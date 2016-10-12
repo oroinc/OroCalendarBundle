@@ -7,7 +7,19 @@
     "require": {
         "php": ">=5.5.9",
         "oro/platform": "1.x-dev",
-        "oro/platform-enterprise": "1.x-dev"
+        "oro/platform-enterprise": "1.x-dev",
+        "oro/ui-bundle": "dev-master",
+        "oro/windows-bundle": "dev-master",
+        "oro/form-bundle": "dev-master",
+        "oro/email-bundle": "dev-master",
+        "oro/notification-bundle": "dev-master",
+        "oro/locale-bundle": "dev-master",
+        "oro/user-bundle": "dev-master",
+        "oro/cron-bundle": "dev-master",
+        "oro/requirejs-bundle": "dev-master",
+        "oro/dashboard-bundle": "dev-master",
+        "oro/entity-extend-bundle": "dev-master",
+        "oro/comment-bundle": "dev-master"
     },
     "autoload": {
         "psr-0": { "Oro\\Bundle\\CalendarBundle": "" }

@@ -9,13 +9,22 @@ use Oro\Bundle\CalendarBundle\Entity\Attendee;
 use Oro\Bundle\EntityExtendBundle\EntityConfig\ExtendScope;
 use Oro\Bundle\EntityExtendBundle\Migration\Extension\ExtendExtension;
 use Oro\Bundle\EntityExtendBundle\Migration\Extension\ExtendExtensionAwareInterface;
+use Oro\Bundle\CommentBundle\Migration\Extension\CommentExtension;
+use Oro\Bundle\CommentBundle\Migration\Extension\CommentExtensionAwareInterface;
 use Oro\Bundle\MigrationBundle\Migration\Installation;
 use Oro\Bundle\MigrationBundle\Migration\QueryBag;
+use Oro\Bundle\CalendarBundle\Migrations\Schema\v1_15\AddCommentAssociation;
 
-class OroCalendarBundleInstaller implements Installation, ExtendExtensionAwareInterface
+class OroCalendarBundleInstaller implements
+    Installation,
+    ExtendExtensionAwareInterface,
+    CommentExtensionAwareInterface
 {
     /** @var ExtendExtension $extendExtension */
     protected $extendExtension;
+
+    /** @var CommentExtension */
+    protected $commentExtension;
 
     /**
      * {@inheritdoc}
@@ -26,11 +35,19 @@ class OroCalendarBundleInstaller implements Installation, ExtendExtensionAwareIn
     }
 
     /**
+     * @param CommentExtension $commentExtension
+     */
+    public function setCommentExtension(CommentExtension $commentExtension)
+    {
+        $this->commentExtension = $commentExtension;
+    }
+
+    /**
      * {@inheritdoc}
      */
     public function getMigrationVersion()
     {
-        return 'v1_14';
+        return 'v1_15';
     }
 
     /**
@@ -55,6 +72,9 @@ class OroCalendarBundleInstaller implements Installation, ExtendExtensionAwareIn
 
         /** Enum generation **/
         $this->addAttendeeEnums($schema);
+
+        /** Association generation */
+        $this->addCommentToCalendarEvent($schema, $this->commentExtension);
     }
 
     /**
@@ -365,5 +385,16 @@ class OroCalendarBundleInstaller implements Installation, ExtendExtensionAwareIn
         $table->addIndex(['start_time'], 'oro_calendar_r_start_time_idx', []);
         $table->addIndex(['end_time'], 'oro_calendar_r_end_time_idx', []);
         $table->addIndex(['calculated_end_time'], 'oro_calendar_r_c_end_time_idx', []);
+    }
+
+    /**
+     * Enable activities
+     *
+     * @param Schema           $schema
+     * @param CommentExtension $commentExtension
+     */
+    private function addCommentToCalendarEvent(Schema $schema, CommentExtension $commentExtension)
+    {
+        AddCommentAssociation::addCalendarEventToComment($schema, $commentExtension);
     }
 }
