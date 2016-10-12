@@ -7,7 +7,6 @@
     "require": {
         "php": ">=5.5.9",
         "oro/platform": "1.x-dev",
-        "oro/platform-enterprise": "1.x-dev",
         "oro/ui-bundle": "dev-master",
         "oro/windows-bundle": "dev-master",
         "oro/form-bundle": "dev-master",
