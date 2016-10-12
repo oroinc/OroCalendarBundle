@@ -19,7 +19,8 @@
         "oro/dashboard-bundle": "dev-master",
         "oro/entity-extend-bundle": "dev-master",
         "oro/comment-bundle": "dev-master",
-        "oro/testframework-bundle": "dev-master"
+        "oro/testframework-bundle": "dev-master",
+        "oro/entity-config-bundle": "dev-master"
     },
     "autoload": {
         "psr-0": { "Oro\\Bundle\\CalendarBundle": "" }
