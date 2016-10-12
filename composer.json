@@ -6,26 +6,17 @@
     "license": "MIT",
     "require": {
         "php": ">=5.5.9",
-        "symfony/symfony": "2.8.*, !=2.8.10",
-        "oro/ui-bundle": "dev-master",
-        "oro/windows-bundle": "dev-master",
-        "oro/form-bundle": "dev-master",
-        "oro/email-bundle": "dev-master",
-        "oro/notification-bundle": "dev-master",
-        "oro/locale-bundle": "dev-master",
-        "oro/user-bundle": "dev-master",
-        "oro/cron-bundle": "dev-master",
-        "oro/requirejs-bundle": "dev-master",
-        "oro/dashboard-bundle": "dev-master"
+        "oro/platform": "1.x-dev"
     },
     "autoload": {
         "psr-0": { "Oro\\Bundle\\CalendarBundle": "" }
     },
     "target-dir": "Oro/Bundle/CalendarBundle",
     "minimum-stability": "dev",
+    "prefer-stable": true,
     "extra": {
         "branch-alias": {
-            "dev-master": "1.0-dev"
+            "dev-master": "1.x-dev"
         }
     }
 }
