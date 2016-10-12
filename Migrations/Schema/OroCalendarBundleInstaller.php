@@ -11,6 +11,8 @@ use Oro\Bundle\EntityExtendBundle\Migration\Extension\ExtendExtension;
 use Oro\Bundle\EntityExtendBundle\Migration\Extension\ExtendExtensionAwareInterface;
 use Oro\Bundle\CommentBundle\Migration\Extension\CommentExtension;
 use Oro\Bundle\CommentBundle\Migration\Extension\CommentExtensionAwareInterface;
+use Oro\Bundle\ActivityBundle\Migration\Extension\ActivityExtension;
+use Oro\Bundle\ActivityBundle\Migration\Extension\ActivityExtensionAwareInterface;
 use Oro\Bundle\MigrationBundle\Migration\Installation;
 use Oro\Bundle\MigrationBundle\Migration\QueryBag;
 use Oro\Bundle\CalendarBundle\Migrations\Schema\v1_15\AddCommentAssociation;
@@ -18,13 +20,17 @@ use Oro\Bundle\CalendarBundle\Migrations\Schema\v1_15\AddCommentAssociation;
 class OroCalendarBundleInstaller implements
     Installation,
     ExtendExtensionAwareInterface,
-    CommentExtensionAwareInterface
+    CommentExtensionAwareInterface,
+    ActivityExtensionAwareInterface
 {
     /** @var ExtendExtension $extendExtension */
     protected $extendExtension;
 
     /** @var CommentExtension */
     protected $commentExtension;
+
+    /** @var ActivityExtension */
+    protected $activityExtension;
 
     /**
      * {@inheritdoc}
@@ -40,6 +46,14 @@ class OroCalendarBundleInstaller implements
     public function setCommentExtension(CommentExtension $commentExtension)
     {
         $this->commentExtension = $commentExtension;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function setActivityExtension(ActivityExtension $activityExtension)
+    {
+        $this->activityExtension = $activityExtension;
     }
 
     /**
@@ -75,6 +89,7 @@ class OroCalendarBundleInstaller implements
 
         /** Association generation */
         $this->addCommentToCalendarEvent($schema, $this->commentExtension);
+        $this->addTestActivityToCalendarEvent($schema);
     }
 
     /**
@@ -388,7 +403,7 @@ class OroCalendarBundleInstaller implements
     }
 
     /**
-     * Enable activities
+     * Add association to comments
      *
      * @param Schema           $schema
      * @param CommentExtension $commentExtension
@@ -396,5 +411,15 @@ class OroCalendarBundleInstaller implements
     private function addCommentToCalendarEvent(Schema $schema, CommentExtension $commentExtension)
     {
         AddCommentAssociation::addCalendarEventToComment($schema, $commentExtension);
+    }
+
+    /**
+     * Add association to test activity
+     *
+     * @param Schema $schema
+     */
+    private function addTestActivityToCalendarEvent(Schema $schema)
+    {
+        $this->activityExtension->addActivityAssociation($schema, 'oro_calendar_event', 'test_activity_target', true);
     }
 }
