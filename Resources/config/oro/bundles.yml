@@ -1,3 +1,2 @@
 bundles:
-    #- { name: Oro\Bundle\CalendarBundle\OroCalendarBundle, priority: 10 }
-    - name: Oro\Bundle\CalendarBundle\OroCalendarBundle
+    - { name: Oro\Bundle\CalendarBundle\OroCalendarBundle, priority: 2 }

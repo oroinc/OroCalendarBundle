@@ -39,7 +39,6 @@ class AddCommentAssociation implements Migration, CommentExtensionAwareInterface
      */
     public static function addCalendarEventToComment(Schema $schema, CommentExtension $commentExtension)
     {
-        var_dump($commentExtension->hasCommentAssociation($schema, self::CALENDAR_EVENT_TABLE));exit;
         if (!$commentExtension->hasCommentAssociation($schema, self::CALENDAR_EVENT_TABLE)) {
             $commentExtension->addCommentAssociation($schema, self::CALENDAR_EVENT_TABLE);
         }
