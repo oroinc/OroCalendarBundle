@@ -1,0 +1,40 @@
+Uid,Day,Title,Description,Start time,End time,All_day,background_color
+1,1,"Lunch","Lunch",12:00,13:00,0,#E1E1E1
+2,1,"Client Call to Ms. Oliver","Client Call to Ms. Oliver",11:00,11:20,0,#F691B2
+3,2,"Client Call to Mr. Weaver","Client Call to Mr. Weaver",16:00,16:15,0,#F691B2
+4,2,"Lunch","Lunch",12:00,13:00,0,#E1E1E1
+5,3,"Lunch","Lunch",12:00,13:00,0,#E1E1E1
+6,4,"Lunch","Lunch",12:00,13:00,0,#E1E1E1
+7,5,"Lunch","Lunch",12:00,13:00,0,#E1E1E1
+8,6,"Board meeting","Board meeting",11:00,14:00,0,#42D692
+9,7,"Lunch","Lunch",12:00,13:00,0,#E1E1E1
+10,8,"Lunch","Lunch",12:00,13:00,0,#E1E1E1
+11,9,"Lunch","Lunch",12:00,13:00,0,#E1E1E1
+12,10,"Conference in Denver","Annual Marketing Conference",09:00,18:00,1,#42D692
+13,11,"Lunch","Lunch",12:00,13:00,0,#E1E1E1
+14,11,"Meeting with Mr. Ramos","Meeting with Mr. Ramos",16:00,17:00,0,#5484ED
+15,12,"Lunch","Lunch",12:00,12:45,0,#E1E1E1
+15,13,"Lunch","Lunch",12:00,12:45,0,#E1E1E1
+16,13,"Meeting with Ms. Peters","Meeting with Ms. Peters",13:00,14:00,0,#5484ED
+17,13,"Client Call to Terry Simpson","Client Call to Terry Simpson",15:35,15:45,0,#F691B2
+18,14,"Department Meeting","Department Meeting",11:00,11:30,0,#42D692
+19,14,"Lunch","Lunch",12:00,13:00,0,#E1E1E1
+20,15,"Lunch","Lunch",12:00,13:00,0,#E1E1E1
+21,16,"Client Call to Judith Rogers","Client Call to Judith Rogers",11:30,11:40,0,#F691B2
+22,16,"Lunch","Lunch",12:00,13:00,0,#E1E1E1
+23,16,"Client Call to Stephen Medina","Client Call to Stephen Medina",14:50,15:00,0,#F691B2
+24,17,"Board meeting","Board meeting",11:00,14:00,0,#42D692
+25,18,"Business trip to Sacramento","Business trip to Sacramento",09:00,18:00,1,#42D692
+26,19,"Lunch","Lunch",12:00,13:00,0,#E1E1E1
+27,20,"Lunch","Lunch",12:00,13:00,0,#E1E1E1
+28,21,"Client Call to Ms. Richardson","Client Call to Ms. Richardson",12:45,13:00,0,#F691B2
+29,21,"Lunch","Lunch",13:00,14:00,0,#E1E1E1
+30,22,"Lunch","Lunch",12:00,13:00,0,#E1E1E1
+31,23,"Meeting with Ms. Mitchell","Meeting with Mr. Mitchell",14:00,14:30,0,#5484ED
+32,24,"Meeting with Mr. Hall","Meeting with Mr. Richard Hall",11:00,11:30,0,#42D692
+30,25,"Lunch","Lunch",12:00,13:00,0,#E1E1E1
+30,26,"Lunch","Lunch",12:00,13:00,0,#E1E1E1
+33,27,"Meeting with our Canada partners","Meeting with our Canada partners",11:00,14:00,0,#42D692
+30,28,"Lunch","Lunch",12:00,13:00,0,#E1E1E1
+34,28,"Client Call to Jean Castillo","Client Call to Jean Castillo",16:00,16:10,0,#42D692
+
