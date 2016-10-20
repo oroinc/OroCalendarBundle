@@ -56,9 +56,11 @@ class LoadUsersCalendarData extends AbstractFixture implements OrderedFixtureInt
      */
     protected function getData()
     {
+        $absolutePath = realpath(__DIR__) . DIRECTORY_SEPARATOR . static::DATA_FOLDER . DIRECTORY_SEPARATOR;
+
         return [
-            'events'      => $this->loadData('calendar/events.csv'),
-            'connections' => $this->loadData('calendar/connections.csv')
+            'events'      => $this->loadDataFromCSV($absolutePath.'calendar/events.csv'),
+            'connections' => $this->loadDataFromCSV($absolutePath.'calendar/connections.csv')
         ];
     }
 
