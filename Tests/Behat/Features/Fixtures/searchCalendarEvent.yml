@@ -1,0 +1,16 @@
+Oro\Bundle\OrganizationBundle\Entity\BusinessUnit:
+  businessUnit:
+    name: Common Business Unit
+    organization: '@organization'
+
+Oro\Bundle\CalendarBundle\Entity\CalendarEvent:
+  calendarEvent:
+    title: Common Event
+    start: <dateTimeThisYear('now')>
+    end: <dateTimeThisYear('now')>
+    allDay: false
+
+Oro\Bundle\OrganizationBundle\Entity\Organization:
+  commonOrganization:
+    name: Common Organization
+    enabled: true
