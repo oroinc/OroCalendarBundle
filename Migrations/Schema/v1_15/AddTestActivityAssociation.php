@@ -41,12 +41,13 @@ class AddTestActivityAssociation implements Migration, ActivityExtensionAwareInt
     public static function addTestActivityToCalendarEvent(Schema $schema, ActivityExtension $activityExtension)
     {
         if ($schema->hasTable(self::TEST_ACTIVITY_TABLE)) {
-            $activityTableName = $activityExtension->getAssociationTableName(
+            $hasAssociationTable = $activityExtension->hasAssociationTable(
+                $schema,
                 self::TEST_ACTIVITY_TABLE,
                 self::CALENDAR_EVENT_TABLE
             );
 
-            if (!$schema->hasTable($activityTableName)) {
+            if (!$hasAssociationTable) {
                 $activityExtension->addActivityAssociation(
                     $schema,
                     self::CALENDAR_EVENT_TABLE,
