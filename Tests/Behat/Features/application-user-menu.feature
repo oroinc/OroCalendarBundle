@@ -1,6 +1,6 @@
 Feature: User menu
   In order to have some quick links related to current user
-  As a OroCRM user
+  As a BAP user
   I need to user navigation menu
 
   Scenario: My Calendar
