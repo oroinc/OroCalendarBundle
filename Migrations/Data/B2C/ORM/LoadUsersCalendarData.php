@@ -1,4 +1,5 @@
 <?php
+
 namespace Oro\Bundle\CalendarBundle\Migrations\Data\B2C\ORM;
 
 use Doctrine\ORM\EntityRepository;
