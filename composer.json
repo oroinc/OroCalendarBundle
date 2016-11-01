@@ -1,9 +1,16 @@
 {
     "name": "oro/calendar-bundle",
     "type": "symfony-bundle",
-    "description": "BAP Calendar Bundle",
-    "keywords": ["BAP", "Calendar"],
-    "license": "MIT",
+    "description": "Oro Calendar Bundle",
+    "homepage": "https://github.com/orocrm/OroCalendarBundle.git",
+    "keywords": ["Oro", "Calendar"],
+    "license": "OSL-3.0",
+    "authors": [
+        {
+            "name": "Oro, Inc",
+            "homepage": "http://www.orocrm.com"
+        }
+    ],
     "require": {
         "php": ">=5.5.9",
         "oro/platform": "1.x-dev",
