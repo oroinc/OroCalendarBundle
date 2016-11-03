@@ -11,6 +11,8 @@ use Oro\Bundle\CalendarBundle\Form\EventListener\AttendeesSubscriber;
 use Oro\Bundle\CalendarBundle\Manager\AttendeeRelationManager;
 use Oro\Bundle\CalendarBundle\Tests\Unit\Fixtures\Entity\Attendee;
 
+use Oro\Bundle\SecurityBundle\SecurityFacade;
+
 class AttendeesSubscriberTest extends \PHPUnit_Framework_TestCase
 {
     /** @var AttendeeRelationManager */
@@ -19,6 +21,9 @@ class AttendeesSubscriberTest extends \PHPUnit_Framework_TestCase
     /** @var AttendeesSubscriber */
     protected $attendeesSubscriber;
 
+    /** @var SecurityFacade */
+    protected $securityFacade;
+
     public function setUp()
     {
         $this->attendeeRelationManager = $this
@@ -26,7 +31,12 @@ class AttendeesSubscriberTest extends \PHPUnit_Framework_TestCase
             ->disableOriginalConstructor()
             ->getMock();
 
-        $this->attendeesSubscriber = new AttendeesSubscriber($this->attendeeRelationManager);
+        $this->securityFacade = $this
+            ->getMockBuilder('Oro\Bundle\SecurityBundle\SecurityFacade')
+            ->disableOriginalConstructor()
+            ->getMock();
+
+        $this->attendeesSubscriber = new AttendeesSubscriber($this->attendeeRelationManager, $this->securityFacade);
     }
 
     public function testGetSubscribedEvents()

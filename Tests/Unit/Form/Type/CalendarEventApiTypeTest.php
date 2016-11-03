@@ -104,7 +104,7 @@ class CalendarEventApiTypeTest extends TypeTestCase
             ->getMock();
         $userRepo->expects($this->any())
             ->method('createQueryBuilder')
-            ->with('e')
+            ->with('event')
             ->will($this->returnValue($qb));
 
         $this->entityManager = $this->getMockBuilder('Doctrine\ORM\EntityManager')

@@ -70,6 +70,19 @@ abstract class AbstractCalendarEventNormalizer
         $attendeeLists = $this->attendeeManager->getAttendeeListsByCalendarEventIds($calendarEventIds);
         foreach ($calendarEvents as $key => $calendarEvent) {
             $calendarEvents[$key]['attendees'] = $this->transformEntity($attendeeLists[$calendarEvent['id']]);
+
+            /**
+             * Contract of the API is to return the attendees in a specific order sorting by displayName field
+             *
+             * @todo Remove duplication of this logic in CRM-6350.
+             * @see \Oro\Bundle\CalendarBundle\Provider\UserCalendarEventNormalizer::prepareExtraValues
+             */
+            usort(
+                $calendarEvents[$key]['attendees'],
+                function ($first, $second) {
+                    return strcmp($first['displayName'], $second['displayName']);
+                }
+            );
         }
     }
 

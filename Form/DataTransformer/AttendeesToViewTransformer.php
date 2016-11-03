@@ -10,6 +10,7 @@ use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInt
 use Symfony\Component\Translation\TranslatorInterface;
 
 use Oro\Bundle\ActivityBundle\Form\DataTransformer\ContextsToViewTransformer;
+use Oro\Bundle\CalendarBundle\Entity\Attendee;
 use Oro\Bundle\CalendarBundle\Manager\AttendeeRelationManager;
 use Oro\Bundle\EntityConfigBundle\Config\ConfigManager;
 use Oro\Bundle\SearchBundle\Resolver\EntityTitleResolverInterface;
@@ -89,6 +90,8 @@ class AttendeesToViewTransformer extends ContextsToViewTransformer
 
     /**
      * {@inheritdoc}
+     *
+     * @param $object Attendee
      */
     protected function getResult($text, $object)
     {
@@ -98,7 +101,7 @@ class AttendeesToViewTransformer extends ContextsToViewTransformer
         $result['displayName'] = $object->getDisplayName();
         $result['email'] = $object->getEmail();
         $result['type'] = $object->getType() ? $object->getType()->getId() : null;
-        $result['status'] = $object->getStatus() ? $object->getStatus()->getId() : null;
+        $result['status'] = $object->getStatusCode();
 
         return $result;
     }

@@ -8,6 +8,7 @@ use Doctrine\ORM\QueryBuilder;
 use Oro\Bundle\CalendarBundle\Entity\Attendee;
 use Oro\Bundle\LocaleBundle\DQL\DQLNameFormatter;
 use Oro\Bundle\LocaleBundle\Formatter\NameFormatter;
+use Oro\Bundle\OrganizationBundle\Entity\Organization;
 use Oro\Bundle\UserBundle\Entity\User;
 
 class AttendeeRelationManager
@@ -89,8 +90,9 @@ class AttendeeRelationManager
 
     /**
      * @param Attendee[]|\Traversable $attendees
+     * @param Organization|null $organization
      */
-    public function bindAttendees($attendees)
+    public function bindAttendees($attendees, Organization $organization = null)
     {
         $unboundAttendeesByEmail = $this->getUnboundAttendeesByEmail($attendees);
         if (!$unboundAttendeesByEmail) {
@@ -99,7 +101,7 @@ class AttendeeRelationManager
 
         $users = $this->registry
             ->getRepository('OroUserBundle:User')
-            ->findUsersByEmails(array_keys($unboundAttendeesByEmail));
+            ->findUsersByEmailsAndOrganization(array_keys($unboundAttendeesByEmail), $organization);
 
         $this->bindUsersToAttendees($users, $unboundAttendeesByEmail);
     }

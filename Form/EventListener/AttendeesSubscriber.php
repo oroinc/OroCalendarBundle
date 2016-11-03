@@ -10,18 +10,24 @@ use Symfony\Component\Form\FormEvents;
 
 use Oro\Bundle\CalendarBundle\Entity\Attendee;
 use Oro\Bundle\CalendarBundle\Manager\AttendeeRelationManager;
+use Oro\Bundle\SecurityBundle\SecurityFacade;
 
 class AttendeesSubscriber implements EventSubscriberInterface
 {
     /** @var AttendeeRelationManager */
     protected $attendeeRelationManager;
 
+    /** @var SecurityFacade */
+    protected $securityFacade;
+
     /**
      * @param AttendeeRelationManager $attendeeRelationManager
+     * @param SecurityFacade $securityFacade
      */
-    public function __construct(AttendeeRelationManager $attendeeRelationManager)
+    public function __construct(AttendeeRelationManager $attendeeRelationManager, SecurityFacade $securityFacade)
     {
         $this->attendeeRelationManager = $attendeeRelationManager;
+        $this->securityFacade = $securityFacade;
     }
 
     /**
@@ -93,6 +99,8 @@ class AttendeesSubscriber implements EventSubscriberInterface
             return;
         }
 
-        $this->attendeeRelationManager->bindAttendees($attendees);
+        $currentOrganization = $this->securityFacade->getOrganization();
+
+        $this->attendeeRelationManager->bindAttendees($attendees, $currentOrganization);
     }
 }

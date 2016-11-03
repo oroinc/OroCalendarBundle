@@ -5,8 +5,10 @@ namespace Oro\Bundle\CalendarBundle\Form\Handler;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\HttpFoundation\Request;
 
-use Doctrine\Common\Persistence\ObjectManager;
+use Doctrine\Common\Persistence\ManagerRegistry;
 use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\ORM\EntityManager;
+use Doctrine\ORM\EntityRepository;
 
 use Oro\Bundle\ActivityBundle\Manager\ActivityManager;
 use Oro\Bundle\CalendarBundle\Entity\Attendee;
@@ -24,8 +26,8 @@ class CalendarEventApiHandler
     /** @var Request */
     protected $request;
 
-    /** @var ObjectManager */
-    protected $manager;
+    /** @var ManagerRegistry */
+    protected $doctrine;
 
     /** @var EmailSendProcessor */
     protected $emailSendProcessor;
@@ -39,7 +41,7 @@ class CalendarEventApiHandler
     /**
      * @param FormInterface           $form
      * @param Request                 $request
-     * @param ObjectManager           $manager
+     * @param ManagerRegistry         $doctrine
      * @param EmailSendProcessor      $emailSendProcessor
      * @param ActivityManager         $activityManager
      * @param AttendeeRelationManager $attendeeRelationManager
@@ -47,14 +49,14 @@ class CalendarEventApiHandler
     public function __construct(
         FormInterface $form,
         Request $request,
-        ObjectManager $manager,
+        ManagerRegistry $doctrine,
         EmailSendProcessor $emailSendProcessor,
         ActivityManager $activityManager,
         AttendeeRelationManager $attendeeRelationManager
     ) {
         $this->form                    = $form;
         $this->request                 = $request;
-        $this->manager                 = $manager;
+        $this->doctrine                = $doctrine;
         $this->emailSendProcessor      = $emailSendProcessor;
         $this->activityManager         = $activityManager;
         $this->attendeeRelationManager = $attendeeRelationManager;
@@ -121,13 +123,11 @@ class CalendarEventApiHandler
             $attendee = $this->attendeeRelationManager->createAttendee($user);
 
             if ($attendee) {
-                $status = $this->manager
-                    ->getRepository(ExtendHelper::buildEnumValueClassName(Attendee::STATUS_ENUM_CODE))
+                $status = $this->getEntityRepository(ExtendHelper::buildEnumValueClassName(Attendee::STATUS_ENUM_CODE))
                     ->find(Attendee::STATUS_NONE);
                 $attendee->setStatus($status);
 
-                $type = $this->manager
-                    ->getRepository(ExtendHelper::buildEnumValueClassName(Attendee::TYPE_ENUM_CODE))
+                $type = $this->getEntityRepository(ExtendHelper::buildEnumValueClassName(Attendee::TYPE_ENUM_CODE))
                     ->find(Attendee::TYPE_REQUIRED);
                 $attendee->setType($type);
 
@@ -149,16 +149,20 @@ class CalendarEventApiHandler
         $notify
     ) {
         $new = $entity->getId() ? false : true;
+
+        $entityManager = $this->getEntityManager();
+
         if ($entity->isCancelled()) {
-            $event = $entity->getRealCalendarEvent();
+            $event = $entity->getParent() ? : $entity;
             $childEvents = $event->getChildEvents();
             foreach ($childEvents as $childEvent) {
                 $childEvent->setCancelled(true);
             }
         }
 
-        $this->manager->persist($entity);
-        $this->manager->flush();
+        $entityManager->persist($entity);
+
+        $entityManager->flush();
 
         if ($notify) {
             if ($new) {
@@ -171,6 +175,22 @@ class CalendarEventApiHandler
                 );
             }
         }
+    }
+
+    /**
+     * @return EntityManager
+     */
+    protected function getEntityManager()
+    {
+        return $this->doctrine->getManager();
+    }
+
+    /**
+     * @return EntityRepository
+     */
+    protected function getEntityRepository($className)
+    {
+        return $this->doctrine->getRepository($className);
     }
 
     /**

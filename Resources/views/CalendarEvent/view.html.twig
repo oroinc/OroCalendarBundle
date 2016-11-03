@@ -50,15 +50,13 @@
 {% block breadcrumbs %}
     {{ parent() }}
     <div class="pull-left">
-        {% set relatedAttendee = entity.relatedAttendee %}
-        {% if relatedAttendee and relatedAttendee.status %}
-            {% set invitationClass = invitations.get_invitatition_badge_class(relatedAttendee.status.id) %}
-            {% if entity.relatedAttendee.status and invitationClass %}
-                <div class="invitation-status badge badge-{{ invitationClass }} status-{{ invitationClass }}">
-                    <i class="icon-status-{{ invitationClass }} icon-circle"></i>
-                    {{ entity.relatedAttendee.status.name }}
-                </div>
-            {% endif %}
+        {% set statusCode = entity.invitationStatus %}
+        {% set invitationClass = invitations.get_invitatition_badge_class(statusCode) %}
+        {% if invitationClass %}
+            <div class="invitation-status badge badge-{{ invitationClass }} status-{{ invitationClass }}">
+                <i class="icon-status-{{ invitationClass }} icon-circle"></i>
+                {{ ('oro.calendar.calendarevent.statuses.' ~ statusCode)|trans }}
+            </div>
         {% endif %}
     </div>
 {% endblock breadcrumbs %}

@@ -11,7 +11,7 @@ datagrids:
                     - event.title
                     - event.start
                     - event.end
-                    - status.id as invitationStatus
+                    - (CASE WHEN (status.id IS NULL) THEN 'Oro\Bundle\CalendarBundle\Entity\CalendarEvent::STATUS_NONE' ELSE status.id END) as invitationStatus
                     - parent.id as parentId
                     - owner.id as ownerId
                     - COUNT(children.id) as childrenCount
@@ -74,7 +74,7 @@ datagrids:
                 end:
                     data_name: event.end
                 invitationStatus:
-                    data_name: event.invitationStatus
+                    data_name: invitationStatus
             default:
                 start: ASC
         filters:
@@ -97,7 +97,7 @@ datagrids:
                 invitationStatus:
                     type: enum
                     enum_code: ce_attendee_status
-                    data_name: status.id
+                    data_name: invitationStatus
         properties:
             id: ~
             view_link:

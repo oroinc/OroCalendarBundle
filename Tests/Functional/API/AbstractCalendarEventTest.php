@@ -2,8 +2,11 @@
 
 namespace Oro\Bundle\CalendarBundle\Tests\Functional\API;
 
+use Oro\Bundle\CalendarBundle\Tests\Functional\DataFixtures\LoadCalendarEventData;
+use Oro\Bundle\CalendarBundle\Tests\Functional\DataFixtures\LoadUserData;
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 use Oro\Bundle\CalendarBundle\Model\Recurrence;
+use Oro\Bundle\TestFrameworkBundle\Tests\Functional\DataFixtures\LoadActivityTargets;
 
 /**
  * @dbIsolation
@@ -24,24 +27,31 @@ abstract class AbstractCalendarEventTest extends WebTestCase
     /** @var array */
     protected static $recurringEventExceptionParameters;
 
+    /**
+     * @var bool
+     */
+    protected static $testDataInitialized;
+
     protected function setUp()
     {
         $this->initClient([], $this->generateWsseAuthHeader());
         $this->loadFixtures([
-            'Oro\Bundle\CalendarBundle\Tests\Functional\DataFixtures\LoadCalendarEventData',
-            'Oro\Bundle\TestFrameworkBundle\Tests\Functional\DataFixtures\LoadActivityTargets',
-            'Oro\Bundle\UserBundle\Tests\Functional\DataFixtures\LoadUserData',
+            LoadCalendarEventData::class,
+            LoadActivityTargets::class,
+            LoadUserData::class,
         ]);
 
-        $targetOne = $this->getReference('activity_target_one');
-        self::$recurringEventParameters['contexts'] = json_encode([
-            'entityId' => $targetOne->getId(),
-            'entityClass' => get_class($targetOne),
-        ]);
+        $this->initializeTestData();
     }
 
-    public static function setUpBeforeClass()
+    protected function initializeTestData()
     {
+        if (self::$testDataInitialized) {
+            return;
+        }
+
+        $targetOne = $this->getReference('activity_target_one');
+
         self::$regularEventParameters = [
             'title' => 'Test Regular Event',
             'description' => 'Test Regular Event Description',
@@ -49,7 +59,7 @@ abstract class AbstractCalendarEventTest extends WebTestCase
             'end' => gmdate(DATE_RFC3339),
             'allDay' => true,
             'backgroundColor' => '#FF0000',
-            'calendar' => self::DEFAULT_USER_CALENDAR_ID,
+            'calendar' => $this->getReference('oro_calendar:calendar:system_user_1')->getId(),
         ];
         self::$recurringEventParameters = [
             'title' => 'Test Recurring Event',
@@ -58,7 +68,7 @@ abstract class AbstractCalendarEventTest extends WebTestCase
             'end' => gmdate(DATE_RFC3339),
             'allDay' => true,
             'backgroundColor' => '#FF0000',
-            'calendar' => self::DEFAULT_USER_CALENDAR_ID,
+            'calendar' => $this->getReference('oro_calendar:calendar:system_user_1')->getId(),
             'recurrence' => [
                 'recurrenceType' => Recurrence::TYPE_DAILY,
                 'interval' => 1,
@@ -73,9 +83,13 @@ abstract class AbstractCalendarEventTest extends WebTestCase
             ],
             'attendees' => [
                 [
-                    'email' => 'simple_user@example.com',
+                    'email' => 'system_user_2@example.com',
                 ],
             ],
+            'contexts' => json_encode([
+                'entityId' => $targetOne->getId(),
+                'entityClass' => get_class($targetOne),
+            ])
         ];
         self::$recurringEventExceptionParameters = [
             'title' => 'Test Recurring Event Exception',
@@ -84,15 +98,24 @@ abstract class AbstractCalendarEventTest extends WebTestCase
             'end' => gmdate(DATE_RFC3339),
             'allDay' => true,
             'backgroundColor' => '#FF0000',
-            'calendar' => self::DEFAULT_USER_CALENDAR_ID,
+            'calendar' => $this->getReference('oro_calendar:calendar:system_user_1')->getId(),
             'recurringEventId' => -1, // is set dynamically
             'originalStart' => gmdate(DATE_RFC3339),
             'isCancelled' => true,
             'attendees' => [
                 [
-                    'email' => 'simple_user@example.com',
+                    'email' => 'system_user_2@example.com',
                 ],
             ],
         ];
+
+        self::$testDataInitialized = true;
     }
+
+    public static function tearDownAfterClass()
+    {
+        self::$testDataInitialized = false;
+    }
+
+
 }

@@ -4,7 +4,6 @@ namespace Oro\Bundle\CalendarBundle\Entity;
 
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
-use Doctrine\ORM\Event\LifecycleEventArgs;
 use Doctrine\ORM\Mapping as ORM;
 
 use Oro\Bundle\CalendarBundle\Exception\NotUserCalendarEvent;
@@ -91,29 +90,6 @@ class CalendarEvent extends ExtendCalendarEvent implements RemindableInterface, 
     const STATUS_ACCEPTED  = 'accepted';
     const STATUS_DECLINED  = 'declined';
 
-    protected $availableStatuses = [
-        CalendarEvent::STATUS_ACCEPTED,
-        CalendarEvent::STATUS_TENTATIVE,
-        CalendarEvent::STATUS_DECLINED
-    ];
-
-    /**
-     * @return array
-     */
-    public function getAvailableInvitationStatuses()
-    {
-        $currentStatus = $this->getInvitationStatus();
-        $availableStatuses = [];
-        if ($currentStatus) {
-            $availableStatuses = $this->availableStatuses;
-            if (($key = array_search($currentStatus, $availableStatuses)) !== false) {
-                unset($availableStatuses[$key]);
-            }
-        }
-
-        return $availableStatuses;
-    }
-
     /**
      * @ORM\Id
      * @ORM\Column(name="id", type="integer")
@@ -125,7 +101,7 @@ class CalendarEvent extends ExtendCalendarEvent implements RemindableInterface, 
      * @var ArrayCollection
      *
      * @ORM\OneToMany(targetEntity="CalendarEvent", mappedBy="parent", orphanRemoval=true, cascade={"all"})
-     **/
+     */
     protected $childEvents;
 
     /**
@@ -133,7 +109,7 @@ class CalendarEvent extends ExtendCalendarEvent implements RemindableInterface, 
      *
      * @ORM\ManyToOne(targetEntity="CalendarEvent", inversedBy="childEvents", fetch="EAGER")
      * @ORM\JoinColumn(name="parent_id", referencedColumnName="id", onDelete="CASCADE")
-     **/
+     */
     protected $parent;
 
     /**
@@ -289,7 +265,8 @@ class CalendarEvent extends ExtendCalendarEvent implements RemindableInterface, 
      * @ORM\OneToOne(
      *     targetEntity="Oro\Bundle\CalendarBundle\Entity\Recurrence",
      *     inversedBy="calendarEvent",
-     *     cascade={"persist"}
+     *     cascade={"persist"},
+     *     orphanRemoval=true
      * )
      * @ORM\JoinColumn(name="recurrence_id", nullable=true, referencedColumnName="id", onDelete="SET NULL")
      */
@@ -739,68 +716,59 @@ class CalendarEvent extends ExtendCalendarEvent implements RemindableInterface, 
     }
 
     /**
-     * @deprecated since 1.10 use $event->getRelatedAttendee()->getStatus() instead
+     * Returns invitation status of the event based on related attendee. If there is no related attendee then returns
+     * "none" status (@see CalendarEvent::STATUS_NONE).
      *
-     * @return string|null
+     * @see CalendarEvent::getRelatedAttendee()
+     *
+     * @return string Status id (@see CalendarEvent::STATUS_*)
      */
     public function getInvitationStatus()
     {
-        if (!$this->relatedAttendee) {
-            return null;
+        $relatedAttendee = $this->getRelatedAttendee();
+
+        if (!$relatedAttendee) {
+            return CalendarEvent::STATUS_NONE;
         }
 
-        $status = $this->relatedAttendee->getStatus();
-
-        return $status
-            ? $status->getId()
-            : null;
+        return $relatedAttendee->getStatusCode();
     }
 
     /**
-     * Get attendee for real (parent) Calendar Event
+     * Get attendee for Calendar Event. If this event is a child event, the attendees collection will be retreived
+     * from the parent instance.
      *
      * @return Collection|Attendee[]
      */
     public function getAttendees()
     {
-        return $this->getRealCalendarEvent()->getCurrentAttendees();
+        $calendarEvent = $this->getParent() ? : $this;
+
+        return $calendarEvent->attendees;
     }
 
     /**
-     * Get attendee for current Calendar Event
+     * Returns all attendees related to child events. This method should not be called using child event.
      *
      * @return Collection|Attendee[]
-     */
-    public function getCurrentAttendees()
-    {
-        return $this->attendees;
-    }
-
-    /**
-     * Set attendee for current Calendar Event
-     *
-     * @param Collection|Attendee[] $attendees
-     */
-    public function setCurrentAttendees(Collection $attendees)
-    {
-        $this->attendees = $attendees;
-    }
-
-    /**
-     * Returns all attendees except related attendee for parent calendar event or empty collection
-     * if the event is child
-     *
-     * @return Collection|Attendee[]
+     * @throws \LogicException If method is called with child event.
      */
     public function getChildAttendees()
     {
-        if ($this->parent) {
-            return new ArrayCollection();
+        $this->ensureCalendarEventIsNotChild();
+
+        $relatedAttendee = $this->getRelatedAttendee();
+
+        if (!$relatedAttendee) {
+            return $this->getAttendees();
         }
 
-        return $this->attendees->filter(function (Attendee $attendee) {
-            return !$this->relatedAttendee || $attendee->getEmail() !== $this->relatedAttendee->getEmail();
-        });
+        // Filter out related attendee using email
+        return $this->getAttendees()->filter(
+            function (Attendee $attendee) use ($relatedAttendee) {
+                return $attendee !== $relatedAttendee && !$attendee->isEmailEqual($relatedAttendee->getEmail());
+            }
+        );
     }
 
     /**
@@ -936,58 +904,134 @@ class CalendarEvent extends ExtendCalendarEvent implements RemindableInterface, 
     {
         return $this->cancelled;
     }
-    
+
     /**
-     * Get attendee for real (parent) Calendar Event
+     * Get attendee of Calendar Event. This method should not be called using child event.
      *
      * @param Collection|Attendee[] $attendees
-     *
      * @return CalendarEvent
+     * @throws \LogicException If method is called with child event.
      */
     public function setAttendees(Collection $attendees)
     {
-        $this->getRealCalendarEvent()->setCurrentAttendees($attendees);
+        $this->ensureCalendarEventIsNotChild();
+
+        $this->attendees = $attendees;
 
         return $this;
     }
 
     /**
-     * @param Attendee $attendee
+     * Throws an exception of Calendar Event has parent. Can be used to restrict calls for some methods using
+     * child Calendar Events.
      *
+     * @throws \LogicException
+     */
+    protected function ensureCalendarEventIsNotChild()
+    {
+        if ($this->getParent()) {
+            throw new \LogicException(
+                sprintf(
+                    'Update of child Calendar Event (id=%d) is restricted. Use parent Calendar Event instead.',
+                    $this->getId()
+                )
+            );
+        }
+    }
+
+    /**
+     * Add attendee of Calendar Event. This method should not be called using child event.
+     *
+     * @param Attendee $attendee
      * @return CalendarEvent
+     * @throws \LogicException If method is called with child event.
      */
     public function addAttendee(Attendee $attendee)
     {
-        $attendees = $this->getRealCalendarEvent()->getCurrentAttendees();
+        $this->ensureCalendarEventIsNotChild();
 
-        if (!$attendees->contains($attendee)) {
+        if (!$this->getAttendees()->contains($attendee)) {
             $attendee->setCalendarEvent($this);
-            $attendees->add($attendee);
+            $this->getAttendees()->add($attendee);
         }
 
         return $this;
     }
 
     /**
-     * Remove child calendar event
+     * Remove attendee. Related child event will be also removed. This method should not be called using child event.
      *
      * @param Attendee $attendee
-     *
      * @return CalendarEvent
+     * @throws \LogicException If method is called with child event.
      */
     public function removeAttendee(Attendee $attendee)
     {
-        if ($this->getRealCalendarEvent()
-            && $this->getRealCalendarEvent()->getCurrentAttendees()->contains($attendee)
-        ) {
-            $event = $this->getEventByAttendee($attendee);
-            if ($event) {
-                $event->relatedAttendee = null;
+        $this->ensureCalendarEventIsNotChild();
+
+        if ($this->getAttendees()->contains($attendee)) {
+            $childEvent = $this->getChildEventByAttendee($attendee);
+            if ($childEvent) {
+                if ($childEvent->getRecurringEvent()) {
+                    // If child event is an exception of recurring event then it should be cancelled
+                    // to hide the event in user's calendar
+                    $childEvent->setCancelled(true);
+                } else {
+                    // otherwise it should be removed
+                    $this->removeChildEvent($childEvent);
+                }
             }
-            $this->getRealCalendarEvent()->getCurrentAttendees()->removeElement($attendee);
+            $this->getAttendees()->removeElement($attendee);
         }
 
         return $this;
+    }
+
+    /**
+     * @param Attendee $attendee
+     *
+     * @return CalendarEvent|null
+     */
+    protected function getChildEventByAttendee(Attendee $attendee)
+    {
+        $result = $this->getChildEvents()->filter(
+            function (CalendarEvent $chileEvent) use ($attendee) {
+                $calendar = $chileEvent->getCalendar();
+                $ownerUser = $calendar ? $calendar->getOwner() : null;
+                return $ownerUser && $attendee->isUserEqual($ownerUser);
+            }
+        );
+
+        return $result->count() ? $result->first() : null;
+    }
+
+    /**
+     * Find attendee related to this event. Related attendee has a user same as an owner of the calendar event.
+     *
+     * @return Attendee|null
+     */
+    public function findRelatedAttendee()
+    {
+        $result = null;
+
+        $calendar = $this->getCalendar();
+        if (!$calendar) {
+            return $result;
+        }
+
+        $ownerUser = $calendar->getOwner();
+        if (!$ownerUser) {
+            return $result;
+        }
+
+        foreach ($this->getAttendees() as $attendee) {
+            if ($attendee->isUserEqual($ownerUser)) {
+                $result = $attendee;
+                break;
+            }
+        }
+
+        return $result;
     }
 
     /**
@@ -999,14 +1043,13 @@ class CalendarEvent extends ExtendCalendarEvent implements RemindableInterface, 
     }
 
     /**
-     * @param Attendee $relatedAttendee
+     * @param Attendee|null $relatedAttendee
      *
      * @return CalendarEvent
      */
-    public function setRelatedAttendee(Attendee $relatedAttendee)
+    public function setRelatedAttendee(Attendee $relatedAttendee = null)
     {
         $this->relatedAttendee = $relatedAttendee;
-        $this->addAttendee($relatedAttendee);
 
         return $this;
     }
@@ -1017,34 +1060,6 @@ class CalendarEvent extends ExtendCalendarEvent implements RemindableInterface, 
     public function __toString()
     {
         return (string)$this->getTitle();
-    }
-
-    /**
-     * @param Attendee $attendee
-     *
-     * @return CalendarEvent|null
-     */
-    protected function getEventByAttendee(Attendee $attendee)
-    {
-        $events = $this->getRealCalendarEvent()->getChildEvents()->toArray();
-        $events[] = $this->getRealCalendarEvent();
-
-        return ArrayUtil::find(
-            function (CalendarEvent $event) use ($attendee) {
-                $relatedAttendee = $event->getRelatedAttendee();
-
-                return $relatedAttendee && $relatedAttendee->getId() === $attendee->getId();
-            },
-            $events
-        );
-    }
-
-    /**
-     * @return CalendarEvent
-     */
-    public function getRealCalendarEvent()
-    {
-        return $this->getParent() ?: $this;
     }
 
     /**

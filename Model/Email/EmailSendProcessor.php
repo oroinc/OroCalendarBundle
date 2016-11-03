@@ -148,8 +148,8 @@ class EmailSendProcessor
             return;
         }
 
-        $statusId = $relatedAttendee->getStatus() ? $relatedAttendee->getStatus()->getId() : null;
-        switch ($statusId) {
+        $statusCode = $relatedAttendee->getStatusCode();
+        switch ($statusCode) {
             case CalendarEvent::STATUS_ACCEPTED:
                 $templateName = self::ACCEPTED_TEMPLATE_NAME;
                 break;
@@ -161,7 +161,7 @@ class EmailSendProcessor
                 break;
             default:
                 throw new \LogicException(
-                    sprintf('Invitees try to send un-respond status %s', $statusId)
+                    sprintf('Invitees try to send un-respond status %s', $statusCode)
                 );
         }
         $this->addEmailNotification(

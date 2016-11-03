@@ -103,7 +103,7 @@ class UserCalendarEventNormalizer extends AbstractCalendarEventNormalizer
                 'backgroundColor'  => $event->getBackgroundColor(),
                 'createdAt'        => $event->getCreatedAt(),
                 'updatedAt'        => $event->getUpdatedAt(),
-                'invitationStatus' => $this->getEventStatus($event),
+                'invitationStatus' => $event->getInvitationStatus(),
                 'parentEventId'    => $event->getParent() ? $event->getParent()->getId() : null,
                 'calendar'         => $event->getCalendar() ? $event->getCalendar()->getId() : null,
                 'recurringEventId' => $event->getRecurringEvent() ? $event->getRecurringEvent()->getId() : null,
@@ -112,26 +112,6 @@ class UserCalendarEventNormalizer extends AbstractCalendarEventNormalizer
             ],
             $this->prepareExtraValues($event, $extraValues)
         );
-    }
-
-    /**
-     * @param CalendarEvent $event
-     *
-     * @return string
-     */
-    protected function getEventStatus(CalendarEvent $event)
-    {
-        $relatedAttendee = $event->getRelatedAttendee();
-
-        if ($relatedAttendee) {
-            $status = $relatedAttendee->getStatus();
-
-            if ($status) {
-                return $status->getId();
-            }
-        }
-
-        return null;
     }
 
     /**
@@ -226,6 +206,19 @@ class UserCalendarEventNormalizer extends AbstractCalendarEventNormalizer
                 $extraValues['invitedUsers'][] = $attendee->getUser()->getId();
             }
         }
+
+        /**
+         * Contract of the API is to return the attendees in a specific order sorting by displayName field
+         *
+         * @todo Remove duplication of this logic in CRM-6350.
+         * @see \Oro\Bundle\CalendarBundle\Provider\AbstractCalendarEventNormalizer::addAttendeesToCalendarEvents
+         */
+        usort(
+            $extraValues['attendees'],
+            function ($first, $second) {
+                return strcmp($first['displayName'], $second['displayName']);
+            }
+        );
 
         return $extraValues;
     }

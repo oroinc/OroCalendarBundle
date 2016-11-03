@@ -298,8 +298,10 @@ class CalendarEventManagerTest extends \PHPUnit_Framework_TestCase
             ->with('Extend\Entity\EV_Ce_Attendee_Status')
             ->will($this->returnValue($statusRepository));
 
-        $event = new CalendarEvent();
-        $event->setRelatedAttendee(new Attendee());
+        $attendee = new Attendee();
+
+        $event = $this->getCalendarEventWithExpectedRelatedAttendee($attendee);
+
         $this->assertNotEquals(CalendarEvent::STATUS_ACCEPTED, $event->getInvitationStatus());
 
         $this->manager->changeStatus($event, CalendarEvent::STATUS_ACCEPTED);
@@ -333,9 +335,30 @@ class CalendarEventManagerTest extends \PHPUnit_Framework_TestCase
             ->with('Extend\Entity\EV_Ce_Attendee_Status')
             ->will($this->returnValue($statusRepository));
 
-        $event = (new CalendarEvent())
-            ->setRelatedAttendee(new Attendee());
+        $attendee = new Attendee();
+
+        $event = $this->getCalendarEventWithExpectedRelatedAttendee($attendee);
 
         $this->manager->changeStatus($event, CalendarEvent::STATUS_ACCEPTED);
+    }
+
+
+    /**
+     * @param Attendee $relatedAttendee
+     * @return CalendarEvent|\PHPUnit_Framework_MockObject_MockObject
+     */
+    protected function getCalendarEventWithExpectedRelatedAttendee(Attendee $relatedAttendee)
+    {
+        $result = $this->getMockBuilder(CalendarEvent::class)
+            ->setMethods(['getRelatedAttendee'])
+            ->getMock();
+
+        $result->expects($this->any())
+            ->method('getRelatedAttendee')
+            ->will($this->returnValue($relatedAttendee));
+
+        $result->addAttendee($relatedAttendee);
+
+        return $result;
     }
 }

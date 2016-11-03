@@ -20,7 +20,7 @@ class RecurringEventWithAttendeesAndDeletionTest extends AbstractUseCaseTestCase
         $this->checkPreconditions();
 
         /** @var User $simpleUser */
-        $simpleUser = $this->getReference('simple_user');
+        $simpleUser = $this->getReference('oro_calendar:user:system_user_1');
         $attendees = [
             [
                 'displayName' => sprintf('%s %s', $simpleUser->getFirstName(), $simpleUser->getLastName()),

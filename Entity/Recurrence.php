@@ -29,8 +29,7 @@ class Recurrence
     /**
      * @ORM\OneToOne(
      *     targetEntity="Oro\Bundle\CalendarBundle\Entity\CalendarEvent",
-     *     mappedBy="recurrence",
-     *     orphanRemoval=true
+     *     mappedBy="recurrence"
      * )
      */
     protected $calendarEvent;

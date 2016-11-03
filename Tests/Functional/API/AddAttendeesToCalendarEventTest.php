@@ -3,12 +3,25 @@
 namespace Oro\Bundle\CalendarBundle\Tests\Functional\API;
 
 use Oro\Bundle\CalendarBundle\Entity\Attendee;
+use Oro\Bundle\CalendarBundle\Tests\Functional\API\Rest\SimpleEventTestCasesTest;
 
 /**
  * @dbIsolation
  */
 class AddAttendeesToCalendarEventTest extends AbstractUseCaseTestCase
 {
+    protected function setUp()
+    {
+        $this->markTestSkipped(
+            sprintf(
+                'This test is covered in %s::%s.',
+                SimpleEventTestCasesTest::class,
+                'testBasicAttendee'
+            )
+        );
+    }
+
+
     public function testAttendeesCanBeAddedToAlreadyExistedCalendarEvent()
     {
         $em = $this->getContainer()->get('doctrine')->getManager();
@@ -16,7 +29,7 @@ class AddAttendeesToCalendarEventTest extends AbstractUseCaseTestCase
         $calendarEventId = $this->postCalendarEventWithEmptyAttendees();
         $em->clear();
 
-        $user = $this->getReference('simple_user');
+        $user = $this->getReference('oro_calendar:user:system_user_1');
 
         $firstAttendee = [
             'displayName' => sprintf('%s %s', $user->getFirstName(), $user->getLastName()),

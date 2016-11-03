@@ -74,33 +74,34 @@ class ChildEventsSubscriberTest extends \PHPUnit_Framework_TestCase
 
     public function testOnSubmit()
     {
+        $firstEventAttendee = new Attendee(1);
+        $firstEventAttendee->setEmail('first@example.com');
+
         // set default empty data
-        $firstEvent = new CalendarEvent();
-        $firstEvent->setTitle('1');
-        $secondEvent = new CalendarEvent();
-        $secondEvent->setTitle('2');
+        $firstEvent = $this->getCalendarEventWithExpectedRelatedAttendee($firstEventAttendee)->setTitle('1');
+
+        $secondEventAttendee = new Attendee(2);
+        $secondEventAttendee->setEmail('second@example.com');
+
+        $secondEvent = $this->getCalendarEventWithExpectedRelatedAttendee($secondEventAttendee)->setTitle('2');
+
         $eventWithoutRelatedAttendee = new CalendarEvent();
         $eventWithoutRelatedAttendee->setTitle('3');
 
-        $parentEvent = new CalendarEvent();
-        $parentEvent->setTitle('parent title')
-            ->setRelatedAttendee(new Attendee())
+        $parentEventAttendee = new Attendee(3);
+        $parentEvent = $this->getCalendarEventWithExpectedRelatedAttendee($parentEventAttendee)
+            ->setTitle('parent title')
             ->setDescription('parent description')
             ->setStart(new \DateTime('now'))
             ->setEnd(new \DateTime('now'))
-            ->setAllDay(true);
-        $parentEvent->addChildEvent($firstEvent)
+            ->setAllDay(true)
+            ->addAttendee($parentEventAttendee)
+            ->addChildEvent($firstEvent)
+            ->addAttendee($firstEventAttendee)
             ->addChildEvent($secondEvent)
+            ->addAttendee($secondEventAttendee)
             ->addChildEvent($eventWithoutRelatedAttendee);
 
-        $firstEvent->setRelatedAttendee(
-            (new Attendee())
-                ->setEmail('first@example.com')
-        );
-        $secondEvent->setRelatedAttendee(
-            (new Attendee())
-                ->setEmail('second@example.com')
-        );
 
         $form = $this->getMock('Symfony\Component\Form\FormInterface');
         $form->expects($this->any())
@@ -113,7 +114,7 @@ class ChildEventsSubscriberTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals(CalendarEvent::STATUS_ACCEPTED, $parentEvent->getInvitationStatus());
         $this->assertEquals(CalendarEvent::STATUS_NONE, $firstEvent->getInvitationStatus());
         $this->assertEquals(CalendarEvent::STATUS_NONE, $secondEvent->getInvitationStatus());
-        $this->assertEquals(null, $eventWithoutRelatedAttendee->getInvitationStatus());
+        $this->assertEquals(CalendarEvent::STATUS_NONE, $eventWithoutRelatedAttendee->getInvitationStatus());
         $this->assertEventDataEquals($parentEvent, $firstEvent);
         $this->assertEventDataEquals($parentEvent, $secondEvent);
         $this->assertEventDataEquals($parentEvent, $eventWithoutRelatedAttendee);
@@ -125,13 +126,13 @@ class ChildEventsSubscriberTest extends \PHPUnit_Framework_TestCase
             ->setEnd(new \DateTime('tomorrow'))
             ->setAllDay(false);
 
-        $parentEvent->getRelatedAttendee()->setStatus(
+        $parentEvent->findRelatedAttendee()->setStatus(
             new TestEnumValue(CalendarEvent::STATUS_ACCEPTED, CalendarEvent::STATUS_ACCEPTED)
         );
-        $firstEvent->getRelatedAttendee()->setStatus(
+        $firstEvent->findRelatedAttendee()->setStatus(
             new TestEnumValue(CalendarEvent::STATUS_DECLINED, CalendarEvent::STATUS_DECLINED)
         );
-        $secondEvent->getRelatedAttendee()->setStatus(
+        $secondEvent->findRelatedAttendee()->setStatus(
             new TestEnumValue(CalendarEvent::STATUS_TENTATIVE, CalendarEvent::STATUS_TENTATIVE)
         );
 
@@ -141,7 +142,7 @@ class ChildEventsSubscriberTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals(CalendarEvent::STATUS_ACCEPTED, $parentEvent->getInvitationStatus());
         $this->assertEquals(CalendarEvent::STATUS_DECLINED, $firstEvent->getInvitationStatus());
         $this->assertEquals(CalendarEvent::STATUS_TENTATIVE, $secondEvent->getInvitationStatus());
-        $this->assertEquals(null, $eventWithoutRelatedAttendee->getInvitationStatus());
+        $this->assertEquals(CalendarEvent::STATUS_NONE, $eventWithoutRelatedAttendee->getInvitationStatus());
         $this->assertEventDataEquals($parentEvent, $firstEvent);
         $this->assertEventDataEquals($parentEvent, $secondEvent);
         $this->assertEventDataEquals($parentEvent, $eventWithoutRelatedAttendee);
@@ -170,7 +171,7 @@ class ChildEventsSubscriberTest extends \PHPUnit_Framework_TestCase
 
         $this->childEventsSubscriber->postSubmit(new FormEvent($form, []));
 
-        $this->assertEquals($attendees->first(), $event->getRelatedAttendee());
+        $this->assertEquals($attendees->first(), $event->findRelatedAttendee());
     }
 
     public function testAddEvents()
@@ -200,7 +201,7 @@ class ChildEventsSubscriberTest extends \PHPUnit_Framework_TestCase
         $this->childEventsSubscriber->postSubmit(new FormEvent($form, []));
 
         $this->assertCount(1, $event->getChildEvents());
-        $this->assertSame($attendees->get(1), $event->getChildEvents()->first()->getRelatedAttendee());
+        $this->assertSame($attendees->get(1), $event->getChildEvents()->first()->findRelatedAttendee());
     }
 
     public function testUpdateAttendees()
@@ -246,5 +247,25 @@ class ChildEventsSubscriberTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals($expected->getStart(), $actual->getStart());
         $this->assertEquals($expected->getEnd(), $actual->getEnd());
         $this->assertEquals($expected->getAllDay(), $actual->getAllDay());
+    }
+
+
+    /**
+     * @param Attendee $relatedAttendee
+     * @return CalendarEvent|\PHPUnit_Framework_MockObject_MockObject
+     */
+    protected function getCalendarEventWithExpectedRelatedAttendee(Attendee $relatedAttendee)
+    {
+        $result = $this->getMockBuilder(CalendarEvent::class)
+            ->setMethods(['findRelatedAttendee'])
+            ->getMock();
+
+        $result->expects($this->any())
+            ->method('findRelatedAttendee')
+            ->will($this->returnValue($relatedAttendee));
+
+        $result->setRelatedAttendee($relatedAttendee);
+
+        return $result;
     }
 }

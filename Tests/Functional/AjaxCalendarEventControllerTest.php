@@ -2,60 +2,46 @@
 
 namespace Oro\Bundle\CalendarBundle\Tests\Functional;
 
-use Oro\Bundle\CalendarBundle\Entity\CalendarEvent;
-use Oro\Bundle\CalendarBundle\Tests\Functional\DataFixtures\LoadCalendarEventData;
-use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
+use Oro\Bundle\CalendarBundle\Test\TestCase;
+use Oro\Bundle\CalendarBundle\Tests\Functional\DataFixtures\LoadUserData;
 
 /**
  * @dbIsolation
  */
-class AjaxCalendarEventControllerTest extends WebTestCase
+class AjaxCalendarEventControllerTest extends AbstractTestCase
 {
-    /** @var CalendarEvent $calendarEvent */
-    protected $calendarEvent;
-
     protected function setUp()
     {
-        $this->initClient([], $this->generateBasicAuthHeader());
-        $this->loadFixtures(['Oro\Bundle\CalendarBundle\Tests\Functional\DataFixtures\LoadCalendarEventData']);
-        $this->calendarEvent = $this->getCalendarEventByTitle(LoadCalendarEventData::CALENDAR_EVENT_WITH_ATTENDEE);
+        parent::setUp();
+
+        $this->loadFixtures([LoadUserData::class], true);
     }
-
-    public function testChangeInvitationStatus()
+    /**
+     * @dataProvider changeInvitationStatusDataProvider
+     * @param TestCase $testCase
+     */
+    public function testChangeInvitationStatus(TestCase $testCase)
     {
-        $availableStatuses = [
-            CalendarEvent::STATUS_ACCEPTED,
-            CalendarEvent::STATUS_TENTATIVE,
-            CalendarEvent::STATUS_DECLINED
-        ];
-
-        foreach ($availableStatuses as $status) {
-            $calendarEventId = $this->calendarEvent->getId();
-            $this->client->request(
-                'GET',
-                $this->getUrl(
-                    'oro_calendar_event_'.$status,
-                    ['id' => $calendarEventId, 'status' => $status]
-                )
-            );
-            $response = $this->client->getResponse();
-            $data = json_decode($response->getContent(), true);
-            $this->assertTrue($data['successful']);
-            $calendarEvent = $this->getCalendarEventByTitle(LoadCalendarEventData::CALENDAR_EVENT_WITH_ATTENDEE);
-            $this->assertNotNull($calendarEvent->getRelatedAttendee());
-            $this->assertNotNull($calendarEvent->getRelatedAttendee()->getStatus());
-            $this->assertEquals($status, $calendarEvent->getRelatedAttendee()->getStatus()->getId());
-        }
+        $testCase->execute($this->getActionAssembler(), $this->getContext());
     }
 
     /**
-     * @param string $title
-     * @return CalendarEvent
+     * @return array
      */
-    protected function getCalendarEventByTitle($title)
+    public function changeInvitationStatusDataProvider()
     {
-        return $this->getContainer()->get('doctrine')
-            ->getRepository('OroCalendarBundle:CalendarEvent')
-            ->findOneBy(['title' => $title]);
+        return $this->getTestCaseDataFromYamlConfigFile('change_invitation_status.yml');
+
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    protected function getTestCaseDataFromYamlConfigFile($filePath, array $filterTestCases = [])
+    {
+        return parent::getTestCaseDataFromYamlConfigFile(
+            implode(DIRECTORY_SEPARATOR, [__DIR__, 'test_cases', 'ajax_calendar_event_controller', $filePath]),
+            $filterTestCases
+        );
     }
 }

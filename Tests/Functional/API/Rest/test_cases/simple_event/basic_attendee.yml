@@ -1,0 +1,469 @@
+test_cases:
+    create_simple_calendar_event_with_user_attendee:
+        title: |-
+            Create regular calendar event with attendee related to user.
+        description: |-
+            Create regular calendar event with attendee related to user existing in the same organization.
+            It is expected attendee has id of related user.
+            It is expected attendee has "required" type by default.
+            It is expected attendee has "status" none by default.
+        steps:
+            -
+                title: |-
+                    Create new calendar event with attendees related to user.
+                actions:
+                    - @test_api_rest_post_calendar_event:
+                        auth:
+                            username: foo_user_1
+                            apiKey: foo_user_1_api_key
+                        request:
+                            content:
+                                title: "Regular event"
+                                start: "2016-10-14T22:00:00+00:00"
+                                end: "2016-10-14T23:00:00+00:00"
+                                calendar: "reference('oro_calendar:calendar:foo_user_1').getId()"
+                                attendees:
+                                    -
+                                        displayName: "reference('oro_calendar:user:foo_user_2').getFullName()"
+                                        email: "foo_user_2@example.com"
+                        response:
+                            statusCode: 201
+                            contentType: application/json
+                            content:
+                                id: "path('id')"
+                                notifiable: true
+                                invitationStatus: "none"
+                            strictCompare: true
+                        entityReference: "new_calendar_event"
+            -
+                title: |-
+                    Get created event and verfy all properties in the response.
+                actions:
+                    - @test_api_rest_get_calendar_event:
+                        auth:
+                            username: foo_user_1
+                            apiKey: foo_user_1_api_key
+                        request:
+                            parameters:
+                                id: "reference('new_calendar_event').getId()"
+                        response:
+                            statusCode: 200
+                            contentType: application/json
+                            content:
+                                id: "reference('new_calendar_event').getId()"
+                                calendar: "reference('oro_calendar:calendar:foo_user_1').getId()"
+                                parentEventId: null
+                                title: "Regular event"
+                                description: null
+                                start: "2016-10-14T22:00:00+00:00"
+                                end: "2016-10-14T23:00:00+00:00"
+                                allDay: false
+                                use_hangout: false
+                                invitedUsers:
+                                    - "reference('oro_calendar:user:foo_user_2').getId()"
+                                attendees:
+                                    -
+                                        displayName: "reference('oro_calendar:user:foo_user_2').getFullName()"
+                                        email: "reference('oro_calendar:user:foo_user_2').getEmail()"
+                                        userId: "reference('oro_calendar:user:foo_user_2').getId()"
+                                        status: "none"
+                                        type: "required"
+                                        createdAt: "attendeeByEmail('new_calendar_event', 'foo_user_2@example.com').getCreatedAt().format(constant('DATE_RFC3339'))"
+                                        updatedAt: "attendeeByEmail('new_calendar_event', 'foo_user_2@example.com').getUpdatedAt().format(constant('DATE_RFC3339'))"
+                                editable: true
+                                removable: true
+                                notifiable: true
+                                backgroundColor: null
+                                invitationStatus: "none"
+                                recurringEventId: null
+                                originalStart: null
+                                isCancelled: false
+                                createdAt: "reference('new_calendar_event').getCreatedAt().format(constant('DATE_RFC3339'))"
+                                updatedAt: "reference('new_calendar_event').getUpdatedAt().format(constant('DATE_RFC3339'))"
+                            strictCompare: true
+
+    create_simple_calendar_event_with_non_user_attendee:
+        title: |-
+            Create regular calendar event with attendee not related to any user.
+        description: |-
+            Create regular calendar event with attendee not related to any user.
+            It is expected to have the attendee exist without related user.
+        steps:
+            -
+                title: |-
+                    Create regular calendar event with attendee not related to any user.
+                actions:
+                    - @test_api_rest_post_calendar_event:
+                        auth:
+                            username: system_user_1
+                            apiKey: system_user_1_api_key
+                        request:
+                            content:
+                                title: "Regular event"
+                                start: "2016-10-14T22:00:00+00:00"
+                                end: "2016-10-14T23:00:00+00:00"
+                                calendar: "reference('oro_calendar:calendar:system_user_1').getId()"
+                                attendees:
+                                    -
+                                        displayName: "External Attendee"
+                                        email: "ext@example.com"
+                                        status: "tentative"
+                                        type: "organizer"
+                        response:
+                            statusCode: 201
+                            contentType: application/json
+                            content:
+                                id: "path('id')"
+                                notifiable: true
+                                invitationStatus: "none"
+                            strictCompare: true
+                        entityReference: "new_calendar_event"
+            -
+                title: |-
+                    Get created event and verfy all properties in the response.
+                actions:
+                    - @test_api_rest_get_calendar_event:
+                        auth:
+                            username: system_user_1
+                            apiKey: system_user_1_api_key
+                        request:
+                            parameters:
+                                id: "reference('new_calendar_event').getId()"
+                        response:
+                            statusCode: 200
+                            contentType: application/json
+                            content:
+                                id: "reference('new_calendar_event').getId()"
+                                calendar: "reference('oro_calendar:calendar:system_user_1').getId()"
+                                parentEventId: null
+                                title: "Regular event"
+                                description: null
+                                start: "2016-10-14T22:00:00+00:00"
+                                end: "2016-10-14T23:00:00+00:00"
+                                allDay: false
+                                use_hangout: false
+                                invitedUsers: []
+                                attendees:
+                                    -
+                                        displayName: "External Attendee"
+                                        email: "ext@example.com"
+                                        userId: null
+                                        status: "tentative"
+                                        type: "organizer"
+                                        createdAt: "attendeeByEmail('new_calendar_event', 'ext@example.com').getCreatedAt().format(constant('DATE_RFC3339'))"
+                                        updatedAt: "attendeeByEmail('new_calendar_event', 'ext@example.com').getUpdatedAt().format(constant('DATE_RFC3339'))"
+                                editable: true
+                                removable: true
+                                notifiable: true
+                                backgroundColor: null
+                                invitationStatus: "none"
+                                recurringEventId: null
+                                originalStart: null
+                                isCancelled: false
+                                createdAt: "reference('new_calendar_event').getCreatedAt().format(constant('DATE_RFC3339'))"
+                                updatedAt: "reference('new_calendar_event').getUpdatedAt().format(constant('DATE_RFC3339'))"
+                            strictCompare: true
+
+    create_simple_calendar_event_with_user_attendee_from_other_organization:
+        title: |-
+            Create regular calendar event with attendee related to user from other organization.
+        description: |-
+            Create regular calendar event with attendee related to user existing in different organization.
+            It is expected to not create a relation between the attendee and user from other organization.
+        steps:
+            -
+                title: |-
+                    Create new calendar event with attendees related to user from different organization.
+                actions:
+                    - @test_api_rest_post_calendar_event:
+                        auth:
+                            username: foo_user_1
+                            apiKey: foo_user_1_api_key
+                        request:
+                            content:
+                                title: "Regular event"
+                                start: "2016-10-14T22:00:00+00:00"
+                                end: "2016-10-14T23:00:00+00:00"
+                                calendar: "reference('oro_calendar:calendar:foo_user_1').getId()"
+                                attendees:
+                                    -
+                                        displayName: "reference('oro_calendar:user:bar_user_1').getFullName()"
+                                        email: "bar_user_1@example.com"
+                                        status: null
+                                        type: required
+                        response:
+                            statusCode: 201
+                            contentType: application/json
+                            content:
+                                id: "path('id')"
+                                notifiable: true
+                                invitationStatus: "none"
+                            strictCompare: true
+                        entityReference: "new_calendar_event"
+            -
+                title: |-
+                    Get created event and verfy all properties in the response.
+                actions:
+                    - @test_api_rest_get_calendar_event:
+                        auth:
+                            username: foo_user_1
+                            apiKey: foo_user_1_api_key
+                        request:
+                            parameters:
+                                id: "reference('new_calendar_event').getId()"
+                        response:
+                            statusCode: 200
+                            contentType: application/json
+                            content:
+                                id: "reference('new_calendar_event').getId()"
+                                calendar: "reference('oro_calendar:calendar:foo_user_1').getId()"
+                                parentEventId: null
+                                title: "Regular event"
+                                description: null
+                                start: "2016-10-14T22:00:00+00:00"
+                                end: "2016-10-14T23:00:00+00:00"
+                                allDay: false
+                                use_hangout: false
+                                invitedUsers: []
+                                attendees:
+                                    -
+                                        displayName: "reference('oro_calendar:user:bar_user_1').getFullName()"
+                                        email: "bar_user_1@example.com"
+                                        userId: null
+                                        status: "none"
+                                        type: "required"
+                                        createdAt: "attendeeByEmail('new_calendar_event', 'bar_user_1@example.com').getCreatedAt().format(constant('DATE_RFC3339'))"
+                                        updatedAt: "attendeeByEmail('new_calendar_event', 'bar_user_1@example.com').getUpdatedAt().format(constant('DATE_RFC3339'))"
+                                editable: true
+                                removable: true
+                                notifiable: true
+                                backgroundColor: null
+                                invitationStatus: "none"
+                                recurringEventId: null
+                                originalStart: null
+                                isCancelled: false
+                                createdAt: "reference('new_calendar_event').getCreatedAt().format(constant('DATE_RFC3339'))"
+                                updatedAt: "reference('new_calendar_event').getUpdatedAt().format(constant('DATE_RFC3339'))"
+                            strictCompare: true
+
+    update_simple_calendar_event_with_existing_attendees:
+        title: |-
+            Update regular calendar event with already existing attendees.
+        description: |-
+            Create regular calendar event with 1 attendee.
+            Then update the event with 2 new attendees.
+            It is expected to have only 2 new attendees in the event and to not have previous attendee.
+        steps:
+            -
+                title: |-
+                    Create new calendar event with attendees related to user.
+                actions:
+                    - @test_api_rest_post_calendar_event:
+                        auth:
+                            username: foo_user_1
+                            apiKey: foo_user_1_api_key
+                        request:
+                            content:
+                                title: "Regular event"
+                                start: "2016-10-14T22:00:00+00:00"
+                                end: "2016-10-14T23:00:00+00:00"
+                                calendar: "reference('oro_calendar:calendar:foo_user_1').getId()"
+                                attendees:
+                                    -
+                                        displayName: "reference('oro_calendar:user:foo_user_2').getFullName()"
+                                        email: "foo_user_2@example.com"
+                                        status: accepted
+                                        type: required
+                        response:
+                            statusCode: 201
+                            contentType: application/json
+                            content:
+                                id: "path('id')"
+                                notifiable: true
+                                invitationStatus: "none"
+                            strictCompare: true
+                        entityReference: "new_calendar_event"
+            -
+                title: |-
+                    Update the calendar event with 2 new attendees.
+                actions:
+                    - @test_api_rest_put_calendar_event:
+                        auth:
+                            username: foo_user_1
+                            apiKey: foo_user_1_api_key
+                        request:
+                            parameters:
+                                id: "reference('new_calendar_event').getId()"
+                            content:
+                                attendees:
+                                    -
+                                        displayName: "External Attendee"
+                                        email: "ext@example.com"
+                                        status: none
+                                        type: optional
+                                    -
+                                        displayName: "reference('oro_calendar:user:foo_user_3').getFullName()"
+                                        email: "foo_user_3@example.com"
+                                        status: accepted
+                                        type: required
+                        response:
+                            statusCode: 200
+                            contentType: application/json
+                            content:
+                                notifiable: true
+                                invitationStatus: "none"
+                            strictCompare: true
+            -
+                title: |-
+                    Get the event and verfy the response contain only 2 new attendees.
+                actions:
+                    - @test_api_rest_get_calendar_event:
+                        auth:
+                            username: foo_user_1
+                            apiKey: foo_user_1_api_key
+                        request:
+                            parameters:
+                                id: "reference('new_calendar_event').getId()"
+                        response:
+                            statusCode: 200
+                            contentType: application/json
+                            content:
+                                id: "reference('new_calendar_event').getId()"
+                                calendar: "reference('oro_calendar:calendar:foo_user_1').getId()"
+                                parentEventId: null
+                                title: "Regular event"
+                                description: null
+                                start: "2016-10-14T22:00:00+00:00"
+                                end: "2016-10-14T23:00:00+00:00"
+                                allDay: false
+                                use_hangout: false
+                                invitedUsers:
+                                    - "reference('oro_calendar:user:foo_user_3').getId()"
+                                attendees:
+                                    -
+                                        displayName: "External Attendee"
+                                        email: "ext@example.com"
+                                        userId: null
+                                        status: "none"
+                                        type: "optional"
+                                        createdAt: "attendeeByEmail('new_calendar_event', 'ext@example.com').getCreatedAt().format(constant('DATE_RFC3339'))"
+                                        updatedAt: "attendeeByEmail('new_calendar_event', 'ext@example.com').getUpdatedAt().format(constant('DATE_RFC3339'))"
+                                    -
+                                        displayName: "reference('oro_calendar:user:foo_user_3').getFullName()"
+                                        email: "foo_user_3@example.com"
+                                        userId: "reference('oro_calendar:user:foo_user_3').getId()"
+                                        status: "accepted"
+                                        type: "required"
+                                        createdAt: "attendeeByEmail('new_calendar_event', 'foo_user_3@example.com').getCreatedAt().format(constant('DATE_RFC3339'))"
+                                        updatedAt: "attendeeByEmail('new_calendar_event', 'foo_user_3@example.com').getUpdatedAt().format(constant('DATE_RFC3339'))"
+                                editable: true
+                                removable: true
+                                notifiable: true
+                                backgroundColor: null
+                                invitationStatus: "none"
+                                recurringEventId: null
+                                originalStart: null
+                                isCancelled: false
+                                createdAt: "reference('new_calendar_event').getCreatedAt().format(constant('DATE_RFC3339'))"
+                                updatedAt: "reference('new_calendar_event').getUpdatedAt().format(constant('DATE_RFC3339'))"
+                            strictCompare: true
+
+    update_simple_calendar_event_with_empty_attendees:
+        title: |-
+            Update regular calendar event with empty list of attendees to remove existed attendees.
+        description: |-
+            Create regular calendar event with 2 attendees.
+            Then update the event with empty attendees.
+            It is expected to have no attendees in the event as a result.
+        steps:
+            -
+                title: |-
+                    Create new calendar event with attendees related to user.
+                actions:
+                    - @test_api_rest_post_calendar_event:
+                        auth:
+                            username: foo_user_1
+                            apiKey: foo_user_1_api_key
+                        request:
+                            content:
+                                title: "Regular event"
+                                start: "2016-10-14T22:00:00+00:00"
+                                end: "2016-10-14T23:00:00+00:00"
+                                calendar: "reference('oro_calendar:calendar:foo_user_1').getId()"
+                                attendees:
+                                    -
+                                        displayName: "External Attendee"
+                                        email: "ext@example.com"
+                                        status: none
+                                        type: optional
+                                    -
+                                        displayName: "reference('oro_calendar:user:foo_user_3').getFullName()"
+                                        email: "foo_user_3@example.com"
+                                        status: accepted
+                                        type: required
+                        response:
+                            statusCode: 201
+                            contentType: application/json
+                            content:
+                                id: "path('id')"
+                                notifiable: true
+                                invitationStatus: "none"
+                            strictCompare: true
+                        entityReference: "new_calendar_event"
+            -
+                title: |-
+                    Update the calendar event with empty list of attendees.
+                actions:
+                    - @test_api_rest_put_calendar_event:
+                        auth:
+                            username: foo_user_1
+                            apiKey: foo_user_1_api_key
+                        request:
+                            parameters:
+                                id: "reference('new_calendar_event').getId()"
+                            content:
+                                attendees: []
+                        response:
+                            statusCode: 200
+                            contentType: application/json
+                            content:
+                                notifiable: false
+                                invitationStatus: "none"
+                            strictCompare: true
+            -
+                title: |-
+                    Get the event and verfy the response contain only 2 new attendees.
+                actions:
+                    - @test_api_rest_get_calendar_event:
+                        auth:
+                            username: foo_user_1
+                            apiKey: foo_user_1_api_key
+                        request:
+                            parameters:
+                                id: "reference('new_calendar_event').getId()"
+                        response:
+                            statusCode: 200
+                            contentType: application/json
+                            content:
+                                id: "reference('new_calendar_event').getId()"
+                                calendar: "reference('oro_calendar:calendar:foo_user_1').getId()"
+                                parentEventId: null
+                                title: "Regular event"
+                                description: null
+                                start: "2016-10-14T22:00:00+00:00"
+                                end: "2016-10-14T23:00:00+00:00"
+                                allDay: false
+                                use_hangout: false
+                                invitedUsers: []
+                                attendees: []
+                                editable: true
+                                removable: true
+                                notifiable: false
+                                backgroundColor: null
+                                invitationStatus: "none"
+                                recurringEventId: null
+                                originalStart: null
+                                isCancelled: false
+                                createdAt: "reference('new_calendar_event').getCreatedAt().format(constant('DATE_RFC3339'))"
+                                updatedAt: "reference('new_calendar_event').getUpdatedAt().format(constant('DATE_RFC3339'))"
+                            strictCompare: true

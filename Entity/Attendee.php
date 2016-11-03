@@ -79,8 +79,7 @@ class Attendee extends ExtendAttendee
      *
      * @ORM\ManyToOne(
      *     targetEntity="Oro\Bundle\CalendarBundle\Entity\CalendarEvent",
-     *     inversedBy="attendees",
-     *     cascade={"persist"}
+     *     inversedBy="attendees"
      * )
      * @ORM\JoinColumn(name="calendar_event_id", referencedColumnName="id", nullable=false, onDelete="CASCADE")
      */
@@ -128,6 +127,32 @@ class Attendee extends ExtendAttendee
     public function getEmail()
     {
         return $this->email;
+    }
+
+    /**
+     * Returns invitation status code of the attendee based on related status. If there is no related status
+     * then returns "none" status (@see CalendarEvent::STATUS_NONE).
+     *
+     * @return string Status id (@see CalendarEvent::STATUS_*)
+     */
+    public function getStatusCode()
+    {
+        $status = $this->getStatus();
+
+        return $status ? $status->getId() : CalendarEvent::STATUS_NONE;
+    }
+
+    /**
+     * Case-insensitive compares of attendees email. Will return TRUE only if both emails exist and if they are
+     * case-insensitive equal.
+     *
+     * @param string $email
+     * @return bool
+     */
+    public function isEmailEqual($email)
+    {
+        $currentEmail = $this->getEmail();
+        return $currentEmail && $email && 0 === strcasecmp($currentEmail, $email);
     }
 
     /**
@@ -180,6 +205,16 @@ class Attendee extends ExtendAttendee
         $this->user = $user;
 
         return $this;
+    }
+
+    /**
+     * @param User $user
+     * @return bool
+     */
+    public function isUserEqual(User $user)
+    {
+        $actualUser = $this->getUser();
+        return $actualUser && ($user === $actualUser || $actualUser->getId() == $user->getId());
     }
 
     /**

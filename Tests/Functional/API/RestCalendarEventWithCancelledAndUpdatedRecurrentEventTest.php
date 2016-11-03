@@ -24,8 +24,8 @@ class RestCalendarEventWithCancelledAndUpdatedRecurrentEventTest extends Abstrac
 
         $attendeesData = [
             [
-                'displayName' => 'simple_user@example.com',
-                'email'       => 'simple_user@example.com',
+                'displayName' => 'system_user_1@example.com',
+                'email'       => 'system_user_1@example.com',
                 'status'      => Attendee::STATUS_NONE,
                 'type'        => Attendee::TYPE_REQUIRED,
             ],
@@ -65,7 +65,7 @@ class RestCalendarEventWithCancelledAndUpdatedRecurrentEventTest extends Abstrac
         $mainExceptionCalendarEventId = $this->addCalendarEventViaAPI($exceptionData);
         $mainExceptionEvent = $this->getCalendarEventById($mainExceptionCalendarEventId);
 
-        $simpleUser = $this->getReference('simple_user');
+        $simpleUser = $this->getReference('oro_calendar:user:system_user_1');
 
         $expectedEventsData = [
             [

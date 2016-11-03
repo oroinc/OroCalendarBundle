@@ -14,7 +14,7 @@
 {# build attendee #}
 {% macro build_invitation_link(attendee) %}
     {% import 'OroUIBundle::macros.html.twig' as UI %}
-        {% set invitationStatus = attendee.status ? attendee.status.id : null %}
+        {% set invitationStatus = attendee.statusCode %}
         {% set invitationClass = _self.get_invitatition_status_class(invitationStatus) %}
         <li class="list-group-item">
             <i {% if invitationClass %}class="{{ invitationClass }}" title="{{ attendee.status.name }}"{% endif %}></i>

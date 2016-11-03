@@ -114,7 +114,7 @@ class CalendarEventApiType extends CalendarEventType
                         ],
                     ]
                 )
-                ->addEventSubscriber(new AttendeesSubscriber($this->attendeeRelationManager))
+                ->addEventSubscriber(new AttendeesSubscriber($this->attendeeRelationManager, $this->securityFacade))
             )
             ->add('notifyInvitedUsers', 'hidden', ['mapped' => false])
             ->add(

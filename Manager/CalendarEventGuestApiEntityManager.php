@@ -31,9 +31,12 @@ class CalendarEventGuestApiEntityManager extends ApiEntityManager
         $userNameDQL = $this->entityNameResolver->getNameDQL('Oro\Bundle\UserBundle\Entity\User', 'u');
         $criteria    = $this->prepareQueryCriteria($limit ? : null, $page, $criteria, $orderBy);
 
-        return $this->getRepository()->createQueryBuilder('e')
-            ->select('e.id, e.invitationStatus, u.email,' . sprintf('%s AS userFullName', $userNameDQL))
-            ->join('e.calendar', 'c')
+        return $this->getRepository()->createQueryBuilder('event')
+            ->addSelect('event.id')
+            ->addSelect('event.invitationStatus') // @todo This field doesn't exist, remove it.
+            ->addSelect('u.email')
+            ->addSelect(sprintf('%s AS userFullName', $userNameDQL))
+            ->join('event.calendar', 'c')
             ->join('c.owner', 'u')
             ->addCriteria($criteria);
     }

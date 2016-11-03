@@ -4,6 +4,7 @@ namespace Oro\Bundle\CalendarBundle\Tests\Functional\API;
 
 use Doctrine\Common\Collections\Collection;
 
+use Oro\Bundle\CalendarBundle\Tests\Functional\DataFixtures\LoadUserData;
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 use Oro\Bundle\CalendarBundle\Entity\Attendee;
 use Oro\Bundle\UserBundle\Entity\User;
@@ -20,7 +21,7 @@ class RestCalendarEventWithAttendeesTest extends WebTestCase
     protected function setUp()
     {
         $this->initClient([], $this->generateWsseAuthHeader());
-        $this->loadFixtures(['Oro\Bundle\UserBundle\Tests\Functional\DataFixtures\LoadUserData']);
+        $this->loadFixtures([LoadUserData::class]);
     }
 
     public function testGets()
@@ -46,7 +47,7 @@ class RestCalendarEventWithAttendeesTest extends WebTestCase
      */
     public function testPost()
     {
-        $user = $this->getReference('simple_user');
+        $user = $this->getReference('oro_calendar:user:system_user_1');
 
         $adminUser = $this->getAdminUser();
 
@@ -109,7 +110,7 @@ class RestCalendarEventWithAttendeesTest extends WebTestCase
      */
     public function testGetAfterPost($id)
     {
-        $user      = $this->getReference('simple_user');
+        $user      = $this->getReference('oro_calendar:user:system_user_1');
         $adminUser = $this->getAdminUser();
 
         $this->client->request(
@@ -143,7 +144,7 @@ class RestCalendarEventWithAttendeesTest extends WebTestCase
                 'attendees'        => [
                     [
                         'displayName' => sprintf('%s %s', $user->getFirstName(), $user->getLastName()),
-                        'email'       => 'simple_user@example.com',
+                        'email'       => 'system_user_1@example.com',
                         'status'      => 'none',
                         'type'        => 'required',
                         'userId'      => $user->getId(),
@@ -206,11 +207,11 @@ class RestCalendarEventWithAttendeesTest extends WebTestCase
 
         $simpleUser = $attendees->filter(
             function ($element) {
-                return $element->getEmail() && $element->getEmail() === 'simple_user@example.com';
+                return $element->getEmail() && $element->getEmail() === 'system_user_1@example.com';
             }
         )->first();
-        $this->assertEquals('simple_user@example.com', $simpleUser->getEmail());
-        $this->assertEquals('simple_user', $simpleUser->getUser()->getUsername());
+        $this->assertEquals('system_user_1@example.com', $simpleUser->getEmail());
+        $this->assertEquals('system_user_1', $simpleUser->getUser()->getUsername());
     }
 
     /**
@@ -552,7 +553,7 @@ class RestCalendarEventWithAttendeesTest extends WebTestCase
      */
     public function testPostInvitedUsers()
     {
-        $user = $this->getReference('simple_user');
+        $user = $this->getReference('oro_calendar:user:system_user_1');
 
         $request = [
             'calendar'        => self::DEFAULT_USER_CALENDAR_ID,
@@ -584,7 +585,7 @@ class RestCalendarEventWithAttendeesTest extends WebTestCase
      */
     public function testGetAfterPostInvitedUsers($id)
     {
-        $user = $this->getReference('simple_user');
+        $user = $this->getReference('oro_calendar:user:system_user_1');
 
         $this->client->request(
             'GET',
@@ -613,7 +614,7 @@ class RestCalendarEventWithAttendeesTest extends WebTestCase
                 'end'              => '2016-05-04T11:29:46+00:00',
                 'allDay'           => true,
                 'backgroundColor'  => '#FF0000',
-                'invitationStatus' => null,
+                'invitationStatus' => 'none',
                 'parentEventId'    => null,
                 'editable'         => true,
                 'removable'        => true,
@@ -639,7 +640,7 @@ class RestCalendarEventWithAttendeesTest extends WebTestCase
      */
     public function testPostRemoveAttendees()
     {
-        $user = $this->getReference('simple_user');
+        $user = $this->getReference('oro_calendar:user:system_user_1');
 
         $adminUser = $this->getAdminUser();
 
@@ -682,7 +683,7 @@ class RestCalendarEventWithAttendeesTest extends WebTestCase
      */
     public function testGetAfterPostRemoveAttendees($id)
     {
-        $user      = $this->getReference('simple_user');
+        $user      = $this->getReference('oro_calendar:user:system_user_1');
         $adminUser = $this->getAdminUser();
 
         $this->client->request(
@@ -751,11 +752,11 @@ class RestCalendarEventWithAttendeesTest extends WebTestCase
 
         $simpleUser = $attendees->filter(
             function ($element) {
-                return $element->getEmail() && $element->getEmail() === 'simple_user@example.com';
+                return $element->getEmail() && $element->getEmail() === 'system_user_1@example.com';
             }
         )->first();
-        $this->assertEquals('simple_user@example.com', $simpleUser->getEmail());
-        $this->assertEquals('simple_user', $simpleUser->getUser()->getUsername());
+        $this->assertEquals('system_user_1@example.com', $simpleUser->getEmail());
+        $this->assertEquals('system_user_1', $simpleUser->getUser()->getUsername());
     }
 
     /**
@@ -812,7 +813,7 @@ class RestCalendarEventWithAttendeesTest extends WebTestCase
                 'end'              => '2016-05-04T11:29:46+00:00',
                 'allDay'           => true,
                 'backgroundColor'  => '#FF0000',
-                'invitationStatus' => null,
+                'invitationStatus' => 'none',
                 'parentEventId'    => null,
                 'editable'         => true,
                 'removable'        => true,
@@ -832,10 +833,10 @@ class RestCalendarEventWithAttendeesTest extends WebTestCase
 
     public function testBindUserToAttendeeIsCaseInsensitive()
     {
-        $this->getReference('simple_user')->setEmail('simple_uSer@example.com');
+        $this->getReference('oro_calendar:user:system_user_1')->setEmail('system_uSer_1@example.com');
         $this->getContainer()->get('doctrine.orm.entity_manager')->flush();
 
-        $user = $this->getReference('simple_user');
+        $user = $this->getReference('oro_calendar:user:system_user_1');
 
         $request = [
             'calendar'        => self::DEFAULT_USER_CALENDAR_ID,
@@ -849,7 +850,7 @@ class RestCalendarEventWithAttendeesTest extends WebTestCase
             'attendees'       => [
                 [
                     'displayName' => sprintf('%s %s', $user->getFirstName(), $user->getLastName()),
-                    'email'       => 'sImple_user@example.com',
+                    'email'       => 'sYstem_user_1@example.com',
                     'status'      => null,
                 ],
             ]

@@ -3,6 +3,7 @@
 namespace Oro\Bundle\CalendarBundle\Tests\Functional\API;
 
 use Oro\Bundle\CalendarBundle\Model\Recurrence;
+use Oro\Bundle\CalendarBundle\Tests\Functional\DataFixtures\LoadUserData;
 use Oro\Bundle\UserBundle\Entity\User;
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 
@@ -16,7 +17,7 @@ class CalendarConnectionControllerTest extends WebTestCase
     protected function setUp()
     {
         $this->initClient([], $this->generateWsseAuthHeader());
-        $this->loadFixtures(['Oro\Bundle\UserBundle\Tests\Functional\DataFixtures\LoadUserData']);
+        $this->loadFixtures([LoadUserData::class]);
     }
 
     public function testGets()
@@ -37,7 +38,7 @@ class CalendarConnectionControllerTest extends WebTestCase
 
     public function testPostCalendarEvent()
     {
-        $user = $this->getReference('simple_user');
+        $user = $this->getReference('oro_calendar:user:system_user_1');
         $adminUser = $this->getAdminUser();
 
         $request = [
@@ -86,7 +87,7 @@ class CalendarConnectionControllerTest extends WebTestCase
      */
     public function testGetsAfterPost()
     {
-        $user      = $this->getReference('simple_user');
+        $user      = $this->getReference('oro_calendar:user:system_user_1');
         $admin = $this->getAdminUser();
 
         $request = [
@@ -151,7 +152,7 @@ class CalendarConnectionControllerTest extends WebTestCase
      */
     public function testAddConnection()
     {
-        $user = $this->getReference('simple_user');
+        $user = $this->getReference('oro_calendar:user:system_user_1');
 
         $request = [
             'calendar'        => $this->findCalendar($user)->getId(),
@@ -169,7 +170,7 @@ class CalendarConnectionControllerTest extends WebTestCase
      */
     public function testGetsAfterAddConnection()
     {
-        $user      = $this->getReference('simple_user');
+        $user      = $this->getReference('oro_calendar:user:system_user_1');
         $admin = $this->getAdminUser();
 
         $request = [

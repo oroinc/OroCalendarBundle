@@ -133,7 +133,7 @@ class CalendarEventDeleteHandler extends DeleteHandler
         $this->checkPermissions($entity, $em);
 
         if ($this->shouldCancelInsteadDelete() && $entity->getRecurringEvent()) {
-            $event = $entity->getRealCalendarEvent();
+            $event = $entity->getParent() ? : $entity;
             $event->setCancelled(true);
 
             $childEvents = $event->getChildEvents();
@@ -146,7 +146,7 @@ class CalendarEventDeleteHandler extends DeleteHandler
             }
 
             if ($entity->getRecurringEvent()) {
-                $event = $entity->getRealCalendarEvent();
+                $event = $entity->getParent() ? : $entity;
                 $childEvents = $event->getChildEvents();
                 foreach ($childEvents as $childEvent) {
                     $this->deleteEntity($childEvent, $em);

@@ -4,9 +4,11 @@ namespace Oro\Bundle\CalendarBundle\Entity\Repository;
 
 use Doctrine\Common\Collections\Criteria;
 use Doctrine\ORM\EntityRepository;
-use Doctrine\ORM\Query\Expr\Join;
+use Doctrine\ORM\Query\Expr;
 use Doctrine\ORM\QueryBuilder;
 
+use Oro\Bundle\CalendarBundle\Entity\Attendee;
+use Oro\Bundle\CalendarBundle\Entity\CalendarEvent;
 use Oro\Bundle\CalendarBundle\Model\Recurrence;
 
 class CalendarEventRepository extends EntityRepository
@@ -43,13 +45,34 @@ class CalendarEventRepository extends EntityRepository
     public function getUserEventListQueryBuilder($filters = [], $extraFields = [])
     {
         $qb = $this->getEventListQueryBuilder($extraFields)
-            ->addSelect('status.id AS invitationStatus')
-            ->addSelect('IDENTITY(e.parent) AS parentEventId, c.id as calendar')
-            ->addSelect('IDENTITY(e.recurringEvent) AS recurringEventId, e.originalStart, e.cancelled AS isCancelled')
-            ->leftJoin('e.relatedAttendee', 'relatedAttendee')
-            ->leftJoin('e.parent', 'parent')
-            ->leftJoin('relatedAttendee.status', 'status')
-            ->innerJoin('e.calendar', 'c');
+            ->addSelect(
+                sprintf(
+                    '(CASE WHEN (status.id IS NULL) THEN \'%s\' ELSE status.id END) as invitationStatus',
+                    CalendarEvent::STATUS_NONE
+                )
+            )
+            ->addSelect('IDENTITY(event.parent) AS parentEventId, c.id as calendar')
+            ->addSelect('IDENTITY(event.recurringEvent) AS recurringEventId')
+            ->addSelect('event.originalStart')
+            ->addSelect('event.cancelled AS isCancelled')
+            ->innerJoin('event.calendar', 'c')
+            ->leftJoin(
+                Attendee::class, 'relatedAttendee',
+                Expr\Join::WITH,
+                '(' .
+                    'event.parent is NULL AND ' .
+                    'event.id = IDENTITY(relatedAttendee.calendarEvent) AND ' .
+                    'IDENTITY(c.owner) = IDENTITY(relatedAttendee.user)' .
+                ') ' .
+                'OR ' .
+                '( ' .
+                    'event.parent is NOT NULL AND ' .
+                    'IDENTITY(event.parent) = IDENTITY(relatedAttendee.calendarEvent) AND ' .
+                    'IDENTITY(c.owner) = IDENTITY(relatedAttendee.user)' .
+                ')'
+            )
+            ->leftJoin('event.parent', 'parent')
+            ->leftJoin('relatedAttendee.status', 'status');
 
         $this->addRecurrenceData($qb);
         $this->addFilters($qb, $filters);
@@ -74,7 +97,7 @@ class CalendarEventRepository extends EntityRepository
     ) {
         $qb = $this->getUserEventListQueryBuilder($filters, $extraFields);
         if ((int)$recurringEventId) {
-            $qb->orWhere('e.id = :recurringEventId')
+            $qb->orWhere('event.id = :recurringEventId')
                 ->setParameter('recurringEventId', (int)$recurringEventId);
         }
 
@@ -96,7 +119,7 @@ class CalendarEventRepository extends EntityRepository
     {
         $qb = $this->getEventListQueryBuilder($extraFields)
             ->addSelect('c.id as calendar')
-            ->innerJoin('e.systemCalendar', 'c')
+            ->innerJoin('event.systemCalendar', 'c')
             ->andWhere('c.public = :public')
             ->setParameter('public', false);
 
@@ -121,7 +144,7 @@ class CalendarEventRepository extends EntityRepository
     {
         $qb = $this->getEventListQueryBuilder($extraFields)
             ->addSelect('c.id as calendar')
-            ->innerJoin('e.systemCalendar', 'c')
+            ->innerJoin('event.systemCalendar', 'c')
             ->andWhere('c.public = :public')
             ->setParameter('public', true);
 
@@ -140,14 +163,14 @@ class CalendarEventRepository extends EntityRepository
      */
     public function getEventListQueryBuilder($extraFields = [])
     {
-        $qb = $this->createQueryBuilder('e')
+        $qb = $this->createQueryBuilder('event')
             ->select(
-                'e.id, e.title, e.description, e.start, e.end, e.allDay,'
-                . ' e.backgroundColor, e.createdAt, e.updatedAt'
+                'event.id, event.title, event.description, event.start, event.end, event.allDay,'
+                . ' event.backgroundColor, event.createdAt, event.updatedAt'
             );
         if ($extraFields) {
             foreach ($extraFields as $field) {
-                $qb->addSelect('e.' . $field);
+                $qb->addSelect('event.' . $field);
             }
         }
         return $qb;
@@ -164,13 +187,13 @@ class CalendarEventRepository extends EntityRepository
     {
         $qb
             ->andWhere(
-                '(e.start < :start AND e.end >= :start) OR '
-                . '(e.start <= :end AND e.end > :end) OR'
-                . '(e.start >= :start AND e.end < :end)'
+                '(event.start < :start AND event.end >= :start) OR '
+                . '(event.start <= :end AND event.end > :end) OR'
+                . '(event.start >= :start AND event.end < :end)'
             )
             ->setParameter('start', $startDate)
             ->setParameter('end', $endDate)
-            ->orderBy('c.id, e.start');
+            ->orderBy('c.id, event.start');
     }
 
     /**
@@ -182,11 +205,11 @@ class CalendarEventRepository extends EntityRepository
      */
     public function getInvitedUsersByParentsQueryBuilder($parentEventIds)
     {
-        return $this->createQueryBuilder('e')
-            ->select('IDENTITY(e.parent) AS parentEventId, e.id AS eventId, u.id AS userId')
-            ->innerJoin('e.calendar', 'c')
+        return $this->createQueryBuilder('event')
+            ->select('IDENTITY(event.parent) AS parentEventId, event.id AS eventId, u.id AS userId')
+            ->innerJoin('event.calendar', 'c')
             ->innerJoin('c.owner', 'u')
-            ->where('e.parent IN (:parentEventIds)')
+            ->where('event.parent IN (:parentEventIds)')
             ->setParameter('parentEventIds', $parentEventIds);
     }
 
@@ -229,8 +252,8 @@ class CalendarEventRepository extends EntityRepository
             ->leftJoin(
                 'OroCalendarBundle:Recurrence',
                 'r',
-                Join::WITH,
-                '(parent.id IS NOT NULL AND parent.recurrence = r.id) OR (parent.id IS NULL AND e.recurrence = r.id)'
+                Expr\Join::WITH,
+                '(parent.id IS NOT NULL AND parent.recurrence = r.id) OR (parent.id IS NULL AND event.recurrence = r.id)'
             )
             ->addSelect(
                 "r.recurrenceType as {$key}RecurrenceType, r.interval as {$key}Interval,"
@@ -268,9 +291,9 @@ class CalendarEventRepository extends EntityRepository
             )
             ->orWhere(
                 $expr->andX(
-                    $expr->isNotNull('e.originalStart'),
-                    $expr->lte('e.originalStart', ':endDate'),
-                    $expr->gte('e.originalStart', ':startDate')
+                    $expr->isNotNull('event.originalStart'),
+                    $expr->lte('event.originalStart', ':endDate'),
+                    $expr->gte('event.originalStart', ':startDate')
                 )
             )
             ->setParameter('startDate', $startDate)

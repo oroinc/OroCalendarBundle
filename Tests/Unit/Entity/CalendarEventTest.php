@@ -2,20 +2,19 @@
 
 namespace Oro\Bundle\CalendarBundle\Tests\Unit\Entity;
 
-use Doctrine\ORM\Event\LifecycleEventArgs;
 use Doctrine\Common\Collections\ArrayCollection;
 
 use Symfony\Component\PropertyAccess\PropertyAccess;
 
 use Oro\Bundle\CalendarBundle\Entity\Calendar;
-use Oro\Bundle\CalendarBundle\Entity\CalendarEvent;
+use Oro\Bundle\CalendarBundle\Entity\Recurrence;
 use Oro\Bundle\CalendarBundle\Entity\SystemCalendar;
 use Oro\Bundle\CalendarBundle\Tests\Unit\Fixtures\Entity\Attendee;
+use Oro\Bundle\CalendarBundle\Tests\Unit\Fixtures\Entity\CalendarEvent;
+use Oro\Bundle\CalendarBundle\Tests\Unit\Fixtures\Entity\User;
 use Oro\Bundle\CalendarBundle\Tests\Unit\ReflectionUtil;
 use Oro\Bundle\EntityExtendBundle\Tests\Unit\Fixtures\TestEnumValue;
 use Oro\Bundle\ReminderBundle\Model\ReminderData;
-use Oro\Bundle\UserBundle\Entity\User;
-use Oro\Bundle\CalendarBundle\Entity\Recurrence;
 
 /**
  * @SuppressWarnings(PHPMD.TooManyPublicMethods)
@@ -70,23 +69,105 @@ class CalendarEventTest extends \PHPUnit_Framework_TestCase
         ];
     }
 
+    public function testFindRelatedAttendeeExist()
+    {
+        $user = new User();
+        $calendar = new Calendar();
+        $calendar->setOwner($user);
+
+        $attendee = new Attendee();
+        $attendee->setUser($user);
+
+        $calendarEvent = new CalendarEvent();
+        $calendarEvent->setCalendar($calendar);
+        $calendarEvent->addAttendee($attendee);
+
+        $this->assertSame($attendee, $calendarEvent->findRelatedAttendee());
+    }
+
+    public function testFindRelatedAttendeeDoesNotExistWhenCalendarHasNoOwner()
+    {
+        $user = new User();
+        $calendar = new Calendar();
+
+        $attendee = new Attendee();
+        $attendee->setUser($user);
+
+        $calendarEvent = new CalendarEvent();
+        $calendarEvent->setCalendar($calendar);
+        $calendarEvent->addAttendee($attendee);
+
+        $this->assertEmpty($calendarEvent->findRelatedAttendee());
+    }
+
+    public function testFindRelatedAttendeeDoesNotExistWhenEventHasNoCalendar()
+    {
+        $user = new User();
+
+        $attendee = new Attendee();
+        $attendee->setUser($user);
+
+        $calendarEvent = new CalendarEvent();
+        $calendarEvent->addAttendee($attendee);
+
+        $this->assertEmpty($calendarEvent->findRelatedAttendee());
+    }
+
+    public function testFindRelatedAttendeeDoesNotExistWhenCalendarOwnerDoesNotMatch()
+    {
+        $userOwner = new User();
+        $userOwner->setId(100);
+        $calendar = new Calendar();
+        $calendar->setOwner($userOwner);
+
+        $userAttendee = new User();
+        $userAttendee->setId(200);
+        $attendee = new Attendee();
+        $attendee->setUser($userAttendee);
+
+        $calendarEvent = new CalendarEvent();
+        $calendarEvent->setCalendar($calendar);
+        $calendarEvent->addAttendee($attendee);
+
+        $this->assertEmpty($calendarEvent->findRelatedAttendee());
+    }
+
     public function testInvitationStatus()
     {
-        $attendee      = new Attendee();
+        $user = new User();
+        $calendar = new Calendar();
+        $calendar->setOwner($user);
+
+        $attendee = new Attendee();
+        $attendee->setUser($user);
+
         $calendarEvent = new CalendarEvent();
+        $calendarEvent->setCalendar($calendar);
         $calendarEvent->setRelatedAttendee($attendee);
 
         $attendee->setStatus(
             new TestEnumValue(CalendarEvent::STATUS_ACCEPTED, CalendarEvent::STATUS_ACCEPTED)
         );
-        $this->assertEquals(CalendarEvent::ACCEPTED, $calendarEvent->getInvitationStatus());
+        $this->assertEquals(CalendarEvent::STATUS_ACCEPTED, $calendarEvent->getInvitationStatus());
         $this->assertEquals(CalendarEvent::STATUS_ACCEPTED, $calendarEvent->getRelatedAttendee()->getStatus());
 
         $attendee->setStatus(
             new TestEnumValue(CalendarEvent::STATUS_TENTATIVE, CalendarEvent::STATUS_TENTATIVE)
         );
-        $this->assertEquals(CalendarEvent::TENTATIVELY_ACCEPTED, $calendarEvent->getInvitationStatus());
+        $this->assertEquals(CalendarEvent::STATUS_TENTATIVE, $calendarEvent->getInvitationStatus());
         $this->assertEquals(CalendarEvent::STATUS_TENTATIVE, $calendarEvent->getRelatedAttendee()->getStatus());
+    }
+
+    public function testInvitationStatusNoneWhenAttendeesDoNotExist()
+    {
+        $user = new User();
+        $calendar = new Calendar();
+        $calendar->setOwner($user);
+
+        $calendarEvent = new CalendarEvent();
+        $calendarEvent->setCalendar($calendar);
+
+        $this->assertEquals(CalendarEvent::STATUS_NONE, $calendarEvent->getInvitationStatus());
     }
 
     public function testChildren()
@@ -132,61 +213,6 @@ class CalendarEventTest extends \PHPUnit_Framework_TestCase
         $actual = $calendarEvent->getChildEvents();
         $this->assertInstanceOf('Doctrine\Common\Collections\ArrayCollection', $actual);
         $this->assertEquals([1 => $calendarEventTwo, 2 => $calendarEventThree], $actual->toArray());
-    }
-
-    /**
-     * @param $status
-     * @param $expected
-     *
-     * @dataProvider getAvailableDataProvider
-     */
-    public function testGetAvailableInvitationStatuses($status, $expected)
-    {
-        $attendee = new Attendee();
-        $attendee->setStatus(new TestEnumValue($status, $status));
-
-        $event = new CalendarEvent();
-        $event->setRelatedAttendee($attendee);
-        $actual = $event->getAvailableInvitationStatuses();
-        $this->assertEmpty(array_diff($expected, $actual));
-    }
-
-    /**
-     * @return array
-     */
-    public function getAvailableDataProvider()
-    {
-        return [
-            'not responded'          => [
-                'status'   => CalendarEvent::STATUS_NONE,
-                'expected' => [
-                    CalendarEvent::STATUS_ACCEPTED,
-                    CalendarEvent::STATUS_TENTATIVE,
-                    CalendarEvent::STATUS_DECLINED,
-                ],
-            ],
-            'declined'               => [
-                'status'   => CalendarEvent::STATUS_DECLINED,
-                'expected' => [
-                    CalendarEvent::STATUS_ACCEPTED,
-                    CalendarEvent::STATUS_TENTATIVE,
-                ],
-            ],
-            'accepted'               => [
-                'status'   => CalendarEvent::STATUS_ACCEPTED,
-                'expected' => [
-                    CalendarEvent::STATUS_TENTATIVE,
-                    CalendarEvent::STATUS_DECLINED,
-                ],
-            ],
-            'tentatively available ' => [
-                'status'   => CalendarEvent::STATUS_TENTATIVE,
-                'expected' => [
-                    CalendarEvent::STATUS_ACCEPTED,
-                    CalendarEvent::STATUS_DECLINED,
-                ],
-            ],
-        ];
     }
 
     public function testGetChildEventByCalendar()
@@ -357,13 +383,114 @@ class CalendarEventTest extends \PHPUnit_Framework_TestCase
         $this->assertCount(1, $calendarEvent->getAttendees());
     }
 
-    public function testRelatedAttendee()
+    public function testRemoveAttendeeRemovesChildEvent()
     {
-        $attendee      = $this->getMock('Oro\Bundle\CalendarBundle\Entity\Attendee');
-        $calendarEvent = new CalendarEvent();
-        $calendarEvent->setRelatedAttendee($attendee);
+        $user1 = new User(1);
+        $attendee1 = new Attendee(1);
+        $attendee1->setUser($user1);
+        $calendar1 = new Calendar();
+        $calendar1->setOwner($user1);
 
-        $this->assertInstanceOf('Oro\Bundle\CalendarBundle\Entity\Attendee', $calendarEvent->getRelatedAttendee());
+        $user2 = new User(2);
+        $attendee2 = new Attendee(2);
+        $attendee2->setUser($user2);
+        $calendar2 = new Calendar();
+        $calendar2->setOwner($user2);
+
+        $user3 = new User(3);
+        $attendee3 = new Attendee(3);
+        $attendee3->setUser($user3);
+        $calendar3 = new Calendar();
+        $calendar3->setOwner($user3);
+
+        $event1 = new CalendarEvent();
+        $event1->setCalendar($calendar1)
+            ->addAttendee($attendee1)
+            ->addAttendee($attendee2)
+            ->addAttendee($attendee3);
+
+        $event2 = new CalendarEvent();
+        $event2->setCalendar($calendar2);
+        $event1->addChildEvent($event2);
+
+        $event3 = new CalendarEvent();
+        $event3->setCalendar($calendar3);
+        $event1->addChildEvent($event3);
+
+        $event1->removeAttendee($attendee2);
+
+        $this->assertEquals(
+            [
+                $attendee1,
+                $attendee3
+            ],
+            array_values($event1->getAttendees()->toArray())
+        );
+
+        $this->assertEquals(
+            [$event3],
+            array_values($event1->getChildEvents()->toArray())
+        );
+    }
+
+    /**
+     * @expectedException \LogicException
+     * @expectedExceptionMessage Update of child Calendar Event (id=2) is restricted. Use parent Calendar Event instead.
+     */
+    public function testAddAttendeeFailsWithChildEvent()
+    {
+        $parentEvent = new CalendarEvent(1);
+        $parentEvent->setTitle('First calendar event');
+        $childEvent = new CalendarEvent(2);
+        $childEvent->setTitle('Second calendar event');
+        $childEvent->setParent($parentEvent);
+        $childEvent->addAttendee(new Attendee(1));
+    }
+
+    /**
+     * @expectedException \LogicException
+     * @expectedExceptionMessage Update of child Calendar Event (id=2) is restricted. Use parent Calendar Event instead.
+     */
+    public function testRemoveAttendeeFailsWithChildEvent()
+    {
+        $parentEvent = new CalendarEvent(1);
+        $parentEvent->setTitle('First calendar event');
+        $childEvent = new CalendarEvent(2);
+        $childEvent->setTitle('Second calendar event');
+        $childEvent->setParent($parentEvent);
+        $childEvent->removeAttendee(new Attendee(1));
+    }
+
+    public function testGetAttendeesWorksWithChildEvent()
+    {
+        $parentEvent = new CalendarEvent();
+        $parentEvent->setTitle('First calendar event');
+        $childEvent = new CalendarEvent();
+        $childEvent->setTitle('Second calendar event');
+        $childEvent->setParent($parentEvent);
+
+        $parentEvent->addAttendee(new Attendee(1));
+        $parentEvent->addAttendee(new Attendee(2));
+        $parentEvent->addAttendee(new Attendee(3));
+        $parentEvent->addAttendee(new Attendee(4));
+
+        $this->assertCount(4, $parentEvent->getAttendees());
+        $this->assertCount(4, $childEvent->getAttendees());
+    }
+
+    /**
+     * @expectedException \LogicException
+     * @expectedExceptionMessage Update of child Calendar Event (id=2) is restricted. Use parent Calendar Event instead.
+     */
+    public function testSetAttendeesFailsWithChildEvent()
+    {
+        $parentEvent = new CalendarEvent(1);
+        $parentEvent->setTitle('First calendar event');
+        $childEvent = new CalendarEvent(2);
+        $childEvent->setTitle('Second calendar event');
+        $childEvent->setParent($parentEvent);
+
+        $childEvent->setAttendees(new ArrayCollection([new Attendee(1)]));
     }
 
     /**
@@ -382,13 +509,31 @@ class CalendarEventTest extends \PHPUnit_Framework_TestCase
      */
     public function childAttendeesProvider()
     {
-        $attendee1 = (new Attendee())->setEmail('first@example.com');
-        $attendee2 = (new Attendee())->setEmail('second@example.com');
-        $attendee3 = (new Attendee())->setEmail('third@example.com');
+        $userCalendarOwnerEmail = 'owner@example.com';
+        $calendarOwner = new User();
+        $calendarOwner->setId(100);
+        $calendarOwner->setEmail($userCalendarOwnerEmail);
+        $calendar = new Calendar();
+        $calendar->setOwner($calendarOwner);
+
+        $user1 = new User();
+        $user1->setId(1);
+        $attendee1 = (new Attendee())->setEmail('first@example.com')->setUser($user1);
+
+        $user2 = new User();
+        $user2->setId(2);
+        $attendee2 = (new Attendee())->setEmail('second@example.com')->setUser($user2);
+
+        $user3 = new User();
+        $user3->setId(3);
+        $attendee3 = (new Attendee())->setEmail('third@example.com')->setUser($user3);
+
+        $attendeeWithSameCalendarOwnerUser = (new Attendee())->setEmail($calendarOwner)->setUser($calendarOwner);
 
         return [
-            'event without realted attendee' => [
+            'event without related attendee' => [
                 (new CalendarEvent())
+                    ->setCalendar($calendar)
                     ->setAttendees(
                         new ArrayCollection(
                             [
@@ -404,24 +549,40 @@ class CalendarEventTest extends \PHPUnit_Framework_TestCase
                     $attendee3,
                 ],
             ],
-            'event with related attendee'    => [
+            'event with related attendee' => [
                 (new CalendarEvent())
+                    ->setCalendar($calendar)
                     ->setAttendees(
                         new ArrayCollection(
                             [
-                                $attendee1,
+                                $attendeeWithSameCalendarOwnerUser,
                                 $attendee2,
                                 $attendee3,
                             ]
                         )
                     )
-                    ->setRelatedAttendee($attendee1),
+                    ->setRelatedAttendee($attendeeWithSameCalendarOwnerUser),
                 [
                     $attendee2,
                     $attendee3,
                 ],
-            ],
+            ]
         ];
+    }
+
+    /**
+     * @expectedException \LogicException
+     * @expectedExceptionMessage Update of child Calendar Event (id=2) is restricted. Use parent Calendar Event instead.
+     */
+    public function testGetChildAttendeesFailsWithChildEvent()
+    {
+        $parentEvent = new CalendarEvent(1);
+        $parentEvent->setTitle('First calendar event');
+        $childEvent = new CalendarEvent(2);
+        $childEvent->setTitle('Second calendar event');
+        $childEvent->setParent($parentEvent);
+
+        $childEvent->getChildAttendees();
     }
 
     public function testExceptions()
@@ -467,31 +628,5 @@ class CalendarEventTest extends \PHPUnit_Framework_TestCase
         $actual = $calendarEvent->getRecurringEventExceptions();
         $this->assertInstanceOf('Doctrine\Common\Collections\ArrayCollection', $actual);
         $this->assertEquals([1 => $exceptionTwo, 2 => $exceptionThree], $actual->toArray());
-    }
-
-    public function testGetCurrentAttendees()
-    {
-        $one = new CalendarEvent();
-        $one->setTitle('First calendar event');
-        $two = new CalendarEvent();
-        $two->setTitle('Second calendar event');
-        $two->setParent($one);
-
-        $one->addAttendee(new Attendee(1));
-        $one->addAttendee(new Attendee(2));
-        $one->addAttendee(new Attendee(3));
-        $one->addAttendee(new Attendee(4));
-
-        $this->assertCount(4, $one->getAttendees());
-        $this->assertCount(4, $two->getAttendees());
-        
-        $this->assertCount(4, $one->getCurrentAttendees());
-        $this->assertCount(0, $two->getCurrentAttendees());
-
-        $one->setCurrentAttendees(new ArrayCollection([new Attendee(5), new Attendee(6)]));
-        $two->setCurrentAttendees(new ArrayCollection([new Attendee(7), new Attendee(8)]));
-
-        $this->assertCount(2, $one->getCurrentAttendees());
-        $this->assertCount(2, $two->getCurrentAttendees());
     }
 }

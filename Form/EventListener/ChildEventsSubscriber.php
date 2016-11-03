@@ -95,8 +95,8 @@ class ChildEventsSubscriber implements EventSubscriberInterface
         if (!$calendarEvent) {
             return;
         }
+        $relatedAttendee = $calendarEvent->findRelatedAttendee();
 
-        $this->setDefaultAttendeeStatus($calendarEvent->getRelatedAttendee(), CalendarEvent::STATUS_ACCEPTED);
         foreach ($calendarEvent->getChildEvents() as $childEvent) {
             $childEvent
                 ->setTitle($calendarEvent->getTitle())
@@ -116,8 +116,8 @@ class ChildEventsSubscriber implements EventSubscriberInterface
             }
         }
 
-        foreach ($calendarEvent->getChildAttendees() as $attendee) {
-            $this->setDefaultAttendeeStatus($attendee);
+        foreach ($calendarEvent->getAttendees() as $attendee) {
+            $this->setDefaultAttendeeStatus($attendee, $relatedAttendee == $attendee);
         }
     }
 
@@ -149,12 +149,13 @@ class ChildEventsSubscriber implements EventSubscriberInterface
         $calendarEventOwnerIds = [];
         $calendar              = $calendarEvent->getCalendar();
         if ($calendar && $calendar->getOwner()) {
-            $childEventOwner = $calendar->getOwner();
-            if (isset($attendeesByUserId[$childEventOwner->getId()])) {
-                $calendarEvent->setRelatedAttendee($attendeesByUserId[$childEventOwner->getId()]);
-            }
             $calendarEventOwnerIds[] = $calendar->getOwner()->getId();
         }
+        $calendarEvent->setRelatedAttendee($calendarEvent->findRelatedAttendee());
+
+        /**
+         * @todo Refactor this code in scope of CRM-6350
+         */
         foreach ($calendarEvent->getChildEvents() as $childEvent) {
             $childEventCalendar = $childEvent->getCalendar();
             if (!$childEventCalendar) {
@@ -167,23 +168,14 @@ class ChildEventsSubscriber implements EventSubscriberInterface
             }
 
             $childEventOwnerId = $childEventOwner->getId();
-            if (!in_array($childEventOwnerId, $currentAttendeeUserIds)) {
-                if ($childEvent->getRecurringEvent()) {
-                    // if this is an exception of recurring event then it should be cancelled
-                    $childEvent->setCancelled(true);
-                } else {
-                    // otherwise it should be removed
-                    $calendarEvent->removeChildEvent($childEvent);
-                }
-            } else {
+            if (in_array($childEventOwnerId, $currentAttendeeUserIds)) {
                 $calendarEventOwnerIds[] = $childEventOwnerId;
             }
         }
 
         $this->createChildEvent(
             $calendarEvent,
-            array_diff($currentAttendeeUserIds, $calendarEventOwnerIds),
-            $attendeesByUserId
+            array_diff($currentAttendeeUserIds, $calendarEventOwnerIds)
         );
     }
 
@@ -205,26 +197,28 @@ class ChildEventsSubscriber implements EventSubscriberInterface
 
     /**
      * @param Attendee|null $attendee
-     * @param string        $status
+     * @param boolean       $isRelatedAttendee
      */
-    protected function setDefaultAttendeeStatus(Attendee $attendee = null, $status = CalendarEvent::STATUS_NONE)
+    protected function setDefaultAttendeeStatus(Attendee $attendee, $isRelatedAttendee)
     {
         if (!$attendee || $attendee->getStatus()) {
             return;
         }
 
+        $statusCode = $isRelatedAttendee ? CalendarEvent::STATUS_ACCEPTED : CalendarEvent::STATUS_NONE;
+
         $statusEnum = $this->registry
             ->getRepository(ExtendHelper::buildEnumValueClassName(Attendee::STATUS_ENUM_CODE))
-            ->find($status);
+            ->find($statusCode);
+
         $attendee->setStatus($statusEnum);
     }
 
     /**
      * @param CalendarEvent    $parent
      * @param array            $missingEventUserIds
-     * @param array|Attendee[] $attendeesByUserId
      */
-    protected function createChildEvent(CalendarEvent $parent, array $missingEventUserIds, array $attendeesByUserId)
+    protected function createChildEvent(CalendarEvent $parent, array $missingEventUserIds)
     {
         if ($missingEventUserIds) {
             /** @var CalendarRepository $calendarRepository */
@@ -239,9 +233,7 @@ class ChildEventsSubscriber implements EventSubscriberInterface
                 $childEvent->setCalendar($calendar);
                 $parent->addChildEvent($childEvent);
 
-                if ($this->shouldRelatedAttendeeBeSet($calendar, $attendeesByUserId)) {
-                    $childEvent->setRelatedAttendee($attendeesByUserId[$calendar->getOwner()->getId()]);
-                }
+                $childEvent->setRelatedAttendee($childEvent->findRelatedAttendee());
 
                 $this->copyRecurringEventExceptions($parent, $childEvent);
             }
@@ -298,23 +290,5 @@ class ChildEventsSubscriber implements EventSubscriberInterface
         return $this->registry
             ->getRepository(ExtendHelper::buildEnumValueClassName(Attendee::TYPE_ENUM_CODE))
             ->find($type);
-    }
-
-    /**
-     * @param Calendar $calendar
-     * @param array    $attendeesByUserId
-     *
-     * @return bool
-     */
-    protected function shouldRelatedAttendeeBeSet(Calendar $calendar, array $attendeesByUserId)
-    {
-        /** @var Attendee $attendee */
-        $attendee = isset($attendeesByUserId[$calendar->getOwner()->getId()])
-            ? $attendeesByUserId[$calendar->getOwner()->getId()]
-            : null;
-
-        return $calendar->getOwner()
-            && $attendee
-            && !($attendee->getCalendarEvent() && $attendee->getCalendarEvent()->getId());
     }
 }
