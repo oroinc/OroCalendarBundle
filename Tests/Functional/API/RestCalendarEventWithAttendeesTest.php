@@ -395,7 +395,7 @@ class RestCalendarEventWithAttendeesTest extends WebTestCase
                             'email'       => 'admin@example.com',
                             'status'      => 'accepted',
                             'type'        => 'required',
-                            'fullName'    => 'John Doe ',
+                            'fullName'    => 'John Doe',
                             'userId'      => $adminUser->getId(),
                         ],
                     ],

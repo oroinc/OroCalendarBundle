@@ -684,7 +684,11 @@ class CalendarEvent extends ExtendCalendarEvent implements RemindableInterface, 
     {
         $result = $this->childEvents->filter(
             function (CalendarEvent $item) use ($calendar) {
-                return $item->getCalendar() == $calendar;
+                $itemCalendar = $item->getCalendar();
+                if (!$itemCalendar) {
+                    return false;
+                }
+                return $itemCalendar === $calendar || $itemCalendar->getId() == $calendar->getId();
             }
         );
 
@@ -735,7 +739,7 @@ class CalendarEvent extends ExtendCalendarEvent implements RemindableInterface, 
     }
 
     /**
-     * Get attendee for Calendar Event. If this event is a child event, the attendees collection will be retreived
+     * Get attendees of Calendar Event. If this event is a child event, the attendees collection will be retrieved
      * from the parent instance.
      *
      * @return Collection|Attendee[]
@@ -745,6 +749,27 @@ class CalendarEvent extends ExtendCalendarEvent implements RemindableInterface, 
         $calendarEvent = $this->getParent() ? : $this;
 
         return $calendarEvent->attendees;
+    }
+
+    /**
+     * Get attendee of Calendar Event by email.
+     *
+     * @return Attendee|null
+     */
+    public function getAttendeeByEmail($email)
+    {
+        $result = null;
+
+        $attendees = $this->getAttendees();
+
+        foreach ($attendees as $attendee) {
+            if ($attendee->isEmailEqual($email)) {
+                $result = $attendee;
+                break;
+            }
+        }
+
+        return $result;
     }
 
     /**

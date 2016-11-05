@@ -2,9 +2,9 @@
 
 namespace Oro\Bundle\CalendarBundle\Tests\Unit\Fixtures\Entity;
 
-use Oro\Bundle\CalendarBundle\Entity\CalendarEvent as BaseCalendarEvent;
+use Oro\Bundle\CalendarBundle\Entity\Calendar as BaseCalendar;
 
-class CalendarEvent extends BaseCalendarEvent
+class Calendar extends BaseCalendar
 {
     /**
      * @param integer|null $id

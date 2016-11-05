@@ -84,7 +84,7 @@ class AttendeeRelationManager
         $userName = $this->dqlNameFormatter->getFormattedNameDQL('user', 'Oro\Bundle\UserBundle\Entity\User');
 
         $qb
-            ->addSelect(sprintf('%s AS fullName, user.id AS userId', $userName))
+            ->addSelect(sprintf('TRIM(%s) AS fullName, user.id AS userId', $userName))
             ->leftJoin('attendee.user', 'user');
     }
 

@@ -6,10 +6,10 @@ use Doctrine\Common\Collections\ArrayCollection;
 
 use Symfony\Component\PropertyAccess\PropertyAccess;
 
-use Oro\Bundle\CalendarBundle\Entity\Calendar;
 use Oro\Bundle\CalendarBundle\Entity\Recurrence;
 use Oro\Bundle\CalendarBundle\Entity\SystemCalendar;
 use Oro\Bundle\CalendarBundle\Tests\Unit\Fixtures\Entity\Attendee;
+use Oro\Bundle\CalendarBundle\Tests\Unit\Fixtures\Entity\Calendar;
 use Oro\Bundle\CalendarBundle\Tests\Unit\Fixtures\Entity\CalendarEvent;
 use Oro\Bundle\CalendarBundle\Tests\Unit\Fixtures\Entity\User;
 use Oro\Bundle\CalendarBundle\Tests\Unit\ReflectionUtil;
@@ -217,15 +217,13 @@ class CalendarEventTest extends \PHPUnit_Framework_TestCase
 
     public function testGetChildEventByCalendar()
     {
-        $firstCalendar = new Calendar();
-        $firstCalendar->setName('1');
-        $secondCalendar = new Calendar();
-        $secondCalendar->setName('2');
+        $firstCalendar = new Calendar(1);
+        $secondCalendar = new Calendar(2);
 
-        $firstEvent = new CalendarEvent();
+        $firstEvent = new CalendarEvent(1);
         $firstEvent->setTitle('1')
             ->setCalendar($firstCalendar);
-        $secondEvent = new CalendarEvent();
+        $secondEvent = new CalendarEvent(2);
         $secondEvent->setTitle('2')
             ->setCalendar($secondCalendar);
 
@@ -628,5 +626,62 @@ class CalendarEventTest extends \PHPUnit_Framework_TestCase
         $actual = $calendarEvent->getRecurringEventExceptions();
         $this->assertInstanceOf('Doctrine\Common\Collections\ArrayCollection', $actual);
         $this->assertEquals([1 => $exceptionTwo, 2 => $exceptionThree], $actual->toArray());
+    }
+
+    public function testGetAttendeeByEmailReturnsTrueWhenAttendeeIsMatched()
+    {
+        $email = 'test@example.com';
+        $event = new CalendarEvent();
+
+        $attendee1 = $this->getMock(Attendee::class);
+        $attendee2 = $this->getMock(Attendee::class);
+
+        $event->addAttendee($attendee1);
+        $event->addAttendee($attendee2);
+
+        $attendee1->expects($this->once())
+            ->method('isEmailEqual')
+            ->with($email)
+            ->will($this->returnValue(false));
+
+        $attendee2->expects($this->once())
+            ->method('isEmailEqual')
+            ->with($email)
+            ->will($this->returnValue(true));
+
+        $this->assertSame($attendee2, $event->getAttendeeByEmail($email));
+    }
+
+    public function testGetAttendeeByEmailReturnsFalseWhenNoAttendeesExist()
+    {
+        $email = 'test@example.com';
+        $event = new CalendarEvent();
+
+        $this->assertNull($event->getAttendeeByEmail($email));
+    }
+
+    public function testGetAttendeeByEmailReturnsFalseWhenNoAttendeesAreMatched()
+    {
+        $email = 'test@example.com';
+        $event = new CalendarEvent();
+
+
+        $attendee1 = $this->getMock(Attendee::class);
+        $attendee2 = $this->getMock(Attendee::class);
+
+        $event->addAttendee($attendee1);
+        $event->addAttendee($attendee2);
+
+        $attendee1->expects($this->once())
+            ->method('isEmailEqual')
+            ->with($email)
+            ->will($this->returnValue(false));
+
+        $attendee2->expects($this->once())
+            ->method('isEmailEqual')
+            ->with($email)
+            ->will($this->returnValue(false));
+
+        $this->assertNull($event->getAttendeeByEmail($email));
     }
 }

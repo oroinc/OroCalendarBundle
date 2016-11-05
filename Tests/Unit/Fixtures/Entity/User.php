@@ -7,7 +7,7 @@ use Oro\Bundle\UserBundle\Entity\User as BaseUser;
 class User extends BaseUser
 {
     /**
-     * @param int|null $id
+     * @param integer|null $id
      */
     public function __construct($id = null)
     {
