@@ -1,19 +1,19 @@
-define([
-    'underscore',
-    'backbone',
-    'routing',
-    'moment'
-], function(_, Backbone, routing, moment) {
+define(function(require) {
     'use strict';
 
     var EventModel;
+    var _ = require('underscore');
+    var routing = require('routing');
+    var moment = require('moment');
+    var localeSettings = require('orolocale/js/locale-settings');
+    var BaseModel = require('oroui/js/app/models/base/model');
 
     /**
      * @export  orocalendar/js/calendar/event/model
      * @class   orocalendar.calendar.event.Model
-     * @extends Backbone.Model
+     * @extends BaseModel
      */
-    EventModel = Backbone.Model.extend({
+    EventModel = BaseModel.extend({
         route: 'oro_api_get_calendarevents',
         urlRoot: null,
         originalId: null, // original id received from a server
@@ -54,7 +54,7 @@ define([
             var id = this.get(this.idAttribute);
 
             this.set(this.idAttribute, this.originalId, {silent: true});
-            url = Backbone.Model.prototype.url.call(this, arguments);
+            url = EventModel.__super__.url.call(this, arguments);
             this.set(this.idAttribute, id, {silent: true});
 
             return url;
@@ -73,14 +73,13 @@ define([
                 attrs[key] = val;
             }
 
-            var fields = [
+            var omitAttrs = [
                 'id',
                 'editable',
                 'removable',
                 'calendarUid',
                 'parentEventId',
                 'invitationStatus',
-                'recurrence',
                 'recurrencePattern',
                 'recurringEventId',
                 'originalStart',
@@ -90,15 +89,17 @@ define([
             ];
 
             if (this.get('recurrence')) {
-                fields.push('start', 'end');
+                // @todo move it out of here
+                this.get('recurrence').startTime = this.get('start');
+                this.get('recurrence').timeZone = localeSettings.getTimeZone();
+                // omitAttrs.push('start', 'end');
+            } else {
+                omitAttrs.push('recurrence');
             }
 
             modelData = _.extend(
                 {id: this.originalId},
-                _.omit(
-                    this.toJSON(),
-                    fields
-                ),
+                _.omit(this.toJSON(), omitAttrs),
                 attrs || {}
             );
             modelData.attendees = _.map(
@@ -113,7 +114,7 @@ define([
             options.contentType = 'application/json';
             options.data = JSON.stringify(modelData);
 
-            Backbone.Model.prototype.save.call(this, attrs, options);
+            EventModel.__super__.save.call(this, attrs, options);
         },
 
         _updateComputableAttributes: function() {
@@ -125,12 +126,12 @@ define([
 
             if (!this.originalId && this.id && calendarUid) {
                 this.originalId = this.id;
-                this.set('id', calendarUid + '_' + this.originalId);
+                this.set('id', calendarUid + '_' + this.originalId, {silent: true});
             }
 
-            if (this.get('recurrence')) {
+            if (this.get('recurrence') && !this.isNew()) {
                 var start = new Date(this.get('start'));
-                this.set('id', this.id + '_' + start.getTime());
+                this.set('id', this.id + '_' + start.getTime(), {silent: true});
             }
         },
 
