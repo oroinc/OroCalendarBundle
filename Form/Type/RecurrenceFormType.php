@@ -94,8 +94,6 @@ class RecurrenceFormType extends AbstractType
                     'model_timezone' => 'UTC',
                     'widget' => 'single_text',
                     'format' => DateTimeType::HTML5_FORMAT,
-                    //need this parameter for proper frontend validation(should be removed after CRM-6638)
-                    'attr' => ['data-format' => 'backend']
                 ]
             )
             ->add(
