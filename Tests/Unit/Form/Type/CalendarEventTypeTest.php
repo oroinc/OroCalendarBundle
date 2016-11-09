@@ -136,6 +136,15 @@ class CalendarEventTypeTest extends \PHPUnit_Framework_TestCase
             )
             ->will($this->returnSelf());
 
+        $builder->expects($this->at(9))
+            ->method('add')
+            ->with(
+                'recurrence',
+                'oro_calendar_event_recurrence',
+                ['required' => false]
+            )
+            ->will($this->returnSelf());
+
         $this->type->buildForm($builder, ['layout_template' => false]);
     }
 

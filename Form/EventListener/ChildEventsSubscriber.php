@@ -23,13 +23,6 @@ class ChildEventsSubscriber implements EventSubscriberInterface
     /** @var SecurityFacade */
     protected $securityFacade;
 
-    /** @var array */
-    protected $editableFieldsForRecurrence = [
-        'title',
-        'description',
-        'contexts',
-    ];
-
     /**
      * @param ManagerRegistry $registry
      * @param SecurityFacade  $securityFacade
