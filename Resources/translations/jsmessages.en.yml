@@ -17,6 +17,12 @@ oro:
             calendar_removed: "Calendar was removed"
             calendar_updating: "Updating calendar, please wait ..."
             calendar_updated: "Calendar was updated"
+        recurrence:
+            ends:
+                never: "Never"
+                after: "After"
+                occurrences: "occurrences"
+                by: "By"
 "Add New Event": "Add New Event"
 "View Event": "View Event"
 "Edit Event": "Edit Event"

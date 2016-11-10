@@ -1,0 +1,23 @@
+<div class="recurrence-ends-control">
+    <div class="recurrence-ends-control__item">
+        <label>
+            <input type="radio">
+            <%- _.__('oro.calendar.recurrence.ends.never') %>
+        </label>
+    </div>
+    <div class="recurrence-ends-control__item">
+        <label>
+            <input type="radio">
+            <%- _.__('oro.calendar.recurrence.ends.after') %>
+            <input class="recurrence-ends-control__number" type="text">
+            <%- _.__('oro.calendar.recurrence.ends.occurrences') %>
+        </label>
+    </div>
+    <div class="recurrence-ends-control__item">
+        <label>
+            <input type="radio">
+            <%- _.__('oro.calendar.recurrence.ends.by') %>
+            <input class="recurrence-ends-control__datetime" type="text" data-name="datetimepicker">
+        </label>
+    </div>
+</div>

@@ -197,6 +197,11 @@ oro:
             end_time.label:         End time
             occurrences.label:      Occurrences
             timezone.label:         Time Zone
+            ends:
+                never: "Never"
+                after: "After"
+                occurrences: "occurrences"
+                by: "By"
 
             patterns:
                 occurrences: "{1} , end after 1 occurrence|]1,Inf[ , end after %count% occurrences"
