@@ -1,0 +1,28 @@
+<div class="recurrence-ends-control">
+    <div class="recurrence-ends-control__item" data-name="control-section">
+        <label>
+            <input type="radio" checked="checked">
+            <%- _.__('oro.calendar.recurrence.days') %>
+            <input class="recurrence-ends-control__number"
+                   type="text"
+                   data-name="value"
+                   data-field="interval"
+                   value="<%=interval %>">
+            <%- _.__('oro.calendar.recurrence.ends.occurrences') %>
+        </label>
+    </div>
+    <div class="recurrence-ends-control__item" data-name="control-section">
+        <label>
+            <input type="radio">
+            <%- _.__('oro.calendar.recurrence.weekday') %>
+        </label>
+        <input class="recurrence-ends-control__number"
+               type="hidden"
+               data-name="value"
+               data-field="recurrenceType"
+               value="weekly">
+        <select style="display: none" data-name="value" data-field="dayOfWeek" multiple>
+            <% _.each(weekDays, function(day) { %><option value="<%= day %>" selected="selected"></option><% }) %>
+        </select>
+    </div>
+</div>
