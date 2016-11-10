@@ -7,6 +7,8 @@ use Oro\Bundle\CalendarBundle\Model\Recurrence;
 
 class MonthlyStrategy extends AbstractStrategy
 {
+    const DAY_OF_MONTH_VALIDATION_ERROR = "Parameter 'dayOfMonth' can't be empty for Monthly recurrence pattern.";
+
     /**
      * {@inheritdoc}
      */
@@ -139,7 +141,7 @@ class MonthlyStrategy extends AbstractStrategy
     public function getValidationErrorMessage(Entity\Recurrence $recurrence)
     {
         if (!$recurrence->getDayOfMonth()) {
-            return "Parameter 'dayOfMonth' can't be empty for Monthly recurrence pattern.";
+            return self::DAY_OF_MONTH_VALIDATION_ERROR;
         }
 
         return null;

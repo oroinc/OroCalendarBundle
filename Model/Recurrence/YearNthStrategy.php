@@ -10,6 +10,12 @@ use Oro\Bundle\CalendarBundle\Model\Recurrence;
  */
 class YearNthStrategy extends AbstractStrategy
 {
+    const INTERVAL_VALIDATION_ERROR = "Parameter 'interval' value must be a multiple of 12"
+        . " for YearNth recurrence pattern.";
+    const INSTANCE_VALIDATION_ERROR = "Parameter 'instance' value can't be empty for YearNth recurrence pattern.";
+    const DAY_OF_WEEK_VALIDATION_ERROR = "Parameter 'dayOfWeek' can't be empty for YearNth recurrence pattern.";
+    const MONTH_OF_YEAR_VALIDATION_ERROR = "Parameter 'monthOfYear' can't be empty for YearNth recurrence pattern.";
+
     /**
      * {@inheritdoc}
      */
@@ -186,19 +192,19 @@ class YearNthStrategy extends AbstractStrategy
     public function getValidationErrorMessage(Entity\Recurrence $recurrence)
     {
         if ($recurrence->getInterval() % 12 !== 0) {
-            return "Parameter 'interval' value must be a multiple of 12 for YearNth recurrence pattern.";
+            return self::INTERVAL_VALIDATION_ERROR;
         }
 
         if (!$recurrence->getInstance()) {
-            return "Parameter 'instance' value can't be empty for YearNth recurrence pattern.";
+            return self::INSTANCE_VALIDATION_ERROR;
         }
 
         if (!$recurrence->getDayOfWeek()) {
-            return "Parameter 'dayOfWeek' can't be empty for YearNth recurrence pattern.";
+            return self::DAY_OF_WEEK_VALIDATION_ERROR;
         }
 
         if (!$recurrence->getMonthOfYear()) {
-            return "Parameter 'monthOfYear' can't be empty for YearNth recurrence pattern.";
+            return self::MONTH_OF_YEAR_VALIDATION_ERROR;
         }
 
         return null;

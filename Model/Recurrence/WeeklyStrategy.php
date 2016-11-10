@@ -7,6 +7,8 @@ use Oro\Bundle\CalendarBundle\Model\Recurrence;
 
 class WeeklyStrategy extends AbstractStrategy
 {
+    const DAY_OF_WEEK_VALIDATION_ERROR = "Parameter 'dayOfWeek' can't be empty for Weekly recurrence pattern.";
+
     /**
      * {@inheritdoc}
      *
@@ -203,7 +205,7 @@ class WeeklyStrategy extends AbstractStrategy
     public function getValidationErrorMessage(Entity\Recurrence $recurrence)
     {
         if (!$recurrence->getDayOfWeek()) {
-            return "Parameter 'dayOfWeek' can't be empty for Weekly recurrence pattern.";
+            return self::DAY_OF_WEEK_VALIDATION_ERROR;
         }
 
         return null;

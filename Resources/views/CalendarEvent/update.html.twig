@@ -43,18 +43,6 @@
 
 {% block content_data %}
     {% set id = 'calendarevent-form' %}
-    {% set recurrencePattern = '' %}
-    {% if entity.recurrence %}
-        {% set recurrencePattern = UI.renderProperty(
-            'oro.calendar.calendarevent.recurrence.label'|trans,
-            get_recurrence_text_value(entity.recurrence)
-        ) %}
-    {% elseif entity.recurringEvent %}
-        {% set recurrencePattern = UI.renderProperty(
-            'oro.calendar.calendarevent.recurrence.exception.label'|trans,
-            get_recurrence_text_value(entity.recurringEvent.recurrence)
-        ) %}
-    {% endif %}
 
     {# @todo Verify the condition in the code of the last element in data (notifyGuestsComponent) is correct #}
     {% set dataBlocks = [{
@@ -71,7 +59,6 @@
                     form_row(form.allDay),
                     form_row(form.repeat),
                     form.recurrence is defined ? form_row(form.recurrence) : null,
-                    recurrencePattern,
                     form_row(form.backgroundColor),
                     form.calendarUid is defined ? form_row(form.calendarUid) : null,
                     form_row(form.attendees),
