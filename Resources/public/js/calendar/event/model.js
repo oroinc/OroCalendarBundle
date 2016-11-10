@@ -73,7 +73,7 @@ define(function(require) {
                 attrs[key] = val;
             }
 
-            var omitAttrs = [
+            var auxiliaryAttrs = [
                 'id',
                 'editable',
                 'removable',
@@ -92,14 +92,14 @@ define(function(require) {
                 // @todo move it out of here
                 this.get('recurrence').startTime = this.get('start');
                 this.get('recurrence').timeZone = localeSettings.getTimeZone();
-                // omitAttrs.push('start', 'end');
+                // auxiliaryAttrs.push('start', 'end');
             } else {
-                omitAttrs.push('recurrence');
+                auxiliaryAttrs.push('recurrence');
             }
 
             modelData = _.extend(
                 {id: this.originalId},
-                _.omit(this.toJSON(), omitAttrs),
+                _.omit(this.toJSON(), auxiliaryAttrs),
                 attrs || {}
             );
             modelData.attendees = _.map(
@@ -124,7 +124,7 @@ define(function(require) {
 
             this.set('calendarUid', calendarUid);
 
-            if (!this.originalId && this.id && calendarUid) {
+            if (!this.originalId && !this.isNew() && calendarUid) {
                 this.originalId = this.id;
                 this.set('id', calendarUid + '_' + this.originalId, {silent: true});
             }

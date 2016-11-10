@@ -14,7 +14,7 @@ define(function(require) {
     var DeleteConfirmation = require('oroui/js/delete-confirmation');
     var fieldFormatter = require('oroform/js/formatter/field');
     var ActivityContextComponent = require('oroactivity/js/app/components/activity-context-activity-component');
-    var EventRecurrenceModel = require('orocalendar/js/calendar/event/recurrence/model');
+    var EventRecurrenceModel = require('orocalendar/js/calendar/event/recurrence/event-recurrence-model');
 
     /**
      * @export  orocalendar/js/calendar/event/view
