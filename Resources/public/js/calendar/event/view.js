@@ -38,7 +38,8 @@ define([
             connections: null,
             colorManager: null,
             widgetRoute: null,
-            widgetOptions: null
+            widgetOptions: null,
+            invitationStatuses: []
         },
 
         /** @property {Object} */
@@ -325,11 +326,16 @@ define([
         getEventView: function() {
             // fetch calendar related connection
             var connection = this.options.connections.findWhere({calendarUid: this.model.get('calendarUid')});
+            var invitationUrls = [];
+            _.each(this.options.invitationStatuses, function(status){
+                invitationUrls[status] = routing.generate('oro_calendar_event_' + status, {id: this.model.originalId});
+            }, this);
             var $element = $(this.viewTemplate(_.extend(this.model.toJSON(), {
                 formatter: fieldFormatter,
-                connection: connection ? connection.toJSON() : null
+                connection: connection ? connection.toJSON() : null,
+                invitationUrls: invitationUrls,
+                originalId: this.model.originalId
             })));
-
             var $contextsSource = $element.find('.activity-context-activity');
             this.activityContext = new ActivityContextComponent({
                 _sourceElement: $contextsSource,

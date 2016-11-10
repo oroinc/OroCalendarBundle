@@ -83,7 +83,8 @@ define(function(require) {
             },
             colorManagerOptions: {
                 colors: null
-            }
+            },
+            invitationStatuses: []
         },
 
         /**
@@ -205,7 +206,8 @@ define(function(require) {
                     connections: this.getConnectionCollection(),
                     viewTemplateSelector: this.options.eventsOptions.itemViewTemplateSelector,
                     formTemplateSelector: this.options.eventsOptions.itemFormTemplateSelector,
-                    colorManager: this.colorManager
+                    colorManager: this.colorManager,
+                    invitationStatuses: this.options.invitationStatuses
                 }));
                 // subscribe to event view collection events
                 this.listenTo(this.eventView, 'addEvent', this.handleEventViewAdd);
