@@ -5,7 +5,6 @@ define(function(require) {
     var _ = require('underscore');
     var routing = require('routing');
     var moment = require('moment');
-    var localeSettings = require('orolocale/js/locale-settings');
     var BaseModel = require('oroui/js/app/models/base/model');
 
     /**
@@ -89,10 +88,11 @@ define(function(require) {
             ];
 
             if (this.get('recurrence')) {
-                // @todo move it out of here
-                this.get('recurrence').startTime = this.get('start');
-                this.get('recurrence').timeZone = localeSettings.getTimeZone();
-                // auxiliaryAttrs.push('start', 'end');
+                if (this.isNew()) {
+                    this.get('recurrence').startTime = this.get('start');
+                } else {
+                    auxiliaryAttrs.push('start', 'end');
+                }
             } else {
                 auxiliaryAttrs.push('recurrence');
             }

@@ -14,6 +14,7 @@ define(function(require) {
     var DeleteConfirmation = require('oroui/js/delete-confirmation');
     var fieldFormatter = require('oroform/js/formatter/field');
     var ActivityContextComponent = require('oroactivity/js/app/components/activity-context-activity-component');
+    var EventRecurrenceView = require('orocalendar/js/calendar/event/recurrence/event-recurrence-view');
     var EventRecurrenceModel = require('orocalendar/js/calendar/event/recurrence/event-recurrence-model');
 
     /**
@@ -463,7 +464,13 @@ define(function(require) {
                 return;
             }
             var eventRecurrenceModel = new EventRecurrenceModel(this.model.get('recurrence'));
-            // @todo init here RecurrenceView for eventRecurrenceModel
+            var eventRecurrenceView = new EventRecurrenceView({
+                autoRender: true,
+                el: $el,
+                model: eventRecurrenceModel,
+                inputNamePrefixes: 'oro_calendar_event_form[recurrence]'
+            });
+            this.subview('eventRecurrence', eventRecurrenceView);
         },
 
         _showUserCalendarOnlyFields: function(form, visible) {
