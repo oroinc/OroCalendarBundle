@@ -9,10 +9,6 @@ define(function(require) {
 
     AbstractRecurrenceSubview = BaseView.extend(/** @exports AbstractRecurrenceSubview.prototype */{
         autoRender: true,
-        events: {
-            'change input[type=radio]': 'onSectionSwitch'
-        },
-
         initialize: function() {
             if ('defaultData' in this === false) {
                 throw new Error('Property "defaultData" should be declare in successor class');
@@ -32,41 +28,25 @@ define(function(require) {
                 var dateTimePickerView = new DateTimePickerView({
                     el: element
                 });
-                var subviewName = 'date-time-picker-' + index;
-                this.subview(subviewName, dateTimePickerView);
-                $(element).closest('[data-name="control-section"]').data('date-time-picker-subview-name', subviewName);
+                this.subview('date-time-picker-' + index, dateTimePickerView);
+                $(element).data('date-time-picker-view', dateTimePickerView);
             }, this));
-            this.updateControlSectionsState();
             return this;
         },
-
-        onSectionSwitch: function(e) {
-            this.$("input[type=radio]").not(e.target).prop('checked', false);
-            this.updateControlSectionsState();
-        },
-
-        updateControlSectionsState: function() {
-            this.$('[data-name="control-section"]').each(_.bind(function(index, section) {
-                var $section = $(section);
-                var isDisabled = !$section.find('input[type=radio]').prop('checked');
-                var datetimeSubviewName = $section.data('date-time-picker-subview-name');
-                if (datetimeSubviewName) {
-                    this.subview(datetimeSubviewName).setDisabled(isDisabled);
-                } else {
-                    $section.find('input[data-name="value"]').prop('disabled', isDisabled);
-                }
-            }, this));
+        /**
+         * Finds inputs where stored data to save
+         *
+         * @return {jQuery}
+         */
+        findDataInputs: function() {
+            return this.$(':input[data-name="value"]');
         },
 
         getValue: function() {
             var value = _.clone(this.defaultData);
-            var $activeInput = this.$('input[type=radio]:checked')
-                .closest('[data-name="control-section"]').find(':input[data-name="value"]');
-            if ($activeInput.length) {
-                $activeInput.each(function() {
-                    value[$(this).data('field')] = $(this).val() || null;
-                });
-            }
+            this.findDataInputs().each(function() {
+                value[$(this).data('field')] = $(this).val() || null;
+            });
             return value;
         }
     });
