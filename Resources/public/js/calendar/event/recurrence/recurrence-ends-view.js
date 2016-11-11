@@ -2,10 +2,9 @@ define(function(require) {
     'use strict';
 
     var RecurrenceEndsView;
-    var AbstractRecurrenceSubview = require('orocalendar/js/calendar/event/recurrence/abstract-recurrence-subview');
+    var SwitchableRecurrenceSubview = require('orocalendar/js/calendar/event/recurrence/switchable-recurrence-subview');
 
-    RecurrenceEndsView = AbstractRecurrenceSubview.extend(/** @exports RecurrenceEndsView.prototype */{
-        autoRender: true,
+    RecurrenceEndsView = SwitchableRecurrenceSubview.extend(/** @exports RecurrenceEndsView.prototype */{
         template: require('tpl!orocalendar/templates/event/recurrence/recurrence-ends.html'),
         defaultData:  {
             occurrences: null,
