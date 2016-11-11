@@ -2,19 +2,19 @@
     <div class="recurrence-ends-control__item" data-name="control-section">
         <label>
             <input type="radio" checked="checked">
-            <%- _.__('oro.calendar.recurrence.days') %>
             <input class="recurrence-ends-control__number"
                    type="text"
                    data-name="value"
                    data-field="interval"
+                   data-validation="<%-JSON.stringify({Number: {}}) %>"
                    value="<%=interval %>">
-            <%- _.__('oro.calendar.recurrence.ends.occurrences') %>
+            <%- _.__('oro.calendar.event.recurrence.days') %>
         </label>
     </div>
     <div class="recurrence-ends-control__item" data-name="control-section">
         <label>
             <input type="radio">
-            <%- _.__('oro.calendar.recurrence.weekday') %>
+            <%- _.__('oro.calendar.event.recurrence.weekday') %>
         </label>
         <input class="recurrence-ends-control__number"
                type="hidden"
