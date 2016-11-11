@@ -17,12 +17,22 @@ oro:
             calendar_removed: "Calendar was removed"
             calendar_updating: "Updating calendar, please wait ..."
             calendar_updated: "Calendar was updated"
-        recurrence:
-            ends:
-                never: "Never"
-                after: "After"
-                occurrences: "occurrences"
-                by: "By"
+        event:
+            recurrence:
+                repeat:
+                    daily: Daily
+                    weekly: Weekly
+                    monthly: Monthly
+                    yearly: Yearly
+                instance:
+                    first: First
+                    second: Second
+                    third: Third
+                    fourth: Fourth
+                    last: Last
+                control-label:
+                    repeat: Repeat
+                    repeats: Repeats
 "Add New Event": "Add New Event"
 "View Event": "View Event"
 "Edit Event": "Edit Event"
