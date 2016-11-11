@@ -2,12 +2,10 @@ define(function(require) {
     'use strict';
 
     var RecurrenceDailyView;
-    var _ = require('underscore');
     var localeSettings = require('orolocale/js/locale-settings');
-    var AbstractRecurrenceSubview = require('orocalendar/js/calendar/event/recurrence/abstract-recurrence-subview');
+    var SwitchableRecurrenceSubview = require('orocalendar/js/calendar/event/recurrence/switchable-recurrence-subview');
 
-    RecurrenceDailyView = AbstractRecurrenceSubview.extend(/** @exports RecurrenceDailyView.prototype */{
-        autoRender: true,
+    RecurrenceDailyView = SwitchableRecurrenceSubview.extend(/** @exports RecurrenceDailyView.prototype */{
         template: require('tpl!orocalendar/templates/event/recurrence/recurrence-daily.html'),
         defaultData: {
             recurrenceType: 'daily',

@@ -1,8 +1,8 @@
-<div class="recurrence-ends-control">
-    <div class="recurrence-ends-control__item" data-name="control-section">
+<div class="recurrence-daily-control">
+    <div class="recurrence-daily-control__item" data-name="control-section">
         <label>
             <input type="radio" checked="checked">
-            <input class="recurrence-ends-control__number"
+            <input class="recurrence-daily-control__number"
                    type="text"
                    data-name="value"
                    data-field="interval"
@@ -11,12 +11,12 @@
             <%- _.__('oro.calendar.event.recurrence.days') %>
         </label>
     </div>
-    <div class="recurrence-ends-control__item" data-name="control-section">
+    <div class="recurrence-daily-control__item" data-name="control-section">
         <label>
             <input type="radio">
             <%- _.__('oro.calendar.event.recurrence.weekday') %>
         </label>
-        <input class="recurrence-ends-control__number"
+        <input class="recurrence-daily-control__number"
                type="hidden"
                data-name="value"
                data-field="recurrenceType"
