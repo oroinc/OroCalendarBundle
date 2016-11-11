@@ -33,6 +33,18 @@ oro:
                 control-label:
                     repeat: Repeat
                     repeats: Repeats
+                    repeat-every: "Repeat every"
+                    repeat-on: "Repeat on"
+                    ends: Ends
+                control-modes:
+                    weekday: Weekday
+                    never: Never
+                    after: After
+                    by: By
+                controls:
+                    occurrences: occurrences
+                    days: "day(s)"
+                    weeks: "week(s)"
 "Add New Event": "Add New Event"
 "View Event": "View Event"
 "Edit Event": "Edit Event"

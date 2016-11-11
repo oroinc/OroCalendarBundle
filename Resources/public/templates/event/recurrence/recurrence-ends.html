@@ -2,26 +2,26 @@
     <div class="recurrence-ends-control__item" data-name="control-section">
         <label>
             <input type="radio"<% if (!occurrences && !endTime) {%> checked="checked"<% } %>>
-            <%- _.__('oro.calendar.recurrence.ends.never') %>
+            <%- _.__('oro.calendar.event.recurrence.control-modes.never') %>
         </label>
     </div>
     <div class="recurrence-ends-control__item" data-name="control-section">
         <label>
             <input type="radio"<% if (occurrences) {%> checked="checked"<% } %>>
-            <%- _.__('oro.calendar.recurrence.ends.after') %>
+            <%- _.__('oro.calendar.event.recurrence.control-modes.after') %>
             <input class="recurrence-ends-control__number"
                    type="text"
                    data-name="value"
                    data-field="occurrences"
                    data-validation="<%-JSON.stringify({Number: {}}) %>"
                    value="<%=occurrences %>">
-            <%- _.__('oro.calendar.recurrence.ends.occurrences') %>
+            <%- _.__('oro.calendar.event.recurrence.controls.occurrences') %>
         </label>
     </div>
     <div class="recurrence-ends-control__item" data-name="control-section">
         <label>
             <input type="radio"<% if (endTime) {%> checked="checked"<% } %>>
-            <%- _.__('oro.calendar.recurrence.ends.by') %>
+            <%- _.__('oro.calendar.event.recurrence.control-modes.by') %>
             <input class="recurrence-ends-control__datetime"
                    type="text"
                    data-name="value"
