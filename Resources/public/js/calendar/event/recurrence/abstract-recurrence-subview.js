@@ -8,7 +8,6 @@ define(function(require) {
     var BaseView = require('oroui/js/app/views/base/view');
 
     AbstractRecurrenceSubview = BaseView.extend(/** @exports AbstractRecurrenceSubview.prototype */{
-        autoRender: true,
         initialize: function() {
             if ('defaultData' in this === false) {
                 throw new Error('Property "defaultData" should be declare in successor class');
