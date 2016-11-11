@@ -19,16 +19,6 @@ define(function(require) {
             var data = RecurrenceDailyView.__super__.getTemplateData.apply(this, arguments);
             data.weekDays = localeSettings.getCalendarDayOfWeekNames('mnemonic', true).slice(1, 6);
             return data;
-        },
-
-        getValue: function() {
-            var value = RecurrenceDailyView.__super__.getValue.apply(this, arguments);
-            var $activeInput = this.$('input[type=radio]:checked')
-                .closest('[data-name="control-section"]').find('input[data-name="value"]');
-            if ($activeInput.length) {
-                value[$activeInput.data('field')] = $activeInput.val() || null;
-            }
-            return value;
         }
     });
 
