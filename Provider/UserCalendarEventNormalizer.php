@@ -273,4 +273,24 @@ class UserCalendarEventNormalizer extends AbstractCalendarEventNormalizer
 
         return $this;
     }
+
+    /**
+     * {@inheritdoc}
+     */
+    protected function addAttendeesToCalendarEvents(array &$calendarEvents)
+    {
+        parent::addAttendeesToCalendarEvents($calendarEvents);
+
+        // decide in which events current user is invited
+        foreach ($calendarEvents as $key => $calendarEvent) {
+            $isCurrentUserInvited = false;
+            foreach ($calendarEvent['attendees'] as $attendee) {
+                if ($attendee['userId'] === $this->securityFacade->getLoggedUserId()) {
+                    $isCurrentUserInvited = true;
+                    break;
+                }
+            }
+            $calendarEvents[$key]['isCurrentUserInvited'] = $isCurrentUserInvited;
+        }
+    }
 }

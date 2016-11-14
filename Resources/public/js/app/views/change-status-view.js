@@ -33,7 +33,7 @@ define([
         sendUpdate: function() {
             $.ajax({
                 url: this.$el.attr('href'),
-                type: 'GET',
+                type: 'POST',
                 success: function() {
                     mediator.execute('refreshPage');
                 },

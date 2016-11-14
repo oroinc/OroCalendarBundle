@@ -40,7 +40,8 @@ define([
             recurrencePattern: null,
             recurringEventId: null,
             originalStart: null,
-            isCancelled: null
+            isCancelled: null,
+            isCurrentUserInvited: false
         },
 
         initialize: function() {
@@ -86,7 +87,8 @@ define([
                 'originalStart',
                 'isCancelled',
                 'durationEditable',
-                'startEditable'
+                'startEditable',
+                'isCurrentUserInvited'
             ];
 
             if (this.get('recurrence')) {
