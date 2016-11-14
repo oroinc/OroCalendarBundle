@@ -9,7 +9,6 @@ define(function(require) {
         autoRender: true,
         template: require('tpl!orocalendar/templates/calendar/event/recurrence/recurrence-weekly.html'),
         defaultData: {
-            recurrenceType: 'daily',
             interval: 1,
             dayOfWeek: []
         },

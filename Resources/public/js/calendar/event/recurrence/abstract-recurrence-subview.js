@@ -37,14 +37,20 @@ define(function(require) {
          *
          * @return {jQuery}
          */
-        findDataInputs: function() {
-            return this.$(':input[data-name="value"]');
+        dataInputs: function() {
+            return this.findDataInputs(this.$el);
+        },
+
+        findDataInputs: function($context) {
+            return $context.find(':input[data-name]').filter(_.bind(function(index, element) {
+                return $(element).attr('data-name') in this.defaultData;
+            }, this));
         },
 
         getValue: function() {
             var value = _.clone(this.defaultData);
-            this.findDataInputs().each(function() {
-                value[$(this).data('field')] = $(this).val() || null;
+            this.dataInputs().each(function() {
+                value[$(this).data('name')] = $(this).val() || null;
             });
             return value;
         }

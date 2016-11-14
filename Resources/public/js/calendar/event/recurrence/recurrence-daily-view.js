@@ -6,7 +6,7 @@ define(function(require) {
     var SwitchableRecurrenceSubview = require('orocalendar/js/calendar/event/recurrence/switchable-recurrence-subview');
 
     RecurrenceDailyView = SwitchableRecurrenceSubview.extend(/** @exports RecurrenceDailyView.prototype */{
-        template: require('tpl!orocalendar/templates/event/recurrence/recurrence-daily.html'),
+        template: require('tpl!orocalendar/templates/calendar/event/recurrence/recurrence-daily.html'),
         defaultData: {
             recurrenceType: 'daily',
             interval: 1,

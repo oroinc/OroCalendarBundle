@@ -16,7 +16,7 @@ define(function(require) {
         },
 
         updateControlSectionsState: function() {
-            this.$('[data-name="control-section"]').each(_.bind(function(index, section) {
+            this.$('[data-name="control-sections"]').children().each(_.bind(function(index, section) {
                 var $section = $(section);
                 var isDisabled = !$section.find('input[type=radio]').prop('checked');
                 this.$('[data-type="datetime"]').each(_.bind(function(index, element) {
@@ -25,7 +25,7 @@ define(function(require) {
                         dateTimePickerView.setDisabled(isDisabled);
                     }
                 }, this));
-                $section.find('input[data-name="value"]').prop('disabled', isDisabled);
+                this.findDataInputs($section).prop('disabled', isDisabled);
             }, this));
         },
 
@@ -35,9 +35,9 @@ define(function(require) {
             return this;
         },
 
-        findDataInputs: function() {
-            return this.$('input[type=radio]:checked')
-                .closest('[data-name="control-section"]').find(':input[data-name="value"]');
+        dataInputs: function() {
+            var $activeSection = this.$('input[type=radio]:checked').closest('[data-name="control-sections"] > *');
+            return this.findDataInputs($activeSection);
         }
     });
 
