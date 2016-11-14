@@ -92,6 +92,8 @@ class CalendarEventManager
         }
 
         $relatedAttendee->setStatus($statusEnum);
+        //need to update calendar event entity, so its view on frontend will be updated
+        $event->setUpdatedAt(new \DateTime('now', new \DateTimeZone('UTC')));
     }
 
     /**

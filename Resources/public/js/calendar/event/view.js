@@ -64,6 +64,7 @@ define([
 
             this.listenTo(this.model, 'sync', this.onModelSave);
             this.listenTo(this.model, 'destroy', this.onModelDelete);
+            this.listenTo(mediator, 'widget_success:attendee_status:change', this.onAttendeeStatusChange);
         },
 
         remove: function() {
@@ -83,6 +84,11 @@ define([
         },
 
         onModelDelete: function() {
+            this.eventDialog.remove();
+            this.remove();
+        },
+
+        onAttendeeStatusChange: function() {
             this.eventDialog.remove();
             this.remove();
         },

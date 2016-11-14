@@ -77,7 +77,7 @@
                     {{ UI.renderProperty('oro.calendar.calendarevent.recurrence.exception.label'|trans, get_recurrence_text_value(entity.recurringEvent.recurrence)) }}
                 {% endif %}
                 {% if app.user and entity.relatedAttendee and entity.relatedAttendee.user and app.user.id == entity.relatedAttendee.user.id  %}
-                    {% include 'OroCalendarBundle:CalendarEvent:invitationControl.html.twig' with {'entity': entity} %}
+                    {% include 'OroCalendarBundle:CalendarEvent:invitationControl.html.twig' with {'entity': entity, 'triggerEventName': ''} %}
                 {% endif %}
             </div>
             <div class="responsive-block">

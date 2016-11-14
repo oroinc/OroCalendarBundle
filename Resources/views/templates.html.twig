@@ -75,13 +75,12 @@
                                             'page-component-module': 'oroui/js/app/components/view-component',
                                             'page-component-options': {
                                                 'view':'orocalendar/js/app/views/change-status-view',
-                                                'invitationStatus': status,
-                                                'originalId': '%originalId%'
+                                                'triggerEventName': 'widget_success:attendee_status:change'
                                             }|json_encode
                                         }
                                     })
                                 }}';
-                                link = link.replace('%path%', invitationUrls["accepted"]);
+                                link = link.replace('%path%', invitationUrls["{{ status }}"]);
                                 properties.push(link);
                             %>
                         <% } else { %>

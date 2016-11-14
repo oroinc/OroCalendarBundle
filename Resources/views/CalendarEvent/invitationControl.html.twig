@@ -16,7 +16,10 @@
                 'path': path('oro_calendar_event_' ~ status, {'id': entity.id}),
                 'data':  {
                     'page-component-module': 'oroui/js/app/components/view-component',
-                    'page-component-options': {'view':'orocalendar/js/app/views/change-status-view'}|json_encode
+                    'page-component-options': {
+                        'view':'orocalendar/js/app/views/change-status-view',
+                        'triggerEventName': triggerEventName
+                    }|json_encode
                 }
             })
         ]) %}

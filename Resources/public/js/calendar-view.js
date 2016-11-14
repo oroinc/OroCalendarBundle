@@ -105,7 +105,8 @@ define(function(require) {
         eventsLoaded: {},
 
         listen: {
-            'layout:reposition mediator': 'onWindowResize'
+            'layout:reposition mediator': 'onWindowResize',
+            'widget_success:attendee_status:change mediator': 'onAttendeeStatusChange'
         },
 
         /**
@@ -318,6 +319,11 @@ define(function(require) {
 
         onEventDeleted: function(eventModel) {
             this.trigger('event:deleted', eventModel);
+            this.updateEvents();
+            this.updateLayout();
+        },
+
+        onAttendeeStatusChange: function() {
             this.updateEvents();
             this.updateLayout();
         },
