@@ -9,7 +9,7 @@ define(function(require) {
     EventRecurrenceModel = BaseModel.extend({
         RECURRENCE_TYPES: ['daily', 'weekly', 'monthly', 'monthnth', 'yearly', 'yearnth'],
         RECURRENCE_INSTANCE: {1: 'first', 2: 'second', 3: 'third', 4: 'fourth', 5: 'last'},
-        RECURRENCE_DAYOFWEEK: localeSettings.getSortedDayOfWeekNames('mnemonic'),
+        RECURRENCE_DAYOFWEEK: localeSettings.getCalendarDayOfWeekNames('mnemonic', true),
 
         defaults: {
             recurrenceType: null, // one of RECURRENCE_TYPES

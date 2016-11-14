@@ -1,17 +1,17 @@
 <div class="recurrence-subview-control" data-name="control-sections">
     <div class="recurrence-subview-control__item">
         <label>
-            <input type="radio"<% if (!occurrences && !endTime) {%> checked="checked"<% } %>>
+            <input type="radio" data-role="control-section-switcher"<% if (!occurrences && !endTime) {%> checked="checked"<% } %>>
             <%- _.__('oro.calendar.event.recurrence.control-modes.never') %>
         </label>
     </div>
     <div class="recurrence-subview-control__item">
         <label>
-            <input type="radio"<% if (occurrences) {%> checked="checked"<% } %>>
+            <input type="radio" data-role="control-section-switcher"<% if (occurrences) {%> checked="checked"<% } %>>
             <%- _.__('oro.calendar.event.recurrence.control-modes.after') %>
             <input class="recurrence-subview-control__number"
                    type="text"
-                   data-name="occurrences"
+                   data-related-field="occurrences"
                    data-validation="<%-JSON.stringify({Number: {}}) %>"
                    value="<%=occurrences %>">
             <%- _.__('oro.calendar.event.recurrence.controls.occurrences') %>
@@ -19,11 +19,11 @@
     </div>
     <div class="recurrence-subview-control__item">
         <label>
-            <input type="radio"<% if (endTime) {%> checked="checked"<% } %>>
+            <input type="radio" data-role="control-section-switcher"<% if (endTime) {%> checked="checked"<% } %>>
             <%- _.__('oro.calendar.event.recurrence.control-modes.by') %>
             <input class="recurrence-subview-control__datetime"
                    type="text"
-                   data-name="endTime"
+                   data-related-field="endTime"
                    data-type="datetime"
                    value="<%=endTime %>">
         </label>

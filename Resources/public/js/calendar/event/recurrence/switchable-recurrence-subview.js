@@ -7,7 +7,7 @@ define(function(require) {
 
     SwitchableRecurrenceSubview = AbstractRecurrenceSubview.extend({
         events: {
-            'change input[type=radio]': 'onSectionSwitch'
+            'change [data-role="control-section-switcher"]': 'onSectionSwitch'
         },
 
         onSectionSwitch: function(e) {
@@ -18,15 +18,13 @@ define(function(require) {
         updateControlSectionsState: function() {
             this.$('[data-name="control-sections"]').children().each(_.bind(function(index, section) {
                 var $section = $(section);
-                var isDisabled = !$section.find('input[type=radio]').prop('checked');
-                this.$('[data-type="datetime"]').each(_.bind(function(index, element) {
-                    var dateTimePickerView = $(element).data('date-time-picker-view');
-                    if (dateTimePickerView) {
-                        dateTimePickerView.setDisabled(isDisabled);
-                    }
-                }, this));
-                this.findDataInputs($section).prop('disabled', isDisabled);
+                var isDisabled = !$section.find('[data-role="control-section-switcher"]').prop('checked');
+                this.setInputsDisabled(this.findDataInputs($section), isDisabled);
             }, this));
+        },
+
+        setInputsDisabled: function($inputs, isDisabled) {
+            $inputs.prop('disabled', isDisabled);
         },
 
         render: function() {
@@ -36,7 +34,8 @@ define(function(require) {
         },
 
         dataInputs: function() {
-            var $activeSection = this.$('input[type=radio]:checked').closest('[data-name="control-sections"] > *');
+            var $activeSection = this.$('[data-role="control-section-switcher"]:checked')
+                .closest('[data-name="control-sections"] > *');
             return this.findDataInputs($activeSection);
         }
     });

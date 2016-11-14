@@ -6,7 +6,7 @@
         <div class="controls recurrence-subview-control">
             <input class="recurrence-subview-control__number"
                    type="text"
-                   data-name="interval"
+                   data-related-field="interval"
                    data-validation="<%-JSON.stringify({Number: {}}) %>"
                    value="<%=interval %>">
             <%- _.__('oro.calendar.event.recurrence.controls.weeks') %>
@@ -16,6 +16,6 @@
         <div class="control-label wrap">
             <label><%- _.__('oro.calendar.event.recurrence.control-label.repeat-on') %></label>
         </div>
-        <div class="controls recurrence-subview-control" data-name="week-day-picker"></div>
+        <div class="controls recurrence-subview-control" data-name="recurrence-week-day-picker"></div>
     </div>
 </div>

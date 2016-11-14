@@ -7,15 +7,10 @@ define(function(require) {
 
     RecurrenceDailyView = SwitchableRecurrenceSubview.extend(/** @exports RecurrenceDailyView.prototype */{
         template: require('tpl!orocalendar/templates/calendar/event/recurrence/recurrence-daily.html'),
-        defaultData: {
-            recurrenceType: 'daily',
-            interval: 1,
-            dayOfWeek: []
-        },
-
+        relatedFields: ['recurrenceType', 'interval', 'dayOfWeek'],
         getTemplateData: function() {
             var data = RecurrenceDailyView.__super__.getTemplateData.apply(this, arguments);
-            data.weekDays = localeSettings.getCalendarDayOfWeekNames('mnemonic', true).slice(1, 6);
+            data.weekDays = this.model.RECURRENCE_DAYOFWEEK.slice(1, 6); // days except weekend
             return data;
         }
     });

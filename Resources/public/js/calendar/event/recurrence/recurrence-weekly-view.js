@@ -6,19 +6,13 @@ define(function(require) {
     var AbstractRecurrenceSubview = require('orocalendar/js/calendar/event/recurrence/abstract-recurrence-subview');
 
     RecurrenceWeeklyView = AbstractRecurrenceSubview.extend(/** @exports RecurrenceWeeklyView.prototype */{
-        autoRender: true,
         template: require('tpl!orocalendar/templates/calendar/event/recurrence/recurrence-weekly.html'),
-        defaultData: {
-            interval: 1,
-            dayOfWeek: []
-        },
-
+        relatedFields: ['interval', 'dayOfWeek'],
         render: function () {
             RecurrenceWeeklyView.__super__.render.apply(this, arguments);
             this.subview('week-day-picker', new WeekDayPickerView({
-                el: this.$('[data-name="week-day-picker"]'),
-                value: this.dayOfWeek || this.defaultData.dayOfWeek,
-                inputName: 'day-of-week-' + this.cid
+                el: this.$('[data-name="recurrence-week-day-picker"]'),
+                value: this.model.dayOfWeek
             }));
             return this;
         },
