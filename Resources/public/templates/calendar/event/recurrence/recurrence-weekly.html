@@ -1,0 +1,22 @@
+<div class="recurrence-weekly-control">
+    <div class="control-group">
+        <div class="control-label wrap">
+            <label><%- _.__('oro.calendar.event.recurrence.control-label.repeat-every') %></label>
+        </div>
+        <div class="controls">
+            <input class="recurrence-weekly-control__number"
+                   type="text"
+                   data-name="value"
+                   data-field="interval"
+                   data-validation="<%-JSON.stringify({Number: {}}) %>"
+                   value="<%=interval %>">
+            <%- _.__('oro.calendar.event.recurrence.controls.weeks') %>
+        </div>
+    </div>
+    <div class="control-group">
+        <div class="control-label wrap">
+            <label><%- _.__('oro.calendar.event.recurrence.control-label.repeat-on') %></label>
+        </div>
+        <div class="controls" data-name="week-day-picker"></div>
+    </div>
+</div>
