@@ -62,6 +62,8 @@
                     form_row(form.start),
                     form_row(form.end),
                     form_row(form.allDay),
+                    form_row(form.repeat),
+                    form.recurrence is defined ? form_row(form.recurrence) : null,
                     form_row(form.backgroundColor),
                 ]
             }

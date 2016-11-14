@@ -7,6 +7,9 @@ use Oro\Bundle\CalendarBundle\Model\Recurrence;
 
 class MonthNthStrategy extends AbstractStrategy
 {
+    const INSTANCE_VALIDATION_ERROR = "Parameter 'instance' value can't be empty for MonthNth recurrence pattern.";
+    const DAY_OF_WEEK_VALIDATION_ERROR = "Parameter 'dayOfWeek' can't be empty for MonthNth recurrence pattern.";
+
     /**
      * {@inheritdoc}
      */
@@ -175,11 +178,11 @@ class MonthNthStrategy extends AbstractStrategy
     public function getValidationErrorMessage(Entity\Recurrence $recurrence)
     {
         if (!$recurrence->getInstance()) {
-            return "Parameter 'instance' value can't be empty for MonthNth recurrence pattern.";
+            return self::INSTANCE_VALIDATION_ERROR;
         }
 
         if (!$recurrence->getDayOfWeek()) {
-            return "Parameter 'dayOfWeek' can't be empty for MonthNth recurrence pattern.";
+            return self::DAY_OF_WEEK_VALIDATION_ERROR;
         }
 
         return null;

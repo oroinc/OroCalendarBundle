@@ -119,6 +119,7 @@ class RecurrenceFormTypeTest extends \PHPUnit_Framework_TestCase
                     'model_timezone' => 'UTC',
                     'widget' => 'single_text',
                     'format' => DateTimeType::HTML5_FORMAT,
+                    'attr' => ['data-format' => 'backend']
                 ]
             )
             ->will($this->returnSelf());

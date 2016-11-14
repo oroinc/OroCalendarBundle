@@ -7,6 +7,7 @@ use Oro\Bundle\CalendarBundle\Model\Recurrence;
 
 class DailyStrategy extends AbstractStrategy
 {
+    const INTERVAL_VALIDATION_ERROR = "Parameter 'interval' can't be more than 99 for Daily recurrence pattern";
     /**
      * {@inheritdoc}
      */
@@ -100,7 +101,7 @@ class DailyStrategy extends AbstractStrategy
     public function getValidationErrorMessage(Entity\Recurrence $recurrence)
     {
         if ($recurrence->getInterval() > 99) {
-            return "Parameter 'interval' can't be more than 99 for Daily recurrence pattern";
+            return self::INTERVAL_VALIDATION_ERROR;
         }
 
         return null;

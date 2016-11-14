@@ -1,0 +1,33 @@
+{% import 'OroUIBundle::macros.html.twig' as UI %}
+{% import 'OroCalendarBundle::invitations.html.twig' as invitations %}
+
+{% set statuses=[
+    constant('Oro\\Bundle\\CalendarBundle\\Entity\\CalendarEvent::STATUS_ACCEPTED'),
+    constant('Oro\\Bundle\\CalendarBundle\\Entity\\CalendarEvent::STATUS_TENTATIVE'),
+    constant('Oro\\Bundle\\CalendarBundle\\Entity\\CalendarEvent::STATUS_DECLINED'),
+] %}
+{% set properties = [] %}
+{% for status in statuses %}
+    {% if status != entity.invitationStatus %}
+        {% set properties = properties|merge([
+            UI.link({
+                'label': invitations.calendar_event_invitation_action(status)|trans,
+                'title': invitations.calendar_event_invitation_action(status)|trans,
+                'path': path('oro_calendar_event_' ~ status, {'id': entity.id}),
+                'data':  {
+                    'page-component-module': 'oroui/js/app/components/view-component',
+                    'page-component-options': {'view':'orocalendar/js/app/views/change-status-view'}|json_encode
+                }
+            })
+        ]) %}
+    {% else %}
+        {% set properties = properties|merge([
+            invitations.calendar_event_invitation_action(status)|trans
+        ]) %}
+    {% endif %}
+{% endfor %}
+
+{{ UI.renderHtmlProperty(
+    'oro.calendar.calendarevent.actions.label'|trans,
+    properties|join('&nbsp;')
+) }}

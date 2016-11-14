@@ -10,6 +10,13 @@ use Oro\Bundle\CalendarBundle\Model\Recurrence;
  */
 class YearlyStrategy extends MonthlyStrategy
 {
+    const INTERVAL_VALIDATION_ERROR = "Parameter 'interval' value must be a multiple of 12"
+        . " for Yearly recurrence pattern.";
+    const DAY_OF_MONTH_VALIDATION_ERROR = "Parameter 'dayOfMonth' can't be empty for Yearly recurrence pattern.";
+    const MONTH_OF_YEAR_VALIDATION_ERROR = "Parameter 'monthOfYear' can't be empty for Yearly recurrence pattern.";
+    const WRONG_DATE_VALIDATION_ERROR = "Parameters 'dayOfMonth' and 'monthOfYear' values are invalid:"
+    . " such date doesn't exist(Yearly recurrence pattern).";
+
     /**
      * {@inheritdoc}
      */
@@ -68,15 +75,15 @@ class YearlyStrategy extends MonthlyStrategy
     public function getValidationErrorMessage(Entity\Recurrence $recurrence)
     {
         if ($recurrence->getInterval() % 12 !== 0) {
-            return "Parameter 'interval' value must be a multiple of 12 for Yearly recurrence pattern.";
+            return self::INTERVAL_VALIDATION_ERROR;
         }
 
         if (!$recurrence->getDayOfMonth()) {
-            return "Parameter 'dayOfMonth' can't be empty for Yearly recurrence pattern.";
+            return self::DAY_OF_MONTH_VALIDATION_ERROR;
         }
 
         if (!$recurrence->getMonthOfYear()) {
-            return "Parameter 'monthOfYear' can't be empty for Yearly recurrence pattern.";
+            return self::MONTH_OF_YEAR_VALIDATION_ERROR;
         }
 
         $currentDate = new \DateTime('now', $recurrence->getStartTime()->getTimezone());
@@ -84,8 +91,7 @@ class YearlyStrategy extends MonthlyStrategy
         $daysInMonth = (int)$currentDate->format('t');
 
         if ($daysInMonth < $recurrence->getDayOfMonth()) {
-            return "Parameters 'dayOfMonth' and 'monthOfYear' values are invalid:"
-            . " such date doesn't exist(Yearly recurrence pattern).";
+            return self::WRONG_DATE_VALIDATION_ERROR;
         }
 
         return null;

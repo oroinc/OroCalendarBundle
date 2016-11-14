@@ -140,10 +140,11 @@ oro:
                 accepted:             Accepted
                 declined:             Declined
 
+            actions.label:            Going?
             actions:
-                tentative:            Tentative
-                accepted:             Accept
-                declined:             Decline
+                tentative:            Maybe
+                accepted:             Yes
+                declined:             No
 
         #
         # Oro/Bundle/CalendarBundle/Entity/CalendarProperty
