@@ -4,6 +4,9 @@
             <label><%- _.__('oro.calendar.event.recurrence.control-label.repeat-every') %></label>
         </div>
         <div class="controls recurrence-subview-control">
+            <input type="hidden"
+                   data-related-field="recurrenceType"
+                   value="weekly">
             <input class="recurrence-subview-control__number"
                    type="text"
                    data-related-field="interval"

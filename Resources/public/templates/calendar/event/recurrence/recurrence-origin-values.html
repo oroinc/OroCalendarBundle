@@ -1,0 +1,22 @@
+<select name="<%- inputNamePrefixes %>[recurrenceType]">
+    <% _.each(recurrenceTypeOptions, function(option) { %>
+    <option value="<%- option.value %>"<% if (option.selected) { %> selected<% } %>><%= option.label %></option>
+    <% }) %>
+</select>
+<input name="<%- inputNamePrefixes %>[interval]" value="<%- interval %>" />
+<select name="<%- inputNamePrefixes %>[instance]">
+    <% _.each(instanceOptions, function(option) { %>
+    <option value="<%- option.value %>"<% if (option.selected) { %> selected<% } %>><%- option.label %></option>
+    <% }) %>
+</select>
+<select name="<%- inputNamePrefixes %>[dayOfWeek][]" multiple>
+    <% _.each(dayOfWeekOptions, function(option) { %>
+    <option value="<%- option.value %>"<% if (option.selected) { %> selected<% } %>><%- option.label %></option>
+    <% }) %>
+</select>
+<input name="<%- inputNamePrefixes %>[dayOfMonth]" value="<%- dayOfMonth %>" />
+<input name="<%- inputNamePrefixes %>[monthOfYear]" value="<%- monthOfYear %>" />
+<input name="<%- inputNamePrefixes %>[startTime]" value="<%- startTime %>" />
+<input name="<%- inputNamePrefixes %>[endTime]" value="<%- endTime %>" />
+<input name="<%- inputNamePrefixes %>[occurrences]" value="<%- occurrences %>" />
+<input name="<%- inputNamePrefixes %>[timeZone]" value="<%- timeZone %>" />
