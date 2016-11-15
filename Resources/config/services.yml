@@ -325,10 +325,10 @@ services:
     oro_calendar.workflow.action.create_calendar_event:
         class: Oro\Bundle\CalendarBundle\Workflow\Action\CreateCalendarEventAction
         arguments:
-            - '@oro_action.context_accessor'
+            - '@oro_action.expression.context_accessor'
             - '@doctrine'
         tags:
-            - { name: oro_workflow.action, alias: create_calendar_event }
+            - { name: oro_action.action, alias: create_calendar_event }
 
     oro_calendar.autocomplete.attendee_search_handler:
         class: Oro\Bundle\CalendarBundle\Autocomplete\AttendeeSearchHandler
@@ -397,7 +397,6 @@ services:
 
     oro_calendar.model.recurrence:
         arguments:
-            - '@validator'
             - '@oro_calendar.recurrence.strategy'
         class: '%oro_calendar.model.recurrence.class%'
 

@@ -12,8 +12,8 @@ use Symfony\Component\Translation\TranslatorInterface;
 use Oro\Bundle\ActivityBundle\Form\DataTransformer\ContextsToViewTransformer;
 use Oro\Bundle\CalendarBundle\Entity\Attendee;
 use Oro\Bundle\CalendarBundle\Manager\AttendeeRelationManager;
+use Oro\Bundle\EntityBundle\Provider\EntityNameResolver;
 use Oro\Bundle\EntityConfigBundle\Config\ConfigManager;
-use Oro\Bundle\SearchBundle\Resolver\EntityTitleResolverInterface;
 
 class AttendeesToViewTransformer extends ContextsToViewTransformer
 {
@@ -27,7 +27,7 @@ class AttendeesToViewTransformer extends ContextsToViewTransformer
      * @param TokenStorageInterface $securityTokenStorage
      * @param EventDispatcherInterface $dispatcher
      * @param AttendeeRelationManager $attendeeRelationManager
-     * @param EntityTitleResolverInterface $entityTitleResolver
+     * @param EntityNameResolver $entityNameResolver
      */
     public function __construct(
         EntityManager $entityManager,
@@ -36,7 +36,7 @@ class AttendeesToViewTransformer extends ContextsToViewTransformer
         TokenStorageInterface $securityTokenStorage,
         EventDispatcherInterface $dispatcher,
         AttendeeRelationManager $attendeeRelationManager,
-        EntityTitleResolverInterface $entityTitleResolver
+        EntityNameResolver $entityNameResolver
     ) {
         parent::__construct(
             $entityManager,
@@ -44,7 +44,7 @@ class AttendeesToViewTransformer extends ContextsToViewTransformer
             $translator,
             $securityTokenStorage,
             $dispatcher,
-            $entityTitleResolver
+            $entityNameResolver
         );
 
         $this->attendeeRelationManager = $attendeeRelationManager;
