@@ -8,6 +8,7 @@ use Oro\Bundle\CalendarBundle\Model\Recurrence;
 class DailyStrategy extends AbstractStrategy
 {
     const INTERVAL_VALIDATION_ERROR = "Parameter 'interval' can't be more than 99 for Daily recurrence pattern";
+
     /**
      * {@inheritdoc}
      */

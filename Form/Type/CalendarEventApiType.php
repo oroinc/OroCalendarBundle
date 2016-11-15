@@ -42,7 +42,7 @@ class CalendarEventApiType extends CalendarEventType
         RequestStack $requestStack,
         AttendeeRelationManager $attendeeRelationManager
     ) {
-        parent::__construct($registry, $securityFacade);
+        parent::__construct($registry, $securityFacade, $calendarEventManager);
         $this->calendarEventManager = $calendarEventManager;
         $this->requestStack         = $requestStack;
         $this->attendeeRelationManager = $attendeeRelationManager;

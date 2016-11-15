@@ -10,12 +10,12 @@ use Oro\Bundle\CalendarBundle\Model\Recurrence;
  */
 class YearlyStrategy extends MonthlyStrategy
 {
-    const INTERVAL_VALIDATION_ERROR = "Parameter 'interval' value must be a multiple of 12"
-        . " for Yearly recurrence pattern.";
-    const DAY_OF_MONTH_VALIDATION_ERROR = "Parameter 'dayOfMonth' can't be empty for Yearly recurrence pattern.";
+    // @codingStandardsIgnoreStart
+    const INTERVAL_VALIDATION_ERROR      = "Parameter 'interval' value must be a multiple of 12 for Yearly recurrence pattern.";
+    const DAY_OF_MONTH_VALIDATION_ERROR  = "Parameter 'dayOfMonth' can't be empty for Yearly recurrence pattern.";
     const MONTH_OF_YEAR_VALIDATION_ERROR = "Parameter 'monthOfYear' can't be empty for Yearly recurrence pattern.";
-    const WRONG_DATE_VALIDATION_ERROR = "Parameters 'dayOfMonth' and 'monthOfYear' values are invalid:"
-    . " such date doesn't exist(Yearly recurrence pattern).";
+    const WRONG_DATE_VALIDATION_ERROR    = "Parameters 'dayOfMonth' and 'monthOfYear' values are invalid: such date doesn't exist (Yearly recurrence pattern).";
+    // @codingStandardsIgnoreEnd
 
     /**
      * {@inheritdoc}

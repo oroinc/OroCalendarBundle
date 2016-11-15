@@ -4,7 +4,6 @@ namespace Oro\Bundle\CalendarBundle\Form\Type;
 
 use Doctrine\Common\Persistence\ManagerRegistry;
 
-use Oro\Bundle\CalendarBundle\Manager\CalendarEventManager;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Form\FormEvent;
@@ -13,9 +12,9 @@ use Symfony\Component\Form\FormInterface;
 use Symfony\Component\Form\FormView;
 use Symfony\Component\OptionsResolver\OptionsResolverInterface;
 
-use Oro\Bundle\CalendarBundle\Entity\CalendarEvent;
 use Oro\Bundle\CalendarBundle\Form\EventListener\CalendarUidSubscriber;
 use Oro\Bundle\CalendarBundle\Form\EventListener\ChildEventsSubscriber;
+use Oro\Bundle\CalendarBundle\Manager\CalendarEventManager;
 use Oro\Bundle\SecurityBundle\SecurityFacade;
 
 class CalendarEventType extends AbstractType
@@ -32,6 +31,7 @@ class CalendarEventType extends AbstractType
     /**
      * @param ManagerRegistry $registry
      * @param SecurityFacade $securityFacade
+     * @param CalendarEventManager $calendarEventManager
      */
     public function __construct(
         ManagerRegistry $registry,

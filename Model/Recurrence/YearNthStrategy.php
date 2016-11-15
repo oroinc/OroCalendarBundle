@@ -10,11 +10,12 @@ use Oro\Bundle\CalendarBundle\Model\Recurrence;
  */
 class YearNthStrategy extends AbstractStrategy
 {
-    const INTERVAL_VALIDATION_ERROR = "Parameter 'interval' value must be a multiple of 12"
-        . " for YearNth recurrence pattern.";
-    const INSTANCE_VALIDATION_ERROR = "Parameter 'instance' value can't be empty for YearNth recurrence pattern.";
-    const DAY_OF_WEEK_VALIDATION_ERROR = "Parameter 'dayOfWeek' can't be empty for YearNth recurrence pattern.";
+    // @codingStandardsIgnoreStart
+    const INTERVAL_VALIDATION_ERROR      = "Parameter 'interval' value must be a multiple of 12 for YearNth recurrence pattern.";
+    const INSTANCE_VALIDATION_ERROR      = "Parameter 'instance' value can't be empty for YearNth recurrence pattern.";
+    const DAY_OF_WEEK_VALIDATION_ERROR   = "Parameter 'dayOfWeek' can't be empty for YearNth recurrence pattern.";
     const MONTH_OF_YEAR_VALIDATION_ERROR = "Parameter 'monthOfYear' can't be empty for YearNth recurrence pattern.";
+    // @codingStandardsIgnoreEnd
 
     /**
      * {@inheritdoc}
