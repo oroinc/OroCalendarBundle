@@ -4,12 +4,14 @@ namespace Oro\Bundle\CalendarBundle\Tests\Unit\Form\EventListener;
 
 use Doctrine\Common\Collections\ArrayCollection;
 
+use Oro\Bundle\CalendarBundle\Manager\AttendeeManager;
 use Symfony\Component\Form\FormEvent;
 use Symfony\Component\Form\FormEvents;
 
 use Oro\Bundle\CalendarBundle\Entity\Calendar;
 use Oro\Bundle\CalendarBundle\Entity\CalendarEvent;
 use Oro\Bundle\CalendarBundle\Form\EventListener\ChildEventsSubscriber;
+use Oro\Bundle\CalendarBundle\Manager\CalendarEventManager;
 use Oro\Bundle\CalendarBundle\Tests\Unit\Fixtures\Entity\Attendee;
 use Oro\Bundle\FilterBundle\Tests\Unit\Filter\Fixtures\TestEnumValue;
 use Oro\Bundle\CalendarBundle\Tests\Unit\Fixtures\Entity\User;
@@ -51,13 +53,48 @@ class ChildEventsSubscriberTest extends \PHPUnit_Framework_TestCase
                 ['OroCalendarBundle:Calendar', null, $repository],
             ]));
 
+        $attendeeRelationManager = $this
+            ->getMockBuilder('Oro\Bundle\CalendarBundle\Manager\AttendeeRelationManager')
+            ->disableOriginalConstructor()
+            ->getMock();
+
+        $doctrineHelper = $this->getMockBuilder('Oro\Bundle\EntityBundle\ORM\DoctrineHelper')
+            ->disableOriginalConstructor()
+            ->getMock();
+
+        $doctrineHelper->expects($this->any())
+            ->method('getEntityRepository')
+            ->will($this->returnValueMap([
+                ['Extend\Entity\EV_Ce_Attendee_Status', $repository],
+                ['Extend\Entity\EV_Ce_Attendee_Type', $repository],
+                ['OroCalendarBundle:Calendar', $repository],
+            ]));
+
+        $attendeeManager = new AttendeeManager($doctrineHelper, $attendeeRelationManager);
+
         $securityFacade = $this->getMockBuilder('Oro\Bundle\SecurityBundle\SecurityFacade')
             ->disableOriginalConstructor()
             ->getMock();
 
+        $entityNameResolver = $this->getMockBuilder('Oro\Bundle\EntityBundle\Provider\EntityNameResolver')
+            ->disableOriginalConstructor()
+            ->getMock();
+
+        $calendarConfig = $this->getMockBuilder('Oro\Bundle\CalendarBundle\Provider\SystemCalendarConfig')
+                ->disableOriginalConstructor()
+                ->getMock();
+
+        $calendarEventManager = new CalendarEventManager(
+            $doctrineHelper,
+            $securityFacade,
+            $entityNameResolver,
+            $calendarConfig
+        );
+
         $this->childEventsSubscriber = new ChildEventsSubscriber(
             $registry,
-            $securityFacade
+            $calendarEventManager,
+            $attendeeManager
         );
     }
 

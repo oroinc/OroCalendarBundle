@@ -213,4 +213,116 @@ class CalendarEventManager
     {
         $this->doctrineHelper->getEntityManager($recurrence)->remove($recurrence);
     }
+
+    /**
+     * @param CalendarEvent $calendarEvent
+     */
+    public function updateCalendarEvents(CalendarEvent $calendarEvent)
+    {
+        $calendar = $calendarEvent->getCalendar();
+        $calendarEventOwnerIds = [];
+        if ($calendar && $calendar->getOwner()) {
+            $calendarEventOwnerIds[] = $calendar->getOwner()->getId();
+        }
+
+        $calendarEvent->setRelatedAttendee($calendarEvent->findRelatedAttendee());
+
+        $currentAttendeeUserIds = $this->getCurrentAttendeeUserIds($calendarEvent);
+        foreach ($calendarEvent->getChildEvents() as $childEvent) {
+            $childEventCalendar = $childEvent->getCalendar();
+            if (!$childEventCalendar) {
+                continue;
+            }
+
+            $childEventOwner = $childEventCalendar->getOwner();
+            if (!$childEventOwner) {
+                continue;
+            }
+
+            $childEventOwnerId = $childEventOwner->getId();
+            if (in_array($childEventOwnerId, $currentAttendeeUserIds)) {
+                $calendarEventOwnerIds[] = $childEventOwnerId;
+            }
+        }
+
+        $missingEventUserIds = array_diff($currentAttendeeUserIds, $calendarEventOwnerIds);
+        if (!empty($missingEventUserIds)) {
+            $this->createChildEvent($calendarEvent, $missingEventUserIds);
+        }
+    }
+
+    /**
+     * @param CalendarEvent $calendarEvent
+     *
+     * @return array
+     */
+    protected function getCurrentAttendeeUserIds(CalendarEvent $calendarEvent)
+    {
+        $attendees = $calendarEvent->getAttendees();
+        if ($calendarEvent->getRecurringEvent() && $calendarEvent->isCancelled()) {
+            $attendees = $calendarEvent->getRecurringEvent()->getAttendees();
+        }
+
+        $currentAttendeeUserIds = [];
+        foreach ($attendees as $attendee) {
+            if ($attendee->getUser()) {
+                $currentAttendeeUserIds[] = $attendee->getUser()->getId();
+            }
+        }
+
+        return $currentAttendeeUserIds;
+    }
+
+    /**
+     * @param CalendarEvent $parent
+     *
+     * @param array $missingEventUserIds
+     */
+    protected function createChildEvent(CalendarEvent $parent, array $missingEventUserIds)
+    {
+        /** @var CalendarRepository $calendarRepository */
+        $calendarRepository = $this->doctrineHelper->getEntityRepository('OroCalendarBundle:Calendar');
+        $organizationId     = $this->securityFacade->getOrganizationId();
+
+        $calendars = $calendarRepository->findDefaultCalendars($missingEventUserIds, $organizationId);
+
+        /** @var Calendar $calendar */
+        foreach ($calendars as $calendar) {
+            $childEvent = new CalendarEvent();
+            $childEvent->setCalendar($calendar);
+            $parent->addChildEvent($childEvent);
+
+            $childEvent->setRelatedAttendee($childEvent->findRelatedAttendee());
+
+            $this->copyRecurringEventExceptions($parent, $childEvent);
+        }
+    }
+
+    /**
+     * @param CalendarEvent $parentEvent
+     * @param CalendarEvent $childEvent
+     */
+    protected function copyRecurringEventExceptions(CalendarEvent $parentEvent, CalendarEvent $childEvent)
+    {
+        if (!$parentEvent->getRecurrence()) {
+            // if this is not recurring event then there are no exceptions to copy
+            return;
+        }
+
+        foreach ($parentEvent->getRecurringEventExceptions() as $parentException) {
+            // $exception will be parent for new exception of attendee
+            $childException = new CalendarEvent();
+            $childException->setCalendar($childEvent->getCalendar())
+                ->setTitle($parentException->getTitle() . 'child exception')
+                ->setDescription($parentException->getDescription())
+                ->setStart($parentException->getStart())
+                ->setEnd($parentException->getEnd())
+                ->setOriginalStart($parentException->getOriginalStart())
+                ->setCancelled($parentException->isCancelled())
+                ->setAllDay($parentException->getAllDay())
+                ->setRecurringEvent($childEvent);
+
+            $parentException->addChildEvent($childException);
+        }
+    }
 }

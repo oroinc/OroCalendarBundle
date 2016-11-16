@@ -1110,4 +1110,28 @@ class CalendarEvent extends ExtendCalendarEvent implements RemindableInterface, 
     {
         return $this->recurrence;
     }
+
+    /**
+     * Updates data for all child events items
+     *
+     * @return $this
+     */
+    public function updateChildEvents()
+    {
+        foreach ($this->getChildEvents() as $childEvent) {
+            $childEvent->setTitle($this->getTitle())
+                ->setDescription($this->getDescription())
+                ->setStart($this->getStart())
+                ->setEnd($this->getEnd())
+                ->setAllDay($this->getAllDay());
+
+            if ($this->getRecurringEvent() && $childEvent->getCalendar()) {
+                $recurringEvent = $this->getRecurringEvent()->getChildEventByCalendar($childEvent->getCalendar());
+                $childEvent->setRecurringEvent($recurringEvent)
+                    ->setOriginalStart($this->getOriginalStart());
+            }
+        }
+
+        return $this;
+    }
 }

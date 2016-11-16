@@ -56,7 +56,6 @@ class CalendarEventApiTypeTest extends TypeTestCase
             ->setMethods(['getCurrentRequest'])
             ->disableOriginalConstructor()
             ->getMock();
-
         $this->calendarEventManager =
             $this->getMockBuilder('Oro\Bundle\CalendarBundle\Manager\CalendarEventManager')
                 ->disableOriginalConstructor()
@@ -129,8 +128,10 @@ class CalendarEventApiTypeTest extends TypeTestCase
             ->method('getManagerForClass')
             ->willReturn($emForEvent);
 
-
         $attendeeRelationManager = $this->getMockBuilder('Oro\Bundle\CalendarBundle\Manager\AttendeeRelationManager')
+            ->disableOriginalConstructor()
+            ->getMock();
+        $attendeeManager = $this->getMockBuilder('Oro\Bundle\CalendarBundle\Manager\AttendeeManager')
             ->disableOriginalConstructor()
             ->getMock();
 
@@ -139,7 +140,8 @@ class CalendarEventApiTypeTest extends TypeTestCase
             $this->registry,
             $this->securityFacade,
             $this->requestStack,
-            $attendeeRelationManager
+            $attendeeRelationManager,
+            $attendeeManager
         );
 
         parent::setUp();

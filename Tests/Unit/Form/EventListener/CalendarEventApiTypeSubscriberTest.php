@@ -10,6 +10,7 @@ use Symfony\Component\HttpFoundation\RequestStack;
 use Oro\Bundle\CalendarBundle\Entity\CalendarEvent;
 use Oro\Bundle\CalendarBundle\Entity\Recurrence;
 use Oro\Bundle\CalendarBundle\Form\EventListener\CalendarEventApiTypeSubscriber;
+use Oro\Bundle\CalendarBundle\Form\EventListener\CalendarEventRecurrenceSubscriber;
 use Oro\Bundle\CalendarBundle\Manager\CalendarEventManager;
 
 class CalendarEventApiTypeSubscriberTest extends \PHPUnit_Framework_TestCase
@@ -23,6 +24,9 @@ class CalendarEventApiTypeSubscriberTest extends \PHPUnit_Framework_TestCase
     /** @var CalendarEventApiTypeSubscriber */
     protected $calendarEventApiTypeSubscriber;
 
+    /** @var  CalendarEventRecurrenceSubscriber */
+    protected $calendarEventRecurrenceSubscriber;
+
     public function setUp()
     {
         $this->calendarEventManager = $this->getMockBuilder('Oro\Bundle\CalendarBundle\Manager\CalendarEventManager')
@@ -35,6 +39,8 @@ class CalendarEventApiTypeSubscriberTest extends \PHPUnit_Framework_TestCase
             $this->calendarEventManager,
             $this->requestStack
         );
+
+        $this->calendarEventRecurrenceSubscriber = new CalendarEventRecurrenceSubscriber($this->calendarEventManager);
     }
 
     public function testGetSubscribedEvents()
@@ -143,7 +149,7 @@ class CalendarEventApiTypeSubscriberTest extends \PHPUnit_Framework_TestCase
             ->method('removeRecurrence')
             ->with($recurrence);
 
-        $this->calendarEventApiTypeSubscriber->preSubmit($event);
+        $this->calendarEventRecurrenceSubscriber->preSubmit($event);
         $this->assertEquals(['id' => 1], $event->getData());
     }
 

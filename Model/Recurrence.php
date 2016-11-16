@@ -2,8 +2,6 @@
 
 namespace Oro\Bundle\CalendarBundle\Model;
 
-use Symfony\Component\Validator\Validator\ValidatorInterface;
-
 use Oro\Bundle\CalendarBundle\Model\Recurrence\StrategyInterface;
 use Oro\Bundle\CalendarBundle\Entity;
 

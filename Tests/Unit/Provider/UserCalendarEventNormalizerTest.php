@@ -46,7 +46,7 @@ class UserCalendarEventNormalizerTest extends \PHPUnit_Framework_TestCase
      */
     public function testGetCalendarEvents($events, $attendees, $expected)
     {
-        $this->markTestIncomplete('TODO: Broken test should be fixed in CRM-6608');
+
         $calendarId = 123;
 
         $query = $this->getMockBuilder('Doctrine\ORM\AbstractQuery')
@@ -136,6 +136,7 @@ class UserCalendarEventNormalizerTest extends \PHPUnit_Framework_TestCase
                         'editable'         => true,
                         'removable'        => true,
                         'notifiable'       => false,
+                        'isCurrentUserInvited' => false
                     ],
                 ]
             ],
@@ -161,6 +162,7 @@ class UserCalendarEventNormalizerTest extends \PHPUnit_Framework_TestCase
                         [
                             'displayName' => 'user',
                             'email' => 'user@example.com',
+                            'userId' => null
                         ],
                     ],
                 ],
@@ -185,8 +187,10 @@ class UserCalendarEventNormalizerTest extends \PHPUnit_Framework_TestCase
                             [
                                 'displayName' => 'user',
                                 'email'       => 'user@example.com',
+                                'userId'      => null
                             ],
                         ],
+                        'isCurrentUserInvited' => true
                     ],
                 ]
             ],

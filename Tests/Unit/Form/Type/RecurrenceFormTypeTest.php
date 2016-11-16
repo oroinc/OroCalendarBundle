@@ -29,8 +29,6 @@ class RecurrenceFormTypeTest extends \PHPUnit_Framework_TestCase
      */
     public function testBuildForm()
     {
-        $this->markTestIncomplete('TODO: Broken test should be fixed in CRM-6608');
-
         $builder = $this->getMockBuilder('Symfony\Component\Form\FormBuilder')
             ->disableOriginalConstructor()
             ->getMock();
@@ -119,7 +117,6 @@ class RecurrenceFormTypeTest extends \PHPUnit_Framework_TestCase
                     'model_timezone' => 'UTC',
                     'widget' => 'single_text',
                     'format' => DateTimeType::HTML5_FORMAT,
-                    'attr' => ['data-format' => 'backend']
                 ]
             )
             ->will($this->returnSelf());

@@ -15,36 +15,32 @@ use Oro\Bundle\CalendarBundle\Manager\CalendarEventManager;
 use Oro\Bundle\SecurityBundle\SecurityFacade;
 use Oro\Bundle\SoapBundle\Form\EventListener\PatchSubscriber;
 use Oro\Bundle\CalendarBundle\Form\EventListener\CalendarEventApiTypeSubscriber;
+use Oro\Bundle\CalendarBundle\Form\EventListener\CalendarEventRecurrenceSubscriber;
+use Oro\Bundle\CalendarBundle\Manager\AttendeeManager;
 use Oro\Bundle\CalendarBundle\Manager\AttendeeRelationManager;
 
 class CalendarEventApiType extends CalendarEventType
 {
-    /** @var CalendarEventManager */
-    protected $calendarEventManager;
-
     /** @var RequestStack */
     protected $requestStack;
 
     /** @var AttendeeRelationManager */
     protected $attendeeRelationManager;
 
-    /**
-     * @param CalendarEventManager $calendarEventManager
-     * @param ManagerRegistry      $registry
-     * @param SecurityFacade       $securityFacade
-     * @param RequestStack         $requestStack
-     * @param AttendeeRelationManager $attendeeRelationManager
-     */
+    /** @var SecurityFacade */
+    protected $securityFacade;
+
     public function __construct(
         CalendarEventManager $calendarEventManager,
         ManagerRegistry $registry,
         SecurityFacade $securityFacade,
         RequestStack $requestStack,
-        AttendeeRelationManager $attendeeRelationManager
+        AttendeeRelationManager $attendeeRelationManager,
+        AttendeeManager $attendeeManager
     ) {
-        parent::__construct($registry, $securityFacade, $calendarEventManager);
-        $this->calendarEventManager = $calendarEventManager;
-        $this->requestStack         = $requestStack;
+        parent::__construct($registry, $calendarEventManager, $attendeeManager);
+        $this->securityFacade = $securityFacade;
+        $this->requestStack = $requestStack;
         $this->attendeeRelationManager = $attendeeRelationManager;
     }
 
@@ -176,13 +172,15 @@ class CalendarEventApiType extends CalendarEventType
         );
 
         $builder->addEventSubscriber(new PatchSubscriber());
+        $builder->addEventSubscriber(new CalendarEventRecurrenceSubscriber($this->calendarEventManager));
         $builder->addEventSubscriber(new CalendarEventApiTypeSubscriber(
             $this->calendarEventManager,
             $this->requestStack
         ));
         $builder->addEventSubscriber(new ChildEventsSubscriber(
             $this->registry,
-            $this->securityFacade
+            $this->calendarEventManager,
+            $this->attendeeManager
         ));
     }
 

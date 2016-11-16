@@ -6,10 +6,11 @@ use Doctrine\Common\Collections\Collection;
 use Doctrine\Common\Util\ClassUtils;
 
 use Oro\Bundle\CalendarBundle\Entity\Attendee;
+use Oro\Bundle\CalendarBundle\Entity\CalendarEvent;
 use Oro\Bundle\CalendarBundle\Entity\Repository\AttendeeRepository;
 use Oro\Bundle\CalendarBundle\Entity\Repository\CalendarEventRepository;
-use Oro\Bundle\CalendarBundle\Manager\AttendeeRelationManager;
 use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
+use Oro\Bundle\EntityExtendBundle\Tools\ExtendHelper;
 
 class AttendeeManager
 {
@@ -116,5 +117,41 @@ class AttendeeManager
         }
 
         return $result += array_fill_keys($calendarEventIds, []);
+    }
+
+    /**
+     * Makes sure displayName is not empty
+     *
+     * @param $attendees
+     */
+    public function updateAttendeeDisplayNames($attendees)
+    {
+        foreach ($attendees as $attendee) {
+            if (!$attendee->getDisplayName()) {
+                $attendee->setDisplayName($attendee->getEmail());
+            }
+        }
+    }
+
+    /**
+     * @param $attendees
+     * @param $relatedAttendee
+     */
+    public function setDefaultAttendeeStatus($attendees, $relatedAttendee)
+    {
+        foreach ($attendees as $attendee) {
+            $isRelatedAttendee = $relatedAttendee == $attendee;
+            if (!$attendee || $attendee->getStatus()) {
+                return;
+            }
+
+            $statusCode = $isRelatedAttendee ? CalendarEvent::STATUS_ACCEPTED : CalendarEvent::STATUS_NONE;
+
+            $statusEnum = $this->doctrineHelper
+                ->getEntityRepository(ExtendHelper::buildEnumValueClassName(Attendee::STATUS_ENUM_CODE))
+                ->find($statusCode);
+
+            $attendee->setStatus($statusEnum);
+        }
     }
 }

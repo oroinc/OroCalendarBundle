@@ -27,15 +27,15 @@ class CalendarEventTypeTest extends \PHPUnit_Framework_TestCase
             ->with('Extend\Entity\EV_Ce_Attendee_Status')
             ->will($this->returnValue($repository));
 
-        $securityFacade = $this->getMockBuilder('Oro\Bundle\SecurityBundle\SecurityFacade')
-            ->disableOriginalConstructor()
-            ->getMock();
-
         $calendarEventManager = $this->getMockBuilder('Oro\Bundle\CalendarBundle\Manager\CalendarEventManager')
             ->disableOriginalConstructor()
             ->getMock();
 
-        $this->type = new CalendarEventType($managerRegistry, $securityFacade, $calendarEventManager);
+        $attendeeManager = $this->getMockBuilder('Oro\Bundle\CalendarBundle\Manager\AttendeeManager')
+            ->disableOriginalConstructor()
+            ->getMock();
+
+        $this->type = new CalendarEventType($managerRegistry, $calendarEventManager, $attendeeManager);
     }
 
     /**
@@ -43,8 +43,6 @@ class CalendarEventTypeTest extends \PHPUnit_Framework_TestCase
      */
     public function testBuildForm()
     {
-        $this->markTestIncomplete('TODO: Broken test should be fixed in CRM-6608');
-
         $builder = $this->getMockBuilder('Symfony\Component\Form\FormBuilder')
             ->disableOriginalConstructor()
             ->getMock();
@@ -145,9 +143,24 @@ class CalendarEventTypeTest extends \PHPUnit_Framework_TestCase
         $builder->expects($this->at(9))
             ->method('add')
             ->with(
+                'repeat',
+                'checkbox',
+                [
+                    'required' => false,
+                    'mapped' => false
+                ]
+            )
+            ->will($this->returnSelf());
+
+        $builder->expects($this->at(10))
+            ->method('add')
+            ->with(
                 'recurrence',
                 'oro_calendar_event_recurrence',
-                ['required' => false]
+                [
+                    'required' => false,
+                    'attr' => ['data-validation-ignore' => '']
+                ]
             )
             ->will($this->returnSelf());
 

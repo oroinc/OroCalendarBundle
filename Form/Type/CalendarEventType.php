@@ -6,41 +6,43 @@ use Doctrine\Common\Persistence\ManagerRegistry;
 
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
-use Symfony\Component\Form\FormEvent;
-use Symfony\Component\Form\FormEvents;
+
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\Form\FormView;
 use Symfony\Component\OptionsResolver\OptionsResolverInterface;
 
+use Oro\Bundle\CalendarBundle\Form\EventListener\CalendarEventRecurrenceSubscriber;
 use Oro\Bundle\CalendarBundle\Form\EventListener\CalendarUidSubscriber;
 use Oro\Bundle\CalendarBundle\Form\EventListener\ChildEventsSubscriber;
+use Oro\Bundle\CalendarBundle\Manager\AttendeeManager;
 use Oro\Bundle\CalendarBundle\Manager\CalendarEventManager;
-use Oro\Bundle\SecurityBundle\SecurityFacade;
 
 class CalendarEventType extends AbstractType
 {
     /** @var ManagerRegistry */
     protected $registry;
 
-    /** @var SecurityFacade */
-    protected $securityFacade;
-
     /** @var CalendarEventManager */
     protected $calendarEventManager;
 
+    /** @var AttendeeManager */
+    protected $attendeeManager;
+
     /**
+     * CalendarEventType constructor.
+     *
      * @param ManagerRegistry $registry
-     * @param SecurityFacade $securityFacade
      * @param CalendarEventManager $calendarEventManager
+     * @param AttendeeManager $attendeeManager
      */
     public function __construct(
         ManagerRegistry $registry,
-        SecurityFacade $securityFacade,
-        CalendarEventManager $calendarEventManager
+        CalendarEventManager $calendarEventManager,
+        AttendeeManager $attendeeManager
     ) {
         $this->registry = $registry;
-        $this->securityFacade = $securityFacade;
         $this->calendarEventManager = $calendarEventManager;
+        $this->attendeeManager = $attendeeManager;
     }
 
     /**
@@ -147,55 +149,12 @@ class CalendarEventType extends AbstractType
             );
 
         $builder->addEventSubscriber(new CalendarUidSubscriber());
-        $builder->addEventSubscriber(new ChildEventsSubscriber($this->registry, $this->securityFacade));
-        $builder->addEventListener(FormEvents::PRE_SET_DATA, array($this, 'onPreSetData'));
-        $builder->addEventListener(FormEvents::POST_SET_DATA, array($this, 'onPostSetData'));
-        //temporary it is done with listener, but it should be moved to subscriber in scope of CRM-6608
-        $builder->addEventListener(FormEvents::PRE_SUBMIT, array($this, 'onPreSubmitData'));
-    }
-
-    /**
-     * @param FormEvent $event
-     */
-    public function onPreSetData(FormEvent $event)
-    {
-        $form = $event->getForm();
-        $entity = $event->getData();
-        if ($entity && $entity->getRecurringEvent() && $form->has('recurrence')) {
-            $form->remove('recurrence');
-        }
-    }
-
-    /**
-     * @param FormEvent $event
-     */
-    public function onPostSetData(FormEvent $event)
-    {
-        $form = $event->getForm();
-        $entity = $event->getData();
-
-        if ($entity && $entity->getRecurrence() && $form->has('repeat')) {
-            $form->get('repeat')->setData(true);
-        }
-    }
-
-    /**
-     * @param FormEvent $event
-     */
-    public function onPreSubmitData(FormEvent $event)
-    {
-        $form = $event->getForm();
-        $data = $event->getData();
-
-        if (empty($data['repeat'])) {
-            $recurrence = $form->get('recurrence')->getData();
-            if ($recurrence) {
-                $this->calendarEventManager->removeRecurrence($recurrence);
-                $form->get('recurrence')->setData(null);
-            }
-            unset($data['recurrence']);
-            $event->setData($data);
-        }
+        $builder->addEventSubscriber(new CalendarEventRecurrenceSubscriber($this->calendarEventManager));
+        $builder->addEventSubscriber(new ChildEventsSubscriber(
+            $this->registry,
+            $this->calendarEventManager,
+            $this->attendeeManager
+        ));
     }
 
     /**

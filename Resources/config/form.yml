@@ -22,8 +22,8 @@ services:
         class: %oro_calendar.calendar_event.form.type.class%
         arguments:
             - '@doctrine'
-            - '@oro_security.security_facade'
             - '@oro_calendar.calendar_event_manager'
+            - '@oro_calendar.attendee_manager'
         tags:
             - { name: form.type, alias: oro_calendar_event }
 
@@ -36,6 +36,7 @@ services:
             - '@oro_security.security_facade'
             - '@request_stack'
             - '@oro_calendar.attendee_relation_manager'
+            - '@oro_calendar.attendee_manager'
         tags:
             - { name: form.type, alias: oro_calendar_event_api }
 
