@@ -21,6 +21,15 @@ define(function(require) {
             yearly: ['yearly', 'yearnth']
         },
 
+        RECURRENCE_REPEAT_VIEWS: {
+            daily: RecurrenceDailyView,
+            weekly: RecurrenceWeeklyView,
+            monthly: RecurrenceMonthlyView
+        },
+
+        /** @type {string|null}*/
+        activeRepeatViewName: null,
+
         /** @type {string} defines name prefix for all form elements that are related to recurrence */
         inputNamePrefixes: '',
 
@@ -29,7 +38,7 @@ define(function(require) {
         template: template,
 
         events: {
-            'change [data-name="recurrence-repeat"]': 'onRecurrentToggle',
+            'change [data-name="recurrence-repeat"]': 'onRecurrenceToggle',
             'change [data-name="recurrence-repeats"]': 'onRepeatsChange'
         },
 
@@ -61,8 +70,7 @@ define(function(require) {
         render: function() {
             EventRecurrenceView.__super__.render.call(this);
 
-            // if recurrence model is not empty
-            if (this.model.toJSON()) {
+            if (!this.model.isEmptyRecurrence()) {
                 delete this._isCompletelyRendered;
                 this.renderSubviews();
             }
@@ -73,7 +81,17 @@ define(function(require) {
         },
 
         renderSubviews: function() {
-            var repeatViewName = this.getRepeatViewName(this.model.get('recurrenceType')) || 'daily';
+            var repeatViewName = this.getRepeatViewName(this.model.get('recurrenceType')) ||
+                _.keys(this.RECURRENCE_REPEAT_VIEWS)[0];
+
+            _.each(this.RECURRENCE_REPEAT_VIEWS, function(View, name) {
+                var $el = this.findElement(name).hide();
+                this.subview(name, new View({
+                    autoRender: true,
+                    el: $el,
+                    model: this.model
+                }));
+            }, this);
 
             this.subview('ends', new RecurrenceEndsView({
                 autoRender: true,
@@ -81,26 +99,7 @@ define(function(require) {
                 model: this.model
             }));
 
-            this.subview('daily', new RecurrenceDailyView({
-                autoRender: true,
-                isActive: repeatViewName === 'daily',
-                el: this.findElement('daily'),
-                model: this.model
-            }));
-
-            this.subview('weekly', new RecurrenceWeeklyView({
-                autoRender: true,
-                isActive: repeatViewName === 'weekly',
-                el: this.findElement('weekly'),
-                model: this.model
-            }));
-
-            this.subview('monthly', new RecurrenceMonthlyView({
-                autoRender: true,
-                isActive: repeatViewName === 'monthly',
-                el: this.findElement('monthly'),
-                model: this.model
-            }));
+            this.switchRepeatView(repeatViewName);
 
             this._isCompletelyRendered = true;
         },
@@ -136,7 +135,7 @@ define(function(require) {
 
         renderOriginValues: function() {
             var html = '';
-            if (this.model.toJSON()) {
+            if (!this.model.isEmptyRecurrence()) {
                 html = originValuesTemplate(this.getOriginValuesTemplateData());
             }
             this.findElement('origin-values').html(html);
@@ -146,7 +145,7 @@ define(function(require) {
             return this.$('[data-name="recurrence-' + shortName + '"]');
         },
 
-        onRecurrentToggle: function(e) {
+        onRecurrenceToggle: function(e) {
             if (!this._isCompletelyRendered) {
                 this.renderSubviews();
             }
@@ -157,19 +156,18 @@ define(function(require) {
 
         onRepeatsChange: function(e) {
             var repeatViewName = e.target.value;
-            // turn off all repeat view
-            _.each(_.keys(this.RECURRENCE_REPEATS), function(name) {
+            this.switchRepeatView(repeatViewName);
+        },
+
+        switchRepeatView: function(repeatViewName) {
+            _.each(_.keys(this.RECURRENCE_REPEAT_VIEWS), function(name) {
                 var subview = this.subview(name);
-                if (subview && subview.isActive && repeatViewName !== name) {
-                    subview.toggle(false);
+                if (subview.isEnabled() && repeatViewName !== name) {
+                    subview.disable();
                 }
             }, this);
 
-            // turn on proper repeat view
-            var subview = this.subview(repeatViewName);
-            if (subview) {
-                subview.toggle(true);
-            }
+            this.subview(repeatViewName).enable();
         },
 
         getRepeatViewName: function(repeatType) {

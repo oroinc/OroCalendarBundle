@@ -24,14 +24,8 @@ define(function(require) {
             timeZone: localeSettings.getTimeZone()
         },
 
-        toJSON: function(options) {
-            if (this.RECURRENCE_TYPES.indexOf(this.get('recurrenceType')) === -1) {
-                return null;
-            } else {
-                return _.filter(_.clone(this.attributes), function(attrValue) {
-                    return !_.isEmpty(attrValue);
-                });
-            }
+        isEmptyRecurrence: function() {
+            return this.RECURRENCE_TYPES.indexOf(this.get('recurrenceType')) === -1;
         }
     });
 

@@ -1,15 +1,15 @@
-<select name="<%- inputNamePrefixes %>[recurrenceType]">
+<select name="<%- inputNamePrefixes %>[recurrenceType]" class="no-uniform">
     <% _.each(recurrenceTypeOptions, function(option) { %>
     <option value="<%- option.value %>"<% if (option.selected) { %> selected<% } %>><%= option.label %></option>
     <% }) %>
 </select>
-<input name="<%- inputNamePrefixes %>[interval]" value="<%- interval %>" />
+<input name="<%- inputNamePrefixes %>[interval]" value="<%- interval %>" class="no-uniform"/>
 <select name="<%- inputNamePrefixes %>[instance]">
     <% _.each(instanceOptions, function(option) { %>
     <option value="<%- option.value %>"<% if (option.selected) { %> selected<% } %>><%- option.label %></option>
     <% }) %>
 </select>
-<select name="<%- inputNamePrefixes %>[dayOfWeek][]" multiple>
+<select name="<%- inputNamePrefixes %>[dayOfWeek]" class="no-uniform" multiple>
     <% _.each(dayOfWeekOptions, function(option) { %>
     <option value="<%- option.value %>"<% if (option.selected) { %> selected<% } %>><%- option.label %></option>
     <% }) %>

@@ -8,7 +8,7 @@ define(function(require) {
 
     AbstractRecurrenceSubview = BaseView.extend(/** @exports AbstractRecurrenceSubview.prototype */{
         /** @type {boolean} */
-        isActive: true,
+        _isEnabled: true,
 
         events: {
             'change :input[data-related-field]': 'updateModel'
@@ -18,14 +18,7 @@ define(function(require) {
             if ('relatedFields' in this === false) {
                 throw new Error('Property "relatedFields" should be declare in successor class');
             }
-            _.extend(this, _.pick(options, 'isActive'));
             AbstractRecurrenceSubview.__super__.initialize.call(this, options);
-        },
-
-        render: function() {
-            AbstractRecurrenceSubview.__super__.render.call(this);
-            this.$el.toggle(this.isActive);
-            return this;
         },
 
         /**
@@ -44,23 +37,39 @@ define(function(require) {
         },
 
         getValue: function() {
-            var value = _.mapObject(_.pick(this.model.defaults, this.relatedFields), _.clone);
-            if (this.isActive) {
-                this.dataInputs().each(function() {
-                    value[$(this).data('related-field')] = $(this).val() || null;
-                });
-            }
+            var value = this.getDefaultValues();
+            this.dataInputs().each(function() {
+                value[$(this).data('related-field')] = $(this).val() || null;
+            });
             return value;
+        },
+
+        getDefaultValues: function() {
+            return _.mapObject(_.pick(this.model.defaults, this.relatedFields), _.clone);
         },
 
         updateModel: function() {
             this.model.set(this.getValue());
         },
 
-        toggle: function(state) {
-            this.isActive = state;
-            this.$el.toggle(state);
+        resetModel: function() {
+            this.model.set(this.getDefaultValues());
+        },
+
+        enable: function() {
+            this.$el.show();
             this.updateModel();
+            this._isEnabled = true;
+        },
+
+        disable: function() {
+            this.resetModel();
+            this.$el.hide();
+            this._isEnabled = false;
+        },
+
+        isEnabled: function() {
+            return this._isEnabled;
         }
     });
 
