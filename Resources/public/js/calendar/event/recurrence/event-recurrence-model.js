@@ -10,6 +10,7 @@ define(function(require) {
         RECURRENCE_TYPES: ['daily', 'weekly', 'monthly', 'monthnth', 'yearly', 'yearnth'],
         RECURRENCE_INSTANCE: {1: 'first', 2: 'second', 3: 'third', 4: 'fourth', 5: 'last'},
         RECURRENCE_DAYOFWEEK: localeSettings.getCalendarDayOfWeekNames('mnemonic', true),
+        RECURRENCE_MONTHS: localeSettings.getCalendarMonthNames('wide'),
 
         defaults: {
             recurrenceType: null, // one of RECURRENCE_TYPES

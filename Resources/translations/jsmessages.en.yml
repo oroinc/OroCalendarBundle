@@ -46,6 +46,7 @@ oro:
                     days: "day(s)"
                     weeks: "week(s)"
                     months: "month(s)"
+                    years: "year(s)"
                     monthly-repeat-on:
                         day: Day
                         first: First

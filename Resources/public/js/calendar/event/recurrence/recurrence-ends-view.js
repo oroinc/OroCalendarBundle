@@ -19,7 +19,7 @@ define(function(require) {
         setInputsDisabled: function($inputs, isDisabled) {
             RecurrenceEndsView.__super__.setInputsDisabled.apply(this, arguments);
             var dateTimePickerView = this.subview('date-time-picker-view');
-            if (dateTimePickerView) {
+            if (dateTimePickerView && $inputs.index(dateTimePickerView.$el) !== -1) {
                 dateTimePickerView.setDisabled(isDisabled);
             }
         }
