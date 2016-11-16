@@ -2,7 +2,6 @@ define(function(require) {
     'use strict';
 
     var RecurrenceDailyView;
-    var localeSettings = require('orolocale/js/locale-settings');
     var SwitchableRecurrenceSubview = require('orocalendar/js/calendar/event/recurrence/switchable-recurrence-subview');
 
     RecurrenceDailyView = SwitchableRecurrenceSubview.extend(/** @exports RecurrenceDailyView.prototype */{

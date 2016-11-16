@@ -3,6 +3,7 @@ define(function(require) {
 
     var SwitchableRecurrenceSubview;
     var _ = require('underscore');
+    var $ = require('jquery');
     var AbstractRecurrenceSubview = require('orocalendar/js/calendar/event/recurrence/abstract-recurrence-subview');
 
     SwitchableRecurrenceSubview = AbstractRecurrenceSubview.extend({
@@ -11,7 +12,7 @@ define(function(require) {
         },
 
         onSectionSwitch: function(e) {
-            this.$("input[type=radio]").not(e.target).prop('checked', false);
+            this.$('input[type=radio]').not(e.target).prop('checked', false);
             this.updateControlSectionsState();
         },
 

@@ -7,11 +7,11 @@ define(function(require) {
     var BaseView = require('oroui/js/app/views/base/view');
 
     AbstractRecurrenceSubview = BaseView.extend(/** @exports AbstractRecurrenceSubview.prototype */{
-        initialize: function() {
+        initialize: function(options) {
             if ('relatedFields' in this === false) {
-                throw new Error('Property "defaultData" should be declare in successor class');
+                throw new Error('Property "relatedFields" should be declare in successor class');
             }
-            AbstractRecurrenceSubview.__super__.render.apply(this, arguments);
+            AbstractRecurrenceSubview.__super__.initialize.call(this, options);
         },
 
         /**
@@ -30,7 +30,7 @@ define(function(require) {
         },
 
         getValue: function() {
-            var value = _.clone(this.defaultData);
+            var value = _.pick(this.model.attributes, this.relatedFields);
             this.dataInputs().each(function() {
                 value[$(this).data('related-field')] = $(this).val() || null;
             });

@@ -1,0 +1,62 @@
+<div class="recurrence-subview-control">
+    <div class="control-group">
+        <div class="control-label wrap">
+            <label><%- _.__('oro.calendar.event.recurrence.control-label.repeat-every') %></label>
+        </div>
+        <div class="controls">
+            <input class="recurrence-subview-control__number"
+                   type="text"
+                   data-related-field="interval"
+                   data-validation="<%-JSON.stringify({Number: {}}) %>"
+                   value="<%=interval %>">
+            <%- _.__('oro.calendar.event.recurrence.controls.months') %>
+        </div>
+    </div>
+    <div class="control-group">
+        <div class="control-label wrap">
+            <label><%- _.__('oro.calendar.event.recurrence.control-label.repeat-on') %></label>
+        </div>
+        <div class="controls">
+            <select data-related-field="instance">
+                <option value=""><%- _.__('oro.calendar.event.recurrence.controls.monthly-repeat-on.day') %></option>
+                <option disabled>&#9473;&#9473;&#9473;&#9473;&#9473;&#9473;&#9473;&#9473;&#9473;</option>
+                <% _.each(repeatOnOptions, function (option) { %>
+                <option value="<%= option.value %>"
+                <% if (option.value === instance) { %> selected="selected"<% } %>>
+                <%- _.__('oro.calendar.event.recurrence.controls.monthly-repeat-on.' + option.text) %>
+                </option>
+                <% }); %>
+            </select>
+            <span data-name="repeat-on-day-of-week">
+                <input class="recurrence-subview-control__number"
+                       type="text"
+                       data-related-field="dayOfMonth"
+                       data-validation="<%-JSON.stringify({Number: {}}) %>"
+                       value="<%=dayOfMonth %>">
+                <input type="hidden"
+                       data-related-field="recurrenceType"
+                       value="monthly">
+            </span>
+            <span data-name="repeat-on-day-number">
+                <select data-related-field="dayOfWeek">
+                    <% _.each(groupWeekDayOptions, function (option) { %>
+                    <option value="<%= option.value %>"
+                    <% if (option.selected) { %> selected="selected"<% } %>>
+                    <%- _.__('oro.calendar.event.recurrence.controls.' + option.text) %>
+                    </option>
+                    <% }); %>
+                    <option disabled></option>
+                    <% _.each(dayOfWeekOptions, function (option) { %>
+                    <option value="<%= option.value %>"
+                    <% if (_.isEqual(dayOfWeek, [option.value])) { %> selected="selected"<% } %>>
+                    <%- option.text %>
+                    </option>
+                    <% }); %>
+                </select>
+                <input type="hidden"
+                       data-related-field="recurrenceType"
+                       value="monthhth">
+            </span>
+        </div>
+    </div>
+</div>

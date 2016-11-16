@@ -45,6 +45,16 @@ oro:
                     occurrences: occurrences
                     days: "day(s)"
                     weeks: "week(s)"
+                    months: "month(s)"
+                    monthly-repeat-on:
+                        day: Day
+                        first: First
+                        second: Second
+                        third: Third
+                        fourth: Fourth
+                        last: Last
+                    weekday: Weekday
+                    weekend-day: "Weekend Day"
 "Add New Event": "Add New Event"
 "View Event": "View Event"
 "Edit Event": "Edit Event"
