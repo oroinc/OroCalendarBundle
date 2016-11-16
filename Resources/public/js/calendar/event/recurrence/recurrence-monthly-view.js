@@ -8,13 +8,6 @@ define(function(require) {
     var AbstractRecurrenceSubview = require('orocalendar/js/calendar/event/recurrence/abstract-recurrence-subview');
 
     RecurrenceMonthlyView = AbstractRecurrenceSubview.extend(/** @exports RecurrenceMonthlyView.prototype */{
-        REPEAT_ON: {
-            1: 'first',
-            2: 'second',
-            3: 'third',
-            4: 'fourth',
-            5: 'last'
-        },
         weekendDays: [],
         weekDays: [],
         template: require('tpl!orocalendar/templates/calendar/event/recurrence/recurrence-monthly.html'),
@@ -31,7 +24,7 @@ define(function(require) {
 
         getTemplateData: function() {
             var data = RecurrenceMonthlyView.__super__.getTemplateData.apply(this, arguments);
-            data.repeatOnOptions = _.map(this.REPEAT_ON, function(item, key) {
+            data.repeatOnOptions = _.map(this.model.RECURRENCE_INSTANCE, function(item, key) {
                 return {
                     'value': key,
                     'text': item
