@@ -23,6 +23,17 @@ define(function(require) {
             return data;
         },
 
+        updateModel: function() {
+            RecurrenceMonthlyView.__super__.updateModel.call(this);
+            var monthOfYear = Number(this.model.get('monthOfYear'));
+            var daysInMonth = new Date(0, monthOfYear, 0).getDate();
+            // since in this view user specified a month it is possible to hide an unnecessary warning
+            // shown in parent view
+            if (daysInMonth >= Number(this.model.get('dayOfMonth'))) {
+                this.$('[data-name="recurrence-warning"]').hide();
+            }
+        },
+
         getValue: function() {
             var value = RecurrenceYearlyView.__super__.getValue.apply(this, arguments);
             if (value.interval) {
