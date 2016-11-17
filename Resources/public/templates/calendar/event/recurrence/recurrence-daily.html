@@ -5,7 +5,7 @@
     <div class="controls" data-name="control-sections">
         <div class="recurrence-subview-control recurrence-subview-control__items" data-name="control-sections">
             <div class="recurrence-subview-control__item">
-                <label>
+                <label class="fields-row">
                     <input type="radio" data-role="control-section-switcher" checked="checked">
                     <input type="hidden"
                            data-related-field="recurrenceType"
@@ -13,7 +13,7 @@
                     <input class="recurrence-subview-control__number"
                            type="text"
                            data-related-field="interval"
-                           data-validation="<%-JSON.stringify({Number: {}, NotBlank: {}}) %>"
+                           data-validation="<%-JSON.stringify({NotBlank: {}, Number: {min: 1, max: 99}, Type: {type: 'integer'}}) %>"
                            value="<%=interval %>">
                     <%- _.__('oro.calendar.event.recurrence.controls.days') %>
                 </label>

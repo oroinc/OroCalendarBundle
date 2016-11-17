@@ -2,7 +2,6 @@ define(function(require) {
     'use strict';
 
     var EventRecurrenceModel;
-    var _ = require('underscore');
     var localeSettings = require('orolocale/js/locale-settings');
     var BaseModel = require('oroui/js/app/models/base/model');
 
