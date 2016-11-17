@@ -14,6 +14,7 @@ define(function(require) {
         onSectionSwitch: function(e) {
             this.$('input[type=radio]').not(e.target).prop('checked', false);
             this.updateControlSectionsState();
+            this.updateModel();
         },
 
         updateControlSectionsState: function() {

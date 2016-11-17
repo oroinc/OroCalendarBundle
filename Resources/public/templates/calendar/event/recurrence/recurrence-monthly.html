@@ -31,7 +31,7 @@
                 <input class="recurrence-subview-control__number"
                        type="text"
                        data-related-field="dayOfMonth"
-                       data-validation="<%-JSON.stringify({Number: {}}) %>"
+                       data-validation="<%-JSON.stringify({Number: {}, NotBlank: {}, Range: {min: 1, max: 31}}) %>"
                        value="<%=dayOfMonth %>">
                 <input type="hidden"
                        data-related-field="recurrenceType"
@@ -55,7 +55,7 @@
                 </select>
                 <input type="hidden"
                        data-related-field="recurrenceType"
-                       value="monthhth">
+                       value="monthnth">
             </span>
         </div>
     </div>

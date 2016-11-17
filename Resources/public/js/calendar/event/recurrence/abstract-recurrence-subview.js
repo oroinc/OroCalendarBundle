@@ -7,6 +7,13 @@ define(function(require) {
     var BaseView = require('oroui/js/app/views/base/view');
 
     AbstractRecurrenceSubview = BaseView.extend(/** @exports AbstractRecurrenceSubview.prototype */{
+        /** @type {boolean} */
+        _isEnabled: true,
+
+        events: {
+            'change :input[data-related-field]': 'updateModel'
+        },
+
         initialize: function(options) {
             if ('relatedFields' in this === false) {
                 throw new Error('Property "relatedFields" should be declare in successor class');
@@ -30,11 +37,39 @@ define(function(require) {
         },
 
         getValue: function() {
-            var value = _.pick(this.model.attributes, this.relatedFields);
+            var value = this.getDefaultValues();
             this.dataInputs().each(function() {
                 value[$(this).data('related-field')] = $(this).val() || null;
             });
             return value;
+        },
+
+        getDefaultValues: function() {
+            return _.mapObject(_.pick(this.model.defaults, this.relatedFields), _.clone);
+        },
+
+        updateModel: function() {
+            this.model.set(this.getValue());
+        },
+
+        resetModel: function() {
+            this.model.set(this.getDefaultValues());
+        },
+
+        enable: function() {
+            this.$el.show();
+            this.updateModel();
+            this._isEnabled = true;
+        },
+
+        disable: function() {
+            this.resetModel();
+            this.$el.hide();
+            this._isEnabled = false;
+        },
+
+        isEnabled: function() {
+            return this._isEnabled;
         }
     });
 

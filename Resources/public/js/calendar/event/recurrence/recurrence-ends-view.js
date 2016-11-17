@@ -13,7 +13,6 @@ define(function(require) {
             this.subview('date-time-picker-view', new DateTimePickerView({
                 el: this.$('[data-related-field="endTime"]')
             }));
-            this.updateControlSectionsState();
             return this;
         },
         setInputsDisabled: function($inputs, isDisabled) {
