@@ -150,7 +150,7 @@ class CalendarEventType extends AbstractType
         $builder->addEventSubscriber(new ChildEventsSubscriber($this->registry, $this->securityFacade));
         $builder->addEventListener(FormEvents::PRE_SET_DATA, array($this, 'onPreSetData'));
         $builder->addEventListener(FormEvents::POST_SET_DATA, array($this, 'onPostSetData'));
-        //temporary it is done with listener, but it should be moved to subscriber in scope of CRM-6608
+        // @todo Temporary it is done with listener, but it should be moved to subscriber in scope of CRM-6608
         $builder->addEventListener(FormEvents::PRE_SUBMIT, array($this, 'onPreSubmitData'));
     }
 
@@ -190,7 +190,6 @@ class CalendarEventType extends AbstractType
         if (empty($data['repeat'])) {
             $recurrence = $form->get('recurrence')->getData();
             if ($recurrence) {
-                $this->calendarEventManager->removeRecurrence($recurrence);
                 $form->get('recurrence')->setData(null);
             }
             unset($data['recurrence']);

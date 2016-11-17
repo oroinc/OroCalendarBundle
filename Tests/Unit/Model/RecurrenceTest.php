@@ -21,36 +21,66 @@ class RecurrenceTest extends \PHPUnit_Framework_TestCase
         $this->model = new Recurrence($this->strategy);
     }
 
-    public function testGetOccurrences()
+    /**
+     * @param string $method
+     * @param array $arguments
+     * @param mixed $returnValue
+     *
+     * @dataProvider delegateMethodsDataProvider
+     */
+    public function testDelegateMethodWorks($method, array $arguments, $returnValue)
     {
-        $this->strategy->expects($this->once())
-            ->method('getOccurrences');
+        $mocker = $this->strategy->expects($this->once())
+            ->method($method);
 
-        $this->model->getOccurrences(new Entity\Recurrence(), new \DateTime(), new \DateTime());
+        call_user_func_array([$mocker, 'with'], $arguments);
+
+        $mocker->willReturn($returnValue);
+
+        $this->assertEquals($returnValue, call_user_func_array([$this->model, $method], $arguments));
     }
 
-    public function testGetTextValue()
+    /**
+     * @return array
+     */
+    public function delegateMethodsDataProvider()
     {
-        $this->strategy->expects($this->once())
-            ->method('getTextValue');
+        $recurrence = new Entity\Recurrence();
+        $start = new \DateTime('2016-10-10 10:00:00');
+        $end = new \DateTime('2016-11-10 10:00:00');
 
-        $this->model->getTextValue(new Entity\Recurrence());
-    }
-
-    public function testGetCalculatedEndTime()
-    {
-        $this->strategy->expects($this->once())
-            ->method('getCalculatedEndTime');
-
-        $this->model->getCalculatedEndTime(new Entity\Recurrence());
-    }
-
-    public function testGetValidationErrorMessage()
-    {
-        $this->strategy->expects($this->once())
-            ->method('getValidationErrorMessage');
-
-        $this->model->getValidationErrorMessage(new Entity\Recurrence());
+        return [
+            'getTextValue' => [
+                'method' => 'getTextValue',
+                'arguments' => [$recurrence],
+                'returnValue' => 'foo',
+            ],
+            'getCalculatedEndTime' => [
+                'method' => 'getCalculatedEndTime',
+                'arguments' => [$recurrence],
+                'returnValue' => new \DateTime(),
+            ],
+            'getMaxInterval' => [
+                'method' => 'getMaxInterval',
+                'arguments' => [$recurrence],
+                'returnValue' => 1,
+            ],
+            'getIntervalMultipleOf' => [
+                'method' => 'getIntervalMultipleOf',
+                'arguments' => [$recurrence],
+                'returnValue' => 1,
+            ],
+            'getRequiredProperties' => [
+                'method' => 'getRequiredProperties',
+                'arguments' => [$recurrence],
+                'returnValue' => ['interval', 'startTime', 'timeZone'],
+            ],
+            'getOccurrences' => [
+                'method' => 'getOccurrences',
+                'arguments' => [$recurrence, $start, $end],
+                'returnValue' => [new \DateTime()],
+            ],
+        ];
     }
 
     public function testGetRecurrenceTypesValues()

@@ -77,8 +77,8 @@ class Attendee extends ExtendAttendee
     /**
      * @var CalendarEvent
      *
-     * NOTE: The column in supports NULL intentionally. Doctrine inserts record into "oro_calendar_event_attendee" first
-     * before record of "oro_calendar_event" was inserted, so NULL has to be supported.
+     * NOTE: The column supports NULL intentionally. Doctrine inserts record into "oro_calendar_event_attendee" first
+     * before record of "oro_calendar_event" is inserted, so NULL has to be supported to not trigger DB violatation.
      *
      * @ORM\ManyToOne(
      *     targetEntity="Oro\Bundle\CalendarBundle\Entity\CalendarEvent",

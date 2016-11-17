@@ -10,12 +10,13 @@ use Oro\Bundle\CalendarBundle\Model\Recurrence;
  */
 class YearNthStrategy extends AbstractStrategy
 {
-    // @codingStandardsIgnoreStart
-    const INTERVAL_VALIDATION_ERROR      = "Parameter 'interval' value must be a multiple of 12 for YearNth recurrence pattern.";
-    const INSTANCE_VALIDATION_ERROR      = "Parameter 'instance' value can't be empty for YearNth recurrence pattern.";
-    const DAY_OF_WEEK_VALIDATION_ERROR   = "Parameter 'dayOfWeek' can't be empty for YearNth recurrence pattern.";
-    const MONTH_OF_YEAR_VALIDATION_ERROR = "Parameter 'monthOfYear' can't be empty for YearNth recurrence pattern.";
-    // @codingStandardsIgnoreEnd
+    /**
+     * {@inheritdoc}
+     */
+    public function getName()
+    {
+        return 'recurrence_yearnth';
+    }
 
     /**
      * {@inheritdoc}
@@ -101,14 +102,6 @@ class YearNthStrategy extends AbstractStrategy
     }
 
     /**
-     * {@inheritdoc}
-     */
-    public function getName()
-    {
-        return 'recurrence_yearnth';
-    }
-
-    /**
      * Returns occurrence date according to last occurrence date and recurrence rules.
      *
      * @param integer $interval A number of months, which is a multiple of 12.
@@ -190,24 +183,26 @@ class YearNthStrategy extends AbstractStrategy
     /**
      * {@inheritdoc}
      */
-    public function getValidationErrorMessage(Entity\Recurrence $recurrence)
+    public function getRequiredProperties(Entity\Recurrence $recurrence)
     {
-        if ($recurrence->getInterval() % 12 !== 0) {
-            return self::INTERVAL_VALIDATION_ERROR;
-        }
+        return array_merge(
+            parent::getRequiredProperties($recurrence),
+            [
+                'instance',
+                'dayOfWeek',
+                'monthOfYear',
+            ]
+        );
+    }
 
-        if (!$recurrence->getInstance()) {
-            return self::INSTANCE_VALIDATION_ERROR;
-        }
-
-        if (!$recurrence->getDayOfWeek()) {
-            return self::DAY_OF_WEEK_VALIDATION_ERROR;
-        }
-
-        if (!$recurrence->getMonthOfYear()) {
-            return self::MONTH_OF_YEAR_VALIDATION_ERROR;
-        }
-
-        return null;
+    /**
+     * The multiplier for yearly recurrence type is 12, so only values of interval from this sequence are supported:
+     * 12, 24, 36, ...
+     *
+     * {@inheritdoc}
+     */
+    public function getIntervalMultipleOf(Entity\Recurrence $recurrence)
+    {
+        return 12;
     }
 }

@@ -28,15 +28,36 @@ class DelegateStrategy implements StrategyInterface
      */
     public function getOccurrences(Recurrence $recurrence, \DateTime $start, \DateTime $end)
     {
-        $delegate = $this->match($recurrence);
+        $delegate = $this->match($recurrence, true);
 
-        if (!$delegate) {
+        return $delegate->getOccurrences($recurrence, $start, $end);
+    }
+
+    /**
+     * Checks if strategy can be used and returns its instance.
+     *
+     * @param Recurrence $recurrence
+     * @param bool $required
+     *
+     * @return StrategyInterface|null
+     * @throws \InvalidArgumentException
+     */
+    protected function match(Recurrence $recurrence, $required = false)
+    {
+        foreach ($this->elements as $strategy) {
+            /** @var StrategyInterface $strategy */
+            if ($strategy->supports($recurrence)) {
+                return $strategy;
+            }
+        }
+
+        if ($required) {
             throw new \InvalidArgumentException(
-                sprintf('Cannot find recurrence strategy for "%s" field.', $recurrence->getRecurrenceType())
+                sprintf('Recurrence type "%s" is not supported.', $recurrence->getRecurrenceType())
             );
         }
 
-        return $delegate->getOccurrences($recurrence, $start, $end);
+        return null;
     }
 
     /**
@@ -48,36 +69,11 @@ class DelegateStrategy implements StrategyInterface
     }
 
     /**
-     * Checks if strategy can be used and returns its instance.
-     *
-     * @param Recurrence $recurrence
-     *
-     * @return null|StrategyInterface
-     */
-    protected function match(Recurrence $recurrence)
-    {
-        foreach ($this->elements as $strategy) {
-            /** @var StrategyInterface $strategy */
-            if ($strategy->supports($recurrence)) {
-                return $strategy;
-            }
-        }
-
-        return null;
-    }
-
-    /**
      * {@inheritdoc}
      */
     public function getTextValue(Recurrence $recurrence)
     {
-        $delegate = $this->match($recurrence);
-
-        if (!$delegate) {
-            throw new \InvalidArgumentException(
-                sprintf('Cannot find recurrence strategy for "%s" field.', $recurrence->getRecurrenceType())
-            );
-        }
+        $delegate = $this->match($recurrence, true);
 
         return $delegate->getTextValue($recurrence);
     }
@@ -87,13 +83,7 @@ class DelegateStrategy implements StrategyInterface
      */
     public function getCalculatedEndTime(Recurrence $recurrence)
     {
-        $delegate = $this->match($recurrence);
-
-        if (!$delegate) {
-            throw new \InvalidArgumentException(
-                sprintf('Cannot find recurrence strategy for "%s" field.', $recurrence->getRecurrenceType())
-            );
-        }
+        $delegate = $this->match($recurrence, true);
 
         return $delegate->getCalculatedEndTime($recurrence);
     }
@@ -101,17 +91,31 @@ class DelegateStrategy implements StrategyInterface
     /**
      * {@inheritdoc}
      */
-    public function getValidationErrorMessage(Recurrence $recurrence)
+    public function getMaxInterval(Recurrence $recurrence)
     {
-        $delegate = $this->match($recurrence);
+        $delegate = $this->match($recurrence, true);
 
-        if (!$delegate) {
-            throw new \InvalidArgumentException(
-                sprintf('Cannot find recurrence strategy for "%s" field.', $recurrence->getRecurrenceType())
-            );
-        }
+        return $delegate->getMaxInterval($recurrence);
+    }
 
-        return $delegate->getValidationErrorMessage($recurrence);
+    /**
+     * {@inheritdoc}
+     */
+    public function getIntervalMultipleOf(Recurrence $recurrence)
+    {
+        $delegate = $this->match($recurrence, true);
+
+        return $delegate->getIntervalMultipleOf($recurrence);
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getRequiredProperties(Recurrence $recurrence)
+    {
+        $delegate = $this->match($recurrence, true);
+
+        return $delegate->getRequiredProperties($recurrence);
     }
 
     /**

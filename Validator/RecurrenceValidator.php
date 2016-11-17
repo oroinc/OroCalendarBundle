@@ -4,56 +4,327 @@ namespace Oro\Bundle\CalendarBundle\Validator;
 
 use Symfony\Component\Validator\Constraint;
 use Symfony\Component\Validator\ConstraintValidator;
+use Symfony\Component\Validator\Context\ExecutionContextInterface;
 
-use Oro\Bundle\CalendarBundle\Model\Recurrence;
+use Oro\Bundle\CalendarBundle\Entity;
+use Oro\Bundle\CalendarBundle\Model;
+
+use Oro\Bundle\CalendarBundle\Validator\Constraints;
 
 class RecurrenceValidator extends ConstraintValidator
 {
-    /** @var Recurrence  */
-    protected $recurrenceModel;
+    const MIN_INTERVAL = 1;
+
+    /**
+     * @var Model\Recurrence
+     */
+    protected $model;
 
     /**
      * RecurrenceValidator constructor.
      *
-     * @param Recurrence $recurrenceModel
+     * @param Model\Recurrence $recurrenceModel
      */
-    public function __construct(Recurrence $recurrenceModel)
+    public function __construct(Model\Recurrence $recurrenceModel)
     {
-        $this->recurrenceModel = $recurrenceModel;
+        $this->model = $recurrenceModel;
     }
 
     /**
      * Validates recurrence according to its recurrenceType.
      *
-     * @param \Oro\Bundle\CalendarBundle\Entity\Recurrence $value
-     *
-     * @param Constraint $constraint
+     * @param Entity\Recurrence $value
+     * @param Constraints\Recurrence $constraint
      */
     public function validate($value, Constraint $constraint)
     {
-        if ($value->getEndTime() !== null && $value->getEndTime() < $value->getStartTime()) {
-            $this->context->addViolation("Parameter 'endTime' date can't be earlier than startTime date.");
+        $hasValidRecurrenceType = $this->validateRecurrenceType($value, $constraint);
+
+        if (!$hasValidRecurrenceType) {
+            return;
         }
 
-        if (!in_array($value->getRecurrenceType(), $this->recurrenceModel->getRecurrenceTypesValues())) {
-            $this->context->addViolation(
-                "Parameter 'recurrenceType' must have one of the values: {{ values }}.",
-                ['{{ values }}' => implode(', ', $this->recurrenceModel->getRecurrenceTypesValues())]
+        $this->validateRequiredProperties($value, $constraint);
+        $this->validateInterval($value, $constraint);
+        $this->validateEndTime($value, $constraint);
+        $this->validateDayOfWeek($value, $constraint);
+        $this->validateDayOfMonth($value, $constraint);
+    }
+
+    /**
+     * Validates recurrence type.
+     *
+     * @param Entity\Recurrence $value
+     * @return bool
+     */
+    protected function validateRecurrenceType(Entity\Recurrence $value, Constraints\Recurrence $constraint)
+    {
+        $recurrenceType = $value->getRecurrenceType();
+
+        $this->validateNotBlank($recurrenceType, $constraint, 'recurrenceType');
+        $this->validateChoice($recurrenceType, $this->model->getRecurrenceTypesValues(), $constraint, 'recurrenceType');
+
+        return in_array($recurrenceType, $this->model->getRecurrenceTypesValues());
+    }
+
+    /**
+     * Validate the value corresponds to allowed list of values.
+     *
+     * @param mixed $value
+     * @param array $allowedValues
+     * @param Constraints\Recurrence $constraint
+     * @param string $path
+     */
+    protected function validateChoice($value, array $allowedValues, Constraints\Recurrence $constraint, $path)
+    {
+        if ($value === null) {
+            return;
+        }
+
+        if (!in_array($value, $allowedValues)) {
+            $this->addViolation(
+                $constraint->choiceMessage,
+                ['{{ allowed_values }}' => implode(', ', $allowedValues)],
+                $value,
+                $path
             );
         }
+    }
 
-        $dayOfWeekValues = $this->recurrenceModel->getDaysOfWeekValues();
-        if ($value->getDayOfWeek() !== null
-            && count(array_intersect($value->getDayOfWeek(), $dayOfWeekValues)) !== count($value->getDayOfWeek())
-        ) {
-            $this->context->addViolation(
-                "Parameter 'dayOfWeek' can have values from the list: {{ values }}.",
-                ['{{ values }}' => implode(', ', $dayOfWeekValues)]
+    /**
+     * Validates value is not blank.
+     *
+     * @param mixed $value
+     * @param Constraints\Recurrence $constraint
+     * @param string $path
+     */
+    protected function validateNotBlank($value, Constraints\Recurrence $constraint, $path)
+    {
+        if ($value === null || (is_array($value) && empty($value))) {
+
+            $this->addViolation(
+                $constraint->notBlankMessage,
+                [],
+                $value,
+                $path
             );
         }
+    }
 
-        if ($errorMessage = $this->recurrenceModel->getValidationErrorMessage($value)) {
-            $this->context->addViolation($errorMessage);
+    /**
+     * Validates all required fields are not blank.
+     *
+     * @param Entity\Recurrence $recurrence
+     * @param Constraints\Recurrence $constraint
+     */
+    protected function validateRequiredProperties(Entity\Recurrence $recurrence, Constraints\Recurrence $constraint)
+    {
+        $requiredProperties = $this->model->getRequiredProperties($recurrence);
+
+        foreach ($requiredProperties as $name) {
+            $method = 'get' . ucfirst($name);
+            $value = $recurrence->$method();
+            $this->validateNotBlank($value, $constraint, $name);
+        }
+    }
+
+    /**
+     * Validates interval property.
+     *
+     * @param Entity\Recurrence $recurrence
+     * @param Constraints\Recurrence $constraint
+     */
+    protected function validateInterval(Entity\Recurrence $recurrence, Constraints\Recurrence $constraint)
+    {
+        $interval = $recurrence->getInterval();
+
+        $this->validateRange(
+            $interval,
+            self::MIN_INTERVAL,
+            $this->model->getMaxInterval($recurrence),
+            $constraint,
+            'interval'
+        );
+
+        $multiplier = (int)$this->model->getIntervalMultipleOf($recurrence);
+        if ($interval !== null && $multiplier > 1 && $interval % $multiplier !== 0) {
+
+            $this->addViolation(
+                $constraint->multipleOfMessage,
+                [
+                    '{{ multiple_of_value }}' => $multiplier,
+                ],
+                $interval,
+                'interval'
+            );
+        }
+    }
+
+    /**
+     * Validates value is between range.
+     *
+     * @param float|integer $value
+     * @param float|integer|null $min
+     * @param float|integer|null $max
+     * @param Constraints\Recurrence $constraint
+     * @param string $path
+     */
+    protected function validateRange($value, $min, $max, Constraints\Recurrence $constraint, $path)
+    {
+        if ($value === null || !is_numeric($value)) {
+            return;
+        } elseif ($min !== null && $value < $min) {
+            $this->addViolation(
+                $constraint->minMessage,
+                [
+                    '{{ limit }}' => $min,
+                ],
+                $value,
+                $path
+            );
+        } elseif ($max !== null && $value > $max) {
+            $this->addViolation(
+                $constraint->maxMessage,
+                [
+                    '{{ limit }}' => $max,
+                ],
+                $value,
+                $path
+            );
+        }
+    }
+
+    /**
+     * Validates recurrence type.
+     *
+     * @param Entity\Recurrence $value
+     * @param Constraints\Recurrence $constraint
+     */
+    protected function validateEndTime(Entity\Recurrence $value, Constraints\Recurrence $constraint)
+    {
+        $endTime = $value->getEndTime();
+        $startTime = $value->getStartTime();
+
+        if ($endTime === null || $startTime === null) {
+            return;
+        }
+
+        if ($startTime > $endTime) {
+            $this->addViolation(
+                $constraint->minMessage,
+                [
+                    '{{ limit }}' => $this->formatValue($value->getStartTime(), self::PRETTY_DATE)
+                ],
+                $value->getEndTime(),
+                'endTime'
+            );
+        }
+    }
+
+    /**
+     * Validates day of week type.
+     *
+     * @param Entity\Recurrence $value
+     * @param Constraints\Recurrence $constraint
+     */
+    protected function validateDayOfWeek(Entity\Recurrence $value, Constraints\Recurrence $constraint)
+    {
+        $dayOfWeek = $value->getDayOfWeek();
+
+        $this->validateMultipleChoices(
+            $dayOfWeek,
+            $this->model->getDaysOfWeekValues(),
+            $constraint,
+            'dayOfWeek'
+        );
+    }
+
+    /**
+     * Validates tje list of values correspond to allowed list of values.
+     *
+     * @param mixed $value
+     * @param array $allowedValues
+     * @param Constraints\Recurrence $constraint
+     * @param string $path
+     */
+    protected function validateMultipleChoices($value, array $allowedValues, Constraints\Recurrence $constraint, $path)
+    {
+        if ($value === null || !is_array($value)) {
+            return;
+        }
+
+        if (count(array_intersect($value, $allowedValues)) !== count($value)) {
+            $this->addViolation(
+                $constraint->multipleChoicesMessage,
+                ['{{ allowed_values }}' => implode(', ', $allowedValues)],
+                $value,
+                $path
+            );
+        }
+    }
+
+    /**
+     * Validates day of month.
+     *
+     * @param Entity\Recurrence $value
+     * @param Constraints\Recurrence $constraint
+     */
+    protected function validateDayOfMonth(Entity\Recurrence $value, Constraints\Recurrence $constraint)
+    {
+        $monthOfYear = $value->getMonthOfYear();
+        $dayOfMonth = $value->getDayOfMonth();
+
+        if (null === $monthOfYear || null === $dayOfMonth) {
+            return;
+        }
+
+        if ($monthOfYear < 1 || $monthOfYear > 12) {
+            // Invalid value is validated by a separate rule in validation.yml.
+            return;
+        }
+
+        $currentDate = new \DateTime('now', new \DateTimeZone('UTC'));
+        $currentDate->setDate($currentDate->format('Y'), $value->getMonthOfYear(), 1);
+        $daysInMonth = (int)$currentDate->format('t');
+
+        $this->validateRange(
+            $dayOfMonth,
+            1,
+            $daysInMonth,
+            $constraint,
+            'dayOfMonth'
+        );
+    }
+
+    /**
+     * @param string $message
+     * @param array $parameters
+     * @param string|null $invalidValue
+     * @param string|null $path
+     */
+    protected function addViolation($message, array $parameters = [], $invalidValue = null, $path = null)
+    {
+        if ($this->context instanceof ExecutionContextInterface) {
+            $violationBuilder = $this->context->buildViolation($message)
+                ->setParameters($parameters)
+                ->setInvalidValue($invalidValue);
+
+            if ($path) {
+                $violationBuilder->atPath($path);
+            }
+
+            $violationBuilder->addViolation();
+        } else {
+            /** @var  $violationBuilder */
+            $violationBuilder = $this->buildViolation($message)
+                ->setInvalidValue($invalidValue)
+                ->setParameters($parameters);
+
+            if ($path) {
+                $violationBuilder->atPath($path);
+            }
+
+            $violationBuilder->addViolation();
         }
     }
 }
