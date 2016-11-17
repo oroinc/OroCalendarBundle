@@ -55,6 +55,10 @@ oro:
                         last: Last
                     weekday: Weekday
                     weekend-day: "Weekend Day"
+                warning:
+                    day-31: "In months that have no 31st day the event will be put on the last day"
+                    day-30: "In february the event will be put on the last day since it has no 30th one"
+                    day-29: "In february of a common year the event will be put on the 28th day since it has no 29th one"
 "Add New Event": "Add New Event"
 "View Event": "View Event"
 "Edit Event": "Edit Event"

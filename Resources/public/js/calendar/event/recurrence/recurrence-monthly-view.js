@@ -3,6 +3,7 @@ define(function(require) {
 
     var RecurrenceMonthlyView;
     var _ = require('underscore');
+    var __ = require('orotranslation/js/translator');
     var $ = require('jquery');
     var localeSettings = require('orolocale/js/locale-settings');
     var AbstractRecurrenceSubview = require('orocalendar/js/calendar/event/recurrence/abstract-recurrence-subview');
@@ -77,6 +78,17 @@ define(function(require) {
             return $dataInputs.filter(function(index, element) {
                 return !$.contains(hiddenControlBlock[0], element);
             });
+        },
+
+        updateModel: function() {
+            RecurrenceMonthlyView.__super__.updateModel.call(this);
+            var dayOfMonth = !this.model.get('instance') ? Number(this.model.get('dayOfMonth')) : null;
+            if (dayOfMonth >= 29 && dayOfMonth <= 31) {
+                this.$('[data-name="recurrence-warning"]')
+                    .html(__('oro.calendar.event.recurrence.warning.day-' + dayOfMonth)).show();
+            } else {
+                this.$('[data-name="recurrence-warning"]').hide();
+            }
         },
 
         getValue: function() {
