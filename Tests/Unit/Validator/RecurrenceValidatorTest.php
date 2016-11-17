@@ -2,90 +2,426 @@
 
 namespace Oro\Bundle\CalendarBundle\Tests\Unit\Validator;
 
+use Oro\Bundle\CalendarBundle\Entity;
+use Oro\Bundle\CalendarBundle\Model;
 use Oro\Bundle\CalendarBundle\Validator\Constraints\Recurrence;
-use Oro\Bundle\CalendarBundle\Entity\Recurrence as EntityRecurrence;
-use Oro\Bundle\CalendarBundle\Model\Recurrence as ModelRecurrence;
 use Oro\Bundle\CalendarBundle\Validator\RecurrenceValidator;
 
 class RecurrenceValidatorTest extends \PHPUnit_Framework_TestCase
 {
-    /** @var Recurrence */
+    /**
+     * @var array
+     */
+    protected static $expectedRecurrenceTypesValues = [
+        Model\Recurrence::TYPE_DAILY,
+        Model\Recurrence::TYPE_WEEKLY,
+        Model\Recurrence::TYPE_MONTHLY,
+        Model\Recurrence::TYPE_MONTH_N_TH,
+        Model\Recurrence::TYPE_YEARLY,
+        Model\Recurrence::TYPE_YEAR_N_TH,
+    ];
+
+    /**
+     * @var array
+     */
+    protected static $expectedDaysOfWeekValues = [
+        Model\Recurrence::DAY_SUNDAY,
+        Model\Recurrence::DAY_MONDAY,
+        Model\Recurrence::DAY_TUESDAY,
+        Model\Recurrence::DAY_WEDNESDAY,
+        Model\Recurrence::DAY_THURSDAY,
+        Model\Recurrence::DAY_FRIDAY,
+        Model\Recurrence::DAY_SATURDAY,
+    ];
+
+    /**
+     * @var Recurrence
+     */
     protected $constraint;
 
-    /** @var \PHPUnit_Framework_MockObject_MockObject */
+    /**
+     * @var \PHPUnit_Framework_MockObject_MockObject
+     */
     protected $context;
 
-    /** @var \PHPUnit_Framework_MockObject_MockObject */
-    protected $strategy;
+    /**
+     * @var \PHPUnit_Framework_MockObject_MockObject
+     */
+    protected $model;
+
+    /**
+     * @var RecurrenceValidator|\PHPUnit_Framework_MockObject_MockObject
+     */
+    protected $validator;
 
     protected function setUp()
     {
         $this->constraint = new Recurrence();
-        $this->context = $this->getMock('Symfony\Component\Validator\ExecutionContextInterface');
+        $this->context = $this->getMock('Symfony\Component\Validator\Context\ExecutionContextInterface');
+
+        $this->model = $this->getMockBuilder('Oro\Bundle\CalendarBundle\Model\Recurrence')
+            ->disableOriginalConstructor()
+            ->getMock();
+        $this->model->expects($this->any())
+            ->method('getRecurrenceTypesValues')
+            ->willReturn(self::$expectedRecurrenceTypesValues);
+        $this->model->expects($this->any())
+            ->method('getDaysOfWeekValues')
+            ->willReturn(self::$expectedDaysOfWeekValues);
+
+        $this->validator = $this->getMockBuilder(RecurrenceValidator::class)
+            ->setConstructorArgs([$this->model])
+            ->setMethods(['formatValue'])
+            ->getMock();
+        $this->validator->initialize($this->context);
     }
 
-    public function testValidateNoErrors()
+    public function testRecurrenceHasNoErrors()
     {
+        $recurrence =  new Entity\Recurrence();
+        $recurrence->setRecurrenceType(Model\Recurrence::TYPE_DAILY);
+        $recurrence->setStartTime(new \DateTime());
+        $recurrence->setInterval(1);
+        $recurrence->setTimeZone('UTC');
+
+        $this->model->expects($this->once())
+            ->method('getRequiredProperties')
+            ->with($recurrence)
+            ->willReturn(['recurrenceType', 'interval', 'timeZone', 'startTime']);
+
+        $this->model->expects($this->once())
+            ->method('getIntervalMultipleOf')
+            ->with($recurrence)
+            ->willReturn(0);
+
         $this->context->expects($this->never())
-            ->method('addViolation');
+            ->method($this->anything());
 
-        $recurrence = new EntityRecurrence();
-        $recurrence->setRecurrenceType('daily');
-
-        $this->getValidator()->validate($recurrence, $this->constraint);
+        $this->validator->validate($recurrence, $this->constraint);
     }
 
-    public function testValidateWithErrors()
+    public function testRecurrenceHasBlankRecurrenceType()
     {
-        $this->context->expects($this->at(0))
-            ->method('addViolation')
-            ->with($this->equalTo("Parameter 'recurrenceType' must have one of the values: {{ values }}."));
-        $this->context->expects($this->at(1))
-            ->method('addViolation')
-            ->with($this->equalTo("Parameter 'dayOfWeek' can have values from the list: {{ values }}."));
-        $this->context->expects($this->at(2))
-            ->method('addViolation')
-            ->with($this->equalTo("Parameter 'endTime' date can't be earlier than startTime date."));
-        $error = 'strategy error message';
-        $this->context->expects($this->at(3))
-            ->method('addViolation')
-            ->with($this->equalTo($error));
+        $recurrence =  new Entity\Recurrence();
 
-        $validator = $this->getValidator();
+        $this->expectAddViolation(
+            $this->at(0),
+            'This value should not be blank.',
+            [],
+            null,
+            'recurrenceType'
+        );
 
-        $recurrence = new EntityRecurrence();
-        $validator->validate($recurrence, $this->constraint);
+        $this->validator->validate($recurrence, $this->constraint);
+    }
 
-        $recurrence->setRecurrenceType('daily')
-            ->setDayOfWeek(['today']);
-        $validator->validate($recurrence, $this->constraint);
+    public function testRecurrenceHasWrongRecurrenceType()
+    {
+        $recurrence =  new Entity\Recurrence();
+        $recurrence->setInterval(1);
+        $recurrence->setRecurrenceType('unknown');
 
-        $recurrence->setStartTime(new \DateTime())
-            ->setDayOfWeek(null)
-            ->setEndTime(new \DateTime('-3 day'));
-        $validator->validate($recurrence, $this->constraint);
+        $this->expectAddViolation(
+            $this->at(0),
+            'This value should be one of the values: {{ allowed_values }}.',
+            ['{{ allowed_values }}' => implode(', ', self::$expectedRecurrenceTypesValues)],
+            $recurrence->getRecurrenceType(),
+            'recurrenceType'
+        );
 
-        $this->strategy->expects($this->once())
-            ->method('getValidationErrorMessage')
-            ->willReturn($error);
-        $recurrence->setEndTime(null)
-            ->setDayOfWeek(null);
-        $validator->validate($recurrence, $this->constraint);
+        $this->validator->validate($recurrence, $this->constraint);
+    }
+
+    public function testRecurrenceHasRequiredFieldsBlank()
+    {
+        $recurrence =  new Entity\Recurrence();
+        $recurrence->setRecurrenceType(Model\Recurrence::TYPE_DAILY);
+
+        $this->model->expects($this->once())
+            ->method('getRequiredProperties')
+            ->with($recurrence)
+            ->willReturn(['recurrenceType', 'interval', 'timeZone', 'startTime']);
+
+        $this->model->expects($this->once())
+            ->method('getIntervalMultipleOf')
+            ->with($recurrence)
+            ->willReturn(0);
+
+        $this->expectAddViolation(
+            $this->at(0),
+            'This value should not be blank.',
+            [],
+            null,
+            'interval'
+        );
+
+        $this->expectAddViolation(
+            $this->at(1),
+            'This value should not be blank.',
+            [],
+            null,
+            'timeZone'
+        );
+
+        $this->expectAddViolation(
+            $this->at(2),
+            'This value should not be blank.',
+            [],
+            null,
+            'startTime'
+        );
+
+        $this->validator->validate($recurrence, $this->constraint);
+    }
+
+    public function testRecurrenceHasTooBigInterval()
+    {
+        $actualInterval = 100;
+        $maxInterval = 99;
+        $recurrence =  new Entity\Recurrence();
+        $recurrence->setRecurrenceType(Model\Recurrence::TYPE_DAILY);
+        $recurrence->setInterval($actualInterval);
+
+        $this->model->expects($this->once())
+            ->method('getRequiredProperties')
+            ->with($recurrence)
+            ->willReturn([]);
+
+        $this->model->expects($this->once())
+            ->method('getMaxInterval')
+            ->with($recurrence)
+            ->willReturn($maxInterval);
+
+        $this->model->expects($this->once())
+            ->method('getIntervalMultipleOf')
+            ->with($recurrence)
+            ->willReturn(0);
+
+        $this->expectAddViolation(
+            $this->at(0),
+            'This value should be {{ limit }} or less.',
+            ['{{ limit }}' => $maxInterval],
+            $actualInterval,
+            'interval'
+        );
+
+        $this->validator->validate($recurrence, $this->constraint);
+    }
+
+    public function testRecurrenceHasTooSmallInterval()
+    {
+        $actualInterval = -1;
+        $minInterval = RecurrenceValidator::MIN_INTERVAL;
+        $recurrence =  new Entity\Recurrence();
+        $recurrence->setRecurrenceType(Model\Recurrence::TYPE_DAILY);
+        $recurrence->setInterval($actualInterval);
+
+        $this->model->expects($this->once())
+            ->method('getRequiredProperties')
+            ->with($recurrence)
+            ->willReturn([]);
+
+        $this->model->expects($this->once())
+            ->method('getMaxInterval')
+            ->with($recurrence)
+            ->willReturn($minInterval);
+
+        $this->model->expects($this->once())
+            ->method('getIntervalMultipleOf')
+            ->with($recurrence)
+            ->willReturn(0);
+
+        $this->expectAddViolation(
+            $this->at(0),
+            'This value should be {{ limit }} or more.',
+            ['{{ limit }}' => $minInterval],
+            $actualInterval,
+            'interval'
+        );
+
+        $this->validator->validate($recurrence, $this->constraint);
+    }
+
+    public function testRecurrenceHasWrongMultipleOfInterval()
+    {
+        $actualInterval = 13;
+        $intervalMultipleOf = 12;
+        $recurrence =  new Entity\Recurrence();
+        $recurrence->setRecurrenceType(Model\Recurrence::TYPE_YEARLY);
+        $recurrence->setInterval($actualInterval);
+
+        $this->model->expects($this->once())
+            ->method('getRequiredProperties')
+            ->with($recurrence)
+            ->willReturn([]);
+
+        $this->model->expects($this->once())
+            ->method('getMaxInterval')
+            ->with($recurrence)
+            ->willReturn(999);
+
+        $this->model->expects($this->once())
+            ->method('getIntervalMultipleOf')
+            ->with($recurrence)
+            ->willReturn($intervalMultipleOf);
+
+        $this->expectAddViolation(
+            $this->at(0),
+            'This value should be a multiple of {{ multiple_of_value }}.',
+            ['{{ multiple_of_value }}' => $intervalMultipleOf],
+            $actualInterval,
+            'interval'
+        );
+
+        $this->validator->validate($recurrence, $this->constraint);
+    }
+
+    public function testRecurrenceHasWrongEndTime()
+    {
+        $recurrence =  new Entity\Recurrence();
+        $recurrence->setInterval(1);
+        $recurrence->setRecurrenceType(Model\Recurrence::TYPE_DAILY);
+        $recurrence->setStartTime(new \DateTime('2016-11-01 00:00:00', new \DateTimeZone('UTC')));
+        $recurrence->setEndTime(new \DateTime('2016-10-01 00:00:00', new \DateTimeZone('UTC')));
+
+        $formattedStartTime = '2016-11-11 00:00:00';
+        $this->validator->expects($this->once())
+            ->method('formatValue')
+            ->with($recurrence->getStartTime(), RecurrenceValidator::PRETTY_DATE)
+            ->willReturn($formattedStartTime);
+
+        $this->model->expects($this->once())
+            ->method('getRequiredProperties')
+            ->with($recurrence)
+            ->willReturn([]);
+
+        $this->model->expects($this->once())
+            ->method('getMaxInterval')
+            ->with($recurrence)
+            ->willReturn(99);
+
+        $this->model->expects($this->once())
+            ->method('getIntervalMultipleOf')
+            ->with($recurrence)
+            ->willReturn(1);
+
+        $this->expectAddViolation(
+            $this->at(0),
+            'This value should be {{ limit }} or more.',
+            ['{{ limit }}' => $formattedStartTime],
+            $recurrence->getEndTime(),
+            'endTime'
+        );
+
+        $this->validator->validate($recurrence, $this->constraint);
+    }
+
+    public function testRecurrenceHasWrongDayOfWeek()
+    {
+        $recurrence =  new Entity\Recurrence();
+        $recurrence->setInterval(1);
+        $recurrence->setRecurrenceType(Model\Recurrence::TYPE_WEEKLY);
+        $recurrence->setDayOfWeek(['unknown']);
+
+        $this->model->expects($this->once())
+            ->method('getRequiredProperties')
+            ->with($recurrence)
+            ->willReturn([]);
+
+        $this->model->expects($this->once())
+            ->method('getMaxInterval')
+            ->with($recurrence)
+            ->willReturn(99);
+
+        $this->model->expects($this->once())
+            ->method('getIntervalMultipleOf')
+            ->with($recurrence)
+            ->willReturn(1);
+
+        $this->expectAddViolation(
+            $this->at(0),
+            'One or more of the given values is not one of the values: {{ allowed_values }}.',
+            ['{{ allowed_values }}' => implode(', ', self::$expectedDaysOfWeekValues)],
+            $recurrence->getDayOfWeek(),
+            'dayOfWeek'
+        );
+
+        $this->validator->validate($recurrence, $this->constraint);
+    }
+
+    public function testRecurrenceHasWrongDayOfMonth()
+    {
+        $recurrence =  new Entity\Recurrence();
+        $recurrence->setInterval(1);
+        $recurrence->setRecurrenceType(Model\Recurrence::TYPE_YEARLY);
+        $recurrence->setMonthOfYear(11);
+        $recurrence->setDayOfMonth(31);
+
+        $this->model->expects($this->once())
+            ->method('getRequiredProperties')
+            ->with($recurrence)
+            ->willReturn([]);
+
+        $this->model->expects($this->once())
+            ->method('getMaxInterval')
+            ->with($recurrence)
+            ->willReturn(999);
+
+        $this->model->expects($this->once())
+            ->method('getIntervalMultipleOf')
+            ->with($recurrence)
+            ->willReturn(1);
+
+        $this->expectAddViolation(
+            $this->at(0),
+            'This value should be {{ limit }} or less.',
+            ['{{ limit }}' => 30],
+            $recurrence->getDayOfMonth(),
+            'dayOfMonth'
+        );
+
+        $this->validator->validate($recurrence, $this->constraint);
     }
 
     /**
-     * @return RecurrenceValidator
+     * @param \PHPUnit_Framework_MockObject_Matcher_Invocation $matcher
+     * @param string $message
+     * @param array $parameters
+     * @param mixed $invalidValue
+     * @param string|null $path
      */
-    protected function getValidator()
-    {
-        $this->strategy = $this->getMockBuilder('Oro\Bundle\CalendarBundle\Model\Recurrence\StrategyInterface')
-            ->getMock();
+    protected function expectAddViolation(
+        \PHPUnit_Framework_MockObject_Matcher_Invocation $matcher,
+        $message,
+        array $parameters,
+        $invalidValue,
+        $path
+    ) {
+        $builder = $this->getMock('Symfony\Component\Validator\Violation\ConstraintViolationBuilderInterface');
 
-        $recurrenceModel = new ModelRecurrence($this->strategy);
+        $this->context->expects($matcher)
+            ->method('buildViolation')
+            ->with($message, [])
+            ->will($this->returnValue($builder));
 
-        $validator = new RecurrenceValidator($recurrenceModel);
-        $validator->initialize($this->context);
+        $builder->expects($this->once())
+            ->method('setParameters')
+            ->with($parameters)
+            ->will($this->returnSelf());
 
-        return $validator;
+        $builder->expects($this->once())
+            ->method('setInvalidValue')
+            ->with($invalidValue)
+            ->will($this->returnSelf());
+
+        if ($path) {
+            $builder->expects($this->once())
+                ->method('atPath')
+                ->with($path)
+                ->will($this->returnSelf());
+        }
+
+        $builder->expects($this->once())
+            ->method('addViolation');
     }
 }

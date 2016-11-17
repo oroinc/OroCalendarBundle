@@ -10,12 +10,13 @@ use Oro\Bundle\CalendarBundle\Model\Recurrence;
  */
 class YearlyStrategy extends MonthlyStrategy
 {
-    // @codingStandardsIgnoreStart
-    const INTERVAL_VALIDATION_ERROR      = "Parameter 'interval' value must be a multiple of 12 for Yearly recurrence pattern.";
-    const DAY_OF_MONTH_VALIDATION_ERROR  = "Parameter 'dayOfMonth' can't be empty for Yearly recurrence pattern.";
-    const MONTH_OF_YEAR_VALIDATION_ERROR = "Parameter 'monthOfYear' can't be empty for Yearly recurrence pattern.";
-    const WRONG_DATE_VALIDATION_ERROR    = "Parameters 'dayOfMonth' and 'monthOfYear' values are invalid: such date doesn't exist (Yearly recurrence pattern).";
-    // @codingStandardsIgnoreEnd
+    /**
+     * {@inheritdoc}
+     */
+    public function getName()
+    {
+        return 'recurrence_yearly';
+    }
 
     /**
      * {@inheritdoc}
@@ -46,14 +47,6 @@ class YearlyStrategy extends MonthlyStrategy
     /**
      * {@inheritdoc}
      */
-    public function getName()
-    {
-        return 'recurrence_yearly';
-    }
-
-    /**
-     * {@inheritdoc}
-     */
     protected function getFirstOccurrence(Entity\Recurrence $recurrence)
     {
         $dayOfMonth = $recurrence->getDayOfMonth();
@@ -72,28 +65,24 @@ class YearlyStrategy extends MonthlyStrategy
     /**
      * {@inheritdoc}
      */
-    public function getValidationErrorMessage(Entity\Recurrence $recurrence)
+    public function getRequiredProperties(Entity\Recurrence $recurrence)
     {
-        if ($recurrence->getInterval() % 12 !== 0) {
-            return self::INTERVAL_VALIDATION_ERROR;
-        }
+        return array_merge(
+            parent::getRequiredProperties($recurrence),
+            [
+                'monthOfYear',
+            ]
+        );
+    }
 
-        if (!$recurrence->getDayOfMonth()) {
-            return self::DAY_OF_MONTH_VALIDATION_ERROR;
-        }
-
-        if (!$recurrence->getMonthOfYear()) {
-            return self::MONTH_OF_YEAR_VALIDATION_ERROR;
-        }
-
-        $currentDate = new \DateTime('now', $recurrence->getStartTime()->getTimezone());
-        $currentDate->setDate($currentDate->format('Y'), $recurrence->getMonthOfYear(), 1);
-        $daysInMonth = (int)$currentDate->format('t');
-
-        if ($daysInMonth < $recurrence->getDayOfMonth()) {
-            return self::WRONG_DATE_VALIDATION_ERROR;
-        }
-
-        return null;
+    /**
+     * The multiplier for yearly recurrence type is 12, so only values of interval from this sequence are supported:
+     * 12, 24, 36, ...
+     *
+     * {@inheritdoc}
+     */
+    public function getIntervalMultipleOf(Entity\Recurrence $recurrence)
+    {
+        return 12;
     }
 }

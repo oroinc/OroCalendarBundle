@@ -7,7 +7,13 @@ use Oro\Bundle\CalendarBundle\Model\Recurrence;
 
 class WeeklyStrategy extends AbstractStrategy
 {
-    const DAY_OF_WEEK_VALIDATION_ERROR = "Parameter 'dayOfWeek' can't be empty for Weekly recurrence pattern.";
+    /**
+     * {@inheritdoc}
+     */
+    public function getName()
+    {
+        return 'recurrence_weekly';
+    }
 
     /**
      * {@inheritdoc}
@@ -108,14 +114,6 @@ class WeeklyStrategy extends AbstractStrategy
     }
 
     /**
-     * {@inheritdoc}
-     */
-    public function getName()
-    {
-        return 'recurrence_weekly';
-    }
-
-    /**
      * Returns next date occurrence.
      *
      * @param string $day
@@ -202,12 +200,11 @@ class WeeklyStrategy extends AbstractStrategy
     /**
      * {@inheritdoc}
      */
-    public function getValidationErrorMessage(Entity\Recurrence $recurrence)
+    public function getRequiredProperties(Entity\Recurrence $recurrence)
     {
-        if (!$recurrence->getDayOfWeek()) {
-            return self::DAY_OF_WEEK_VALIDATION_ERROR;
-        }
-
-        return null;
+        return array_merge(
+            parent::getRequiredProperties($recurrence),
+            ['dayOfWeek']
+        );
     }
 }

@@ -173,24 +173,6 @@ class AbstractTestCase extends WebTestCase
     }
 
     /**
-     * Sorts array by key recursively. This method is used to output failures of array response comparison in
-     * a more comprehensive way.
-     *
-     * @param array $array
-     * @return mixed
-     */
-    protected function sortArrayByKeyRecursively(array &$array)
-    {
-        ksort($array);
-
-        foreach ($array as $key => &$value) {
-            if (is_array($value)) {
-                $this->sortArrayByKeyRecursively($value);
-            }
-        }
-    }
-
-    /**
      * Get instance of Doctrine's entity repository.
      *
      * @param string $entityName

@@ -57,13 +57,30 @@ interface StrategyInterface
     public function getCalculatedEndTime(Recurrence $recurrence);
 
     /**
-     * Validates recurrence and returns error message if it is not valid.
+     * Returns maximum interval for this recurrence strategy.
      *
      * @param Recurrence $recurrence
      *
-     * @return null|string
-     *
-     * @throws \InvalidArgumentException
+     * @return integer
      */
-    public function getValidationErrorMessage(Recurrence $recurrence);
+    public function getMaxInterval(Recurrence $recurrence);
+
+    /**
+     * Get multiple of interval. For example if recurrence type is "yearly" the interval has to be a multiple of 12.
+     * It means only next values of the interval are supported: 12, 24, 36, ...
+     *
+     * @param Recurrence $recurrence
+     *
+     * @return integer
+     */
+    public function getIntervalMultipleOf(Recurrence $recurrence);
+
+    /**
+     * Returns list of required fields for this recurrence strategy.
+     *
+     * @param Recurrence $recurrence
+     *
+     * @return array
+     */
+    public function getRequiredProperties(Recurrence $recurrence);
 }
