@@ -15,10 +15,12 @@ define(function(require) {
 
     EventRecurrenceView = BaseView.extend({
         RECURRENCE_REPEATS: {
-            daily: ['daily'],
-            weekly: ['weekly'],
-            monthly: ['monthly', 'monthnth'],
-            yearly: ['yearly', 'yearnth']
+            daily: 'daily',
+            weekly: 'weekly',
+            monthly: 'monthly',
+            monthnth: 'monthly',
+            yearly: 'yearly',
+            yearnth: 'yearly'
         },
 
         RECURRENCE_REPEAT_VIEWS: {
@@ -52,15 +54,15 @@ define(function(require) {
         },
 
         getTemplateData: function() {
-            var RECURRENCE_REPEATS = this.RECURRENCE_REPEATS;
             var data = EventRecurrenceView.__super__.getTemplateData.call(this);
+            var repeatViewName = this.getRepeatViewName(data.recurrenceType);
 
             data.cid = this.cid;
-            data.repeatsOptions = _.map(_.keys(RECURRENCE_REPEATS), function(item) {
+            data.repeatsOptions = _.map(_.keys(this.RECURRENCE_REPEAT_VIEWS), function(item) {
                 return {
                     value: item,
                     label: __('oro.calendar.event.recurrence.repeat.' + item),
-                    selected: RECURRENCE_REPEATS[item].indexOf(data.recurrenceType) !== -1
+                    selected: item === repeatViewName
                 };
             });
 
@@ -171,9 +173,7 @@ define(function(require) {
         },
 
         getRepeatViewName: function(repeatType) {
-            return _.findKey(this.RECURRENCE_REPEATS, function(repeatTypes) {
-                return repeatTypes.indexOf(repeatType) !== -1;
-            });
+            return this.RECURRENCE_REPEATS[repeatType];
         }
     });
 
