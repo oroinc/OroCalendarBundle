@@ -401,10 +401,23 @@ define(function(require) {
             var formData = this.eventDialog.form.serializeArray().filter(function(item) {
                 return fieldNameFilterRegex.test(item.name);
             });
-            formData = formData.concat(this.eventDialog.form.find('input[type=checkbox]:not(:checked)')
+            formData = formData.concat(this.eventDialog.form.find('input[name][type=checkbox]:not(:checked)')
                 .map(function() {
                     return {name: this.name, value: false};
                 }).get());
+            // convert multiselect separate values into array of values
+            formData = _.reduce(formData, function(result, item) {
+                var existingItem = _.findWhere(result, {name: item.name});
+                if (existingItem) {
+                    if (!_.isArray(existingItem.value)) {
+                        existingItem.value = [existingItem.value];
+                    }
+                    existingItem.value.push(item.value);
+                } else {
+                    result.push(item);
+                }
+                return result;
+            }, []);
             _.each(formData, function(dataItem) {
                 var matches = [];
                 var match;
