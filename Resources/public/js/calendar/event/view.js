@@ -1,37 +1,28 @@
-define([
-    'underscore',
-    'backbone',
-    'orotranslation/js/translator',
-    'routing',
-    'oro/dialog-widget',
-    'oroui/js/mediator',
-    'oroui/js/app/views/loading-mask-view',
-    'orocalendar/js/form-validation',
-    'oroui/js/delete-confirmation',
-    'oroform/js/formatter/field',
-    'oroactivity/js/app/components/activity-context-activity-component'
-], function(
-    _,
-    Backbone,
-    __,
-    routing,
-    DialogWidget,
-    mediator,
-    LoadingMask,
-    FormValidation,
-    DeleteConfirmation,
-    fieldFormatter,
-    ActivityContextComponent
-) {
+define(function(require) {
     'use strict';
 
-    var $ = Backbone.$;
+    var CalendarEventView;
+    var $ = require('jquery');
+    var _ = require('underscore');
+    var BaseView = require('oroui/js/app/views/base/view');
+    var __ = require('orotranslation/js/translator');
+    var routing = require('routing');
+    var DialogWidget = require('oro/dialog-widget');
+    var mediator = require('oroui/js/mediator');
+    var LoadingMask = require('oroui/js/app/views/loading-mask-view');
+    var FormValidation = require('orocalendar/js/form-validation');
+    var DeleteConfirmation = require('oroui/js/delete-confirmation');
+    var fieldFormatter = require('oroform/js/formatter/field');
+    var ActivityContextComponent = require('oroactivity/js/app/components/activity-context-activity-component');
+    var EventRecurrenceView = require('orocalendar/js/calendar/event/recurrence/event-recurrence-view');
+    var EventRecurrenceModel = require('orocalendar/js/calendar/event/recurrence/event-recurrence-model');
+
     /**
      * @export  orocalendar/js/calendar/event/view
      * @class   orocalendar.calendar.event.View
-     * @extends Backbone.View
+     * @extends BaseView
      */
-    return Backbone.View.extend({
+    CalendarEventView = BaseView.extend({
         /** @property {Object} */
         options: {
             calendar: null,
@@ -47,7 +38,8 @@ define([
             backgroundColor: 'input[name$="[backgroundColor]"]',
             calendarUid: '[name*="calendarUid"]',
             attendees: 'input[name$="[attendees]"]',
-            contexts: 'input[name$="[contexts]"]'
+            contexts: 'input[name$="[contexts]"]',
+            recurrenceContainer: '[data-name=recurrence-container]'
         },
 
         /** @property {Array} */
@@ -72,7 +64,7 @@ define([
                 this.activityContext.dispose();
                 delete this.activityContext;
             }
-            Backbone.View.prototype.remove.apply(this, arguments);
+            CalendarEventView.__super__.remove.apply(this, arguments);
         },
 
         onModelSave: function() {
@@ -186,7 +178,7 @@ define([
             try {
                 var options = {
                     wait: true,
-                    error: _.bind(this._handleResponseError, this),
+                    error: _.bind(this._handleResponseError, this)
                 };
                 if (deleteUrl) {
                     options.url = routing.generate(deleteUrl, {id: this.model.originalId});
@@ -348,6 +340,8 @@ define([
             var form = this.fillForm(this.template(templateData), modelData);
             var calendarColors = this.options.colorManager.getCalendarColors(this.model.get('calendarUid'));
 
+            this._initRecurrenceView(form.find(this.selectors.recurrenceContainer));
+
             form.find(this.selectors.backgroundColor)
                 .data('page-component-options').emptyColor = calendarColors.backgroundColor;
             if (modelData.calendarAlias !== 'user') {
@@ -404,13 +398,28 @@ define([
             var fieldNameFilterRegex = /^oro_calendar_event_form/;
             var fieldNameRegex = /\[(\w+)\]/g;
             var data = {};
+            var $form = this.eventDialog.form;
             var formData = this.eventDialog.form.serializeArray().filter(function(item) {
                 return fieldNameFilterRegex.test(item.name);
             });
-            formData = formData.concat(this.eventDialog.form.find('input[type=checkbox]:not(:checked)')
+            formData = formData.concat(this.eventDialog.form.find('input[name][type=checkbox]:not(:checked)')
                 .map(function() {
                     return {name: this.name, value: false};
                 }).get());
+            // convert multiselect separate values into array of values
+            formData = _.reduce(formData, function(result, item) {
+                var existingItem = _.findWhere(result, {name: item.name});
+                if (!existingItem && _.isArray($form.find('[name="' + item.name + '"]').val())) {
+                    // convert first value of multiselect into array
+                    item.value = [item.value];
+                }
+                if (existingItem) {
+                    existingItem.value.push(item.value);
+                } else {
+                    result.push(item);
+                }
+                return result;
+            }, []);
             _.each(formData, function(dataItem) {
                 var matches = [];
                 var match;
@@ -463,6 +472,20 @@ define([
                 calendarAlias: calendarUid.substr(0, calendarUid.lastIndexOf('_')),
                 calendar: parseInt(calendarUid.substr(calendarUid.lastIndexOf('_') + 1))
             };
+        },
+
+        _initRecurrenceView: function($el) {
+            if (!$el.length) {
+                return;
+            }
+            var eventRecurrenceModel = new EventRecurrenceModel(this.model.get('recurrence'));
+            var eventRecurrenceView = new EventRecurrenceView({
+                autoRender: true,
+                el: $el,
+                model: eventRecurrenceModel,
+                inputNamePrefixes: 'oro_calendar_event_form[recurrence]'
+            });
+            this.subview('eventRecurrence', eventRecurrenceView);
         },
 
         _showUserCalendarOnlyFields: function(form, visible) {
@@ -570,4 +593,6 @@ define([
             };
         }
     });
+
+    return CalendarEventView;
 });

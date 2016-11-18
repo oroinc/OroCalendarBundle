@@ -1,0 +1,30 @@
+<div class="recurrence-subview-control">
+    <div class="control-group">
+        <div class="control-label wrap">
+            <label><%- _.__('oro.calendar.event.recurrence.control-label.repeat-every') %></label>
+        </div>
+        <div class="controls">
+            <label class="fields-row">
+                <input type="hidden"
+                       data-related-field="recurrenceType"
+                       value="weekly">
+                <input class="recurrence-subview-control__number"
+                       type="text"
+                       data-related-field="interval"
+                       data-validation="<%-JSON.stringify({NotBlank: {}, Number: {min: 1, max: 999}, Type: {type: 'integer'}}) %>"
+                       value="<%=interval %>">
+                <span class="recurrence-subview-control__text"><%- _.__('oro.calendar.event.recurrence.controls.weeks') %></span>
+            </label>
+        </div>
+    </div>
+    <div class="control-group">
+        <div class="control-label wrap">
+            <label><%- _.__('oro.calendar.event.recurrence.control-label.repeat-on') %></label>
+        </div>
+        <div class="controls recurrence-subview-control">
+            <div class="validate-group" data-name="recurrence-week-day-picker"
+                 data-validation="<%-JSON.stringify({Count:{minMessage:'oro.calendar.event.recurrence.validation.dayOfWeek.minMessage', min: 1}})%>"
+            ></div>
+        </div>
+    </div>
+</div>

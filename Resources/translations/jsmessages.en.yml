@@ -17,6 +17,50 @@ oro:
             calendar_removed: "Calendar was removed"
             calendar_updating: "Updating calendar, please wait ..."
             calendar_updated: "Calendar was updated"
+        event:
+            recurrence:
+                repeat:
+                    daily: Daily
+                    weekly: Weekly
+                    monthly: Monthly
+                    yearly: Yearly
+                instance:
+                    first: First
+                    second: Second
+                    third: Third
+                    fourth: Fourth
+                    last: Last
+                control-label:
+                    repeat: Repeat
+                    repeats: Repeats
+                    repeat-every: "Repeat every"
+                    repeat-on: "Repeat on"
+                    ends: Ends
+                control-modes:
+                    weekday: Weekday
+                    never: Never
+                    after: After
+                    by: By
+                controls:
+                    occurrences: occurrences
+                    days: "day(s)"
+                    weeks: "week(s)"
+                    months: "month(s)"
+                    years: "year(s)"
+                    monthly-repeat-on:
+                        day: Day
+                        first: First
+                        second: Second
+                        third: Third
+                        fourth: Fourth
+                        last: Last
+                    weekday: Weekday
+                    weekend-day: "Weekend Day"
+                warning:
+                    some-months-have-fewer-days: "Some months have fewer than {{ number }} days. For these months, the occurence will fall on the last day of te month."
+                validation:
+                    dayOfWeek:
+                        minMessage: "You must select at least {{ limit }} day"
 "Add New Event": "Add New Event"
 "View Event": "View Event"
 "Edit Event": "Edit Event"
