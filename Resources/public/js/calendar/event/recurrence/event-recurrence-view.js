@@ -12,6 +12,7 @@ define(function(require) {
     var RecurrenceDailyView = require('orocalendar/js/calendar/event/recurrence/recurrence-daily-view');
     var RecurrenceWeeklyView = require('orocalendar/js/calendar/event/recurrence/recurrence-weekly-view');
     var RecurrenceMonthlyView = require('orocalendar/js/calendar/event/recurrence/recurrence-monthly-view');
+    var RecurrenceYearlyView = require('orocalendar/js/calendar/event/recurrence/recurrence-yearly-view');
 
     EventRecurrenceView = BaseView.extend({
         RECURRENCE_REPEATS: {
@@ -26,7 +27,8 @@ define(function(require) {
         RECURRENCE_REPEAT_VIEWS: {
             daily: RecurrenceDailyView,
             weekly: RecurrenceWeeklyView,
-            monthly: RecurrenceMonthlyView
+            monthly: RecurrenceMonthlyView,
+            yearly: RecurrenceYearlyView
         },
 
         /** @type {string|null}*/

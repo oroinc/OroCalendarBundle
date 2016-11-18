@@ -1,8 +1,12 @@
 .recurrence-subview-control {
-  margin-top: 6px;
+  &__items {
+    margin-top: 1px;
+  }
   &__item {
-    min-height: 26px;
-    label{
+    label {
+      height: 30px;
+      line-height: 30px;
+      vertical-align: middle;
       display: inline-block;
     }
     input[type=radio] {
@@ -18,7 +22,13 @@
   }
   &__number {
     width: 36px;
-    margin: 0 6px;
+    margin-right: 6px;
+  }
+  label &__number {
+    margin-left: 6px;
+  }
+  &__row {
+    margin-bottom: 10px;
   }
   .controls select {
     width: auto;

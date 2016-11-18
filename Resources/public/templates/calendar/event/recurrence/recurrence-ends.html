@@ -2,28 +2,28 @@
     <div class="control-label wrap">
         <label><%- _.__('oro.calendar.event.recurrence.control-label.ends') %></label>
     </div>
-    <div class="controls recurrence-subview-control" data-name="control-sections">
+    <div class="controls recurrence-subview-control recurrence-subview-control__items" data-name="control-sections">
         <div class="recurrence-subview-control__item">
-            <label>
-                <input type="radio" data-role="control-section-switcher"<% if (!occurrences && !endTime) {%> checked="checked"<% } %>>
+            <label data-role="control-section-switcher">
+                <input type="radio"<% if (!occurrences && !endTime) {%> checked<% } %>>
                 <%- _.__('oro.calendar.event.recurrence.control-modes.never') %>
             </label>
         </div>
         <div class="recurrence-subview-control__item">
-            <label>
-                <input type="radio" data-role="control-section-switcher"<% if (occurrences) {%> checked="checked"<% } %>>
+            <label class="fields-row" data-role="control-section-switcher">
+                <input type="radio"<% if (occurrences) {%> checked<% } %>>
                 <%- _.__('oro.calendar.event.recurrence.control-modes.after') %>
                 <input class="recurrence-subview-control__number"
                        type="text"
                        data-related-field="occurrences"
-                       data-validation="<%-JSON.stringify({Number: {}, NotBlank: {}}) %>"
+                       data-validation="<%-JSON.stringify({NotBlank: {}, Number: {min: 1, max: 999}, Type: {type: 'integer'}}) %>"
                        value="<%=occurrences %>">
                 <%- _.__('oro.calendar.event.recurrence.controls.occurrences') %>
             </label>
         </div>
         <div class="recurrence-subview-control__item">
-            <label>
-                <input type="radio" data-role="control-section-switcher"<% if (endTime) {%> checked="checked"<% } %>>
+            <label data-role="control-section-switcher">
+                <input type="radio"<% if (endTime) {%> checked<% } %>>
                 <%- _.__('oro.calendar.event.recurrence.control-modes.by') %>
                 <input class="recurrence-subview-control__datetime"
                        type="text"

@@ -46,6 +46,7 @@ oro:
                     days: "day(s)"
                     weeks: "week(s)"
                     months: "month(s)"
+                    years: "year(s)"
                     monthly-repeat-on:
                         day: Day
                         first: First
@@ -57,6 +58,9 @@ oro:
                     weekend-day: "Weekend Day"
                 warning:
                     some-months-have-fewer-days: "Some months have fewer than {{ number }} days. For these months, the occurence will fall on the last day of te month."
+                validation:
+                    dayOfWeek:
+                        minMessage: "You must select at least {{ limit }} day"
 "Add New Event": "Add New Event"
 "View Event": "View Event"
 "Edit Event": "Edit Event"
