@@ -17,6 +17,10 @@ define(function(require) {
             'change [data-related-field="instance"]': 'onInstanceChange'
         },
 
+        listen: {
+            'change model': 'onModelChange'
+        },
+
         initialize: function() {
             RecurrenceMonthlyView.__super__.initialize.apply(this, arguments);
             this.weekendDays = [this.model.RECURRENCE_DAYOFWEEK[0], this.model.RECURRENCE_DAYOFWEEK[6]];
@@ -80,12 +84,12 @@ define(function(require) {
             });
         },
 
-        updateModel: function() {
-            RecurrenceMonthlyView.__super__.updateModel.call(this);
+        onModelChange: function() {
             var dayOfMonth = !this.model.get('instance') ? Number(this.model.get('dayOfMonth')) : null;
             if (dayOfMonth >= 29 && dayOfMonth <= 31) {
                 this.$('[data-name="recurrence-warning"]')
-                    .html(__('oro.calendar.event.recurrence.warning.day-' + dayOfMonth)).show();
+                    .html(__('oro.calendar.event.recurrence.warning.some-months-have-fewer-days', {number: dayOfMonth}))
+                    .show();
             } else {
                 this.$('[data-name="recurrence-warning"]').hide();
             }
