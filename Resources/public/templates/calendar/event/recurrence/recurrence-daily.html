@@ -5,8 +5,8 @@
     <div class="controls" data-name="control-sections">
         <div class="recurrence-subview-control recurrence-subview-control__items" data-name="control-sections">
             <div class="recurrence-subview-control__item">
-                <label class="fields-row">
-                    <input type="radio" data-role="control-section-switcher" checked="checked">
+                <label class="fields-row" data-role="control-section-switcher">
+                    <input type="radio" checked="checked">
                     <input type="hidden"
                            data-related-field="recurrenceType"
                            value="daily">
@@ -19,8 +19,8 @@
                 </label>
             </div>
             <div class="recurrence-subview-control__item">
-                <label>
-                    <input type="radio" data-role="control-section-switcher">
+                <label data-role="control-section-switcher">
+                    <input type="radio">
                     <%- _.__('oro.calendar.event.recurrence.control-modes.weekday') %>
                 </label>
                 <input type="hidden"
