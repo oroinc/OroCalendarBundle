@@ -255,8 +255,8 @@ datagrids:
                 label: oro.user.enabled.label
                 frontend_type: select
                 choices:
-                   - Inactive
-                   - Active
+                   - Disabled
+                   - Enabled
 
         properties:
             id: ~
@@ -294,8 +294,8 @@ datagrids:
                     options:
                         field_options:
                             choices:
-                                2: Inactive
-                                1: Active
+                                2: Disabled
+                                1: Enabled
 
     base-system-calendar-event-grid:
         source:
