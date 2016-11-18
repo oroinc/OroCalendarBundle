@@ -23,15 +23,26 @@ define(function(require) {
             return data;
         },
 
-        updateModel: function() {
-            RecurrenceMonthlyView.__super__.updateModel.call(this);
+        onModelChange: function(model) {
+            var dayOfMonth = !this.model.get('instance') ? Number(this.model.get('dayOfMonth')) : null;
             var monthOfYear = Number(this.model.get('monthOfYear'));
-            var daysInMonth = new Date(0, monthOfYear, 0).getDate();
-            // since in this view user specified a month it is possible to hide an unnecessary warning
-            // shown in parent view
-            if (daysInMonth >= Number(this.model.get('dayOfMonth'))) {
-                this.$('[data-name="recurrence-warning"]').hide();
+            var daysInMonth = this._daysInMonth(monthOfYear);
+            if ('monthOfYear' in model.changed) {
+                var dayValidationRules = this.$('[data-related-field="dayOfMonth"]').data('validation');
+                dayValidationRules.Number.max = daysInMonth;
             }
+            if (dayOfMonth === 29 && monthOfYear === 2) { // the 29 of february was selected
+                this.getWarningContainer().html(
+                    __('oro.calendar.event.recurrence.warning.some-months-have-fewer-days', {number: dayOfMonth})
+                ).show();
+            } else {
+                this.getWarningContainer().hide();
+            }
+        },
+
+        _daysInMonth: function(month) {
+            var fullYear = new Date().getFullYear();
+            return new Date(fullYear, month, 0).getDate();
         },
 
         getValue: function() {

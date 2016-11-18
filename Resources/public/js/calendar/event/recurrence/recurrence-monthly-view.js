@@ -65,6 +65,10 @@ define(function(require) {
             return this;
         },
 
+        getWarningContainer: function() {
+            return this.$('[data-name="recurrence-warning"]');
+        },
+
         onInstanceChange: function(e) {
             this.updateControlBlocksState();
         },
@@ -87,11 +91,11 @@ define(function(require) {
         onModelChange: function() {
             var dayOfMonth = !this.model.get('instance') ? Number(this.model.get('dayOfMonth')) : null;
             if (dayOfMonth >= 29 && dayOfMonth <= 31) {
-                this.$('[data-name="recurrence-warning"]')
+                this.getWarningContainer()
                     .html(__('oro.calendar.event.recurrence.warning.some-months-have-fewer-days', {number: dayOfMonth}))
                     .show();
             } else {
-                this.$('[data-name="recurrence-warning"]').hide();
+                this.getWarningContainer().hide();
             }
         },
 
