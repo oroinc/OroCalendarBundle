@@ -1,6 +1,9 @@
+.ui-dialog .form-horizontal .control-group.control-group-choice {
+  margin-bottom: 8px;
+}
 .recurrence-subview-control {
   &__items {
-    margin-top: 1px;
+    margin-top: 0px;
   }
   &__item {
     label {
@@ -10,27 +13,38 @@
       display: inline-block;
     }
     input[type=radio] {
-      margin: -2px 8px 0 0 ;
+      margin: 0 8px 0 0 ;
     }
     .fields-row {
       display: inline-block;
+      line-height: 30px;
     }
     .hasDatepicker {
       width: 95px;
-      margin: 0 6px 0 18px;
+      margin: 0 6px 0 0;
     }
+  }
+  &__item:last-child label {
+    margin-bottom: 0;
   }
   &__number {
     width: 36px;
     margin-right: 6px;
   }
-  label &__number {
-    margin-left: 6px;
+  &__text {
+    vertical-align: middle;
+  }
+  input[type=radio] + &__text {
+    display: inline-block;
+    min-width: 36px;
   }
   &__row {
     margin-bottom: 10px;
   }
   .controls select {
     width: auto;
+  }
+  .ui-dialog .form-horizontal & .control-group {
+    margin-bottom: 4px;
   }
 }
