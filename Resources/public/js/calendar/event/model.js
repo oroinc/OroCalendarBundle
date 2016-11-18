@@ -51,11 +51,11 @@ define([
 
         url: function() {
             var url;
-            var id = this.id;
+            var id = this.get(this.idAttribute);
 
-            this.id = this.originalId;
+            this.set(this.idAttribute, this.originalId, {silent: true});
             url = Backbone.Model.prototype.url.call(this, arguments);
-            this.id = id;
+            this.set(this.idAttribute, id, {silent: true});
 
             return url;
         },
