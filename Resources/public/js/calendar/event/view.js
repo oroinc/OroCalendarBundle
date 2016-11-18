@@ -398,13 +398,28 @@ define(function(require) {
             var fieldNameFilterRegex = /^oro_calendar_event_form/;
             var fieldNameRegex = /\[(\w+)\]/g;
             var data = {};
+            var $form = this.eventDialog.form;
             var formData = this.eventDialog.form.serializeArray().filter(function(item) {
                 return fieldNameFilterRegex.test(item.name);
             });
-            formData = formData.concat(this.eventDialog.form.find('input[type=checkbox]:not(:checked)')
+            formData = formData.concat(this.eventDialog.form.find('input[name][type=checkbox]:not(:checked)')
                 .map(function() {
                     return {name: this.name, value: false};
                 }).get());
+            // convert multiselect separate values into array of values
+            formData = _.reduce(formData, function(result, item) {
+                var existingItem = _.findWhere(result, {name: item.name});
+                if (!existingItem && _.isArray($form.find('[name="' + item.name + '"]').val())) {
+                    // convert first value of multiselect into array
+                    item.value = [item.value];
+                }
+                if (existingItem) {
+                    existingItem.value.push(item.value);
+                } else {
+                    result.push(item);
+                }
+                return result;
+            }, []);
             _.each(formData, function(dataItem) {
                 var matches = [];
                 var match;

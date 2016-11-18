@@ -3,6 +3,7 @@ define(function(require) {
 
     var RecurrenceMonthlyView;
     var _ = require('underscore');
+    var __ = require('orotranslation/js/translator');
     var $ = require('jquery');
     var localeSettings = require('orolocale/js/locale-settings');
     var AbstractRecurrenceSubview = require('orocalendar/js/calendar/event/recurrence/abstract-recurrence-subview');
@@ -14,6 +15,10 @@ define(function(require) {
         relatedFields: ['recurrenceType', 'interval', 'instance', 'dayOfWeek', 'dayOfMonth'],
         events: {
             'change [data-related-field="instance"]': 'onInstanceChange'
+        },
+
+        listen: {
+            'change model': 'onModelChange'
         },
 
         initialize: function() {
@@ -65,18 +70,29 @@ define(function(require) {
         },
 
         updateControlBlocksState: function() {
-            var repeatOnDayOfWeek = !this.$('[data-related-field="instance"]').val();
-            this.$('[data-name="repeat-on-day-of-week"]').toggle(repeatOnDayOfWeek);
-            this.$('[data-name="repeat-on-day-number"]').toggle(!repeatOnDayOfWeek);
+            var repeatOnInstance = !this.$('[data-related-field="instance"]').val();
+            this.$('[data-name="repeat-on-day"]').toggle(repeatOnInstance);
+            this.$('[data-name="repeat-on-instance"]').toggle(!repeatOnInstance);
         },
 
         dataInputs: function() {
             var $dataInputs = RecurrenceMonthlyView.__super__.dataInputs.apply(this, arguments);
             var hiddenControlBlock = this.$('[data-related-field="instance"]').val() ?
-                this.$('[data-name="repeat-on-day-of-week"]') : this.$('[data-name="repeat-on-day-number"]');
+                this.$('[data-name="repeat-on-day"]') : this.$('[data-name="repeat-on-instance"]');
             return $dataInputs.filter(function(index, element) {
                 return !$.contains(hiddenControlBlock[0], element);
             });
+        },
+
+        onModelChange: function() {
+            var dayOfMonth = !this.model.get('instance') ? Number(this.model.get('dayOfMonth')) : null;
+            if (dayOfMonth >= 29 && dayOfMonth <= 31) {
+                this.$('[data-name="recurrence-warning"]')
+                    .html(__('oro.calendar.event.recurrence.warning.some-months-have-fewer-days', {number: dayOfMonth}))
+                    .show();
+            } else {
+                this.$('[data-name="recurrence-warning"]').hide();
+            }
         },
 
         getValue: function() {

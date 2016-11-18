@@ -2,6 +2,7 @@ define(function(require) {
     'use strict';
 
     var RecurrenceEndsView;
+    var __ = require('orotranslation/js/translator');
     var DateTimePickerView = require('oroui/js/app/views/datepicker/datetimepicker-view');
     var SwitchableRecurrenceSubview = require('orocalendar/js/calendar/event/recurrence/switchable-recurrence-subview');
 
@@ -11,7 +12,25 @@ define(function(require) {
         render: function() {
             RecurrenceEndsView.__super__.render.call(this);
             this.subview('date-time-picker-view', new DateTimePickerView({
-                el: this.$('[data-related-field="endTime"]')
+                el: this.$('[data-related-field="endTime"]'),
+                dateInputAttrs: {
+                    placeholder: __('oro.form.choose_date'),
+                    autocomplete: 'off',
+                    'data-validation': JSON.stringify({Date: {}})
+                },
+                timeInputAttrs: {
+                    placeholder: __('oro.form.choose_time'),
+                    autocomplete: 'off',
+                    'class': 'input-small timepicker-input',
+                    'data-validation': JSON.stringify({Time: {}})
+                },
+                datePickerOptions: {
+                    altFormat: 'yy-mm-dd',
+                    changeMonth: true,
+                    changeYear: true,
+                    yearRange: '-80:+1',
+                    showButtonPanel: true
+                }
             }));
             return this;
         },
