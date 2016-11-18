@@ -65,8 +65,14 @@ define(function(require) {
             return this;
         },
 
-        getWarningContainer: function() {
-            return this.$('[data-name="recurrence-warning"]');
+        setFewerDaysWarning: function(dayOfMonth) {
+            if (dayOfMonth) {
+                this.$('[data-name="recurrence-warning"]').html(
+                    __('oro.calendar.event.recurrence.warning.some-months-have-fewer-days', {number: dayOfMonth})
+                ).show();
+            } else {
+                this.$('[data-name="recurrence-warning"]').hide();
+            }
         },
 
         onInstanceChange: function(e) {
@@ -89,13 +95,11 @@ define(function(require) {
         },
 
         onModelChange: function() {
-            var dayOfMonth = !this.model.get('instance') ? Number(this.model.get('dayOfMonth')) : null;
-            if (dayOfMonth >= 29 && dayOfMonth <= 31) {
-                this.getWarningContainer()
-                    .html(__('oro.calendar.event.recurrence.warning.some-months-have-fewer-days', {number: dayOfMonth}))
-                    .show();
+            var dayOfMonth = Number(this.model.get('dayOfMonth'));
+            if (!this.model.get('instance') && dayOfMonth >= 29 && dayOfMonth <= 31) {
+                this.setFewerDaysWarning(dayOfMonth);
             } else {
-                this.getWarningContainer().hide();
+                this.setFewerDaysWarning(false);
             }
         },
 

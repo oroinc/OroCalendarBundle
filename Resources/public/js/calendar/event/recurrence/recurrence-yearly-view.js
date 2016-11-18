@@ -27,16 +27,18 @@ define(function(require) {
             var dayOfMonth = !this.model.get('instance') ? Number(this.model.get('dayOfMonth')) : null;
             var monthOfYear = Number(this.model.get('monthOfYear'));
             var daysInMonth = this._daysInMonth(monthOfYear);
+            var $dayOfMonthField = this.$('[data-related-field="dayOfMonth"]');
             if ('monthOfYear' in model.changed) {
-                var dayValidationRules = this.$('[data-related-field="dayOfMonth"]').data('validation');
+                var dayValidationRules = $dayOfMonthField.data('validation');
                 dayValidationRules.Number.max = daysInMonth;
+                if ($dayOfMonthField.val()) {
+                    $dayOfMonthField.trigger('blur');
+                }
             }
             if (dayOfMonth === 29 && monthOfYear === 2) { // the 29 of february was selected
-                this.getWarningContainer().html(
-                    __('oro.calendar.event.recurrence.warning.some-months-have-fewer-days', {number: dayOfMonth})
-                ).show();
+                this.setFewerDaysWarning(dayOfMonth);
             } else {
-                this.getWarningContainer().hide();
+                this.setFewerDaysWarning(false);
             }
         },
 
