@@ -139,7 +139,7 @@ define(function(require) {
 
         renderOriginValues: function() {
             var html = '';
-            if (!this.model.isEmptyRecurrence()) {
+            if (!this.model.isEmptyRecurrence() && this.findElement('repeat').is(':checked')) {
                 html = originValuesTemplate(this.getOriginValuesTemplateData());
             }
             this.findElement('origin-values').html(html);
@@ -155,6 +155,7 @@ define(function(require) {
             }
 
             this.findElement('settings').toggle(e.target.checked);
+            this.renderOriginValues();
             this.$el.trigger('content:changed');
         },
 

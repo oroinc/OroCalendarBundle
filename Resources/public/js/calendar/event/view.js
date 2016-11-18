@@ -413,7 +413,7 @@ define(function(require) {
                     // convert first value of multiselect into array
                     item.value = [item.value];
                 }
-                if (existingItem) {
+                if (existingItem && _.isArray(existingItem.value)) {
                     existingItem.value.push(item.value);
                 } else {
                     result.push(item);
