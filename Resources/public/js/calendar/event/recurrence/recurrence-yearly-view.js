@@ -27,11 +27,12 @@ define(function(require) {
             var dayOfMonth = !this.model.get('instance') ? Number(this.model.get('dayOfMonth')) : null;
             var monthOfYear = Number(this.model.get('monthOfYear'));
             var daysInMonth = this._daysInMonth(monthOfYear);
+            var $dayOfMonthField = this.$('[data-related-field="dayOfMonth"]');
             if ('monthOfYear' in model.changed) {
-                var dayValidationRules = this.$('[data-related-field="dayOfMonth"]').data('validation');
+                var dayValidationRules = $dayOfMonthField.data('validation');
                 dayValidationRules.Number.max = daysInMonth;
-                if (this.$('[data-related-field="dayOfMonth"]').val()) {
-                    this.$('[data-related-field="dayOfMonth"]').trigger('blur');
+                if ($dayOfMonthField.val()) {
+                    $dayOfMonthField.trigger('blur');
                 }
             }
             if (dayOfMonth === 29 && monthOfYear === 2) { // the 29 of february was selected
