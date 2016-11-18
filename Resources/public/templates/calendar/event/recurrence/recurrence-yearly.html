@@ -29,18 +29,18 @@
                     <% }); %>
                 </select>
             </div>
-            <label class="fields-row">
-                <select data-related-field="instance">
-                    <option value=""><%- _.__('oro.calendar.event.recurrence.controls.monthly-repeat-on.day') %></option>
-                    <option disabled>&#9473;&#9473;&#9473;&#9473;&#9473;&#9473;&#9473;&#9473;&#9473;</option>
-                    <% _.each(repeatOnOptions, function (option) { %>
-                    <option value="<%= option.value %>"
-                    <% if (option.value === instance) { %> selected="selected"<% } %>>
-                    <%- _.__('oro.calendar.event.recurrence.controls.monthly-repeat-on.' + option.text) %>
-                    </option>
-                    <% }); %>
-                </select>
-                <span data-name="repeat-on-day">
+            <select data-related-field="instance">
+                <option value=""><%- _.__('oro.calendar.event.recurrence.controls.monthly-repeat-on.day') %></option>
+                <option disabled>&#9473;&#9473;&#9473;&#9473;&#9473;&#9473;&#9473;&#9473;&#9473;</option>
+                <% _.each(repeatOnOptions, function (option) { %>
+                <option value="<%= option.value %>"
+                <% if (option.value === instance) { %> selected="selected"<% } %>>
+                <%- _.__('oro.calendar.event.recurrence.controls.monthly-repeat-on.' + option.text) %>
+                </option>
+                <% }); %>
+            </select>
+            <span data-name="repeat-on-day">
+                <span class="fields-row">
                     <input class="recurrence-subview-control__number"
                            type="text"
                            data-related-field="dayOfMonth"
@@ -50,27 +50,27 @@
                            data-related-field="recurrenceType"
                            value="yearly">
                 </span>
-                <span data-name="repeat-on-instance">
-                    <select data-related-field="dayOfWeek">
-                        <% _.each(groupWeekDayOptions, function (option) { %>
-                        <option value="<%= option.value %>"
-                        <% if (option.selected) { %> selected="selected"<% } %>>
-                        <%- _.__('oro.calendar.event.recurrence.controls.' + option.text) %>
-                        </option>
-                        <% }); %>
-                        <option disabled></option>
-                        <% _.each(dayOfWeekOptions, function (option) { %>
-                        <option value="<%= option.value %>"
-                        <% if (_.isEqual(dayOfWeek, [option.value])) { %> selected="selected"<% } %>>
-                        <%- option.text %>
-                        </option>
-                        <% }); %>
-                    </select>
-                    <input type="hidden"
-                           data-related-field="recurrenceType"
-                           value="yearnth">
-                </span>
-            </label>
+            </span>
+            <span data-name="repeat-on-instance">
+                <select data-related-field="dayOfWeek">
+                    <% _.each(groupWeekDayOptions, function (option) { %>
+                    <option value="<%= option.value %>"
+                    <% if (option.selected) { %> selected="selected"<% } %>>
+                    <%- _.__('oro.calendar.event.recurrence.controls.' + option.text) %>
+                    </option>
+                    <% }); %>
+                    <option disabled></option>
+                    <% _.each(dayOfWeekOptions, function (option) { %>
+                    <option value="<%= option.value %>"
+                    <% if (_.isEqual(dayOfWeek, [option.value])) { %> selected="selected"<% } %>>
+                    <%- option.text %>
+                    </option>
+                    <% }); %>
+                </select>
+                <input type="hidden"
+                       data-related-field="recurrenceType"
+                       value="yearnth">
+            </span>
         </div>
     </div>
     <div class="alert alert-warning" data-name="recurrence-warning" style="display: none"></div>
