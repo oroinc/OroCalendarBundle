@@ -30,13 +30,14 @@ define(function(require) {
             if ('monthOfYear' in model.changed) {
                 var dayValidationRules = this.$('[data-related-field="dayOfMonth"]').data('validation');
                 dayValidationRules.Number.max = daysInMonth;
+                if (this.$('[data-related-field="dayOfMonth"]').val()) {
+                    this.$('[data-related-field="dayOfMonth"]').trigger('blur');
+                }
             }
             if (dayOfMonth === 29 && monthOfYear === 2) { // the 29 of february was selected
-                this.getWarningContainer().html(
-                    __('oro.calendar.event.recurrence.warning.some-months-have-fewer-days', {number: dayOfMonth})
-                ).show();
+                this.setFewerDaysWarning(dayOfMonth);
             } else {
-                this.getWarningContainer().hide();
+                this.setFewerDaysWarning(false);
             }
         },
 
