@@ -8,12 +8,11 @@ use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\Form\FormView;
-use Symfony\Component\OptionsResolver\OptionsResolverInterface;
+use Symfony\Component\OptionsResolver\OptionsResolver;
 
 use Oro\Bundle\CalendarBundle\Form\EventListener\CalendarEventRecurrenceSubscriber;
 use Oro\Bundle\CalendarBundle\Form\EventListener\CalendarUidSubscriber;
 use Oro\Bundle\CalendarBundle\Form\EventListener\ChildEventsSubscriber;
-use Oro\Bundle\CalendarBundle\Manager\AttendeeManager;
 use Oro\Bundle\CalendarBundle\Manager\CalendarEventManager;
 
 class CalendarEventType extends AbstractType
@@ -24,24 +23,18 @@ class CalendarEventType extends AbstractType
     /** @var CalendarEventManager */
     protected $calendarEventManager;
 
-    /** @var AttendeeManager */
-    protected $attendeeManager;
-
     /**
      * CalendarEventType constructor.
      *
      * @param ManagerRegistry $registry
      * @param CalendarEventManager $calendarEventManager
-     * @param AttendeeManager $attendeeManager
      */
     public function __construct(
         ManagerRegistry $registry,
-        CalendarEventManager $calendarEventManager,
-        AttendeeManager $attendeeManager
+        CalendarEventManager $calendarEventManager
     ) {
         $this->registry = $registry;
         $this->calendarEventManager = $calendarEventManager;
-        $this->attendeeManager = $attendeeManager;
     }
 
     /**
@@ -151,15 +144,14 @@ class CalendarEventType extends AbstractType
         $builder->addEventSubscriber(new CalendarEventRecurrenceSubscriber($this->calendarEventManager));
         $builder->addEventSubscriber(new ChildEventsSubscriber(
             $this->registry,
-            $this->calendarEventManager,
-            $this->attendeeManager
+            $this->calendarEventManager
         ));
     }
 
     /**
-     *M-BM- {@inheritdoc}
+     * {@inheritdoc}
      */
-    public function setDefaultOptions(OptionsResolverInterface $resolver)
+    public function configureOptions(OptionsResolver $resolver)
     {
         $resolver->setDefaults(
             [
@@ -189,7 +181,7 @@ class CalendarEventType extends AbstractType
     }
 
     /**
-     *M-BM- {@inheritdoc}
+     * {@inheritdoc}
      */
     public function getName()
     {

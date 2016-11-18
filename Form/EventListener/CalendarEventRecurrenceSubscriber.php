@@ -2,6 +2,7 @@
 
 namespace Oro\Bundle\CalendarBundle\Form\EventListener;
 
+use Oro\Bundle\CalendarBundle\Entity\CalendarEvent;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\Form\FormEvent;
 use Symfony\Component\Form\FormEvents;
@@ -40,12 +41,24 @@ class CalendarEventRecurrenceSubscriber implements EventSubscriberInterface
      */
     public function preSubmit(FormEvent $event)
     {
+        $this->clearOldRecurrence($event);
+    }
+
+    /**
+     * If "repeat" field is unchecked the old instance of recurrence should be removed.
+     * Or iff "recurrence" form field is empty the old instance of recurrence should be removed.
+     *
+     * @param FormEvent $event
+     */
+    protected function clearOldRecurrence(FormEvent $event)
+    {
         $form = $event->getForm();
         $data = $event->getData();
 
         $isRecurrence = $form->has('recurrence') && empty($data['recurrence']);
-        $isRepeat = $form->has('repeat') && empty($data['repeat']);
-        if ($isRecurrence || $isRepeat) {
+        $isRepeatUnchecked = $form->has('repeat') && empty($data['repeat']);
+
+        if ($isRecurrence || $isRepeatUnchecked) {
             $recurrence = $form->get('recurrence')->getData();
             if ($recurrence) {
                 $this->calendarEventManager->removeRecurrence($recurrence);
@@ -61,9 +74,22 @@ class CalendarEventRecurrenceSubscriber implements EventSubscriberInterface
      */
     public function preSetData(FormEvent $event)
     {
+        $this->removeRecurrenceFormFieldForException($event);
+    }
+
+    /**
+     * Removes recurrence field from the form if entity represents an exception of recurring event.
+     *
+     * Exception should not have its' own recurrence.
+     *
+     * @param FormEvent $event
+     */
+    protected function removeRecurrenceFormFieldForException(FormEvent $event)
+    {
         $form = $event->getForm();
         $entity = $event->getData();
-        if ($entity && $entity->getRecurringEvent() && $form->has('recurrence')) {
+
+        if ($entity instanceof CalendarEvent && $entity->getRecurringEvent() && $form->has('recurrence')) {
             $form->remove('recurrence');
         }
     }
@@ -73,10 +99,20 @@ class CalendarEventRecurrenceSubscriber implements EventSubscriberInterface
      */
     public function postSetData(FormEvent $event)
     {
+        $this->enableRepeatFieldForRecurringEvent($event);
+    }
+
+    /**
+     * When form is shown for recurring event "repeat" field is marked as enabled.
+     *
+     * @param FormEvent $event
+     */
+    protected function enableRepeatFieldForRecurringEvent(FormEvent $event)
+    {
         $form = $event->getForm();
         $entity = $event->getData();
 
-        if ($entity && $entity->getRecurrence() && $form->has('repeat')) {
+        if ($entity instanceof CalendarEvent && $entity->getRecurrence() && $form->has('repeat')) {
             $form->get('repeat')->setData(true);
         }
     }

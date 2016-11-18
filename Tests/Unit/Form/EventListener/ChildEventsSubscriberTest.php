@@ -85,17 +85,14 @@ class ChildEventsSubscriberTest extends \PHPUnit_Framework_TestCase
                 ->getMock();
 
         $calendarEventManager = new CalendarEventManager(
+            $attendeeManager,
             $doctrineHelper,
             $securityFacade,
             $entityNameResolver,
             $calendarConfig
         );
 
-        $this->childEventsSubscriber = new ChildEventsSubscriber(
-            $registry,
-            $calendarEventManager,
-            $attendeeManager
-        );
+        $this->childEventsSubscriber = new ChildEventsSubscriber($registry, $calendarEventManager);
     }
 
     public function testGetSubscribedEvents()
@@ -109,6 +106,10 @@ class ChildEventsSubscriberTest extends \PHPUnit_Framework_TestCase
         );
     }
 
+    /**
+     * @todo Move this test to CalendarEventManagerTest
+     * @see \Oro\Bundle\CalendarBundle\Tests\Unit\Manager\CalendarEventManagerTest
+     */
     public function testOnSubmit()
     {
         $firstEventAttendee = new Attendee(1);
@@ -185,6 +186,10 @@ class ChildEventsSubscriberTest extends \PHPUnit_Framework_TestCase
         $this->assertEventDataEquals($parentEvent, $eventWithoutRelatedAttendee);
     }
 
+    /**
+     * @todo Move this test to CalendarEventManagerTest
+     * @see \Oro\Bundle\CalendarBundle\Tests\Unit\Manager\CalendarEventManagerTest
+     */
     public function testRelatedAttendees()
     {
         $user = new User();
@@ -211,6 +216,10 @@ class ChildEventsSubscriberTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals($attendees->first(), $event->findRelatedAttendee());
     }
 
+    /**
+     * @todo Move this test to CalendarEventManagerTest
+     * @see \Oro\Bundle\CalendarBundle\Tests\Unit\Manager\CalendarEventManagerTest
+     */
     public function testAddEvents()
     {
         $user = new User(1);
@@ -241,6 +250,10 @@ class ChildEventsSubscriberTest extends \PHPUnit_Framework_TestCase
         $this->assertSame($attendees->get(1), $event->getChildEvents()->first()->findRelatedAttendee());
     }
 
+    /**
+     * @todo Move this test to CalendarEventManagerTest
+     * @see \Oro\Bundle\CalendarBundle\Tests\Unit\Manager\CalendarEventManagerTest
+     */
     public function testUpdateAttendees()
     {
         $user = (new User())

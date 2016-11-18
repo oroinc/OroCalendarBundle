@@ -167,9 +167,11 @@ class CalendarEventTypeTest extends \PHPUnit_Framework_TestCase
         $this->type->buildForm($builder, ['layout_template' => false]);
     }
 
-    public function testSetDefaultOptions()
+    public function testConfigureOptions()
     {
-        $resolver = $this->getMock('Symfony\Component\OptionsResolver\OptionsResolverInterface');
+        $resolver = $this->getMockBuilder('Symfony\Component\OptionsResolver\OptionsResolver')
+            ->disableOriginalConstructor()
+            ->getMock();
         $resolver->expects($this->once())
             ->method('setDefaults')
             ->with(
@@ -182,7 +184,7 @@ class CalendarEventTypeTest extends \PHPUnit_Framework_TestCase
                 ]
             );
 
-        $this->type->setDefaultOptions($resolver);
+        $this->type->configureOptions($resolver);
     }
 
     public function testGetName()

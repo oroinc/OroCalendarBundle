@@ -873,7 +873,7 @@ class CalendarEvent extends ExtendCalendarEvent implements RemindableInterface, 
     }
 
     /**
-     * Gets parent for calendar event exception.
+     * Gets recurring event for calendar event exception.
      *
      * @return CalendarEvent|null
      */
@@ -985,6 +985,8 @@ class CalendarEvent extends ExtendCalendarEvent implements RemindableInterface, 
 
     /**
      * Remove attendee. Related child event will be also removed. This method should not be called using child event.
+     *
+     * @todo Move logic of this method to \Oro\Bundle\CalendarBundle\Manager\CalendarEventManager for consistency.
      *
      * @param Attendee $attendee
      * @return CalendarEvent
@@ -1109,29 +1111,5 @@ class CalendarEvent extends ExtendCalendarEvent implements RemindableInterface, 
     public function getRecurrence()
     {
         return $this->recurrence;
-    }
-
-    /**
-     * Updates data for all child events items
-     *
-     * @return $this
-     */
-    public function updateChildEvents()
-    {
-        foreach ($this->getChildEvents() as $childEvent) {
-            $childEvent->setTitle($this->getTitle())
-                ->setDescription($this->getDescription())
-                ->setStart($this->getStart())
-                ->setEnd($this->getEnd())
-                ->setAllDay($this->getAllDay());
-
-            if ($this->getRecurringEvent() && $childEvent->getCalendar()) {
-                $recurringEvent = $this->getRecurringEvent()->getChildEventByCalendar($childEvent->getCalendar());
-                $childEvent->setRecurringEvent($recurringEvent)
-                    ->setOriginalStart($this->getOriginalStart());
-            }
-        }
-
-        return $this;
     }
 }

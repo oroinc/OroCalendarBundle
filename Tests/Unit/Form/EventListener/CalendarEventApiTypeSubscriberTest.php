@@ -134,6 +134,14 @@ class CalendarEventApiTypeSubscriberTest extends \PHPUnit_Framework_TestCase
         $this->requestStack->push(new Request());
 
         $event = new FormEvent($form, ['id' => 1, 'recurrence' => []]);
+        $form->expects($this->at(0))
+            ->method('has')
+            ->with('recurrence')
+            ->willReturn(true);
+        $form->expects($this->at(1))
+            ->method('has')
+            ->with('repeat')
+            ->willReturn(true);
         $form->expects($this->any())
             ->method('get')
             ->with('recurrence')

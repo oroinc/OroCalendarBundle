@@ -10,7 +10,6 @@ use Symfony\Component\Form\FormEvents;
 
 use Oro\Bundle\CalendarBundle\Entity\Attendee;
 use Oro\Bundle\CalendarBundle\Entity\CalendarEvent;
-use Oro\Bundle\CalendarBundle\Manager\AttendeeManager;
 use Oro\Bundle\CalendarBundle\Manager\CalendarEventManager;
 use Oro\Bundle\EntityExtendBundle\Tools\ExtendHelper;
 
@@ -22,24 +21,16 @@ class ChildEventsSubscriber implements EventSubscriberInterface
     /** @var CalendarEventManager */
     protected $calendarEventManager;
 
-    /** @var AttendeeManager */
-    protected $attendeeManager;
-
     /**
      * ChildEventsSubscriber constructor.
      *
      * @param ManagerRegistry $registry
      * @param CalendarEventManager $calendarEventManager
-     * @param AttendeeManager $attendeeManager
      */
-    public function __construct(
-        ManagerRegistry $registry,
-        CalendarEventManager $calendarEventManager,
-        AttendeeManager $attendeeManager
-    ) {
+    public function __construct(ManagerRegistry $registry, CalendarEventManager $calendarEventManager)
+    {
         $this->registry = $registry;
         $this->calendarEventManager = $calendarEventManager;
-        $this->attendeeManager = $attendeeManager;
     }
 
     /**
@@ -78,12 +69,6 @@ class ChildEventsSubscriber implements EventSubscriberInterface
     }
 
     /**
-     * - creates/removes calendar events based on attendee changes
-     * - makes sure displayName is not empty
-     * - sets default attendee status
-     * - updates duplicated values of child events
-     * (It would be better to have separate entity for common data. Could be e.g. CalendarEventInfo)
-     *
      * @param FormEvent $event
      */
     public function postSubmit(FormEvent $event)
@@ -94,16 +79,7 @@ class ChildEventsSubscriber implements EventSubscriberInterface
             return;
         }
 
-        $this->calendarEventManager->updateCalendarEvents($calendarEvent);
-
-        $this->attendeeManager->updateAttendeeDisplayNames($calendarEvent->getAttendees());
-
-        $calendarEvent->updateChildEvents();
-
-        $this->attendeeManager->setDefaultAttendeeStatus(
-            $calendarEvent->getAttendees(),
-            $calendarEvent->findRelatedAttendee()
-        );
+        $this->calendarEventManager->onEventUpdate($calendarEvent);
     }
 
     /**

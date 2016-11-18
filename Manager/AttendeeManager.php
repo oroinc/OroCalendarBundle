@@ -122,7 +122,7 @@ class AttendeeManager
     /**
      * Makes sure displayName is not empty
      *
-     * @param $attendees
+     * @param Collection|Attendee[] $attendees
      */
     public function updateAttendeeDisplayNames($attendees)
     {

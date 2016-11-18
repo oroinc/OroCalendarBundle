@@ -158,6 +158,7 @@ services:
     oro_calendar.calendar_event_manager:
         class: %oro_calendar.calendar_event_manager.class%
         arguments:
+            - '@oro_calendar.attendee_manager'
             - '@oro_entity.doctrine_helper'
             - '@oro_security.security_facade'
             - '@oro_entity.entity_name_resolver'

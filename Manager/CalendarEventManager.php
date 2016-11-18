@@ -20,6 +20,9 @@ use Oro\Bundle\SecurityBundle\Exception\ForbiddenException;
 
 class CalendarEventManager
 {
+    /** @var AttendeeManager */
+    protected $attendeeManager;
+
     /** @var DoctrineHelper */
     protected $doctrineHelper;
 
@@ -33,17 +36,20 @@ class CalendarEventManager
     protected $calendarConfig;
 
     /**
+     * @param AttendeeManager      $attendeeManager
      * @param DoctrineHelper       $doctrineHelper
      * @param SecurityFacade       $securityFacade
      * @param EntityNameResolver   $entityNameResolver
      * @param SystemCalendarConfig $calendarConfig
      */
     public function __construct(
+        AttendeeManager $attendeeManager,
         DoctrineHelper $doctrineHelper,
         SecurityFacade $securityFacade,
         EntityNameResolver $entityNameResolver,
         SystemCalendarConfig $calendarConfig
     ) {
+        $this->attendeeManager    = $attendeeManager;
         $this->doctrineHelper     = $doctrineHelper;
         $this->securityFacade     = $securityFacade;
         $this->entityNameResolver = $entityNameResolver;
@@ -215,76 +221,154 @@ class CalendarEventManager
     }
 
     /**
+     * Responsible to actualize event state after it was updated.
+     *
+     * - Update related attendee of the event.
+     * - Update child events according to attendees.
+     * - Update attendees display name if they are empty.
+     * - Set default attendee status.
+     *
      * @param CalendarEvent $calendarEvent
      */
-    public function updateCalendarEvents(CalendarEvent $calendarEvent)
+    public function onEventUpdate(CalendarEvent $calendarEvent)
     {
-        $calendar = $calendarEvent->getCalendar();
-        $calendarEventOwnerIds = [];
-        if ($calendar && $calendar->getOwner()) {
-            $calendarEventOwnerIds[] = $calendar->getOwner()->getId();
-        }
-
         $calendarEvent->setRelatedAttendee($calendarEvent->findRelatedAttendee());
 
-        $currentAttendeeUserIds = $this->getCurrentAttendeeUserIds($calendarEvent);
-        foreach ($calendarEvent->getChildEvents() as $childEvent) {
-            $childEventCalendar = $childEvent->getCalendar();
-            if (!$childEventCalendar) {
-                continue;
-            }
+        $this->updateChildEvents($calendarEvent);
 
-            $childEventOwner = $childEventCalendar->getOwner();
-            if (!$childEventOwner) {
-                continue;
-            }
+        $this->attendeeManager->updateAttendeeDisplayNames($calendarEvent->getAttendees());
 
-            $childEventOwnerId = $childEventOwner->getId();
-            if (in_array($childEventOwnerId, $currentAttendeeUserIds)) {
-                $calendarEventOwnerIds[] = $childEventOwnerId;
-            }
-        }
+        $this->attendeeManager->setDefaultAttendeeStatus(
+            $calendarEvent->getAttendees(),
+            $calendarEvent->findRelatedAttendee()
+        );
+    }
 
-        $missingEventUserIds = array_diff($currentAttendeeUserIds, $calendarEventOwnerIds);
-        if (!empty($missingEventUserIds)) {
-            $this->createChildEvent($calendarEvent, $missingEventUserIds);
-        }
+    /**
+     * Child events is updated for next reasons:
+     *
+     * - event has changes in field and child event should be synced
+     * - new attendees added to the event - as a result new child event should correspond to user of the attendee.
+     *
+     * @param CalendarEvent $calendarEvent
+     */
+    protected function updateChildEvents(CalendarEvent $calendarEvent)
+    {
+        $this->createMissingChildEvents($calendarEvent);
+        $this->updateExistingChildEvents($calendarEvent);
     }
 
     /**
      * @param CalendarEvent $calendarEvent
+     */
+    protected function updateExistingChildEvents(CalendarEvent $calendarEvent)
+    {
+        foreach ($calendarEvent->getChildEvents() as $childEvent) {
+            $childEvent->setTitle($calendarEvent->getTitle())
+                ->setDescription($calendarEvent->getDescription())
+                ->setStart($calendarEvent->getStart())
+                ->setEnd($calendarEvent->getEnd())
+                ->setAllDay($calendarEvent->getAllDay());
+
+            // If event is exception of recurring event
+            if ($calendarEvent->getRecurringEvent() && $childEvent->getCalendar()) {
+                // Get respective recurring event in child calendar
+                $childRecurringEvent = $calendarEvent->getRecurringEvent()
+                    ->getChildEventByCalendar($childEvent->getCalendar());
+
+                // Associate child event with child recurring event
+                $childEvent->setRecurringEvent($childRecurringEvent);
+
+                // Sync original start
+                $childEvent->setOriginalStart($calendarEvent->getOriginalStart());
+            }
+        }
+    }
+
+    /**
+     * Creates missing child events of the main event.
+     *
+     * Every attendee of the event should have a event in respective calendar.
+     *
+     * @param CalendarEvent $calendarEvent
+     */
+    public function createMissingChildEvents(CalendarEvent $calendarEvent)
+    {
+        $attendeeUsers = $this->getAttendeeUserIds($calendarEvent);
+        $calendarUsers = $this->getCalendarUserIds($calendarEvent);
+
+        $missingUsers = array_diff($attendeeUsers, $calendarUsers);
+        $missingUsers = array_intersect($missingUsers, $attendeeUsers);
+
+        if (!empty($missingUsers)) {
+            $this->createChildEvents($calendarEvent, $missingUsers);
+        }
+    }
+
+    /**
+     * Get ids of users which related to attendees of this event.
+     *
+     * @param CalendarEvent $calendarEvent
      *
      * @return array
      */
-    protected function getCurrentAttendeeUserIds(CalendarEvent $calendarEvent)
+    protected function getAttendeeUserIds(CalendarEvent $calendarEvent)
     {
-        $attendees = $calendarEvent->getAttendees();
+        $result = [];
+
         if ($calendarEvent->getRecurringEvent() && $calendarEvent->isCancelled()) {
+            // Attendees of cancelled exception are taken from recurring event.
             $attendees = $calendarEvent->getRecurringEvent()->getAttendees();
+        } else {
+            $attendees = $calendarEvent->getAttendees();
         }
 
-        $currentAttendeeUserIds = [];
         foreach ($attendees as $attendee) {
             if ($attendee->getUser()) {
-                $currentAttendeeUserIds[] = $attendee->getUser()->getId();
+                $result[] = $attendee->getUser()->getId();
             }
         }
 
-        return $currentAttendeeUserIds;
+        return $result;
+    }
+
+    /**
+     * Get ids of users which have this event in their calendar.
+     *
+     * @param CalendarEvent $calendarEvent
+     *
+     * @return array
+     */
+    protected function getCalendarUserIds(CalendarEvent $calendarEvent)
+    {
+        $result = [];
+
+        $calendar = $calendarEvent->getCalendar();
+        if ($calendar && $calendar->getOwner()) {
+            $result[] = $calendar->getOwner()->getId();
+        }
+
+        foreach ($calendarEvent->getChildEvents() as $childEvent) {
+            $childEventCalendar = $childEvent->getCalendar();
+            if ($childEventCalendar && $childEventCalendar->getOwner()) {
+                $result[] = $childEventCalendar->getOwner()->getId();
+            }
+        }
+        return $result;
     }
 
     /**
      * @param CalendarEvent $parent
      *
-     * @param array $missingEventUserIds
+     * @param array $userOwnerIds
      */
-    protected function createChildEvent(CalendarEvent $parent, array $missingEventUserIds)
+    protected function createChildEvents(CalendarEvent $parent, array $userOwnerIds)
     {
         /** @var CalendarRepository $calendarRepository */
         $calendarRepository = $this->doctrineHelper->getEntityRepository('OroCalendarBundle:Calendar');
         $organizationId     = $this->securityFacade->getOrganizationId();
 
-        $calendars = $calendarRepository->findDefaultCalendars($missingEventUserIds, $organizationId);
+        $calendars = $calendarRepository->findDefaultCalendars($userOwnerIds, $organizationId);
 
         /** @var Calendar $calendar */
         foreach ($calendars as $calendar) {
@@ -313,7 +397,7 @@ class CalendarEventManager
             // $exception will be parent for new exception of attendee
             $childException = new CalendarEvent();
             $childException->setCalendar($childEvent->getCalendar())
-                ->setTitle($parentException->getTitle() . 'child exception')
+                ->setTitle($parentException->getTitle())
                 ->setDescription($parentException->getDescription())
                 ->setStart($parentException->getStart())
                 ->setEnd($parentException->getEnd())

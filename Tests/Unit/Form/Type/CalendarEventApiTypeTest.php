@@ -356,7 +356,9 @@ class CalendarEventApiTypeTest extends TypeTestCase
 
     public function testSetDefaultOptions()
     {
-        $resolver = $this->getMock('Symfony\Component\OptionsResolver\OptionsResolverInterface');
+        $resolver = $this->getMockBuilder('Symfony\Component\OptionsResolver\OptionsResolver')
+            ->disableOriginalConstructor()
+            ->getMock();
         $resolver->expects($this->once())
             ->method('setDefaults')
             ->with(
@@ -368,7 +370,7 @@ class CalendarEventApiTypeTest extends TypeTestCase
                 ]
             );
 
-        $this->calendarEventApiType->setDefaultOptions($resolver);
+        $this->calendarEventApiType->configureOptions($resolver);
     }
 
     public function testGetName()

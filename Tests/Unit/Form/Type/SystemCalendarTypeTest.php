@@ -167,7 +167,9 @@ class SystemCalendarTypeTest extends TypeTestCase
 
     public function testSetDefaultOptions()
     {
-        $resolver = $this->getMock('Symfony\Component\OptionsResolver\OptionsResolverInterface');
+        $resolver = $this->getMockBuilder('Symfony\Component\OptionsResolver\OptionsResolver')
+            ->disableOriginalConstructor()
+            ->getMock();
         $resolver->expects($this->once())
             ->method('setDefaults')
             ->with(
@@ -178,7 +180,7 @@ class SystemCalendarTypeTest extends TypeTestCase
             );
 
         $type = new SystemCalendarType($this->securityFacade, $this->calendarConfig);
-        $type->setDefaultOptions($resolver);
+        $type->configureOptions($resolver);
     }
 
     public function testGetName()
