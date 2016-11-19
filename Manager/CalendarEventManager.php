@@ -17,6 +17,7 @@ use Oro\Bundle\EntityBundle\Provider\EntityNameResolver;
 use Oro\Bundle\EntityExtendBundle\Tools\ExtendHelper;
 use Oro\Bundle\SecurityBundle\SecurityFacade;
 use Oro\Bundle\SecurityBundle\Exception\ForbiddenException;
+use Oro\Component\PropertyAccess\PropertyAccessor;
 
 class CalendarEventManager
 {
@@ -408,5 +409,42 @@ class CalendarEventManager
 
             $parentException->addChildEvent($childException);
         }
+    }
+
+    /**
+     * @param CalendarEvent $entity
+     * @param Recurrence $originalRecurrence
+     */
+    public function clearExceptionsWhenRecurrenceChanged(CalendarEvent $entity, Recurrence $originalRecurrence)
+    {
+        $recurrence = $entity->getRecurrence();
+        $propertyAccessor = new PropertyAccessor();
+        foreach ($this->getRecurreceFieldsToCompareWhenRecurrenceChanged() as $field) {
+            $value = $propertyAccessor->getValue($recurrence, $field);
+            $originalValue = $propertyAccessor->getValue($originalRecurrence, $field);
+            if ($value !== $originalValue) {
+                $entity->getRecurringEventExceptions()->clear();
+                return;
+            }
+        }
+    }
+
+    /**
+     * @return array
+     */
+    protected function getRecurreceFieldsToCompareWhenRecurrenceChanged()
+    {
+        return [
+            'recurrenceType',
+            'interval',
+            'instance',
+            'dayOfWeek',
+            'dayOfMonth',
+            'monthOfYear',
+            'startTime',
+            'endTime',
+            'occurrences',
+            'timeZone'
+        ];
     }
 }

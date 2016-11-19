@@ -4,12 +4,14 @@ namespace Oro\Bundle\CalendarBundle\Tests\Unit\Manager;
 
 use Oro\Bundle\CalendarBundle\Entity\Calendar;
 use Oro\Bundle\CalendarBundle\Entity\CalendarEvent;
+use Oro\Bundle\CalendarBundle\Entity\Recurrence;
 use Oro\Bundle\CalendarBundle\Entity\SystemCalendar;
 use Oro\Bundle\CalendarBundle\Manager\CalendarEventManager;
 use Oro\Bundle\CalendarBundle\Tests\Unit\Fixtures\Entity\Attendee;
 use Oro\Bundle\CalendarBundle\Tests\Unit\ReflectionUtil;
 use Oro\Bundle\EntityExtendBundle\Tests\Unit\Fixtures\TestEnumValue;
 use Oro\Bundle\UserBundle\Entity\User;
+use Oro\Component\PropertyAccess\PropertyAccessor;
 
 class CalendarEventManagerTest extends \PHPUnit_Framework_TestCase
 {
@@ -367,5 +369,44 @@ class CalendarEventManagerTest extends \PHPUnit_Framework_TestCase
         $result->addAttendee($relatedAttendee);
 
         return $result;
+    }
+
+    /**
+     * @dataProvider recurrenceFieldsValues
+     */
+    public function testProcessWithClearingExceptions($field, $value)
+    {
+        $originalRecurrence = new Recurrence();
+        $entity = new CalendarEvent();
+
+        $newRecurrence = new Recurrence();
+        $propertyAccessor = new PropertyAccessor();
+        $propertyAccessor->setValue($newRecurrence, $field, $value);
+        $entity->setRecurrence($newRecurrence);
+
+        $entity->addRecurringEventException(new CalendarEvent());
+
+        $this->manager->clearExceptionsWhenRecurrenceChanged($entity, $originalRecurrence);
+
+        $this->assertCount(0, $entity->getRecurringEventExceptions());
+    }
+
+    /**
+     * @return array
+     */
+    public function recurrenceFieldsValues()
+    {
+        return [
+            'Test recurrenceType changed' => ['recurrenceType', 'test_type'],
+            'interval' => ['interval', 1],
+            'instance' => ['instance', 2],
+            'dayOfWeek' => ['dayOfWeek', ['friday']],
+            'dayOfMonth' => ['dayOfMonth', 11],
+            'monthOfYear' => ['monthOfYear', 11],
+            'startTime' => ['startTime', new \DateTime()],
+            'endTime' => ['endTime', new \DateTime()],
+            'occurrences'  => ['occurrences', 11],
+            'timeZone' => ['timeZone', 'Test/TimeZone'],
+        ];
     }
 }

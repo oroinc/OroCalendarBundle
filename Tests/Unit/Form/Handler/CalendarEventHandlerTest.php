@@ -2,11 +2,16 @@
 
 namespace Oro\Bundle\CalendarBundle\Tests\Unit\Form\Handler;
 
+use Oro\Bundle\CalendarBundle\Entity\Calendar;
+use Oro\Bundle\CalendarBundle\Entity\Recurrence;
+use Oro\Component\PropertyAccess\PropertyAccessor;
 use Symfony\Component\HttpFoundation\Request;
 
 use Oro\Bundle\CalendarBundle\Tests\Unit\ReflectionUtil;
 use Oro\Bundle\CalendarBundle\Tests\Unit\Fixtures\Entity\CalendarEvent;
 use Oro\Bundle\CalendarBundle\Form\Handler\CalendarEventHandler;
+use Oro\Bundle\CalendarBundle\Manager\AttendeeManager;
+use Oro\Bundle\CalendarBundle\Manager\CalendarEventManager;
 use Oro\Bundle\UserBundle\Entity\User;
 use Oro\Bundle\OrganizationBundle\Entity\Organization;
 
@@ -61,13 +66,71 @@ class CalendarEventHandlerTest extends \PHPUnit_Framework_TestCase
             ->disableOriginalConstructor()
             ->getMock();
 
-        $transformer = $this
-            ->getMockBuilder('Oro\Bundle\CalendarBundle\Form\DataTransformer\UsersToAttendeesTransformer')
+        $this->entity  = new CalendarEvent();
+
+        $attendeeRelationManager = $this
+            ->getMockBuilder('Oro\Bundle\CalendarBundle\Manager\AttendeeRelationManager')
             ->disableOriginalConstructor()
-            ->setMethods(null)
             ->getMock();
 
-        $this->entity  = new CalendarEvent();
+        $repository = $this->getMockBuilder('Doctrine\ORM\EntityRepository')
+            ->setMethods(['find', 'findDefaultCalendars'])
+            ->disableOriginalConstructor()
+            ->getMock();
+        $repository->expects($this->any())
+            ->method('find')
+            ->will($this->returnCallback(function ($id) {
+                return new TestEnumValue($id, $id);
+            }));
+        $repository->expects($this->any())
+            ->method('findDefaultCalendars')
+            ->will($this->returnCallback(function ($userIds) {
+                return array_map(
+                    function ($userId) {
+                        return (new Calendar())
+                            ->setOwner(new User($userId));
+                    },
+                    $userIds
+                );
+            }));
+
+        $doctrineHelper = $this->getMockBuilder('Oro\Bundle\EntityBundle\ORM\DoctrineHelper')
+            ->disableOriginalConstructor()
+            ->getMock();
+
+        $doctrineHelper->expects($this->any())
+            ->method('getEntityRepository')
+            ->will($this->returnValueMap([
+                ['Extend\Entity\EV_Ce_Attendee_Status', $repository],
+                ['Extend\Entity\EV_Ce_Attendee_Type', $repository],
+                ['OroCalendarBundle:Calendar', $repository],
+            ]));
+
+        $attendeeManager = new AttendeeManager($doctrineHelper, $attendeeRelationManager);
+
+        $doctrineHelper = $this->getMockBuilder('Oro\Bundle\EntityBundle\ORM\DoctrineHelper')
+            ->disableOriginalConstructor()
+            ->getMock();
+
+        $securityFacade = $this->getMockBuilder('Oro\Bundle\SecurityBundle\SecurityFacade')
+            ->disableOriginalConstructor()
+            ->getMock();
+
+        $entityNameResolver = $this->getMockBuilder('Oro\Bundle\EntityBundle\Provider\EntityNameResolver')
+            ->disableOriginalConstructor()
+            ->getMock();
+
+        $calendarConfig = $this->getMockBuilder('Oro\Bundle\CalendarBundle\Provider\SystemCalendarConfig')
+            ->disableOriginalConstructor()
+            ->getMock();
+
+        $calendarEventManager = new CalendarEventManager(
+            $attendeeManager,
+            $doctrineHelper,
+            $securityFacade,
+            $entityNameResolver,
+            $calendarConfig
+        );
 
         $this->handler = new CalendarEventHandler(
             $this->form,
@@ -77,7 +140,7 @@ class CalendarEventHandlerTest extends \PHPUnit_Framework_TestCase
             $this->entityRoutingHelper,
             $this->securityFacade,
             $this->emailSendProcessor,
-            $transformer
+            $calendarEventManager
         );
     }
 

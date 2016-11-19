@@ -123,6 +123,7 @@ class ValidationErrorTest extends AbstractValidationErrorTestCase
                     'start' => [],
                     'title' => [],
                     'use_hangout' => [],
+                    'updateExceptions' => [],
                 ],
             ],
         ];

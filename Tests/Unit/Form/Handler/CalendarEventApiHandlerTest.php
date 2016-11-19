@@ -137,11 +137,12 @@ class CalendarEventApiHandlerTest extends \PHPUnit_Framework_TestCase
             ->getMock();
         $this->entity->setCalendar($defaultCalendar);
 
-        $this->form->expects($this->exactly(2))
+        $this->form->expects($this->any())
             ->method('has')
             ->withConsecutive(
                 ['invitedUsers'],
-                ['contexts']
+                ['contexts'],
+                ['updateExceptions']
             )
             ->will($this->returnValue(true));
 
@@ -179,5 +180,25 @@ class CalendarEventApiHandlerTest extends \PHPUnit_Framework_TestCase
             ->will($this->returnValue(true));
 
         $this->handler->process($this->entity);
+    }
+
+    public function testProcessWithClearingExceptions()
+    {
+        $this->request->setMethod('PUT');
+        $this->form->expects($this->any())
+            ->method('getData')
+            ->will($this->returnValue(true));
+        $this->form->expects($this->any())
+            ->method('has')
+            ->will($this->returnValueMap([
+                ['invitedUsers', false],
+                ['updateExceptions', true],
+                ['recurrence', true]
+            ]));
+
+        $this->entity->addRecurringEventException(new CalendarEvent());
+
+        $this->handler->process($this->entity);
+        $this->assertCount(0, $this->entity->getRecurringEventExceptions());
     }
 }

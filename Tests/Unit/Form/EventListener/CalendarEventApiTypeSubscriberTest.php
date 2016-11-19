@@ -146,6 +146,13 @@ class CalendarEventApiTypeSubscriberTest extends \PHPUnit_Framework_TestCase
             ->method('get')
             ->with('recurrence')
             ->will($this->returnValue($recurrenceForm));
+        $form->expects($this->any())
+            ->method('has')
+            ->withConsecutive(
+                ['recurrence'],
+                ['repeat']
+            )
+            ->will($this->returnValue(true));
         $recurrenceForm->expects($this->once())
             ->method('getData')
             ->will($this->returnValue($recurrence));

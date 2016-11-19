@@ -167,6 +167,14 @@ class CalendarEventApiType extends AbstractType
                     'required' => false,
                     'property_path' => 'cancelled',
                 ]
+            )
+            ->add(
+                'updateExceptions',
+                'checkbox',
+                [
+                    'required' => false,
+                    'mapped' => false,
+                ]
             );
 
         /** @deprecated since 1.10 'invitedUsers' field was replaced by field 'attendees' */

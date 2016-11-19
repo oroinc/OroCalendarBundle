@@ -75,6 +75,7 @@ services:
             - '@oro_entity.routing_helper'
             - '@oro_security.security_facade'
             - '@oro_calendar.send_processor.email'
+            - '@oro_calendar.calendar_event_manager'
 
     oro_calendar.system_calendar_event.form.handler:
         class: %oro_calendar.system_calendar_event.form.handler.class%

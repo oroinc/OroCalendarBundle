@@ -160,6 +160,8 @@ class CalendarEventApiHandler
             }
         }
 
+        $this->clearRecurringEventExceptions($entity);
+
         $entityManager->persist($entity);
 
         $entityManager->flush();
@@ -203,5 +205,17 @@ class CalendarEventApiHandler
         $notifyInvitedUsers = $this->form->get('notifyInvitedUsers')->getData();
 
         return $notifyInvitedUsers === 'true' || $notifyInvitedUsers === true;
+    }
+
+    /**
+     * @param CalendarEvent $entity
+     */
+    protected function clearRecurringEventExceptions(CalendarEvent $entity)
+    {
+        $hasException = $this->form->has('updateExceptions');
+        $hasRecurrence = $this->form->has('recurrence');
+        if ($hasRecurrence && $hasException && !empty($this->form->get('updateExceptions')->getData())) {
+            $entity->getRecurringEventExceptions()->clear();
+        }
     }
 }

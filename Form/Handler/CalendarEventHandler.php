@@ -5,15 +5,16 @@ namespace Oro\Bundle\CalendarBundle\Form\Handler;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Persistence\ObjectManager;
 
+use Oro\Bundle\CalendarBundle\Entity\Recurrence;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Security\Core\Exception\AccessDeniedException;
 
 use Oro\Bundle\ActivityBundle\Manager\ActivityManager;
 use Oro\Bundle\EntityBundle\Tools\EntityRoutingHelper;
-use Oro\Bundle\CalendarBundle\Entity\Attendee;
 use Oro\Bundle\CalendarBundle\Entity\CalendarEvent;
 use Oro\Bundle\CalendarBundle\Entity\Calendar;
+use Oro\Bundle\CalendarBundle\Manager\CalendarEventManager;
 use Oro\Bundle\CalendarBundle\Model\Email\EmailSendProcessor;
 use Oro\Bundle\UserBundle\Entity\User;
 use Oro\Bundle\SecurityBundle\SecurityFacade;
@@ -41,14 +42,20 @@ class CalendarEventHandler
     /** @var EmailSendProcessor */
     protected $emailSendProcessor;
 
+    /** @var CalendarEventManager */
+    protected $calendarEventManager;
+
     /**
-     * @param FormInterface               $form
-     * @param Request                     $request
-     * @param ObjectManager               $manager
-     * @param ActivityManager             $activityManager
-     * @param EntityRoutingHelper         $entityRoutingHelper
-     * @param SecurityFacade              $securityFacade
-     * @param EmailSendProcessor          $emailSendProcessor
+     * CalendarEventHandler constructor.
+     * 
+     * @param FormInterface $form
+     * @param Request $request
+     * @param ObjectManager $manager
+     * @param ActivityManager $activityManager
+     * @param EntityRoutingHelper $entityRoutingHelper
+     * @param SecurityFacade $securityFacade
+     * @param EmailSendProcessor $emailSendProcessor
+     * @param CalendarEventManager $calendarEventManager
      */
     public function __construct(
         FormInterface $form,
@@ -57,7 +64,8 @@ class CalendarEventHandler
         ActivityManager $activityManager,
         EntityRoutingHelper $entityRoutingHelper,
         SecurityFacade $securityFacade,
-        EmailSendProcessor $emailSendProcessor
+        EmailSendProcessor $emailSendProcessor,
+        CalendarEventManager $calendarEventManager
     ) {
         $this->form                        = $form;
         $this->request                     = $request;
@@ -66,6 +74,7 @@ class CalendarEventHandler
         $this->entityRoutingHelper         = $entityRoutingHelper;
         $this->securityFacade              = $securityFacade;
         $this->emailSendProcessor          = $emailSendProcessor;
+        $this->calendarEventManager        = $calendarEventManager;
     }
 
     /**
@@ -98,6 +107,8 @@ class CalendarEventHandler
             // create array collection of attendees to have have original attendees at disposal later
             $originalAttendees = new ArrayCollection($entity->getAttendees()->toArray());
 
+            $originalRecurrence = is_object($entity->getRecurrence()) ? clone $entity->getRecurrence() : null;
+
             $this->ensureCalendarSet($entity);
 
             $this->form->submit($this->request);
@@ -123,7 +134,8 @@ class CalendarEventHandler
                 $this->onSuccess(
                     $entity,
                     $originalAttendees,
-                    $notifyInvitedUsers
+                    $notifyInvitedUsers,
+                    $originalRecurrence
                 );
 
                 return true;
@@ -160,12 +172,21 @@ class CalendarEventHandler
     /**
      * "Success" form handler
      *
-     * @param CalendarEvent              $entity
-     * @param ArrayCollection|Attendee[] $originalAttendees
-     * @param boolean                    $notify
+     * @param CalendarEvent $entity
+     * @param ArrayCollection $originalAttendees
+     * @param boolean $notify
+     * @param Recurrence|null $originalRecurrence
      */
-    protected function onSuccess(CalendarEvent $entity, ArrayCollection $originalAttendees, $notify)
-    {
+    protected function onSuccess(
+        CalendarEvent $entity,
+        ArrayCollection $originalAttendees,
+        $notify,
+        $originalRecurrence
+    ) {
+        if ($originalRecurrence && $this->form->has('recurrence') && $this->form->get('recurrence')->getData()) {
+            $this->calendarEventManager->clearExceptionsWhenRecurrenceChanged($entity, $originalRecurrence);
+        }
+
         $new = $entity->getId() ? false : true;
         $this->manager->persist($entity);
         $this->manager->flush();
