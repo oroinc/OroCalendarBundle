@@ -1,0 +1,23 @@
+<div class="control-group control-group-checkbox">
+    <div class="control-label wrap"><label for="recurrence-repeat-<%= cid %>"
+        ><%- _.__('oro.calendar.event.recurrence.control-label.repeat') %></label></div>
+    <div class="controls"><input type="checkbox" id="recurrence-repeat-<%= cid %>"
+                                 data-name="recurrence-repeat"<% if (recurrenceType) { %> checked<% } %>></div>
+</div>
+<div data-name="recurrence-settings"<% if (!recurrenceType) { %> style="display: none"<% } %>>
+    <div class="control-group control-group-choice">
+        <div class="control-label wrap"><label for="recurrence-repeats-<%= cid %>"
+            ><%- _.__('oro.calendar.event.recurrence.control-label.repeats') %></label></div>
+        <div class="controls"><select id="recurrence-repeats-<%= cid %>" data-name="recurrence-repeats">
+            <% _.each(repeatsOptions, function(option) { %>
+            <option value="<%- option.value %>"<% if (option.selected) { %> selected<% } %>><%- option.label %></option>
+            <% }) %>
+        </select></div>
+    </div>
+    <div data-name="recurrence-daily"></div>
+    <div data-name="recurrence-weekly"></div>
+    <div data-name="recurrence-monthly"></div>
+    <div data-name="recurrence-yearly"></div>
+    <div data-name="recurrence-ends"></div>
+    <div data-name="recurrence-origin-values" class="hide"></div>
+</div>
