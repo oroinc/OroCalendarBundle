@@ -14,6 +14,7 @@ class RecurringEventNewAttendeeHasAllCancelledEventsTest extends AbstractUseCase
 {
     protected function setUp()
     {
+        $this->markTestSkipped('Temporary skip');
         $this->initClient([], $this->generateWsseAuthHeader(), true);
         $this->loadFixtures(['Oro\Bundle\CalendarBundle\Tests\Functional\DataFixtures\LoadUserData'], true);
     }
