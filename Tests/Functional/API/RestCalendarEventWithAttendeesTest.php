@@ -19,6 +19,7 @@ class RestCalendarEventWithAttendeesTest extends WebTestCase
 
     protected function setUp()
     {
+        $this->markTestSkipped('Temporary skip');
         $this->initClient([], $this->generateWsseAuthHeader());
         $this->loadFixtures(['Oro\Bundle\UserBundle\Tests\Functional\DataFixtures\LoadUserData']);
     }

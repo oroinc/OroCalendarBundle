@@ -37,6 +37,7 @@ class CalendarConnectionControllerTest extends WebTestCase
 
     public function testPostCalendarEvent()
     {
+        $this->markTestSkipped('Temporary skip');
         $user = $this->getReference('simple_user');
         $adminUser = $this->getAdminUser();
 
