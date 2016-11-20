@@ -12,7 +12,7 @@ class RecurringEventWithAttendeesAndExceptionTest extends AbstractUseCaseTestCas
 {
     protected function setUp()
     {
-        $this->markTestSkipped('Temporary skip');
+        $this->markTestSkipped('Should be corrected after BAP-12699');
         $this->initClient([], $this->generateWsseAuthHeader(), true);
         $this->loadFixtures(['Oro\Bundle\UserBundle\Tests\Functional\DataFixtures\LoadUserData'], true);
     }

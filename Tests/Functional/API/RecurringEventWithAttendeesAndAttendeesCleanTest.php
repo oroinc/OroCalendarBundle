@@ -17,7 +17,7 @@ class RecurringEventWithAttendeesAndAttendeesCleanTest extends AbstractUseCaseTe
      */
     public function testRecurringEventWithAttendeesAndDeletion()
     {
-        $this->markTestSkipped('Temporary skip');
+        $this->markTestSkipped('Should be corrected after BAP-12699');
 
         $this->checkPreconditions();
 

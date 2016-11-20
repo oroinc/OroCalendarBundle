@@ -15,7 +15,7 @@ class RestCalendarEventWithCancelledAndUpdatedRecurrentEventTest extends Abstrac
      */
     public function testCalendarEventWithCancelledAndUpdatedRecurrentEventTest()
     {
-        $this->markTestSkipped('Temporary skip');
+        $this->markTestSkipped('Should be corrected after BAP-12699');
         $this->checkPreconditions();
 
         $startDate = '2016-02-07T09:00:00+00:00';
