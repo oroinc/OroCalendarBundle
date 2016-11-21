@@ -183,7 +183,7 @@ class CalendarEventHandler
         $notify,
         $originalRecurrence
     ) {
-        if ($originalRecurrence && $this->form->has('recurrence') && $this->form->get('recurrence')->getData()) {
+        if ($originalRecurrence && $this->form->has('recurrence')) {
             $this->calendarEventManager->clearExceptionsWhenRecurrenceChanged($entity, $originalRecurrence);
         }
 

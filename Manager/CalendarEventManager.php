@@ -418,14 +418,31 @@ class CalendarEventManager
     public function clearExceptionsWhenRecurrenceChanged(CalendarEvent $entity, Recurrence $originalRecurrence)
     {
         $recurrence = $entity->getRecurrence();
+        if ($recurrence === null) {
+            $entity->getRecurringEventExceptions()->clear();
+            $this->clearExceptionsForChildEvents($entity);
+            return;
+        }
+
         $propertyAccessor = new PropertyAccessor();
         foreach ($this->getRecurreceFieldsToCompareWhenRecurrenceChanged() as $field) {
             $value = $propertyAccessor->getValue($recurrence, $field);
             $originalValue = $propertyAccessor->getValue($originalRecurrence, $field);
             if ($value !== $originalValue) {
                 $entity->getRecurringEventExceptions()->clear();
+                $this->clearExceptionsForChildEvents($entity);
                 return;
             }
+        }
+    }
+
+    /**
+     * @param CalendarEvent $calendarEvent
+     */
+    protected function clearExceptionsForChildEvents(CalendarEvent $calendarEvent)
+    {
+        foreach ($calendarEvent->getChildEvents() as $childEvent) {
+            $childEvent->getRecurringEventExceptions()->clear();
         }
     }
 
