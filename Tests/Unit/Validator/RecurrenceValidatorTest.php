@@ -50,7 +50,7 @@ class RecurrenceValidatorTest extends \PHPUnit_Framework_TestCase
     protected $model;
 
     /**
-     * @var RecurrenceValidator|\PHPUnit_Framework_MockObject_MockObject
+     * @var RecurrenceValidator
      */
     protected $validator;
 
@@ -69,10 +69,7 @@ class RecurrenceValidatorTest extends \PHPUnit_Framework_TestCase
             ->method('getDaysOfWeekValues')
             ->willReturn(self::$expectedDaysOfWeekValues);
 
-        $this->validator = $this->getMockBuilder(RecurrenceValidator::class)
-            ->setConstructorArgs([$this->model])
-            ->setMethods(['formatValue'])
-            ->getMock();
+        $this->validator = new RecurrenceValidator($this->model);
         $this->validator->initialize($this->context);
     }
 
@@ -284,11 +281,7 @@ class RecurrenceValidatorTest extends \PHPUnit_Framework_TestCase
         $recurrence->setStartTime(new \DateTime('2016-11-01 00:00:00', new \DateTimeZone('UTC')));
         $recurrence->setEndTime(new \DateTime('2016-10-01 00:00:00', new \DateTimeZone('UTC')));
 
-        $formattedStartTime = '2016-11-11 00:00:00';
-        $this->validator->expects($this->once())
-            ->method('formatValue')
-            ->with($recurrence->getStartTime(), RecurrenceValidator::PRETTY_DATE)
-            ->willReturn($formattedStartTime);
+        $formattedStartTime = '2016-11-01T00:00:00+00:00';
 
         $this->model->expects($this->once())
             ->method('getRequiredProperties')

@@ -205,7 +205,7 @@ class RecurrenceValidator extends ConstraintValidator
         $endTime = $value->getEndTime();
         $startTime = $value->getStartTime();
 
-        if ($endTime === null || $startTime === null) {
+        if (!$endTime instanceof \DateTime || !$startTime instanceof \DateTime) {
             return;
         }
 
@@ -213,7 +213,7 @@ class RecurrenceValidator extends ConstraintValidator
             $this->addViolation(
                 $constraint->minMessage,
                 [
-                    '{{ limit }}' => $this->formatValue($value->getStartTime(), self::PRETTY_DATE)
+                    '{{ limit }}' => $startTime->format(\DateTime::RFC3339)
                 ],
                 $value->getEndTime(),
                 'endTime'
@@ -274,14 +274,31 @@ class RecurrenceValidator extends ConstraintValidator
         $monthOfYear = $value->getMonthOfYear();
         $dayOfMonth = $value->getDayOfMonth();
 
-        if (null === $monthOfYear || null === $dayOfMonth) {
+        if (null === $dayOfMonth) {
+            return;
+        }
+
+        // Validate dayOfMonth >= 1
+        $this->validateRange(
+            $dayOfMonth,
+            1,
+            null,
+            $constraint,
+            'dayOfMonth'
+        );
+
+        if (null === $monthOfYear) {
+            // If monthOfYear is not defined the rest of the validation logic is not applicable.
             return;
         }
 
         if ($monthOfYear < 1 || $monthOfYear > 12) {
-            // Invalid value is validated by a separate rule in validation.yml.
+            // Invalid value of monthOfYear is validated by a separate rule in validation.yml.
             return;
         }
+
+        // Validate the value according to selected monthOfYear
+        // @todo Investigate logic of Outlook and take into account edge case with 29th of February and leap year.
 
         $currentDate = new \DateTime('now', new \DateTimeZone('UTC'));
         $currentDate->setDate($currentDate->format('Y'), $value->getMonthOfYear(), 1);
@@ -289,7 +306,7 @@ class RecurrenceValidator extends ConstraintValidator
 
         $this->validateRange(
             $dayOfMonth,
-            1,
+            null,
             $daysInMonth,
             $constraint,
             'dayOfMonth'
