@@ -14,57 +14,17 @@ abstract class AbstractValidationErrorTestCase extends AbstractTestCase
      */
     public function recurrenceValidationFailedDataProvider()
     {
+        $startTime = gmdate(DATE_RFC3339);
+        $wrongEndTime = gmdate(DATE_RFC3339, strtotime('-1 day'));
+
         return [
-            'test' => [
-                'recurrence' => [
-                    'recurrenceType' => Recurrence::TYPE_DAILY,
-                    'interval' => 0,
-                    'instance' => null,
-                    'dayOfWeek' => [],
-                    'dayOfMonth' => null,
-                    'monthOfYear' => null,
-                    'startTime' => gmdate(DATE_RFC3339),
-                    'endTime' => null,
-                    'occurrences' => null,
-                    'timeZone' => 'UTC'
-                ],
-                'errors' => [
-                    'interval' => [
-                        'This value should be 1 or more.'
-                    ]
-                ]
-            ],
-            'recurrenceType is not provided' => [
-                'recurrence' => [
-                    'interval' => 1,
-                    'startTime' => gmdate(DATE_RFC3339),
-                    'timeZone' => 'UTC'
-                ],
-                'errors' => [
-                    'recurrenceType' => [
-                        'This value should not be blank.'
-                    ]
-                ]
-            ],
-            'recurrenceType is blank' => [
-                'recurrence' => [
-                    'recurrenceType' => null,
-                    'interval' => 1,
-                    'startTime' => gmdate(DATE_RFC3339),
-                    'timeZone' => 'UTC'
-                ],
-                'errors' => [
-                    'recurrenceType' => [
-                        'This value should not be blank.'
-                    ]
-                ]
-            ],
+            // Validation cases for "recurrenceType" field
             'recurrenceType has invalid type' => [
                 'recurrence' => [
                     'interval' => 1,
+                    'startTime' => $startTime,
+                    'timeZone' => 'UTC',
                     'recurrenceType' => [1],
-                    'startTime' => gmdate(DATE_RFC3339),
-                    'timeZone' => 'UTC'
                 ],
                 'errors' => [
                     'recurrenceType' => [
@@ -74,10 +34,10 @@ abstract class AbstractValidationErrorTestCase extends AbstractTestCase
             ],
             'recurrenceType is invalid' => [
                 'recurrence' => [
-                    'recurrenceType' => 'unknown',
                     'interval' => 1,
-                    'startTime' => gmdate(DATE_RFC3339),
-                    'timeZone' => 'UTC'
+                    'startTime' => $startTime,
+                    'timeZone' => 'UTC',
+                    'recurrenceType' => 'unknown',
                 ],
                 'errors' => [
                     'recurrenceType' => [
@@ -85,37 +45,88 @@ abstract class AbstractValidationErrorTestCase extends AbstractTestCase
                     ]
                 ]
             ],
-            'interval is blank' => [
+            // Validation cases for "endTime" field
+            'endTime greater then startTime' => [
                 'recurrence' => [
                     'recurrenceType' => Recurrence::TYPE_DAILY,
-                    'interval' => null,
-                    'startTime' => gmdate(DATE_RFC3339),
-                    'timeZone' => 'UTC'
+                    'timeZone' => 'UTC',
+                    'interval' => 1,
+                    'startTime' => $startTime,
+                    'endTime' => $wrongEndTime,
                 ],
                 'errors' => [
-                    'interval' => [
-                        'This value should not be blank.'
+                    'endTime' => [
+                        sprintf(
+                            'This value should be %s or more.',
+                            $startTime
+                        )
                     ]
                 ]
             ],
-            'interval is not provided' => [
+            'endTime has wrong type' => [
                 'recurrence' => [
                     'recurrenceType' => Recurrence::TYPE_DAILY,
-                    'startTime' => gmdate(DATE_RFC3339),
-                    'timeZone' => 'UTC'
+                    'timeZone' => 'UTC',
+                    'interval' => 1,
+                    'startTime' => $startTime,
+                    'endTime' => 'string',
                 ],
                 'errors' => [
-                    'interval' => [
-                        'This value should not be blank.'
+                    'endTime' => [
+                        'This value is not valid.'
                     ]
                 ]
             ],
+            // Validation cases for "occurrences" field
+            'occurrences has wrong type' => [
+                'recurrence' => [
+                    'recurrenceType' => Recurrence::TYPE_DAILY,
+                    'timeZone' => 'UTC',
+                    'interval' => 1,
+                    'startTime' => $startTime,
+                    'occurrences' => 'string',
+                ],
+                'errors' => [
+                    'occurrences' => [
+                        'This value is not valid.'
+                    ]
+                ]
+            ],
+            'occurrences is too small' => [
+                'recurrence' => [
+                    'recurrenceType' => Recurrence::TYPE_DAILY,
+                    'timeZone' => 'UTC',
+                    'interval' => 1,
+                    'startTime' => $startTime,
+                    'occurrences' => 0,
+                ],
+                'errors' => [
+                    'occurrences' => [
+                        'This value should be 1 or more.'
+                    ]
+                ]
+            ],
+            'occurrences is too big' => [
+                'recurrence' => [
+                    'recurrenceType' => Recurrence::TYPE_DAILY,
+                    'timeZone' => 'UTC',
+                    'interval' => 1,
+                    'startTime' => $startTime,
+                    'occurrences' => 1000,
+                ],
+                'errors' => [
+                    'occurrences' => [
+                        'This value should be 999 or less.'
+                    ]
+                ]
+            ],
+            // Validation cases for "interval" field
             'interval has wrong type' => [
                 'recurrence' => [
                     'recurrenceType' => Recurrence::TYPE_DAILY,
-                    'interval' => 'string',
-                    'startTime' => gmdate(DATE_RFC3339),
+                    'startTime' => $startTime,
                     'timeZone' => 'UTC',
+                    'interval' => 'string',
                 ],
                 'errors' => [
                     'interval' => [
@@ -126,9 +137,9 @@ abstract class AbstractValidationErrorTestCase extends AbstractTestCase
             'interval is too small' => [
                 'recurrence' => [
                     'recurrenceType' => Recurrence::TYPE_DAILY,
+                    'startTime' => $startTime,
+                    'timeZone' => 'UTC',
                     'interval' => 0,
-                    'startTime' => gmdate(DATE_RFC3339),
-                    'timeZone' => 'UTC'
                 ],
                 'errors' => [
                     'interval' => [
@@ -139,9 +150,9 @@ abstract class AbstractValidationErrorTestCase extends AbstractTestCase
             'interval is too big for daily recurrence type' => [
                 'recurrence' => [
                     'recurrenceType' => Recurrence::TYPE_DAILY,
+                    'startTime' => $startTime,
+                    'timeZone' => 'UTC',
                     'interval' => 100,
-                    'startTime' => gmdate(DATE_RFC3339),
-                    'timeZone' => 'UTC'
                 ],
                 'errors' => [
                     'interval' => [
@@ -152,11 +163,11 @@ abstract class AbstractValidationErrorTestCase extends AbstractTestCase
             'interval is too big for yearly recurrence type' => [
                 'recurrence' => [
                     'recurrenceType' => Recurrence::TYPE_YEARLY,
-                    'interval' => 12000,
-                    'startTime' => gmdate(DATE_RFC3339),
+                    'startTime' => $startTime,
                     'dayOfMonth' => 1,
                     'monthOfYear' => 1,
-                    'timeZone' => 'UTC'
+                    'timeZone' => 'UTC',
+                    'interval' => 12000,
                 ],
                 'errors' => [
                     'interval' => [
@@ -167,11 +178,11 @@ abstract class AbstractValidationErrorTestCase extends AbstractTestCase
             'interval is not multiple of 12 for yearly recurrence type' => [
                 'recurrence' => [
                     'recurrenceType' => Recurrence::TYPE_YEARLY,
-                    'interval' => 1,
-                    'startTime' => gmdate(DATE_RFC3339),
+                    'startTime' => $startTime,
                     'dayOfMonth' => 1,
                     'monthOfYear' => 1,
-                    'timeZone' => 'UTC'
+                    'timeZone' => 'UTC',
+                    'interval' => 1,
                 ],
                 'errors' => [
                     'interval' => [
@@ -183,11 +194,11 @@ abstract class AbstractValidationErrorTestCase extends AbstractTestCase
                 'recurrence' => [
                     'recurrenceType' => Recurrence::TYPE_YEAR_N_TH,
                     'instance' => 1,
-                    'interval' => 1,
-                    'startTime' => gmdate(DATE_RFC3339),
+                    'startTime' => $startTime,
                     'dayOfWeek' => ['monday'],
                     'monthOfYear' => 1,
-                    'timeZone' => 'UTC'
+                    'timeZone' => 'UTC',
+                    'interval' => 1,
                 ],
                 'errors' => [
                     'interval' => [
@@ -195,36 +206,12 @@ abstract class AbstractValidationErrorTestCase extends AbstractTestCase
                     ]
                 ]
             ],
-            'timeZone is not provided' => [
-                'recurrence' => [
-                    'recurrenceType' => Recurrence::TYPE_DAILY,
-                    'interval' => 1,
-                    'startTime' => gmdate(DATE_RFC3339),
-                ],
-                'errors' => [
-                    'timeZone' => [
-                        'This value should not be blank.'
-                    ]
-                ]
-            ],
-            'timeZone is blank' => [
-                'recurrence' => [
-                    'recurrenceType' => Recurrence::TYPE_DAILY,
-                    'interval' => 1,
-                    'startTime' => gmdate(DATE_RFC3339),
-                    'timeZone' => ''
-                ],
-                'errors' => [
-                    'timeZone' => [
-                        'This value should not be blank.'
-                    ]
-                ]
-            ],
+            // Validation cases for "timeZone" field
             'timeZone has invalid type' => [
                 'recurrence' => [
                     'recurrenceType' => Recurrence::TYPE_DAILY,
                     'interval' => 1,
-                    'startTime' => gmdate(DATE_RFC3339),
+                    'startTime' => $startTime,
                     'timeZone' => ['UTC']
                 ],
                 'errors' => [
@@ -237,7 +224,7 @@ abstract class AbstractValidationErrorTestCase extends AbstractTestCase
                 'recurrence' => [
                     'recurrenceType' => Recurrence::TYPE_DAILY,
                     'interval' => 1,
-                    'startTime' => gmdate(DATE_RFC3339),
+                    'startTime' => $startTime,
                     'timeZone' => 'unknown'
                 ],
                 'errors' => [
@@ -246,6 +233,174 @@ abstract class AbstractValidationErrorTestCase extends AbstractTestCase
                     ]
                 ]
             ],
+            // Validation cases for "instance" field
+            'instance has wrong type' => [
+                'recurrence' => [
+                    'recurrenceType' => Recurrence::TYPE_MONTH_N_TH,
+                    'interval' => 1,
+                    'dayOfWeek' => ['monday'],
+                    'startTime' => $startTime,
+                    'timeZone' => 'UTC',
+                    'instance' => 'string',
+                ],
+                'errors' => [
+                    'instance' => [
+                        'This value is not valid.'
+                    ]
+                ]
+            ],
+            'instance is too small' => [
+                'recurrence' => [
+                    'recurrenceType' => Recurrence::TYPE_MONTH_N_TH,
+                    'interval' => 1,
+                    'dayOfWeek' => ['monday'],
+                    'startTime' => $startTime,
+                    'timeZone' => 'UTC',
+                    'instance' => 0,
+                ],
+                'errors' => [
+                    'instance' => [
+                        'This value is not valid.' // Choice field of "instance" doesn't accept values out of the list.
+                    ]
+                ]
+            ],
+            'instance is too big' => [
+                'recurrence' => [
+                    'recurrenceType' => Recurrence::TYPE_MONTH_N_TH,
+                    'interval' => 1,
+                    'dayOfWeek' => ['monday'],
+                    'startTime' => $startTime,
+                    'timeZone' => 'UTC',
+                    'instance' => 6,
+                ],
+                'errors' => [
+                    'instance' => [
+                        'This value is not valid.' // Choice field of "instance" doesn't accept values out of the list.
+                    ]
+                ]
+            ],
+            // Validation cases for "dayOfWeek" field
+            'dayOfWeek has wrong type' => [
+                'recurrence' => [
+                    'recurrenceType' => Recurrence::TYPE_MONTH_N_TH,
+                    'interval' => 1,
+                    'instance' => 1,
+                    'startTime' => $startTime,
+                    'timeZone' => 'UTC',
+                    'dayOfWeek' => 'string',
+                ],
+                'errors' => [
+                    'dayOfWeek' => [
+                        'This value is not valid.'
+                    ]
+                ]
+            ],
+            'dayOfWeek is invalid' => [
+                'recurrence' => [
+                    'recurrenceType' => Recurrence::TYPE_MONTH_N_TH,
+                    'interval' => 1,
+                    'instance' => 1,
+                    'startTime' => $startTime,
+                    'timeZone' => 'UTC',
+                    'dayOfWeek' => ['Monday'],
+                ],
+                'errors' => [
+                    'dayOfWeek' => [
+                        'This value is not valid.'
+                    ]
+                ]
+            ],
+            // Validation cases for "dayOfMonth" field
+            'dayOfMonth has wrong type' => [
+                'recurrence' => [
+                    'recurrenceType' => Recurrence::TYPE_MONTHLY,
+                    'interval' => 1,
+                    'startTime' => $startTime,
+                    'timeZone' => 'UTC',
+                    'dayOfMonth' => 'string',
+                ],
+                'errors' => [
+                    'dayOfMonth' => [
+                        'This value is not valid.'
+                    ]
+                ]
+            ],
+            'dayOfMonth too small' => [
+                'recurrence' => [
+                    'recurrenceType' => Recurrence::TYPE_MONTHLY,
+                    'interval' => 1,
+                    'startTime' => $startTime,
+                    'timeZone' => 'UTC',
+                    'dayOfMonth' => 0,
+                ],
+                'errors' => [
+                    'dayOfMonth' => [
+                        'This value should be 1 or more.'
+                    ]
+                ]
+            ],
+            'dayOfMonth too big' => [
+                'recurrence' => [
+                    'recurrenceType' => Recurrence::TYPE_YEARLY,
+                    'interval' => 12,
+                    'startTime' => $startTime,
+                    'timeZone' => 'UTC',
+                    'monthOfYear' => 11,
+                    'dayOfMonth' => 31,
+                ],
+                'errors' => [
+                    'dayOfMonth' => [
+                        'This value should be 30 or less.'
+                    ]
+                ]
+            ],
+            // Validation cases for "monthOfYear" field
+            'monthOfYear has wrong type' => [
+                'recurrence' => [
+                    'recurrenceType' => Recurrence::TYPE_YEARLY,
+                    'interval' => 12,
+                    'startTime' => $startTime,
+                    'timeZone' => 'UTC',
+                    'dayOfMonth' => 1,
+                    'monthOfYear' => 'string',
+                ],
+                'errors' => [
+                    'monthOfYear' => [
+                        'This value is not valid.'
+                    ]
+                ]
+            ],
+            'monthOfYear too small' => [
+                'recurrence' => [
+                    'recurrenceType' => Recurrence::TYPE_YEARLY,
+                    'interval' => 12,
+                    'startTime' => $startTime,
+                    'timeZone' => 'UTC',
+                    'dayOfMonth' => 1,
+                    'monthOfYear' => 0,
+                ],
+                'errors' => [
+                    'monthOfYear' => [
+                        'This value should be 1 or more.'
+                    ]
+                ]
+            ],
+            'monthOfYear too big' => [
+                'recurrence' => [
+                    'recurrenceType' => Recurrence::TYPE_YEARLY,
+                    'interval' => 12,
+                    'startTime' => $startTime,
+                    'timeZone' => 'UTC',
+                    'dayOfMonth' => 1,
+                    'monthOfYear' => 13,
+                ],
+                'errors' => [
+                    'monthOfYear' => [
+                        'This value should be 12 or less.'
+                    ]
+                ]
+            ],
+            // Validation cases for requied fields depending on "recurrenceType" field
             'daily type has required fields blank' => [
                 'recurrence' => [
                     'recurrenceType' => Recurrence::TYPE_DAILY,
