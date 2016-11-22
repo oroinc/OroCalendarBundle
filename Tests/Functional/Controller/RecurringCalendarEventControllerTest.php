@@ -2,17 +2,15 @@
 
 namespace Oro\Bundle\CalendarBundle\Tests\Functional\Controller;
 
-use Symfony\Component\DomCrawler\Crawler;
-
 use Oro\Bundle\CalendarBundle\Entity\CalendarEvent;
 use Oro\Bundle\CalendarBundle\Model\Recurrence;
-use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
+use Oro\Bundle\CalendarBundle\Tests\Functional\API\AbstractUseCaseTestCase;
 
 /**
  * @dbIsolation
  * @dbReindex
  */
-class RecurringCalendarEventControllerTest extends WebTestCase
+class RecurringCalendarEventControllerTest extends AbstractUseCaseTestCase
 {
     const RECURRING_EVENT_TITLE = 'Test Creating/Updating Recurring Event';
 
@@ -31,66 +29,8 @@ class RecurringCalendarEventControllerTest extends WebTestCase
         $recurringEventData = [
             'oro_calendar_event_form[title]' => self::RECURRING_EVENT_TITLE,
             'oro_calendar_event_form[description]' => 'Test Recurring Event Description',
-            'oro_calendar_event_form[start]' => gmdate(DATE_RFC3339),
-            'oro_calendar_event_form[end]' => gmdate(DATE_RFC3339),
-            'oro_calendar_event_form[allDay]' => true,
-            'oro_calendar_event_form[backgroundColor]' => '#FF0000',
-            'oro_calendar_event_form[repeat]' => true,
-            'oro_calendar_event_form[recurrence]' => [
-                'recurrenceType' => Recurrence::TYPE_DAILY,
-                'interval' => 2,
-                'startTime' => gmdate(DATE_RFC3339),
-                'occurrences' => 10,
-                'timeZone' => 'UTC'
-            ]
-        ];
-
-        $form->setValues($recurringEventData);
-
-        $this->client->followRedirects(true);
-        $crawler = $this->client->submit($form);
-
-        $result = $this->client->getResponse();
-        $this->assertHtmlResponseStatusCodeEquals($result, 200);
-        $this->assertContains('Calendar event saved', $crawler->html());
-
-        $calendarEvent = $this->getContainer()->get('doctrine')
-            ->getRepository('OroCalendarBundle:CalendarEvent')
-            ->findOneBy(['title' => self::RECURRING_EVENT_TITLE]);
-
-        $this->assertNotNull($calendarEvent);
-        $this->assertNotNull($calendarEvent->getRecurrence());
-
-        $this->assertEquals($calendarEvent->getRecurrence()->getRecurrenceType(), Recurrence::TYPE_DAILY);
-
-        return $calendarEvent;
-    }
-
-    /**
-     * @depends testCreateEventWithRecurring
-     *
-     * @param CalendarEvent $calendarEvent
-     */
-    public function testUpdateEventWithRecurring($calendarEvent)
-    {
-        $response = $this->client->requestGrid(
-            'calendar-event-grid',
-            ['calendar-event-grid[_filter][title][value]' => self::RECURRING_EVENT_TITLE]
-        );
-        $result = $this->getJsonResponseContent($response, 200);
-        $result = reset($result['data']);
-
-        $crawler = $this->client->request(
-            'GET',
-            $this->getUrl('oro_calendar_event_update', ['id' => $result['id']])
-        );
-        $form    = $crawler->selectButton('Save and Close')->form();
-
-        $recurringEventData = [
-            'oro_calendar_event_form[title]' => self::RECURRING_EVENT_TITLE,
-            'oro_calendar_event_form[description]' => 'Test Recurring Event Description',
-            'oro_calendar_event_form[start]' => gmdate(DATE_RFC3339),
-            'oro_calendar_event_form[end]' => gmdate(DATE_RFC3339),
+            'oro_calendar_event_form[start]' => '2016-04-25T01:00:00+00:00',
+            'oro_calendar_event_form[end]' => '2016-04-25T01:00:00+00:00',
             'oro_calendar_event_form[allDay]' => true,
             'oro_calendar_event_form[backgroundColor]' => '#FF0000',
             'oro_calendar_event_form[repeat]' => true,
@@ -124,11 +64,214 @@ class RecurringCalendarEventControllerTest extends WebTestCase
     }
 
     /**
+     * @depends testCreateEventWithRecurring
+     *
+     * @return CalendarEvent $calendarEvent
+     */
+    public function testUpdateEventWithRecurring()
+    {
+        $response = $this->client->requestGrid(
+            'calendar-event-grid',
+            ['calendar-event-grid[_filter][title][value]' => self::RECURRING_EVENT_TITLE]
+        );
+        $result = $this->getJsonResponseContent($response, 200);
+        $result = reset($result['data']);
+
+        $crawler = $this->client->request(
+            'GET',
+            $this->getUrl('oro_calendar_event_update', ['id' => $result['id']])
+        );
+        $form    = $crawler->selectButton('Save and Close')->form();
+
+        $recurringEventData = [
+            'oro_calendar_event_form[title]' => self::RECURRING_EVENT_TITLE,
+            'oro_calendar_event_form[description]' => 'Test Recurring Event Description',
+            'oro_calendar_event_form[start]' => '2016-04-25T01:00:00+00:00',
+            'oro_calendar_event_form[end]' => '2016-04-25T02:00:00+00:00',
+            'oro_calendar_event_form[allDay]' => true,
+            'oro_calendar_event_form[backgroundColor]' => '#FF0000',
+            'oro_calendar_event_form[repeat]' => true,
+            'oro_calendar_event_form[recurrence]' => [
+                'recurrenceType' => Recurrence::TYPE_DAILY,
+                'interval' => 5,
+                'startTime' => '2016-04-25T01:00:00+00:00',
+                'endTime' => '2016-06-10T01:00:00+00:00',
+                'occurrences' => null,
+                'timeZone' => 'UTC'
+            ]
+        ];
+
+        $form->setValues($recurringEventData);
+
+        $this->client->followRedirects(true);
+        $crawler = $this->client->submit($form);
+
+        $result = $this->client->getResponse();
+        $this->assertHtmlResponseStatusCodeEquals($result, 200);
+        $this->assertContains('Calendar event saved', $crawler->html());
+
+        $calendarEvent = $this->getContainer()->get('doctrine')
+            ->getRepository('OroCalendarBundle:CalendarEvent')
+            ->findOneBy(['title' => self::RECURRING_EVENT_TITLE]);
+
+        $this->assertNotNull($calendarEvent);
+        $this->assertNotNull($calendarEvent->getRecurrence());
+
+        $this->assertEquals($calendarEvent->getRecurrence()->getRecurrenceType(), Recurrence::TYPE_DAILY);
+
+
+        return $calendarEvent;
+    }
+
+    /**
+     * @depends testUpdateEventWithRecurring
+     *
+     * @param CalendarEvent $calendarEvent
+     *
+     * @return CalendarEvent $calendarEvent
+     */
+    public function testUpdateExceptionsOnRecurrenceFieldsUpdate($calendarEvent)
+    {
+        $this->initClient([], $this->generateWsseAuthHeader());
+
+        //add exceptions with API requests
+        $this->addExceptions($calendarEvent);
+
+        //update recurrence of calendar event, so all exceptions should be removed
+        $this->initClient([], $this->generateBasicAuthHeader());
+        $this->client->useHashNavigation(true);
+
+        $crawler = $this->client->request(
+            'GET',
+            $this->getUrl('oro_calendar_event_update', ['id' => $calendarEvent->getId()])
+        );
+        $form    = $crawler->selectButton('Save and Close')->form();
+
+        $recurringEventData = [
+            'oro_calendar_event_form[title]' => self::RECURRING_EVENT_TITLE,
+            'oro_calendar_event_form[description]' => 'Test Recurring Event Description',
+            'oro_calendar_event_form[start]' => '2016-05-30T01:00:00+00:00',
+            'oro_calendar_event_form[end]' => '2016-05-30T02:00:00+00:00',
+            'oro_calendar_event_form[allDay]' => true,
+            'oro_calendar_event_form[backgroundColor]' => '#FF0000',
+            'oro_calendar_event_form[repeat]' => true,
+            'oro_calendar_event_form[recurrence]' => [
+                'recurrenceType' => Recurrence::TYPE_DAILY,
+                'interval' => 5,
+                'startTime' => '2016-05-30T01:00:00+00:00',
+                'endTime' => '2016-06-10T01:00:00+00:00',
+                'occurrences' => null,
+                'timeZone' => 'UTC'
+            ]
+        ];
+
+        $form->setValues($recurringEventData);
+
+        $this->client->followRedirects(true);
+        $crawler = $this->client->submit($form);
+
+        $result = $this->client->getResponse();
+        $this->assertHtmlResponseStatusCodeEquals($result, 200);
+        $this->assertContains('Calendar event saved', $crawler->html());
+
+        $this->initClient([], $this->generateWsseAuthHeader());
+
+        //make API request get event and make sure exceptions are removed
+        $actualEvents = $this->getOrderedCalendarEventsViaAPI($this->getApiRequestData($calendarEvent));
+        $expectedCalendarEvents = [
+            [
+                'start' => '2016-06-09T01:00:00+00:00',
+                'end' => '2016-06-09T02:00:00+00:00',
+                'title' => $calendarEvent->getTitle(),
+                'description' => $calendarEvent->getDescription(),
+            ],
+            [
+                'start' => '2016-06-04T01:00:00+00:00',
+                'end' => '2016-06-04T02:00:00+00:00',
+                'title' => $calendarEvent->getTitle(),
+                'description' => $calendarEvent->getDescription(),
+            ],
+            [
+                'start' => '2016-05-30T01:00:00+00:00',
+                'end' => '2016-05-30T02:00:00+00:00',
+                'title' => $calendarEvent->getTitle(),
+                'description' => $calendarEvent->getDescription(),
+            ],
+        ];
+        $this->assertCalendarEvents($expectedCalendarEvents, $actualEvents);
+
+        return $calendarEvent;
+    }
+
+    /**
+     * @depends testUpdateExceptionsOnRecurrenceFieldsUpdate
+     *
+     * @param CalendarEvent $calendarEvent
+     */
+    public function testUpdateExceptionsOnEmptyRecurrence($calendarEvent)
+    {
+        $this->initClient([], $this->generateWsseAuthHeader());
+
+        //add exceptions with API requests
+        $this->addExceptions($calendarEvent);
+
+        //update recurrence of calendar event, so all exceptions should be removed
+        $this->initClient([], $this->generateBasicAuthHeader());
+        $this->client->useHashNavigation(true);
+
+        $crawler = $this->client->request(
+            'GET',
+            $this->getUrl('oro_calendar_event_update', ['id' => $calendarEvent->getId()])
+        );
+        $form    = $crawler->selectButton('Save and Close')->form();
+
+        $recurringEventData = [
+            'oro_calendar_event_form[title]' => self::RECURRING_EVENT_TITLE,
+            'oro_calendar_event_form[description]' => 'Test Recurring Event Description',
+            'oro_calendar_event_form[start]' => '2016-05-30T01:00:00+00:00',
+            'oro_calendar_event_form[end]' => '2016-05-30T02:00:00+00:00',
+            'oro_calendar_event_form[allDay]' => true,
+            'oro_calendar_event_form[backgroundColor]' => '#FF0000',
+            'oro_calendar_event_form[repeat]' => false
+        ];
+
+        $form->setValues($recurringEventData);
+
+        $this->client->followRedirects(true);
+        $crawler = $this->client->submit($form);
+
+        $result = $this->client->getResponse();
+        $this->assertHtmlResponseStatusCodeEquals($result, 200);
+        $this->assertContains('Calendar event saved', $crawler->html());
+
+        $this->initClient([], $this->generateWsseAuthHeader());
+
+        //make API request get event and make sure exceptions are removed
+        $actualEvents = $this->getOrderedCalendarEventsViaAPI($this->getApiRequestData($calendarEvent));
+        $expectedCalendarEvents = [
+            [
+                'id' => $calendarEvent->getId(),
+                'start' => '2016-05-30T01:00:00+00:00',
+                'end' => '2016-05-30T02:00:00+00:00',
+                'title' => $calendarEvent->getTitle(),
+                'description' => $calendarEvent->getDescription(),
+                'recurringEventId' => null, //make sure it is not exception
+                'isCancelled' => false,
+            ],
+        ];
+        $this->assertCalendarEvents($expectedCalendarEvents, $actualEvents);
+
+        $this->deleteEventViaAPI($calendarEvent->getId());
+    }
+
+    /**
      * @dataProvider recurringEventCreationDataProvider
      *
      * @param $recurringEventParameters
+     * @param $apiRequestParams
+     * @param $expectedCalendarEvents
      */
-    public function testCreateRecurringEvent($recurringEventParameters)
+    public function testCreateRecurringEvent($recurringEventParameters, $apiRequestParams, $expectedCalendarEvents)
     {
         $crawler = $this->client->request('GET', $this->getUrl('oro_calendar_event_create'));
         $form    = $crawler->selectButton('Save and Close')->form();
@@ -163,6 +306,18 @@ class RecurringCalendarEventControllerTest extends WebTestCase
             $calendarEvent->getRecurrence()->getRecurrenceType(),
             $recurringEventParameters['recurrence']['recurrenceType']
         );
+
+        $request = [
+            'calendar'    => self::DEFAULT_USER_CALENDAR_ID,
+            'start'       => $apiRequestParams['start'],
+            'end'         => $apiRequestParams['end'],
+            'subordinate' => true,
+        ];
+
+        $this->initClient([], $this->generateWsseAuthHeader());
+        $actualEvents = $this->getOrderedCalendarEventsViaAPI($request);
+        $this->assertCalendarEvents($expectedCalendarEvents, $actualEvents);
+        $this->deleteEventViaAPI($calendarEvent->getId());
     }
 
     /**
@@ -172,87 +327,143 @@ class RecurringCalendarEventControllerTest extends WebTestCase
     {
         return [
             'Daily' => [
-                [
+                'recurringEventParameters' => [
                     'title' => 'Test Daily Recurring Event',
                     'description' => 'Test Daily Recurring Event Description',
-                    'start' => gmdate(DATE_RFC3339),
-                    'end' => gmdate(DATE_RFC3339),
+                    'start' => '2016-04-25T01:00:00+00:00',
+                    'end' => '2016-04-25T02:00:00+00:00',
                     'allDay' => true,
                     'backgroundColor' => '#FF0000',
                     'recurrence' => [
                         'recurrenceType' => Recurrence::TYPE_DAILY,
-                        'interval' => 3,
-                        'startTime' => gmdate(DATE_RFC3339),
-                        'endTime' => null,
+                        'interval' => 5,
+                        'startTime' => '2016-04-25T01:00:00+00:00',
+                        'endTime' => '2016-06-10T01:00:00+00:00',
                         'occurrences' => null,
                         'timeZone' => 'UTC'
+                    ]
+                ],
+                'apiRequestParams' => [
+                    'start' => '2016-03-28T01:00:00+00:00',
+                    'end' => '2016-05-01T01:00:00+00:00'
+                ],
+                'expectedCalendarEvents' => [
+                    [
+                        'start' => '2016-04-30T01:00:00+00:00',
+                        'end' => '2016-04-30T02:00:00+00:00',
+                    ],
+                    [
+                        'start' => '2016-04-25T01:00:00+00:00',
+                        'end' => '2016-04-25T02:00:00+00:00',
                     ]
                 ]
             ],
             'Monthly' => [
-                [
+                'recurringEventParameters' => [
                     'title' => 'Test Monthly Recurring Event',
                     'description' => 'Test Monthly Recurring Event Description',
-                    'start' => gmdate(DATE_RFC3339),
-                    'end' => gmdate(DATE_RFC3339),
+                    'start' => '2016-04-25T01:00:00+00:00',
+                    'end' => '2016-04-25T02:00:00+00:00',
                     'allDay' => true,
                     'backgroundColor' => '#FF0000',
                     'recurrence' => [
                         'recurrenceType' => Recurrence::TYPE_MONTHLY,
-                        'interval' => 1,
+                        'interval' => 2,
                         'dayOfMonth' => 25,
-                        'startTime' => gmdate(DATE_RFC3339),
-                        'endTime' => null,
-                        'occurrences' => 5,
+                        'startTime' => '2016-04-25T01:00:00+00:00',
+                        'endTime' => '2016-12-31T01:00:00+00:00',
+                        'occurrences' => 3,
                         'timeZone' => 'UTC'
+                    ]
+                ],
+                'apiRequestParams' => [
+                    'start' => '2016-07-25T01:00:00+00:00',
+                    'end' => '2016-09-04T01:00:00+00:00'
+                ],
+                'expectedCalendarEvents' => [
+                    [
+                        'start' => '2016-08-25T01:00:00+00:00',
+                        'end' => '2016-08-25T02:00:00+00:00',
                     ]
                 ]
             ],
             'MonthNth' => [
-                [
+                'recurringEventParameters' => [
                     'title' => 'Test MonthNth Recurring Event',
                     'description' => 'Test MonthNth Recurring Event Description',
-                    'start' => gmdate(DATE_RFC3339),
-                    'end' => gmdate(DATE_RFC3339),
+                    'start' => '2016-04-25T01:00:00+00:00',
+                    'end' => '2016-04-25T02:00:00+00:00',
                     'allDay' => true,
                     'backgroundColor' => '#FF0000',
                     'recurrence' => [
                         'recurrenceType' => Recurrence::TYPE_MONTH_N_TH,
                         'instance' => Recurrence::INSTANCE_FIRST,
-                        'dayOfWeek' => Recurrence::DAY_MONDAY,
+                        'dayOfWeek' => [Recurrence::DAY_MONDAY],
                         'interval' => 2,
-                        'startTime' => gmdate(DATE_RFC3339),
-                        'endTime' => null,
+                        'startTime' => '2016-04-25T01:00:00+00:00',
+                        'endTime' => '2016-08-01T01:00:00+00:00',
                         'occurrences' => null,
                         'timeZone' => 'UTC'
                     ]
+                ],
+                'apiRequestParams' => [
+                    'start' => '2016-04-01T01:00:00+00:00',
+                    'end' => '2016-09-01T01:00:00+00:00'
+                ],
+                'expectedCalendarEvents' => [
+                    [
+                        'start' => '2016-08-01T01:00:00+00:00',
+                        'end' => '2016-08-01T02:00:00+00:00',
+                    ],
+                    [
+                        'start' => '2016-06-06T01:00:00+00:00',
+                        'end' => '2016-06-06T02:00:00+00:00',
+                    ],
                 ]
             ],
             'Weekly' => [
-                [
+                'recurringEventParameters' => [
                     'title' => 'Test Weekly Recurring Event',
                     'description' => 'Test Weekly Recurring Event Description',
-                    'start' => gmdate(DATE_RFC3339),
-                    'end' => gmdate(DATE_RFC3339),
+                    'start' => '2016-04-25T01:00:00+00:00',
+                    'end' => '2016-04-25T02:00:00+00:00',
                     'allDay' => true,
                     'backgroundColor' => '#FF0000',
                     'recurrence' => [
                         'recurrenceType' => Recurrence::TYPE_WEEKLY,
                         'interval' => 2,
-                        'dayOfWeek' => [Recurrence::DAY_MONDAY, Recurrence::DAY_SUNDAY],
-                        'startTime' => gmdate(DATE_RFC3339),
-                        'endTime' => gmdate(DATE_RFC3339),
-                        'occurrences' => null,
+                        'dayOfWeek' => [Recurrence::DAY_SUNDAY, Recurrence::DAY_MONDAY],
+                        'startTime' => '2016-04-25T01:00:00+00:00',
+                        'endTime' => null,
+                        'occurrences' => 4,
                         'timeZone' => 'UTC'
                     ]
+                ],
+                'apiRequestParams' => [
+                    'start' => '2016-05-01T01:00:00+00:00',
+                    'end' => '2016-07-03T01:00:00+00:00'
+                ],
+                'expectedCalendarEvents' => [
+                    [
+                        'start' => '2016-05-22T01:00:00+00:00',
+                        'end' => '2016-05-22T02:00:00+00:00',
+                    ],
+                    [
+                        'start' => '2016-05-09T01:00:00+00:00',
+                        'end' => '2016-05-09T02:00:00+00:00',
+                    ],
+                    [
+                        'start' => '2016-05-08T01:00:00+00:00',
+                        'end' => '2016-05-08T02:00:00+00:00',
+                    ],
                 ]
             ],
             'Yearly' => [
-                [
+                'recurringEventParameters' => [
                     'title' => 'Test Yearly Recurring Event',
                     'description' => 'Test Yearly Recurring Event Description',
-                    'start' => gmdate(DATE_RFC3339),
-                    'end' => gmdate(DATE_RFC3339),
+                    'start' => '2016-04-25T01:00:00+00:00',
+                    'end' => '2016-04-25T02:00:00+00:00',
                     'allDay' => true,
                     'backgroundColor' => '#FF0000',
                     'recurrence' => [
@@ -260,34 +471,131 @@ class RecurringCalendarEventControllerTest extends WebTestCase
                         'interval' => 12,
                         'dayOfMonth' => 25,
                         'monthOfYear' => 4,
-                        'startTime' => gmdate(DATE_RFC3339),
-                        'endTime' => null,
-                        'occurrences' => 10,
+                        'startTime' => '2016-04-25T01:00:00+00:00',
+                        'endTime' => '2018-06-30T01:00:00+00:00',
+                        'occurrences' => null,
                         'timeZone' => 'UTC'
                     ]
+                ],
+                'apiRequestParams' => [
+                    'start' => '2018-01-01T01:00:00+00:00',
+                    'end' => '2019-05-01T01:00:00+00:00'
+                ],
+                'expectedCalendarEvents' => [
+                    [
+                        'start' => '2018-04-25T01:00:00+00:00',
+                        'end' => '2018-04-25T02:00:00+00:00',
+                    ],
                 ]
             ],
             'YearNth' => [
-                [
+                'recurringEventParameters' => [
                     'title' => 'Test YearNth Recurring Event',
                     'description' => 'Test YearNth Recurring Event Description',
-                    'start' => gmdate(DATE_RFC3339),
-                    'end' => gmdate(DATE_RFC3339),
+                    'start' => '2015-03-01T01:00:00+00:00',
+                    'end' => '2015-03-01T02:00:00+00:00',
                     'allDay' => true,
                     'backgroundColor' => '#FF0000',
                     'recurrence' => [
                         'recurrenceType' => Recurrence::TYPE_YEAR_N_TH,
-                        'instance' => Recurrence::INSTANCE_SECOND,
+                        'instance' => Recurrence::INSTANCE_FIRST,
                         'dayOfWeek' => [Recurrence::DAY_MONDAY],
                         'interval' => 12,
                         'monthOfYear' => 4,
-                        'startTime' => gmdate(DATE_RFC3339),
-                        'endTime' => null,
-                        'occurrences' => 10,
+                        'startTime' => '2016-04-25T01:00:00+00:00',
+                        'endTime' => '2020-03-01T01:00:00+00:00',
+                        'occurrences' => null,
                         'timeZone' => 'UTC'
                     ]
+                ],
+                'apiRequestParams' => [
+                    'start' => '2015-03-01T01:00:00+00:00',
+                    'end' => '2018-03-01T01:00:00+00:00'
+                ],
+                'expectedCalendarEvents' => [
+                    [
+                        'start' => '2017-04-03T01:00:00+00:00',
+                        'end' => '2017-04-03T02:00:00+00:00',
+                    ],
                 ]
             ],
+        ];
+    }
+
+    /**
+     * @param $calendarEvent
+     *
+     * @return array
+     */
+    protected function getExceptionsData($calendarEvent)
+    {
+        return [
+            [//canceled event exception
+                'isCancelled'      => true,
+                'title'            => $calendarEvent->getTitle(),
+                'description'      => $calendarEvent->getDescription(),
+                'start'            => '2016-06-04T01:00:00+00:00',
+                'allDay'           => $calendarEvent->getAllDay(),
+                'calendar'         => $calendarEvent->getCalendar()->getId(),
+                'recurringEventId' => $calendarEvent->getId(),
+                'originalStart'    => '2016-06-04T01:00:00+00:00',
+                'end'              => '2016-06-04T02:00:00+00:00',
+            ],
+            [//changed calendar event as exception
+                'isCancelled'      => false,
+                'title'            => $calendarEvent->getTitle() . ' Changed',
+                'description'      => $calendarEvent->getDescription(),
+                'start'            => '2016-05-30T03:00:00+00:00',
+                'allDay'           => $calendarEvent->getAllDay(),
+                'calendar'         => $calendarEvent->getCalendar()->getId(),
+                'recurringEventId' => $calendarEvent->getId(),
+                'originalStart'    => '2016-05-30T01:00:00+00:00',
+                'end'              => '2016-05-30T05:00:00+00:00',
+            ]
+        ];
+    }
+
+    /**
+     * @param $calendarEvent
+     */
+    protected function addExceptions($calendarEvent)
+    {
+        foreach ($this->getExceptionsData($calendarEvent) as $exceptionData) {
+            $this->addCalendarEventViaAPI($exceptionData);
+        }
+
+        //make API request get event and make sure exceptions are applied
+        $request = $this->getApiRequestData($calendarEvent);
+        $actualEvents = $this->getOrderedCalendarEventsViaAPI($request);
+        $expectedCalendarEvents = [
+            [
+                'start' => '2016-06-09T01:00:00+00:00',
+                'end' => '2016-06-09T02:00:00+00:00',
+                'title' => $calendarEvent->getTitle(),
+                'description' => $calendarEvent->getDescription(),
+            ],
+            [
+                'start' => '2016-05-30T03:00:00+00:00',
+                'title' => $calendarEvent->getTitle() . ' Changed',
+                'description' => $calendarEvent->getDescription(),
+                'end' => '2016-05-30T05:00:00+00:00',
+            ]
+        ];
+        $this->assertCalendarEvents($expectedCalendarEvents, $actualEvents);
+    }
+
+    /**
+     * @param $calendarEvent
+     *
+     * @return array
+     */
+    protected function getApiRequestData($calendarEvent)
+    {
+        return [
+            'calendar'    => $calendarEvent->getCalendar()->getId(),
+            'start'       => '2016-05-30T01:00:00+00:00',
+            'end'         => '2016-07-04T01:00:00+00:00',
+            'subordinate' => true,
         ];
     }
 }
