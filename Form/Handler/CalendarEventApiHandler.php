@@ -214,8 +214,12 @@ class CalendarEventApiHandler
     {
         $hasException = $this->form->has('updateExceptions');
         $hasRecurrence = $this->form->has('recurrence');
-        if ($hasRecurrence && $hasException && !empty($this->form->get('updateExceptions')->getData())) {
+        $updateExceptionValue = $hasException ? $this->form->get('updateExceptions')->getData() : null;
+        if ($hasRecurrence && $hasException && ($updateExceptionValue === 'true' || $updateExceptionValue === true)) {
             $entity->getRecurringEventExceptions()->clear();
+            foreach ($entity->getChildEvents() as $childEvent) {
+                $childEvent->getRecurringEventExceptions()->clear();
+            }
         }
     }
 }
