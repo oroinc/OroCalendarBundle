@@ -56,7 +56,6 @@ class CalendarEventApiTypeTest extends TypeTestCase
             ->setMethods(['getCurrentRequest'])
             ->disableOriginalConstructor()
             ->getMock();
-
         $this->calendarEventManager =
             $this->getMockBuilder('Oro\Bundle\CalendarBundle\Manager\CalendarEventManager')
                 ->disableOriginalConstructor()
@@ -129,8 +128,10 @@ class CalendarEventApiTypeTest extends TypeTestCase
             ->method('getManagerForClass')
             ->willReturn($emForEvent);
 
-
         $attendeeRelationManager = $this->getMockBuilder('Oro\Bundle\CalendarBundle\Manager\AttendeeRelationManager')
+            ->disableOriginalConstructor()
+            ->getMock();
+        $attendeeManager = $this->getMockBuilder('Oro\Bundle\CalendarBundle\Manager\AttendeeManager')
             ->disableOriginalConstructor()
             ->getMock();
 
@@ -139,7 +140,8 @@ class CalendarEventApiTypeTest extends TypeTestCase
             $this->registry,
             $this->securityFacade,
             $this->requestStack,
-            $attendeeRelationManager
+            $attendeeRelationManager,
+            $attendeeManager
         );
 
         parent::setUp();
@@ -354,7 +356,9 @@ class CalendarEventApiTypeTest extends TypeTestCase
 
     public function testSetDefaultOptions()
     {
-        $resolver = $this->getMock('Symfony\Component\OptionsResolver\OptionsResolverInterface');
+        $resolver = $this->getMockBuilder('Symfony\Component\OptionsResolver\OptionsResolver')
+            ->disableOriginalConstructor()
+            ->getMock();
         $resolver->expects($this->once())
             ->method('setDefaults')
             ->with(
@@ -366,7 +370,7 @@ class CalendarEventApiTypeTest extends TypeTestCase
                 ]
             );
 
-        $this->calendarEventApiType->setDefaultOptions($resolver);
+        $this->calendarEventApiType->configureOptions($resolver);
     }
 
     public function testGetName()
@@ -395,13 +399,10 @@ class CalendarEventApiTypeTest extends TypeTestCase
             ->disableOriginalConstructor()
             ->getMock();
 
-        $validator = $this->getMockBuilder('Symfony\Component\Validator\Validator\ValidatorInterface')
-            ->getMock();
-
         $strategy = $this->getMockBuilder('Oro\Bundle\CalendarBundle\Model\Recurrence\StrategyInterface')
             ->getMock();
 
-        $recurrenceModel = new Recurrence($validator, $strategy);
+        $recurrenceModel = new Recurrence($strategy);
 
         $types = [
             new ReminderCollectionType($this->registry),

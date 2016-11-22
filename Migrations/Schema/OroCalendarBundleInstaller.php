@@ -101,7 +101,7 @@ class OroCalendarBundleInstaller implements
         $table = $schema->createTable('oro_calendar_event_attendee');
         $table->addColumn('id', 'integer', ['autoincrement' => true]);
         $table->addColumn('user_id', 'integer', ['notnull' => false]);
-        $table->addColumn('calendar_event_id', 'integer', ['notnull' => true]);
+        $table->addColumn('calendar_event_id', 'integer', ['notnull' => false]);
         $table->addColumn('email', 'string', ['notnull' => false, 'length' => 255]);
         $table->addColumn('display_name', 'string', ['notnull' => false, 'length' => 255]);
         $table->addColumn('created_at', 'datetime', ['notnull' => true]);

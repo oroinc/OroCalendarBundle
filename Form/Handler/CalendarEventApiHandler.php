@@ -186,6 +186,8 @@ class CalendarEventApiHandler
     }
 
     /**
+     * @param $className
+     *
      * @return EntityRepository
      */
     protected function getEntityRepository($className)

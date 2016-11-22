@@ -2,8 +2,6 @@
 
 namespace Oro\Bundle\CalendarBundle\Model;
 
-use Symfony\Component\Validator\Validator\ValidatorInterface;
-
 use Oro\Bundle\CalendarBundle\Model\Recurrence\StrategyInterface;
 use Oro\Bundle\CalendarBundle\Entity;
 
@@ -72,9 +70,6 @@ class Recurrence
     const DAY_SATURDAY = 'saturday';
     /**#@-*/
 
-    /** @var ValidatorInterface */
-    protected $validator;
-
     /** @var StrategyInterface  */
     protected $recurrenceStrategy;
 
@@ -103,12 +98,10 @@ class Recurrence
     ];
 
     /**
-     * @param ValidatorInterface $validator
      * @param StrategyInterface $recurrenceStrategy
      */
-    public function __construct(ValidatorInterface $validator, StrategyInterface $recurrenceStrategy)
+    public function __construct(StrategyInterface $recurrenceStrategy)
     {
-        $this->validator = $validator;
         $this->recurrenceStrategy = $recurrenceStrategy;
     }
 
@@ -145,13 +138,27 @@ class Recurrence
     }
 
     /**
-     * @param Entity\Recurrence $recurrence
-     *
-     * @return null|string
+     * {@inheritdoc}
      */
-    public function getValidationErrorMessage(Entity\Recurrence $recurrence)
+    public function getMaxInterval(Entity\Recurrence $recurrence)
     {
-        return $this->recurrenceStrategy->getValidationErrorMessage($recurrence);
+        return $this->recurrenceStrategy->getMaxInterval($recurrence);
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getIntervalMultipleOf(Entity\Recurrence $recurrence)
+    {
+        return $this->recurrenceStrategy->getIntervalMultipleOf($recurrence);
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getRequiredProperties(Entity\Recurrence $recurrence)
+    {
+        return $this->recurrenceStrategy->getRequiredProperties($recurrence);
     }
 
     /**

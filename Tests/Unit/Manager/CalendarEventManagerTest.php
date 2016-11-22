@@ -14,6 +14,9 @@ use Oro\Bundle\UserBundle\Entity\User;
 class CalendarEventManagerTest extends \PHPUnit_Framework_TestCase
 {
     /** @var \PHPUnit_Framework_MockObject_MockObject */
+    protected $attendeeManager;
+
+    /** @var \PHPUnit_Framework_MockObject_MockObject */
     protected $doctrineHelper;
 
     /** @var \PHPUnit_Framework_MockObject_MockObject */
@@ -30,6 +33,9 @@ class CalendarEventManagerTest extends \PHPUnit_Framework_TestCase
 
     protected function setUp()
     {
+        $this->attendeeManager     = $this->getMockBuilder('Oro\Bundle\CalendarBundle\Manager\AttendeeManager')
+            ->disableOriginalConstructor()
+            ->getMock();
         $this->doctrineHelper     = $this->getMockBuilder('Oro\Bundle\EntityBundle\ORM\DoctrineHelper')
             ->disableOriginalConstructor()
             ->getMock();
@@ -45,6 +51,7 @@ class CalendarEventManagerTest extends \PHPUnit_Framework_TestCase
                 ->getMock();
 
         $this->manager = new CalendarEventManager(
+            $this->attendeeManager,
             $this->doctrineHelper,
             $this->securityFacade,
             $this->entityNameResolver,

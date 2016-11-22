@@ -873,7 +873,7 @@ class CalendarEvent extends ExtendCalendarEvent implements RemindableInterface, 
     }
 
     /**
-     * Gets parent for calendar event exception.
+     * Gets recurring event for calendar event exception.
      *
      * @return CalendarEvent|null
      */
@@ -985,6 +985,8 @@ class CalendarEvent extends ExtendCalendarEvent implements RemindableInterface, 
 
     /**
      * Remove attendee. Related child event will be also removed. This method should not be called using child event.
+     *
+     * @todo Move logic of this method to \Oro\Bundle\CalendarBundle\Manager\CalendarEventManager for consistency.
      *
      * @param Attendee $attendee
      * @return CalendarEvent

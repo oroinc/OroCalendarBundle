@@ -10,6 +10,14 @@ class MonthlyStrategy extends AbstractStrategy
     /**
      * {@inheritdoc}
      */
+    public function getName()
+    {
+        return 'recurrence_monthly';
+    }
+
+    /**
+     * {@inheritdoc}
+     */
     public function getOccurrences(Entity\Recurrence $recurrence, \DateTime $start, \DateTime $end)
     {
         $result = [];
@@ -61,14 +69,6 @@ class MonthlyStrategy extends AbstractStrategy
             $interval,
             ['%count%' => $interval, '%day%' => $recurrence->getDayOfMonth()]
         );
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function getName()
-    {
-        return 'recurrence_monthly';
     }
 
     /**
@@ -136,12 +136,11 @@ class MonthlyStrategy extends AbstractStrategy
     /**
      * {@inheritdoc}
      */
-    public function getValidationErrorMessage(Entity\Recurrence $recurrence)
+    public function getRequiredProperties(Entity\Recurrence $recurrence)
     {
-        if (!$recurrence->getDayOfMonth()) {
-            return "Parameter 'dayOfMonth' can't be empty for Monthly recurrence pattern.";
-        }
-
-        return null;
+        return array_merge(
+            parent::getRequiredProperties($recurrence),
+            ['dayOfMonth']
+        );
     }
 }

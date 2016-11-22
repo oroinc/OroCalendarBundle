@@ -301,7 +301,7 @@ class Recurrence
      *
      * @return self
      */
-    public function setDayOfWeek($dayOfWeek)
+    public function setDayOfWeek(array $dayOfWeek = null)
     {
         $this->dayOfWeek = $dayOfWeek;
 

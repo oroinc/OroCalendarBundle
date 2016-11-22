@@ -6,41 +6,36 @@ use Doctrine\Common\Persistence\ManagerRegistry;
 
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
-use Symfony\Component\Form\FormEvent;
-use Symfony\Component\Form\FormEvents;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\Form\FormView;
-use Symfony\Component\OptionsResolver\OptionsResolverInterface;
+use Symfony\Component\OptionsResolver\OptionsResolver;
 
-use Oro\Bundle\CalendarBundle\Entity\CalendarEvent;
+use Oro\Bundle\CalendarBundle\Form\EventListener\CalendarEventRecurrenceSubscriber;
 use Oro\Bundle\CalendarBundle\Form\EventListener\CalendarUidSubscriber;
 use Oro\Bundle\CalendarBundle\Form\EventListener\ChildEventsSubscriber;
-use Oro\Bundle\SecurityBundle\SecurityFacade;
+use Oro\Bundle\CalendarBundle\Manager\CalendarEventManager;
 
 class CalendarEventType extends AbstractType
 {
     /** @var ManagerRegistry */
     protected $registry;
 
-    /** @var SecurityFacade */
-    protected $securityFacade;
+    /** @var CalendarEventManager */
+    protected $calendarEventManager;
 
     /**
+     * CalendarEventType constructor.
+     *
      * @param ManagerRegistry $registry
-     * @param SecurityFacade $securityFacade
+     * @param CalendarEventManager $calendarEventManager
      */
-    public function __construct(ManagerRegistry $registry, SecurityFacade $securityFacade)
-    {
+    public function __construct(
+        ManagerRegistry $registry,
+        CalendarEventManager $calendarEventManager
+    ) {
         $this->registry = $registry;
-        $this->securityFacade = $securityFacade;
+        $this->calendarEventManager = $calendarEventManager;
     }
-
-    /** @var array */
-    protected $editableFieldsForRecurrence = [
-        'title',
-        'description',
-        'contexts',
-    ];
 
     /**
      * @SuppressWarnings(PHPMD.ExcessiveMethodLength)
@@ -127,31 +122,36 @@ class CalendarEventType extends AbstractType
                 [
                     'mapped' => false
                 ]
+            )
+            ->add(
+                'repeat',
+                'checkbox',
+                [
+                    'required' => false,
+                    'mapped' => false
+                ]
+            )
+            ->add(
+                'recurrence',
+                'oro_calendar_event_recurrence',
+                [
+                    'required' => false,
+                    'attr' => ['data-validation-ignore' => '']
+                ]
             );
 
         $builder->addEventSubscriber(new CalendarUidSubscriber());
-        $builder->addEventSubscriber(new ChildEventsSubscriber($this->registry, $this->securityFacade));
-        $builder->addEventListener(FormEvents::PRE_SUBMIT, function (FormEvent $event) {
-            $form = $event->getForm();
-            if ($form->getNormData() && $form->getNormData()->getRecurrence()) {
-                foreach ($form->all() as $child) {
-                    if (in_array($child->getName(), $this->editableFieldsForRecurrence)) {
-                        continue;
-                    }
-                    if ($form->has($child->getName())) {
-                        $options = $child->getConfig()->getOptions();
-                        $options['disabled'] = true;
-                        $form->add($child->getName(), $child->getConfig()->getType()->getName(), $options);
-                    }
-                }
-            }
-        }, 10);
+        $builder->addEventSubscriber(new CalendarEventRecurrenceSubscriber($this->calendarEventManager));
+        $builder->addEventSubscriber(new ChildEventsSubscriber(
+            $this->registry,
+            $this->calendarEventManager
+        ));
     }
 
     /**
-     *M-BM- {@inheritdoc}
+     * {@inheritdoc}
      */
-    public function setDefaultOptions(OptionsResolverInterface $resolver)
+    public function configureOptions(OptionsResolver $resolver)
     {
         $resolver->setDefaults(
             [
@@ -172,13 +172,6 @@ class CalendarEventType extends AbstractType
         if ($form->getData() && $form->getData()->getRecurrence()) {
             /** @var FormView $childView */
             foreach ($view->children as $childView) {
-                if (in_array($childView->vars['name'], $this->editableFieldsForRecurrence)) {
-                    continue;
-                }
-                $childView->vars['disabled'] = true;
-                if (in_array($childView->vars['name'], ['start', 'end'])) {
-                    $childView->vars['attr']['data-required'] = false;
-                }
                 if ($childView->vars['name'] === 'reminders') {
                     $childView->vars['allow_add'] = false;
                     $childView->vars['allow_delete'] = false;
@@ -188,7 +181,7 @@ class CalendarEventType extends AbstractType
     }
 
     /**
-     *M-BM- {@inheritdoc}
+     * {@inheritdoc}
      */
     public function getName()
     {

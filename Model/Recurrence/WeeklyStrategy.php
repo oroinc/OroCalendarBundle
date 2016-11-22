@@ -9,6 +9,14 @@ class WeeklyStrategy extends AbstractStrategy
 {
     /**
      * {@inheritdoc}
+     */
+    public function getName()
+    {
+        return 'recurrence_weekly';
+    }
+
+    /**
+     * {@inheritdoc}
      *
      * @SuppressWarnings(PHPMD.NPathComplexity)
      * @SuppressWarnings(PHPMD.CyclomaticComplexity)
@@ -106,14 +114,6 @@ class WeeklyStrategy extends AbstractStrategy
     }
 
     /**
-     * {@inheritdoc}
-     */
-    public function getName()
-    {
-        return 'recurrence_weekly';
-    }
-
-    /**
      * Returns next date occurrence.
      *
      * @param string $day
@@ -200,12 +200,11 @@ class WeeklyStrategy extends AbstractStrategy
     /**
      * {@inheritdoc}
      */
-    public function getValidationErrorMessage(Entity\Recurrence $recurrence)
+    public function getRequiredProperties(Entity\Recurrence $recurrence)
     {
-        if (!$recurrence->getDayOfWeek()) {
-            return "Parameter 'dayOfWeek' can't be empty for Weekly recurrence pattern.";
-        }
-
-        return null;
+        return array_merge(
+            parent::getRequiredProperties($recurrence),
+            ['dayOfWeek']
+        );
     }
 }
