@@ -3,10 +3,10 @@
 namespace Oro\Bundle\CalendarBundle\Tests\Functional\API;
 
 use Oro\Bundle\CalendarBundle\Model\Recurrence;
+use Oro\Component\PhpUtils\ArrayUtil;
 
 /**
  * @dbIsolation
- * @dbReindex
  */
 class RestCalendarRecurrentEventUpdateExceptionTest extends AbstractUseCaseTestCase
 {
@@ -18,6 +18,15 @@ class RestCalendarRecurrentEventUpdateExceptionTest extends AbstractUseCaseTestC
      */
     public function testUpdateExceptionsCases($changedEventData, $expectedCalendarEvents)
     {
+        $result = $this->getOrderedCalendarEventsViaAPI($this->getApiRequestData());
+        if (!empty($result)) {
+            $ids = ArrayUtil::arrayColumn($result, 'id');
+            $ids = array_unique($ids);
+            foreach ($ids as $id) {
+                $this->deleteEventViaAPI($id);
+            }
+        }
+
         $calendarEventId = $this->createRecurringEventWithExceptions();
         $eventData = $this->getCalendarEventData();
         $eventData = array_replace_recursive($eventData, $changedEventData);
