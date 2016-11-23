@@ -189,7 +189,6 @@ class UserCalendarEventNormalizer extends AbstractCalendarEventNormalizer
     protected function prepareExtraValues(CalendarEvent $event, array $extraValues)
     {
         $extraValues['attendees']    = [];
-        $extraValues['invitedUsers'] = [];
 
         foreach ($event->getAttendees() as $attendee) {
             $extraValues['attendees'][] = $this->transformEntity([
@@ -201,10 +200,6 @@ class UserCalendarEventNormalizer extends AbstractCalendarEventNormalizer
                 'status'      => $this->getObjectValue($attendee, 'status.id'),
                 'type'        => $this->getObjectValue($attendee, 'type.id'),
             ]);
-
-            if ($attendee->getUser()) {
-                $extraValues['invitedUsers'][] = $attendee->getUser()->getId();
-            }
         }
 
         /**

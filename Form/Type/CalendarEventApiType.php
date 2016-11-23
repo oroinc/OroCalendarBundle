@@ -7,48 +7,22 @@ use Doctrine\Common\Persistence\ManagerRegistry;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\DateTimeType;
 use Symfony\Component\Form\FormBuilderInterface;
-use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
 use Oro\Bundle\CalendarBundle\Form\EventListener\AttendeesSubscriber;
-use Oro\Bundle\CalendarBundle\Form\EventListener\ChildEventsSubscriber;
 use Oro\Bundle\CalendarBundle\Manager\CalendarEventManager;
-use Oro\Bundle\SecurityBundle\SecurityFacade;
-use Oro\Bundle\SoapBundle\Form\EventListener\PatchSubscriber;
 use Oro\Bundle\CalendarBundle\Form\EventListener\CalendarEventApiTypeSubscriber;
 use Oro\Bundle\CalendarBundle\Form\EventListener\CalendarEventRecurrenceSubscriber;
-use Oro\Bundle\CalendarBundle\Manager\AttendeeManager;
-use Oro\Bundle\CalendarBundle\Manager\AttendeeRelationManager;
+use Oro\Bundle\SoapBundle\Form\EventListener\PatchSubscriber;
 
 class CalendarEventApiType extends AbstractType
 {
-    /** @var ManagerRegistry */
-    protected $registry;
-
     /** @var CalendarEventManager */
     protected $calendarEventManager;
 
-    /** @var RequestStack */
-    protected $requestStack;
-
-    /** @var AttendeeRelationManager */
-    protected $attendeeRelationManager;
-
-    /** @var SecurityFacade */
-    protected $securityFacade;
-
-    public function __construct(
-        CalendarEventManager $calendarEventManager,
-        ManagerRegistry $registry,
-        SecurityFacade $securityFacade,
-        RequestStack $requestStack,
-        AttendeeRelationManager $attendeeRelationManager
-    ) {
-        $this->registry = $registry;
+    public function __construct(CalendarEventManager $calendarEventManager)
+    {
         $this->calendarEventManager = $calendarEventManager;
-        $this->securityFacade = $securityFacade;
-        $this->requestStack = $requestStack;
-        $this->attendeeRelationManager = $attendeeRelationManager;
     }
 
     /**
@@ -117,8 +91,7 @@ class CalendarEventApiType extends AbstractType
                         ],
                     ]
                 )
-                // @todo Move adding subscriber to \Oro\Bundle\CalendarBundle\Form\Type\CalendarEventAttendeesApiType
-                ->addEventSubscriber(new AttendeesSubscriber($this->attendeeRelationManager, $this->securityFacade))
+                ->addEventSubscriber(new AttendeesSubscriber())
             )
             ->add('notifyInvitedUsers', 'hidden', ['mapped' => false])
             ->add(
@@ -169,26 +142,9 @@ class CalendarEventApiType extends AbstractType
                 ]
             );
 
-        /** @deprecated since 1.10 'invitedUsers' field was replaced by field 'attendees' */
-        $builder->add(
-            'invitedUsers',
-            'oro_user_multiselect',
-            [
-                'required' => false,
-                'mapped'   => false,
-            ]
-        );
-
         $builder->addEventSubscriber(new PatchSubscriber());
-        $builder->addEventSubscriber(new CalendarEventRecurrenceSubscriber($this->calendarEventManager));
-        $builder->addEventSubscriber(new CalendarEventApiTypeSubscriber(
-            $this->calendarEventManager,
-            $this->requestStack
-        ));
-        $builder->addEventSubscriber(new ChildEventsSubscriber(
-            $this->registry,
-            $this->calendarEventManager
-        ));
+        $builder->addEventSubscriber(new CalendarEventRecurrenceSubscriber());
+        $builder->addEventSubscriber(new CalendarEventApiTypeSubscriber($this->calendarEventManager));
     }
 
     /**

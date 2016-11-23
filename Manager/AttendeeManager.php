@@ -11,6 +11,7 @@ use Oro\Bundle\CalendarBundle\Entity\Repository\AttendeeRepository;
 use Oro\Bundle\CalendarBundle\Entity\Repository\CalendarEventRepository;
 use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
 use Oro\Bundle\EntityExtendBundle\Tools\ExtendHelper;
+use Oro\Bundle\OrganizationBundle\Entity\Organization;
 
 class AttendeeManager
 {
@@ -120,11 +121,35 @@ class AttendeeManager
     }
 
     /**
-     * Makes sure displayName is not empty
+     * Responsible to actualize attendees state after it event was created/updated:
+     * - Bind attendees with users from $organization.
+     * - Update related attendee of the event.
+     * - Set default attendee status.
+     * - Update attendees with empty display name.
+     *
+     * @param CalendarEvent $calendarEvent
+     * @param Organization $organization
+     */
+    public function onEventUpdate(CalendarEvent $calendarEvent, Organization $organization)
+    {
+        $this->attendeeRelationManager->bindAttendees($calendarEvent->getAttendees(), $organization);
+
+        $calendarEvent->setRelatedAttendee($calendarEvent->findRelatedAttendee());
+
+        $this->setDefaultAttendeeStatus(
+            $calendarEvent->getAttendees(),
+            $calendarEvent->getRelatedAttendee()
+        );
+
+        $this->updateAttendeeDisplayNames($calendarEvent->getAttendees());
+    }
+
+    /**
+     * Set displayName if it is empty.
      *
      * @param Collection|Attendee[] $attendees
      */
-    public function updateAttendeeDisplayNames($attendees)
+    protected function updateAttendeeDisplayNames($attendees)
     {
         foreach ($attendees as $attendee) {
             if (!$attendee->getDisplayName()) {
@@ -134,10 +159,10 @@ class AttendeeManager
     }
 
     /**
-     * @param $attendees
-     * @param $relatedAttendee
+     * @param Collection|Attendee[] $attendees
+     * @param Attendee|null $relatedAttendee
      */
-    public function setDefaultAttendeeStatus($attendees, $relatedAttendee)
+    protected function setDefaultAttendeeStatus($attendees, Attendee $relatedAttendee = null)
     {
         foreach ($attendees as $attendee) {
             $isRelatedAttendee = $relatedAttendee == $attendee;

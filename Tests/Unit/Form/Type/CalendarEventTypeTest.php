@@ -31,11 +31,7 @@ class CalendarEventTypeTest extends \PHPUnit_Framework_TestCase
             ->disableOriginalConstructor()
             ->getMock();
 
-        $attendeeManager = $this->getMockBuilder('Oro\Bundle\CalendarBundle\Manager\AttendeeManager')
-            ->disableOriginalConstructor()
-            ->getMock();
-
-        $this->type = new CalendarEventType($managerRegistry, $calendarEventManager, $attendeeManager);
+        $this->type = new CalendarEventType($calendarEventManager);
     }
 
     /**

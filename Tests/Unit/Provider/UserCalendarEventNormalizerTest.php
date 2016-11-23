@@ -249,7 +249,6 @@ class UserCalendarEventNormalizerTest extends \PHPUnit_Framework_TestCase
                     'updatedAt'        => null,
                     'parentEventId'    => null,
                     'invitationStatus' => '',
-                    'invitedUsers'     => [],
                     'attendees'        => [],
                     'recurringEventId' => null,
                     'originalStart'    => null,
@@ -272,7 +271,6 @@ class UserCalendarEventNormalizerTest extends \PHPUnit_Framework_TestCase
                     'editable'         => true,
                     'removable'        => true,
                     'notifiable'       => false,
-                    'invitedUsers'     => [],
                     'attendees'        => [],
                     'recurringEventId' => null,
                     'originalStart'    => null,
@@ -321,7 +319,6 @@ class UserCalendarEventNormalizerTest extends \PHPUnit_Framework_TestCase
                     'editable'         => true,
                     'removable'        => true,
                     'notifiable'       => true,
-                    'invitedUsers'     => [],
                     'attendees'        => [
                         [
                             'displayName' => 'user',
@@ -351,7 +348,6 @@ class UserCalendarEventNormalizerTest extends \PHPUnit_Framework_TestCase
                     'updatedAt'        => null,
                     'parentEventId'    => null,
                     'invitationStatus' => CalendarEvent::STATUS_NONE,
-                    'invitedUsers'     => []
                 ],
                 'calendarId' => 456,
                 'expected'   => [
@@ -371,7 +367,6 @@ class UserCalendarEventNormalizerTest extends \PHPUnit_Framework_TestCase
                     'editable'         => false,
                     'removable'        => false,
                     'notifiable'       => false,
-                    'invitedUsers'     => [],
                     'recurringEventId' => null,
                     'originalStart'    => null,
                     'isCancelled'      => false,
