@@ -20,9 +20,6 @@ parameters:
 services:
     oro_calendar.calendar_event.form.type:
         class: %oro_calendar.calendar_event.form.type.class%
-        arguments:
-            - '@doctrine'
-            - '@oro_calendar.calendar_event_manager'
         tags:
             - { name: form.type, alias: oro_calendar_event }
 
@@ -31,10 +28,6 @@ services:
         scope: request
         arguments:
             - '@oro_calendar.calendar_event_manager'
-            - '@doctrine'
-            - '@oro_security.security_facade'
-            - '@request_stack'
-            - '@oro_calendar.attendee_relation_manager'
         tags:
             - { name: form.type, alias: oro_calendar_event_api }
 
@@ -70,11 +63,12 @@ services:
         arguments:
             - '@oro_calendar.calendar_event.form'
             - '@request'
-            - '@doctrine.orm.entity_manager'
+            - '@doctrine'
             - '@oro_activity.manager'
             - '@oro_entity.routing_helper'
             - '@oro_security.security_facade'
             - '@oro_calendar.send_processor.email'
+            - '@oro_calendar.calendar_event_manager'
 
     oro_calendar.system_calendar_event.form.handler:
         class: %oro_calendar.system_calendar_event.form.handler.class%
@@ -82,8 +76,10 @@ services:
         arguments:
             - '@oro_calendar.calendar_event.form'
             - '@request'
-            - '@doctrine.orm.entity_manager'
+            - '@doctrine'
+            - '@oro_security.security_facade'
             - '@oro_activity.manager'
+            - '@oro_calendar.calendar_event_manager'
 
     oro_calendar.calendar_event.form.handler.api:
         class: %oro_calendar.calendar_event.form.handler.api.class%
@@ -92,9 +88,10 @@ services:
             - '@oro_calendar.calendar_event.form.api'
             - '@request'
             - '@doctrine'
+            - '@oro_security.security_facade'
             - '@oro_calendar.send_processor.email'
             - '@oro_activity.manager'
-            - '@oro_calendar.attendee_relation_manager'
+            - '@oro_calendar.calendar_event_manager'
 
     oro_calendar.oro_calendar_event_attendees_select.form.type:
         class: %oro_calendar.oro_calendar_event_attendees_select.form.type.class%

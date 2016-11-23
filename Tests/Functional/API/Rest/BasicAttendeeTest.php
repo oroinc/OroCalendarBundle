@@ -112,9 +112,6 @@ class BasicAttendeeTest extends AbstractTestCase
                 'end' => "2016-10-14T23:00:00+00:00",
                 'allDay' => false,
                 'use_hangout' => false,
-                'invitedUsers' => [
-                    $this->getReference('oro_calendar:user:foo_user_2')->getId(),
-                ],
                 'attendees' => [
                     [
                         'displayName' => $this->getReference('oro_calendar:user:foo_user_2')->getFullName(),
@@ -219,7 +216,6 @@ class BasicAttendeeTest extends AbstractTestCase
                 'end' => "2016-10-14T23:00:00+00:00",
                 'allDay' => false,
                 'use_hangout' => false,
-                'invitedUsers' => [],
                 'attendees' => [
                     [
                         'displayName' => 'External Attendee',
@@ -324,7 +320,6 @@ class BasicAttendeeTest extends AbstractTestCase
                 'end' => "2016-10-14T23:00:00+00:00",
                 'allDay' => false,
                 'use_hangout' => false,
-                'invitedUsers' => [],
                 'attendees' => [
                     [
                         'displayName' => $this->getReference('oro_calendar:user:bar_user_1')->getFullName(),
@@ -472,9 +467,6 @@ class BasicAttendeeTest extends AbstractTestCase
                 'end' => "2016-10-14T23:00:00+00:00",
                 'allDay' => false,
                 'use_hangout' => false,
-                'invitedUsers' => [
-                    $this->getReference('oro_calendar:user:foo_user_3')->getId(),
-                ],
                 'attendees' => [
                     [
                         'displayName' => 'External Attendee',
@@ -626,7 +618,6 @@ class BasicAttendeeTest extends AbstractTestCase
                 'end' => "2016-10-14T23:00:00+00:00",
                 'allDay' => false,
                 'use_hangout' => false,
-                'invitedUsers' => [],
                 'attendees' => [],
                 'editable' => true,
                 'removable' => true,

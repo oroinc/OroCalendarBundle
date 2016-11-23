@@ -12,31 +12,9 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 
 use Oro\Bundle\CalendarBundle\Form\EventListener\CalendarEventRecurrenceSubscriber;
 use Oro\Bundle\CalendarBundle\Form\EventListener\CalendarUidSubscriber;
-use Oro\Bundle\CalendarBundle\Form\EventListener\ChildEventsSubscriber;
-use Oro\Bundle\CalendarBundle\Manager\CalendarEventManager;
 
 class CalendarEventType extends AbstractType
 {
-    /** @var ManagerRegistry */
-    protected $registry;
-
-    /** @var CalendarEventManager */
-    protected $calendarEventManager;
-
-    /**
-     * CalendarEventType constructor.
-     *
-     * @param ManagerRegistry $registry
-     * @param CalendarEventManager $calendarEventManager
-     */
-    public function __construct(
-        ManagerRegistry $registry,
-        CalendarEventManager $calendarEventManager
-    ) {
-        $this->registry = $registry;
-        $this->calendarEventManager = $calendarEventManager;
-    }
-
     /**
      * @SuppressWarnings(PHPMD.ExcessiveMethodLength)
      *
@@ -141,11 +119,7 @@ class CalendarEventType extends AbstractType
             );
 
         $builder->addEventSubscriber(new CalendarUidSubscriber());
-        $builder->addEventSubscriber(new CalendarEventRecurrenceSubscriber($this->calendarEventManager));
-        $builder->addEventSubscriber(new ChildEventsSubscriber(
-            $this->registry,
-            $this->calendarEventManager
-        ));
+        $builder->addEventSubscriber(new CalendarEventRecurrenceSubscriber());
     }
 
     /**

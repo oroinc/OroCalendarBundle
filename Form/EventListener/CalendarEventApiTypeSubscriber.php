@@ -5,10 +5,7 @@ namespace Oro\Bundle\CalendarBundle\Form\EventListener;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\Form\FormEvent;
 use Symfony\Component\Form\FormEvents;
-use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\HttpFoundation\RequestStack;
 
-use Oro\Bundle\CalendarBundle\Entity\Attendee;
 use Oro\Bundle\CalendarBundle\Entity\CalendarEvent;
 use Oro\Bundle\CalendarBundle\Entity\Calendar;
 use Oro\Bundle\CalendarBundle\Manager\CalendarEventManager;
@@ -18,19 +15,14 @@ class CalendarEventApiTypeSubscriber implements EventSubscriberInterface
     /** @var CalendarEventManager */
     protected $calendarEventManager;
 
-    /** @var RequestStack */
-    protected $requestStack;
-
     /**
      * CalendarEventApiTypeSubscriber constructor.
      *
      * @param CalendarEventManager $calendarEventManager
-     * @param RequestStack         $requestStack
      */
-    public function __construct(CalendarEventManager $calendarEventManager, RequestStack $requestStack)
+    public function __construct(CalendarEventManager $calendarEventManager)
     {
         $this->calendarEventManager = $calendarEventManager;
-        $this->requestStack         = $requestStack;
     }
 
     /**
@@ -39,59 +31,51 @@ class CalendarEventApiTypeSubscriber implements EventSubscriberInterface
     public static function getSubscribedEvents()
     {
         return [
-            FormEvents::PRE_SET_DATA => 'preSetData',
-            FormEvents::PRE_SUBMIT   => 'preSubmit',
+            FormEvents::PRE_SUBMIT  => 'preSubmitData',
             FormEvents::POST_SUBMIT  => 'postSubmitData',
         ];
     }
 
     /**
-     * @deprecated since 1.10 'invitedUsers' field was replaced by field 'attendees'
-     *
-     * @param FormEvent $event
+     * @param FormEvent $formEvent
      */
-    public function preSetData(FormEvent $event)
+    public function preSubmitData(FormEvent $formEvent)
     {
-        $form = $event->getForm();
-        $data = $event->getData();
+        $data = $formEvent->getData();
 
-        if (empty($data)) {
-            return;
+        $this->fixBooleanFields(
+            $data,
+            ['allDay', 'isCancelled', 'use_hangout', 'notifyInvitedUsers']
+        );
+
+        if (isset($data['attendees']) && ($data['attendees'] === '')) {
+            $data['attendees'] = null;
         }
 
-        if ($this->hasAttendeeInRequest()) {
-            $form->remove('invitedUsers');
-        }
+        $formEvent->setData($data);
     }
 
     /**
-     * @param FormEvent $event
+     * Normalize boolean values of the form data.
+     *
+     * @param array $data
+     * @param array $booleanFields
      */
-    public function preSubmit(FormEvent $event)
+    protected function fixBooleanFields(array &$data, array $booleanFields)
     {
-        $form = $event->getForm();
-        $data = $event->getData();
-
-        /**
-         * @deprecated since 1.10 'invitedUsers' field was replaced by field 'attendees'
-         */
-        if ($this->hasAttendeeInRequest()) {
-            $form->remove('invitedUsers');
-        }
-
-        /**
-         * We check if there is no type in request data for attendee we set default value - Attendee::TYPE_REQUIRED
-         */
-        if (!empty($data['attendees']) && is_array($data['attendees'])) {
-            $attendees = &$data['attendees'];
-
-            foreach ($attendees as &$attendee) {
-                if (!array_key_exists('type', $attendee)) {
-                    $attendee['type'] = Attendee::TYPE_REQUIRED;
+        foreach ($booleanFields as $name => $value) {
+            if (isset($data[$name])) {
+                if (is_string($value)) {
+                    $value = strtolower($value);
+                    $data[$name] = ($value === '1' || $value === 'true');
+                } else {
+                    $data[$name] = (bool)$value;
                 }
             }
+        }
 
-            $event->setData($data);
+        if (isset($data['attendees']) && ($data['attendees'] === '')) {
+            $data['attendees'] = null;
         }
     }
 
@@ -120,18 +104,5 @@ class CalendarEventApiTypeSubscriber implements EventSubscriberInterface
         }
 
         $this->calendarEventManager->setCalendar($data, $calendarAlias, (int)$calendarId);
-    }
-
-    /**
-     * @deprecated since 1.10 'invitedUsers' field was replaced by field 'attendees'
-     *
-     * @return bool
-     */
-    protected function hasAttendeeInRequest()
-    {
-        /** @var Request $request */
-        $request = $this->requestStack->getCurrentRequest();
-
-        return $request->request->has('attendees');
     }
 }

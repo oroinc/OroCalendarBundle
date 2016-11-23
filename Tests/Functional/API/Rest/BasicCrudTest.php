@@ -95,7 +95,6 @@ class BasicCrudTest extends AbstractTestCase
                 'end' => "2016-10-14T23:00:00+00:00",
                 'allDay' => false,
                 'use_hangout' => false,
-                'invitedUsers' => [],
                 'attendees' => [],
                 'editable' => true,
                 'removable' => true,

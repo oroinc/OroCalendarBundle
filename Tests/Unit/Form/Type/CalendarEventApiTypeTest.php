@@ -41,19 +41,12 @@ class CalendarEventApiTypeTest extends TypeTestCase
     /** @var \PHPUnit_Framework_MockObject_MockObject */
     protected $securityFacade;
 
-    /** @var \PHPUnit_Framework_MockObject_MockObject */
-    protected $requestStack;
-
     /** @var CalendarEventApiType */
     protected $calendarEventApiType;
 
     public function setUp()
     {
         $this->registry     = $this->getMockBuilder('Doctrine\Common\Persistence\ManagerRegistry')
-            ->disableOriginalConstructor()
-            ->getMock();
-        $this->requestStack = $this->getMockBuilder('Symfony\Component\HttpFoundation\RequestStack')
-            ->setMethods(['getCurrentRequest'])
             ->disableOriginalConstructor()
             ->getMock();
         $this->calendarEventManager =
@@ -131,17 +124,11 @@ class CalendarEventApiTypeTest extends TypeTestCase
         $attendeeRelationManager = $this->getMockBuilder('Oro\Bundle\CalendarBundle\Manager\AttendeeRelationManager')
             ->disableOriginalConstructor()
             ->getMock();
-        $attendeeManager = $this->getMockBuilder('Oro\Bundle\CalendarBundle\Manager\AttendeeManager')
-            ->disableOriginalConstructor()
-            ->getMock();
 
         $this->calendarEventApiType = new CalendarEventApiType(
             $this->calendarEventManager,
-            $this->registry,
-            $this->securityFacade,
-            $this->requestStack,
             $attendeeRelationManager,
-            $attendeeManager
+            $this->securityFacade
         );
 
         parent::setUp();
@@ -183,72 +170,8 @@ class CalendarEventApiTypeTest extends TypeTestCase
         return $request;
     }
 
-    /**
-     * @deprecated since 1.10 'invitedUsers' field was replaced by field 'attendees'
-     */
-    public function testSubmitInvitedUser()
-    {
-        $this->requestStack
-            ->expects($this->once())
-            ->method('getCurrentRequest')
-            ->will($this->returnValue($this->getRequest(false)));
-
-        $formData = [
-            'calendar'        => 1,
-            'title'           => 'testTitle',
-            'description'     => 'testDescription',
-            'start'           => '2013-10-05T13:00:00Z',
-            'end'             => '2013-10-05T13:30:00+00:00',
-            'allDay'          => true,
-            'backgroundColor' => '#FF0000',
-            'reminders'       => new ArrayCollection(),
-            'invitedUsers'    => [],
-        ];
-
-        $form = $this->factory->create(
-            $this->calendarEventApiType,
-            null,
-            ['data_class' => 'Oro\Bundle\CalendarBundle\Tests\Unit\Fixtures\Entity\CalendarEvent']
-        );
-
-        $this->calendarEventManager->expects($this->once())
-            ->method('setCalendar')
-            ->with(
-                $this->isInstanceOf('Oro\Bundle\CalendarBundle\Entity\CalendarEvent'),
-                Calendar::CALENDAR_ALIAS,
-                1
-            );
-
-        $form->submit($formData);
-
-        $this->assertTrue($form->isSynchronized());
-        /** @var CalendarEvent $result */
-        $result = $form->getData();
-        $this->assertInstanceOf('Oro\Bundle\CalendarBundle\Entity\CalendarEvent', $result);
-        $this->assertEquals('testTitle', $result->getTitle());
-        $this->assertEquals('testDescription', $result->getDescription());
-        $this->assertDateTimeEquals(new \DateTime('2013-10-05T13:00:00Z'), $result->getStart());
-        $this->assertDateTimeEquals(new \DateTime('2013-10-05T13:30:00Z'), $result->getEnd());
-        $this->assertTrue($result->getAllDay());
-        $this->assertEquals('#FF0000', $result->getBackgroundColor());
-
-        $view     = $form->createView();
-        $children = $view->children;
-
-        foreach (array_keys($formData) as $key) {
-            $this->assertArrayHasKey($key, $children);
-        }
-
-        $this->assertTrue($form->has('invitedUsers'));
-    }
-
     public function testSubmitValidData()
     {
-        $this->requestStack
-            ->expects($this->once())
-            ->method('getCurrentRequest')
-            ->will($this->returnValue($this->getRequest()));
-
         $formData = [
             'calendar'        => 1,
             'title'           => 'testTitle',
@@ -300,11 +223,6 @@ class CalendarEventApiTypeTest extends TypeTestCase
 
     public function testSubmitValidDataSystemCalendar()
     {
-        $this->requestStack
-            ->expects($this->once())
-            ->method('getCurrentRequest')
-            ->will($this->returnValue($this->getRequest()));
-
         $formData = [
             'calendar'        => 1,
             'calendarAlias'   => 'system',
