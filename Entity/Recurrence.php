@@ -481,4 +481,44 @@ class Recurrence
     {
         return $this->timeZone;
     }
+
+    /**
+     * Compares instance with another instance and not taking into account relation to event.
+     *
+     * @param Recurrence|null $other
+     * @return bool
+     */
+    public function isEqual($other)
+    {
+        if (!$other instanceof Recurrence) {
+            return false;
+        }
+
+        return
+            $this->recurrenceType == $other->recurrenceType &&
+            $this->interval == $other->interval &&
+            $this->instance == $other->instance &&
+            $this->dayOfWeek == $other->dayOfWeek &&
+            $this->dayOfMonth == $other->dayOfMonth &&
+            $this->monthOfYear == $other->monthOfYear &&
+            $this->isDateTimeValueEqual($this->startTime, $other->startTime) &&
+            $this->isDateTimeValueEqual($this->endTime, $other->endTime) &&
+            $this->occurrences == $other->occurrences &&
+            $this->timeZone == $other->timeZone &&
+            true;
+    }
+
+    /**
+     * @param \DateTime|null $source
+     * @param \DateTime|null $target
+     * @return bool
+     */
+    protected function isDateTimeValueEqual(\DateTime $source = null, \DateTime $target = null)
+    {
+        if ($source && $target) {
+            return $source->format('U') == $target->format('U');
+        } else {
+            return !$source && !$target;
+        }
+    }
 }

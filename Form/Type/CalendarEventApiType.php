@@ -140,6 +140,14 @@ class CalendarEventApiType extends AbstractType
                     'required' => false,
                     'property_path' => 'cancelled',
                 ]
+            )
+            ->add(
+                'updateExceptions',
+                'checkbox',
+                [
+                    'required' => false,
+                    'mapped' => false,
+                ]
             );
 
         $builder->addEventSubscriber(new PatchSubscriber());

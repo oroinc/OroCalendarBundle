@@ -26,13 +26,12 @@ class CalendarEventRecurrenceSubscriberTest extends \PHPUnit_Framework_TestCase
         $recurrence = new Recurrence();
 
         $event = new FormEvent($form, ['id' => 1, 'recurrence' => []]);
-        $form->expects($this->at(0))
+        $form->expects($this->any())
             ->method('has')
-            ->with('recurrence')
-            ->willReturn(true);
-        $form->expects($this->at(1))
-            ->method('has')
-            ->with('repeat')
+            ->withConsecutive(
+                ['recurrence'],
+                ['repeat']
+            )
             ->willReturn(true);
         $form->expects($this->any())
             ->method('get')

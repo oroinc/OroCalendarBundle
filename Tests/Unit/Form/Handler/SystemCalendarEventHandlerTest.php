@@ -181,7 +181,7 @@ class SystemCalendarEventHandlerTest extends \PHPUnit_Framework_TestCase
             ->will($this->returnValue(true));
         $this->calendarEventManager->expects($this->once())
             ->method('onEventUpdate')
-            ->with($this->entity, $this->organization);
+            ->with($this->entity, clone $this->entity, $this->organization, false);
         $this->objectManager->expects($this->once())
             ->method('persist');
         $this->objectManager->expects($this->once())

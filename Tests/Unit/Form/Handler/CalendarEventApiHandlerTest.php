@@ -33,6 +33,9 @@ class CalendarEventApiHandlerTest extends \PHPUnit_Framework_TestCase
     /** @var CalendarEvent */
     protected $entity;
 
+    /** @var Organization */
+    protected $organization;
+
     /** @var ActivityManager */
     protected $activityManager;
 
@@ -80,13 +83,13 @@ class CalendarEventApiHandlerTest extends \PHPUnit_Framework_TestCase
             ->method('getManager')
             ->will($this->returnValue($objectManager));
 
-        $organization = new Organization();
+        $this->organization = new Organization();
         $securityFacade = $this->getMockBuilder('Oro\Bundle\SecurityBundle\SecurityFacade')
             ->disableOriginalConstructor()
             ->getMock();
         $securityFacade->expects($this->any())
             ->method('getOrganization')
-            ->willReturn($organization);
+            ->willReturn($this->organization);
 
         $this->emailSendProcessor = $this->getMockBuilder('Oro\Bundle\CalendarBundle\Model\Email\EmailSendProcessor')
             ->disableOriginalConstructor()
@@ -100,11 +103,6 @@ class CalendarEventApiHandlerTest extends \PHPUnit_Framework_TestCase
             ->getMockBuilder('Oro\Bundle\CalendarBundle\Manager\CalendarEventManager')
             ->disableOriginalConstructor()
             ->getMock();
-
-        $this->calendarEventManager
-            ->expects($this->once())
-            ->method('onEventUpdate')
-            ->with($this->entity, $organization);
 
         $objectManager->expects($this->once())
             ->method('persist')
@@ -157,6 +155,11 @@ class CalendarEventApiHandlerTest extends \PHPUnit_Framework_TestCase
         $this->activityManager->expects($this->never())
             ->method('removeActivityTarget');
 
+        $this->calendarEventManager
+            ->expects($this->once())
+            ->method('onEventUpdate')
+            ->with($this->entity, clone $this->entity, $this->organization, false);
+
         $this->handler->process($this->entity);
 
         $this->assertSame($defaultCalendar, $this->entity->getCalendar());
@@ -171,6 +174,11 @@ class CalendarEventApiHandlerTest extends \PHPUnit_Framework_TestCase
         $originalAttendees = new ArrayCollection($this->entity->getAttendees()->toArray());
 
         $this->setExpectedFormValues(['notifyInvitedUsers' => true]);
+
+        $this->calendarEventManager
+            ->expects($this->once())
+            ->method('onEventUpdate')
+            ->with($this->entity, clone $this->entity, $this->organization, false);
 
         $this->emailSendProcessor
             ->expects($this->once())
@@ -187,6 +195,11 @@ class CalendarEventApiHandlerTest extends \PHPUnit_Framework_TestCase
 
         $this->setExpectedFormValues(['notifyInvitedUsers' => false]);
 
+        $this->calendarEventManager
+            ->expects($this->once())
+            ->method('onEventUpdate')
+            ->with($this->entity, clone $this->entity, $this->organization, false);
+
         $this->emailSendProcessor
             ->expects($this->never())
             ->method($this->anything());
@@ -201,6 +214,11 @@ class CalendarEventApiHandlerTest extends \PHPUnit_Framework_TestCase
 
         $this->setExpectedFormValues([]);
 
+        $this->calendarEventManager
+            ->expects($this->once())
+            ->method('onEventUpdate')
+            ->with($this->entity, clone $this->entity, $this->organization, false);
+
         $this->emailSendProcessor
             ->expects($this->never())
             ->method($this->anything());
@@ -213,6 +231,11 @@ class CalendarEventApiHandlerTest extends \PHPUnit_Framework_TestCase
         $this->request->setMethod('POST');
 
         $this->setExpectedFormValues(['notifyInvitedUsers' => true]);
+
+        $this->calendarEventManager
+            ->expects($this->once())
+            ->method('onEventUpdate')
+            ->with($this->entity, clone $this->entity, $this->organization, false);
 
         $this->emailSendProcessor
             ->expects($this->once())
@@ -228,6 +251,11 @@ class CalendarEventApiHandlerTest extends \PHPUnit_Framework_TestCase
 
         $this->setExpectedFormValues(['notifyInvitedUsers' => false]);
 
+        $this->calendarEventManager
+            ->expects($this->once())
+            ->method('onEventUpdate')
+            ->with($this->entity, clone $this->entity, $this->organization, false);
+
         $this->emailSendProcessor
             ->expects($this->never())
             ->method($this->anything());
@@ -241,9 +269,28 @@ class CalendarEventApiHandlerTest extends \PHPUnit_Framework_TestCase
 
         $this->setExpectedFormValues([]);
 
+        $this->calendarEventManager
+            ->expects($this->once())
+            ->method('onEventUpdate')
+            ->with($this->entity, clone $this->entity, $this->organization, false);
+
         $this->emailSendProcessor
             ->expects($this->never())
             ->method($this->anything());
+
+        $this->handler->process($this->entity);
+    }
+
+    public function testProcessWithClearingExceptions()
+    {
+        $this->request->setMethod('PUT');
+
+        $this->setExpectedFormValues(['updateExceptions' => true]);
+
+        $this->calendarEventManager
+            ->expects($this->once())
+            ->method('onEventUpdate')
+            ->with($this->entity, clone $this->entity, $this->organization, true);
 
         $this->handler->process($this->entity);
     }
@@ -253,7 +300,7 @@ class CalendarEventApiHandlerTest extends \PHPUnit_Framework_TestCase
      */
     protected function setExpectedFormValues(array $values)
     {
-        $fields = ['contexts', 'notifyInvitedUsers'];
+        $fields = ['contexts', 'notifyInvitedUsers', 'updateExceptions'];
 
         $valueMapHas = [];
 
@@ -269,7 +316,7 @@ class CalendarEventApiHandlerTest extends \PHPUnit_Framework_TestCase
 
         foreach ($values as $name => $value) {
             $field = $this->getMock('Symfony\Component\Form\FormInterface');
-            $field->expects($this->once())
+            $field->expects($this->any())
                 ->method('getData')
                 ->willReturn($value);
             $valueMapGet[] = [$name, $field];

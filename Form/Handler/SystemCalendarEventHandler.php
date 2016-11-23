@@ -76,6 +76,7 @@ class SystemCalendarEventHandler
         $this->form->setData($entity);
 
         if (in_array($this->request->getMethod(), array('POST', 'PUT'))) {
+            $originalEntity = clone $entity;
             $this->form->submit($this->request);
 
             if ($this->form->isValid()) {
@@ -92,7 +93,7 @@ class SystemCalendarEventHandler
                     $this->activityManager->setActivityTargets($entity, $contexts);
                 }
 
-                $this->onSuccess($entity);
+                $this->onSuccess($entity, $originalEntity);
 
                 return true;
             }
@@ -105,10 +106,16 @@ class SystemCalendarEventHandler
      * "Success" form handler
      *
      * @param CalendarEvent $entity
+     * @param CalendarEvent $originalEntity
      */
-    protected function onSuccess(CalendarEvent $entity)
+    protected function onSuccess(CalendarEvent $entity, CalendarEvent $originalEntity)
     {
-        $this->calendarEventManager->onEventUpdate($entity, $this->securityFacade->getOrganization());
+        $this->calendarEventManager->onEventUpdate(
+            $entity,
+            $originalEntity,
+            $this->securityFacade->getOrganization(),
+            false
+        );
 
         $this->getEntityManager()->persist($entity);
         $this->getEntityManager()->flush();

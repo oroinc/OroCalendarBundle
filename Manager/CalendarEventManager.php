@@ -18,6 +18,7 @@ use Oro\Bundle\EntityExtendBundle\Tools\ExtendHelper;
 use Oro\Bundle\OrganizationBundle\Entity\Organization;
 use Oro\Bundle\SecurityBundle\SecurityFacade;
 use Oro\Bundle\SecurityBundle\Exception\ForbiddenException;
+use Oro\Component\PropertyAccess\PropertyAccessor;
 
 class CalendarEventManager
 {
@@ -228,17 +229,31 @@ class CalendarEventManager
      * - Delegate attendees state update to AttendeeManager.
      * - Update child events according to actualized state of attendees.
      *
-     * @param CalendarEvent $calendarEvent
-     * @param Organization $organization
+     * @param CalendarEvent $event          Actual calendar event.
+     * @param CalendarEvent $originalEvent  Original calendar event state before update.
+     * @param Organization $organization    Organization is used to match users to attendees by their email.
+     * @param bool $allowClearExceptions    If TRUE and current Recurrence state is different from original,
+     *                                      then
+     *
      */
-    public function onEventUpdate(CalendarEvent $calendarEvent, Organization $organization)
-    {
+    public function onEventUpdate(
+        CalendarEvent $event,
+        CalendarEvent $originalEvent,
+        Organization $organization,
+        $allowClearExceptions
+    ) {
         $this->attendeeManager->onEventUpdate(
-            $calendarEvent,
+            $event,
             $organization
         );
 
-        $this->updateChildEvents($calendarEvent);
+        $this->updateChildEvents($event);
+
+        if ($allowClearExceptions &&
+            $this->shouldClearExceptions($event->getRecurrence(), $originalEvent->getRecurrence())
+        ) {
+            $this->clearExceptions($event);
+        }
     }
 
     /**
@@ -404,6 +419,44 @@ class CalendarEventManager
                 ->setRecurringEvent($childEvent);
 
             $parentException->addChildEvent($childException);
+        }
+    }
+
+    /**
+     * Checks if recurrence change should clear exceptions
+     *
+     * @param Recurrence|null $recurrence
+     * @param Recurrence|null $originalRecurrence
+     * @return bool
+     */
+    protected function shouldClearExceptions(Recurrence $recurrence = null, Recurrence $originalRecurrence = null)
+    {
+        $result = false;
+
+        if ($originalRecurrence && !$recurrence) {
+            // Recurrence existed before and was removed, exceptions should be cleared.
+            $result = true;
+        } elseif ($recurrence && !$recurrence->isEqual($originalRecurrence)) {
+            // Recurrence was changed
+            $result = true;
+        }
+
+        return $result;
+    }
+
+    /**
+     * Clears all exceptions of the event.
+     *
+     * @param CalendarEvent $event
+     */
+    protected function clearExceptions(CalendarEvent $event)
+    {
+        $event->getRecurringEventExceptions()->clear();
+
+        if ($event->getParent()) {
+            foreach ($event->getChildEvents() as $childEvent) {
+                $this->clearExceptions($childEvent);
+            }
         }
     }
 }

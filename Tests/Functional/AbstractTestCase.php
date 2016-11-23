@@ -229,9 +229,10 @@ class AbstractTestCase extends WebTestCase
      *
      * @param string $className
      * @param mixed $id
+     * @param boolean $optional
      * @return mixed
      */
-    protected function getEntity($className, $id)
+    protected function getEntity($className, $id, $optional = false)
     {
         $className = ClassUtils::getRealClass($className);
 
@@ -241,14 +242,16 @@ class AbstractTestCase extends WebTestCase
 
         $result = $this->getEntityRepository($className)->find($id);
 
-        $this->assertInstanceOf(
-            $className,
-            $result,
-            sprintf(
-                'Failed asserting entity "%s" is existing in the persistence.',
-                $className
-            )
-        );
+        if ($result && !$optional) {
+            $this->assertInstanceOf(
+                $className,
+                $result,
+                sprintf(
+                    'Failed asserting entity "%s" is existing in the persistence.',
+                    $className
+                )
+            );
+        }
 
         return $result;
     }
