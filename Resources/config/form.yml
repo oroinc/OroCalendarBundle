@@ -76,8 +76,10 @@ services:
         arguments:
             - '@oro_calendar.calendar_event.form'
             - '@request'
-            - '@doctrine.orm.entity_manager'
+            - '@doctrine'
+            - '@oro_security.security_facade'
             - '@oro_activity.manager'
+            - '@oro_calendar.calendar_event_manager'
 
     oro_calendar.calendar_event.form.handler.api:
         class: %oro_calendar.calendar_event.form.handler.api.class%
