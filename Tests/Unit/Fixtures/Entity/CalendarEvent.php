@@ -14,4 +14,12 @@ class CalendarEvent extends BaseCalendarEvent
         parent::__construct();
         $this->id = $id;
     }
+
+    /**
+     * @param integer $id
+     */
+    public function setId($id)
+    {
+        $this->id = $id;
+    }
 }

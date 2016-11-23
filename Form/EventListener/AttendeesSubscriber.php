@@ -9,27 +9,9 @@ use Symfony\Component\Form\FormEvent;
 use Symfony\Component\Form\FormEvents;
 
 use Oro\Bundle\CalendarBundle\Entity\Attendee;
-use Oro\Bundle\CalendarBundle\Manager\AttendeeRelationManager;
-use Oro\Bundle\SecurityBundle\SecurityFacade;
 
 class AttendeesSubscriber implements EventSubscriberInterface
 {
-    /** @var AttendeeRelationManager */
-    protected $attendeeRelationManager;
-
-    /** @var SecurityFacade */
-    protected $securityFacade;
-
-    /**
-     * @param AttendeeRelationManager $attendeeRelationManager
-     * @param SecurityFacade $securityFacade
-     */
-    public function __construct(AttendeeRelationManager $attendeeRelationManager, SecurityFacade $securityFacade)
-    {
-        $this->attendeeRelationManager = $attendeeRelationManager;
-        $this->securityFacade = $securityFacade;
-    }
-
     /**
      * {@inheritdoc}
      */
@@ -37,7 +19,6 @@ class AttendeesSubscriber implements EventSubscriberInterface
     {
         return [
             FormEvents::PRE_SUBMIT  => ['fixSubmittedData', 100],
-            FormEvents::POST_SUBMIT => ['postSubmit', -100],
         ];
     }
 
@@ -85,22 +66,5 @@ class AttendeesSubscriber implements EventSubscriberInterface
         }
 
         $event->setData($fixedData);
-    }
-
-    /**
-     * Tries to search and bind users to attendees by email
-     *
-     * @param FormEvent $event
-     */
-    public function postSubmit(FormEvent $event)
-    {
-        $attendees = $event->getData();
-        if (!$attendees) {
-            return;
-        }
-
-        $currentOrganization = $this->securityFacade->getOrganization();
-
-        $this->attendeeRelationManager->bindAttendees($attendees, $currentOrganization);
     }
 }

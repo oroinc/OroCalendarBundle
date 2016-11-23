@@ -8,11 +8,13 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\ParameterBag;
 
 use Oro\Bundle\ActivityBundle\Manager\ActivityManager;
+use Oro\Bundle\CalendarBundle\Entity\Attendee;
 use Oro\Bundle\CalendarBundle\Entity\CalendarEvent;
 use Oro\Bundle\CalendarBundle\Form\Handler\CalendarEventApiHandler;
-use Oro\Bundle\CalendarBundle\Manager\AttendeeRelationManager;
+use Oro\Bundle\CalendarBundle\Manager\CalendarEventManager;
 use Oro\Bundle\CalendarBundle\Tests\Unit\ReflectionUtil;
 use Oro\Bundle\UserBundle\Entity\User;
+use Oro\Bundle\OrganizationBundle\Entity\Organization;
 
 class CalendarEventApiHandlerTest extends \PHPUnit_Framework_TestCase
 {
@@ -23,10 +25,7 @@ class CalendarEventApiHandlerTest extends \PHPUnit_Framework_TestCase
     protected $request;
 
     /** @var \PHPUnit_Framework_MockObject_MockObject */
-    protected $doctrine;
-
-    /** @var \PHPUnit_Framework_MockObject_MockObject */
-    protected $objectManager;
+    protected $securityFacade;
 
     /** @var \PHPUnit_Framework_MockObject_MockObject */
     protected $emailSendProcessor;
@@ -37,90 +36,92 @@ class CalendarEventApiHandlerTest extends \PHPUnit_Framework_TestCase
     /** @var ActivityManager */
     protected $activityManager;
 
-    /** @var \PHPUnit_Framework_MockObject_MockObject|AttendeeRelationManager */
-    private $attendeeRelationManager;
+    /** @var \PHPUnit_Framework_MockObject_MockObject|CalendarEventManager */
+    protected $calendarEventManager;
 
     /** @var CalendarEventApiHandler */
     protected $handler;
 
     protected function setUp()
     {
-        $this->form = $this->getMockBuilder('Symfony\Component\Form\Form')
-            ->disableOriginalConstructor()
-            ->getMock();
-        $data = [
+        $this->entity  = new CalendarEvent();
+
+        $formData = [
             'contexts' => [],
             'attendees' => new ArrayCollection()
         ];
+
         $this->request = new Request();
-        $this->request->request = new ParameterBag($data);
+        $this->request->request = new ParameterBag($formData);
 
-        $this->doctrine = $this->getMockBuilder('Doctrine\Common\Persistence\ManagerRegistry')
-            ->disableOriginalConstructor()
-            ->getMock();
-
-        $this->objectManager = $this->getMockBuilder('Doctrine\Common\Persistence\ObjectManager')
-            ->disableOriginalConstructor()
-            ->getMock();
-
-        $this->doctrine->expects($this->any())
-            ->method('getManager')
-            ->will($this->returnValue($this->objectManager));
-
-        $this->emailSendProcessor = $this->getMockBuilder('Oro\Bundle\CalendarBundle\Model\Email\EmailSendProcessor')
-            ->disableOriginalConstructor()
-            ->getMock();
-        $this->activityManager = $this->getMockBuilder('Oro\Bundle\ActivityBundle\Manager\ActivityManager')
-            ->disableOriginalConstructor()
-            ->getMock();
-
-        $this->attendeeRelationManager = $this
-            ->getMockBuilder('Oro\Bundle\CalendarBundle\Manager\AttendeeRelationManager')
-            ->disableOriginalConstructor()
-            ->getMock();
-
-        $this->entity  = new CalendarEvent();
+        $this->form = $this->getMock('Symfony\Component\Form\FormInterface');
 
         $this->form->expects($this->once())
             ->method('setData')
             ->with($this->identicalTo($this->entity));
+
         $this->form->expects($this->once())
             ->method('submit')
-            ->with($this->identicalTo($data));
+            ->with($this->identicalTo($formData));
+
         $this->form->expects($this->once())
             ->method('isValid')
-            ->will($this->returnValue(true));
-        $this->objectManager->expects($this->once())
+            ->willReturn(true);
+
+        $doctrine = $this->getMockBuilder('Doctrine\Common\Persistence\ManagerRegistry')
+            ->disableOriginalConstructor()
+            ->getMock();
+
+        $objectManager = $this->getMockBuilder('Doctrine\Common\Persistence\ObjectManager')
+            ->disableOriginalConstructor()
+            ->getMock();
+
+        $doctrine->expects($this->any())
+            ->method('getManager')
+            ->will($this->returnValue($objectManager));
+
+        $organization = new Organization();
+        $securityFacade = $this->getMockBuilder('Oro\Bundle\SecurityBundle\SecurityFacade')
+            ->disableOriginalConstructor()
+            ->getMock();
+        $securityFacade->expects($this->any())
+            ->method('getOrganization')
+            ->willReturn($organization);
+
+        $this->emailSendProcessor = $this->getMockBuilder('Oro\Bundle\CalendarBundle\Model\Email\EmailSendProcessor')
+            ->disableOriginalConstructor()
+            ->getMock();
+
+        $this->activityManager = $this->getMockBuilder('Oro\Bundle\ActivityBundle\Manager\ActivityManager')
+            ->disableOriginalConstructor()
+            ->getMock();
+
+        $this->calendarEventManager = $this
+            ->getMockBuilder('Oro\Bundle\CalendarBundle\Manager\CalendarEventManager')
+            ->disableOriginalConstructor()
+            ->getMock();
+
+        $this->calendarEventManager
+            ->expects($this->once())
+            ->method('onEventUpdate')
+            ->with($this->entity, $organization);
+
+        $objectManager->expects($this->once())
             ->method('persist')
             ->with($this->identicalTo($this->entity));
-        $this->objectManager->expects($this->once())
+
+        $objectManager->expects($this->once())
             ->method('flush');
-        $this->form->expects($this->any())
-            ->method('get')
-            ->will($this->returnValue($this->form));
 
         $this->handler = new CalendarEventApiHandler(
             $this->form,
             $this->request,
-            $this->doctrine,
+            $doctrine,
+            $securityFacade,
             $this->emailSendProcessor,
             $this->activityManager,
-            $this->attendeeRelationManager
+            $this->calendarEventManager
         );
-    }
-
-    public function testProcessPOST()
-    {
-        $this->request->setMethod('POST');
-        $this->emailSendProcessor
-            ->expects($this->once())
-            ->method('sendInviteNotification');
-
-        $this->form->expects($this->any())
-            ->method('getData')
-            ->will($this->returnValue(true));
-
-        $this->handler->process($this->entity);
     }
 
     public function testProcessWithContexts()
@@ -132,52 +133,117 @@ class CalendarEventApiHandlerTest extends \PHPUnit_Framework_TestCase
         ReflectionUtil::setId($owner, 321);
 
         $this->request->setMethod('POST');
+
         $defaultCalendar = $this->getMockBuilder('Oro\Bundle\CalendarBundle\Entity\Calendar')
             ->disableOriginalConstructor()
             ->getMock();
-        $this->entity->setCalendar($defaultCalendar);
 
-        $this->form->expects($this->any())
-            ->method('has')
-            ->withConsecutive(
-                ['invitedUsers'],
-                ['contexts'],
-                ['updateExceptions']
-            )
-            ->will($this->returnValue(true));
+        $this->entity->setCalendar($defaultCalendar);
 
         $defaultCalendar->expects($this->once())
             ->method('getOwner')
             ->will($this->returnValue($owner));
 
-        $this->form->expects($this->any())
-            ->method('getData')
-            ->will($this->returnValue([$context]));
+
+        $this->setExpectedFormValues(['contexts' => [$context]]);
 
         $this->activityManager->expects($this->once())
             ->method('setActivityTargets')
             ->with(
-                $this->identicalTo($this->entity),
-                $this->identicalTo([$context, $owner])
+                $this->entity,
+                [$context, $owner]
             );
 
         $this->activityManager->expects($this->never())
             ->method('removeActivityTarget');
+
         $this->handler->process($this->entity);
 
         $this->assertSame($defaultCalendar, $this->entity->getCalendar());
     }
 
-    public function testProcessPUT()
+    public function testProcessPutWithNotifyInvitedUsersWorks()
     {
-        ReflectionUtil::setId($this->entity, 1);
         $this->request->setMethod('PUT');
+
+        ReflectionUtil::setId($this->entity, 123);
+        $this->entity->addAttendee(new Attendee());
+        $originalAttendees = new ArrayCollection($this->entity->getAttendees()->toArray());
+
+        $this->setExpectedFormValues(['notifyInvitedUsers' => true]);
+
         $this->emailSendProcessor
             ->expects($this->once())
-            ->method('sendUpdateParentEventNotification');
-        $this->form->expects($this->any())
-            ->method('getData')
-            ->will($this->returnValue(true));
+            ->method('sendUpdateParentEventNotification')
+            ->with($this->entity, $originalAttendees, true);
+
+        $this->handler->process($this->entity);
+    }
+
+    public function testProcessPutWithNotifyInvitedUsersFalseWorks()
+    {
+        ReflectionUtil::setId($this->entity, 123);
+        $this->request->setMethod('PUT');
+
+        $this->setExpectedFormValues(['notifyInvitedUsers' => false]);
+
+        $this->emailSendProcessor
+            ->expects($this->never())
+            ->method($this->anything());
+
+        $this->handler->process($this->entity);
+    }
+
+    public function testProcessPutWithNotifyInvitedUsersNotPassedWorks()
+    {
+        ReflectionUtil::setId($this->entity, 123);
+        $this->request->setMethod('PUT');
+
+        $this->setExpectedFormValues([]);
+
+        $this->emailSendProcessor
+            ->expects($this->never())
+            ->method($this->anything());
+
+        $this->handler->process($this->entity);
+    }
+
+    public function testProcessPostWithNotifyInvitedUsersWorks()
+    {
+        $this->request->setMethod('POST');
+
+        $this->setExpectedFormValues(['notifyInvitedUsers' => true]);
+
+        $this->emailSendProcessor
+            ->expects($this->once())
+            ->method('sendInviteNotification')
+            ->with($this->entity);
+
+        $this->handler->process($this->entity);
+    }
+
+    public function testProcessPostWithNotifyInvitedUsersFalseWorks()
+    {
+        $this->request->setMethod('POST');
+
+        $this->setExpectedFormValues(['notifyInvitedUsers' => false]);
+
+        $this->emailSendProcessor
+            ->expects($this->never())
+            ->method($this->anything());
+
+        $this->handler->process($this->entity);
+    }
+
+    public function testProcessPostWithNotifyInvitedUsersNotPassedWorks()
+    {
+        $this->request->setMethod('POST');
+
+        $this->setExpectedFormValues([]);
+
+        $this->emailSendProcessor
+            ->expects($this->never())
+            ->method($this->anything());
 
         $this->handler->process($this->entity);
     }
@@ -185,20 +251,43 @@ class CalendarEventApiHandlerTest extends \PHPUnit_Framework_TestCase
     public function testProcessWithClearingExceptions()
     {
         $this->request->setMethod('PUT');
-        $this->form->expects($this->any())
-            ->method('getData')
-            ->will($this->returnValue(true));
-        $this->form->expects($this->any())
-            ->method('has')
-            ->will($this->returnValueMap([
-                ['invitedUsers', false],
-                ['updateExceptions', true],
-                ['recurrence', true]
-            ]));
+
+        $this->setExpectedFormValues(['updateExceptions' => true, 'recurrence' => true]);
 
         $this->entity->addRecurringEventException(new CalendarEvent());
-
         $this->handler->process($this->entity);
         $this->assertCount(0, $this->entity->getRecurringEventExceptions());
+    }
+
+    /**
+     * @param array $values
+     */
+    protected function setExpectedFormValues(array $values)
+    {
+        $fields = ['contexts', 'notifyInvitedUsers', 'updateExceptions', 'recurrence'];
+
+        $valueMapHas = [];
+
+        foreach ($fields as $name) {
+            $valueMapHas[] = [$name, isset($values[$name])];
+        }
+
+        $this->form->expects($this->any())
+            ->method('has')
+            ->willReturnMap($valueMapHas);
+
+        $valueMapGet = [];
+
+        foreach ($values as $name => $value) {
+            $field = $this->getMock('Symfony\Component\Form\FormInterface');
+            $field->expects($this->any())
+                ->method('getData')
+                ->willReturn($value);
+            $valueMapGet[] = [$name, $field];
+        }
+
+        $this->form->expects($this->any())
+            ->method('get')
+            ->willReturnMap($valueMapGet);
     }
 }

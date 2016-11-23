@@ -15,6 +15,7 @@ use Oro\Bundle\CalendarBundle\Provider\SystemCalendarConfig;
 use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
 use Oro\Bundle\EntityBundle\Provider\EntityNameResolver;
 use Oro\Bundle\EntityExtendBundle\Tools\ExtendHelper;
+use Oro\Bundle\OrganizationBundle\Entity\Organization;
 use Oro\Bundle\SecurityBundle\SecurityFacade;
 use Oro\Bundle\SecurityBundle\Exception\ForbiddenException;
 use Oro\Component\PropertyAccess\PropertyAccessor;
@@ -223,26 +224,20 @@ class CalendarEventManager
 
     /**
      * Responsible to actualize event state after it was updated.
-     *
-     * - Update related attendee of the event.
-     * - Update child events according to attendees.
-     * - Update attendees display name if they are empty.
-     * - Set default attendee status.
+     * - Delegate attendees state update to AttendeeManager.
+     * - Update child events according to actualized state of attendees.
      *
      * @param CalendarEvent $calendarEvent
+     * @param Organization $organization
      */
-    public function onEventUpdate(CalendarEvent $calendarEvent)
+    public function onEventUpdate(CalendarEvent $calendarEvent, Organization $organization)
     {
-        $calendarEvent->setRelatedAttendee($calendarEvent->findRelatedAttendee());
+        $this->attendeeManager->onEventUpdate(
+            $calendarEvent,
+            $organization
+        );
 
         $this->updateChildEvents($calendarEvent);
-
-        $this->attendeeManager->updateAttendeeDisplayNames($calendarEvent->getAttendees());
-
-        $this->attendeeManager->setDefaultAttendeeStatus(
-            $calendarEvent->getAttendees(),
-            $calendarEvent->findRelatedAttendee()
-        );
     }
 
     /**
@@ -293,7 +288,7 @@ class CalendarEventManager
      *
      * @param CalendarEvent $calendarEvent
      */
-    public function createMissingChildEvents(CalendarEvent $calendarEvent)
+    protected function createMissingChildEvents(CalendarEvent $calendarEvent)
     {
         $attendeeUsers = $this->getAttendeeUserIds($calendarEvent);
         $calendarUsers = $this->getCalendarUserIds($calendarEvent);

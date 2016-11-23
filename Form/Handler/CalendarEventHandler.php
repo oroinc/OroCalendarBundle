@@ -3,7 +3,8 @@
 namespace Oro\Bundle\CalendarBundle\Form\Handler;
 
 use Doctrine\Common\Collections\ArrayCollection;
-use Doctrine\Common\Persistence\ObjectManager;
+use Doctrine\Common\Persistence\ManagerRegistry;
+use Doctrine\ORM\EntityManager;
 
 use Oro\Bundle\CalendarBundle\Entity\Recurrence;
 use Symfony\Component\Form\FormInterface;
@@ -27,8 +28,8 @@ class CalendarEventHandler
     /** @var Request */
     protected $request;
 
-    /** @var ObjectManager */
-    protected $manager;
+    /** @var ManagerRegistry */
+    protected $doctrine;
 
     /** @var ActivityManager */
     protected $activityManager;
@@ -50,7 +51,7 @@ class CalendarEventHandler
      * 
      * @param FormInterface $form
      * @param Request $request
-     * @param ObjectManager $manager
+     * @param ManagerRegistry $doctrine
      * @param ActivityManager $activityManager
      * @param EntityRoutingHelper $entityRoutingHelper
      * @param SecurityFacade $securityFacade
@@ -60,7 +61,7 @@ class CalendarEventHandler
     public function __construct(
         FormInterface $form,
         Request $request,
-        ObjectManager $manager,
+        ManagerRegistry $doctrine,
         ActivityManager $activityManager,
         EntityRoutingHelper $entityRoutingHelper,
         SecurityFacade $securityFacade,
@@ -69,7 +70,7 @@ class CalendarEventHandler
     ) {
         $this->form                        = $form;
         $this->request                     = $request;
-        $this->manager                     = $manager;
+        $this->doctrine                    = $doctrine;
         $this->activityManager             = $activityManager;
         $this->entityRoutingHelper         = $entityRoutingHelper;
         $this->securityFacade              = $securityFacade;
@@ -123,19 +124,20 @@ class CalendarEventHandler
                         $contexts = array_merge($contexts, [$owner]);
                     }
                     $this->activityManager->setActivityTargets($entity, $contexts);
+                } elseif (!$entity->getId() && $entity->getRecurringEvent()) {
+                    $this->activityManager->setActivityTargets(
+                        $entity,
+                        $entity->getRecurringEvent()->getActivityTargetEntities()
+                    );
                 }
 
                 $this->processTargetEntity($entity);
 
-                $notifyInvitedUsers = $this->form->has('notifyInvitedUsers')
-                    ? $this->form->get('notifyInvitedUsers')->getData() === 'true'
-                    : false;
-                
                 $this->onSuccess(
                     $entity,
                     $originalAttendees,
-                    $notifyInvitedUsers,
-                    $originalRecurrence
+                    $originalRecurrence,
+                    $this->shouldBeNotified()
                 );
 
                 return true;
@@ -160,7 +162,7 @@ class CalendarEventHandler
         }
 
         /** @var Calendar $defaultCalendar */
-        $defaultCalendar = $this->manager
+        $defaultCalendar = $this->getEntityManager()
             ->getRepository('OroCalendarBundle:Calendar')
             ->findDefaultCalendar(
                 $this->securityFacade->getLoggedUser()->getId(),
@@ -174,31 +176,38 @@ class CalendarEventHandler
      *
      * @param CalendarEvent $entity
      * @param ArrayCollection $originalAttendees
-     * @param boolean $notify
      * @param Recurrence|null $originalRecurrence
+     * @param boolean $notify
      */
     protected function onSuccess(
         CalendarEvent $entity,
         ArrayCollection $originalAttendees,
-        $notify,
-        $originalRecurrence
+        Recurrence $originalRecurrence = null,
+        $notify = false
     ) {
+        $this->calendarEventManager->onEventUpdate(
+            $entity,
+            $this->securityFacade->getOrganization()
+        );
+
         if ($originalRecurrence && $this->form->has('recurrence')) {
             $this->calendarEventManager->clearExceptionsWhenRecurrenceChanged($entity, $originalRecurrence);
         }
 
         $new = $entity->getId() ? false : true;
-        $this->manager->persist($entity);
-        $this->manager->flush();
+        $this->getEntityManager()->persist($entity);
+        $this->getEntityManager()->flush();
 
-        if ($new) {
-            $this->emailSendProcessor->sendInviteNotification($entity);
-        } else {
-            $this->emailSendProcessor->sendUpdateParentEventNotification(
-                $entity,
-                $originalAttendees,
-                $notify
-            );
+        if ($notify) {
+            if ($new) {
+                $this->emailSendProcessor->sendInviteNotification($entity);
+            } else {
+                $this->emailSendProcessor->sendUpdateParentEventNotification(
+                    $entity,
+                    $originalAttendees,
+                    $notify
+                );
+            }
         }
     }
 
@@ -239,7 +248,7 @@ class CalendarEventHandler
                 && $targetEntityId !== $this->securityFacade->getLoggedUserId()
             ) {
                 /** @var Calendar $defaultCalendar */
-                $defaultCalendar = $this->manager
+                $defaultCalendar = $this->getEntityManager()
                     ->getRepository('OroCalendarBundle:Calendar')
                     ->findDefaultCalendar($targetEntity->getId(), $targetEntity->getOrganization()->getId());
                 $entity->setCalendar($defaultCalendar);
@@ -247,5 +256,21 @@ class CalendarEventHandler
         }
 
         return $this;
+    }
+
+    /**
+     * @return bool
+     */
+    protected function shouldBeNotified()
+    {
+        return $this->form->has('notifyInvitedUsers') && $this->form->get('notifyInvitedUsers')->getData();
+    }
+
+    /**
+     * @return EntityManager
+     */
+    protected function getEntityManager()
+    {
+        return $this->doctrine->getManager();
     }
 }

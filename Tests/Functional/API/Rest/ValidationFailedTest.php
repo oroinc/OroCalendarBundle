@@ -97,7 +97,6 @@ class ValidationErrorTest extends AbstractValidationErrorTestCase
                     'description' => [],
                     'end' => [],
                     'id' => [],
-                    'invitedUsers' => [],
                     'isCancelled' => [],
                     'notifyInvitedUsers' => [],
                     'originalStart' => [],

@@ -8,15 +8,13 @@ use Symfony\Component\HttpFoundation\Request;
 use Doctrine\Common\Persistence\ManagerRegistry;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\EntityManager;
-use Doctrine\ORM\EntityRepository;
 
 use Oro\Bundle\ActivityBundle\Manager\ActivityManager;
 use Oro\Bundle\CalendarBundle\Entity\Attendee;
 use Oro\Bundle\CalendarBundle\Entity\CalendarEvent;
-use Oro\Bundle\CalendarBundle\Manager\AttendeeRelationManager;
+use Oro\Bundle\CalendarBundle\Manager\CalendarEventManager;
 use Oro\Bundle\CalendarBundle\Model\Email\EmailSendProcessor;
-use Oro\Bundle\EntityExtendBundle\Tools\ExtendHelper;
-use Oro\Bundle\UserBundle\Entity\User;
+use Oro\Bundle\SecurityBundle\SecurityFacade;
 
 class CalendarEventApiHandler
 {
@@ -35,31 +33,37 @@ class CalendarEventApiHandler
     /** @var ActivityManager */
     protected $activityManager;
 
-    /** @var AttendeeRelationManager */
-    protected $attendeeRelationManager;
+    /** @var SecurityFacade */
+    protected $securityFacade;
+
+    /** @var CalendarEventManager */
+    protected $calendarEventManager;
 
     /**
      * @param FormInterface           $form
      * @param Request                 $request
      * @param ManagerRegistry         $doctrine
+     * @param SecurityFacade          $securityFacade
      * @param EmailSendProcessor      $emailSendProcessor
      * @param ActivityManager         $activityManager
-     * @param AttendeeRelationManager $attendeeRelationManager
+     * @param CalendarEventManager    $calendarEventManager
      */
     public function __construct(
         FormInterface $form,
         Request $request,
         ManagerRegistry $doctrine,
+        SecurityFacade $securityFacade,
         EmailSendProcessor $emailSendProcessor,
         ActivityManager $activityManager,
-        AttendeeRelationManager $attendeeRelationManager
+        CalendarEventManager $calendarEventManager
     ) {
-        $this->form                    = $form;
-        $this->request                 = $request;
-        $this->doctrine                = $doctrine;
-        $this->emailSendProcessor      = $emailSendProcessor;
-        $this->activityManager         = $activityManager;
-        $this->attendeeRelationManager = $attendeeRelationManager;
+        $this->form                 = $form;
+        $this->request              = $request;
+        $this->doctrine             = $doctrine;
+        $this->emailSendProcessor   = $emailSendProcessor;
+        $this->activityManager      = $activityManager;
+        $this->securityFacade       = $securityFacade;
+        $this->calendarEventManager = $calendarEventManager;
     }
 
     /**
@@ -78,11 +82,6 @@ class CalendarEventApiHandler
             $this->form->submit($this->request->request->all());
 
             if ($this->form->isValid()) {
-                /** @deprecated since version 1.10. Please use field attendees instead of invitedUsers */
-                if ($this->form->has('invitedUsers')) {
-                    $this->convertInvitedUsersToAttendees($entity, $this->form->get('invitedUsers')->getData());
-                }
-
                 // TODO: should be refactored after finishing BAP-8722
                 // Contexts handling should be moved to common for activities form handler
                 if ($this->form->has('contexts') && $this->request->request->has('contexts')) {
@@ -112,31 +111,6 @@ class CalendarEventApiHandler
     }
 
     /**
-     * @deprecated since version 1.10. Please use field attendees instead of invitedUsers
-     *
-     * @param CalendarEvent $event
-     * @param User[]        $users
-     */
-    protected function convertInvitedUsersToAttendees(CalendarEvent $event, array $users)
-    {
-        foreach ($users as $user) {
-            $attendee = $this->attendeeRelationManager->createAttendee($user);
-
-            if ($attendee) {
-                $status = $this->getEntityRepository(ExtendHelper::buildEnumValueClassName(Attendee::STATUS_ENUM_CODE))
-                    ->find(Attendee::STATUS_NONE);
-                $attendee->setStatus($status);
-
-                $type = $this->getEntityRepository(ExtendHelper::buildEnumValueClassName(Attendee::TYPE_ENUM_CODE))
-                    ->find(Attendee::TYPE_REQUIRED);
-                $attendee->setType($type);
-
-                $event->addAttendee($attendee);
-            }
-        }
-    }
-
-    /**
      * "Success" form handler
      *
      * @param CalendarEvent              $entity
@@ -148,6 +122,11 @@ class CalendarEventApiHandler
         ArrayCollection $originalAttendees,
         $notify
     ) {
+        $this->calendarEventManager->onEventUpdate(
+            $entity,
+            $this->securityFacade->getOrganization()
+        );
+
         $new = $entity->getId() ? false : true;
 
         $entityManager = $this->getEntityManager();
@@ -180,31 +159,19 @@ class CalendarEventApiHandler
     }
 
     /**
+     * @return bool
+     */
+    protected function shouldBeNotified()
+    {
+        return $this->form->has('notifyInvitedUsers') && $this->form->get('notifyInvitedUsers')->getData();
+    }
+
+    /**
      * @return EntityManager
      */
     protected function getEntityManager()
     {
         return $this->doctrine->getManager();
-    }
-
-    /**
-     * @param $className
-     *
-     * @return EntityRepository
-     */
-    protected function getEntityRepository($className)
-    {
-        return $this->doctrine->getRepository($className);
-    }
-
-    /**
-     * @return bool
-     */
-    protected function shouldBeNotified()
-    {
-        $notifyInvitedUsers = $this->form->get('notifyInvitedUsers')->getData();
-
-        return $notifyInvitedUsers === 'true' || $notifyInvitedUsers === true;
     }
 
     /**

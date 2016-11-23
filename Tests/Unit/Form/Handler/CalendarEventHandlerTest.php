@@ -2,15 +2,11 @@
 
 namespace Oro\Bundle\CalendarBundle\Tests\Unit\Form\Handler;
 
-use Oro\Bundle\CalendarBundle\Entity\Calendar;
-use Oro\Bundle\CalendarBundle\Entity\Recurrence;
-use Oro\Component\PropertyAccess\PropertyAccessor;
 use Symfony\Component\HttpFoundation\Request;
 
 use Oro\Bundle\CalendarBundle\Tests\Unit\ReflectionUtil;
 use Oro\Bundle\CalendarBundle\Tests\Unit\Fixtures\Entity\CalendarEvent;
 use Oro\Bundle\CalendarBundle\Form\Handler\CalendarEventHandler;
-use Oro\Bundle\CalendarBundle\Manager\AttendeeManager;
 use Oro\Bundle\CalendarBundle\Manager\CalendarEventManager;
 use Oro\Bundle\UserBundle\Entity\User;
 use Oro\Bundle\OrganizationBundle\Entity\Organization;
@@ -24,7 +20,7 @@ class CalendarEventHandlerTest extends \PHPUnit_Framework_TestCase
     protected $request;
 
     /** @var \PHPUnit_Framework_MockObject_MockObject */
-    protected $om;
+    protected $objectManager;
 
     /** @var \PHPUnit_Framework_MockObject_MockObject */
     protected $activityManager;
@@ -35,11 +31,17 @@ class CalendarEventHandlerTest extends \PHPUnit_Framework_TestCase
     /** @var \PHPUnit_Framework_MockObject_MockObject */
     protected $securityFacade;
 
+    /** @var \PHPUnit_Framework_MockObject_MockObject|CalendarEventManager */
+    protected $calendarEventManager;
+
     /** @var CalendarEventHandler */
     protected $handler;
 
     /** @var CalendarEvent */
     protected $entity;
+
+    /** @var Organization */
+    protected $organization;
 
     /** @var \PHPUnit_Framework_MockObject_MockObject */
     protected $emailSendProcessor;
@@ -50,97 +52,55 @@ class CalendarEventHandlerTest extends \PHPUnit_Framework_TestCase
             ->disableOriginalConstructor()
             ->getMock();
         $this->request             = new Request();
-        $this->om                  = $this->getMockBuilder('Doctrine\Common\Persistence\ObjectManager')
+
+        $this->objectManager                  = $this->getMockBuilder('Doctrine\Common\Persistence\ObjectManager')
             ->disableOriginalConstructor()
             ->getMock();
+
+        $doctrine = $this->getMockBuilder('Doctrine\Common\Persistence\ManagerRegistry')
+            ->disableOriginalConstructor()
+            ->getMock();
+
+        $doctrine->expects($this->any())
+            ->method('getManager')
+            ->will($this->returnValue($this->objectManager));
+
         $this->activityManager     = $this->getMockBuilder('Oro\Bundle\ActivityBundle\Manager\ActivityManager')
             ->disableOriginalConstructor()
             ->getMock();
+
         $this->entityRoutingHelper = $this->getMockBuilder('Oro\Bundle\EntityBundle\Tools\EntityRoutingHelper')
             ->disableOriginalConstructor()
             ->getMock();
+
+        $this->organization = new Organization();
         $this->securityFacade      = $this->getMockBuilder('Oro\Bundle\SecurityBundle\SecurityFacade')
             ->disableOriginalConstructor()
             ->getMock();
+        $this->securityFacade->expects($this->any())
+            ->method('getOrganization')
+            ->willReturn($this->organization);
+
         $this->emailSendProcessor = $this->getMockBuilder('Oro\Bundle\CalendarBundle\Model\Email\EmailSendProcessor')
             ->disableOriginalConstructor()
             ->getMock();
 
-        $this->entity  = new CalendarEvent();
-
-        $attendeeRelationManager = $this
-            ->getMockBuilder('Oro\Bundle\CalendarBundle\Manager\AttendeeRelationManager')
+        $this->calendarEventManager = $this
+            ->getMockBuilder('Oro\Bundle\CalendarBundle\Manager\CalendarEventManager')
             ->disableOriginalConstructor()
             ->getMock();
 
-        $repository = $this->getMockBuilder('Doctrine\ORM\EntityRepository')
-            ->setMethods(['find', 'findDefaultCalendars'])
-            ->disableOriginalConstructor()
-            ->getMock();
-        $repository->expects($this->any())
-            ->method('find')
-            ->will($this->returnCallback(function ($id) {
-                return new TestEnumValue($id, $id);
-            }));
-        $repository->expects($this->any())
-            ->method('findDefaultCalendars')
-            ->will($this->returnCallback(function ($userIds) {
-                return array_map(
-                    function ($userId) {
-                        return (new Calendar())
-                            ->setOwner(new User($userId));
-                    },
-                    $userIds
-                );
-            }));
-
-        $doctrineHelper = $this->getMockBuilder('Oro\Bundle\EntityBundle\ORM\DoctrineHelper')
-            ->disableOriginalConstructor()
-            ->getMock();
-
-        $doctrineHelper->expects($this->any())
-            ->method('getEntityRepository')
-            ->will($this->returnValueMap([
-                ['Extend\Entity\EV_Ce_Attendee_Status', $repository],
-                ['Extend\Entity\EV_Ce_Attendee_Type', $repository],
-                ['OroCalendarBundle:Calendar', $repository],
-            ]));
-
-        $attendeeManager = new AttendeeManager($doctrineHelper, $attendeeRelationManager);
-
-        $doctrineHelper = $this->getMockBuilder('Oro\Bundle\EntityBundle\ORM\DoctrineHelper')
-            ->disableOriginalConstructor()
-            ->getMock();
-
-        $securityFacade = $this->getMockBuilder('Oro\Bundle\SecurityBundle\SecurityFacade')
-            ->disableOriginalConstructor()
-            ->getMock();
-
-        $entityNameResolver = $this->getMockBuilder('Oro\Bundle\EntityBundle\Provider\EntityNameResolver')
-            ->disableOriginalConstructor()
-            ->getMock();
-
-        $calendarConfig = $this->getMockBuilder('Oro\Bundle\CalendarBundle\Provider\SystemCalendarConfig')
-            ->disableOriginalConstructor()
-            ->getMock();
-
-        $calendarEventManager = new CalendarEventManager(
-            $attendeeManager,
-            $doctrineHelper,
-            $securityFacade,
-            $entityNameResolver,
-            $calendarConfig
-        );
+        $this->entity = new CalendarEvent();
 
         $this->handler = new CalendarEventHandler(
             $this->form,
             $this->request,
-            $this->om,
+            $doctrine,
             $this->activityManager,
             $this->entityRoutingHelper,
             $this->securityFacade,
             $this->emailSendProcessor,
-            $calendarEventManager
+            $this->calendarEventManager
         );
     }
 
@@ -189,10 +149,12 @@ class CalendarEventHandlerTest extends \PHPUnit_Framework_TestCase
         $this->form->expects($this->once())
             ->method('isValid')
             ->will($this->returnValue(false));
-        $this->om->expects($this->never())
+        $this->objectManager->expects($this->never())
             ->method('persist');
-        $this->om->expects($this->never())
+        $this->objectManager->expects($this->never())
             ->method('flush');
+        $this->calendarEventManager->expects($this->never())
+            ->method('onEventUpdate');
 
         $this->assertFalse(
             $this->handler->process($this->entity)
@@ -226,10 +188,13 @@ class CalendarEventHandlerTest extends \PHPUnit_Framework_TestCase
         $this->entityRoutingHelper->expects($this->once())
             ->method('getEntityClassName')
             ->will($this->returnValue(null));
-        $this->om->expects($this->once())
+        $this->calendarEventManager->expects($this->once())
+            ->method('onEventUpdate')
+            ->with($this->entity, $this->organization);
+        $this->objectManager->expects($this->once())
             ->method('persist')
             ->with($this->identicalTo($this->entity));
-        $this->om->expects($this->once())
+        $this->objectManager->expects($this->once())
             ->method('flush');
 
         $this->assertTrue(
@@ -383,7 +348,7 @@ class CalendarEventHandlerTest extends \PHPUnit_Framework_TestCase
             ->method('findDefaultCalendar')
             ->will($this->returnValue($calendar));
 
-        $this->om->expects($this->once())
+        $this->objectManager->expects($this->once())
             ->method('getRepository')
             ->will($this->returnValue($repository));
 
@@ -391,10 +356,14 @@ class CalendarEventHandlerTest extends \PHPUnit_Framework_TestCase
             ->method('has')
             ->will($this->returnValue(false));
 
-        $this->om->expects($this->once())
+        $this->calendarEventManager->expects($this->once())
+            ->method('onEventUpdate')
+            ->with($this->entity, $this->organization);
+
+        $this->objectManager->expects($this->once())
             ->method('persist')
             ->with($this->identicalTo($this->entity));
-        $this->om->expects($this->once())
+        $this->objectManager->expects($this->once())
             ->method('flush');
 
         $this->assertTrue(
@@ -453,10 +422,14 @@ class CalendarEventHandlerTest extends \PHPUnit_Framework_TestCase
             ->method('has')
             ->will($this->returnValue(false));
 
-        $this->om->expects($this->once())
+        $this->calendarEventManager->expects($this->once())
+            ->method('onEventUpdate')
+            ->with($this->entity, $this->organization);
+
+        $this->objectManager->expects($this->once())
             ->method('persist')
             ->with($this->identicalTo($this->entity));
-        $this->om->expects($this->once())
+        $this->objectManager->expects($this->once())
             ->method('flush');
 
         $this->assertTrue(
@@ -466,11 +439,14 @@ class CalendarEventHandlerTest extends \PHPUnit_Framework_TestCase
         $this->assertSame($defaultCalendar, $this->entity->getCalendar());
     }
 
+    /**
+     * @return array
+     */
     public function supportedMethods()
     {
-        return array(
-            array('POST'),
-            array('PUT')
-        );
+        return [
+            ['POST'],
+            ['PUT']
+        ];
     }
 }

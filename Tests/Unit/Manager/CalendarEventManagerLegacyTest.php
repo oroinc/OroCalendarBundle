@@ -1,25 +1,26 @@
 <?php
 
-namespace Oro\Bundle\CalendarBundle\Tests\Unit\Form\EventListener;
+namespace Oro\Bundle\CalendarBundle\Tests\Unit\Manager;
 
 use Doctrine\Common\Collections\ArrayCollection;
 
-use Symfony\Component\Form\FormEvent;
-use Symfony\Component\Form\FormEvents;
+use Oro\Bundle\CalendarBundle\Manager\AttendeeManager;
 
 use Oro\Bundle\CalendarBundle\Entity\Calendar;
 use Oro\Bundle\CalendarBundle\Entity\CalendarEvent;
-use Oro\Bundle\CalendarBundle\Form\EventListener\ChildEventsSubscriber;
-use Oro\Bundle\CalendarBundle\Manager\AttendeeManager;
 use Oro\Bundle\CalendarBundle\Manager\CalendarEventManager;
 use Oro\Bundle\CalendarBundle\Tests\Unit\Fixtures\Entity\Attendee;
-use Oro\Bundle\FilterBundle\Tests\Unit\Filter\Fixtures\TestEnumValue;
 use Oro\Bundle\CalendarBundle\Tests\Unit\Fixtures\Entity\User;
+use Oro\Bundle\FilterBundle\Tests\Unit\Filter\Fixtures\TestEnumValue;
+use Oro\Bundle\OrganizationBundle\Entity\Organization;
 
-class ChildEventsSubscriberTest extends \PHPUnit_Framework_TestCase
+/**
+ * Old tests moved after remove of \Oro\Bundle\CalendarBundle\Tests\Unit\Form\EventListener\ChildEventsSubscriberTest.
+ */
+class CalendarEventManagerLegacyTest extends \PHPUnit_Framework_TestCase
 {
-    /** @var ChildEventsSubscriber */
-    protected $childEventsSubscriber;
+    /** @var CalendarEventManager */
+    protected $calendarEventManager;
 
     public function setUp()
     {
@@ -84,33 +85,16 @@ class ChildEventsSubscriberTest extends \PHPUnit_Framework_TestCase
                 ->disableOriginalConstructor()
                 ->getMock();
 
-        $calendarEventManager = new CalendarEventManager(
+        $this->calendarEventManager = new CalendarEventManager(
             $attendeeManager,
             $doctrineHelper,
             $securityFacade,
             $entityNameResolver,
             $calendarConfig
         );
-
-        $this->childEventsSubscriber = new ChildEventsSubscriber($registry, $calendarEventManager);
     }
 
-    public function testGetSubscribedEvents()
-    {
-        $this->assertEquals(
-            [
-                FormEvents::POST_SUBMIT => 'postSubmit',
-                FormEvents::PRE_SUBMIT => 'preSubmit',
-            ],
-            $this->childEventsSubscriber->getSubscribedEvents()
-        );
-    }
-
-    /**
-     * @todo Move this test to CalendarEventManagerTest
-     * @see \Oro\Bundle\CalendarBundle\Tests\Unit\Manager\CalendarEventManagerTest
-     */
-    public function testOnSubmit()
+    public function testOnEventUpdate()
     {
         $firstEventAttendee = new Attendee(1);
         $firstEventAttendee->setEmail('first@example.com');
@@ -141,13 +125,8 @@ class ChildEventsSubscriberTest extends \PHPUnit_Framework_TestCase
             ->addChildEvent($eventWithoutRelatedAttendee);
 
 
-        $form = $this->getMock('Symfony\Component\Form\FormInterface');
-        $form->expects($this->any())
-            ->method('getData')
-            ->will($this->returnValue($parentEvent));
-
         // assert default data with default status
-        $this->childEventsSubscriber->postSubmit(new FormEvent($form, []));
+        $this->calendarEventManager->onEventUpdate($parentEvent, new Organization());
 
         $this->assertEquals(CalendarEvent::STATUS_ACCEPTED, $parentEvent->getInvitationStatus());
         $this->assertEquals(CalendarEvent::STATUS_NONE, $firstEvent->getInvitationStatus());
@@ -175,7 +154,7 @@ class ChildEventsSubscriberTest extends \PHPUnit_Framework_TestCase
         );
 
         // assert modified data
-        $this->childEventsSubscriber->postSubmit(new FormEvent($form, []));
+        $this->calendarEventManager->onEventUpdate($parentEvent, new Organization());
 
         $this->assertEquals(CalendarEvent::STATUS_ACCEPTED, $parentEvent->getInvitationStatus());
         $this->assertEquals(CalendarEvent::STATUS_DECLINED, $firstEvent->getInvitationStatus());
@@ -186,10 +165,6 @@ class ChildEventsSubscriberTest extends \PHPUnit_Framework_TestCase
         $this->assertEventDataEquals($parentEvent, $eventWithoutRelatedAttendee);
     }
 
-    /**
-     * @todo Move this test to CalendarEventManagerTest
-     * @see \Oro\Bundle\CalendarBundle\Tests\Unit\Manager\CalendarEventManagerTest
-     */
     public function testRelatedAttendees()
     {
         $user = new User();
@@ -206,20 +181,11 @@ class ChildEventsSubscriberTest extends \PHPUnit_Framework_TestCase
             ->setAttendees($attendees)
             ->setCalendar($calendar);
 
-        $form = $this->getMock('Symfony\Component\Form\FormInterface');
-        $form->expects($this->any())
-            ->method('getData')
-            ->will($this->returnValue($event));
-
-        $this->childEventsSubscriber->postSubmit(new FormEvent($form, []));
+        $this->calendarEventManager->onEventUpdate($event, new Organization());
 
         $this->assertEquals($attendees->first(), $event->findRelatedAttendee());
     }
 
-    /**
-     * @todo Move this test to CalendarEventManagerTest
-     * @see \Oro\Bundle\CalendarBundle\Tests\Unit\Manager\CalendarEventManagerTest
-     */
     public function testAddEvents()
     {
         $user = new User(1);
@@ -239,21 +205,12 @@ class ChildEventsSubscriberTest extends \PHPUnit_Framework_TestCase
             ->setAttendees($attendees)
             ->setCalendar($calendar);
 
-        $form = $this->getMock('Symfony\Component\Form\FormInterface');
-        $form->expects($this->any())
-            ->method('getData')
-            ->will($this->returnValue($event));
-
-        $this->childEventsSubscriber->postSubmit(new FormEvent($form, []));
+        $this->calendarEventManager->onEventUpdate($event, new Organization());
 
         $this->assertCount(1, $event->getChildEvents());
         $this->assertSame($attendees->get(1), $event->getChildEvents()->first()->findRelatedAttendee());
     }
 
-    /**
-     * @todo Move this test to CalendarEventManagerTest
-     * @see \Oro\Bundle\CalendarBundle\Tests\Unit\Manager\CalendarEventManagerTest
-     */
     public function testUpdateAttendees()
     {
         $user = (new User())
@@ -275,12 +232,7 @@ class ChildEventsSubscriberTest extends \PHPUnit_Framework_TestCase
             ->setAttendees($attendees)
             ->setCalendar($calendar);
 
-        $form = $this->getMock('Symfony\Component\Form\FormInterface');
-        $form->expects($this->any())
-            ->method('getData')
-            ->will($this->returnValue($event));
-
-        $this->childEventsSubscriber->postSubmit(new FormEvent($form, []));
+        $this->calendarEventManager->onEventUpdate($event, new Organization());
 
         $this->assertEquals('attendee@example.com', $attendees->get(0)->getDisplayName());
         $this->assertEquals('attendee2@example.com', $attendees->get(1)->getDisplayName());

@@ -8,35 +8,16 @@ use Symfony\Component\Form\FormEvent;
 use Symfony\Component\Form\FormEvents;
 
 use Oro\Bundle\CalendarBundle\Form\EventListener\AttendeesSubscriber;
-use Oro\Bundle\CalendarBundle\Manager\AttendeeRelationManager;
 use Oro\Bundle\CalendarBundle\Tests\Unit\Fixtures\Entity\Attendee;
-
-use Oro\Bundle\SecurityBundle\SecurityFacade;
 
 class AttendeesSubscriberTest extends \PHPUnit_Framework_TestCase
 {
-    /** @var AttendeeRelationManager */
-    protected $attendeeRelationManager;
-
     /** @var AttendeesSubscriber */
     protected $attendeesSubscriber;
 
-    /** @var SecurityFacade */
-    protected $securityFacade;
-
     public function setUp()
     {
-        $this->attendeeRelationManager = $this
-            ->getMockBuilder('Oro\Bundle\CalendarBundle\Manager\AttendeeRelationManager')
-            ->disableOriginalConstructor()
-            ->getMock();
-
-        $this->securityFacade = $this
-            ->getMockBuilder('Oro\Bundle\SecurityBundle\SecurityFacade')
-            ->disableOriginalConstructor()
-            ->getMock();
-
-        $this->attendeesSubscriber = new AttendeesSubscriber($this->attendeeRelationManager, $this->securityFacade);
+        $this->attendeesSubscriber = new AttendeesSubscriber();
     }
 
     public function testGetSubscribedEvents()
@@ -44,7 +25,6 @@ class AttendeesSubscriberTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals(
             [
                 FormEvents::PRE_SUBMIT  => ['fixSubmittedData', 100],
-                FormEvents::POST_SUBMIT => ['postSubmit', -100],
             ],
             $this->attendeesSubscriber->getSubscribedEvents()
         );
@@ -203,31 +183,5 @@ class AttendeesSubscriberTest extends \PHPUnit_Framework_TestCase
                 ],
             ],
         ];
-    }
-
-    public function testPostSubmit()
-    {
-        $attendees = new ArrayCollection([new Attendee(1)]);
-
-        $event = new FormEvent(
-            $this->getMock('Symfony\Component\Form\FormInterface'),
-            $attendees
-        );
-
-        $this->attendeeRelationManager->expects($this->once())
-            ->method('bindAttendees')
-            ->with($attendees);
-
-        $this->attendeesSubscriber->postSubmit($event);
-    }
-
-    public function testPostSubmitWithNullData()
-    {
-        $this->attendeeRelationManager->expects($this->never())
-            ->method('bindAttendees');
-
-        $this->attendeesSubscriber->postSubmit(
-            new FormEvent($this->getMock('Symfony\Component\Form\FormInterface'), null)
-        );
     }
 }

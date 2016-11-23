@@ -4,13 +4,10 @@ namespace Oro\Bundle\CalendarBundle\Tests\Unit\Form\EventListener;
 
 use Symfony\Component\Form\FormEvents;
 use Symfony\Component\Form\FormEvent;
-use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\RequestStack;
 
 use Oro\Bundle\CalendarBundle\Entity\CalendarEvent;
-use Oro\Bundle\CalendarBundle\Entity\Recurrence;
 use Oro\Bundle\CalendarBundle\Form\EventListener\CalendarEventApiTypeSubscriber;
-use Oro\Bundle\CalendarBundle\Form\EventListener\CalendarEventRecurrenceSubscriber;
 use Oro\Bundle\CalendarBundle\Manager\CalendarEventManager;
 
 class CalendarEventApiTypeSubscriberTest extends \PHPUnit_Framework_TestCase
@@ -24,9 +21,6 @@ class CalendarEventApiTypeSubscriberTest extends \PHPUnit_Framework_TestCase
     /** @var CalendarEventApiTypeSubscriber */
     protected $calendarEventApiTypeSubscriber;
 
-    /** @var  CalendarEventRecurrenceSubscriber */
-    protected $calendarEventRecurrenceSubscriber;
-
     public function setUp()
     {
         $this->calendarEventManager = $this->getMockBuilder('Oro\Bundle\CalendarBundle\Manager\CalendarEventManager')
@@ -39,133 +33,17 @@ class CalendarEventApiTypeSubscriberTest extends \PHPUnit_Framework_TestCase
             $this->calendarEventManager,
             $this->requestStack
         );
-
-        $this->calendarEventRecurrenceSubscriber = new CalendarEventRecurrenceSubscriber($this->calendarEventManager);
     }
 
     public function testGetSubscribedEvents()
     {
         $this->assertEquals(
             [
-                FormEvents::PRE_SET_DATA => 'preSetData',
-                FormEvents::PRE_SUBMIT   => 'preSubmit',
+                FormEvents::PRE_SUBMIT  => 'preSubmitData',
                 FormEvents::POST_SUBMIT  => 'postSubmitData',
             ],
             CalendarEventApiTypeSubscriber::getSubscribedEvents()
         );
-    }
-
-    public function testPreSetDataShouldRemoveInvitedUsers()
-    {
-        $form = $this->getMock('Symfony\Component\Form\FormInterface');
-
-        $this->requestStack->push(new Request([], ['attendees' => []]));
-
-        $event = new FormEvent($form, new CalendarEvent());
-        $form->expects($this->once())
-            ->method('remove')
-            ->with('invitedUsers');
-
-        $this->calendarEventApiTypeSubscriber->preSetData($event);
-    }
-
-    /**
-     * @dataProvider testPreSetDataShouldNotRemoveInvitedUsersProvider
-     */
-    public function testPreSetDataShouldNotRemoveInvitedUsers($data, $request)
-    {
-        $form = $this->getMock('Symfony\Component\Form\FormInterface');
-
-        $this->requestStack->push($request);
-
-        $event = new FormEvent($form, $data);
-        $form->expects($this->never())
-            ->method('remove');
-
-        $this->calendarEventApiTypeSubscriber->preSetData($event);
-    }
-
-    public function testPreSetDataShouldNotRemoveInvitedUsersProvider()
-    {
-        return [
-            [
-                null,
-                new Request([], ['attendees' => []]),
-            ],
-            [
-                new CalendarEvent(),
-                new Request(),
-            ],
-        ];
-    }
-
-    public function testPreSubmitShouldRemoveInvitedUsers()
-    {
-        $form = $this->getMock('Symfony\Component\Form\FormInterface');
-
-        $this->requestStack->push(new Request([], ['attendees' => []]));
-
-        $event = new FormEvent($form, ['recurrence' => ['occurences' => 1]]);
-        $form->expects($this->once())
-            ->method('remove')
-            ->with('invitedUsers');
-
-        $this->calendarEventApiTypeSubscriber->preSubmit($event);
-    }
-
-    public function testPreSubmitShouldNotRemoveInvitedUsers()
-    {
-        $form = $this->getMock('Symfony\Component\Form\FormInterface');
-
-        $this->requestStack->push(new Request());
-
-        $event = new FormEvent($form, ['recurrence' => ['occurences' => 1]]);
-        $form->expects($this->never())
-            ->method('remove');
-
-        $this->calendarEventApiTypeSubscriber->preSubmit($event);
-    }
-
-    public function testPreSubmitShouldRemoveRecurrence()
-    {
-        $form = $this->getMock('Symfony\Component\Form\FormInterface');
-        $recurrenceForm = $this->getMock('Symfony\Component\Form\FormInterface');
-        $recurrence = new Recurrence();
-        $this->requestStack->push(new Request());
-
-        $event = new FormEvent($form, ['id' => 1, 'recurrence' => []]);
-        $form->expects($this->at(0))
-            ->method('has')
-            ->with('recurrence')
-            ->willReturn(true);
-        $form->expects($this->at(1))
-            ->method('has')
-            ->with('repeat')
-            ->willReturn(true);
-        $form->expects($this->any())
-            ->method('get')
-            ->with('recurrence')
-            ->will($this->returnValue($recurrenceForm));
-        $form->expects($this->any())
-            ->method('has')
-            ->withConsecutive(
-                ['recurrence'],
-                ['repeat']
-            )
-            ->will($this->returnValue(true));
-        $recurrenceForm->expects($this->once())
-            ->method('getData')
-            ->will($this->returnValue($recurrence));
-        $recurrenceForm->expects($this->once())
-            ->method('setData')
-            ->with(null);
-
-        $this->calendarEventManager->expects($this->once())
-            ->method('removeRecurrence')
-            ->with($recurrence);
-
-        $this->calendarEventRecurrenceSubscriber->preSubmit($event);
-        $this->assertEquals(['id' => 1], $event->getData());
     }
 
     /**

@@ -2,13 +2,16 @@
 
 namespace Oro\Bundle\CalendarBundle\Form\Handler;
 
-use Doctrine\Common\Persistence\ObjectManager;
+use Doctrine\Common\Persistence\ManagerRegistry;
+use Doctrine\ORM\EntityManager;
 
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\HttpFoundation\Request;
 
 use Oro\Bundle\ActivityBundle\Manager\ActivityManager;
 use Oro\Bundle\CalendarBundle\Entity\CalendarEvent;
+use Oro\Bundle\CalendarBundle\Manager\CalendarEventManager;
+use Oro\Bundle\SecurityBundle\SecurityFacade;
 
 class SystemCalendarEventHandler
 {
@@ -18,28 +21,37 @@ class SystemCalendarEventHandler
     /** @var Request */
     protected $request;
 
-    /** @var ObjectManager */
-    protected $manager;
+    /** @var ManagerRegistry */
+    protected $doctrine;
 
     /** @var ActivityManager */
     protected $activityManager;
 
+    /** @var CalendarEventManager */
+    protected $calendarEventManager;
+
     /**
-     * @param FormInterface   $form
-     * @param Request         $request
-     * @param ObjectManager   $manager
-     * @param ActivityManager $activityManager
+     * @param FormInterface        $form
+     * @param Request              $request
+     * @param ManagerRegistry      $doctrine
+     * @param SecurityFacade       $securityFacade
+     * @param ActivityManager      $activityManager
+     * @param CalendarEventManager $calendarEventManager
      */
     public function __construct(
         FormInterface $form,
         Request $request,
-        ObjectManager $manager,
-        ActivityManager $activityManager
+        ManagerRegistry $doctrine,
+        SecurityFacade $securityFacade,
+        ActivityManager $activityManager,
+        CalendarEventManager $calendarEventManager
     ) {
-        $this->form            = $form;
-        $this->request         = $request;
-        $this->manager         = $manager;
-        $this->activityManager = $activityManager;
+        $this->form                 = $form;
+        $this->request              = $request;
+        $this->doctrine             = $doctrine;
+        $this->securityFacade       = $securityFacade;
+        $this->activityManager      = $activityManager;
+        $this->calendarEventManager = $calendarEventManager;
     }
 
     /**
@@ -96,7 +108,17 @@ class SystemCalendarEventHandler
      */
     protected function onSuccess(CalendarEvent $entity)
     {
-        $this->manager->persist($entity);
-        $this->manager->flush();
+        $this->calendarEventManager->onEventUpdate($entity, $this->securityFacade->getOrganization());
+
+        $this->getEntityManager()->persist($entity);
+        $this->getEntityManager()->flush();
+    }
+
+    /**
+     * @return EntityManager
+     */
+    protected function getEntityManager()
+    {
+        return $this->doctrine->getManager();
     }
 }

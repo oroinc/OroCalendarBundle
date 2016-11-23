@@ -11,19 +11,6 @@ use Oro\Bundle\CalendarBundle\Manager\CalendarEventManager;
 
 class CalendarEventRecurrenceSubscriber implements EventSubscriberInterface
 {
-    /** @var CalendarEventManager */
-    protected $calendarEventManager;
-
-    /**
-     * CalendarEventRecurrenceSubscriber constructor.
-     *
-     * @param CalendarEventManager $calendarEventManager
-     */
-    public function __construct(CalendarEventManager $calendarEventManager)
-    {
-        $this->calendarEventManager = $calendarEventManager;
-    }
-
     /**
      * {@inheritdoc}
      */
@@ -61,7 +48,6 @@ class CalendarEventRecurrenceSubscriber implements EventSubscriberInterface
         if ($isRecurrence || $isRepeatUnchecked) {
             $recurrence = $form->get('recurrence')->getData();
             if ($recurrence) {
-                $this->calendarEventManager->removeRecurrence($recurrence);
                 $form->get('recurrence')->setData(null);
             }
             unset($data['recurrence']);
