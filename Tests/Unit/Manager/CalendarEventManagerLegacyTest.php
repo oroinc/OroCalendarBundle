@@ -126,7 +126,7 @@ class CalendarEventManagerLegacyTest extends \PHPUnit_Framework_TestCase
 
 
         // assert default data with default status
-        $this->calendarEventManager->onEventUpdate($parentEvent, new Organization());
+        $this->calendarEventManager->onEventUpdate($parentEvent, clone $parentEvent, new Organization(), false);
 
         $this->assertEquals(CalendarEvent::STATUS_ACCEPTED, $parentEvent->getInvitationStatus());
         $this->assertEquals(CalendarEvent::STATUS_NONE, $firstEvent->getInvitationStatus());
@@ -154,7 +154,7 @@ class CalendarEventManagerLegacyTest extends \PHPUnit_Framework_TestCase
         );
 
         // assert modified data
-        $this->calendarEventManager->onEventUpdate($parentEvent, new Organization());
+        $this->calendarEventManager->onEventUpdate($parentEvent, clone $parentEvent, new Organization(), false);
 
         $this->assertEquals(CalendarEvent::STATUS_ACCEPTED, $parentEvent->getInvitationStatus());
         $this->assertEquals(CalendarEvent::STATUS_DECLINED, $firstEvent->getInvitationStatus());
@@ -181,7 +181,7 @@ class CalendarEventManagerLegacyTest extends \PHPUnit_Framework_TestCase
             ->setAttendees($attendees)
             ->setCalendar($calendar);
 
-        $this->calendarEventManager->onEventUpdate($event, new Organization());
+        $this->calendarEventManager->onEventUpdate($event, clone $event, new Organization(), false);
 
         $this->assertEquals($attendees->first(), $event->findRelatedAttendee());
     }
@@ -205,7 +205,7 @@ class CalendarEventManagerLegacyTest extends \PHPUnit_Framework_TestCase
             ->setAttendees($attendees)
             ->setCalendar($calendar);
 
-        $this->calendarEventManager->onEventUpdate($event, new Organization());
+        $this->calendarEventManager->onEventUpdate($event, clone $event, new Organization(), false);
 
         $this->assertCount(1, $event->getChildEvents());
         $this->assertSame($attendees->get(1), $event->getChildEvents()->first()->findRelatedAttendee());
@@ -232,7 +232,7 @@ class CalendarEventManagerLegacyTest extends \PHPUnit_Framework_TestCase
             ->setAttendees($attendees)
             ->setCalendar($calendar);
 
-        $this->calendarEventManager->onEventUpdate($event, new Organization());
+        $this->calendarEventManager->onEventUpdate($event, clone $event, new Organization(), false);
 
         $this->assertEquals('attendee@example.com', $attendees->get(0)->getDisplayName());
         $this->assertEquals('attendee2@example.com', $attendees->get(1)->getDisplayName());

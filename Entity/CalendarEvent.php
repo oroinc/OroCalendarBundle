@@ -1112,4 +1112,24 @@ class CalendarEvent extends ExtendCalendarEvent implements RemindableInterface, 
     {
         return $this->recurrence;
     }
+
+    /**
+     * The implementation should provides possibility to compare main relations of
+     * event with original state before update.
+     *
+     * @see \Oro\Bundle\CalendarBundle\Form\Handler\CalendarEventHandler::process
+     * @see \Oro\Bundle\CalendarBundle\Form\Handler\CalendarEventApiHandler::process
+     * @see \Oro\Bundle\CalendarBundle\Form\Handler\SystemCalendarEventHandler::process
+     */
+    public function __clone()
+    {
+        if ($this->id) {
+            $this->id = null;
+            $this->reminders = new ArrayCollection($this->reminders->toArray());
+            $this->childEvents = new ArrayCollection($this->childEvents->toArray());
+            $this->attendees = new ArrayCollection($this->attendees->toArray());
+            $this->recurringEventExceptions = new ArrayCollection($this->recurringEventExceptions->toArray());
+            $this->recurrence = $this->recurrence ? clone $this->recurrence : null;
+        }
+    }
 }

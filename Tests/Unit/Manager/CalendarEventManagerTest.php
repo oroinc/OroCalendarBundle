@@ -10,6 +10,7 @@ use Oro\Bundle\CalendarBundle\Manager\CalendarEventManager;
 use Oro\Bundle\CalendarBundle\Tests\Unit\Fixtures\Entity\Attendee;
 use Oro\Bundle\CalendarBundle\Tests\Unit\ReflectionUtil;
 use Oro\Bundle\EntityExtendBundle\Tests\Unit\Fixtures\TestEnumValue;
+use Oro\Bundle\OrganizationBundle\Entity\Organization;
 use Oro\Bundle\UserBundle\Entity\User;
 use Oro\Component\PropertyAccess\PropertyAccessor;
 
@@ -374,9 +375,12 @@ class CalendarEventManagerTest extends \PHPUnit_Framework_TestCase
     /**
      * @dataProvider recurrenceFieldsValues
      */
-    public function testProcessWithClearingExceptions($field, $value)
+    public function testClearingExceptionsOnUpdate($field, $value)
     {
+        $originalEntity = new CalendarEvent();
         $originalRecurrence = new Recurrence();
+        $originalEntity->setRecurrence($originalRecurrence);
+
         $entity = new CalendarEvent();
 
         $newRecurrence = new Recurrence();
@@ -386,7 +390,7 @@ class CalendarEventManagerTest extends \PHPUnit_Framework_TestCase
 
         $entity->addRecurringEventException(new CalendarEvent());
 
-        $this->manager->clearExceptionsWhenRecurrenceChanged($entity, $originalRecurrence);
+        $this->manager->onEventUpdate($entity, $originalEntity, new Organization(), true);
 
         $this->assertCount(0, $entity->getRecurringEventExceptions());
     }

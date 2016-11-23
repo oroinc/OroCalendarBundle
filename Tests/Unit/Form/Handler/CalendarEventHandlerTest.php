@@ -182,7 +182,7 @@ class CalendarEventHandlerTest extends \PHPUnit_Framework_TestCase
         $this->form->expects($this->once())
             ->method('isValid')
             ->will($this->returnValue(true));
-        $this->form->expects($this->exactly(2))
+        $this->form->expects($this->any())
             ->method('has')
             ->will($this->returnValue(false));
         $this->entityRoutingHelper->expects($this->once())
@@ -190,7 +190,7 @@ class CalendarEventHandlerTest extends \PHPUnit_Framework_TestCase
             ->will($this->returnValue(null));
         $this->calendarEventManager->expects($this->once())
             ->method('onEventUpdate')
-            ->with($this->entity, $this->organization);
+            ->with($this->entity, clone $this->entity, $this->organization, true);
         $this->objectManager->expects($this->once())
             ->method('persist')
             ->with($this->identicalTo($this->entity));
@@ -231,7 +231,7 @@ class CalendarEventHandlerTest extends \PHPUnit_Framework_TestCase
             ->method('isValid')
             ->will($this->returnValue(true));
 
-        $this->form->expects($this->exactly(2))
+        $this->form->expects($this->any())
             ->method('has')
             ->withConsecutive(
                 ['contexts'],
@@ -352,13 +352,13 @@ class CalendarEventHandlerTest extends \PHPUnit_Framework_TestCase
             ->method('getRepository')
             ->will($this->returnValue($repository));
 
-        $this->form->expects($this->exactly(2))
+        $this->form->expects($this->any())
             ->method('has')
             ->will($this->returnValue(false));
 
         $this->calendarEventManager->expects($this->once())
             ->method('onEventUpdate')
-            ->with($this->entity, $this->organization);
+            ->with($this->entity, clone $this->entity, $this->organization, true);
 
         $this->objectManager->expects($this->once())
             ->method('persist')
@@ -418,13 +418,13 @@ class CalendarEventHandlerTest extends \PHPUnit_Framework_TestCase
         $this->activityManager->expects($this->once())
             ->method('addActivityTarget')
             ->with($this->identicalTo($this->entity), $this->identicalTo($targetEntity));
-        $this->form->expects($this->exactly(2))
+        $this->form->expects($this->any())
             ->method('has')
             ->will($this->returnValue(false));
 
         $this->calendarEventManager->expects($this->once())
             ->method('onEventUpdate')
-            ->with($this->entity, $this->organization);
+            ->with($this->entity, clone $this->entity, $this->organization, true);
 
         $this->objectManager->expects($this->once())
             ->method('persist')

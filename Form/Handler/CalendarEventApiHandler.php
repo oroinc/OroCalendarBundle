@@ -6,11 +6,9 @@ use Symfony\Component\Form\FormInterface;
 use Symfony\Component\HttpFoundation\Request;
 
 use Doctrine\Common\Persistence\ManagerRegistry;
-use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\EntityManager;
 
 use Oro\Bundle\ActivityBundle\Manager\ActivityManager;
-use Oro\Bundle\CalendarBundle\Entity\Attendee;
 use Oro\Bundle\CalendarBundle\Entity\CalendarEvent;
 use Oro\Bundle\CalendarBundle\Manager\CalendarEventManager;
 use Oro\Bundle\CalendarBundle\Model\Email\EmailSendProcessor;
@@ -40,13 +38,13 @@ class CalendarEventApiHandler
     protected $calendarEventManager;
 
     /**
-     * @param FormInterface           $form
-     * @param Request                 $request
-     * @param ManagerRegistry         $doctrine
-     * @param SecurityFacade          $securityFacade
-     * @param EmailSendProcessor      $emailSendProcessor
-     * @param ActivityManager         $activityManager
-     * @param CalendarEventManager    $calendarEventManager
+     * @param FormInterface        $form
+     * @param Request              $request
+     * @param ManagerRegistry      $doctrine
+     * @param SecurityFacade       $securityFacade
+     * @param EmailSendProcessor   $emailSendProcessor
+     * @param ActivityManager      $activityManager
+     * @param CalendarEventManager $calendarEventManager
      */
     public function __construct(
         FormInterface $form,
@@ -77,8 +75,9 @@ class CalendarEventApiHandler
         $this->form->setData($entity);
 
         if (in_array($this->request->getMethod(), ['POST', 'PUT'])) {
-            // clone attendees to have have original attendees at disposal later
-            $originalAttendees = new ArrayCollection($entity->getAttendees()->toArray());
+            // clone entity to have original values later
+            $originaEntity = clone $entity;
+
             $this->form->submit($this->request->request->all());
 
             if ($this->form->isValid()) {
@@ -98,11 +97,8 @@ class CalendarEventApiHandler
                     );
                 }
 
-                $this->onSuccess(
-                    $entity,
-                    $originalAttendees,
-                    $this->shouldBeNotified()
-                );
+                $this->onSuccess($entity, $originaEntity);
+
                 return true;
             }
         }
@@ -113,18 +109,15 @@ class CalendarEventApiHandler
     /**
      * "Success" form handler
      *
-     * @param CalendarEvent              $entity
-     * @param ArrayCollection|Attendee[] $originalAttendees
-     * @param boolean                    $notify
+     * @param CalendarEvent $entity
+     * @param CalendarEvent $originalEntity
      */
-    protected function onSuccess(
-        CalendarEvent $entity,
-        ArrayCollection $originalAttendees,
-        $notify
-    ) {
+    protected function onSuccess(CalendarEvent $entity, CalendarEvent $originalEntity) {
         $this->calendarEventManager->onEventUpdate(
             $entity,
-            $this->securityFacade->getOrganization()
+            $originalEntity,
+            $this->securityFacade->getOrganization(),
+            $this->allowClearExceptions()
         );
 
         $new = $entity->getId() ? false : true;
@@ -139,31 +132,42 @@ class CalendarEventApiHandler
             }
         }
 
-        $this->clearRecurringEventExceptions($entity);
-
         $entityManager->persist($entity);
 
         $entityManager->flush();
 
-        if ($notify) {
+        if ($this->shouldNotifyInvitedUsers()) {
             if ($new) {
                 $this->emailSendProcessor->sendInviteNotification($entity);
             } else {
                 $this->emailSendProcessor->sendUpdateParentEventNotification(
                     $entity,
-                    $originalAttendees,
-                    $notify
+                    $originalEntity->getAttendees(),
+                    true
                 );
             }
         }
     }
 
     /**
+     * If API request contains a property "notifyInvitedUsers" with TRUE value, notification should be send.
+     *
      * @return bool
      */
-    protected function shouldBeNotified()
+    protected function shouldNotifyInvitedUsers()
     {
         return $this->form->has('notifyInvitedUsers') && $this->form->get('notifyInvitedUsers')->getData();
+    }
+
+    /**
+     * If API request contains a property "updateExceptions" exceptions of recurring event are allowed to clear
+     * if necessary.
+     *
+     * @return bool
+     */
+    protected function allowClearExceptions()
+    {
+        return $this->form->has('updateExceptions') && $this->form->get('updateExceptions')->getData();
     }
 
     /**
@@ -172,21 +176,5 @@ class CalendarEventApiHandler
     protected function getEntityManager()
     {
         return $this->doctrine->getManager();
-    }
-
-    /**
-     * @param CalendarEvent $entity
-     */
-    protected function clearRecurringEventExceptions(CalendarEvent $entity)
-    {
-        $hasException = $this->form->has('updateExceptions');
-        $hasRecurrence = $this->form->has('recurrence');
-        $updateExceptionValue = $hasException ? $this->form->get('updateExceptions')->getData() : null;
-        if ($hasRecurrence && $hasException && ($updateExceptionValue === 'true' || $updateExceptionValue === true)) {
-            $entity->getRecurringEventExceptions()->clear();
-            foreach ($entity->getChildEvents() as $childEvent) {
-                $childEvent->getRecurringEventExceptions()->clear();
-            }
-        }
     }
 }

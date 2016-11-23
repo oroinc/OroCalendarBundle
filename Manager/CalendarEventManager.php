@@ -227,17 +227,31 @@ class CalendarEventManager
      * - Delegate attendees state update to AttendeeManager.
      * - Update child events according to actualized state of attendees.
      *
-     * @param CalendarEvent $calendarEvent
-     * @param Organization $organization
+     * @param CalendarEvent $event          Actual calendar event.
+     * @param CalendarEvent $originalEvent  Original calendar event state before update.
+     * @param Organization $organization    Organization is used to match users to attendees by their email.
+     * @param bool $allowClearExceptions    If TRUE and current Recurrence state is different from original,
+     *                                      then
+     *
      */
-    public function onEventUpdate(CalendarEvent $calendarEvent, Organization $organization)
-    {
+    public function onEventUpdate(
+        CalendarEvent $event,
+        CalendarEvent $originalEvent,
+        Organization $organization,
+        $allowClearExceptions
+    ) {
         $this->attendeeManager->onEventUpdate(
-            $calendarEvent,
+            $event,
             $organization
         );
 
-        $this->updateChildEvents($calendarEvent);
+        $this->updateChildEvents($event);
+
+        if ($allowClearExceptions &&
+            $this->shouldClearExceptions($event->getRecurrence(), $originalEvent->getRecurrence())
+        ) {
+            $this->clearExceptions($event);
+        }
     }
 
     /**
@@ -407,56 +421,40 @@ class CalendarEventManager
     }
 
     /**
-     * @param CalendarEvent $entity
-     * @param Recurrence $originalRecurrence
+     * Checks if recurrence change should clear exceptions
+     *
+     * @param Recurrence|null $recurrence
+     * @param Recurrence|null $originalRecurrence
+     * @return bool
      */
-    public function clearExceptionsWhenRecurrenceChanged(CalendarEvent $entity, Recurrence $originalRecurrence)
+    protected function shouldClearExceptions(Recurrence $recurrence = null, Recurrence $originalRecurrence = null)
     {
-        $recurrence = $entity->getRecurrence();
-        if ($recurrence === null) {
-            $entity->getRecurringEventExceptions()->clear();
-            $this->clearExceptionsForChildEvents($entity);
-            return;
+        $result = false;
+
+        if ($originalRecurrence && !$recurrence) {
+            // Recurrence existed before and was removed, exceptions should be cleared.
+            $result = true;
+        } elseif ($recurrence && !$recurrence->isEqual($originalRecurrence)) {
+            // Recurrence was changed
+            $result = true;
         }
 
-        $propertyAccessor = new PropertyAccessor();
-        foreach ($this->getRecurreceFieldsToCompareWhenRecurrenceChanged() as $field) {
-            $value = $propertyAccessor->getValue($recurrence, $field);
-            $originalValue = $propertyAccessor->getValue($originalRecurrence, $field);
-            if ($value !== $originalValue) {
-                $entity->getRecurringEventExceptions()->clear();
-                $this->clearExceptionsForChildEvents($entity);
-                return;
+        return $result;
+    }
+
+    /**
+     * Clears all exceptions of the event.
+     *
+     * @param CalendarEvent $event
+     */
+    protected function clearExceptions(CalendarEvent $event)
+    {
+        $event->getRecurringEventExceptions()->clear();
+
+        if ($event->getParent()) {
+            foreach ($event->getChildEvents() as $childEvent) {
+                $this->clearExceptions($childEvent);
             }
         }
-    }
-
-    /**
-     * @param CalendarEvent $calendarEvent
-     */
-    protected function clearExceptionsForChildEvents(CalendarEvent $calendarEvent)
-    {
-        foreach ($calendarEvent->getChildEvents() as $childEvent) {
-            $childEvent->getRecurringEventExceptions()->clear();
-        }
-    }
-
-    /**
-     * @return array
-     */
-    protected function getRecurreceFieldsToCompareWhenRecurrenceChanged()
-    {
-        return [
-            'recurrenceType',
-            'interval',
-            'instance',
-            'dayOfWeek',
-            'dayOfMonth',
-            'monthOfYear',
-            'startTime',
-            'endTime',
-            'occurrences',
-            'timeZone'
-        ];
     }
 }
