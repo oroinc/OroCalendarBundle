@@ -81,6 +81,7 @@ class BasicAttendeeTest extends AbstractTestCase
                 'id' => $response['id'],
                 'notifiable' => true,
                 'invitationStatus' => Attendee::STATUS_NONE,
+                'isCurrentUserInvited' => false,
             ],
             $response
         );
@@ -135,6 +136,8 @@ class BasicAttendeeTest extends AbstractTestCase
                 'isCancelled' => false,
                 'createdAt' => $newEvent->getCreatedAt()->format(DATE_RFC3339),
                 'updatedAt' => $newEvent->getUpdatedAt()->format(DATE_RFC3339),
+                'isCurrentUserInvited' => false,
+                'calendarOwnerId' => $this->getReference('oro_calendar:calendar:foo_user_1')->getId()
             ],
             $response
         );
@@ -185,6 +188,7 @@ class BasicAttendeeTest extends AbstractTestCase
                 'id' => $response['id'],
                 'notifiable' => true,
                 'invitationStatus' => Attendee::STATUS_NONE,
+                'isCurrentUserInvited' => false,
             ],
             $response
         );
@@ -239,6 +243,8 @@ class BasicAttendeeTest extends AbstractTestCase
                 'isCancelled' => false,
                 'createdAt' => $newEvent->getCreatedAt()->format(DATE_RFC3339),
                 'updatedAt' => $newEvent->getUpdatedAt()->format(DATE_RFC3339),
+                'isCurrentUserInvited' => false,
+                'calendarOwnerId' => $this->getReference('oro_calendar:calendar:system_user_1')->getId(),
             ],
             $response
         );
@@ -289,6 +295,7 @@ class BasicAttendeeTest extends AbstractTestCase
                 'id' => $response['id'],
                 'notifiable' => true,
                 'invitationStatus' => Attendee::STATUS_NONE,
+                'isCurrentUserInvited' => false
             ],
             $response
         );
@@ -343,6 +350,8 @@ class BasicAttendeeTest extends AbstractTestCase
                 'isCancelled' => false,
                 'createdAt' => $newEvent->getCreatedAt()->format(DATE_RFC3339),
                 'updatedAt' => $newEvent->getUpdatedAt()->format(DATE_RFC3339),
+                'isCurrentUserInvited' => false,
+                'calendarOwnerId' => $this->getReference('oro_calendar:calendar:foo_user_1')->getId()
             ],
             $response
         );
@@ -394,6 +403,7 @@ class BasicAttendeeTest extends AbstractTestCase
                 'id' => $response['id'],
                 'notifiable' => true,
                 'invitationStatus' => Attendee::STATUS_NONE,
+                'isCurrentUserInvited' => false
             ],
             $response
         );
@@ -434,6 +444,7 @@ class BasicAttendeeTest extends AbstractTestCase
             [
                 'notifiable' => true,
                 'invitationStatus' => Attendee::STATUS_NONE,
+                'isCurrentUserInvited' => false
             ],
             $response
         );
@@ -501,6 +512,8 @@ class BasicAttendeeTest extends AbstractTestCase
                 'isCancelled' => false,
                 'createdAt' => $newEvent->getCreatedAt()->format(DATE_RFC3339),
                 'updatedAt' => $newEvent->getUpdatedAt()->format(DATE_RFC3339),
+                'isCurrentUserInvited' => false,
+                'calendarOwnerId' => $this->getReference('oro_calendar:calendar:foo_user_1')->getId()
             ],
             $response
         );
@@ -558,6 +571,7 @@ class BasicAttendeeTest extends AbstractTestCase
                 'id' => $response['id'],
                 'notifiable' => true,
                 'invitationStatus' => Attendee::STATUS_NONE,
+                'isCurrentUserInvited' => false
             ],
             $response
         );
@@ -585,6 +599,7 @@ class BasicAttendeeTest extends AbstractTestCase
             [
                 'notifiable' => false,
                 'invitationStatus' => Attendee::STATUS_NONE,
+                'isCurrentUserInvited' => false
             ],
             $response
         );
@@ -629,6 +644,8 @@ class BasicAttendeeTest extends AbstractTestCase
                 'isCancelled' => false,
                 'createdAt' => $newEvent->getCreatedAt()->format(DATE_RFC3339),
                 'updatedAt' => $newEvent->getUpdatedAt()->format(DATE_RFC3339),
+                'isCurrentUserInvited' => false,
+                'calendarOwnerId' => $this->getReference('oro_calendar:calendar:foo_user_1')->getId()
             ],
             $response
         );

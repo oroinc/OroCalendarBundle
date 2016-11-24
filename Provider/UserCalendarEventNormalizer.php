@@ -56,6 +56,7 @@ class UserCalendarEventNormalizer extends AbstractCalendarEventNormalizer
         $result = [$item];
         $this->applyAdditionalData($result, $calendarId);
         $this->applyPermissions($result[0], $calendarId);
+        $this->addCurrentUserInvitationToCalendarEvents($result);
         $this->reminderManager->applyReminders($result, 'Oro\Bundle\CalendarBundle\Entity\CalendarEvent');
 
         return $result[0];
@@ -109,6 +110,7 @@ class UserCalendarEventNormalizer extends AbstractCalendarEventNormalizer
                 'recurringEventId' => $event->getRecurringEvent() ? $event->getRecurringEvent()->getId() : null,
                 'originalStart'    => $event->getOriginalStart(),
                 'isCancelled'      => $event->isCancelled(),
+                'calendarOwnerId'  => $event->getCalendar()->getOwner()->getId(),
             ],
             $this->prepareExtraValues($event, $extraValues)
         );
@@ -233,6 +235,7 @@ class UserCalendarEventNormalizer extends AbstractCalendarEventNormalizer
         }
         $this->applyAdditionalData($result, $calendarId);
         $this->addAttendeesToCalendarEvents($result);
+        $this->addCurrentUserInvitationToCalendarEvents($result);
         foreach ($result as &$resultItem) {
             $this->applyPermissions($resultItem, $calendarId);
         }
@@ -270,22 +273,25 @@ class UserCalendarEventNormalizer extends AbstractCalendarEventNormalizer
     }
 
     /**
-     * {@inheritdoc}
+     * @param array $calendarEvents
+     *
+     * @return $this
      */
-    protected function addAttendeesToCalendarEvents(array &$calendarEvents)
+    protected function addCurrentUserInvitationToCalendarEvents(array &$calendarEvents)
     {
-        parent::addAttendeesToCalendarEvents($calendarEvents);
-
         // decide in which events current user is invited
+        $loggedUserId = $this->securityFacade->getLoggedUserId();
         foreach ($calendarEvents as $key => $calendarEvent) {
             $isCurrentUserInvited = false;
             foreach ($calendarEvent['attendees'] as $attendee) {
-                if ($attendee['userId'] === $this->securityFacade->getLoggedUserId()) {
+                if ($calendarEvent['calendarOwnerId'] == $loggedUserId && $attendee['userId'] === $loggedUserId) {
                     $isCurrentUserInvited = true;
                     break;
                 }
             }
             $calendarEvents[$key]['isCurrentUserInvited'] = $isCurrentUserInvited;
         }
+
+        return $this;
     }
 }

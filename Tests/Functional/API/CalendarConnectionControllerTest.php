@@ -125,7 +125,7 @@ class CalendarConnectionControllerTest extends WebTestCase
                         'displayName' => $admin->getFullName(),
                         'fullName'    => $admin->getFullName(),
                         'email'       => $admin->getEmail(),
-                        'status'      => 'accepted',
+                        'status'      => 'none',
                         'type'        => 'required',
                         'userId'      => $admin->getId(),
                     ]
@@ -208,7 +208,7 @@ class CalendarConnectionControllerTest extends WebTestCase
                     'displayName' => $admin->getFullName(),
                     'fullName'    => $admin->getFullName(),
                     'email'       => $admin->getEmail(),
-                    'status'      => 'accepted',
+                    'status'      => 'none',
                     'type'        => 'required',
                     'userId'      => $admin->getId(),
                 ]

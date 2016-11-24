@@ -128,7 +128,7 @@ class CalendarEventManagerLegacyTest extends \PHPUnit_Framework_TestCase
         // assert default data with default status
         $this->calendarEventManager->onEventUpdate($parentEvent, clone $parentEvent, new Organization(), false);
 
-        $this->assertEquals(CalendarEvent::STATUS_ACCEPTED, $parentEvent->getInvitationStatus());
+        $this->assertEquals(CalendarEvent::STATUS_NONE, $parentEvent->getInvitationStatus());
         $this->assertEquals(CalendarEvent::STATUS_NONE, $firstEvent->getInvitationStatus());
         $this->assertEquals(CalendarEvent::STATUS_NONE, $secondEvent->getInvitationStatus());
         $this->assertEquals(CalendarEvent::STATUS_NONE, $eventWithoutRelatedAttendee->getInvitationStatus());

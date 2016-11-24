@@ -6,6 +6,7 @@ use Oro\Bundle\CalendarBundle\Entity\Calendar;
 use Oro\Bundle\CalendarBundle\Provider\UserCalendarEventNormalizer;
 use Oro\Bundle\CalendarBundle\Tests\Unit\Fixtures\Entity\Attendee;
 use Oro\Bundle\CalendarBundle\Tests\Unit\Fixtures\Entity\CalendarEvent;
+use Oro\Bundle\CalendarBundle\Tests\Unit\Fixtures\Entity\User;
 use Oro\Bundle\EntityExtendBundle\Tests\Unit\Fixtures\TestEnumValue;
 
 class UserCalendarEventNormalizerTest extends \PHPUnit_Framework_TestCase
@@ -115,6 +116,7 @@ class UserCalendarEventNormalizerTest extends \PHPUnit_Framework_TestCase
                         'updatedAt'        => null,
                         'parentEventId'    => null,
                         'invitationStatus' => null,
+                        'calendarOwnerId'  => 123,
                     ],
                 ],
                 'invitees'               => [1 => []],
@@ -136,7 +138,8 @@ class UserCalendarEventNormalizerTest extends \PHPUnit_Framework_TestCase
                         'editable'         => true,
                         'removable'        => true,
                         'notifiable'       => false,
-                        'isCurrentUserInvited' => false
+                        'isCurrentUserInvited' => false,
+                        'calendarOwnerId'  => 123,
                     ],
                 ]
             ],
@@ -155,6 +158,7 @@ class UserCalendarEventNormalizerTest extends \PHPUnit_Framework_TestCase
                         'updatedAt'        => null,
                         'parentEventId'    => null,
                         'invitationStatus' => null,
+                        'calendarOwnerId'  => 123,
                     ],
                 ],
                 'attendees'                => [
@@ -190,7 +194,8 @@ class UserCalendarEventNormalizerTest extends \PHPUnit_Framework_TestCase
                                 'userId'      => null
                             ],
                         ],
-                        'isCurrentUserInvited' => true
+                        'isCurrentUserInvited' => false,
+                        'calendarOwnerId' => 123
                     ],
                 ]
             ],
@@ -275,6 +280,8 @@ class UserCalendarEventNormalizerTest extends \PHPUnit_Framework_TestCase
                     'recurringEventId' => null,
                     'originalStart'    => null,
                     'isCancelled'      => false,
+                    'isCurrentUserInvited' => false,
+                    'calendarOwnerId' => 1,
                 ]
             ],
             'own calendar'           => [
@@ -333,6 +340,9 @@ class UserCalendarEventNormalizerTest extends \PHPUnit_Framework_TestCase
                     'recurringEventId' => null,
                     'originalStart'    => null,
                     'isCancelled'      => false,
+                    'isCurrentUserInvited' => true,
+                    'isCurrentUserInvited' => false,
+                    'calendarOwnerId' => 1
                 ]
             ],
             'another calendar'       => [
@@ -370,6 +380,8 @@ class UserCalendarEventNormalizerTest extends \PHPUnit_Framework_TestCase
                     'recurringEventId' => null,
                     'originalStart'    => null,
                     'isCancelled'      => false,
+                    'isCurrentUserInvited' => false,
+                    'calendarOwnerId' => 1
                 ]
             ],
         ];
@@ -403,6 +415,7 @@ class UserCalendarEventNormalizerTest extends \PHPUnit_Framework_TestCase
         }
         if (!empty($data['calendar'])) {
             $calendar = new Calendar();
+            $calendar->setOwner(new User(1));
             $event->setCalendar($calendar);
             $reflection = new \ReflectionProperty(get_class($calendar), 'id');
             $reflection->setAccessible(true);

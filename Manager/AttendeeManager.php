@@ -136,10 +136,7 @@ class AttendeeManager
 
         $calendarEvent->setRelatedAttendee($calendarEvent->findRelatedAttendee());
 
-        $this->setDefaultAttendeeStatus(
-            $calendarEvent->getAttendees(),
-            $calendarEvent->getRelatedAttendee()
-        );
+        $this->setDefaultAttendeeStatus($calendarEvent->getAttendees());
 
         $this->updateAttendeeDisplayNames($calendarEvent->getAttendees());
     }
@@ -160,21 +157,17 @@ class AttendeeManager
 
     /**
      * @param Collection|Attendee[] $attendees
-     * @param Attendee|null $relatedAttendee
      */
-    protected function setDefaultAttendeeStatus($attendees, Attendee $relatedAttendee = null)
+    protected function setDefaultAttendeeStatus($attendees)
     {
         foreach ($attendees as $attendee) {
-            $isRelatedAttendee = $relatedAttendee == $attendee;
             if (!$attendee || $attendee->getStatus()) {
                 return;
             }
 
-            $statusCode = $isRelatedAttendee ? CalendarEvent::STATUS_ACCEPTED : CalendarEvent::STATUS_NONE;
-
             $statusEnum = $this->doctrineHelper
                 ->getEntityRepository(ExtendHelper::buildEnumValueClassName(Attendee::STATUS_ENUM_CODE))
-                ->find($statusCode);
+                ->find(CalendarEvent::STATUS_NONE);
 
             $attendee->setStatus($statusEnum);
         }

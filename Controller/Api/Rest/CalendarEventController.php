@@ -439,6 +439,7 @@ class CalendarEventController extends RestController implements ClassResourceInt
 
         $response['notifiable']       = $serializedEvent['notifiable'];
         $response['invitationStatus'] = (string)$serializedEvent['invitationStatus'];
+        $response['isCurrentUserInvited'] = $serializedEvent['isCurrentUserInvited'];
 
         return $response;
     }
