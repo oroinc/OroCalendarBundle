@@ -517,8 +517,8 @@ class Recurrence
     {
         if ($source && $target) {
             return $source->format('U') == $target->format('U');
-        } else {
-            return !$source && !$target;
         }
+
+        return !$source && !$target;
     }
 }

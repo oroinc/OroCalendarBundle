@@ -117,7 +117,7 @@ class CalendarEventApiHandler
             $entity,
             $originalEntity,
             $this->securityFacade->getOrganization(),
-            $this->allowClearExceptions()
+            $this->allowUpdateExceptions()
         );
 
         $new = $entity->getId() ? false : true;
@@ -165,7 +165,7 @@ class CalendarEventApiHandler
      *
      * @return bool
      */
-    protected function allowClearExceptions()
+    protected function allowUpdateExceptions()
     {
         return $this->form->has('updateExceptions') && $this->form->get('updateExceptions')->getData();
     }

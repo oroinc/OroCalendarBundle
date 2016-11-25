@@ -308,4 +308,24 @@ class Attendee extends ExtendAttendee
     {
         return (string) $this->displayName;
     }
+
+    /**
+     * Compares instance with another instance
+     *
+     * @param Attendee|null $other
+     *
+     * @return bool
+     */
+    public function isEqual($other)
+    {
+        if (!$other instanceof Attendee) {
+            return false;
+        }
+
+        return
+            (($other->getUser() === null && $this->getUser() === null) || $this->isUserEqual($other->getUser())) &&
+            $this->isEmailEqual($other->getEmail()) &&
+            0 === strcasecmp($this->getDisplayName(), $other->getDisplayName()) &&
+            true;
+    }
 }
