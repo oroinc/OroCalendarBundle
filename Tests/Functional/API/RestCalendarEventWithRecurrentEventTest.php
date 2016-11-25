@@ -122,7 +122,7 @@ class RestCalendarEventWithRecurrentEventTest extends AbstractCalendarEventTest
             $event->getRecurrence()->getCalculatedEndTime()->format(DATE_RFC3339)
         );
 
-        $activityTargetEntities = $event->getActivityTargetEntities();
+        $activityTargetEntities = $event->getActivityTargets();
         $this->assertCount(1, $activityTargetEntities);
         $this->assertEquals(
             $this->getReference('activity_target_one')->getId(),
@@ -192,7 +192,7 @@ class RestCalendarEventWithRecurrentEventTest extends AbstractCalendarEventTest
 
         $event = $this->getContainer()->get('doctrine')->getRepository('OroCalendarBundle:CalendarEvent')
             ->findOneBy(['id' => $data['id']]);
-        $activityTargetEntities = $event->getActivityTargetEntities();
+        $activityTargetEntities = $event->getActivityTargets();
         $this->assertCount(1, $activityTargetEntities);
         $this->assertEquals(
             $this->getReference('activity_target_one')->getId(),
@@ -259,7 +259,7 @@ class RestCalendarEventWithRecurrentEventTest extends AbstractCalendarEventTest
             ->find($result['id']);
         $this->assertNotNull($exception);
         $this->assertEquals($data['id'], $exception->getRecurringEvent()->getId());
-        $activityTargetEntities = $exception->getActivityTargetEntities();
+        $activityTargetEntities = $exception->getActivityTargets();
         $this->assertCount(1, $activityTargetEntities);
         $this->assertEquals(
             $this->getReference('activity_target_one')->getId(),
@@ -326,7 +326,7 @@ class RestCalendarEventWithRecurrentEventTest extends AbstractCalendarEventTest
             $event->getChildEvents()->first()->getRecurringEvent()->getId()
         );
         $this->assertEquals(self::$recurringEventExceptionParameters['isCancelled'], $event->isCancelled());
-        $activityTargetEntities = $event->getActivityTargetEntities();
+        $activityTargetEntities = $event->getActivityTargets();
         $this->assertCount(1, $activityTargetEntities);
         $this->assertEquals(
             $this->getReference('activity_target_one')->getId(),
