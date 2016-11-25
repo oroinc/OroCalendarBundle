@@ -14,6 +14,7 @@ class RecurringEventNewAttendeeHasAllCancelledEventsTest extends AbstractUseCase
 {
     protected function setUp()
     {
+        $this->markTestSkipped('Should be corrected after BAP-12699');
         $this->initClient([], $this->generateWsseAuthHeader(), true);
         $this->loadFixtures(['Oro\Bundle\CalendarBundle\Tests\Functional\DataFixtures\LoadUserData'], true);
     }

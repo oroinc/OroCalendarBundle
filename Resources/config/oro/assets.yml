@@ -1,6 +1,6 @@
 assets:
     css:
         'orocalendar':
-            - 'bundles/orocalendar/css/calendar.css'
+            - 'bundles/orocalendar/css/less/main.less'
             - 'bundles/orocalendar/css/less/print.less'
             - 'bundles/bowerassets/fullcalendar/dist/fullcalendar.css'
