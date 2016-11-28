@@ -162,7 +162,7 @@ class AttendeeManager
     {
         foreach ($attendees as $attendee) {
             if (!$attendee || $attendee->getStatus()) {
-                return;
+                continue;
             }
 
             $statusEnum = $this->doctrineHelper

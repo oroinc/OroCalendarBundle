@@ -24,7 +24,6 @@ define([
         sendUpdate: function(e) {
             e.preventDefault();
             var triggerEventName = this.triggerEventName;
-            console.log(triggerEventName);
             $.ajax({
                 url: this.$el.attr('href'),
                 type: 'POST',

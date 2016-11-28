@@ -340,7 +340,6 @@ class UserCalendarEventNormalizerTest extends \PHPUnit_Framework_TestCase
                     'recurringEventId' => null,
                     'originalStart'    => null,
                     'isCancelled'      => false,
-                    'isCurrentUserInvited' => true,
                     'isCurrentUserInvited' => false,
                     'calendarOwnerId' => 1
                 ]
