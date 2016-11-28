@@ -2,6 +2,7 @@
 
 namespace Oro\Bundle\CalendarBundle\Manager;
 
+use Doctrine\Common\Collections\ArrayCollection;
 use Oro\Bundle\CalendarBundle\Entity\Attendee;
 use Oro\Bundle\CalendarBundle\Entity\Calendar;
 use Oro\Bundle\CalendarBundle\Entity\CalendarEvent;
@@ -232,15 +233,14 @@ class CalendarEventManager
      * @param CalendarEvent $event          Actual calendar event.
      * @param CalendarEvent $originalEvent  Original calendar event state before update.
      * @param Organization $organization    Organization is used to match users to attendees by their email.
-     * @param bool $allowClearExceptions    If TRUE and current Recurrence state is different from original,
-     *                                      then
+     * @param bool $allowUpdateExceptions   If TRUE then exceptions data should be updated
      *
      */
     public function onEventUpdate(
         CalendarEvent $event,
         CalendarEvent $originalEvent,
         Organization $organization,
-        $allowClearExceptions
+        $allowUpdateExceptions
     ) {
         $this->attendeeManager->onEventUpdate(
             $event,
@@ -249,10 +249,12 @@ class CalendarEventManager
 
         $this->updateChildEvents($event);
 
-        if ($allowClearExceptions &&
-            $this->shouldClearExceptions($event->getRecurrence(), $originalEvent->getRecurrence())
-        ) {
-            $this->clearExceptions($event);
+        if ($allowUpdateExceptions) {
+            $this->updateExceptionsData($event, $originalEvent);
+
+            if ($this->shouldClearExceptions($event, $originalEvent)) {
+                $this->clearExceptions($event);
+            }
         }
     }
 
@@ -423,15 +425,17 @@ class CalendarEventManager
     }
 
     /**
-     * Checks if recurrence change should clear exceptions
+     * Checks if recurrence or end date(duration change) change should clear exceptions
      *
-     * @param Recurrence|null $recurrence
-     * @param Recurrence|null $originalRecurrence
+     * @param CalendarEvent $event
+     * @param CalendarEvent $originalEvent
      * @return bool
      */
-    protected function shouldClearExceptions(Recurrence $recurrence = null, Recurrence $originalRecurrence = null)
+    protected function shouldClearExceptions($event, $originalEvent)
     {
         $result = false;
+        $recurrence = $event->getRecurrence();
+        $originalRecurrence = $originalEvent->getRecurrence();
 
         if ($originalRecurrence && !$recurrence) {
             // Recurrence existed before and was removed, exceptions should be cleared.
@@ -440,6 +444,15 @@ class CalendarEventManager
             // Recurrence was changed
             $result = true;
         }
+
+        $originalEnd = $originalEvent->getEnd();
+        $end = $event->getEnd();
+
+        if ($originalEnd && $end) {
+            $result = $result || $originalEnd->format('U') != $end->format('U');
+        }
+
+        $result = $result || ($originalEnd xor $end);
 
         return $result;
     }
@@ -458,5 +471,95 @@ class CalendarEventManager
                 $this->clearExceptions($childEvent);
             }
         }
+    }
+
+    /**
+     * Updates exceptions data for particular calendar event.
+     *
+     * @param CalendarEvent $event
+     * @param CalendarEvent $originalEvent
+     */
+    protected function updateExceptionsDataForEvent(CalendarEvent $event, CalendarEvent $originalEvent)
+    {
+        $exceptionEvents = $event->getRecurringEventExceptions();
+        if ($exceptionEvents) {
+            $propertyAccessor = new PropertyAccessor();
+            $fields = $this->getExceptionsListFieldsToUpdate();
+
+            foreach ($exceptionEvents as $exceptionEvent) {
+                foreach ($fields as $field) {
+                    $originalValue = $propertyAccessor->getValue($originalEvent, $field);
+                    $exceptionValue = $propertyAccessor->getValue($exceptionEvent, $field);
+                    if ($originalValue === $exceptionValue) {
+                        $propertyAccessor->setValue(
+                            $exceptionEvent,
+                            $field,
+                            $propertyAccessor->getValue($event, $field)
+                        );
+                    }
+                }
+                if (!$this->isAttendeesChanged($originalEvent, $exceptionEvent)) {
+                    $exceptionEvent->setAttendees(new ArrayCollection($event->getAttendees()->toArray()));
+                }
+            }
+        }
+    }
+
+    /**
+     * Checks were attendees of two calendar events changed or not.
+     *
+     * @param CalendarEvent $originalEvent
+     * @param CalendarEvent $exceptionEvent
+     *
+     * @return bool
+     */
+    protected function isAttendeesChanged(CalendarEvent $originalEvent, CalendarEvent $exceptionEvent)
+    {
+        $originalAttendees = $originalEvent->getAttendees();
+        $exceptionsAttendees = $exceptionEvent->getAttendees();
+
+        if (count($originalAttendees) !== count($exceptionsAttendees)) {
+            return true;
+        }
+
+        foreach ($originalAttendees as $originalAttendee) {
+            foreach ($exceptionsAttendees as $exceptionsAttendee) {
+                if (!$originalAttendee->isEqual($exceptionsAttendee)) {
+                    return true;
+                }
+            }
+        }
+
+        return false;
+    }
+
+    /**
+     * Calculates what data in exceptions was not changed and changes it according to data in recurring event.
+     *
+     * @param CalendarEvent $event
+     * @param CalendarEvent $originalEvent
+     */
+    protected function updateExceptionsData(CalendarEvent $event, CalendarEvent $originalEvent)
+    {
+        $this->updateExceptionsDataForEvent($event, $originalEvent);
+        foreach ($event->getChildEvents() as $childEvent) {
+            $this->updateExceptionsDataForEvent($childEvent, $originalEvent);
+        }
+    }
+
+    /**
+     * Gets the list of fields that should be updated on updating recurring event.
+     * This list must contain only fields that can be compared with '==='. For other fields
+     * additional methods/logic should be applied.
+     *
+     * @return array
+     */
+    public function getExceptionsListFieldsToUpdate()
+    {
+        return [
+            'title',
+            'description',
+            'allDay'
+        ];
     }
 }

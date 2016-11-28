@@ -357,11 +357,19 @@ class RecurringEventUpdateExceptionTest extends AbstractTestCase
             ],
             'Exceptions not cleared when recurrence is not changed and updateExceptions is true' => [
                 'changedEventData' => [
+                    'start' => '2016-04-25T01:00:00+00:00',
+                    'end' => '2016-04-25T02:00:00+00:00',
+                    'updateExceptions' => true,
+                ],
+                'expectExceptionsCleared' => false
+            ],
+            'Exceptions cleared when recurrence is not changed and updateExceptions is true, end date is changed' => [
+                'changedEventData' => [
                     'start' => '2016-05-25T01:00:00+00:00',
                     'end' => '2016-05-25T02:00:00+00:00',
                     'updateExceptions' => true,
                 ],
-                'expectExceptionsCleared' => false
+                'expectExceptionsCleared' => true
             ],
             'Exceptions cleared when recurrence set empty and updateExceptions is true' => [
                 'changedEventData' => [

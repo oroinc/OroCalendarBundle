@@ -413,4 +413,27 @@ class CalendarEventManagerTest extends \PHPUnit_Framework_TestCase
             'timeZone' => ['timeZone', 'Test/TimeZone'],
         ];
     }
+
+    public function testUpdateExceptionsDataOnEventUpdate()
+    {
+        $originalEntity = new CalendarEvent();
+        $originalEntity->setTitle('test')
+            ->setDescription('Test Description')
+            ->setAllDay(true);
+
+        $exception = clone $originalEntity;
+        $exception->setDescription('Changed Description');
+
+        $entity = clone $originalEntity;
+        $entity->setTitle('New Title')
+            ->addRecurringEventException($exception);
+
+        $this->manager->onEventUpdate($entity, $originalEntity, new Organization(), true);
+
+        $expectedCalendarEvent = clone $originalEntity;
+        $expectedCalendarEvent->setDescription('Changed Description')
+            ->setTitle('New Title')
+            ->setRecurringEvent($entity);
+        $this->assertEquals($entity->getRecurringEventExceptions()->toArray(), [$expectedCalendarEvent]);
+    }
 }
