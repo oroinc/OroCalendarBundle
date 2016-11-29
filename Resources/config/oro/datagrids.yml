@@ -303,18 +303,22 @@ datagrids:
             skip_acl_apply: true
             query:
                 select:
-                    - event.id
+                    - partial event.{ id, recurrence }
                     - event.title
                     - event.start
                     - event.end
+                    - (CASE WHEN (recurrence.id IS NULL) THEN false ELSE true END) as is_recurrent
                 from:
                     - { table: %oro_calendar.calendar_event.entity.class%, alias: event }
                 join:
                     inner:
                         - { join: event.systemCalendar, alias: calendar }
+                    left:
+                        - { join: event.recurrence, alias: recurrence }
                 where:
                     and:
                         - calendar.id = :calendarId
+                        - event.cancelled = false
             bind_parameters:
                 - calendarId
         columns:
@@ -326,6 +330,14 @@ datagrids:
             end:
                 label: oro.calendar.calendarevent.end.label
                 frontend_type: datetime
+            is_recurrent:
+                label: oro.calendar.calendarevent.recurrence.alias.recurrent
+                frontend_type: boolean
+            recurrence:
+                label: oro.calendar.calendarevent.recurrence.label
+                type: twig
+                template: OroCalendarBundle:CalendarEvent:Datagrid/Property/recurrence.html.twig
+                frontend_type: html
         sorters:
             columns:
                 title:
@@ -347,6 +359,13 @@ datagrids:
                 end:
                     type: datetime
                     data_name: event.end
+                is_recurrent:
+                    type: boolean
+                    data_name: is_recurrent
+                invitationStatus:
+                    type: enum
+                    enum_code: ce_attendee_status
+                    data_name: invitationStatus
         properties:
             id: ~
             view_link:
