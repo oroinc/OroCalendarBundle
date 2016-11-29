@@ -107,8 +107,7 @@ class BasicCrudTest extends AbstractTestCase
                 'isCancelled' => false,
                 'createdAt' => $newEvent->getCreatedAt()->format(DATE_RFC3339),
                 'updatedAt' => $newEvent->getUpdatedAt()->format(DATE_RFC3339),
-                'isCurrentUserInvited' => false,
-                'calendarOwnerId' => $this->getReference('oro_calendar:calendar:foo_user_1')->getId()
+                'isCurrentUserInvited' => false
             ],
             $response
         );

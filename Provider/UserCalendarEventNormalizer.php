@@ -110,7 +110,9 @@ class UserCalendarEventNormalizer extends AbstractCalendarEventNormalizer
                 'recurringEventId' => $event->getRecurringEvent() ? $event->getRecurringEvent()->getId() : null,
                 'originalStart'    => $event->getOriginalStart(),
                 'isCancelled'      => $event->isCancelled(),
-                'calendarOwnerId'  => $event->getCalendar()->getOwner()->getId(),
+                'relatedAttendeeUserId' => $event->getRelatedAttendee()
+                    ? $event->getRelatedAttendee()->getUser()->getId()
+                    : null,
             ],
             $this->prepareExtraValues($event, $extraValues)
         );
@@ -282,14 +284,9 @@ class UserCalendarEventNormalizer extends AbstractCalendarEventNormalizer
         // decide in which events current user is invited
         $loggedUserId = $this->securityFacade->getLoggedUserId();
         foreach ($calendarEvents as $key => $calendarEvent) {
-            $isCurrentUserInvited = false;
-            foreach ($calendarEvent['attendees'] as $attendee) {
-                if ($calendarEvent['calendarOwnerId'] == $loggedUserId && $attendee['userId'] === $loggedUserId) {
-                    $isCurrentUserInvited = true;
-                    break;
-                }
-            }
+            $isCurrentUserInvited = (string) $calendarEvent['relatedAttendeeUserId'] === (string) $loggedUserId;
             $calendarEvents[$key]['isCurrentUserInvited'] = $isCurrentUserInvited;
+            unset($calendarEvents[$key]['relatedAttendeeUserId']);
         }
 
         return $this;

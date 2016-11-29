@@ -69,7 +69,7 @@ class CalendarEventRepositoryTest extends OrmTestCase
             . ' IDENTITY(event.parent) AS parentEventId,'
             . ' c.id as calendar,'
             . ' IDENTITY(event.recurringEvent) AS recurringEventId,'
-            . ' IDENTITY(c.owner) AS calendarOwnerId,'
+            . ' IDENTITY(relatedAttendee.user) AS relatedAttendeeUserId,'
             . ' event.originalStart, event.cancelled AS isCancelled,'
             . " r.recurrenceType as {$key}RecurrenceType, r.interval as {$key}Interval,"
             . "r.dayOfWeek as {$key}DayOfWeek, r.dayOfMonth as {$key}DayOfMonth,"
@@ -121,7 +121,7 @@ class CalendarEventRepositoryTest extends OrmTestCase
             . ' IDENTITY(event.parent) AS parentEventId,'
             . ' c.id as calendar,'
             . ' IDENTITY(event.recurringEvent) AS recurringEventId,'
-            . ' IDENTITY(c.owner) AS calendarOwnerId,'
+            . ' IDENTITY(relatedAttendee.user) AS relatedAttendeeUserId,'
             . ' event.originalStart, event.cancelled AS isCancelled,'
             . " r.recurrenceType as {$key}RecurrenceType, r.interval as {$key}Interval,"
             . "r.dayOfWeek as {$key}DayOfWeek, r.dayOfMonth as {$key}DayOfMonth,"
@@ -177,7 +177,7 @@ class CalendarEventRepositoryTest extends OrmTestCase
             . ' IDENTITY(event.parent) AS parentEventId,'
             . ' c.id as calendar,'
             . ' IDENTITY(event.recurringEvent) AS recurringEventId,'
-            . ' IDENTITY(c.owner) AS calendarOwnerId,'
+            . ' IDENTITY(relatedAttendee.user) AS relatedAttendeeUserId,'
             . ' event.originalStart, event.cancelled AS isCancelled,'
             . " r.recurrenceType as {$key}RecurrenceType, r.interval as {$key}Interval,"
             . "r.dayOfWeek as {$key}DayOfWeek, r.dayOfMonth as {$key}DayOfMonth,"
@@ -234,7 +234,7 @@ class CalendarEventRepositoryTest extends OrmTestCase
             . ' IDENTITY(event.parent) AS parentEventId,'
             . ' c.id as calendar,'
             . ' IDENTITY(event.recurringEvent) AS recurringEventId,'
-            . ' IDENTITY(c.owner) AS calendarOwnerId,'
+            . ' IDENTITY(relatedAttendee.user) AS relatedAttendeeUserId,'
             . ' event.originalStart, event.cancelled AS isCancelled,'
             . " r.recurrenceType as {$key}RecurrenceType, r.interval as {$key}Interval,"
             . "r.dayOfWeek as {$key}DayOfWeek, r.dayOfMonth as {$key}DayOfMonth,"

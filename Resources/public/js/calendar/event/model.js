@@ -41,8 +41,7 @@ define([
             recurringEventId: null,
             originalStart: null,
             isCancelled: null,
-            isCurrentUserInvited: false,
-            calendarOwnerId: null
+            isCurrentUserInvited: false
         },
 
         initialize: function() {
@@ -89,8 +88,7 @@ define([
                 'isCancelled',
                 'durationEditable',
                 'startEditable',
-                'isCurrentUserInvited',
-                'calendarOwnerId'
+                'isCurrentUserInvited'
             ];
 
             if (this.get('recurrence')) {

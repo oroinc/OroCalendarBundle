@@ -53,7 +53,7 @@ class CalendarEventRepository extends EntityRepository
             )
             ->addSelect('IDENTITY(event.parent) AS parentEventId, c.id as calendar')
             ->addSelect('IDENTITY(event.recurringEvent) AS recurringEventId')
-            ->addSelect('IDENTITY(c.owner) AS calendarOwnerId')
+            ->addSelect('IDENTITY(relatedAttendee.user) AS relatedAttendeeUserId')
             ->addSelect('event.originalStart')
             ->addSelect('event.cancelled AS isCancelled')
             ->innerJoin('event.calendar', 'c')
