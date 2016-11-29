@@ -362,10 +362,6 @@ datagrids:
                 is_recurrent:
                     type: boolean
                     data_name: is_recurrent
-                invitationStatus:
-                    type: enum
-                    enum_code: ce_attendee_status
-                    data_name: invitationStatus
         properties:
             id: ~
             view_link:
