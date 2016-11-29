@@ -498,8 +498,23 @@ class CalendarEventManager
                         );
                     }
                 }
-                if (!$this->isAttendeesChanged($originalEvent, $exceptionEvent)) {
-                    $exceptionEvent->setAttendees(new ArrayCollection($event->getAttendees()->toArray()));
+
+                if (!$exceptionEvent->getParent() && !$this->isAttendeesChanged($originalEvent, $exceptionEvent)
+                    && $this->isAttendeesChanged($originalEvent, $event)
+                ) {
+                    $eventAttendees = $event->getAttendees()->toArray();
+                    $exceptionEvent->getAttendees()->clear();
+                    foreach ($eventAttendees as $eventAttendee) {
+                        $attendee = new Attendee();
+                        $attendee->setDisplayName($eventAttendee->getDisplayName())
+                            ->setEmail($eventAttendee->getEmail())
+                            ->setType($eventAttendee->getType())
+                            ->setStatus($eventAttendee->getStatus());
+                        if ($eventAttendee->getUser()) {
+                            $attendee->setUser($eventAttendee->getUser());
+                        }
+                        $exceptionEvent->addAttendee($attendee);
+                    }
                 }
             }
         }
@@ -509,24 +524,25 @@ class CalendarEventManager
      * Checks were attendees of two calendar events changed or not.
      *
      * @param CalendarEvent $originalEvent
-     * @param CalendarEvent $exceptionEvent
+     * @param CalendarEvent $calendarEvent
      *
      * @return bool
      */
-    protected function isAttendeesChanged(CalendarEvent $originalEvent, CalendarEvent $exceptionEvent)
+    protected function isAttendeesChanged(CalendarEvent $originalEvent, CalendarEvent $calendarEvent)
     {
-        $originalAttendees = $originalEvent->getAttendees();
-        $exceptionsAttendees = $exceptionEvent->getAttendees();
+        $originalAttendees = $originalEvent->getAttendees()->toArray();
+        $calendarEventAttendees = $calendarEvent->getAttendees()->toArray();
 
-        if (count($originalAttendees) !== count($exceptionsAttendees)) {
+        if (count($originalAttendees) !== count($calendarEventAttendees)) {
             return true;
         }
 
-        foreach ($originalAttendees as $originalAttendee) {
-            foreach ($exceptionsAttendees as $exceptionsAttendee) {
-                if (!$originalAttendee->isEqual($exceptionsAttendee)) {
-                    return true;
-                }
+        $this->sortAttendees($originalAttendees)
+            ->sortAttendees($calendarEventAttendees);
+
+        foreach ($originalAttendees as $key => $originalAttendee) {
+            if (!$originalAttendee->isEqual($calendarEventAttendees[$key])) {
+                return true;
             }
         }
 
@@ -548,6 +564,22 @@ class CalendarEventManager
     }
 
     /**
+     * Sorts array of attendees according to its email.
+     *
+     * @param $attendees
+     *
+     * @return $this
+     */
+    protected function sortAttendees(&$attendees)
+    {
+        usort($attendees, function ($attendee1, $attendee2) {
+            return strcmp($attendee1->getEmail(), $attendee2->getEmail());
+        });
+
+        return $this;
+    }
+
+    /**
      * Gets the list of fields that should be updated on updating recurring event.
      * This list must contain only fields that can be compared with '==='. For other fields
      * additional methods/logic should be applied.
@@ -559,7 +591,8 @@ class CalendarEventManager
         return [
             'title',
             'description',
-            'allDay'
+            'allDay',
+            'backgroundColor'
         ];
     }
 }

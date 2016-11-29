@@ -322,8 +322,10 @@ class Attendee extends ExtendAttendee
             return false;
         }
 
+        $user = $this->getUser();
+        $otherUser = $other->getUser();
         return
-            (($other->getUser() === null && $this->getUser() === null) || $this->isUserEqual($other->getUser())) &&
+            (($otherUser === null && $user === null) || ($user xor $otherUser) || $this->isUserEqual($otherUser)) &&
             $this->isEmailEqual($other->getEmail()) &&
             0 === strcasecmp($this->getDisplayName(), $other->getDisplayName()) &&
             true;
