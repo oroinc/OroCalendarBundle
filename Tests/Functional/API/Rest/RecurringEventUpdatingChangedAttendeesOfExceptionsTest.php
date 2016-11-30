@@ -85,7 +85,8 @@ class RecurringEventUpdatingChangedAttendeesOfExceptionsTest extends AbstractTes
         /** @var CalendarEvent $recurringEvent */
         $recurringEvent = $this->getEntity(CalendarEvent::class, $response['id']);
 
-        // Step 2. Create exception for the recurring event, exception represents changed event
+        // Step 2. Create exception for the recurring event, exception represents changed event on 2016-05-22
+        // Exception event has the same attributes except next
         $exceptionData = [
             'title'            => 'Test Recurring Event Changed',
             'description'      => 'Test Recurring Event Description',
@@ -272,6 +273,7 @@ class RecurringEventUpdatingChangedAttendeesOfExceptionsTest extends AbstractTes
             [
                 'notifiable' => false,
                 'invitationStatus' => Attendee::STATUS_NONE,
+                'isCurrentUserInvited' => false,
             ],
             $response
         );
@@ -309,9 +311,9 @@ class RecurringEventUpdatingChangedAttendeesOfExceptionsTest extends AbstractTes
                 'userId' => null,
                 'status' => Attendee::STATUS_NONE,
                 'type' => Attendee::TYPE_OPTIONAL,
-                'createdAt' => $recurringEvent->getAttendeeByEmail('ext@example.com')
+                'createdAt' => $recurringEvent->getAttendeeByEmail('aext@example.com')
                     ->getCreatedAt()->format(DATE_RFC3339),
-                'updatedAt' => $recurringEvent->getAttendeeByEmail('ext@example.com')
+                'updatedAt' => $recurringEvent->getAttendeeByEmail('aext@example.com')
                     ->getUpdatedAt()->format(DATE_RFC3339),
             ],
             [
@@ -336,9 +338,9 @@ class RecurringEventUpdatingChangedAttendeesOfExceptionsTest extends AbstractTes
                 'userId' => null,
                 'status' => Attendee::STATUS_NONE,
                 'type' => Attendee::TYPE_OPTIONAL,
-                'createdAt' => $changedEventException->getAttendeeByEmail('ext@example.com')
+                'createdAt' => $changedEventException->getAttendeeByEmail('aext@example.com')
                     ->getCreatedAt()->format(DATE_RFC3339),
-                'updatedAt' => $changedEventException->getAttendeeByEmail('ext@example.com')
+                'updatedAt' => $changedEventException->getAttendeeByEmail('aext@example.com')
                     ->getUpdatedAt()->format(DATE_RFC3339),
             ],
             [

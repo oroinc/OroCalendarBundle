@@ -267,6 +267,7 @@ class RecurringEventUpdatingDeletedAttendeesOfExceptionsTest extends AbstractTes
             [
                 'notifiable' => false,
                 'invitationStatus' => Attendee::STATUS_NONE,
+                'isCurrentUserInvited' => false,
             ],
             $response
         );

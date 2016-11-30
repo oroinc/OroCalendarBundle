@@ -754,18 +754,20 @@ class CalendarEvent extends ExtendCalendarEvent implements RemindableInterface, 
     /**
      * Get attendee of Calendar Event by email.
      *
+     * @param string|null $email If null no return will be returned.
      * @return Attendee|null
      */
     public function getAttendeeByEmail($email)
     {
         $result = null;
 
-        $attendees = $this->getAttendees();
-
-        foreach ($attendees as $attendee) {
-            if ($attendee->isEmailEqual($email)) {
-                $result = $attendee;
-                break;
+        if ($email) {
+            $attendees = $this->getAttendees();
+            foreach ($attendees as $attendee) {
+                if ($attendee->isEmailEqual($email)) {
+                    $result = $attendee;
+                    break;
+                }
             }
         }
 
@@ -1131,5 +1133,48 @@ class CalendarEvent extends ExtendCalendarEvent implements RemindableInterface, 
             $this->recurringEventExceptions = new ArrayCollection($this->recurringEventExceptions->toArray());
             $this->recurrence = $this->recurrence ? clone $this->recurrence : null;
         }
+    }
+
+    /**
+     * Compares attendees of the event with other event.
+     *
+     * @param CalendarEvent $other
+     *
+     * @return bool
+     */
+    public function hasEqualAttendees(CalendarEvent $other)
+    {
+        /** @var Attendee[] $actualAttendees */
+        $actualAttendees = $this->getAttendees()->toArray();
+
+        /** @var Attendee[] $otherAttendees */
+        $otherAttendees = $other->getAttendees()->toArray();
+
+        if (count($actualAttendees) !== count($otherAttendees)) {
+            return false;
+        }
+
+        $this->sortAttendees($actualAttendees);
+        $this->sortAttendees($otherAttendees);
+
+        foreach ($actualAttendees as $key => $originalAttendee) {
+            if (!$originalAttendee->isEqual($otherAttendees[$key])) {
+                return false;
+            }
+        }
+
+        return true;
+    }
+
+    /**
+     * Sorts array of attendees according to its email.
+     *
+     * @param Attendee[] $attendees
+     */
+    protected function sortAttendees(array &$attendees)
+    {
+        usort($attendees, function ($attendee1, $attendee2) {
+            return strcmp($attendee1->getEmail(), $attendee2->getEmail());
+        });
     }
 }

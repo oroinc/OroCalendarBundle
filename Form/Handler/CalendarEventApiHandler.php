@@ -161,7 +161,7 @@ class CalendarEventApiHandler
 
     /**
      * If API request contains a property "updateExceptions" exceptions of recurring event are allowed to clear
-     * if necessary.
+     * and update if necessary.
      *
      * @return bool
      */

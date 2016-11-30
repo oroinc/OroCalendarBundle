@@ -278,6 +278,7 @@ class RecurringEventUpdatingAddedAttendeesOfExceptionsTest extends AbstractTestC
             [
                 'notifiable' => false,
                 'invitationStatus' => Attendee::STATUS_NONE,
+                'isCurrentUserInvited' => false,
             ],
             $response
         );

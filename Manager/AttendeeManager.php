@@ -6,12 +6,9 @@ use Doctrine\Common\Collections\Collection;
 use Doctrine\Common\Util\ClassUtils;
 
 use Oro\Bundle\CalendarBundle\Entity\Attendee;
-use Oro\Bundle\CalendarBundle\Entity\CalendarEvent;
 use Oro\Bundle\CalendarBundle\Entity\Repository\AttendeeRepository;
 use Oro\Bundle\CalendarBundle\Entity\Repository\CalendarEventRepository;
 use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
-use Oro\Bundle\EntityExtendBundle\Tools\ExtendHelper;
-use Oro\Bundle\OrganizationBundle\Entity\Organization;
 
 class AttendeeManager
 {
@@ -118,58 +115,5 @@ class AttendeeManager
         }
 
         return $result += array_fill_keys($calendarEventIds, []);
-    }
-
-    /**
-     * Responsible to actualize attendees state after it event was created/updated:
-     * - Bind attendees with users from $organization.
-     * - Update related attendee of the event.
-     * - Set default attendee status.
-     * - Update attendees with empty display name.
-     *
-     * @param CalendarEvent $calendarEvent
-     * @param Organization $organization
-     */
-    public function onEventUpdate(CalendarEvent $calendarEvent, Organization $organization)
-    {
-        $this->attendeeRelationManager->bindAttendees($calendarEvent->getAttendees(), $organization);
-
-        $calendarEvent->setRelatedAttendee($calendarEvent->findRelatedAttendee());
-
-        $this->setDefaultAttendeeStatus($calendarEvent->getAttendees());
-
-        $this->updateAttendeeDisplayNames($calendarEvent->getAttendees());
-    }
-
-    /**
-     * Set displayName if it is empty.
-     *
-     * @param Collection|Attendee[] $attendees
-     */
-    protected function updateAttendeeDisplayNames($attendees)
-    {
-        foreach ($attendees as $attendee) {
-            if (!$attendee->getDisplayName()) {
-                $attendee->setDisplayName($attendee->getEmail());
-            }
-        }
-    }
-
-    /**
-     * @param Collection|Attendee[] $attendees
-     */
-    protected function setDefaultAttendeeStatus($attendees)
-    {
-        foreach ($attendees as $attendee) {
-            if (!$attendee || $attendee->getStatus()) {
-                continue;
-            }
-
-            $statusEnum = $this->doctrineHelper
-                ->getEntityRepository(ExtendHelper::buildEnumValueClassName(Attendee::STATUS_ENUM_CODE))
-                ->find(CalendarEvent::STATUS_NONE);
-
-            $attendee->setStatus($statusEnum);
-        }
     }
 }
