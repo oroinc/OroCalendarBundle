@@ -318,7 +318,7 @@ define(function(require) {
             // fetch calendar related connection
             var connection = this.options.connections.findWhere({calendarUid: this.model.get('calendarUid')});
             var invitationUrls = [];
-            _.each(this.options.invitationStatuses, function(status){
+            _.each(this.options.invitationStatuses, function(status) {
                 invitationUrls[status] = routing.generate('oro_calendar_event_' + status, {id: this.model.originalId});
             }, this);
             var $element = $(this.viewTemplate(_.extend(this.model.toJSON(), {

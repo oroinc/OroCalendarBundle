@@ -285,7 +285,6 @@ class RecurringCalendarEventControllerTest extends AbstractUseCaseTestCase
             } else {
                 $form["oro_calendar_event_form[$name]"] = $parameterValue;
             }
-
         }
 
         $this->client->followRedirects(true);

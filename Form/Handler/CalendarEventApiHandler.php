@@ -112,7 +112,8 @@ class CalendarEventApiHandler
      * @param CalendarEvent $entity
      * @param CalendarEvent $originalEntity
      */
-    protected function onSuccess(CalendarEvent $entity, CalendarEvent $originalEntity) {
+    protected function onSuccess(CalendarEvent $entity, CalendarEvent $originalEntity)
+    {
         $this->calendarEventManager->onEventUpdate(
             $entity,
             $originalEntity,

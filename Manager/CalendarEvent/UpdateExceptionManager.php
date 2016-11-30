@@ -141,8 +141,6 @@ class UpdateExceptionManager
     ) {
         $this->syncExceptionFields($actualEvent, $originalEvent, $exceptionEvent);
         $this->syncAttendees($actualEvent, $originalEvent, $exceptionEvent);
-
-
     }
 
     /**

@@ -46,7 +46,7 @@ class CalendarEventHandler
 
     /**
      * CalendarEventHandler constructor.
-     * 
+     *
      * @param FormInterface $form
      * @param Request $request
      * @param ManagerRegistry $doctrine

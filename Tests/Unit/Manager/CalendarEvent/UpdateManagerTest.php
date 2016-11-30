@@ -31,20 +31,20 @@ class UpdateManagerTest extends \PHPUnit_Framework_TestCase
     protected function setUp()
     {
         $this->updateAttendeeManager = $this->getMockBuilder(
-                'Oro\Bundle\CalendarBundle\Manager\CalendarEvent\UpdateAttendeeManager'
-            )
+            'Oro\Bundle\CalendarBundle\Manager\CalendarEvent\UpdateAttendeeManager'
+        )
             ->disableOriginalConstructor()
             ->getMock();
 
         $this->updateChildManager = $this->getMockBuilder(
-                'Oro\Bundle\CalendarBundle\Manager\CalendarEvent\UpdateChildManager'
-            )
+            'Oro\Bundle\CalendarBundle\Manager\CalendarEvent\UpdateChildManager'
+        )
             ->disableOriginalConstructor()
             ->getMock();
 
         $this->updateExceptionManager = $this->getMockBuilder(
-                'Oro\Bundle\CalendarBundle\Manager\CalendarEvent\UpdateExceptionManager'
-            )
+            'Oro\Bundle\CalendarBundle\Manager\CalendarEvent\UpdateExceptionManager'
+        )
             ->disableOriginalConstructor()
             ->getMock();
 

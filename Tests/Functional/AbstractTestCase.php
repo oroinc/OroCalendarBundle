@@ -71,7 +71,7 @@ class AbstractTestCase extends WebTestCase
 
         $this->client->request(
             $parameters['method'],
-            $parameters['url'] ,
+            $parameters['url'],
             $parameters['parameters'],
             $parameters['files'],
             $parameters['server'],

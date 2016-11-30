@@ -58,19 +58,22 @@ class CalendarEventRepository extends EntityRepository
             ->addSelect('event.cancelled AS isCancelled')
             ->innerJoin('event.calendar', 'c')
             ->leftJoin(
-                Attendee::class, 'relatedAttendee',
+                Attendee::class,
+                'relatedAttendee',
                 Expr\Join::WITH,
-                '(' .
-                    'event.parent is NULL AND ' .
-                    'event.id = IDENTITY(relatedAttendee.calendarEvent) AND ' .
-                    'IDENTITY(c.owner) = IDENTITY(relatedAttendee.user)' .
-                ') ' .
-                'OR ' .
-                '( ' .
-                    'event.parent is NOT NULL AND ' .
-                    'IDENTITY(event.parent) = IDENTITY(relatedAttendee.calendarEvent) AND ' .
-                    'IDENTITY(c.owner) = IDENTITY(relatedAttendee.user)' .
-                ')'
+                '
+                (
+                    event.parent is NULL AND
+                    event.id = IDENTITY(relatedAttendee.calendarEvent) AND 
+                    IDENTITY(c.owner) = IDENTITY(relatedAttendee.user)
+                )
+                OR
+                (
+                    event.parent is NOT NULL AND
+                    IDENTITY(event.parent) = IDENTITY(relatedAttendee.calendarEvent) AND
+                    IDENTITY(c.owner) = IDENTITY(relatedAttendee.user)
+                )
+                '
             )
             ->leftJoin('event.parent', 'parent')
             ->leftJoin('relatedAttendee.status', 'status');
@@ -254,7 +257,8 @@ class CalendarEventRepository extends EntityRepository
                 'OroCalendarBundle:Recurrence',
                 'r',
                 Expr\Join::WITH,
-                '(parent.id IS NOT NULL AND parent.recurrence = r.id) OR (parent.id IS NULL AND event.recurrence = r.id)'
+                '(parent.id IS NOT NULL AND parent.recurrence = r.id) ' .
+                'OR (parent.id IS NULL AND event.recurrence = r.id)'
             )
             ->addSelect(
                 "r.recurrenceType as {$key}RecurrenceType, r.interval as {$key}Interval,"
