@@ -556,12 +556,10 @@ define(function(require) {
                 this._hideMask();
                 callback(fcEvents);
             }, this);
-
+            start = start.tz(timezone, true).format(this.MOMENT_BACKEND_FORMAT);
+            end = end.tz(timezone, true).format(this.MOMENT_BACKEND_FORMAT);
             try {
-                this.collection.setRange(
-                    start.format(this.MOMENT_BACKEND_FORMAT),
-                    end.format(this.MOMENT_BACKEND_FORMAT)
-                );
+                this.collection.setRange(start, end);
                 if (this.enableEventLoading) {
                     // load events from a server
                     this.collection.fetch({
