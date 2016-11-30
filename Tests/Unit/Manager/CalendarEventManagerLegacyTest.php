@@ -4,10 +4,12 @@ namespace Oro\Bundle\CalendarBundle\Tests\Unit\Manager;
 
 use Doctrine\Common\Collections\ArrayCollection;
 
-use Oro\Bundle\CalendarBundle\Manager\AttendeeManager;
-
 use Oro\Bundle\CalendarBundle\Entity\Calendar;
 use Oro\Bundle\CalendarBundle\Entity\CalendarEvent;
+use Oro\Bundle\CalendarBundle\Manager\CalendarEvent\UpdateAttendeeManager;
+use Oro\Bundle\CalendarBundle\Manager\CalendarEvent\UpdateChildManager;
+use Oro\Bundle\CalendarBundle\Manager\CalendarEvent\UpdateExceptionManager;
+use Oro\Bundle\CalendarBundle\Manager\CalendarEvent\UpdateManager;
 use Oro\Bundle\CalendarBundle\Manager\CalendarEventManager;
 use Oro\Bundle\CalendarBundle\Tests\Unit\Fixtures\Entity\Attendee;
 use Oro\Bundle\CalendarBundle\Tests\Unit\Fixtures\Entity\User;
@@ -71,7 +73,6 @@ class CalendarEventManagerLegacyTest extends \PHPUnit_Framework_TestCase
                 ['OroCalendarBundle:Calendar', $repository],
             ]));
 
-        $attendeeManager = new AttendeeManager($doctrineHelper, $attendeeRelationManager);
 
         $securityFacade = $this->getMockBuilder('Oro\Bundle\SecurityBundle\SecurityFacade')
             ->disableOriginalConstructor()
@@ -85,8 +86,14 @@ class CalendarEventManagerLegacyTest extends \PHPUnit_Framework_TestCase
                 ->disableOriginalConstructor()
                 ->getMock();
 
+        $updateManager = new UpdateManager(
+            new UpdateAttendeeManager($attendeeRelationManager, $doctrineHelper),
+            new UpdateChildManager($doctrineHelper),
+            new UpdateExceptionManager()
+        );
+
         $this->calendarEventManager = new CalendarEventManager(
-            $attendeeManager,
+            $updateManager,
             $doctrineHelper,
             $securityFacade,
             $entityNameResolver,

@@ -2,29 +2,27 @@
 
 namespace Oro\Bundle\CalendarBundle\Manager;
 
-use Doctrine\Common\Collections\ArrayCollection;
 use Oro\Bundle\CalendarBundle\Entity\Attendee;
 use Oro\Bundle\CalendarBundle\Entity\Calendar;
 use Oro\Bundle\CalendarBundle\Entity\CalendarEvent;
-use Oro\Bundle\CalendarBundle\Entity\Recurrence;
 use Oro\Bundle\CalendarBundle\Entity\SystemCalendar;
 use Oro\Bundle\CalendarBundle\Entity\Repository\CalendarRepository;
 use Oro\Bundle\CalendarBundle\Entity\Repository\SystemCalendarRepository;
 use Oro\Bundle\CalendarBundle\Exception\CalendarEventRelatedAttendeeNotFoundException;
 use Oro\Bundle\CalendarBundle\Exception\StatusNotFoundException;
 use Oro\Bundle\CalendarBundle\Provider\SystemCalendarConfig;
+use Oro\Bundle\CalendarBundle\Manager\CalendarEvent\UpdateManager;
 use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
 use Oro\Bundle\EntityBundle\Provider\EntityNameResolver;
 use Oro\Bundle\EntityExtendBundle\Tools\ExtendHelper;
 use Oro\Bundle\OrganizationBundle\Entity\Organization;
 use Oro\Bundle\SecurityBundle\SecurityFacade;
 use Oro\Bundle\SecurityBundle\Exception\ForbiddenException;
-use Oro\Component\PropertyAccess\PropertyAccessor;
 
 class CalendarEventManager
 {
-    /** @var AttendeeManager */
-    protected $attendeeManager;
+    /** @var UpdateManager */
+    protected $updateManager;
 
     /** @var DoctrineHelper */
     protected $doctrineHelper;
@@ -39,20 +37,20 @@ class CalendarEventManager
     protected $calendarConfig;
 
     /**
-     * @param AttendeeManager      $attendeeManager
+     * @param UpdateManager        $updateManager
      * @param DoctrineHelper       $doctrineHelper
      * @param SecurityFacade       $securityFacade
      * @param EntityNameResolver   $entityNameResolver
      * @param SystemCalendarConfig $calendarConfig
      */
     public function __construct(
-        AttendeeManager $attendeeManager,
+        UpdateManager $updateManager,
         DoctrineHelper $doctrineHelper,
         SecurityFacade $securityFacade,
         EntityNameResolver $entityNameResolver,
         SystemCalendarConfig $calendarConfig
     ) {
-        $this->attendeeManager    = $attendeeManager;
+        $this->updateManager      = $updateManager;
         $this->doctrineHelper     = $doctrineHelper;
         $this->securityFacade     = $securityFacade;
         $this->entityNameResolver = $entityNameResolver;
@@ -218,381 +216,25 @@ class CalendarEventManager
     }
 
     /**
-     * @param Recurrence $recurrence
-     */
-    public function removeRecurrence(Recurrence $recurrence)
-    {
-        $this->doctrineHelper->getEntityManager($recurrence)->remove($recurrence);
-    }
-
-    /**
-     * Responsible to actualize event state after it was updated.
-     * - Delegate attendees state update to AttendeeManager.
-     * - Update child events according to actualized state of attendees.
+     * Actualize event state after it was updated.
      *
-     * @param CalendarEvent $event          Actual calendar event.
+     * @param CalendarEvent $actualEvent    Actual calendar event.
      * @param CalendarEvent $originalEvent  Original calendar event state before update.
      * @param Organization $organization    Organization is used to match users to attendees by their email.
      * @param bool $allowUpdateExceptions   If TRUE then exceptions data should be updated
      *
      */
     public function onEventUpdate(
-        CalendarEvent $event,
+        CalendarEvent $actualEvent,
         CalendarEvent $originalEvent,
         Organization $organization,
         $allowUpdateExceptions
     ) {
-        $this->attendeeManager->onEventUpdate(
-            $event,
-            $organization
+        $this->updateManager->onEventUpdate(
+            $actualEvent,
+            $originalEvent,
+            $organization,
+            $allowUpdateExceptions
         );
-
-        $this->updateChildEvents($event);
-
-        if ($allowUpdateExceptions) {
-            $this->updateExceptionsData($event, $originalEvent);
-
-            if ($this->shouldClearExceptions($event, $originalEvent)) {
-                $this->clearExceptions($event);
-            }
-        }
-    }
-
-    /**
-     * Child events is updated for next reasons:
-     *
-     * - event has changes in field and child event should be synced
-     * - new attendees added to the event - as a result new child event should correspond to user of the attendee.
-     *
-     * @param CalendarEvent $calendarEvent
-     */
-    protected function updateChildEvents(CalendarEvent $calendarEvent)
-    {
-        $this->createMissingChildEvents($calendarEvent);
-        $this->updateExistingChildEvents($calendarEvent);
-    }
-
-    /**
-     * @param CalendarEvent $calendarEvent
-     */
-    protected function updateExistingChildEvents(CalendarEvent $calendarEvent)
-    {
-        foreach ($calendarEvent->getChildEvents() as $childEvent) {
-            $childEvent->setTitle($calendarEvent->getTitle())
-                ->setDescription($calendarEvent->getDescription())
-                ->setStart($calendarEvent->getStart())
-                ->setEnd($calendarEvent->getEnd())
-                ->setAllDay($calendarEvent->getAllDay());
-
-            // If event is exception of recurring event
-            if ($calendarEvent->getRecurringEvent() && $childEvent->getCalendar()) {
-                // Get respective recurring event in child calendar
-                $childRecurringEvent = $calendarEvent->getRecurringEvent()
-                    ->getChildEventByCalendar($childEvent->getCalendar());
-
-                // Associate child event with child recurring event
-                $childEvent->setRecurringEvent($childRecurringEvent);
-
-                // Sync original start
-                $childEvent->setOriginalStart($calendarEvent->getOriginalStart());
-            }
-        }
-    }
-
-    /**
-     * Creates missing child events of the main event.
-     *
-     * Every attendee of the event should have a event in respective calendar.
-     *
-     * @param CalendarEvent $calendarEvent
-     */
-    protected function createMissingChildEvents(CalendarEvent $calendarEvent)
-    {
-        $attendeeUsers = $this->getAttendeeUserIds($calendarEvent);
-        $calendarUsers = $this->getCalendarUserIds($calendarEvent);
-
-        $missingUsers = array_diff($attendeeUsers, $calendarUsers);
-        $missingUsers = array_intersect($missingUsers, $attendeeUsers);
-
-        if (!empty($missingUsers)) {
-            $this->createChildEvents($calendarEvent, $missingUsers);
-        }
-    }
-
-    /**
-     * Get ids of users which related to attendees of this event.
-     *
-     * @param CalendarEvent $calendarEvent
-     *
-     * @return array
-     */
-    protected function getAttendeeUserIds(CalendarEvent $calendarEvent)
-    {
-        $result = [];
-
-        if ($calendarEvent->getRecurringEvent() && $calendarEvent->isCancelled()) {
-            // Attendees of cancelled exception are taken from recurring event.
-            $attendees = $calendarEvent->getRecurringEvent()->getAttendees();
-        } else {
-            $attendees = $calendarEvent->getAttendees();
-        }
-
-        foreach ($attendees as $attendee) {
-            if ($attendee->getUser()) {
-                $result[] = $attendee->getUser()->getId();
-            }
-        }
-
-        return $result;
-    }
-
-    /**
-     * Get ids of users which have this event in their calendar.
-     *
-     * @param CalendarEvent $calendarEvent
-     *
-     * @return array
-     */
-    protected function getCalendarUserIds(CalendarEvent $calendarEvent)
-    {
-        $result = [];
-
-        $calendar = $calendarEvent->getCalendar();
-        if ($calendar && $calendar->getOwner()) {
-            $result[] = $calendar->getOwner()->getId();
-        }
-
-        foreach ($calendarEvent->getChildEvents() as $childEvent) {
-            $childEventCalendar = $childEvent->getCalendar();
-            if ($childEventCalendar && $childEventCalendar->getOwner()) {
-                $result[] = $childEventCalendar->getOwner()->getId();
-            }
-        }
-        return $result;
-    }
-
-    /**
-     * @param CalendarEvent $parent
-     *
-     * @param array $userOwnerIds
-     */
-    protected function createChildEvents(CalendarEvent $parent, array $userOwnerIds)
-    {
-        /** @var CalendarRepository $calendarRepository */
-        $calendarRepository = $this->doctrineHelper->getEntityRepository('OroCalendarBundle:Calendar');
-        $organizationId     = $this->securityFacade->getOrganizationId();
-
-        $calendars = $calendarRepository->findDefaultCalendars($userOwnerIds, $organizationId);
-
-        /** @var Calendar $calendar */
-        foreach ($calendars as $calendar) {
-            $childEvent = new CalendarEvent();
-            $childEvent->setCalendar($calendar);
-            $parent->addChildEvent($childEvent);
-
-            $childEvent->setRelatedAttendee($childEvent->findRelatedAttendee());
-
-            $this->copyRecurringEventExceptions($parent, $childEvent);
-        }
-    }
-
-    /**
-     * @param CalendarEvent $parentEvent
-     * @param CalendarEvent $childEvent
-     */
-    protected function copyRecurringEventExceptions(CalendarEvent $parentEvent, CalendarEvent $childEvent)
-    {
-        if (!$parentEvent->getRecurrence()) {
-            // if this is not recurring event then there are no exceptions to copy
-            return;
-        }
-
-        foreach ($parentEvent->getRecurringEventExceptions() as $parentException) {
-            // $exception will be parent for new exception of attendee
-            $childException = new CalendarEvent();
-            $childException->setCalendar($childEvent->getCalendar())
-                ->setTitle($parentException->getTitle())
-                ->setDescription($parentException->getDescription())
-                ->setStart($parentException->getStart())
-                ->setEnd($parentException->getEnd())
-                ->setOriginalStart($parentException->getOriginalStart())
-                ->setCancelled($parentException->isCancelled())
-                ->setAllDay($parentException->getAllDay())
-                ->setRecurringEvent($childEvent);
-
-            $parentException->addChildEvent($childException);
-        }
-    }
-
-    /**
-     * Checks if recurrence or end date(duration change) change should clear exceptions
-     *
-     * @param CalendarEvent $event
-     * @param CalendarEvent $originalEvent
-     * @return bool
-     */
-    protected function shouldClearExceptions($event, $originalEvent)
-    {
-        $result = false;
-        $recurrence = $event->getRecurrence();
-        $originalRecurrence = $originalEvent->getRecurrence();
-
-        if ($originalRecurrence && !$recurrence) {
-            // Recurrence existed before and was removed, exceptions should be cleared.
-            $result = true;
-        } elseif ($recurrence && !$recurrence->isEqual($originalRecurrence)) {
-            // Recurrence was changed
-            $result = true;
-        }
-
-        $originalEnd = $originalEvent->getEnd();
-        $end = $event->getEnd();
-
-        if ($originalEnd && $end) {
-            $result = $result || $originalEnd->format('U') != $end->format('U');
-        }
-
-        $result = $result || ($originalEnd xor $end);
-
-        return $result;
-    }
-
-    /**
-     * Clears all exceptions of the event.
-     *
-     * @param CalendarEvent $event
-     */
-    protected function clearExceptions(CalendarEvent $event)
-    {
-        $event->getRecurringEventExceptions()->clear();
-
-        if ($event->getParent()) {
-            foreach ($event->getChildEvents() as $childEvent) {
-                $this->clearExceptions($childEvent);
-            }
-        }
-    }
-
-    /**
-     * Updates exceptions data for particular calendar event.
-     *
-     * @param CalendarEvent $event
-     * @param CalendarEvent $originalEvent
-     */
-    protected function updateExceptionsDataForEvent(CalendarEvent $event, CalendarEvent $originalEvent)
-    {
-        $exceptionEvents = $event->getRecurringEventExceptions();
-        if ($exceptionEvents) {
-            $propertyAccessor = new PropertyAccessor();
-            $fields = $this->getExceptionsListFieldsToUpdate();
-
-            foreach ($exceptionEvents as $exceptionEvent) {
-                foreach ($fields as $field) {
-                    $originalValue = $propertyAccessor->getValue($originalEvent, $field);
-                    $exceptionValue = $propertyAccessor->getValue($exceptionEvent, $field);
-                    if ($originalValue === $exceptionValue) {
-                        $propertyAccessor->setValue(
-                            $exceptionEvent,
-                            $field,
-                            $propertyAccessor->getValue($event, $field)
-                        );
-                    }
-                }
-
-                if (!$exceptionEvent->getParent() && !$this->isAttendeesChanged($originalEvent, $exceptionEvent)
-                    && $this->isAttendeesChanged($originalEvent, $event)
-                ) {
-                    $eventAttendees = $event->getAttendees()->toArray();
-                    $exceptionEvent->getAttendees()->clear();
-                    foreach ($eventAttendees as $eventAttendee) {
-                        $attendee = new Attendee();
-                        $attendee->setDisplayName($eventAttendee->getDisplayName())
-                            ->setEmail($eventAttendee->getEmail())
-                            ->setType($eventAttendee->getType())
-                            ->setStatus($eventAttendee->getStatus());
-                        if ($eventAttendee->getUser()) {
-                            $attendee->setUser($eventAttendee->getUser());
-                        }
-                        $exceptionEvent->addAttendee($attendee);
-                    }
-                }
-            }
-        }
-    }
-
-    /**
-     * Checks were attendees of two calendar events changed or not.
-     *
-     * @param CalendarEvent $originalEvent
-     * @param CalendarEvent $calendarEvent
-     *
-     * @return bool
-     */
-    protected function isAttendeesChanged(CalendarEvent $originalEvent, CalendarEvent $calendarEvent)
-    {
-        $originalAttendees = $originalEvent->getAttendees()->toArray();
-        $calendarEventAttendees = $calendarEvent->getAttendees()->toArray();
-
-        if (count($originalAttendees) !== count($calendarEventAttendees)) {
-            return true;
-        }
-
-        $this->sortAttendees($originalAttendees)
-            ->sortAttendees($calendarEventAttendees);
-
-        foreach ($originalAttendees as $key => $originalAttendee) {
-            if (!$originalAttendee->isEqual($calendarEventAttendees[$key])) {
-                return true;
-            }
-        }
-
-        return false;
-    }
-
-    /**
-     * Calculates what data in exceptions was not changed and changes it according to data in recurring event.
-     *
-     * @param CalendarEvent $event
-     * @param CalendarEvent $originalEvent
-     */
-    protected function updateExceptionsData(CalendarEvent $event, CalendarEvent $originalEvent)
-    {
-        $this->updateExceptionsDataForEvent($event, $originalEvent);
-        foreach ($event->getChildEvents() as $childEvent) {
-            $this->updateExceptionsDataForEvent($childEvent, $originalEvent);
-        }
-    }
-
-    /**
-     * Sorts array of attendees according to its email.
-     *
-     * @param $attendees
-     *
-     * @return $this
-     */
-    protected function sortAttendees(&$attendees)
-    {
-        usort($attendees, function ($attendee1, $attendee2) {
-            return strcmp($attendee1->getEmail(), $attendee2->getEmail());
-        });
-
-        return $this;
-    }
-
-    /**
-     * Gets the list of fields that should be updated on updating recurring event.
-     * This list must contain only fields that can be compared with '==='. For other fields
-     * additional methods/logic should be applied.
-     *
-     * @return array
-     */
-    public function getExceptionsListFieldsToUpdate()
-    {
-        return [
-            'title',
-            'description',
-            'allDay',
-            'backgroundColor'
-        ];
     }
 }

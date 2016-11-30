@@ -17,7 +17,7 @@ use Oro\Component\PropertyAccess\PropertyAccessor;
 class CalendarEventManagerTest extends \PHPUnit_Framework_TestCase
 {
     /** @var \PHPUnit_Framework_MockObject_MockObject */
-    protected $attendeeManager;
+    protected $updateManager;
 
     /** @var \PHPUnit_Framework_MockObject_MockObject */
     protected $doctrineHelper;
@@ -36,7 +36,9 @@ class CalendarEventManagerTest extends \PHPUnit_Framework_TestCase
 
     protected function setUp()
     {
-        $this->attendeeManager     = $this->getMockBuilder('Oro\Bundle\CalendarBundle\Manager\AttendeeManager')
+        $this->updateManager     = $this->getMockBuilder(
+                'Oro\Bundle\CalendarBundle\Manager\CalendarEvent\UpdateManager'
+            )
             ->disableOriginalConstructor()
             ->getMock();
         $this->doctrineHelper     = $this->getMockBuilder('Oro\Bundle\EntityBundle\ORM\DoctrineHelper')
@@ -54,7 +56,7 @@ class CalendarEventManagerTest extends \PHPUnit_Framework_TestCase
                 ->getMock();
 
         $this->manager = new CalendarEventManager(
-            $this->attendeeManager,
+            $this->updateManager,
             $this->doctrineHelper,
             $this->securityFacade,
             $this->entityNameResolver,
@@ -352,7 +354,6 @@ class CalendarEventManagerTest extends \PHPUnit_Framework_TestCase
         $this->manager->changeStatus($event, CalendarEvent::STATUS_ACCEPTED);
     }
 
-
     /**
      * @param Attendee $relatedAttendee
      * @return CalendarEvent|\PHPUnit_Framework_MockObject_MockObject
@@ -372,68 +373,22 @@ class CalendarEventManagerTest extends \PHPUnit_Framework_TestCase
         return $result;
     }
 
-    /**
-     * @dataProvider recurrenceFieldsValues
-     */
-    public function testClearingExceptionsOnUpdate($field, $value)
+    public function testOnEventUpdate()
     {
-        $originalEntity = new CalendarEvent();
-        $originalRecurrence = new Recurrence();
-        $originalEntity->setRecurrence($originalRecurrence);
-
         $entity = new CalendarEvent();
+        $entity->setTitle('New Title');
 
-        $newRecurrence = new Recurrence();
-        $propertyAccessor = new PropertyAccessor();
-        $propertyAccessor->setValue($newRecurrence, $field, $value);
-        $entity->setRecurrence($newRecurrence);
+        $originalEntity = clone $entity;
+        $originalEntity->setTitle('Original Title test');
 
-        $entity->addRecurringEventException(new CalendarEvent());
+        $organization = new Organization();
 
-        $this->manager->onEventUpdate($entity, $originalEntity, new Organization(), true);
+        $allowUpdateExceptions = true;
 
-        $this->assertCount(0, $entity->getRecurringEventExceptions());
-    }
+        $this->updateManager->expects($this->once())
+            ->method('onEventUpdate')
+            ->with($entity, $originalEntity, $organization, $allowUpdateExceptions);
 
-    /**
-     * @return array
-     */
-    public function recurrenceFieldsValues()
-    {
-        return [
-            'Test recurrenceType changed' => ['recurrenceType', 'test_type'],
-            'interval' => ['interval', 1],
-            'instance' => ['instance', 2],
-            'dayOfWeek' => ['dayOfWeek', ['friday']],
-            'dayOfMonth' => ['dayOfMonth', 11],
-            'monthOfYear' => ['monthOfYear', 11],
-            'startTime' => ['startTime', new \DateTime()],
-            'endTime' => ['endTime', new \DateTime()],
-            'occurrences'  => ['occurrences', 11],
-            'timeZone' => ['timeZone', 'Test/TimeZone'],
-        ];
-    }
-
-    public function testUpdateExceptionsDataOnEventUpdate()
-    {
-        $originalEntity = new CalendarEvent();
-        $originalEntity->setTitle('test')
-            ->setDescription('Test Description')
-            ->setAllDay(true);
-
-        $exception = clone $originalEntity;
-        $exception->setDescription('Changed Description');
-
-        $entity = clone $originalEntity;
-        $entity->setTitle('New Title')
-            ->addRecurringEventException($exception);
-
-        $this->manager->onEventUpdate($entity, $originalEntity, new Organization(), true);
-
-        $expectedCalendarEvent = clone $originalEntity;
-        $expectedCalendarEvent->setDescription('Changed Description')
-            ->setTitle('New Title')
-            ->setRecurringEvent($entity);
-        $this->assertEquals($entity->getRecurringEventExceptions()->toArray(), [$expectedCalendarEvent]);
+        $this->manager->onEventUpdate($entity, $originalEntity, $organization, $allowUpdateExceptions);
     }
 }

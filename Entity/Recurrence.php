@@ -504,8 +504,7 @@ class Recurrence
             $this->isDateTimeValueEqual($this->startTime, $other->startTime) &&
             $this->isDateTimeValueEqual($this->endTime, $other->endTime) &&
             $this->occurrences == $other->occurrences &&
-            $this->timeZone == $other->timeZone &&
-            true;
+            $this->timeZone == $other->timeZone;
     }
 
     /**

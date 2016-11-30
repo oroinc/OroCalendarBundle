@@ -146,19 +146,6 @@ class Attendee extends ExtendAttendee
     }
 
     /**
-     * Case-insensitive compares of attendees email. Will return TRUE only if both emails exist and if they are
-     * case-insensitive equal.
-     *
-     * @param string $email
-     * @return bool
-     */
-    public function isEmailEqual($email)
-    {
-        $currentEmail = $this->getEmail();
-        return $currentEmail && $email && 0 === strcasecmp($currentEmail, $email);
-    }
-
-    /**
      * @param string $email
      *
      * @return Attendee
@@ -203,21 +190,11 @@ class Attendee extends ExtendAttendee
      *
      * @return Attendee
      */
-    public function setUser(User $user)
+    public function setUser(User $user = null)
     {
         $this->user = $user;
 
         return $this;
-    }
-
-    /**
-     * @param User $user
-     * @return bool
-     */
-    public function isUserEqual(User $user)
-    {
-        $actualUser = $this->getUser();
-        return $actualUser && ($user === $actualUser || $actualUser->getId() == $user->getId());
     }
 
     /**
@@ -310,7 +287,7 @@ class Attendee extends ExtendAttendee
     }
 
     /**
-     * Compares instance with another instance
+     * Compares instance with another instance. Returns TRUE if instances have the same user, email and display name.
      *
      * @param Attendee|null $other
      *
@@ -322,12 +299,34 @@ class Attendee extends ExtendAttendee
             return false;
         }
 
-        $user = $this->getUser();
-        $otherUser = $other->getUser();
         return
-            (($otherUser === null && $user === null) || ($user xor $otherUser) || $this->isUserEqual($otherUser)) &&
+            $this->isUserEqual($other->getUser()) &&
             $this->isEmailEqual($other->getEmail()) &&
-            0 === strcasecmp($this->getDisplayName(), $other->getDisplayName()) &&
-            true;
+            0 === strcmp($this->getDisplayName(), $other->getDisplayName());
+    }
+
+    /**
+     * Will return TRUE if both users exist and if they are referencing the same users or if both users are not exist.
+     *
+     * @param User|null $user
+     * @return bool
+     */
+    public function isUserEqual(User $user = null)
+    {
+        $actualUser = $this->getUser();
+        return $actualUser === $user || ($user && $actualUser && $actualUser->getId() == $user->getId());
+    }
+
+    /**
+     * Case-insensitive compares of attendees email. Will return TRUE if both emails exist and if they are
+     * case-insensitive equal or if both emails are not exist.
+     *
+     * @param string|null $email
+     * @return bool
+     */
+    public function isEmailEqual($email)
+    {
+        $actualEmail = $this->getEmail();
+        return $actualEmail === $email || 0 === strcasecmp($actualEmail, $email);
     }
 }
