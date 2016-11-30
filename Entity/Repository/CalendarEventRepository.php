@@ -61,19 +61,17 @@ class CalendarEventRepository extends EntityRepository
                 Attendee::class,
                 'relatedAttendee',
                 Expr\Join::WITH,
-                '
-                (
-                    event.parent is NULL AND
-                    event.id = IDENTITY(relatedAttendee.calendarEvent) AND 
-                    IDENTITY(c.owner) = IDENTITY(relatedAttendee.user)
-                )
-                OR
-                (
-                    event.parent is NOT NULL AND
-                    IDENTITY(event.parent) = IDENTITY(relatedAttendee.calendarEvent) AND
-                    IDENTITY(c.owner) = IDENTITY(relatedAttendee.user)
-                )
-                '
+                '('
+                . 'event.parent is NULL AND '
+                . 'event.id = IDENTITY(relatedAttendee.calendarEvent) AND '
+                . 'IDENTITY(c.owner) = IDENTITY(relatedAttendee.user)'
+                . ')'
+                . ' OR '
+                . '('
+                . 'event.parent is NOT NULL AND '
+                . 'IDENTITY(event.parent) = IDENTITY(relatedAttendee.calendarEvent) AND '
+                . 'IDENTITY(c.owner) = IDENTITY(relatedAttendee.user)'
+                . ')'
             )
             ->leftJoin('event.parent', 'parent')
             ->leftJoin('relatedAttendee.status', 'status');

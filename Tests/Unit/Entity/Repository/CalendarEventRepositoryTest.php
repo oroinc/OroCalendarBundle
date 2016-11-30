@@ -81,12 +81,17 @@ class CalendarEventRepositoryTest extends OrmTestCase
             . ' FROM Oro\Bundle\CalendarBundle\Entity\CalendarEvent event'
             . ' INNER JOIN event.calendar c'
             . ' LEFT JOIN Oro\Bundle\CalendarBundle\Entity\Attendee relatedAttendee WITH'
-            . ' (event.parent is NULL'
-            . ' AND event.id = IDENTITY(relatedAttendee.calendarEvent)'
-            . ' AND IDENTITY(c.owner) = IDENTITY(relatedAttendee.user))'
-            . ' OR ( event.parent is NOT NULL'
-            . ' AND IDENTITY(event.parent) = IDENTITY(relatedAttendee.calendarEvent)'
-            . ' AND IDENTITY(c.owner) = IDENTITY(relatedAttendee.user))'
+            . ' ('
+            . 'event.parent is NULL AND '
+            . 'event.id = IDENTITY(relatedAttendee.calendarEvent) AND '
+            . 'IDENTITY(c.owner) = IDENTITY(relatedAttendee.user)'
+            . ')'
+            . ' OR '
+            . '('
+            . 'event.parent is NOT NULL AND '
+            . 'IDENTITY(event.parent) = IDENTITY(relatedAttendee.calendarEvent) AND '
+            . 'IDENTITY(c.owner) = IDENTITY(relatedAttendee.user)'
+            . ')'
             . ' LEFT JOIN event.parent parent'
             . ' LEFT JOIN relatedAttendee.status status'
             . ' LEFT JOIN OroCalendarBundle:Recurrence r WITH (parent.id IS NOT NULL AND parent.recurrence = r.id) OR'
@@ -101,63 +106,6 @@ class CalendarEventRepositoryTest extends OrmTestCase
             . ' ORDER BY c.id, event.start ASC',
             $qb->getQuery()->getDQL()
         );
-    }
-
-    public function testGetUserEventListByTimeIntervalQueryBuilderWithAdditionalFiltersAsCriteria()
-    {
-        /** @var CalendarEventRepository $repo */
-        $repo = $this->em->getRepository('OroCalendarBundle:CalendarEvent');
-
-        $qb = $repo->getUserEventListByTimeIntervalQueryBuilder(
-            new \DateTime(),
-            new \DateTime(),
-            new Criteria(Criteria::expr()->eq('allDay', true))
-        );
-
-        $key = Recurrence::STRING_KEY;
-        $this->assertEquals(
-            'SELECT event.id, event.title, event.description, event.start, event.end, event.allDay,'
-            . ' event.backgroundColor, event.createdAt, event.updatedAt,'
-            . ' (CASE WHEN (status.id IS NULL) THEN \'none\' ELSE status.id END) as invitationStatus,'
-            . ' IDENTITY(event.parent) AS parentEventId,'
-            . ' c.id as calendar,'
-            . ' IDENTITY(event.recurringEvent) AS recurringEventId,'
-            . ' IDENTITY(c.owner) AS calendarOwnerId,'
-            . ' event.originalStart, event.cancelled AS isCancelled,'
-            . " r.recurrenceType as {$key}RecurrenceType, r.interval as {$key}Interval,"
-            . "r.dayOfWeek as {$key}DayOfWeek, r.dayOfMonth as {$key}DayOfMonth,"
-            . "r.monthOfYear as {$key}MonthOfYear, r.startTime as {$key}StartTime,"
-            . "r.endTime as {$key}EndTime, r.occurrences as {$key}Occurrences,"
-            . "r.instance as {$key}Instance, r.id as recurrenceId,"
-            . ' r.timeZone as recurrenceTimeZone,'
-            . " r.calculatedEndTime as {$key}calculatedEndTime"
-            . ' FROM Oro\Bundle\CalendarBundle\Entity\CalendarEvent event'
-            . ' INNER JOIN event.calendar c'
-            . ' LEFT JOIN Oro\Bundle\CalendarBundle\Entity\Attendee relatedAttendee WITH'
-            . ' (event.parent is NULL'
-            . ' AND event.id = IDENTITY(relatedAttendee.calendarEvent)'
-            . ' AND IDENTITY(c.owner) = IDENTITY(relatedAttendee.user))'
-            . ' OR ( event.parent is NOT NULL'
-            . ' AND IDENTITY(event.parent) = IDENTITY(relatedAttendee.calendarEvent)'
-            . ' AND IDENTITY(c.owner) = IDENTITY(relatedAttendee.user))'
-            . ' LEFT JOIN event.parent parent'
-            . ' LEFT JOIN relatedAttendee.status status'
-            . ' LEFT JOIN OroCalendarBundle:Recurrence r WITH (parent.id IS NOT NULL AND parent.recurrence = r.id) OR'
-            . ' (parent.id IS NULL AND event.recurrence = r.id)'
-            . ' WHERE '
-            . '(event.allDay = :allDay'
-            . ' AND ('
-            . '(event.start < :start AND event.end >= :start) OR '
-            . '(event.start <= :end AND event.end > :end) OR'
-            . '(event.start >= :start AND event.end < :end))) OR'
-            . ' (r.startTime <= :endDate AND r.calculatedEndTime >= :startDate) OR'
-            . ' (event.originalStart IS NOT NULL AND event.originalStart <= :endDate AND'
-            . ' event.originalStart >= :startDate)'
-            . ' ORDER BY c.id, event.start ASC',
-            $qb->getQuery()->getDQL()
-        );
-
-        $this->assertTrue($qb->getQuery()->getParameter('allDay')->getValue());
     }
 
     public function testGetUserEventListByTimeIntervalQueryBuilderWithAdditionalFiltersAsArray()
@@ -191,12 +139,79 @@ class CalendarEventRepositoryTest extends OrmTestCase
             . ' FROM Oro\Bundle\CalendarBundle\Entity\CalendarEvent event'
             . ' INNER JOIN event.calendar c'
             . ' LEFT JOIN Oro\Bundle\CalendarBundle\Entity\Attendee relatedAttendee WITH'
-            . ' (event.parent is NULL'
-            . ' AND event.id = IDENTITY(relatedAttendee.calendarEvent)'
-            . ' AND IDENTITY(c.owner) = IDENTITY(relatedAttendee.user))'
-            . ' OR ( event.parent is NOT NULL'
-            . ' AND IDENTITY(event.parent) = IDENTITY(relatedAttendee.calendarEvent)'
-            . ' AND IDENTITY(c.owner) = IDENTITY(relatedAttendee.user))'
+            . ' ('
+            . 'event.parent is NULL AND '
+            . 'event.id = IDENTITY(relatedAttendee.calendarEvent) AND '
+            . 'IDENTITY(c.owner) = IDENTITY(relatedAttendee.user)'
+            . ')'
+            . ' OR '
+            . '('
+            . 'event.parent is NOT NULL AND '
+            . 'IDENTITY(event.parent) = IDENTITY(relatedAttendee.calendarEvent) AND '
+            . 'IDENTITY(c.owner) = IDENTITY(relatedAttendee.user)'
+            . ')'
+            . ' LEFT JOIN event.parent parent'
+            . ' LEFT JOIN relatedAttendee.status status'
+            . ' LEFT JOIN OroCalendarBundle:Recurrence r WITH (parent.id IS NOT NULL AND parent.recurrence = r.id) OR'
+            . ' (parent.id IS NULL AND event.recurrence = r.id)'
+            . ' WHERE '
+            . '(event.allDay = :allDay'
+            . ' AND ('
+            . '(event.start < :start AND event.end >= :start) OR '
+            . '(event.start <= :end AND event.end > :end) OR'
+            . '(event.start >= :start AND event.end < :end))) OR'
+            . ' (r.startTime <= :endDate AND r.calculatedEndTime >= :startDate) OR'
+            . ' (event.originalStart IS NOT NULL AND event.originalStart <= :endDate AND'
+            . ' event.originalStart >= :startDate)'
+            . ' ORDER BY c.id, event.start ASC',
+            $qb->getQuery()->getDQL()
+        );
+
+        $this->assertTrue($qb->getQuery()->getParameter('allDay')->getValue());
+    }
+
+    public function testGetUserEventListByTimeIntervalQueryBuilderWithAdditionalFiltersAsCriteria()
+    {
+        /** @var CalendarEventRepository $repo */
+        $repo = $this->em->getRepository('OroCalendarBundle:CalendarEvent');
+
+        $qb = $repo->getUserEventListByTimeIntervalQueryBuilder(
+            new \DateTime(),
+            new \DateTime(),
+            new Criteria(Criteria::expr()->eq('allDay', true))
+        );
+
+        $key = Recurrence::STRING_KEY;
+        $this->assertEquals(
+            'SELECT event.id, event.title, event.description, event.start, event.end, event.allDay,'
+            . ' event.backgroundColor, event.createdAt, event.updatedAt,'
+            . ' (CASE WHEN (status.id IS NULL) THEN \'none\' ELSE status.id END) as invitationStatus,'
+            . ' IDENTITY(event.parent) AS parentEventId,'
+            . ' c.id as calendar,'
+            . ' IDENTITY(event.recurringEvent) AS recurringEventId,'
+            . ' IDENTITY(c.owner) AS calendarOwnerId,'
+            . ' event.originalStart, event.cancelled AS isCancelled,'
+            . " r.recurrenceType as {$key}RecurrenceType, r.interval as {$key}Interval,"
+            . "r.dayOfWeek as {$key}DayOfWeek, r.dayOfMonth as {$key}DayOfMonth,"
+            . "r.monthOfYear as {$key}MonthOfYear, r.startTime as {$key}StartTime,"
+            . "r.endTime as {$key}EndTime, r.occurrences as {$key}Occurrences,"
+            . "r.instance as {$key}Instance, r.id as recurrenceId,"
+            . ' r.timeZone as recurrenceTimeZone,'
+            . " r.calculatedEndTime as {$key}calculatedEndTime"
+            . ' FROM Oro\Bundle\CalendarBundle\Entity\CalendarEvent event'
+            . ' INNER JOIN event.calendar c'
+            . ' LEFT JOIN Oro\Bundle\CalendarBundle\Entity\Attendee relatedAttendee WITH'
+            . ' ('
+            . 'event.parent is NULL AND '
+            . 'event.id = IDENTITY(relatedAttendee.calendarEvent) AND '
+            . 'IDENTITY(c.owner) = IDENTITY(relatedAttendee.user)'
+            . ')'
+            . ' OR '
+            . '('
+            . 'event.parent is NOT NULL AND '
+            . 'IDENTITY(event.parent) = IDENTITY(relatedAttendee.calendarEvent) AND '
+            . 'IDENTITY(c.owner) = IDENTITY(relatedAttendee.user)'
+            . ')'
             . ' LEFT JOIN event.parent parent'
             . ' LEFT JOIN relatedAttendee.status status'
             . ' LEFT JOIN OroCalendarBundle:Recurrence r WITH (parent.id IS NOT NULL AND parent.recurrence = r.id) OR'
@@ -249,12 +264,17 @@ class CalendarEventRepositoryTest extends OrmTestCase
             . ' FROM Oro\Bundle\CalendarBundle\Entity\CalendarEvent event'
             . ' INNER JOIN event.calendar c'
             . ' LEFT JOIN Oro\Bundle\CalendarBundle\Entity\Attendee relatedAttendee WITH'
-            . ' (event.parent is NULL'
-            . ' AND event.id = IDENTITY(relatedAttendee.calendarEvent)'
-            . ' AND IDENTITY(c.owner) = IDENTITY(relatedAttendee.user))'
-            . ' OR ( event.parent is NOT NULL'
-            . ' AND IDENTITY(event.parent) = IDENTITY(relatedAttendee.calendarEvent)'
-            . ' AND IDENTITY(c.owner) = IDENTITY(relatedAttendee.user))'
+            . ' ('
+            . 'event.parent is NULL AND '
+            . 'event.id = IDENTITY(relatedAttendee.calendarEvent) AND '
+            . 'IDENTITY(c.owner) = IDENTITY(relatedAttendee.user)'
+            . ')'
+            . ' OR '
+            . '('
+            . 'event.parent is NOT NULL AND '
+            . 'IDENTITY(event.parent) = IDENTITY(relatedAttendee.calendarEvent) AND '
+            . 'IDENTITY(c.owner) = IDENTITY(relatedAttendee.user)'
+            . ')'
             . ' LEFT JOIN event.parent parent'
             . ' LEFT JOIN relatedAttendee.status status'
             . ' LEFT JOIN OroCalendarBundle:Recurrence r WITH (parent.id IS NOT NULL AND parent.recurrence = r.id) OR'
