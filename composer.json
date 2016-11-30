@@ -13,7 +13,7 @@
     ],
     "require": {
         "php": ">=5.5.9",
-        "oro/platform": "1.x-dev",
+        "oro/platform": "1.10.10-beta.5",
         "bower-asset/fullcalendar": "2.2.3"
     },
     "autoload": {
