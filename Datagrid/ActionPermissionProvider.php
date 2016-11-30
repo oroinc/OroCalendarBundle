@@ -31,31 +31,28 @@ class ActionPermissionProvider
         $invitationStatus = $record->getValue('invitationStatus');
         $parentId         = $record->getValue('parentId');
         $ownerId          = $record->getValue('ownerId');
-        $childrenCount    = $record->getValue('childrenCount');
+        $attendeeUserId   = $record->getValue('attendeeUserId');
         $isEditable       = (!$invitationStatus || ($invitationStatus && !$parentId));
 
         return [
             'accept'      => $this->isAvailableResponseButton(
                 $user,
-                $parentId,
                 $ownerId,
-                $childrenCount,
+                $attendeeUserId,
                 $invitationStatus,
                 CalendarEvent::STATUS_ACCEPTED
             ),
             'decline'     => $this->isAvailableResponseButton(
                 $user,
-                $parentId,
                 $ownerId,
-                $childrenCount,
+                $attendeeUserId,
                 $invitationStatus,
                 CalendarEvent::STATUS_DECLINED
             ),
             'tentatively' => $this->isAvailableResponseButton(
                 $user,
-                $parentId,
                 $ownerId,
-                $childrenCount,
+                $attendeeUserId,
                 $invitationStatus,
                 CalendarEvent::STATUS_TENTATIVE
             ),
@@ -66,24 +63,22 @@ class ActionPermissionProvider
 
     /**
      * @param User $user
-     * @param int $parentId
      * @param int $ownerId
-     * @param int $childrenCount
+     * @param int $attendeeUserId
      * @param string $invitationStatus
      * @param string $buttonStatus
      * @return bool
      */
     protected function isAvailableResponseButton(
         $user,
-        $parentId,
         $ownerId,
-        $childrenCount,
+        $attendeeUserId,
         $invitationStatus,
         $buttonStatus
     ) {
         return $invitationStatus
         && $invitationStatus != $buttonStatus
         && $user->getId() == $ownerId
-        && ($parentId || $childrenCount);
+        && $user->getId() == $attendeeUserId;
     }
 }

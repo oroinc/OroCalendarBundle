@@ -60,8 +60,8 @@ class ActionPermissionProviderTest extends \PHPUnit_Framework_TestCase
 
         $record->expects($this->at(3))
             ->method('getValue')
-            ->with('childrenCount')
-            ->will($this->returnValue($params['childrenCount']));
+            ->with('attendeeUserId')
+            ->will($this->returnValue($params['attendeeUserId']));
 
         $result = $this->provider->getInvitationPermissions($record);
 
@@ -79,7 +79,7 @@ class ActionPermissionProviderTest extends \PHPUnit_Framework_TestCase
                     'invitationStatus' => 'accepted',
                     'parentId' => '3512',
                     'ownerId' => self::ADMIN,
-                    'childrenCount' => null
+                    'attendeeUserId' => self::ADMIN,
                 ],
                 'expected' => [
                     'accept'      => false,
@@ -94,7 +94,7 @@ class ActionPermissionProviderTest extends \PHPUnit_Framework_TestCase
                     'invitationStatus' => 'accepted',
                     'parentId' => '3512',
                     'ownerId' => self::ADMIN,
-                    'childrenCount' => null
+                    'attendeeUserId' => self::ADMIN,
                 ],
                 'expected' => [
                     'accept'      => false,
@@ -109,7 +109,7 @@ class ActionPermissionProviderTest extends \PHPUnit_Framework_TestCase
                     'invitationStatus' => null,
                     'parentId' => null,
                     'ownerId' => self::ADMIN,
-                    'childrenCount' => 2
+                    'attendeeUserId' => self::ADMIN
                 ],
                 'expected' => [
                     'accept'      => false,
@@ -124,7 +124,7 @@ class ActionPermissionProviderTest extends \PHPUnit_Framework_TestCase
                     'invitationStatus' => 'accepted',
                     'parentId' => '3512',
                     'ownerId' => self::USER,
-                    'childrenCount' => 2
+                    'attendeeUserId' => self::USER
                 ],
                 'expected' => [
                     'accept'      => false,
@@ -139,7 +139,7 @@ class ActionPermissionProviderTest extends \PHPUnit_Framework_TestCase
                     'invitationStatus' => 'accepted',
                     'parentId' => null,
                     'ownerId' => self::ADMIN,
-                    'childrenCount' => null
+                    'attendeeUserId' => null
                 ],
                 'expected' => [
                     'accept'      => false,
