@@ -18,11 +18,6 @@ use Oro\Bundle\UserBundle\Entity\User;
  *          "entity"={
  *              "icon"="icon-info-sign"
  *          },
- *          "security"={
- *              "type"="ACL",
- *              "permissions"="VIEW;CREATE;EDIT;DELETE",
- *              "group_name"=""
- *          },
  *          "activity"={
  *              "immutable"=true
  *          }
