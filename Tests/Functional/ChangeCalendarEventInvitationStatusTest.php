@@ -190,7 +190,7 @@ class ChangeCalendarEventInvitationStatusTest extends AbstractTestCase
                     'isCurrentUserInvited' => true,
                     'createdAt' => $newEvent->getCreatedAt()->format(DATE_RFC3339),
                     'updatedAt' => $newEvent->getUpdatedAt()->format(DATE_RFC3339),
-                    'calendarOwnerId' => $this->getReference('oro_calendar:calendar:foo_user_1')->getId(),
+                    'calendarOwnerId' => $this->getReference('oro_calendar:user:foo_user_1')->getId(),
                 ],
                 [
                     'id' => $newChildEvent->getId(),
@@ -240,7 +240,7 @@ class ChangeCalendarEventInvitationStatusTest extends AbstractTestCase
                     'isCurrentUserInvited' => false,
                     'createdAt' => $newChildEvent->getCreatedAt()->format(DATE_RFC3339),
                     'updatedAt' => $newChildEvent->getUpdatedAt()->format(DATE_RFC3339),
-                    'calendarOwnerId' => $this->getReference('oro_calendar:calendar:foo_user_2')->getId()
+                    'calendarOwnerId' => $this->getReference('oro_calendar:user:foo_user_2')->getId()
                 ],
             ],
             $response
