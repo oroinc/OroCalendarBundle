@@ -3,7 +3,7 @@
 namespace Oro\Bundle\CalendarBundle\Tests\Functional\API\Rest;
 
 use Oro\Bundle\CalendarBundle\Entity\Attendee;
-use Oro\Bundle\CalendarBundle\Tests\Functional\AbstractTestCase;
+use Oro\Bundle\CalendarBundle\Tests\Functional\HangoutsCallDependentTestCase;
 use Oro\Bundle\CalendarBundle\Tests\Functional\DataFixtures\LoadUserData;
 use Oro\Bundle\CalendarBundle\Entity\CalendarEvent;
 
@@ -27,7 +27,7 @@ use Oro\Bundle\CalendarBundle\Entity\CalendarEvent;
  *
  * @dbIsolation
  */
-class BasicAttendeeTest extends AbstractTestCase
+class BasicAttendeeTest extends HangoutsCallDependentTestCase
 {
     protected function setUp()
     {
@@ -112,7 +112,6 @@ class BasicAttendeeTest extends AbstractTestCase
                 'start' => "2016-10-14T22:00:00+00:00",
                 'end' => "2016-10-14T23:00:00+00:00",
                 'allDay' => false,
-                'use_hangout' => false,
                 'attendees' => [
                     [
                         'displayName' => $this->getReference('oro_calendar:user:foo_user_2')->getFullName(),
@@ -221,7 +220,6 @@ class BasicAttendeeTest extends AbstractTestCase
                 'start' => "2016-10-14T22:00:00+00:00",
                 'end' => "2016-10-14T23:00:00+00:00",
                 'allDay' => false,
-                'use_hangout' => false,
                 'attendees' => [
                     [
                         'displayName' => 'External Attendee',
@@ -330,7 +328,6 @@ class BasicAttendeeTest extends AbstractTestCase
                 'start' => "2016-10-14T22:00:00+00:00",
                 'end' => "2016-10-14T23:00:00+00:00",
                 'allDay' => false,
-                'use_hangout' => false,
                 'attendees' => [
                     [
                         'displayName' => $this->getReference('oro_calendar:user:bar_user_1')->getFullName(),
@@ -483,7 +480,6 @@ class BasicAttendeeTest extends AbstractTestCase
                 'start' => "2016-10-14T22:00:00+00:00",
                 'end' => "2016-10-14T23:00:00+00:00",
                 'allDay' => false,
-                'use_hangout' => false,
                 'attendees' => [
                     [
                         'displayName' => 'External Attendee',
@@ -640,7 +636,6 @@ class BasicAttendeeTest extends AbstractTestCase
                 'start' => "2016-10-14T22:00:00+00:00",
                 'end' => "2016-10-14T23:00:00+00:00",
                 'allDay' => false,
-                'use_hangout' => false,
                 'attendees' => [],
                 'editable' => true,
                 'removable' => true,

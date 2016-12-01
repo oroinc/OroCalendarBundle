@@ -3,7 +3,7 @@
 namespace Oro\Bundle\CalendarBundle\Tests\Functional\API\Rest;
 
 use Oro\Bundle\CalendarBundle\Entity\Attendee;
-use Oro\Bundle\CalendarBundle\Tests\Functional\AbstractTestCase;
+use Oro\Bundle\CalendarBundle\Tests\Functional\HangoutsCallDependentTestCase;
 use Oro\Bundle\CalendarBundle\Tests\Functional\DataFixtures\LoadUserData;
 use Oro\Bundle\CalendarBundle\Entity\CalendarEvent;
 
@@ -19,7 +19,7 @@ use Oro\Bundle\CalendarBundle\Entity\CalendarEvent;
  *
  * @dbIsolation
  */
-class BasicCrudTest extends AbstractTestCase
+class BasicCrudTest extends HangoutsCallDependentTestCase
 {
     protected function setUp()
     {
@@ -95,7 +95,6 @@ class BasicCrudTest extends AbstractTestCase
                 'start' => "2016-10-14T22:00:00+00:00",
                 'end' => "2016-10-14T23:00:00+00:00",
                 'allDay' => false,
-                'use_hangout' => false,
                 'attendees' => [],
                 'editable' => true,
                 'removable' => true,
