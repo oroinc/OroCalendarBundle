@@ -39,6 +39,8 @@ class ChangeCalendarEventInvitationStatusTest extends AbstractTestCase
      *
      * Create regular calendar event with 2 attendees and update invitation status of the events.
      * It is expected the invitation status of main event and the child event can be updated.
+     *
+     * @SuppressWarnings(PHPMD.ExcessiveMethodLength)
      */
     public function testCalendarEventInvitationStatusIsUpdatedForMainEventAndChildEvent()
     {

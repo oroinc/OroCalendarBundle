@@ -47,6 +47,8 @@ class RecurringEventUpdateExceptionTest extends AbstractTestCase
      * @param array $changedEventData
      * @param bool $expectExceptionsCleared
      * @param bool $expectRemoveRecurrence
+     *
+     * @SuppressWarnings(PHPMD.ExcessiveMethodLength)
      */
     public function testUpdateRecurringEventRecurrenceClearsExceptions(
         array $changedEventData,

@@ -148,6 +148,8 @@ class BasicAttendeeTest extends AbstractTestCase
      *
      * Create regular calendar event with attendee not related to any user.
      * It is expected to have the attendee exist without related user.
+     *
+     * @SuppressWarnings(PHPMD.ExcessiveMethodLength)
      */
     public function testCreateSimpleCalendarEventWithNonUserAttendee()
     {
@@ -255,6 +257,8 @@ class BasicAttendeeTest extends AbstractTestCase
      *
      * Create regular calendar event with attendee related to user existing in different organization.
      * It is expected to not create a relation between the attendee and user from other organization.
+     *
+     * @SuppressWarnings(PHPMD.ExcessiveMethodLength)
      */
     public function testCreateSimpleCalendarEventWithUserAttendeeFromOtherOrganization()
     {
@@ -363,6 +367,8 @@ class BasicAttendeeTest extends AbstractTestCase
      * Create regular calendar event with 1 attendee.
      * Then update the event with 2 new attendees.
      * It is expected to have only 2 new attendees in the event and to not have previous attendee.
+     *
+     * @SuppressWarnings(PHPMD.ExcessiveMethodLength)
      */
     public function testUpdateSimpleCalendarEventWithExistingAttendees()
     {
@@ -525,6 +531,8 @@ class BasicAttendeeTest extends AbstractTestCase
      * Create regular calendar event with 2 attendees.
      * Then update the event with empty attendees.
      * It is expected to have no attendees in the event as a result.
+     *
+     * @SuppressWarnings(PHPMD.ExcessiveMethodLength)
      */
     public function testUpdateSimpleCalendarEventWithEmptyAttendees()
     {

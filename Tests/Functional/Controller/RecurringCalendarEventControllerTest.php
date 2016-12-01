@@ -321,6 +321,8 @@ class RecurringCalendarEventControllerTest extends AbstractUseCaseTestCase
 
     /**
      * @return array
+     *
+     * @SuppressWarnings(PHPMD.ExcessiveMethodLength)
      */
     public function recurringEventCreationDataProvider()
     {

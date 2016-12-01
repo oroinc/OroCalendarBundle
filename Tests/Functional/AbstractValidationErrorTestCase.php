@@ -11,6 +11,8 @@ abstract class AbstractValidationErrorTestCase extends AbstractTestCase
 {
     /**
      * @return array
+     *
+     * @SuppressWarnings(PHPMD.ExcessiveMethodLength)
      */
     public function recurrenceValidationFailedDataProvider()
     {

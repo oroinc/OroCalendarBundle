@@ -30,6 +30,9 @@ class RecurringEventUpdatingChangedAttendeesOfExceptionsTest extends AbstractTes
         $this->loadFixtures([LoadUserData::class]);  // force load fixtures
     }
 
+    /**
+     * @SuppressWarnings(PHPMD.ExcessiveMethodLength)
+     */
     public function testUpdateChangedAttendeesOfExceptionsAfterAllSeriesChanges()
     {
         // Step 1. Create new recurring event
