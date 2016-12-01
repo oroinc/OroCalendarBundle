@@ -37,8 +37,8 @@ class CalendarEventManagerTest extends \PHPUnit_Framework_TestCase
     protected function setUp()
     {
         $this->updateManager     = $this->getMockBuilder(
-                'Oro\Bundle\CalendarBundle\Manager\CalendarEvent\UpdateManager'
-            )
+            'Oro\Bundle\CalendarBundle\Manager\CalendarEvent\UpdateManager'
+        )
             ->disableOriginalConstructor()
             ->getMock();
         $this->doctrineHelper     = $this->getMockBuilder('Oro\Bundle\EntityBundle\ORM\DoctrineHelper')

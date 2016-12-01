@@ -70,6 +70,7 @@ use Oro\Component\PhpUtils\ArrayUtil;
  * )
  *
  * @SuppressWarnings(PHPMD.ExcessiveClassComplexity)
+ * @SuppressWarnings(PHPMD.ExcessiveClassLength)
  * @SuppressWarnings(PHPMD.ExcessivePublicCount)
  */
 class CalendarEvent extends ExtendCalendarEvent implements RemindableInterface, DatesAwareInterface

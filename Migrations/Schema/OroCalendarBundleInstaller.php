@@ -16,7 +16,6 @@ use Oro\Bundle\ActivityBundle\Migration\Extension\ActivityExtensionAwareInterfac
 use Oro\Bundle\MigrationBundle\Migration\Installation;
 use Oro\Bundle\MigrationBundle\Migration\QueryBag;
 use Oro\Bundle\CalendarBundle\Migrations\Schema\v1_15\AddCommentAssociation;
-use Oro\Bundle\CalendarBundle\Migrations\Schema\v1_15\AddTestActivityAssociation;
 
 class OroCalendarBundleInstaller implements
     Installation,
@@ -90,7 +89,6 @@ class OroCalendarBundleInstaller implements
 
         /** Association generation */
         $this->addCommentToCalendarEvent($schema);
-        $this->addTestActivityToCalendarEvent($schema);
     }
 
     /**
@@ -411,15 +409,5 @@ class OroCalendarBundleInstaller implements
     private function addCommentToCalendarEvent(Schema $schema)
     {
         AddCommentAssociation::addCalendarEventToComment($schema, $this->commentExtension);
-    }
-
-    /**
-     * Add association to test activity
-     *
-     * @param Schema $schema
-     */
-    private function addTestActivityToCalendarEvent(Schema $schema)
-    {
-        AddTestActivityAssociation::addTestActivityToCalendarEvent($schema, $this->activityExtension);
     }
 }

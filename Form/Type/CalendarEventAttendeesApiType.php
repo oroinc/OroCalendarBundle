@@ -42,7 +42,6 @@ class CalendarEventAttendeesApiType extends AbstractType
         if (!array_key_exists('type', $data)) {
             $data['type'] = Attendee::TYPE_REQUIRED;
             $event->setData($data);
-
         } elseif (!$this->isTypeSupported($data['type'])) {
             $data['type'] = null;
             $event->setData($data);

@@ -37,7 +37,7 @@ class RecurringEventUpdatingAttributesOfExceptionsTest extends AbstractTestCase
      * @param array $changedEventData
      * @param array $exceptionChangedData
      *
-     *
+     * @SuppressWarnings(PHPMD.ExcessiveMethodLength)
      */
     public function testUpdateAttributesOfExceptionsAfterAllSeriesChanges(
         array $changedEventData,

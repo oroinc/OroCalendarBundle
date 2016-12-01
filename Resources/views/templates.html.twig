@@ -135,13 +135,12 @@
                     'oro.calendar.calendarevent.recurrence.label'|trans,
                     '<%= recurrencePattern %>'
                 ) ~
-            '<% } %>',
-            '<% if (recurringEventId && recurrencePattern) { %>' ~
+            '<% } else if (recurringEventId && recurrencePattern) { %>' ~
                 UI.renderHtmlProperty(
                     'oro.calendar.calendarevent.recurrence.exception.label'|trans,
                     '<%= recurrencePattern %>'
                 ) ~
-            '<% } %>',
+            '<% } else if (!id) { %><div data-name="recurrence-container"></div><% } %>',
             form_row(form.backgroundColor),
             form.calendarUid is defined ? form_row(form.calendarUid) : null,
             form_row(form.attendees),

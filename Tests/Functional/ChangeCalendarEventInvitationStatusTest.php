@@ -25,7 +25,7 @@ use Oro\Bundle\CalendarBundle\Tests\Functional\DataFixtures\LoadUserData;
  *
  * @dbIsolation
  */
-class ChangeCalendarEventInvitationStatusTest extends AbstractTestCase
+class ChangeCalendarEventInvitationStatusTest extends HangoutsCallDependentTestCase
 {
     protected function setUp()
     {
@@ -39,6 +39,8 @@ class ChangeCalendarEventInvitationStatusTest extends AbstractTestCase
      *
      * Create regular calendar event with 2 attendees and update invitation status of the events.
      * It is expected the invitation status of main event and the child event can be updated.
+     *
+     * @SuppressWarnings(PHPMD.ExcessiveMethodLength)
      */
     public function testCalendarEventInvitationStatusIsUpdatedForMainEventAndChildEvent()
     {
@@ -150,7 +152,6 @@ class ChangeCalendarEventInvitationStatusTest extends AbstractTestCase
                     'start' => "2016-10-14T22:00:00+00:00",
                     'end' => "2016-10-14T23:00:00+00:00",
                     'allDay' => false,
-                    'use_hangout' => false,
                     'attendees' => [
                         [
                             'displayName' => $this->getReference('oro_calendar:user:foo_user_1')->getFullName(),
@@ -199,7 +200,6 @@ class ChangeCalendarEventInvitationStatusTest extends AbstractTestCase
                     'start' => "2016-10-14T22:00:00+00:00",
                     'end' => "2016-10-14T23:00:00+00:00",
                     'allDay' => false,
-                    'use_hangout' => false,
                     'attendees' => [
                         [
                             'displayName' => $this->getReference('oro_calendar:user:foo_user_1')->getFullName(),
@@ -304,7 +304,6 @@ class ChangeCalendarEventInvitationStatusTest extends AbstractTestCase
                     'start' => "2016-10-14T22:00:00+00:00",
                     'end' => "2016-10-14T23:00:00+00:00",
                     'allDay' => false,
-                    'use_hangout' => false,
                     'attendees' => [
                         [
                             'displayName' => $this->getReference('oro_calendar:user:foo_user_1')->getFullName(),
@@ -352,7 +351,6 @@ class ChangeCalendarEventInvitationStatusTest extends AbstractTestCase
                     'start' => "2016-10-14T22:00:00+00:00",
                     'end' => "2016-10-14T23:00:00+00:00",
                     'allDay' => false,
-                    'use_hangout' => false,
                     'attendees' => [
                         [
                             'displayName' => $this->getReference('oro_calendar:user:foo_user_1')->getFullName(),
@@ -457,7 +455,6 @@ class ChangeCalendarEventInvitationStatusTest extends AbstractTestCase
                     'start' => "2016-10-14T22:00:00+00:00",
                     'end' => "2016-10-14T23:00:00+00:00",
                     'allDay' => false,
-                    'use_hangout' => false,
                     'attendees' => [
                         [
                             'displayName' => $this->getReference('oro_calendar:user:foo_user_1')->getFullName(),
@@ -505,7 +502,6 @@ class ChangeCalendarEventInvitationStatusTest extends AbstractTestCase
                     'start' => "2016-10-14T22:00:00+00:00",
                     'end' => "2016-10-14T23:00:00+00:00",
                     'allDay' => false,
-                    'use_hangout' => false,
                     'attendees' => [
                         [
                             'displayName' => $this->getReference('oro_calendar:user:foo_user_1')->getFullName(),
@@ -610,7 +606,6 @@ class ChangeCalendarEventInvitationStatusTest extends AbstractTestCase
                     'start' => "2016-10-14T22:00:00+00:00",
                     'end' => "2016-10-14T23:00:00+00:00",
                     'allDay' => false,
-                    'use_hangout' => false,
                     'attendees' => [
                         [
                             'displayName' => $this->getReference('oro_calendar:user:foo_user_1')->getFullName(),
@@ -658,7 +653,6 @@ class ChangeCalendarEventInvitationStatusTest extends AbstractTestCase
                     'start' => "2016-10-14T22:00:00+00:00",
                     'end' => "2016-10-14T23:00:00+00:00",
                     'allDay' => false,
-                    'use_hangout' => false,
                     'attendees' => [
                         [
                             'displayName' => $this->getReference('oro_calendar:user:foo_user_1')->getFullName(),
@@ -764,7 +758,6 @@ class ChangeCalendarEventInvitationStatusTest extends AbstractTestCase
                     'start' => "2016-10-14T22:00:00+00:00",
                     'end' => "2016-10-14T23:00:00+00:00",
                     'allDay' => false,
-                    'use_hangout' => false,
                     'attendees' => [
                         [
                             'displayName' => $this->getReference('oro_calendar:user:foo_user_1')->getFullName(),
@@ -812,7 +805,6 @@ class ChangeCalendarEventInvitationStatusTest extends AbstractTestCase
                     'start' => "2016-10-14T22:00:00+00:00",
                     'end' => "2016-10-14T23:00:00+00:00",
                     'allDay' => false,
-                    'use_hangout' => false,
                     'attendees' => [
                         [
                             'displayName' => $this->getReference('oro_calendar:user:foo_user_1')->getFullName(),

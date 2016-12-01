@@ -116,6 +116,4 @@ abstract class AbstractCalendarEventTest extends WebTestCase
     {
         self::$testDataInitialized = false;
     }
-
-
 }

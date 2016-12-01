@@ -13,6 +13,7 @@ class RecurringEventWithAttendeesAndExceptionTest extends AbstractUseCaseTestCas
 {
     protected function setUp()
     {
+        $this->markTestSkipped('Should be corrected after BAP-12699');
         $this->initClient([], $this->generateWsseAuthHeader(), true);
         $this->loadFixtures([LoadUserData::class], true);
     }

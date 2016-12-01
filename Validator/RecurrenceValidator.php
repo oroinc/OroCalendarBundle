@@ -101,7 +101,6 @@ class RecurrenceValidator extends ConstraintValidator
     protected function validateNotBlank($value, Constraints\Recurrence $constraint, $path)
     {
         if ($value === null || (is_array($value) && empty($value))) {
-
             $this->addViolation(
                 $constraint->notBlankMessage,
                 [],
@@ -148,7 +147,6 @@ class RecurrenceValidator extends ConstraintValidator
 
         $multiplier = (int)$this->model->getIntervalMultipleOf($recurrence);
         if ($interval !== null && $multiplier > 1 && $interval % $multiplier !== 0) {
-
             $this->addViolation(
                 $constraint->multipleOfMessage,
                 [
