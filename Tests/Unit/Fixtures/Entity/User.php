@@ -2,7 +2,7 @@
 
 namespace Oro\Bundle\CalendarBundle\Tests\Unit\Fixtures\Entity;
 
-use Oro\Bundle\UserBundle\Entity\User as BaseUser;
+use Oro\Bundle\UserBundle\Tests\Unit\Stub\UserStub as BaseUser;
 
 class User extends BaseUser
 {
