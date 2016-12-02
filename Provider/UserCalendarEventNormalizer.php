@@ -284,8 +284,12 @@ class UserCalendarEventNormalizer extends AbstractCalendarEventNormalizer
         // decide in which events current user is invited
         $loggedUserId = $this->securityFacade->getLoggedUserId();
         foreach ($calendarEvents as $key => $calendarEvent) {
-            $isCurrentUserInvited = (string) $calendarEvent['relatedAttendeeUserId'] === (string) $loggedUserId;
-            $calendarEvents[$key]['isCurrentUserInvited'] = $isCurrentUserInvited;
+            if ($calendarEvent['relatedAttendeeUserId'] !== null) {
+                $isResponsive = (string) $calendarEvent['relatedAttendeeUserId'] === (string) $loggedUserId;
+            } else {
+                $isResponsive = false;
+            }
+            $calendarEvents[$key]['isResponsive'] = $isResponsive;
             unset($calendarEvents[$key]['relatedAttendeeUserId']);
         }
 

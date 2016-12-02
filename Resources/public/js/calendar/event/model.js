@@ -40,7 +40,7 @@ define(function(require) {
             recurringEventId: null,
             originalStart: null,
             isCancelled: null,
-            isCurrentUserInvited: false
+            isResponsive: false
         },
 
         initialize: function() {
@@ -87,7 +87,7 @@ define(function(require) {
                 'isCancelled',
                 'durationEditable',
                 'startEditable',
-                'isCurrentUserInvited'
+                'isResponsive'
             ];
 
             if (this.get('recurrence')) {

@@ -116,6 +116,7 @@ class UserCalendarEventNormalizerTest extends \PHPUnit_Framework_TestCase
                         'updatedAt'        => null,
                         'parentEventId'    => null,
                         'invitationStatus' => null,
+                        'relatedAttendeeUserId' => 1,
                     ],
                 ],
                 'invitees'               => [1 => []],
@@ -137,7 +138,7 @@ class UserCalendarEventNormalizerTest extends \PHPUnit_Framework_TestCase
                         'editable'         => true,
                         'removable'        => true,
                         'notifiable'       => false,
-                        'isCurrentUserInvited' => false,
+                        'isResponsive'     => false,
                     ],
                 ]
             ],
@@ -156,6 +157,7 @@ class UserCalendarEventNormalizerTest extends \PHPUnit_Framework_TestCase
                         'updatedAt'        => null,
                         'parentEventId'    => null,
                         'invitationStatus' => null,
+                        'relatedAttendeeUserId' => 1,
                     ],
                 ],
                 'attendees'                => [
@@ -191,7 +193,7 @@ class UserCalendarEventNormalizerTest extends \PHPUnit_Framework_TestCase
                                 'userId'      => null
                             ],
                         ],
-                        'isCurrentUserInvited' => false,
+                        'isResponsive'      => false,
                     ],
                 ]
             ],
@@ -276,8 +278,7 @@ class UserCalendarEventNormalizerTest extends \PHPUnit_Framework_TestCase
                     'recurringEventId' => null,
                     'originalStart'    => null,
                     'isCancelled'      => false,
-                    'isCurrentUserInvited' => false,
-                    'calendarOwnerId' => 1,
+                    'isResponsive'     => false,
                 ]
             ],
             'own calendar'           => [
@@ -336,8 +337,7 @@ class UserCalendarEventNormalizerTest extends \PHPUnit_Framework_TestCase
                     'recurringEventId' => null,
                     'originalStart'    => null,
                     'isCancelled'      => false,
-                    'isCurrentUserInvited' => false,
-                    'calendarOwnerId' => 1
+                    'isResponsive'     => false,
                 ]
             ],
             'another calendar'       => [
@@ -375,8 +375,7 @@ class UserCalendarEventNormalizerTest extends \PHPUnit_Framework_TestCase
                     'recurringEventId' => null,
                     'originalStart'    => null,
                     'isCancelled'      => false,
-                    'isCurrentUserInvited' => false,
-                    'calendarOwnerId' => 1
+                    'isResponsive'     => false,
                 ]
             ],
         ];
@@ -407,6 +406,9 @@ class UserCalendarEventNormalizerTest extends \PHPUnit_Framework_TestCase
         }
         if (!empty($data['end'])) {
             $event->setEnd($data['end']);
+        }
+        if (isset($data['allDay'])) {
+            $event->setAllDay($data['allDay']);
         }
         if (!empty($data['calendar'])) {
             $calendar = new Calendar();

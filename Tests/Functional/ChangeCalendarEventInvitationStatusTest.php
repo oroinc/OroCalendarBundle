@@ -107,7 +107,7 @@ class ChangeCalendarEventInvitationStatusTest extends HangoutsCallDependentTestC
                 'id' => $response['id'],
                 'notifiable' => true,
                 'invitationStatus' => Attendee::STATUS_NONE,
-                'isCurrentUserInvited' => true
+                'isResponsive' => true
             ],
             $response
         );
@@ -186,7 +186,7 @@ class ChangeCalendarEventInvitationStatusTest extends HangoutsCallDependentTestC
                     'recurringEventId' => null,
                     'originalStart' => null,
                     'isCancelled' => false,
-                    'isCurrentUserInvited' => true,
+                    'isResponsive' => true,
                     'createdAt' => $newEvent->getCreatedAt()->format(DATE_RFC3339),
                     'updatedAt' => $newEvent->getUpdatedAt()->format(DATE_RFC3339),
                 ],
@@ -234,7 +234,7 @@ class ChangeCalendarEventInvitationStatusTest extends HangoutsCallDependentTestC
                     'recurringEventId' => null,
                     'originalStart' => null,
                     'isCancelled' => false,
-                    'isCurrentUserInvited' => false,
+                    'isResponsive' => false,
                     'createdAt' => $newChildEvent->getCreatedAt()->format(DATE_RFC3339),
                     'updatedAt' => $newChildEvent->getUpdatedAt()->format(DATE_RFC3339),
                 ],

@@ -64,7 +64,7 @@ class BasicCrudTest extends HangoutsCallDependentTestCase
                 'id' => $response['id'],
                 'notifiable' => false,
                 'invitationStatus' => Attendee::STATUS_NONE,
-                'isCurrentUserInvited' => false
+                'isResponsive' => false
             ],
             $response
         );
@@ -106,7 +106,7 @@ class BasicCrudTest extends HangoutsCallDependentTestCase
                 'isCancelled' => false,
                 'createdAt' => $newEvent->getCreatedAt()->format(DATE_RFC3339),
                 'updatedAt' => $newEvent->getUpdatedAt()->format(DATE_RFC3339),
-                'isCurrentUserInvited' => false
+                'isResponsive' => false
             ],
             $response
         );
