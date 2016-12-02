@@ -34,7 +34,6 @@ class RestCalendarEventWithRecurrentEventTest extends AbstractCalendarEventTest
             $event->getRecurrence()->getCalculatedEndTime()->format(DATE_RFC3339)
         );
 
-        $this->markTestSkipped('The test is failed because of issue after CRM-6120');
         $activityTargetEntities = $event->getActivityTargetEntities();
         $this->assertCount(1, $activityTargetEntities);
         $this->assertEquals(
@@ -107,7 +106,6 @@ class RestCalendarEventWithRecurrentEventTest extends AbstractCalendarEventTest
             ->findOneBy(['id' => $data['id']]);
         $activityTargetEntities = $event->getActivityTargetEntities();
 
-        $this->markTestSkipped('The test is failed because of issue after CRM-6120');
         $this->assertCount(1, $activityTargetEntities);
         $this->assertEquals(
             $this->getReference('activity_target_one')->getId(),

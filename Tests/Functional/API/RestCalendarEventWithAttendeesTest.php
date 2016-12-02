@@ -20,7 +20,6 @@ class RestCalendarEventWithAttendeesTest extends WebTestCase
 
     protected function setUp()
     {
-        $this->markTestSkipped('Should be corrected after BAP-12699');
         $this->initClient([], $this->generateWsseAuthHeader());
         $this->loadFixtures([LoadUserData::class]);
     }
