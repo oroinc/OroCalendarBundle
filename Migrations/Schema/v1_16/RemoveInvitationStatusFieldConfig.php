@@ -1,5 +1,5 @@
 <?php
-namespace Oro\Bundle\CalendarBundle\Migrations\Schema\v1_15;
+namespace Oro\Bundle\CalendarBundle\Migrations\Schema\v1_16;
 
 use Doctrine\DBAL\Schema\Schema;
 
@@ -8,7 +8,6 @@ use Oro\Bundle\MigrationBundle\Migration\QueryBag;
 
 class RemoveInvitationStatusFieldConfig implements Migration
 {
-
     /**
      * {@inheritdoc}
      */
