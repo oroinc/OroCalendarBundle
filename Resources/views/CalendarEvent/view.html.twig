@@ -55,7 +55,7 @@
             {% set invitationClass = invitations.get_invitatition_badge_class(relatedAttendee.status.id) %}
             {% if entity.relatedAttendee.status and invitationClass %}
                 <div class="invitation-status badge badge-{{ invitationClass }} status-{{ invitationClass }}">
-                    <i class="icon-status-{{ invitationClass }} icon-circle"></i>
+                    <i class="icon-status-{{ invitationClass }} fa-circle"></i>
                     {{ entity.relatedAttendee.status.name }}
                 </div>
             {% endif %}

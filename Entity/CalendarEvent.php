@@ -34,7 +34,7 @@ use Oro\Component\PhpUtils\ArrayUtil;
  *      routeView="oro_calendar_event_view",
  *      defaultValues={
  *          "entity"={
- *              "icon"="icon-time"
+ *              "icon"="fa-clock-o"
  *          },
  *          "dataaudit"={
  *              "auditable"=true
