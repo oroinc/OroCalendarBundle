@@ -381,7 +381,13 @@ class CalendarEventController extends RestController implements ClassResourceInt
         parent::fixFormData($data, $entity);
 
         // remove auxiliary attributes if any
-        unset($data['updatedAt'], $data['editable'], $data['removable'], $data['notifiable']);
+        unset(
+            $data['updatedAt'],
+            $data['editable'],
+            $data['editableInvitationStatus'],
+            $data['removable'],
+            $data['notifiable']
+        );
 
         return true;
     }
@@ -437,9 +443,9 @@ class CalendarEventController extends RestController implements ClassResourceInt
         $response        = parent::createResponseData($entity);
         $serializedEvent = $this->get('oro_calendar.calendar_event_normalizer.user')->getCalendarEvent($entity);
 
-        $response['notifiable']       = $serializedEvent['notifiable'];
-        $response['invitationStatus'] = (string)$serializedEvent['invitationStatus'];
-        $response['isResponsive']     = $serializedEvent['isResponsive'];
+        $response['notifiable']               = $serializedEvent['notifiable'];
+        $response['invitationStatus']         = (string)$serializedEvent['invitationStatus'];
+        $response['editableInvitationStatus'] = $serializedEvent['editableInvitationStatus'];
 
         return $response;
     }

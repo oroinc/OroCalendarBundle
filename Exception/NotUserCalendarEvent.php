@@ -2,7 +2,7 @@
 
 namespace Oro\Bundle\CalendarBundle\Exception;
 
-class NotUserCalendarEvent extends \LogicException
+class NotUserCalendarEvent extends \LogicException implements ExceptionInterface
 {
     /**
      * NotUserCalendarEvent constructor.

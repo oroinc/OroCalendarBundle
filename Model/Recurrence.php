@@ -7,8 +7,6 @@ use Oro\Bundle\CalendarBundle\Entity;
 
 class Recurrence
 {
-    const STRING_KEY = 'recurrence';
-
     /**
      * Used to calculate max endTime when it's empty and there are no occurrences specified.
      *

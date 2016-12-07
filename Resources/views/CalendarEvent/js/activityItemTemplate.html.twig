@@ -30,7 +30,7 @@
     {% set action %}
         <a href="<%= routing.generate('oro_calendar_event_view', {'id': relatedActivityId}) %>"
            title="{{ 'oro.calendar.view'|trans|raw }}"><i
-                class="icon-eye-open hide-text">{{ 'oro.calendar.view'|trans|raw }}</i></a>
+                class="fa-eye hide-text">{{ 'oro.calendar.view'|trans|raw }}</i></a>
     {% endset %}
     {% set actions = actions|merge([action]) %}
 
@@ -38,7 +38,7 @@
         <% if (editable) { %>
         <a href="#" class="action item-edit-button"
            title="{{ 'oro.calendar.calendarevent.update_event'|trans({'{{ entity }}': entityName}) }}">
-            <i class="icon-edit hide-text">{{ 'oro.calendar.calendarevent.update_event'|trans({'{{ entity }}': entityName}) }}</i>
+            <i class="fa-pencil-square-o hide-text">{{ 'oro.calendar.calendarevent.update_event'|trans({'{{ entity }}': entityName}) }}</i>
         </a>
         <% } %>
     {% endset %}
@@ -48,7 +48,7 @@
         <% if (removable) { %>
         <a href="#" class="action item-remove-button"
            title="{{ 'oro.calendar.calendarevent.delete_event'|trans({'{{ entity }}': entityName}) }}">
-            <i class="icon-trash hide-text">{{ 'oro.calendar.calendarevent.delete_event'|trans({'{{ entity }}': entityName}) }}</i>
+            <i class="fa-trash-o hide-text">{{ 'oro.calendar.calendarevent.delete_event'|trans({'{{ entity }}': entityName}) }}</i>
         </a>
         <% } %>
     {% endset %}

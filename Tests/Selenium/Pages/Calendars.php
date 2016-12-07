@@ -64,7 +64,7 @@ class Calendars extends AbstractPage
     public function checkReminderIcon($event)
     {
         $this->assertElementPresent(
-            "//td[@class='fc-event-container']/a[contains(., '{$event}')]/i[@class='reminder-status icon-bell']",
+            "//td[@class='fc-event-container']/a[contains(., '{$event}')]/i[@class='reminder-status fa-bell-o']",
             'Reminder icon for event not found at calendar'
         );
 

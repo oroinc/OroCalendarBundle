@@ -8,8 +8,7 @@ use Oro\Bundle\CalendarBundle\Entity\CalendarEvent;
 use Oro\Bundle\CalendarBundle\Entity\SystemCalendar;
 use Oro\Bundle\CalendarBundle\Entity\Repository\CalendarRepository;
 use Oro\Bundle\CalendarBundle\Entity\Repository\SystemCalendarRepository;
-use Oro\Bundle\CalendarBundle\Exception\CalendarEventRelatedAttendeeNotFoundException;
-use Oro\Bundle\CalendarBundle\Exception\StatusNotFoundException;
+use Oro\Bundle\CalendarBundle\Exception\ChangeInvitationStatusException;
 use Oro\Bundle\CalendarBundle\Provider\SystemCalendarConfig;
 use Oro\Bundle\CalendarBundle\Manager\CalendarEvent\UpdateManager;
 use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
@@ -18,6 +17,7 @@ use Oro\Bundle\EntityExtendBundle\Tools\ExtendHelper;
 use Oro\Bundle\OrganizationBundle\Entity\Organization;
 use Oro\Bundle\SecurityBundle\SecurityFacade;
 use Oro\Bundle\SecurityBundle\Exception\ForbiddenException;
+use Oro\Bundle\UserBundle\Entity\User;
 
 class CalendarEventManager
 {
@@ -77,17 +77,47 @@ class CalendarEventManager
     }
 
     /**
-     * @param CalendarEvent $event
-     * @param string $newStatus
+     * Returns TRUE if current user can change status of the event.
      *
-     * @throws CalendarEventRelatedAttendeeNotFoundException
-     * @throws StatusNotFoundException
+     * @param CalendarEvent|array $event Calendar event object or serialized data
+     * @param User $user Target user
+     * @return bool
      */
-    public function changeStatus(CalendarEvent $event, $newStatus)
+    public function canChangeInvitationStatus($event, User $user)
+    {
+        if ($event instanceof CalendarEvent) {
+            $result = $event->isRelatedAttendeeUserEqual($user);
+        } elseif (is_array($event)) {
+            $relatedAttendeeUserId = isset($event['relatedAttendeeUserId']) ? $event['relatedAttendeeUserId'] : null;
+            $result = (int)$user->getId() == (int)$relatedAttendeeUserId;
+        } else {
+            throw new \InvalidArgumentException(
+                sprintf(
+                    'Event expected to be an array or instance of %s, but %s is given',
+                    CalendarEvent::class,
+                    is_object($event) ? get_class($event) : gettype($event)
+                )
+            );
+        }
+
+        return $result;
+    }
+
+    /**
+     * Change status of calendar event for user.
+     *
+     * @param CalendarEvent $event Target event.
+     * @param string $newStatus New invitation status.
+     * @param User $user Target user.
+     *
+     * @throws ChangeInvitationStatusException
+     */
+    public function changeInvitationStatus(CalendarEvent $event, $newStatus, User $user)
     {
         $relatedAttendee = $event->getRelatedAttendee();
+
         if (!$relatedAttendee) {
-            throw new CalendarEventRelatedAttendeeNotFoundException();
+            throw ChangeInvitationStatusException::changeInvitationStatusFailedWhenRelatedAttendeeNotExist();
         }
 
         $statusEnum = $this->doctrineHelper
@@ -95,7 +125,15 @@ class CalendarEventManager
             ->find($newStatus);
 
         if (!$statusEnum) {
-            throw new StatusNotFoundException(sprintf('Status "%s" does not exists', $newStatus));
+            throw ChangeInvitationStatusException::invitationStatusNotFound($newStatus);
+        }
+
+        if (!$relatedAttendee->isUserEqual($user)) {
+            throw ChangeInvitationStatusException::changeInvitationFailed();
+        }
+
+        if (!$this->canChangeInvitationStatus($event, $user)) {
+            throw ChangeInvitationStatusException::changeInvitationFailed();
         }
 
         $relatedAttendee->setStatus($statusEnum);

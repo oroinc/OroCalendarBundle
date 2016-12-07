@@ -4,14 +4,13 @@ namespace Oro\Bundle\CalendarBundle\Tests\Unit\Manager;
 
 use Oro\Bundle\CalendarBundle\Entity\Calendar;
 use Oro\Bundle\CalendarBundle\Entity\CalendarEvent;
-use Oro\Bundle\CalendarBundle\Entity\Recurrence;
 use Oro\Bundle\CalendarBundle\Entity\SystemCalendar;
 use Oro\Bundle\CalendarBundle\Manager\CalendarEventManager;
 use Oro\Bundle\CalendarBundle\Tests\Unit\Fixtures\Entity\Attendee;
 use Oro\Bundle\CalendarBundle\Tests\Unit\ReflectionUtil;
 use Oro\Bundle\EntityExtendBundle\Tests\Unit\Fixtures\TestEnumValue;
 use Oro\Bundle\OrganizationBundle\Entity\Organization;
-use Oro\Bundle\UserBundle\Entity\User;
+use Oro\Bundle\CalendarBundle\Tests\Unit\Fixtures\Entity\User;
 use Oro\Component\PropertyAccess\PropertyAccessor;
 
 class CalendarEventManagerTest extends \PHPUnit_Framework_TestCase
@@ -295,15 +294,18 @@ class CalendarEventManagerTest extends \PHPUnit_Framework_TestCase
         $this->assertSame(123, $id);
     }
 
-    public function testChangeStatus()
+    public function testChangeInvitationStatus()
     {
-        $enum = new TestEnumValue(CalendarEvent::STATUS_ACCEPTED, CalendarEvent::STATUS_ACCEPTED);
+        $user = new User();
+        $user->setId(100);
+
+        $status = new TestEnumValue(CalendarEvent::STATUS_ACCEPTED, CalendarEvent::STATUS_ACCEPTED);
 
         $statusRepository = $this->getMock('Doctrine\Common\Persistence\ObjectRepository');
         $statusRepository->expects($this->any())
             ->method('find')
             ->with(CalendarEvent::STATUS_ACCEPTED)
-            ->will($this->returnValue($enum));
+            ->will($this->returnValue($status));
 
         $this->doctrineHelper->expects($this->any())
             ->method('getEntityRepository')
@@ -311,31 +313,37 @@ class CalendarEventManagerTest extends \PHPUnit_Framework_TestCase
             ->will($this->returnValue($statusRepository));
 
         $attendee = new Attendee();
+        $attendee->setUser($user);
 
         $event = $this->getCalendarEventWithExpectedRelatedAttendee($attendee);
 
         $this->assertNotEquals(CalendarEvent::STATUS_ACCEPTED, $event->getInvitationStatus());
 
-        $this->manager->changeStatus($event, CalendarEvent::STATUS_ACCEPTED);
+        $this->manager->changeInvitationStatus($event, CalendarEvent::STATUS_ACCEPTED, $user);
         $this->assertEquals(CalendarEvent::STATUS_ACCEPTED, $event->getInvitationStatus());
     }
 
     /**
-     * @expectedException \Oro\Bundle\CalendarBundle\Exception\CalendarEventRelatedAttendeeNotFoundException
-     * @expectedExceptionMessage Calendar event does not have relatedAttendee
+     * @expectedException \Oro\Bundle\CalendarBundle\Exception\ChangeInvitationStatusException
+     * @expectedExceptionMessage Cannot change invitation status of the event with no related attendee.
      */
-    public function testChangeStatusWithEmptyRelatedAttendee()
+    public function testChangeInvitationStatusWithEmptyRelatedAttendee()
     {
+        $user = new User();
+        $user->setId(100);
         $event = new CalendarEvent();
-        $this->manager->changeStatus($event, CalendarEvent::STATUS_ACCEPTED);
+        $this->manager->changeInvitationStatus($event, CalendarEvent::STATUS_ACCEPTED, $user);
     }
 
     /**
-     * @expectedException \Oro\Bundle\CalendarBundle\Exception\StatusNotFoundException
+     * @expectedException \Oro\Bundle\CalendarBundle\Exception\ChangeInvitationStatusException
      * @expectedExceptionMessage Status "accepted" does not exists
      */
-    public function testChangeStatusWithNonExistingStatus()
+    public function testChangeInvitationStatusWithNonExistingStatus()
     {
+        $user = new User();
+        $user->setId(100);
+
         $statusRepository = $this->getMock('Doctrine\Common\Persistence\ObjectRepository');
         $statusRepository->expects($this->any())
             ->method('find')
@@ -348,10 +356,41 @@ class CalendarEventManagerTest extends \PHPUnit_Framework_TestCase
             ->will($this->returnValue($statusRepository));
 
         $attendee = new Attendee();
+        $attendee->setUser($user);
 
         $event = $this->getCalendarEventWithExpectedRelatedAttendee($attendee);
 
-        $this->manager->changeStatus($event, CalendarEvent::STATUS_ACCEPTED);
+        $this->manager->changeInvitationStatus($event, CalendarEvent::STATUS_ACCEPTED, $user);
+    }
+
+    /**
+     * @expectedException \Oro\Bundle\CalendarBundle\Exception\ChangeInvitationStatusException
+     * @expectedExceptionMessage Cannot change invitation status of the event.
+     */
+    public function testChangeInvitationStatusWithDifferentRelatedAttendeeUser()
+    {
+        $user = new User();
+        $user->setId(100);
+
+        $status = new TestEnumValue(CalendarEvent::STATUS_ACCEPTED, CalendarEvent::STATUS_ACCEPTED);
+
+        $statusRepository = $this->getMock('Doctrine\Common\Persistence\ObjectRepository');
+        $statusRepository->expects($this->any())
+            ->method('find')
+            ->with(CalendarEvent::STATUS_ACCEPTED)
+            ->will($this->returnValue($status));
+
+        $this->doctrineHelper->expects($this->any())
+            ->method('getEntityRepository')
+            ->with('Extend\Entity\EV_Ce_Attendee_Status')
+            ->will($this->returnValue($statusRepository));
+
+        $attendee = new Attendee();
+        $attendee->setUser(new User());
+
+        $event = $this->getCalendarEventWithExpectedRelatedAttendee($attendee);
+
+        $this->manager->changeInvitationStatus($event, CalendarEvent::STATUS_ACCEPTED, $user);
     }
 
     /**

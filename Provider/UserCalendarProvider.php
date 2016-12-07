@@ -163,7 +163,7 @@ class UserCalendarProvider extends AbstractCalendarProvider
     {
         $events = [];
         foreach ($items as $index => $item) {
-            if (empty($item[Recurrence::STRING_KEY]) && empty($item['recurringEventId'])) {
+            if (empty($item['recurrence']) && empty($item['recurringEventId'])) {
                 $events[] = $item;
                 unset($items[$index]);
             }
@@ -183,7 +183,7 @@ class UserCalendarProvider extends AbstractCalendarProvider
     {
         $exceptions = [];
         foreach ($items as $index => $item) {
-            if (empty($item[Recurrence::STRING_KEY]) &&
+            if (empty($item['recurrence']) &&
                 !empty($item['recurringEventId']) &&
                 !empty($item['originalStart'])
             ) {
@@ -212,15 +212,14 @@ class UserCalendarProvider extends AbstractCalendarProvider
      */
     protected function filterRecurringOccurrenceEvents(array &$items, \DateTime $start, \DateTime $end)
     {
-        $key = Recurrence::STRING_KEY;
         $propertyAccessor = $this->getPropertyAccessor();
         $occurrences = [];
         $dateFields = ['startTime', 'endTime', 'calculatedEndTime'];
         foreach ($items as $index => $item) {
-            if (!empty($item[$key]) && empty($item['recurringEventId'])) {
+            if (!empty($item['recurrence']) && empty($item['recurringEventId'])) {
                 unset($items[$index]);
                 $recurrence = new Entity\Recurrence();
-                foreach ($item[$key] as $field => $value) {
+                foreach ($item['recurrence'] as $field => $value) {
                     $value = in_array($field, $dateFields, true) && $value !== null
                         ? new \DateTime($value, new \DateTimeZone('UTC'))
                         : $value;
@@ -228,7 +227,7 @@ class UserCalendarProvider extends AbstractCalendarProvider
                         $propertyAccessor->setValue($recurrence, $field, $value);
                     }
                 }
-                unset($item[$key]['calculatedEndTime']);
+                unset($item['recurrence']['calculatedEndTime']);
 
                 //set timezone for all datetime values,
                 // to make sure all occurrences are calculated in the time zone in which the recurrence is created

@@ -9,7 +9,7 @@
         <div class="btn-group">
             {{ UI.button({
                 'path' : path('oro_calendar_event_index'),
-                'iCss': 'icon-time',
+                'iCss': 'fa-clock-o',
                 'label': 'oro.calendar.view_events'|trans,
                 'title': 'oro.calendar.view_events'|trans
             }) }}
@@ -71,9 +71,9 @@
          data-page-component-options="{{ calendarOptions | json_encode }}">
         <div class="oro-page-sidebar search-entity-types-column dropdown">
             <a href="javascript: void(0);" class="dropdown-toggle" data-toggle="dropdown">
-                <i class="icon-filter"></i>
+                <i class="fa-filter"></i>
                 Select calendars
-                <i class="icon-sort-down"></i>
+                <i class="fa-sort-desc"></i>
             </a>
             <div class="dropdown-menu" role="menu" aria-labelledby="dropdownMenu">
                 <div class="calendars">
@@ -102,7 +102,7 @@
             <div class="pull-right">
                 <div class="connection-menu-container dropdown pull-left icons-holder">
                     <a href="javascript: void(0);" class="icons-holder-text no-hash context-menu-button">
-                        <i class="icon-ellipsis-horizontal"></i>
+                        <i class="fa-ellipsis-h"></i>
                     </a>
                 </div>
             </div>

@@ -129,7 +129,7 @@ datagrids:
                 type:         ajax
                 label:        Accept
                 link:         accept_link
-                icon:         ok
+                icon:         check
                 acl_resource: oro_calendar_event_view
             tentatively:
                 type:         ajax
@@ -141,26 +141,26 @@ datagrids:
                 type:         ajax
                 label:        Decline
                 link:         decline_link
-                icon:         remove
+                icon:         close
                 acl_resource: oro_calendar_event_view
             view:
                 type:         navigate
                 label:        View
                 link:         view_link
-                icon:         eye-open
+                icon:         eye
                 acl_resource: oro_calendar_event_view
                 rowAction:    true
             update:
                 type:          navigate
                 acl_resource:  oro_calendar_event_create
                 label:         Update
-                icon:          edit
+                icon:          pencil-square-o
                 link:          update_link
             delete:
                 type:          delete
                 acl_resource:  oro_calendar_event_delete
                 label:         Delete
-                icon:          trash
+                icon:          trash-o
                 link:          delete_link
         action_configuration: ['@oro_calendar.datagrid.action_permission_provider', "getInvitationPermissions"]
         options:
@@ -381,20 +381,20 @@ datagrids:
                 type:         navigate
                 label:        View
                 link:         view_link
-                icon:         eye-open
+                icon:         eye
                 acl_resource: oro_calendar_event_view
                 rowAction:    true
             update:
                 type:          navigate
                 acl_resource:  oro_calendar_event_create
                 label:         Update
-                icon:          edit
+                icon:          pencil-square-o
                 link:          update_link
             delete:
                 type:          delete
                 acl_resource:  oro_calendar_event_delete
                 label:         Delete
-                icon:          trash
+                icon:          trash-o
                 link:          delete_link
         options:
             entityHint: calendar_events
@@ -478,17 +478,17 @@ datagrids:
                 type:         navigate
                 label:        View
                 link:         view_link
-                icon:         eye-open
+                icon:         eye
                 rowAction:    true
             update:
                 type:          navigate
                 label:         Update
-                icon:          edit
+                icon:          pencil-square-o
                 link:          update_link
             delete:
                 type:          delete
                 label:         Delete
-                icon:          trash
+                icon:          trash-o
                 link:          delete_link
         action_configuration: "@oro_calendar.listener.datagrid.system_calendar->getActionConfigurationClosure"
 
