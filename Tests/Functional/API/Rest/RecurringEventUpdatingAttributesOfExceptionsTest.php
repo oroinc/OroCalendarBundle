@@ -153,7 +153,7 @@ class RecurringEventUpdatingAttributesOfExceptionsTest extends AbstractTestCase
             [
                 'notifiable' => false,
                 'invitationStatus' => Attendee::STATUS_NONE,
-                'isResponsive' => false,
+                'editableInvitationStatus' => false,
             ],
             $response
         );
@@ -442,7 +442,7 @@ class RecurringEventUpdatingAttributesOfExceptionsTest extends AbstractTestCase
             [
                 'notifiable' => false,
                 'invitationStatus' => Attendee::STATUS_NONE,
-                'isResponsive' => false,
+                'editableInvitationStatus' => false,
             ],
             $response
         );
@@ -701,7 +701,7 @@ class RecurringEventUpdatingAttributesOfExceptionsTest extends AbstractTestCase
             [
                 'notifiable' => false,
                 'invitationStatus' => Attendee::STATUS_NONE,
-                'isResponsive' => false,
+                'editableInvitationStatus' => false,
             ],
             $response
         );
@@ -923,7 +923,7 @@ class RecurringEventUpdatingAttributesOfExceptionsTest extends AbstractTestCase
             [
                 'notifiable' => false,
                 'invitationStatus' => Attendee::STATUS_NONE,
-                'isResponsive' => false,
+                'editableInvitationStatus' => false,
             ],
             $response
         );

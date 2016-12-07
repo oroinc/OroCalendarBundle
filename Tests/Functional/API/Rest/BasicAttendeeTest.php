@@ -81,7 +81,7 @@ class BasicAttendeeTest extends HangoutsCallDependentTestCase
                 'id' => $response['id'],
                 'notifiable' => true,
                 'invitationStatus' => Attendee::STATUS_NONE,
-                'isResponsive' => false,
+                'editableInvitationStatus' => false,
             ],
             $response
         );
@@ -126,6 +126,7 @@ class BasicAttendeeTest extends HangoutsCallDependentTestCase
                     ]
                 ],
                 'editable' => true,
+                'editableInvitationStatus' => false,
                 'removable' => true,
                 'notifiable' => true,
                 'backgroundColor' => null,
@@ -135,7 +136,6 @@ class BasicAttendeeTest extends HangoutsCallDependentTestCase
                 'isCancelled' => false,
                 'createdAt' => $newEvent->getCreatedAt()->format(DATE_RFC3339),
                 'updatedAt' => $newEvent->getUpdatedAt()->format(DATE_RFC3339),
-                'isResponsive' => false
             ],
             $response
         );
@@ -188,7 +188,7 @@ class BasicAttendeeTest extends HangoutsCallDependentTestCase
                 'id' => $response['id'],
                 'notifiable' => true,
                 'invitationStatus' => Attendee::STATUS_NONE,
-                'isResponsive' => false,
+                'editableInvitationStatus' => false,
             ],
             $response
         );
@@ -233,6 +233,7 @@ class BasicAttendeeTest extends HangoutsCallDependentTestCase
                     ]
                 ],
                 'editable' => true,
+                'editableInvitationStatus' => false,
                 'removable' => true,
                 'notifiable' => true,
                 'backgroundColor' => null,
@@ -242,7 +243,6 @@ class BasicAttendeeTest extends HangoutsCallDependentTestCase
                 'isCancelled' => false,
                 'createdAt' => $newEvent->getCreatedAt()->format(DATE_RFC3339),
                 'updatedAt' => $newEvent->getUpdatedAt()->format(DATE_RFC3339),
-                'isResponsive' => false
             ],
             $response
         );
@@ -295,7 +295,7 @@ class BasicAttendeeTest extends HangoutsCallDependentTestCase
                 'id' => $response['id'],
                 'notifiable' => true,
                 'invitationStatus' => Attendee::STATUS_NONE,
-                'isResponsive' => false
+                'editableInvitationStatus' => false,
             ],
             $response
         );
@@ -340,6 +340,7 @@ class BasicAttendeeTest extends HangoutsCallDependentTestCase
                     ]
                 ],
                 'editable' => true,
+                'editableInvitationStatus' => false,
                 'removable' => true,
                 'notifiable' => true,
                 'backgroundColor' => null,
@@ -349,7 +350,6 @@ class BasicAttendeeTest extends HangoutsCallDependentTestCase
                 'isCancelled' => false,
                 'createdAt' => $newEvent->getCreatedAt()->format(DATE_RFC3339),
                 'updatedAt' => $newEvent->getUpdatedAt()->format(DATE_RFC3339),
-                'isResponsive' => false
             ],
             $response
         );
@@ -403,7 +403,7 @@ class BasicAttendeeTest extends HangoutsCallDependentTestCase
                 'id' => $response['id'],
                 'notifiable' => true,
                 'invitationStatus' => Attendee::STATUS_NONE,
-                'isResponsive' => false
+                'editableInvitationStatus' => false,
             ],
             $response
         );
@@ -444,7 +444,7 @@ class BasicAttendeeTest extends HangoutsCallDependentTestCase
             [
                 'notifiable' => true,
                 'invitationStatus' => Attendee::STATUS_NONE,
-                'isResponsive' => false
+                'editableInvitationStatus' => false,
             ],
             $response
         );
@@ -502,6 +502,7 @@ class BasicAttendeeTest extends HangoutsCallDependentTestCase
                     ]
                 ],
                 'editable' => true,
+                'editableInvitationStatus' => false,
                 'removable' => true,
                 'notifiable' => true,
                 'backgroundColor' => null,
@@ -511,7 +512,6 @@ class BasicAttendeeTest extends HangoutsCallDependentTestCase
                 'isCancelled' => false,
                 'createdAt' => $newEvent->getCreatedAt()->format(DATE_RFC3339),
                 'updatedAt' => $newEvent->getUpdatedAt()->format(DATE_RFC3339),
-                'isResponsive' => false
             ],
             $response
         );
@@ -571,7 +571,7 @@ class BasicAttendeeTest extends HangoutsCallDependentTestCase
                 'id' => $response['id'],
                 'notifiable' => true,
                 'invitationStatus' => Attendee::STATUS_NONE,
-                'isResponsive' => false
+                'editableInvitationStatus' => false,
             ],
             $response
         );
@@ -599,7 +599,7 @@ class BasicAttendeeTest extends HangoutsCallDependentTestCase
             [
                 'notifiable' => false,
                 'invitationStatus' => Attendee::STATUS_NONE,
-                'isResponsive' => false
+                'editableInvitationStatus' => false,
             ],
             $response
         );
@@ -643,7 +643,7 @@ class BasicAttendeeTest extends HangoutsCallDependentTestCase
                 'isCancelled' => false,
                 'createdAt' => $newEvent->getCreatedAt()->format(DATE_RFC3339),
                 'updatedAt' => $newEvent->getUpdatedAt()->format(DATE_RFC3339),
-                'isResponsive' => false
+                'editableInvitationStatus' => false,
             ],
             $response
         );

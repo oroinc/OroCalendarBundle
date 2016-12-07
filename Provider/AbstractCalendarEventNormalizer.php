@@ -5,85 +5,101 @@ namespace Oro\Bundle\CalendarBundle\Provider;
 use Doctrine\ORM\Proxy\Proxy;
 use Doctrine\ORM\AbstractQuery;
 
+use Oro\Bundle\CalendarBundle\Entity\CalendarEvent;
 use Oro\Bundle\CalendarBundle\Manager\AttendeeManager;
+use Oro\Bundle\CalendarBundle\Manager\CalendarEventManager;
 use Oro\Bundle\ReminderBundle\Entity\Manager\ReminderManager;
+use Oro\Bundle\SecurityBundle\SecurityFacade;
 
 abstract class AbstractCalendarEventNormalizer
 {
-    /** @var ReminderManager */
-    protected $reminderManager;
+    /**
+     * @var CalendarEventManager
+     */
+    protected $calendarEventManager;
 
-    /** @var AttendeeManager */
+    /**
+     * @var AttendeeManager
+     */
     protected $attendeeManager;
 
     /**
-     * @param ReminderManager $reminderManager
-     * @param AttendeeManager $attendeeManager
+     * @var ReminderManager
      */
-    public function __construct(ReminderManager $reminderManager, AttendeeManager $attendeeManager)
-    {
-        $this->reminderManager = $reminderManager;
+    protected $reminderManager;
+
+    /**
+     * @var SecurityFacade
+     */
+    protected $securityFacade;
+
+    /**
+     * @var array
+     */
+    protected $currentCalendarEventIds;
+
+    /**
+     * @var integer
+     */
+    protected $currentCalendarId;
+
+    /**
+     * @var array
+     */
+    protected $currentAttendeeLists;
+
+    /**
+     * @param CalendarEventManager $calendarEventManager
+     * @param AttendeeManager $attendeeManager
+     * @param ReminderManager $reminderManager
+     * @param SecurityFacade $securityFacade
+     */
+    public function __construct(
+        CalendarEventManager $calendarEventManager,
+        AttendeeManager $attendeeManager,
+        ReminderManager $reminderManager,
+        SecurityFacade $securityFacade
+    ) {
+        $this->calendarEventManager = $calendarEventManager;
         $this->attendeeManager = $attendeeManager;
+        $this->reminderManager = $reminderManager;
+        $this->securityFacade = $securityFacade;
     }
 
     /**
      * Converts calendar events returned by the given query to form that can be used in API
      *
-     * @param int           $calendarId The target calendar id
-     * @param AbstractQuery $query      The query that should be used to get events
+     * @param int $calendarId The target calendar id
+     * @param AbstractQuery $query The query that should be used to get events
      *
      * @return array
      */
     public function getCalendarEvents($calendarId, AbstractQuery $query)
     {
-        $result = [];
-
         $rawData = $query->getArrayResult();
-        foreach ($rawData as $rawDataItem) {
-            $result[] = $this->transformEntity($rawDataItem);
-        }
 
-        $this->applyAdditionalData($result, $calendarId);
-
-        foreach ($result as &$resultItem) {
-            $this->applyPermissions($resultItem, $calendarId);
-        }
-
-        $this->addAttendeesToCalendarEvents($result);
-        $this->reminderManager->applyReminders($result, 'Oro\Bundle\CalendarBundle\Entity\CalendarEvent');
+        $result = $this->transformList($rawData);
+        $this->applyListData($result, $calendarId);
 
         return $result;
     }
 
     /**
-     * @param array $calendarEvents
+     * Converts values of entity fields to form that can be used in API
+     *
+     * @param array $rawData List of raw data of calendar events returned by the query.
+     *
+     * @return array
      */
-    protected function addAttendeesToCalendarEvents(array &$calendarEvents)
+    protected function transformList(array $rawData)
     {
-        $calendarEventIds = array_map(
-            function ($calendarEvent) {
-                return $calendarEvent['id'];
-            },
-            $calendarEvents
-        );
+        $result = [];
 
-        $attendeeLists = $this->attendeeManager->getAttendeeListsByCalendarEventIds($calendarEventIds);
-        foreach ($calendarEvents as $key => $calendarEvent) {
-            $calendarEvents[$key]['attendees'] = $this->transformEntity($attendeeLists[$calendarEvent['id']]);
-
-            /**
-             * Contract of the API is to return the attendees in a specific order sorting by displayName field
-             *
-             * @todo Remove duplication of this logic in CRM-6350.
-             * @see \Oro\Bundle\CalendarBundle\Provider\UserCalendarEventNormalizer::prepareExtraValues
-             */
-            usort(
-                $calendarEvents[$key]['attendees'],
-                function ($first, $second) {
-                    return strcmp($first['displayName'], $second['displayName']);
-                }
-            );
+        foreach ($rawData as $rawDataItem) {
+            $result[] = $this->transformEntity($rawDataItem);
         }
+
+        return $result;
     }
 
     /**
@@ -121,22 +137,244 @@ abstract class AbstractCalendarEventNormalizer
     }
 
     /**
-     * Applies additional properties to the given calendar events
-     * The list of additional properties depends on a calendar event type
+     * Applies data  properties to the given list of calendar events.
+     * The list of additional properties depends on a calendar event type.
+     *
+     * @param array $items Calendar events, each element is a data array.
+     * @param int   $calendarId Id of calendar applicable for all events.
+     */
+    protected function applyListData(&$items, $calendarId)
+    {
+        $this->beforeApplyListData($items, $calendarId);
+        $this->onApplyListData($items);
+        $this->afterApplyListData($items);
+    }
+
+    /**
+     * This method can be used to modify the list data before it will be returned to the client.
+     *
+     * @param array $items Calendar events, each element is a data array.
+     */
+    protected function onApplyListData(&$items)
+    {
+        foreach ($items as &$item) {
+            $this->applyItemData($item);
+        }
+    }
+
+    /**
+     * Triggered at the beginning of method applyListData.
+     *
+     * It can be used to modify the data or initialize state related to the list of calendar events.
+     *
+     * @param array $items Calendar events, each element is a data array.
+     * @param integer $calendarId
+     */
+    protected function beforeApplyListData(array &$items, $calendarId)
+    {
+        $this->initCurrentListData($items, $calendarId);
+    }
+
+    /**
+     * Triggered at the end of method applyListData.
+     *
+     * It can be used to modify the data or reset state related to the list of calendar events.
+     *
+     * @param array $items Calendar events, each element is a data array.
+     */
+    protected function afterApplyListData(array &$items)
+    {
+        $this->applyListReminders($items);
+        $this->resetCurrentListData();
+    }
+
+    /**
+     * Initiates state related to current list of calendar events data.
      *
      * @param array $items
-     * @param int   $calendarId
+     * @param int $calendarId
      */
-    protected function applyAdditionalData(&$items, $calendarId)
+    protected function initCurrentListData(array $items, $calendarId)
+    {
+        $this->currentCalendarEventIds = $this->getCalendarEventIds($items);
+        $this->currentCalendarId = $calendarId;
+        $this->currentAttendeeLists = null;
+    }
+
+    /**
+     * Returns ids of calendar events in the given list.
+     *
+     * @param array $items Element of array represents an event and should have key with name "id".
+     * @return integer
+     */
+    protected function getCalendarEventIds(array $items)
+    {
+        $result = [];
+
+        foreach ($items as $item) {
+            $result[] = $item['id'];
+        }
+
+        return $result;
+    }
+
+    /**
+     * Adds data of reminders related data to the list of calendar events data.
+     *
+     * @param array $items List of calendar events data, each element is an array representing calendar event data.
+     */
+    protected function applyListReminders(array &$items)
+    {
+        $this->reminderManager->applyReminders($items, CalendarEvent::class);
+    }
+
+    /**
+     * Resets state related to current list of calendar events data.
+     */
+    protected function resetCurrentListData()
+    {
+        $this->currentCalendarEventIds = null;
+        $this->currentCalendarId = null;
+        $this->currentAttendeeLists = null;
+    }
+
+    /**
+     * Get ids of current calendar events list. Initiated when method applyListData is called.
+     *
+     * @return array
+     */
+    protected function getCurrentCalendarEventIds()
+    {
+        if (null === $this->currentCalendarEventIds) {
+            throw new \BadMethodCallException(
+                'Calendar event id is not initiated. The method should be called only with method applyListData.'
+            );
+        }
+        return $this->currentCalendarEventIds;
+    }
+
+    /**
+     * Get id of current calendar. Initiated when method applyListData is called.
+     *
+     * @return int
+     */
+    protected function getCurrentCalendarId()
+    {
+        if (null === $this->currentCalendarEventIds) {
+            throw new \BadMethodCallException(
+                'Calendar id is not initiated. The method should be called only with method applyListData.'
+            );
+        }
+
+        return $this->currentCalendarId;
+    }
+
+    /**
+     * Modifies item in the list of calendar event.
+     *
+     * This method can be used to adjust the data of calendar event item before it will be returned to the client.
+     *
+     * @param array $item Calendar event data array.
+     */
+    protected function applyItemData(array &$item)
+    {
+        $this->beforeApplyItemData($item);
+        $this->onApplyItemData($item);
+        $this->afterApplyItemData($item);
+
+    }
+
+    /**
+     * Modifies item in the list of calendar event. Called before method onApplyItemData.
+     *
+     * This method can be used to adjust the data of calendar event item before it will be returned to the client.
+     *
+     * @param array $item Calendar event data array.
+     */
+    protected function beforeApplyItemData(array &$item)
     {
     }
 
     /**
-     * Applies permission to the given calendar event
+     * Modifies item in the list of calendar event. Called after method beforeApplyItemData and before method
+     * afterApplyItemData.
+     *
+     * This method can be used to adjust the data of calendar event item before it will be returned to the client.
+     *
+     * @param array $item Calendar event data array.
+     */
+    protected function onApplyItemData(array &$item)
+    {
+        $this->applyItemAttendees($item);
+    }
+
+    /**
+     * Modifies item in the list of calendar event. Called after method onApplyItemData.
+     *
+     * This method can be used to adjust the data of calendar event item before it will be returned to the client.
+     *
+     * @param array $item Calendar event data array.
+     */
+    protected function afterApplyItemData(array &$item)
+    {
+        $this->applyItemPermissionsData($item);
+    }
+
+    /**
+     * Adds data of attendees to item in the list of calendar events data.
+     *
+     * @param array $item Calendar events data array.
+     */
+    protected function applyItemAttendees(array &$item)
+    {
+        if (!isset($item['attendees'])) {
+            // Attendees is not prepared in the item, then it should be fetched and set.
+            $attendeeLists = $this->getCurrentAttendeeList();
+            $attendees = isset($attendeeLists[$item['id']]) ? $attendeeLists[$item['id']] : [];
+            $item['attendees'] = $this->transformEntity($attendees);
+        }
+        $this->sortAttendees($item['attendees']);
+    }
+
+    /**
+     * Uses lazy loading to get attendees to the list of current event ids. Values are associated by ids
+     *
+     * @return array
+     */
+    protected function getCurrentAttendeeList()
+    {
+        if (null === $this->currentAttendeeLists) {
+            $this->currentAttendeeLists = $this->attendeeManager->getAttendeeListsByCalendarEventIds(
+                $this->getCurrentCalendarEventIds()
+            );
+        }
+
+        return $this->currentAttendeeLists;
+    }
+
+    /**
+     * Attendees should be returned in a specific order sorting by displayName field.
+     *
+     * @param array $attendees
+     */
+    protected function sortAttendees(array &$attendees)
+    {
+        usort(
+            $attendees,
+            function ($first, $second) {
+                return strcmp($first['displayName'], $second['displayName']);
+            }
+        );
+    }
+
+    /**
+     * Adds permissions data to the item in the list of calendar events data.
+     *
+     * This method will be called in the last moment when all other data was already prepared.
+     *
      * {@see Oro\Bundle\CalendarBundle\Provider\CalendarProviderInterface::getCalendarEvents}
      *
-     * @param array $item
-     * @param int   $calendarId
+     * @param array $item Calendar events data array.
      */
-    abstract protected function applyPermissions(&$item, $calendarId);
+    abstract protected function applyItemPermissionsData(array &$item);
 }

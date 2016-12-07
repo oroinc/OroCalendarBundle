@@ -13,6 +13,8 @@ use Oro\Bundle\CalendarBundle\Model\Recurrence;
 
 class CalendarEventRepository extends EntityRepository
 {
+    const RECURRENCE_FIELD_PREFIX = 'recurrence';
+
     /**
      * Returns a query builder which can be used to get a list of user calendar events filtered by start and end dates
      *
@@ -249,7 +251,7 @@ class CalendarEventRepository extends EntityRepository
      */
     protected function addRecurrenceData(QueryBuilder $queryBuilder)
     {
-        $key = Recurrence::STRING_KEY;
+        $prefix = self::RECURRENCE_FIELD_PREFIX;
         $queryBuilder
             ->leftJoin(
                 'OroCalendarBundle:Recurrence',
@@ -259,11 +261,11 @@ class CalendarEventRepository extends EntityRepository
                 'OR (parent.id IS NULL AND event.recurrence = r.id)'
             )
             ->addSelect(
-                "r.recurrenceType as {$key}RecurrenceType, r.interval as {$key}Interval,"
-                . "r.dayOfWeek as {$key}DayOfWeek, r.dayOfMonth as {$key}DayOfMonth,"
-                . "r.monthOfYear as {$key}MonthOfYear, r.startTime as {$key}StartTime,"
-                . "r.endTime as {$key}EndTime, r.occurrences as {$key}Occurrences,"
-                . "r.instance as {$key}Instance, r.id as {$key}Id, r.timeZone as {$key}TimeZone"
+                "r.recurrenceType as {$prefix}RecurrenceType, r.interval as {$prefix}Interval,"
+                . "r.dayOfWeek as {$prefix}DayOfWeek, r.dayOfMonth as {$prefix}DayOfMonth,"
+                . "r.monthOfYear as {$prefix}MonthOfYear, r.startTime as {$prefix}StartTime,"
+                . "r.endTime as {$prefix}EndTime, r.occurrences as {$prefix}Occurrences,"
+                . "r.instance as {$prefix}Instance, r.id as {$prefix}Id, r.timeZone as {$prefix}TimeZone"
             );
 
         return $this;
@@ -280,8 +282,8 @@ class CalendarEventRepository extends EntityRepository
      */
     protected function addRecurrencesConditions(QueryBuilder $queryBuilder, $startDate, $endDate)
     {
-        $key = Recurrence::STRING_KEY;
-        $queryBuilder->addSelect("r.calculatedEndTime as {$key}calculatedEndTime");
+        $prefix = self::RECURRENCE_FIELD_PREFIX;
+        $queryBuilder->addSelect("r.calculatedEndTime as {$prefix}CalculatedEndTime");
 
         //add condition that recurrence dates and filter dates are crossing
         $expr = $queryBuilder->expr();

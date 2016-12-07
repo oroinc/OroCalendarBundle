@@ -61,7 +61,7 @@ class CalendarEventRepositoryTest extends OrmTestCase
 
         $qb = $repo->getUserEventListByTimeIntervalQueryBuilder(new \DateTime(), new \DateTime());
 
-        $key = Recurrence::STRING_KEY;
+        $prefix = CalendarEventRepository::RECURRENCE_FIELD_PREFIX;
         $this->assertEquals(
             'SELECT event.id, event.title, event.description, event.start, event.end, event.allDay,'
             . ' event.backgroundColor, event.createdAt, event.updatedAt,'
@@ -71,13 +71,13 @@ class CalendarEventRepositoryTest extends OrmTestCase
             . ' IDENTITY(event.recurringEvent) AS recurringEventId,'
             . ' IDENTITY(relatedAttendee.user) AS relatedAttendeeUserId,'
             . ' event.originalStart, event.cancelled AS isCancelled,'
-            . " r.recurrenceType as {$key}RecurrenceType, r.interval as {$key}Interval,"
-            . "r.dayOfWeek as {$key}DayOfWeek, r.dayOfMonth as {$key}DayOfMonth,"
-            . "r.monthOfYear as {$key}MonthOfYear, r.startTime as {$key}StartTime,"
-            . "r.endTime as {$key}EndTime, r.occurrences as {$key}Occurrences,"
-            . "r.instance as {$key}Instance, r.id as recurrenceId,"
+            . " r.recurrenceType as {$prefix}RecurrenceType, r.interval as {$prefix}Interval,"
+            . "r.dayOfWeek as {$prefix}DayOfWeek, r.dayOfMonth as {$prefix}DayOfMonth,"
+            . "r.monthOfYear as {$prefix}MonthOfYear, r.startTime as {$prefix}StartTime,"
+            . "r.endTime as {$prefix}EndTime, r.occurrences as {$prefix}Occurrences,"
+            . "r.instance as {$prefix}Instance, r.id as recurrenceId,"
             . ' r.timeZone as recurrenceTimeZone,'
-            . " r.calculatedEndTime as {$key}calculatedEndTime"
+            . " r.calculatedEndTime as {$prefix}CalculatedEndTime"
             . ' FROM Oro\Bundle\CalendarBundle\Entity\CalendarEvent event'
             . ' INNER JOIN event.calendar c'
             . ' LEFT JOIN Oro\Bundle\CalendarBundle\Entity\Attendee relatedAttendee WITH'
@@ -119,7 +119,7 @@ class CalendarEventRepositoryTest extends OrmTestCase
             ['allDay' => true]
         );
 
-        $key = Recurrence::STRING_KEY;
+        $prefix = CalendarEventRepository::RECURRENCE_FIELD_PREFIX;
         $this->assertEquals(
             'SELECT event.id, event.title, event.description, event.start, event.end, event.allDay,'
             . ' event.backgroundColor, event.createdAt, event.updatedAt,'
@@ -129,13 +129,13 @@ class CalendarEventRepositoryTest extends OrmTestCase
             . ' IDENTITY(event.recurringEvent) AS recurringEventId,'
             . ' IDENTITY(relatedAttendee.user) AS relatedAttendeeUserId,'
             . ' event.originalStart, event.cancelled AS isCancelled,'
-            . " r.recurrenceType as {$key}RecurrenceType, r.interval as {$key}Interval,"
-            . "r.dayOfWeek as {$key}DayOfWeek, r.dayOfMonth as {$key}DayOfMonth,"
-            . "r.monthOfYear as {$key}MonthOfYear, r.startTime as {$key}StartTime,"
-            . "r.endTime as {$key}EndTime, r.occurrences as {$key}Occurrences,"
-            . "r.instance as {$key}Instance, r.id as recurrenceId,"
+            . " r.recurrenceType as {$prefix}RecurrenceType, r.interval as {$prefix}Interval,"
+            . "r.dayOfWeek as {$prefix}DayOfWeek, r.dayOfMonth as {$prefix}DayOfMonth,"
+            . "r.monthOfYear as {$prefix}MonthOfYear, r.startTime as {$prefix}StartTime,"
+            . "r.endTime as {$prefix}EndTime, r.occurrences as {$prefix}Occurrences,"
+            . "r.instance as {$prefix}Instance, r.id as recurrenceId,"
             . ' r.timeZone as recurrenceTimeZone,'
-            . " r.calculatedEndTime as {$key}calculatedEndTime"
+            . " r.calculatedEndTime as {$prefix}CalculatedEndTime"
             . ' FROM Oro\Bundle\CalendarBundle\Entity\CalendarEvent event'
             . ' INNER JOIN event.calendar c'
             . ' LEFT JOIN Oro\Bundle\CalendarBundle\Entity\Attendee relatedAttendee WITH'
@@ -181,7 +181,7 @@ class CalendarEventRepositoryTest extends OrmTestCase
             new Criteria(Criteria::expr()->eq('allDay', true))
         );
 
-        $key = Recurrence::STRING_KEY;
+        $prefix = CalendarEventRepository::RECURRENCE_FIELD_PREFIX;
         $this->assertEquals(
             'SELECT event.id, event.title, event.description, event.start, event.end, event.allDay,'
             . ' event.backgroundColor, event.createdAt, event.updatedAt,'
@@ -191,13 +191,13 @@ class CalendarEventRepositoryTest extends OrmTestCase
             . ' IDENTITY(event.recurringEvent) AS recurringEventId,'
             . ' IDENTITY(relatedAttendee.user) AS relatedAttendeeUserId,'
             . ' event.originalStart, event.cancelled AS isCancelled,'
-            . " r.recurrenceType as {$key}RecurrenceType, r.interval as {$key}Interval,"
-            . "r.dayOfWeek as {$key}DayOfWeek, r.dayOfMonth as {$key}DayOfMonth,"
-            . "r.monthOfYear as {$key}MonthOfYear, r.startTime as {$key}StartTime,"
-            . "r.endTime as {$key}EndTime, r.occurrences as {$key}Occurrences,"
-            . "r.instance as {$key}Instance, r.id as recurrenceId,"
+            . " r.recurrenceType as {$prefix}RecurrenceType, r.interval as {$prefix}Interval,"
+            . "r.dayOfWeek as {$prefix}DayOfWeek, r.dayOfMonth as {$prefix}DayOfMonth,"
+            . "r.monthOfYear as {$prefix}MonthOfYear, r.startTime as {$prefix}StartTime,"
+            . "r.endTime as {$prefix}EndTime, r.occurrences as {$prefix}Occurrences,"
+            . "r.instance as {$prefix}Instance, r.id as recurrenceId,"
             . ' r.timeZone as recurrenceTimeZone,'
-            . " r.calculatedEndTime as {$key}calculatedEndTime"
+            . " r.calculatedEndTime as {$prefix}CalculatedEndTime"
             . ' FROM Oro\Bundle\CalendarBundle\Entity\CalendarEvent event'
             . ' INNER JOIN event.calendar c'
             . ' LEFT JOIN Oro\Bundle\CalendarBundle\Entity\Attendee relatedAttendee WITH'
@@ -244,7 +244,7 @@ class CalendarEventRepositoryTest extends OrmTestCase
             ['status']
         );
 
-        $key = Recurrence::STRING_KEY;
+        $prefix = CalendarEventRepository::RECURRENCE_FIELD_PREFIX;
         $this->assertEquals(
             'SELECT event.id, event.title, event.description, event.start, event.end, event.allDay,'
             . ' event.backgroundColor, event.createdAt, event.updatedAt, event.status,'
@@ -254,13 +254,13 @@ class CalendarEventRepositoryTest extends OrmTestCase
             . ' IDENTITY(event.recurringEvent) AS recurringEventId,'
             . ' IDENTITY(relatedAttendee.user) AS relatedAttendeeUserId,'
             . ' event.originalStart, event.cancelled AS isCancelled,'
-            . " r.recurrenceType as {$key}RecurrenceType, r.interval as {$key}Interval,"
-            . "r.dayOfWeek as {$key}DayOfWeek, r.dayOfMonth as {$key}DayOfMonth,"
-            . "r.monthOfYear as {$key}MonthOfYear, r.startTime as {$key}StartTime,"
-            . "r.endTime as {$key}EndTime, r.occurrences as {$key}Occurrences,"
-            . "r.instance as {$key}Instance, r.id as recurrenceId,"
+            . " r.recurrenceType as {$prefix}RecurrenceType, r.interval as {$prefix}Interval,"
+            . "r.dayOfWeek as {$prefix}DayOfWeek, r.dayOfMonth as {$prefix}DayOfMonth,"
+            . "r.monthOfYear as {$prefix}MonthOfYear, r.startTime as {$prefix}StartTime,"
+            . "r.endTime as {$prefix}EndTime, r.occurrences as {$prefix}Occurrences,"
+            . "r.instance as {$prefix}Instance, r.id as recurrenceId,"
             . ' r.timeZone as recurrenceTimeZone,'
-            . " r.calculatedEndTime as {$key}calculatedEndTime"
+            . " r.calculatedEndTime as {$prefix}CalculatedEndTime"
             . ' FROM Oro\Bundle\CalendarBundle\Entity\CalendarEvent event'
             . ' INNER JOIN event.calendar c'
             . ' LEFT JOIN Oro\Bundle\CalendarBundle\Entity\Attendee relatedAttendee WITH'

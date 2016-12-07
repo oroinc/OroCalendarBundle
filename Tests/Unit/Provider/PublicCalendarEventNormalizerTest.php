@@ -7,6 +7,12 @@ use Oro\Bundle\CalendarBundle\Provider\PublicCalendarEventNormalizer;
 class PublicCalendarEventNormalizerTest extends \PHPUnit_Framework_TestCase
 {
     /** @var \PHPUnit_Framework_MockObject_MockObject */
+    protected $calendarEventManager;
+
+    /** @var \PHPUnit_Framework_MockObject_MockObject */
+    protected $attendeeManager;
+
+    /** @var \PHPUnit_Framework_MockObject_MockObject */
     protected $reminderManager;
 
     /** @var \PHPUnit_Framework_MockObject_MockObject */
@@ -17,10 +23,13 @@ class PublicCalendarEventNormalizerTest extends \PHPUnit_Framework_TestCase
 
     protected function setUp()
     {
-        $attendeeManager = $this->getMockBuilder('Oro\Bundle\CalendarBundle\Manager\AttendeeManager')
+        $this->calendarEventManager = $this->getMockBuilder('Oro\Bundle\CalendarBundle\Manager\CalendarEventManager')
             ->disableOriginalConstructor()
             ->getMock();
-        $attendeeManager->expects($this->any())
+        $this->attendeeManager = $this->getMockBuilder('Oro\Bundle\CalendarBundle\Manager\AttendeeManager')
+            ->disableOriginalConstructor()
+            ->getMock();
+        $this->attendeeManager->expects($this->any())
             ->method('getAttendeeListsByCalendarEventIds')
             ->will($this->returnCallback(function (array $calendarEventIds) {
                 return array_fill_keys($calendarEventIds, []);
@@ -35,9 +44,10 @@ class PublicCalendarEventNormalizerTest extends \PHPUnit_Framework_TestCase
             ->getMock();
 
         $this->normalizer = new PublicCalendarEventNormalizer(
+            $this->calendarEventManager,
+            $this->attendeeManager,
             $this->reminderManager,
-            $this->securityFacade,
-            $attendeeManager
+            $this->securityFacade
         );
     }
 

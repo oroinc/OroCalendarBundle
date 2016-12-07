@@ -247,26 +247,26 @@ services:
         tags:
             - { name: oro_calendar.calendar_provider, alias: public }
 
-    oro_calendar.calendar_event_normalizer.user:
-        class: %oro_calendar.calendar_event_normalizer.user.class%
+    oro_calendar.calendar_event_normalizer.abstract:
+        class: 'Oro\Bundle\CalendarBundle\Provider\AbstractCalendarEventNormalizer'
+        abstract: true
         arguments:
+            - '@oro_calendar.calendar_event_manager'
+            - '@oro_calendar.attendee_manager'
             - '@oro_reminder.entity.manager'
             - '@oro_security.security_facade'
-            - '@oro_calendar.attendee_manager'
+
+    oro_calendar.calendar_event_normalizer.user:
+        class: %oro_calendar.calendar_event_normalizer.user.class%
+        parent: oro_calendar.calendar_event_normalizer.abstract
 
     oro_calendar.calendar_event_normalizer.system:
         class: %oro_calendar.calendar_event_normalizer.system.class%
-        arguments:
-            - '@oro_reminder.entity.manager'
-            - '@oro_security.security_facade'
-            - '@oro_calendar.attendee_manager'
+        parent: oro_calendar.calendar_event_normalizer.abstract
 
     oro_calendar.calendar_event_normalizer.public:
         class: %oro_calendar.calendar_event_normalizer.public.class%
-        arguments:
-            - '@oro_reminder.entity.manager'
-            - '@oro_security.security_facade'
-            - '@oro_calendar.attendee_manager'
+        parent: oro_calendar.calendar_event_normalizer.abstract
 
     oro_calendar.autocomplete.user_calendar_handler:
         class: %oro_calendar.autocomplete.user_calendar_handler.class%

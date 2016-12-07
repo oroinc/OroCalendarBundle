@@ -2,167 +2,168 @@
 
 namespace Oro\Bundle\CalendarBundle\Provider;
 
-use Doctrine\ORM\AbstractQuery;
-
 use Symfony\Component\PropertyAccess\Exception\InvalidPropertyPathException;
 use Symfony\Component\PropertyAccess\Exception\NoSuchPropertyException;
 
+use Oro\Bundle\CalendarBundle\Entity\Attendee;
 use Oro\Bundle\CalendarBundle\Entity\CalendarEvent;
-use Oro\Bundle\CalendarBundle\Manager\AttendeeManager;
-use Oro\Bundle\CalendarBundle\Model\Recurrence;
-use Oro\Bundle\ReminderBundle\Entity\Manager\ReminderManager;
-use Oro\Bundle\SecurityBundle\SecurityFacade;
+use Oro\Bundle\CalendarBundle\Entity\Recurrence;
+use Oro\Bundle\CalendarBundle\Entity\Repository\CalendarEventRepository;
+use Oro\Bundle\CalendarBundle\Manager\CalendarEventManager;
 use Oro\Component\PropertyAccess\PropertyAccessor;
 
 class UserCalendarEventNormalizer extends AbstractCalendarEventNormalizer
 {
-    /** @var SecurityFacade */
-    protected $securityFacade;
-
-    /** @var PropertyAccessor */
+    /**
+     * @var PropertyAccessor
+     */
     protected $propertyAccessor;
 
     /**
-     * @param ReminderManager $reminderManager
-     * @param SecurityFacade  $securityFacade
-     * @param AttendeeManager $attendeeManager
-     */
-    public function __construct(
-        ReminderManager $reminderManager,
-        SecurityFacade $securityFacade,
-        AttendeeManager $attendeeManager
-    ) {
-        parent::__construct($reminderManager, $attendeeManager);
-        $this->securityFacade = $securityFacade;
-    }
-
-    /**
-     * Converts calendar event to form that can be used in API
+     * Converts calendar event object to an array to be exposed in the API
      *
-     * @param CalendarEvent $event      The calendar event object
-     * @param int           $calendarId The target calendar id
-     *
-     * @param array         $extraFields
+     * @param CalendarEvent $event The calendar event object
+     * @param int $calendarId The target calendar id
+     * @param array $extraFields List of extra fields to be added to the event
      *
      * @return array
      */
     public function getCalendarEvent(CalendarEvent $event, $calendarId = null, array $extraFields = [])
     {
         $item = $this->transformEntity($this->serializeCalendarEvent($event, $extraFields));
+
         if (!$calendarId) {
             $calendarId = $item['calendar'];
         }
 
         $result = [$item];
-        $this->applyAdditionalData($result, $calendarId);
-        $this->applyPermissions($result[0], $calendarId);
-        $this->addCurrentUserInvitationToCalendarEvents($result);
-        $this->reminderManager->applyReminders($result, 'Oro\Bundle\CalendarBundle\Entity\CalendarEvent');
+        $this->applyListData($result, $calendarId);
 
         return $result[0];
     }
 
     /**
-     * @param CalendarEvent $event
+     * Serialize calendar event object into an array to be expose in the API.
      *
-     * @param array         $extraFields
+     * @param CalendarEvent $event Source calendar event instance.
+     * @param array $extraFields List of extra fields to add.
      *
-     * @return array
+     * @return array Serialized data of calendar event.
      */
     protected function serializeCalendarEvent(CalendarEvent $event, array $extraFields = [])
     {
-        $extraValues = [];
+        $item = [
+            'id'                    => $event->getId(),
+            'title'                 => $event->getTitle(),
+            'description'           => $event->getDescription(),
+            'start'                 => $event->getStart(),
+            'end'                   => $event->getEnd(),
+            'allDay'                => $event->getAllDay(),
+            'backgroundColor'       => $event->getBackgroundColor(),
+            'createdAt'             => $event->getCreatedAt(),
+            'updatedAt'             => $event->getUpdatedAt(),
+            'invitationStatus'      => $event->getInvitationStatus(),
+            'parentEventId'         => $event->getParent() ? $event->getParent()->getId() : null,
+            'calendar'              => $event->getCalendar() ? $event->getCalendar()->getId() : null,
+            'recurringEventId'      => $event->getRecurringEvent() ? $event->getRecurringEvent()->getId() : null,
+            'originalStart'         => $event->getOriginalStart(),
+            'isCancelled'           => $event->isCancelled(),
+            'relatedAttendeeUserId' => $event->getRelatedAttendeeUserId(),
+        ];
 
-        foreach ($extraFields as $field) {
-            $extraValues[$field] = $this->getObjectValue($event, $field);
-        }
+        $this->applySerializedRecurrence($item, $event);
+        $this->applySerializedAttendees($item, $event);
+        $this->applySerializedExtraFields($item, $event, $extraFields);
 
+        return $item;
+    }
+
+    /**
+     * Adds recurrence to the serialized calendar event data.
+     *
+     * @param array $item Serialized calendar event data to update.
+     * @param CalendarEvent $event Source calendar event instance.
+     */
+    protected function applySerializedRecurrence(array &$item, CalendarEvent $event)
+    {
         if ($recurrence = $event->getRecurrence()) {
-            $extraValues[Recurrence::STRING_KEY] = [
-                'id' => $recurrence->getId(),
-                'recurrenceType' => $recurrence->getRecurrenceType(),
-                'interval' => $recurrence->getInterval(),
-                'instance' => $recurrence->getInstance(),
-                'dayOfWeek' => $recurrence->getDayOfWeek(),
-                'dayOfMonth' => $recurrence->getDayOfMonth(),
-                'monthOfYear' => $recurrence->getMonthOfYear(),
-                'startTime' => $recurrence->getStartTime(),
-                'endTime' => $recurrence->getEndTime(),
-                'occurrences' => $recurrence->getOccurrences(),
-                'timezone' => $recurrence->getTimeZone()
-            ];
+            $item['recurrence'] = $this->serializeRecurrence($event->getRecurrence());
         }
+    }
 
-        return array_merge(
+    /**
+     * Serialize recurrence of the calendar event.
+     *
+     * @param Recurrence $recurrence
+     *
+     * @return array
+     */
+    protected function serializeRecurrence(Recurrence $recurrence)
+    {
+        return [
+            'id' => $recurrence->getId(),
+            'recurrenceType' => $recurrence->getRecurrenceType(),
+            'interval' => $recurrence->getInterval(),
+            'instance' => $recurrence->getInstance(),
+            'dayOfWeek' => $recurrence->getDayOfWeek(),
+            'dayOfMonth' => $recurrence->getDayOfMonth(),
+            'monthOfYear' => $recurrence->getMonthOfYear(),
+            'startTime' => $recurrence->getStartTime(),
+            'endTime' => $recurrence->getEndTime(),
+            'occurrences' => $recurrence->getOccurrences(),
+            'timezone' => $recurrence->getTimeZone()
+        ];
+    }
+
+    /**
+     * Serialize attendees collection of calendar event.
+     *
+     * @param array $item Serialized calendar event data to update.
+     * @param CalendarEvent $event Source calendar event instance.
+     */
+    protected function applySerializedAttendees(array &$item, CalendarEvent $event)
+    {
+        $item['attendees'] = [];
+
+        foreach ($event->getAttendees() as $attendee) {
+            $item['attendees'][] = $this->serializeAttendee($attendee);
+        }
+    }
+
+    /**
+     * Serialize attendee of calendar event.
+     *
+     * @param Attendee $attendee
+     *
+     * @return array
+     */
+    protected function serializeAttendee(Attendee $attendee)
+    {
+        return $this->transformEntity(
             [
-                'id'               => $event->getId(),
-                'title'            => $event->getTitle(),
-                'description'      => $event->getDescription(),
-                'start'            => $event->getStart(),
-                'end'              => $event->getEnd(),
-                'allDay'           => $event->getAllDay(),
-                'backgroundColor'  => $event->getBackgroundColor(),
-                'createdAt'        => $event->getCreatedAt(),
-                'updatedAt'        => $event->getUpdatedAt(),
-                'invitationStatus' => $event->getInvitationStatus(),
-                'parentEventId'    => $event->getParent() ? $event->getParent()->getId() : null,
-                'calendar'         => $event->getCalendar() ? $event->getCalendar()->getId() : null,
-                'recurringEventId' => $event->getRecurringEvent() ? $event->getRecurringEvent()->getId() : null,
-                'originalStart'    => $event->getOriginalStart(),
-                'isCancelled'      => $event->isCancelled(),
-                'relatedAttendeeUserId' => $event->getRelatedAttendee()
-                    ? $event->getRelatedAttendee()->getUser()->getId()
-                    : null,
-            ],
-            $this->prepareExtraValues($event, $extraValues)
+                'displayName' => $attendee->getDisplayName(),
+                'email'       => $attendee->getEmail(),
+                'userId'      => $this->getObjectValue($attendee, 'user.id'),
+                'createdAt'   => $attendee->getCreatedAt(),
+                'updatedAt'   => $attendee->getUpdatedAt(),
+                'status'      => $this->getObjectValue($attendee, 'status.id'),
+                'type'        => $this->getObjectValue($attendee, 'type.id'),
+            ]
         );
     }
 
     /**
-     * {@inheritdoc}
-     */
-    protected function applyPermissions(&$item, $calendarId)
-    {
-        $item['editable']     =
-            ($item['calendar'] === $calendarId)
-            && empty($item['parentEventId'])
-            && $this->securityFacade->isGranted('oro_calendar_event_update');
-        $item['removable']    =
-            ($item['calendar'] === $calendarId)
-            && $this->securityFacade->isGranted('oro_calendar_event_delete');
-        $item['notifiable'] =
-            empty($item['parentEventId'])
-            && !empty($item['attendees'])
-            && empty($item['recurrence']);
-    }
-
-    /**
-     * @param array  $items
+     * Adds extra fields to the serialized calendar event data.
      *
-     * @return array
+     * @param array $item Serialized calendar event data to update.
+     * @param CalendarEvent $event Source calendar event instance.
+     * @param array $extraFields List of extra fields to add.
      */
-    protected function getParentEventIds(array $items)
+    protected function applySerializedExtraFields(array &$item, CalendarEvent $event, array $extraFields = [])
     {
-        $ids = [];
-        foreach ($items as $item) {
-            if (empty($item['parentEventId'])) {
-                $ids[] = $item['id'];
-            }
+        foreach ($extraFields as $field) {
+            $item[$field] = $this->getObjectValue($event, $field);
         }
-
-        return $ids;
-    }
-
-    /**
-     * @return PropertyAccessor
-     */
-    protected function getPropertyAccessor()
-    {
-        if (null === $this->propertyAccessor) {
-            $this->propertyAccessor = new PropertyAccessor();
-        }
-
-        return $this->propertyAccessor;
     }
 
     /**
@@ -185,114 +186,101 @@ class UserCalendarEventNormalizer extends AbstractCalendarEventNormalizer
     }
 
     /**
-     * @param CalendarEvent $event
-     * @param array         $extraValues
-     *
-     * @return array
+     * @return PropertyAccessor
      */
-    protected function prepareExtraValues(CalendarEvent $event, array $extraValues)
+    protected function getPropertyAccessor()
     {
-        $extraValues['attendees']    = [];
-
-        foreach ($event->getAttendees() as $attendee) {
-            $extraValues['attendees'][] = $this->transformEntity([
-                'displayName' => $attendee->getDisplayName(),
-                'email'       => $attendee->getEmail(),
-                'userId'      => $this->getObjectValue($attendee, 'user.id'),
-                'createdAt'   => $attendee->getCreatedAt(),
-                'updatedAt'   => $attendee->getUpdatedAt(),
-                'status'      => $this->getObjectValue($attendee, 'status.id'),
-                'type'        => $this->getObjectValue($attendee, 'type.id'),
-            ]);
+        if (null === $this->propertyAccessor) {
+            $this->propertyAccessor = new PropertyAccessor();
         }
 
-        /**
-         * Contract of the API is to return the attendees in a specific order sorting by displayName field
-         *
-         * @todo Remove duplication of this logic in CRM-6350.
-         * @see \Oro\Bundle\CalendarBundle\Provider\AbstractCalendarEventNormalizer::addAttendeesToCalendarEvents
-         */
-        usort(
-            $extraValues['attendees'],
-            function ($first, $second) {
-                return strcmp($first['displayName'], $second['displayName']);
-            }
-        );
-
-        return $extraValues;
+        return $this->propertyAccessor;
     }
 
     /**
      * {@inheritdoc}
      */
-    public function getCalendarEvents($calendarId, AbstractQuery $query)
+    protected function applyItemPermissionsData(array &$item)
     {
-        $result = [];
+        $item['editable'] =
+            ($item['calendar'] === $this->getCurrentCalendarId())
+            && empty($item['parentEventId'])
+            && $this->securityFacade->isGranted('oro_calendar_event_update');
 
-        $rawData = $query->getArrayResult();
-        foreach ($rawData as $rawDataItem) {
-            $item = $this->transformEntity($rawDataItem);
-            $this->transformRecurrenceData($item);
-            $result[] = $item;
-        }
-        $this->applyAdditionalData($result, $calendarId);
-        $this->addAttendeesToCalendarEvents($result);
-        $this->addCurrentUserInvitationToCalendarEvents($result);
-        foreach ($result as &$resultItem) {
-            $this->applyPermissions($resultItem, $calendarId);
-        }
+        $item['removable'] =
+            ($item['calendar'] === $this->getCurrentCalendarId())
+            && $this->securityFacade->isGranted('oro_calendar_event_delete');
 
-        $this->reminderManager->applyReminders($result, 'Oro\Bundle\CalendarBundle\Entity\CalendarEvent');
+        $item['notifiable'] =
+            empty($item['parentEventId'])
+            && !empty($item['attendees'])
+            && empty($item['recurrence']);
 
-        return $result;
+        $item['editableInvitationStatus'] = $this->canChangeInvitationStatus($item);
     }
 
     /**
-     * Transforms recurrence data into separate field.
+     * Returns TRUE if user can change his invitation status for the event.
+     * By default user can change invitation status only if event he is related attendee of the event.
      *
-     * @param $entity
+     * @param array $item Calendar event data array
      *
-     * @return UserCalendarEventNormalizer
+     * @return boolean
      */
-    protected function transformRecurrenceData(&$entity)
+    protected function canChangeInvitationStatus(array $item)
     {
-        $result = [];
-        $key = Recurrence::STRING_KEY;
+        $loggedUser = $this->securityFacade->getLoggedUser();
+
+        return $this->calendarEventManager->canChangeInvitationStatus($item, $loggedUser);
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    protected function onApplyItemData(array &$item)
+    {
+        parent::onApplyItemData($item);
+        $this->applyItemRecurrence($item);
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    protected function afterApplyItemData(array &$item)
+    {
+        parent::afterApplyItemData($item);
+        // Remove temporary property to not expose it in the API.
+        unset($item['relatedAttendeeUserId']);
+    }
+
+    /**
+     * Shrink all fields related to recurrence data into a single field. This operation is required because repository
+     * will return a query with all fields of recurrence represented as separate keys.
+     *
+     * @see \Oro\Bundle\CalendarBundle\Entity\Repository\CalendarEventRepository
+     *
+     * @param array $item Calendar event data as an array.
+     */
+    protected function applyItemRecurrence(&$item)
+    {
+        if (isset($item['recurrence'])) {
+            // Recurrence field has already a value, no additional action is required
+            return;
+        }
+
+        $recurrence = [];
+        $recurrenceFieldPrefix = CalendarEventRepository::RECURRENCE_FIELD_PREFIX;
         $isEmpty = true;
-        foreach ($entity as $field => $value) {
-            if (substr($field, 0, strlen($key)) === $key) {
-                unset($entity[$field]);
-                $result[lcfirst(substr($field, strlen($key)))] = $value;
+        foreach ($item as $field => $value) {
+            if (substr($field, 0, strlen($recurrenceFieldPrefix)) === $recurrenceFieldPrefix) {
+                unset($item[$field]);
+                $recurrence[lcfirst(substr($field, strlen($recurrenceFieldPrefix)))] = $value;
                 $isEmpty = empty($value) ? $isEmpty : false;
             }
         }
 
         if (!$isEmpty) {
-            $entity[$key] = $result;
+            $item['recurrence'] = $recurrence;
         }
-
-        return $this;
-    }
-
-    /**
-     * @param array $calendarEvents
-     *
-     * @return $this
-     */
-    protected function addCurrentUserInvitationToCalendarEvents(array &$calendarEvents)
-    {
-        // decide in which events current user is invited
-        $loggedUserId = $this->securityFacade->getLoggedUserId();
-        foreach ($calendarEvents as $key => $calendarEvent) {
-            if ($calendarEvent['relatedAttendeeUserId'] !== null) {
-                $isResponsive = (string) $calendarEvent['relatedAttendeeUserId'] === (string) $loggedUserId;
-            } else {
-                $isResponsive = false;
-            }
-            $calendarEvents[$key]['isResponsive'] = $isResponsive;
-            unset($calendarEvents[$key]['relatedAttendeeUserId']);
-        }
-
-        return $this;
     }
 }

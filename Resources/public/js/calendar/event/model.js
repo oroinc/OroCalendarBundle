@@ -31,6 +31,7 @@ define(function(require) {
             invitationStatus: null,
             attendees: null,
             editable: false,
+            editableInvitationStatus: false,
             removable: false,
             calendarAlias: null,
             calendar: null, // calendarId
@@ -39,8 +40,7 @@ define(function(require) {
             recurrencePattern: null,
             recurringEventId: null,
             originalStart: null,
-            isCancelled: null,
-            isResponsive: false
+            isCancelled: null
         },
 
         initialize: function() {
@@ -76,6 +76,7 @@ define(function(require) {
             var auxiliaryAttrs = [
                 'id',
                 'editable',
+                'editableInvitationStatus',
                 'removable',
                 'calendarUid',
                 'parentEventId',
@@ -86,8 +87,7 @@ define(function(require) {
                 'originalStart',
                 'isCancelled',
                 'durationEditable',
-                'startEditable',
-                'isResponsive'
+                'startEditable'
             ];
 
             if (this.get('recurrence')) {

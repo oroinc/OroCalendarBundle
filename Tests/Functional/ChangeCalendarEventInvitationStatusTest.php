@@ -5,6 +5,8 @@ namespace Oro\Bundle\CalendarBundle\Tests\Functional;
 use Oro\Bundle\CalendarBundle\Entity\Attendee;
 use Oro\Bundle\CalendarBundle\Entity\CalendarEvent;
 use Oro\Bundle\CalendarBundle\Tests\Functional\DataFixtures\LoadUserData;
+use Symfony\Component\Filesystem\Filesystem;
+use Symfony\Component\HttpFoundation\Session\Storage\MockFileSessionStorage;
 
 /**
  * The test covers changes of invitation status of simple calendar event.
@@ -107,7 +109,7 @@ class ChangeCalendarEventInvitationStatusTest extends HangoutsCallDependentTestC
                 'id' => $response['id'],
                 'notifiable' => true,
                 'invitationStatus' => Attendee::STATUS_NONE,
-                'isResponsive' => true
+                'editableInvitationStatus' => true
             ],
             $response
         );
@@ -179,6 +181,7 @@ class ChangeCalendarEventInvitationStatusTest extends HangoutsCallDependentTestC
                         ]
                     ],
                     'editable' => true,
+                    'editableInvitationStatus' => true,
                     'removable' => true,
                     'notifiable' => true,
                     'backgroundColor' => null,
@@ -186,7 +189,6 @@ class ChangeCalendarEventInvitationStatusTest extends HangoutsCallDependentTestC
                     'recurringEventId' => null,
                     'originalStart' => null,
                     'isCancelled' => false,
-                    'isResponsive' => true,
                     'createdAt' => $newEvent->getCreatedAt()->format(DATE_RFC3339),
                     'updatedAt' => $newEvent->getUpdatedAt()->format(DATE_RFC3339),
                 ],
@@ -227,6 +229,7 @@ class ChangeCalendarEventInvitationStatusTest extends HangoutsCallDependentTestC
                         ]
                     ],
                     'editable' => false,
+                    'editableInvitationStatus' => false,
                     'removable' => false,
                     'notifiable' => false,
                     'backgroundColor' => null,
@@ -234,7 +237,6 @@ class ChangeCalendarEventInvitationStatusTest extends HangoutsCallDependentTestC
                     'recurringEventId' => null,
                     'originalStart' => null,
                     'isCancelled' => false,
-                    'isResponsive' => false,
                     'createdAt' => $newChildEvent->getCreatedAt()->format(DATE_RFC3339),
                     'updatedAt' => $newChildEvent->getUpdatedAt()->format(DATE_RFC3339),
                 ],
@@ -247,7 +249,10 @@ class ChangeCalendarEventInvitationStatusTest extends HangoutsCallDependentTestC
             [
                 'method' => 'GET',
                 'url' => $this->getUrl('oro_calendar_event_accepted', ['id' => $newEvent->getId()]),
-                'server' => $this->generateWsseAuthHeader('foo_user_1', 'foo_user_1_api_key')
+                'server' => array_merge(
+                    $this->generateBasicAuthHeader('foo_user_1', 'password'),
+                    ['HTTP_X-CSRF-Header' => 1]
+                )
             ]
         );
 
@@ -398,7 +403,10 @@ class ChangeCalendarEventInvitationStatusTest extends HangoutsCallDependentTestC
             [
                 'method' => 'GET',
                 'url' => $this->getUrl('oro_calendar_event_tentative', ['id' => $newEvent->getId()]),
-                'server' => $this->generateWsseAuthHeader('foo_user_1', 'foo_user_1_api_key')
+                'server' => array_merge(
+                    $this->generateBasicAuthHeader('foo_user_1', 'password'),
+                    ['HTTP_X-CSRF-Header' => 1]
+                )
             ]
         );
 
@@ -549,7 +557,10 @@ class ChangeCalendarEventInvitationStatusTest extends HangoutsCallDependentTestC
             [
                 'method' => 'GET',
                 'url' => $this->getUrl('oro_calendar_event_declined', ['id' => $newEvent->getId()]),
-                'server' => $this->generateWsseAuthHeader('foo_user_1', 'foo_user_1_api_key')
+                'server' => array_merge(
+                    $this->generateBasicAuthHeader('foo_user_1', 'password'),
+                    ['HTTP_X-CSRF-Header' => 1]
+                )
             ]
         );
 
@@ -696,11 +707,18 @@ class ChangeCalendarEventInvitationStatusTest extends HangoutsCallDependentTestC
         );
 
         // Step 10. Update invitation status of the child event to "accepted".
+
+        // Clear session to to login with foo_user_2
+        $this->getContainer()->get('session')->clear();
+
         $this->restRequest(
             [
                 'method' => 'GET',
                 'url' => $this->getUrl('oro_calendar_event_accepted', ['id' => $newChildEvent->getId()]),
-                'server' => $this->generateWsseAuthHeader('foo_user_2', 'foo_user_2_api_key')
+                'server' => array_merge(
+                    $this->generateBasicAuthHeader('foo_user_2', 'password'),
+                    ['HTTP_X-CSRF-Header' => 1]
+                )
             ]
         );
 
@@ -717,6 +735,9 @@ class ChangeCalendarEventInvitationStatusTest extends HangoutsCallDependentTestC
             ],
             $response
         );
+
+        // Clear session after login with foo_user_2
+        $this->getContainer()->get('session')->clear();
 
         // Step 11. Get the events and verify the invitation status is set to "declined" in the main event
         // and "accepted" in the child event.

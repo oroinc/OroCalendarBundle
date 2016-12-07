@@ -277,7 +277,7 @@ class RecurringEventUpdateExceptionTest extends AbstractTestCase
             [
                 'notifiable' => false,
                 'invitationStatus' => Attendee::STATUS_NONE,
-                'isResponsive' => false
+                'editableInvitationStatus' => false,
             ],
             $response
         );

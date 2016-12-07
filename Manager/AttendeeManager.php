@@ -82,6 +82,8 @@ class AttendeeManager
     }
 
     /**
+     * Returns list of attendees for calendar events.
+     *
      * @param array $calendarEventIds
      *
      * @return array

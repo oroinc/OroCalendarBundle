@@ -8,13 +8,13 @@ use Doctrine\ORM\Mapping as ORM;
 
 use Oro\Bundle\CalendarBundle\Exception\NotUserCalendarEvent;
 use Oro\Bundle\CalendarBundle\Model\ExtendCalendarEvent;
+use Oro\Bundle\EntityBundle\EntityProperty\DatesAwareInterface;
+use Oro\Bundle\EntityBundle\EntityProperty\DatesAwareTrait;
 use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\Config;
 use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\ConfigField;
 use Oro\Bundle\ReminderBundle\Entity\RemindableInterface;
 use Oro\Bundle\ReminderBundle\Model\ReminderData;
-use Oro\Bundle\EntityBundle\EntityProperty\DatesAwareInterface;
-use Oro\Bundle\EntityBundle\EntityProperty\DatesAwareTrait;
-use Oro\Component\PhpUtils\ArrayUtil;
+use Oro\Bundle\UserBundle\Entity\User;
 
 /**
  * @ORM\Entity(repositoryClass="Oro\Bundle\CalendarBundle\Entity\Repository\CalendarEventRepository")
@@ -1070,6 +1070,29 @@ class CalendarEvent extends ExtendCalendarEvent implements RemindableInterface, 
     public function getRelatedAttendee()
     {
         return $this->relatedAttendee;
+    }
+
+    /**
+     * Returns id of user of related attendee if it exist.
+     *
+     * @return integer|null
+     */
+    public function getRelatedAttendeeUserId()
+    {
+        return $this->getRelatedAttendee() && $this->getRelatedAttendee()->getUser() ?
+            $this->getRelatedAttendee()->getUser()->getId() : null;
+    }
+
+
+    /**
+     * Returns true if related attendee user is equal to passed instance of user.
+     *
+     * @param User $user
+     * @return bool
+     */
+    public function isRelatedAttendeeUserEqual(User $user)
+    {
+        return $this->getRelatedAttendee() && $this->getRelatedAttendee()->isUserEqual($user);
     }
 
     /**
