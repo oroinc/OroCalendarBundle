@@ -16,7 +16,7 @@ use Oro\Bundle\UserBundle\Entity\User;
  * @Config(
  *      defaultValues={
  *          "entity"={
- *              "icon"="icon-info-sign"
+ *              "icon"="fa-info-circle"
  *          },
  *          "activity"={
  *              "immutable"=true

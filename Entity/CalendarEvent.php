@@ -33,7 +33,7 @@ use Oro\Bundle\UserBundle\Entity\User;
  *      routeView="oro_calendar_event_view",
  *      defaultValues={
  *          "entity"={
- *              "icon"="icon-time"
+ *              "icon"="fa-clock-o"
  *          },
  *          "dataaudit"={
  *              "auditable"=true

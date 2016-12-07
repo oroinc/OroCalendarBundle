@@ -26,7 +26,7 @@ use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\Config;
  * @Config(
  *      defaultValues={
  *          "entity"={
- *              "icon"="icon-cog"
+ *              "icon"="fa-cog"
  *          },
  *          "note"={
  *              "immutable"=true
