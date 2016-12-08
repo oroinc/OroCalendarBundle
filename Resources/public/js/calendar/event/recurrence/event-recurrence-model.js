@@ -2,13 +2,17 @@ define(function(require) {
     'use strict';
 
     var EventRecurrenceModel;
+    var _ = require('underscore');
     var localeSettings = require('orolocale/js/locale-settings');
+    var DAYOFWEEK = localeSettings.getCalendarDayOfWeekNames('mnemonic', true);
     var BaseModel = require('oroui/js/app/models/base/model');
 
     EventRecurrenceModel = BaseModel.extend({
         RECURRENCE_TYPES: ['daily', 'weekly', 'monthly', 'monthnth', 'yearly', 'yearnth'],
         RECURRENCE_INSTANCE: {1: 'first', 2: 'second', 3: 'third', 4: 'fourth', 5: 'last'},
-        RECURRENCE_DAYOFWEEK: localeSettings.getCalendarDayOfWeekNames('mnemonic', true),
+        RECURRENCE_DAYOFWEEK: DAYOFWEEK,
+        RECURRENCE_WEEKDAYS: DAYOFWEEK.slice(1, 6),
+        RECURRENCE_WEEKENDS: [DAYOFWEEK[0], DAYOFWEEK[6]],
         RECURRENCE_MONTHS: localeSettings.getCalendarMonthNames('wide'),
 
         defaults: {
@@ -26,6 +30,27 @@ define(function(require) {
 
         isEmptyRecurrence: function() {
             return this.RECURRENCE_TYPES.indexOf(this.get('recurrenceType')) === -1;
+        },
+        /**
+         * Compares data with model's attributes
+         *
+         * @param {object} values
+         * @returns {Boolean}
+         */
+        isEqual: function(values) {
+            values = _.mapObject(values, this._fieldCast);
+            var attributes = _.mapObject(this.attributes, this._fieldCast);
+            return _.isEqual(values, attributes);
+        },
+
+        _fieldCast: function(value, key) {
+            if (key === 'dayOfWeek') {
+                return _.sortBy(value);
+            } else if (_.contains(['interval', 'instance', 'dayOfMonth', 'monthOfYear', 'occurences'], key)) {
+                return Number(value) || null;
+            } else {
+                return value;
+            }
         }
     });
 

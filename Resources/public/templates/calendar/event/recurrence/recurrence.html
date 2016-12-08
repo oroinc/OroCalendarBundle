@@ -5,6 +5,15 @@
                                  data-name="recurrence-repeat"<% if (recurrenceType) { %> checked<% } %>></div>
 </div>
 <div data-name="recurrence-settings"<% if (!recurrenceType) { %> style="display: none"<% } %>>
+    <% if (!_.isEmpty(errors)) { %>
+    <div class="control-group alert alert-error">
+        <ul class="controls">
+        <% _.each(errors, function(item) {
+            _.each(item.messages, function(message) { %><li><%- item.label %>:&nbsp;<%= message %></li><% })
+        }) %>
+        </ul>
+    </div>
+    <% } %>
     <div class="control-group control-group-choice">
         <div class="control-label wrap"><label for="recurrence-repeats-<%= cid %>"
             ><%- _.__('oro.calendar.event.recurrence.control-label.repeats') %></label></div>
@@ -19,5 +28,12 @@
     <div data-name="recurrence-monthly"></div>
     <div data-name="recurrence-yearly"></div>
     <div data-name="recurrence-ends"></div>
+    <div class="control-group recurrence-summary alert-info">
+        <div class="control-label wrap">
+            <label><%= _.__('oro.calendar.event.recurrence.control-label.summary') %>:</label>
+        </div>
+        <div class="controls" data-name="recurrence-summary"></div>
+    </div>
     <div data-name="recurrence-origin-values" class="hide"></div>
 </div>
+<div class="alert alert-warning" data-name="recurrence-warning" style="display: none"></div>

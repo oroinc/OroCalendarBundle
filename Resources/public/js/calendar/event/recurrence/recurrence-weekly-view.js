@@ -9,11 +9,12 @@ define(function(require) {
         template: require('tpl!orocalendar/templates/calendar/event/recurrence/recurrence-weekly.html'),
         relatedFields: ['recurrenceType', 'interval', 'dayOfWeek'],
         render: function() {
+            var data = this.getTemplateData();
             RecurrenceWeeklyView.__super__.render.apply(this, arguments);
             this.subview('week-day-picker', new WeekDayPickerView({
                 autoRender: true,
                 el: this.$('[data-name="recurrence-week-day-picker"]'),
-                value: this.model.get('dayOfWeek'),
+                value: data.dayOfWeek,
                 selectAttrs: {
                     'data-related-field': 'dayOfWeek'
                 }

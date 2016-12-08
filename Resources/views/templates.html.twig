@@ -86,49 +86,66 @@
 <script type="text/html" id="{{ id }}">
     {% import 'OroUIBundle::macros.html.twig' as UI %}
     {% import 'OroCalendarBundle::invitations.html.twig' as invitations %}
-    {% set data = [
-            form_row(form.title),
-            form_row(form.description),
-            form_row(form.start),
-            form_row(form.end),
-            form_row(form.allDay),
-            '<% if (recurrence) { %>' ~
-                UI.renderHtmlProperty(
-                    'oro.calendar.calendarevent.recurrence.label'|trans,
-                    '<%= recurrencePattern %>'
-                ) ~
-            '<% } else if (recurringEventId && recurrencePattern) { %>' ~
-                UI.renderHtmlProperty(
-                    'oro.calendar.calendarevent.recurrence.exception.label'|trans,
-                    '<%= recurrencePattern %>'
-                ) ~
-            '<% } else if (!id) { %><div data-name="recurrence-container"></div><% } %>',
-            form_row(form.backgroundColor),
-            form.calendarUid is defined ? form_row(form.calendarUid) : null,
-            form_row(form.attendees),
-            '<% if (!recurrence) { %>' ~ form_row(form.reminders) ~ '<% } %>',
-            form_row(form.notifyInvitedUsers)
-        ]
-    %}
-    {% for child in form.children if child.vars.extra_field is defined and child.vars.extra_field %}
-        {% set data = data|merge([form_row(child)]) %}
-    {% endfor %}
+    {% set calendarEventDateRange = {
+        module: 'orocalendar/js/app/components/calendar-event-date-range-component',
+        name: 'calendar-event-date-range',
+        options: {
+            nativeMode: isMobileVersion()
+        }
+    } %}
+    {% set calendarEventRecurrence = {
+        module: 'orocalendar/js/app/components/calendar-event-recurrence-component',
+        name: 'calendar-event-recurrence',
+        options: {
+            inputNamePrefixes: form.recurrence.vars.full_name
+        }
+    } %}
+    {% set rightColumn %}
+        <div {{ UI.renderPageComponentAttributes(calendarEventDateRange) }}>
+            {{ form_row(form.start) }}
+            {{ form_row(form.end) }}
+            {{ form_row(form.allDay) }}
+        </div>
+        <% if (editAsException || recurringEventId) { %>
+            {{ UI.renderHtmlProperty(
+                'oro.calendar.calendarevent.recurrence.exception.label'|trans,
+                '<%= recurrencePattern %>'
+            ) }}
+        <% } else { %>
+            <div {{ UI.renderPageComponentAttributes(calendarEventRecurrence) }}></div>
+        <% } %>
+    {% endset %}
+    {% set leftColumn %}
+        {{ form_row(form.title) }}
+        {{ form_row(form.description) }}
+        {{ form_row(form.backgroundColor) }}
+        {% if form.calendarUid is defined %}
+            {{ form_row(form.calendarUid) }}
+        {% endif %}
+        {{ form_row(form.attendees) }}
+        <% if (!recurrence) { %>
+            {{ form_row(form.reminders) }}
+        <% } %>
+        {{ form_row(form.notifyInvitedUsers) }}
+        {% for child in form.children if child.vars.extra_field is defined and child.vars.extra_field %}
+            {{ form_row(child) }}
+        {% endfor %}
+        <% if (typeof notifiable !== 'undefined' && notifiable) { %>
+            {{ invitations.notifyGuestsComponent() }}
+        <% } %>
+    {% endset %}
+
     <div class="widget-content">
         <div class="alert alert-error" style="display: none;"></div>
-        <form id="{{ form.vars.id }}" name="{{ form.vars.name }}" action="#">
-            {% set options = {
-                'view':'orocalendar/js/app/views/calendar-event-form-view',
-                'nativeMode': isMobileVersion()
-            } %}
-            <div data-page-component-module="oroui/js/app/components/view-component"
-                 data-page-component-options="{{ options|json_encode }}"
-                 data-layout="separate">
-                <fieldset class="form-horizontal">
-                    {{ UI.scrollSubblock(null, data, true, false)|oro_js_template_content|raw }}
-                    <% if (typeof notifiable !== 'undefined' && notifiable) { %>
-                        {{ invitations.notifyGuestsComponent() }}
-                    <% } %>
-
+        <div class="form-container">
+            <form id="{{ form.vars.id }}" name="{{ form.vars.name }}" action="#">
+                <fieldset class="form form-horizontal">
+                    <div class="span6">
+                        {{ leftColumn }}
+                    </div>
+                    <div class="span6">
+                        {{ rightColumn }}
+                    </div>
                     <div class="widget-actions form-actions" style="display: none;">
                         <% if (id != null && removable) { %>
                         {{
@@ -148,8 +165,8 @@
                         <% } %>
                     </div>
                 </fieldset>
-            </div>
-        </form>
+            </form>
+        </div>
         {{ oro_form_js_validation(form)|oro_js_template_content|raw }}
     </div>
 </script>
