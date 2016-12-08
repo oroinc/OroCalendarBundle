@@ -135,16 +135,22 @@ oro:
             delete_event:         Delete {{ entity }}
 
             statuses:
-                none:                 Not responded
-                tentative:            Tentatively accepted
-                accepted:             Accepted
-                declined:             Declined
+                none.label:           Not responded
+                tentative.label:      Tentatively accepted
+                accepted.label:       Accepted
+                declined.label:       Declined
 
-            actions.label:            Going?
-            actions:
-                tentative:            Maybe
-                accepted:             Yes
-                declined:             No
+            action:
+                status:
+                    tentative.label:  Tentative
+                    accepted.label:   Accept
+                    declined.label:   Decline
+                going_status:
+                    label:            Going?
+                    tentative.label:  Maybe
+                    accepted.label:   Yes
+                    declined.label:   No
+
 
         #
         # Oro/Bundle/CalendarBundle/Entity/CalendarProperty

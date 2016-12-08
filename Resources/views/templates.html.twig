@@ -68,8 +68,8 @@
                         <% if (invitationStatus !== "{{ status }}") { %>
                             <% var link='{{
                                     _self.rawLink({
-                                        'label': invitations.calendar_event_invitation_action(status)|trans,
-                                        'title': invitations.calendar_event_invitation_action(status)|trans,
+                                        'label': invitations.calendar_event_invitation_going_status(status),
+                                        'title': invitations.calendar_event_invitation_going_status(status),
                                         'path': '%path%',
                                         'data':  {
                                             'page-component-module': 'oroui/js/app/components/view-component',
@@ -84,11 +84,11 @@
                                 properties.push(link);
                             %>
                         <% } else { %>
-                            <% properties.push('{{ invitations.calendar_event_invitation_action(status)|trans }}'); %>
+                            <% properties.push('{{ invitations.calendar_event_invitation_going_status(status) }}'); %>
                         <% } %>
                     {% endfor %}
                     <div class="invitation-response">
-                        {{ UI.renderHtmlProperty('oro.calendar.calendarevent.actions.label'|trans, '<%= formatter.html(properties.join("&nbsp")) %>') }}
+                        {{ UI.renderHtmlProperty('oro.calendar.calendarevent.action.going_status.label'|trans, '<%= formatter.html(properties.join("&nbsp")) %>') }}
                     </div>
                 <% } %>
 

@@ -13,7 +13,7 @@ class ActionPermissionProvider
     protected $securityFacade;
 
     /**
-     * @param SecurityFacade      $securityFacade
+     * @param SecurityFacade $securityFacade
      */
     public function __construct(SecurityFacade $securityFacade)
     {
@@ -27,32 +27,32 @@ class ActionPermissionProvider
     public function getInvitationPermissions(ResultRecordInterface $record)
     {
         /** @var User $user */
-        $user             = $this->securityFacade->getLoggedUser();
-        $invitationStatus = $record->getValue('invitationStatus');
-        $parentId         = $record->getValue('parentId');
-        $ownerId          = $record->getValue('ownerId');
-        $attendeeUserId   = $record->getValue('attendeeUserId');
-        $isEditable       = (!$invitationStatus || ($invitationStatus && !$parentId));
+        $user                  = $this->securityFacade->getLoggedUser();
+        $invitationStatus      = $record->getValue('invitationStatus');
+        $parentId              = $record->getValue('parentId');
+        $ownerId               = $record->getValue('ownerId');
+        $relatedAttendeeUserId = $record->getValue('relatedAttendeeUserId');
+        $isEditable            = (!$invitationStatus || ($invitationStatus && !$parentId));
 
         return [
             'accept'      => $this->isAvailableResponseButton(
                 $user,
                 $ownerId,
-                $attendeeUserId,
+                $relatedAttendeeUserId,
                 $invitationStatus,
                 CalendarEvent::STATUS_ACCEPTED
             ),
             'decline'     => $this->isAvailableResponseButton(
                 $user,
                 $ownerId,
-                $attendeeUserId,
+                $relatedAttendeeUserId,
                 $invitationStatus,
                 CalendarEvent::STATUS_DECLINED
             ),
-            'tentatively' => $this->isAvailableResponseButton(
+            'tentative' => $this->isAvailableResponseButton(
                 $user,
                 $ownerId,
-                $attendeeUserId,
+                $relatedAttendeeUserId,
                 $invitationStatus,
                 CalendarEvent::STATUS_TENTATIVE
             ),
@@ -64,7 +64,7 @@ class ActionPermissionProvider
     /**
      * @param User $user
      * @param int $ownerId
-     * @param int $attendeeUserId
+     * @param int $relatedAttendeeUserId
      * @param string $invitationStatus
      * @param string $buttonStatus
      * @return bool
@@ -72,13 +72,13 @@ class ActionPermissionProvider
     protected function isAvailableResponseButton(
         $user,
         $ownerId,
-        $attendeeUserId,
+        $relatedAttendeeUserId,
         $invitationStatus,
         $buttonStatus
     ) {
         return $invitationStatus
-        && $invitationStatus != $buttonStatus
-        && $user->getId() == $ownerId
-        && $user->getId() == $attendeeUserId;
+            && $invitationStatus != $buttonStatus
+            && $user->getId() == $ownerId
+            && $user->getId() == $relatedAttendeeUserId;
     }
 }

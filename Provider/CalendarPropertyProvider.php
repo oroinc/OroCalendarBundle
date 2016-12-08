@@ -203,9 +203,9 @@ class CalendarPropertyProvider
         );
 
         $repo = $this->doctrineHelper->getEntityRepository($fieldConfig->get('target_entity'));
-        $data = $repo->createQueryBuilder('entity')
-            ->select('entity.id')
-            ->where('entity.default = true')
+        $data = $repo->createQueryBuilder('e')
+            ->select('e.id')
+            ->where('e.default = true')
             ->getQuery()
             ->getArrayResult();
 

@@ -160,15 +160,15 @@ class CalendarPropertyProviderTest extends \PHPUnit_Framework_TestCase
             ->getMock();
         $repo->expects($this->once())
             ->method('createQueryBuilder')
-            ->with('entity')
+            ->with('e')
             ->will($this->returnValue($qb));
         $qb->expects($this->once())
             ->method('select')
-            ->with('entity.id')
+            ->with('e.id')
             ->will($this->returnSelf());
         $qb->expects($this->once())
             ->method('where')
-            ->with('entity.default = true')
+            ->with('e.default = true')
             ->will($this->returnSelf());
         $query = $this->getMockBuilder('Doctrine\ORM\AbstractQuery')
             ->disableOriginalConstructor()

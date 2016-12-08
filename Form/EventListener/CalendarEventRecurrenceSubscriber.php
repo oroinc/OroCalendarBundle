@@ -7,8 +7,6 @@ use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\Form\FormEvent;
 use Symfony\Component\Form\FormEvents;
 
-use Oro\Bundle\CalendarBundle\Manager\CalendarEventManager;
-
 class CalendarEventRecurrenceSubscriber implements EventSubscriberInterface
 {
     /**

@@ -5,8 +5,6 @@ namespace Oro\Bundle\CalendarBundle\Tests\Functional;
 use Oro\Bundle\CalendarBundle\Entity\Attendee;
 use Oro\Bundle\CalendarBundle\Entity\CalendarEvent;
 use Oro\Bundle\CalendarBundle\Tests\Functional\DataFixtures\LoadUserData;
-use Symfony\Component\Filesystem\Filesystem;
-use Symfony\Component\HttpFoundation\Session\Storage\MockFileSessionStorage;
 
 /**
  * The test covers changes of invitation status of simple calendar event.
@@ -27,7 +25,7 @@ use Symfony\Component\HttpFoundation\Session\Storage\MockFileSessionStorage;
  *
  * @dbIsolation
  */
-class ChangeCalendarEventInvitationStatusTest extends HangoutsCallDependentTestCase
+class ChangeCalendarEventInvitationStatusTest extends AbstractTestCase
 {
     protected function setUp()
     {

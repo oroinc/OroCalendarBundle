@@ -61,9 +61,6 @@ class ValidationErrorTest extends AbstractValidationErrorTestCase
                 'contentType' => 'application/json'
             ]
         );
-        if (array_key_exists('use_hangout', $response['errors']['children'])) {
-            unset($response['errors']['children']['use_hangout']);
-        }
 
         $calendarEvent = $this->getEntityRepository('OroCalendarBundle:CalendarEvent')
             ->findOneBy(['title' => $eventData['title']]);

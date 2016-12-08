@@ -11,8 +11,8 @@
     {% if status != entity.invitationStatus %}
         {% set properties = properties|merge([
             UI.link({
-                'label': invitations.calendar_event_invitation_action(status)|trans,
-                'title': invitations.calendar_event_invitation_action(status)|trans,
+                'label': invitations.calendar_event_invitation_going_status(status),
+                'title': invitations.calendar_event_invitation_going_status(status),
                 'path': path('oro_calendar_event_' ~ status, {'id': entity.id}),
                 'data':  {
                     'page-component-module': 'oroui/js/app/components/view-component',
@@ -25,12 +25,12 @@
         ]) %}
     {% else %}
         {% set properties = properties|merge([
-            invitations.calendar_event_invitation_action(status)|trans
+            invitations.calendar_event_invitation_going_status(status)
         ]) %}
     {% endif %}
 {% endfor %}
 
 {{ UI.renderHtmlProperty(
-    'oro.calendar.calendarevent.actions.label'|trans,
+    'oro.calendar.calendarevent.action.going_status.label'|trans,
     properties|join('&nbsp;')
 ) }}

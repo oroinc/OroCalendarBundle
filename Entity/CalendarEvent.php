@@ -77,15 +77,6 @@ class CalendarEvent extends ExtendCalendarEvent implements RemindableInterface, 
 {
     use DatesAwareTrait;
 
-    /** @deprecated since 1.10 use constant with STATUS_ prefix */
-    const NOT_RESPONDED        = self::STATUS_NONE;
-    /** @deprecated since 1.10 use constant with STATUS_ prefix */
-    const TENTATIVELY_ACCEPTED = self::STATUS_TENTATIVE;
-    /** @deprecated since 1.10 use constant with STATUS_ prefix */
-    const ACCEPTED             = self::STATUS_ACCEPTED;
-    /** @deprecated since 1.10 use constant with STATUS_ prefix */
-    const DECLINED             = self::STATUS_DECLINED;
-
     const STATUS_NONE      = 'none';
     const STATUS_TENTATIVE = 'tentative';
     const STATUS_ACCEPTED  = 'accepted';

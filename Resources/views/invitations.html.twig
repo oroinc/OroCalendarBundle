@@ -63,13 +63,12 @@
     {%- endif -%}
 {% endmacro %}
 
-{# deprecated - use attendee.status.name instead #}
 {%- macro calendar_event_invitation_status(statusCode) -%}
-    {{ ('oro.calendar.calendarevent.statuses.' ~ statusCode)|trans }}
+    {{ ('oro.calendar.calendarevent.statuses.' ~ statusCode ~ '.label')|trans }}
 {%- endmacro -%}
 
-{%- macro calendar_event_invitation_action(statusCode) -%}
-    {{ ('oro.calendar.calendarevent.actions.' ~ statusCode)|trans }}
+{%- macro calendar_event_invitation_going_status(statusCode) -%}
+    {{ ('oro.calendar.calendarevent.action.going_status.' ~ statusCode ~ '.label')|trans }}
 {%- endmacro -%}
 
 {% macro notifyGuestsComponent() %}

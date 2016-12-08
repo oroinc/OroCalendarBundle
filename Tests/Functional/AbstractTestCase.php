@@ -11,6 +11,14 @@ use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 
 class AbstractTestCase extends WebTestCase
 {
+    /**
+     * The list of fields which can be exposed in the API if some optional bundels are enabled.
+     * This properties are not considered when response verified.
+     *
+     * @var array
+     */
+    static protected $ignoredResponseFields = ['use_hangout'];
+
     protected function setUp()
     {
         $this->initClient([]);
@@ -154,6 +162,7 @@ class AbstractTestCase extends WebTestCase
             $this->client->getRequest()->getRequestUri()
         );
 
+        $this->filterIgnoredResponseFields($actualResponse);
         $this->sortArrayByKeyRecursively($expectedResponse);
         $this->sortArrayByKeyRecursively($actualResponse);
 
@@ -169,6 +178,28 @@ class AbstractTestCase extends WebTestCase
                 $actualResponse,
                 $message
             );
+        }
+    }
+
+    /**
+     * Remove ignored fields from the response to not take it into account during comparison.
+     *
+     * @param array $response
+     */
+    protected function filterIgnoredResponseFields(array &$response)
+    {
+        if (isset($response[0]) && is_array($response[0])) {
+            foreach ($response as &$item) {
+                $this->filterIgnoredResponseFields($item);
+            }
+        } elseif (isset($response['errors']['children'])) {
+            foreach (self::$ignoredResponseFields as $fieldName) {
+                unset($response['errors']['children'][$fieldName]);
+            }
+        } else {
+            foreach (self::$ignoredResponseFields as $fieldName) {
+                unset($response[$fieldName]);
+            }
         }
     }
 
