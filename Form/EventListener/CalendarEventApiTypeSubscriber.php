@@ -63,8 +63,9 @@ class CalendarEventApiTypeSubscriber implements EventSubscriberInterface
      */
     protected function fixBooleanFields(array &$data, array $booleanFields)
     {
-        foreach ($booleanFields as $name => $value) {
+        foreach ($booleanFields as $name) {
             if (isset($data[$name])) {
+                $value = $data[$name];
                 if (is_string($value)) {
                     $value = strtolower($value);
                     $data[$name] = ($value === '1' || $value === 'true');
