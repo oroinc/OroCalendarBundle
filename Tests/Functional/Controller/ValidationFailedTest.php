@@ -85,23 +85,7 @@ class ValidationFailedTest extends AbstractValidationErrorTestCase
             'Failed asserting regular fields of event don\'t have validation errors.'
         );
 
-        $recurrenceFieldsValidationErrors = $this->getFormFieldsValidationErrors(
-            $crawler,
-            'oro_calendar_event_form',
-            'oro_calendar_event_form_recurrence_',
-            [
-                'recurrenceType',
-                'interval',
-                'instance',
-                'dayOfWeek',
-                'dayOfMonth',
-                'monthOfYear',
-                'startTime',
-                'endTime',
-                'occurrences',
-                'timeZone',
-            ]
-        );
+        $recurrenceFieldsValidationErrors = $this->getRecurrenceErrors($crawler);
 
         $this->sortArrayByKeyRecursively($recurrenceFieldsValidationErrors);
         $this->sortArrayByKeyRecursively($errors);
@@ -178,6 +162,37 @@ class ValidationFailedTest extends AbstractValidationErrorTestCase
                 $result[] = $validationErrorNode->text();
             }
         );
+
+        return $result;
+    }
+
+    /**
+     * Returns array of validation errors of the 'recurrence' fields.
+     *
+     * @param Crawler $crawler
+     *
+     * @return array
+     */
+    protected function getRecurrenceErrors(Crawler $crawler)
+    {
+        $component = 'orocalendar/js/app/components/calendar-event-recurrence-component';
+        $errorsXPath = sprintf(
+            '//div[contains(@data-page-component-module, "%s")]/@data-page-component-options',
+            $component
+        );
+
+        $componentOptions = json_decode($crawler->filterXPath($errorsXPath)->text(), true);
+
+        $errors = $componentOptions['errors'];
+
+        if (count($errors) == 0) {
+            return [];
+        }
+
+        $result = [];
+        foreach ($errors as $error) {
+            $result[$error['name']] = $error['messages'];
+        }
 
         return $result;
     }
