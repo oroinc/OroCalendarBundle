@@ -79,23 +79,10 @@ define(function(require) {
                 'calendarUid',
                 'parentEventId',
                 'invitationStatus',
-                'recurrence',
                 'recurrencePattern',
-                'recurringEventId',
-                'originalStart',
-                'isCancelled',
                 'durationEditable',
                 'startEditable'
             ];
-
-            if (this.get('recurrence')) {
-                if (this.isNew()) {
-                    this.get('recurrence').startTime = this.get('start');
-                    auxiliaryAttrs = _.without(auxiliaryAttrs, 'recurrence');
-                } else {
-                    auxiliaryAttrs.push('start', 'end');
-                }
-            }
 
             modelData = _.extend(
                 {id: this.originalId},

@@ -272,7 +272,6 @@ class UserCalendarProvider extends AbstractCalendarProvider
                         $timeZone
                     );
                     $newItem['end'] = $endDate->format('c');
-                    $newItem['removable'] = false;
                     $newItem['startEditable'] = false;
                     $newItem['durationEditable'] = false;
                     $occurrences[] = $newItem;

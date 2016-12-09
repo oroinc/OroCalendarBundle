@@ -34,7 +34,7 @@
                 <option disabled>&#9473;&#9473;&#9473;&#9473;&#9473;&#9473;&#9473;&#9473;&#9473;</option>
                 <% _.each(repeatOnOptions, function (option) { %>
                 <option value="<%= option.value %>"
-                <% if (option.value === instance) { %> selected="selected"<% } %>>
+                <% if (option.selected) { %> selected="selected"<% } %>>
                 <%- _.__('oro.calendar.event.recurrence.controls.monthly-repeat-on.' + option.text) %>
                 </option>
                 <% }); %>
@@ -73,5 +73,5 @@
             </span>
         </div>
     </div>
-    <div class="alert alert-warning" data-name="recurrence-warning" style="display: none"></div>
+    <div class="alert alert-warning" data-name="recurrence-fewer-days-warning" style="display: none"></div>
 </div>

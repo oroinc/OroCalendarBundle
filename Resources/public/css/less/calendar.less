@@ -212,7 +212,7 @@ i.invitation-status {
   margin: 1px 4px 0 1px;
   line-height: 13px;
 }
-i.invitation-status.icon-question-sign {
+i.invitation-status.fa-question-circle {
   font-size: 13px;
   margin: 0 4px 0 1px;
 }
@@ -276,4 +276,25 @@ i.invitation-status.icon-question-sign {
   white-space: inherit;
   overflow: inherit;
   text-overflow: inherit;
+}
+
+.event-action-target-select-form {
+  padding: 10px 16px;
+  &__item {
+    margin-bottom: 10px;
+    [type="radio"] {
+      float: left;
+    }
+  }
+  &__item-title {
+    color: @bodyColor;
+    font-weight: bold;
+    font-size: 14px;
+    margin-left: 20px;
+  }
+  &__item-desc {
+    color: lighten(@bodyColor, 25%);
+    font-size: 12px;
+    margin-left: 20px;
+  }
 }

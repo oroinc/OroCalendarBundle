@@ -18,7 +18,18 @@ define(function(require) {
             if ('relatedFields' in this === false) {
                 throw new Error('Property "relatedFields" should be declare in successor class');
             }
+            if ('enabled' in options) {
+                this._isEnabled = Boolean(options.enabled);
+            }
             AbstractRecurrenceSubview.__super__.initialize.call(this, options);
+        },
+
+        getTemplateData: function() {
+            var data = AbstractRecurrenceSubview.__super__.getTemplateData.call(this);
+            if (!this._isEnabled) {
+                _.extend(data, this.getDefaultValues());
+            }
+            return data;
         },
 
         /**

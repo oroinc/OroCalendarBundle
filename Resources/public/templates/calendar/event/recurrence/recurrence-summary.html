@@ -1,0 +1,18 @@
+<div><%
+if (recurrenceType) {
+    if (exclusion) {
+    %><span><%= _.__('oro.calendar.event.recurrence.patterns.' + exclusion) %></span><%
+    } else if (_.contains(['daily', 'weekly', 'monthly', 'monthnth', 'yearly', 'yearnth'], recurrenceType)) {
+    %><span><%= _.__('oro.calendar.event.recurrence.patterns.' + recurrenceType, obj, Number(count) || Number.MAX_SAFE_INTEGER) %></span><%
+    }
+    if (occurrences) {
+    %><span><%= _.__('oro.calendar.event.recurrence.patterns.occurrences', {count: occurrences}, Number(occurrences) || Number.MAX_SAFE_INTEGER) %></span><%
+    }
+    if (endTime) {
+    %><span><%= _.__('oro.calendar.event.recurrence.patterns.end-date', {date: formattedEndTime}) %></span><%
+    }
+    if (timezone_offset) {
+    %><span><%= _.__('oro.calendar.event.recurrence.patterns.timezone', obj) %></span><%
+    }
+}
+%></div>

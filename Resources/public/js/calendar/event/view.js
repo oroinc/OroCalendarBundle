@@ -14,8 +14,7 @@ define(function(require) {
     var DeleteConfirmation = require('oroui/js/delete-confirmation');
     var fieldFormatter = require('oroform/js/formatter/field');
     var ActivityContextComponent = require('oroactivity/js/app/components/activity-context-activity-component');
-    var EventRecurrenceView = require('orocalendar/js/calendar/event/recurrence/event-recurrence-view');
-    var EventRecurrenceModel = require('orocalendar/js/calendar/event/recurrence/event-recurrence-model');
+    var ActionTargetSelectView = require('orocalendar/js/calendar/event/action-target-select-view');
 
     /**
      * @export  orocalendar/js/calendar/event/view
@@ -38,9 +37,10 @@ define(function(require) {
             backgroundColor: 'input[name$="[backgroundColor]"]',
             calendarUid: '[name*="calendarUid"]',
             attendees: 'input[name$="[attendees]"]',
-            contexts: 'input[name$="[contexts]"]',
-            recurrenceContainer: '[data-name=recurrence-container]'
+            contexts: 'input[name$="[contexts]"]'
         },
+
+        exceptionEventData: null,
 
         /** @property {Array} */
         userCalendarOnlyFields: [
@@ -58,7 +58,6 @@ define(function(require) {
         },
 
         remove: function() {
-            this.trigger('remove');
             this._hideMask();
             if (this.activityContext) {
                 this.activityContext.dispose();
@@ -70,55 +69,27 @@ define(function(require) {
         onModelSave: function() {
             this.trigger('addEvent', this.model);
             this.eventDialog.remove();
-            this.remove();
         },
 
         onModelDelete: function() {
             this.eventDialog.remove();
-            this.remove();
         },
 
         render: function() {
             var widgetOptions = this.options.widgetOptions || {};
             var defaultOptions = {
-                    title: this.model.isNew() ? __('Add New Event') : __('View Event'),
-                    stateEnabled: false,
-                    incrementalPosition: false,
-                    dialogOptions: _.defaults(widgetOptions.dialogOptions || {}, {
-                        modal: true,
-                        resizable: false,
-                        width: 475,
-                        autoResize: true,
-                        close: _.bind(this.remove, this)
-                    }),
-                    submitHandler: _.bind(this.saveModel, this)
-                };
-            var onDelete = _.bind(function(e) {
-                    var $el = $(e.currentTarget);
-                    var deleteUrl = $el.data('url');
-                    var deleteConfirmationMessage = $el.data('message');
-                    if (this.model.toJSON().recurringEventId) {
-                        deleteConfirmationMessage = deleteConfirmationMessage +
-                            '<br/>' +
-                            __('Only this particular event will be deleted from the series.');
-                    }
-                    var confirm = new DeleteConfirmation({
-                        content: deleteConfirmationMessage
-                    });
-                    e.preventDefault();
-                    confirm.on('ok', _.bind(function() {
-                        this.deleteModel(deleteUrl);
-                    }, this));
-                    confirm.open();
-                }, this);
-            var onEdit = _.bind(function(e) {
-                    this.eventDialog.setTitle(__('Edit Event'));
-                    this.eventDialog.setContent(this.getEventForm());
-                    // subscribe to 'delete event' event
-                    this.eventDialog.getAction('delete', 'adopted', function(deleteAction) {
-                        deleteAction.on('click', onDelete);
-                    });
-                }, this);
+                title: this.model.isNew() ? __('Add New Event') : __('View Event'),
+                stateEnabled: false,
+                incrementalPosition: false,
+                dialogOptions: _.defaults(widgetOptions.dialogOptions || {}, {
+                    modal: true,
+                    resizable: false,
+                    width: 475,
+                    autoResize: true,
+                    close: _.bind(this.dispose, this)
+                }),
+                submitHandler: _.bind(this.saveModel, this)
+            };
 
             if (this.options.widgetRoute) {
                 defaultOptions.el = $('<div></div>');
@@ -126,6 +97,11 @@ define(function(require) {
                 defaultOptions.type = 'Calendar';
             } else {
                 defaultOptions.el = this.model.isNew() ? this.getEventForm() : this.getEventView();
+                defaultOptions.el.wrapInner('<div data-layout="separate" />');
+                this.setElement(defaultOptions.el.find('>*:first'));
+                if (this.model.isNew()) {
+                    defaultOptions.dialogOptions.width = 1000;
+                }
                 defaultOptions.loadingMaskEnabled = false;
             }
 
@@ -136,25 +112,143 @@ define(function(require) {
             this.eventDialog.render();
 
             // subscribe to 'delete event' event
-            this.eventDialog.getAction('delete', 'adopted', function(deleteAction) {
-                deleteAction.on('click', onDelete);
-            });
+            this.eventDialog.getAction('delete', 'adopted', _.bind(function(deleteAction) {
+                var callback = this.model.get('recurrence') ? this._onDeleteTargetSelect : this._onDeleteDialogAction;
+                deleteAction.on('click', callback.bind(this));
+            }, this));
             // subscribe to 'switch to edit' event
-            this.eventDialog.getAction('edit', 'adopted', function(editAction) {
-                editAction.on('click', onEdit);
-            });
+            this.eventDialog.getAction('edit', 'adopted', _.bind(function(editAction) {
+                var callback = this.model.get('recurrence') ? this._onEditTargetSelect : this._onEditDialogAction;
+                this.exceptionEventData = null;
+                editAction.on('click', callback.bind(this));
+            }, this));
 
             // init loading mask control
             this.loadingMask = new LoadingMask({
                 container: this.eventDialog.$el.closest('.ui-dialog')
             });
 
+            this.showLoadingMask();
+            this.initLayout({model: this.model})
+                .always(_.bind(this._hideMask, this));
+
             return this;
+        },
+
+        /**
+         * Displays form in popup that allows to select single event or whole of series event to edit
+         *
+         * @param {jQuery.Event} e
+         */
+        _onEditTargetSelect: function(e) {
+            var view = new ActionTargetSelectView({
+                autoRender: true,
+                actionType: 'edit'
+            });
+            this.eventDialog.setTitle(__('Edit Event'));
+            this.eventDialog.setContent(view.$el);
+            // subscribe to 'delete event' event
+            this.eventDialog.getAction('apply', 'adopted', _.bind(function(applyAction) {
+                applyAction.on('click', _.bind(function(e) {
+                    if (view.getValue() === 'exception') {
+                        this.exceptionEventData = {
+                            originalStart: this.model.get('start')
+                        };
+                    } else {
+                        this.exceptionEventData = null;
+                    }
+                    this._onEditDialogAction(e);
+                }, this));
+            }, this));
+        },
+
+        /**
+         * Displays form in popup that allows to select single event or whole of series event to delete
+         *
+         * @param {jQuery.Event} e
+         */
+        _onDeleteTargetSelect: function(e) {
+            var deleteUrl = $(e.currentTarget).data('url');
+            var view = new ActionTargetSelectView({
+                autoRender: true,
+                actionType: 'delete'
+            });
+            this.disposePageComponents();
+            this.eventDialog.setTitle(__('Delete Event'));
+            this.eventDialog.setContent(view.$el);
+            // subscribe to 'delete event' event
+            this.eventDialog.getAction('apply', 'adopted', _.bind(function(applyAction) {
+                applyAction.on('click', _.bind(function(e) {
+                    if (view.getValue() === 'exception') {
+                        this.exceptionEventData = {
+                            originalStart: this.model.get('start'),
+                            isCancelled: true
+                        };
+                        this.model.once('sync', function(model) {
+                            model.set({id: null});
+                            model.collection.remove(model);
+                        }, this);
+                        this.saveModel();
+                    } else {
+                        this.exceptionEventData = null;
+                        this.model.once('destroy', function(model, collection) {
+                            collection.trigger('toRefresh');
+                        });
+                        this.deleteModel(deleteUrl);
+                    }
+                }, this));
+            }, this));
+        },
+
+        _onEditDialogAction: function(e) {
+            var $content = this.getEventForm();
+            $content.wrapInner('<div data-layout="separate" />');
+            this.setElement($content.find('>*:first'));
+            this.eventDialog.setTitle(__('Edit Event'));
+            this.eventDialog.setContent($content);
+            this.eventDialog.widget.dialog('option', 'width', 1000);
+            // subscribe to 'delete event' event
+            this.eventDialog.getAction('delete', 'adopted', _.bind(function(deleteAction) {
+                var callback = this.model.get('recurrence') ? this._onDeleteTargetSelect : this._onDeleteDialogAction;
+                deleteAction.on('click', callback.bind(this));
+            }, this));
+            this.showLoadingMask();
+            this.initLayout({model: this.model})
+                .always(_.bind(this._hideMask, this));
+        },
+
+        _onDeleteDialogAction: function(e) {
+            var $el = $(e.currentTarget);
+            var deleteUrl = $el.data('url');
+            var deleteConfirmationMessage = $el.data('message');
+            if (this.model.get('recurringEventId')) {
+                deleteConfirmationMessage = deleteConfirmationMessage +
+                    '<br/>' +
+                    __('Only this particular event will be deleted from the series.');
+            }
+            var confirm = new DeleteConfirmation({
+                content: deleteConfirmationMessage
+            });
+            e.preventDefault();
+            confirm.on('ok', _.bind(function() {
+                this.deleteModel(deleteUrl);
+            }, this));
+            confirm.open();
         },
 
         saveModel: function() {
             var errors;
             this.model.set(this.getEventFormData());
+            if (this.exceptionEventData !== null) {
+                this.model.set({
+                    'id': null,
+                    'recurringEventId': this.model.originalId,
+                    'originalStart': this.exceptionEventData.originalStart,
+                    'recurrence': null,
+                    'isCancelled': _.result(this.exceptionEventData, 'isCancelled') || null
+                });
+                this.model.originalId = null;
+            }
             if (this.model.isValid()) {
                 this.showSavingMask();
                 try {
@@ -282,14 +376,7 @@ define(function(require) {
                     }
                     input.change();
                 }
-
-                if (modelData.recurrence &&
-                    name.indexOf('[title]') === -1 &&
-                    name.indexOf('[description]') === -1 &&
-                    name.indexOf('[contexts]') === -1) {
-                    input.attr('disabled', true);
-                }
-            });
+            }, this);
 
             return form;
         },
@@ -339,8 +426,6 @@ define(function(require) {
             var templateData = _.extend(this.getEventFormTemplateData(!modelData.id), modelData);
             var form = this.fillForm(this.template(templateData), modelData);
             var calendarColors = this.options.colorManager.getCalendarColors(this.model.get('calendarUid'));
-
-            this._initRecurrenceView(form.find(this.selectors.recurrenceContainer));
 
             form.find(this.selectors.backgroundColor)
                 .data('page-component-options').emptyColor = calendarColors.backgroundColor;
@@ -460,9 +545,10 @@ define(function(require) {
                 });
             }
 
-            if (!data.hasOwnProperty('reminders')) {
-                data.reminders = {};
-            }
+            _.defaults(data, {
+                reminders: {},
+                recurrence: null
+            });
 
             return data;
         },
@@ -472,20 +558,6 @@ define(function(require) {
                 calendarAlias: calendarUid.substr(0, calendarUid.lastIndexOf('_')),
                 calendar: parseInt(calendarUid.substr(calendarUid.lastIndexOf('_') + 1))
             };
-        },
-
-        _initRecurrenceView: function($el) {
-            if (!$el.length) {
-                return;
-            }
-            var eventRecurrenceModel = new EventRecurrenceModel(this.model.get('recurrence'));
-            var eventRecurrenceView = new EventRecurrenceView({
-                autoRender: true,
-                el: $el,
-                model: eventRecurrenceModel,
-                inputNamePrefixes: 'oro_calendar_event_form[recurrence]'
-            });
-            this.subview('eventRecurrence', eventRecurrenceView);
         },
 
         _showUserCalendarOnlyFields: function(form, visible) {
@@ -589,7 +661,8 @@ define(function(require) {
 
             return {
                 calendarUidTemplateType: templateType,
-                calendars: calendars
+                calendars: calendars,
+                editAsException: this.exceptionEventData !== null
             };
         }
     });

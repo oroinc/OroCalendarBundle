@@ -127,25 +127,29 @@ class CalendarEventType extends AbstractType
                 [
                     'mapped' => false
                 ]
+            )
+            ->add(
+                'recurrence',
+                'oro_calendar_event_recurrence',
+                [
+                    'required' => false,
+                ]
             );
 
         $builder->addEventSubscriber(new CalendarUidSubscriber());
         $builder->addEventSubscriber(new ChildEventsSubscriber($this->registry, $this->securityFacade));
         $builder->addEventListener(FormEvents::PRE_SUBMIT, function (FormEvent $event) {
             $form = $event->getForm();
-            if ($form->getNormData() && $form->getNormData()->getRecurrence()) {
-                foreach ($form->all() as $child) {
-                    if (in_array($child->getName(), $this->editableFieldsForRecurrence)) {
-                        continue;
-                    }
-                    if ($form->has($child->getName())) {
-                        $options = $child->getConfig()->getOptions();
-                        $options['disabled'] = true;
-                        $form->add($child->getName(), $child->getConfig()->getType()->getName(), $options);
-                    }
+            $data = $event->getData();
+            if (empty($data['recurrence'])) {
+                $recurrence = $form->get('recurrence')->getData();
+                if ($recurrence) {
+                    $form->get('recurrence')->setData(null);
                 }
+                unset($data['recurrence']);
+                $event->setData($data);
             }
-        }, 10);
+        });
     }
 
     /**
@@ -172,13 +176,6 @@ class CalendarEventType extends AbstractType
         if ($form->getData() && $form->getData()->getRecurrence()) {
             /** @var FormView $childView */
             foreach ($view->children as $childView) {
-                if (in_array($childView->vars['name'], $this->editableFieldsForRecurrence)) {
-                    continue;
-                }
-                $childView->vars['disabled'] = true;
-                if (in_array($childView->vars['name'], ['start', 'end'])) {
-                    $childView->vars['attr']['data-required'] = false;
-                }
                 if ($childView->vars['name'] === 'reminders') {
                     $childView->vars['allow_add'] = false;
                     $childView->vars['allow_delete'] = false;

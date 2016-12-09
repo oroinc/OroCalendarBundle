@@ -156,6 +156,7 @@ define(function(require) {
             this.listenTo(this.collection, 'add', this.onEventAdded);
             this.listenTo(this.collection, 'change', this.onEventChanged);
             this.listenTo(this.collection, 'destroy', this.onEventDeleted);
+            this.listenTo(this.collection, 'toRefresh', this.refreshView);
             this.colorManager = new ColorManager(this.options.colorManagerOptions);
 
             this.pluginManager = new PluginManager(this);
@@ -209,13 +210,13 @@ define(function(require) {
                 }));
                 // subscribe to event view collection events
                 this.listenTo(this.eventView, 'addEvent', this.handleEventViewAdd);
-                this.listenTo(this.eventView, 'remove', this.handleEventViewRemove);
+                this.listenTo(this.eventView, 'dispose', this.handleEventViewRemove);
             }
             return this.eventView;
         },
 
         handleEventViewRemove: function() {
-            this.eventView = null;
+            delete this.eventView;
         },
 
         /**
@@ -249,17 +250,6 @@ define(function(require) {
 
         handleEventViewAdd: function(eventModel) {
             this.collection.add(eventModel);
-            //after editing recurrence event, all events should be loaded with actual data
-            if (eventModel.get('recurrence')) {
-                var oldEnableEventLoading = this.enableEventLoading;
-                this.enableEventLoading = true;
-                this.getCalendarElement().fullCalendar('refetchEvents');
-                this.enableEventLoading = oldEnableEventLoading;
-            }
-        },
-
-        visibleDefaultCalendar: function(eventModel) {
-
         },
 
         addEventToCalendar: function(eventModel) {
@@ -300,6 +290,18 @@ define(function(require) {
             eventModel.set('editable', connectionModel.get('canEditEvent'));
             eventModel.set('removable', connectionModel.get('canDeleteEvent'), {silent: true});
 
+            if (eventModel.hasChanged('id')) {
+                // if id value was deleted -- remove the event from calendar
+                if (eventModel.get('id') === null && eventModel.previous('id')) {
+                    this.getCalendarElement().fullCalendar('removeEvents', eventModel.previous('id'));
+
+                // if new id value was assigned -- add the event to calendar
+                } else if (eventModel.previous('id') === null && eventModel.get('id')) {
+                    this.addEventToCalendar(eventModel);
+                }
+                return;
+            }
+
             // find and update fullCalendar event model
             fcEvent = calendarElement.fullCalendar('clientEvents', eventModel.id)[0];
             _.extend(fcEvent, this.createViewModel(eventModel));
@@ -315,14 +317,12 @@ define(function(require) {
         },
 
         onEventDeleted: function(eventModel) {
+            this.getCalendarElement().fullCalendar('removeEvents', eventModel.id);
             this.trigger('event:deleted', eventModel);
-            this.updateEvents();
-            this.updateLayout();
         },
 
         onConnectionAdded: function() {
-            this.updateEvents();
-            this.updateLayout();
+            this.refreshView();
         },
 
         onConnectionChanged: function(connectionModel) {
@@ -344,6 +344,10 @@ define(function(require) {
         },
 
         onConnectionDeleted: function() {
+            this.refreshView();
+        },
+
+        refreshView: function() {
             this.updateEvents();
             this.updateLayout();
         },
