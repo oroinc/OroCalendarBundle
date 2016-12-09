@@ -139,23 +139,10 @@ class CalendarEventTypeTest extends \PHPUnit_Framework_TestCase
         $builder->expects($this->at(9))
             ->method('add')
             ->with(
-                'repeat',
-                'checkbox',
-                [
-                    'required' => false,
-                    'mapped' => false
-                ]
-            )
-            ->will($this->returnSelf());
-
-        $builder->expects($this->at(10))
-            ->method('add')
-            ->with(
                 'recurrence',
                 'oro_calendar_event_recurrence',
                 [
                     'required' => false,
-                    'attr' => ['data-validation-ignore' => '']
                 ]
             )
             ->will($this->returnSelf());
