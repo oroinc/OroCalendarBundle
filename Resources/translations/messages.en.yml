@@ -131,6 +131,7 @@ oro:
             no_color:             Use calendar color
             updated_by:           added by {{ user }}, updated by {{ editor }}
             added_by:             added by {{ user }}
+            view_event:           View {{ entity }}
             update_event:         Update {{ entity }}
             delete_event:         Delete {{ entity }}
 
