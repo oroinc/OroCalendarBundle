@@ -5,7 +5,7 @@ datagrids:
             type: orm
             query:
                 select:
-                    - partial event.{ id, start, recurrence }
+                    - partial event.{ id, start, recurrence, cancelled }
                     - event.id
                     - CONCAT(CASE WHEN calendar.name IS NOT NULL THEN calendar.name ELSE CONCAT_WS(' ', owner.firstName, owner.lastName) END, '') AS name
                     - event.title
@@ -163,6 +163,14 @@ datagrids:
                 icon:          trash-o
                 link:          delete_link
         action_configuration: ['@oro_calendar.datagrid.action_permission_provider', "getInvitationPermissions"]
+        mass_actions:
+            delete:
+                type: delete
+                icon: trash
+                label: oro.grid.action.delete
+                entity_name: Oro\Bundle\CalendarBundle\Entity\CalendarEvent
+                data_identifier: event.id
+                handler: oro_calendar.datagrid.mass_action.handler.delete
         options:
             entityHint: calendar_events
             entity_pagination: true
