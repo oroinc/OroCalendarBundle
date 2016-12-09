@@ -11,29 +11,18 @@ define(function(require) {
     RecurrenceEndsView = SwitchableRecurrenceSubview.extend(/** @exports RecurrenceEndsView.prototype */{
         template: require('tpl!orocalendar/templates/calendar/event/recurrence/recurrence-ends.html'),
         relatedFields: ['occurrences', 'endTime'],
+        /** @type {string|null} datetime in ISO format */
+        minDatetime: null,
 
-        delegateEvents: function(events) {
-            RecurrenceEndsView.__super__.delegateEvents.call(this, events);
-            this.$eventEnd = this.$el.closest('form').find('[data-name="field__end"]');
-            this.$eventEnd.on('change' + this.eventNamespace(), _.bind(this.onEventEndChange, this));
-            return this;
-        },
-
-        undelegateEvents: function() {
-            RecurrenceEndsView.__super__.undelegateEvents.call(this);
-            if (this.$eventEnd) {
-                this.$eventEnd.off(this.eventNamespace());
-                delete this.$eventEnd;
-            }
-            return this;
+        initialize: function(options) {
+            _.extend(this, _.pick(options, 'minDatetime'));
+            RecurrenceEndsView.__super__.initialize.call(this, options);
         },
 
         render: function() {
-            var minDatetime = this.$eventEnd && this.$eventEnd.val();
-
             RecurrenceEndsView.__super__.render.call(this);
 
-            this.setMinDatetime(minDatetime);
+            this.setMinDatetime(this.minDatetime);
             this.subview('date-time-picker-view', new DateTimePickerView({
                 el: this.$('[data-related-field="endTime"]'),
                 dateInputAttrs: {
@@ -65,8 +54,7 @@ define(function(require) {
                 .data('validation', {DateTime: {min: minDatetime}, NotBlank: {}});
         },
 
-        onEventEndChange: function(e) {
-            var eventEndValue = e.target.value;
+        syncRecurrenceEnd: function(eventEndValue) {
             var dateTimePickerView = this.subview('date-time-picker-view');
             var recurrentEndMoment = dateTimePickerView.getOriginalMoment();
             var eventEndMoment = moment.utc(eventEndValue, dateTimePickerView.backendFormat, true);

@@ -49,7 +49,13 @@
 
 {% block content_data %}
     {% set id = 'calendarevent-form' %}
-
+    {% set calendarEventDateRange = {
+        module: 'orocalendar/js/app/components/calendar-event-date-range-component',
+        name: 'calendar-event-date-range',
+        options: {
+            nativeMode: isMobileVersion()
+        }
+    } %}
     {% set dataBlocks = [{
         'title': 'General Information'|trans,
         'class': 'active',
@@ -59,12 +65,18 @@
                 'data':  [
                     form_row(form.title),
                     form_row(form.description),
-                    form_row(form.start),
-                    form_row(form.end),
-                    form_row(form.allDay),
-                    form_row(form.repeat),
-                    form.recurrence is defined ? form_row(form.recurrence) : null,
-                    form_row(form.backgroundColor),
+                    form_row(form.backgroundColor)
+                ]
+            },
+            {
+                'title': '',
+                'data':  [
+                    '<div ' ~ UI.renderPageComponentAttributes(calendarEventDateRange) ~ '>' ~
+                        form_row(form.start) ~
+                        form_row(form.end) ~
+                        form_row(form.allDay) ~
+                    '</div>',
+                    form_row(form.recurrence)
                 ]
             }
         ]
@@ -89,5 +101,6 @@
         'formErrors': form_errors(form)? form_errors(form) : null,
         'dataBlocks': dataBlocks
     } %}
+
     {{ parent() }}
 {% endblock content_data %}

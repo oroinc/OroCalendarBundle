@@ -43,6 +43,13 @@
 
 {% block content_data %}
     {% set id = 'calendarevent-form' %}
+    {% set calendarEventDateRange = {
+        module: 'orocalendar/js/app/components/calendar-event-date-range-component',
+        name: 'calendar-event-date-range',
+        options: {
+            nativeMode: isMobileVersion()
+        }
+    } %}
 
     {# @todo Verify the condition in the code of the last element in data (notifyGuestsComponent) is correct #}
     {% set dataBlocks = [{
@@ -54,17 +61,23 @@
                 'data':  [
                     form_row(form.title),
                     form_row(form.description),
-                    form_row(form.start),
-                    form_row(form.end),
-                    form_row(form.allDay),
-                    form_row(form.repeat),
-                    form.recurrence is defined ? form_row(form.recurrence) : null,
                     form_row(form.backgroundColor),
                     form.calendarUid is defined ? form_row(form.calendarUid) : null,
                     form_row(form.attendees),
                     entity.recurrence is null ? form_row(form.reminders) : null,
                     form_row(form.notifyInvitedUsers),
                     entity.relatedAttendee and entity.relatedAttendee.status and entity.parent is null and entity.childAttendees is not empty and entity.recurrence is null ? invitations.notifyGuestsComponent() : null
+                ]
+            },
+            {
+                'title': '',
+                'data':  [
+                    '<div ' ~ UI.renderPageComponentAttributes(calendarEventDateRange) ~ '>' ~
+                        form_row(form.start) ~
+                        form_row(form.end) ~
+                        form_row(form.allDay) ~
+                    '</div>',
+                    form_row(form.recurrence)
                 ]
             }
         ]
@@ -89,13 +102,6 @@
         'formErrors': form_errors(form)? form_errors(form) : null,
         'dataBlocks': dataBlocks
     } %}
-    {% set options = {
-        'view':'orocalendar/js/app/views/calendar-event-form-view',
-        'nativeMode': isMobileVersion()
-    } %}
-    <div data-page-component-module="oroui/js/app/components/view-component"
-         data-page-component-options="{{ options|json_encode }}"
-         data-layout="separate">
-        {{ parent() }}
-    </div>
+
+    {{ parent() }}
 {% endblock content_data %}

@@ -25,15 +25,6 @@ define([
         oldEndAtValue: null,
 
         render: function() {
-            var self = this;
-            var renderDeferred = this.renderDeferred = $.Deferred();
-            this.initLayout().done(function() {
-                self.handleLayoutInit();
-                renderDeferred.resolve();
-            });
-        },
-
-        handleLayoutInit: function() {
             this.handleAllDayEventFlag(this.$('input[name$="[allDay]"]'), 0);
         },
 

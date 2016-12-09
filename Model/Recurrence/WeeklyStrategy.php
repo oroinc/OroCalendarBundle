@@ -119,7 +119,7 @@ class WeeklyStrategy extends AbstractStrategy
         $days = [];
         $dayOfWeek = $recurrence->getDayOfWeek();
 
-        if ($this->getDayOfWeekRelativeValue($dayOfWeek) == 'weekday') {
+        if ($this->getDayOfWeekRelativeValue($dayOfWeek) == 'weekday' && $interval == 1) {
             return $this->getFullRecurrencePattern($recurrence, 'oro.calendar.recurrence.patterns.weekday', 0, []);
         }
 

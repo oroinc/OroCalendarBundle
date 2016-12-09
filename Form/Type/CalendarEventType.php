@@ -100,19 +100,10 @@ class CalendarEventType extends AbstractType
                 ]
             )
             ->add(
-                'repeat',
-                'checkbox',
-                [
-                    'required' => false,
-                    'mapped' => false
-                ]
-            )
-            ->add(
                 'recurrence',
                 'oro_calendar_event_recurrence',
                 [
                     'required' => false,
-                    'attr' => ['data-validation-ignore' => '']
                 ]
             );
 
