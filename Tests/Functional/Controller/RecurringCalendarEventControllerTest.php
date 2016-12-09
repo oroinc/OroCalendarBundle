@@ -33,7 +33,6 @@ class RecurringCalendarEventControllerTest extends AbstractUseCaseTestCase
             'oro_calendar_event_form[end]' => '2016-04-25T01:00:00+00:00',
             'oro_calendar_event_form[allDay]' => true,
             'oro_calendar_event_form[backgroundColor]' => '#FF0000',
-            'oro_calendar_event_form[repeat]' => true,
             'oro_calendar_event_form[recurrence]' => [
                 'recurrenceType' => Recurrence::TYPE_MONTH_N_TH,
                 'instance' => Recurrence::INSTANCE_FIRST,
@@ -90,7 +89,6 @@ class RecurringCalendarEventControllerTest extends AbstractUseCaseTestCase
             'oro_calendar_event_form[end]' => '2016-04-25T02:00:00+00:00',
             'oro_calendar_event_form[allDay]' => true,
             'oro_calendar_event_form[backgroundColor]' => '#FF0000',
-            'oro_calendar_event_form[repeat]' => true,
             'oro_calendar_event_form[recurrence]' => [
                 'recurrenceType' => Recurrence::TYPE_DAILY,
                 'interval' => 5,
@@ -154,7 +152,6 @@ class RecurringCalendarEventControllerTest extends AbstractUseCaseTestCase
             'oro_calendar_event_form[end]' => '2016-05-30T02:00:00+00:00',
             'oro_calendar_event_form[allDay]' => true,
             'oro_calendar_event_form[backgroundColor]' => '#FF0000',
-            'oro_calendar_event_form[repeat]' => true,
             'oro_calendar_event_form[recurrence]' => [
                 'recurrenceType' => Recurrence::TYPE_DAILY,
                 'interval' => 5,
@@ -232,7 +229,6 @@ class RecurringCalendarEventControllerTest extends AbstractUseCaseTestCase
             'oro_calendar_event_form[end]' => '2016-05-30T02:00:00+00:00',
             'oro_calendar_event_form[allDay]' => true,
             'oro_calendar_event_form[backgroundColor]' => '#FF0000',
-            'oro_calendar_event_form[repeat]' => false
         ];
 
         $form->setValues($recurringEventData);
@@ -276,7 +272,6 @@ class RecurringCalendarEventControllerTest extends AbstractUseCaseTestCase
         $crawler = $this->client->request('GET', $this->getUrl('oro_calendar_event_create'));
         $form    = $crawler->selectButton('Save and Close')->form();
 
-        $form["oro_calendar_event_form[repeat]"] = true;
         foreach ($recurringEventParameters as $name => $parameterValue) {
             if (is_array($parameterValue)) {
                 foreach ($parameterValue as $key => $value) {

@@ -44,7 +44,6 @@ class ValidationFailedTest extends AbstractValidationErrorTestCase
             'title' => 'Recurring event',
             'start' => '2016-10-14T22:00:00+00:00',
             'end' => '2016-10-14T23:00:00+00:00',
-            'repeat' => true,
             'recurrence' => $recurrence,
         ];
 
