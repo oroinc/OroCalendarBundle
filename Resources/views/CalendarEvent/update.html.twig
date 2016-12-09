@@ -77,7 +77,7 @@
                         form_row(form.end) ~
                         form_row(form.allDay) ~
                     '</div>',
-                    form.recurrence is not null ? form_row(form.recurrence) : null
+                    form.recurrence is defined ? form_row(form.recurrence) : null
                 ]
             }
         ]
