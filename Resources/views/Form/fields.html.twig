@@ -45,3 +45,37 @@
         <%= _.template({{ name|raw }}Template.replace(/\< %/g, '<' + '%').replace(/% \>/g, '%' + '>'))({calendars: calendars}) %>
     <% } %>
 {% endblock %}
+
+{% block oro_calendar_event_recurrence_row %}
+    {% import 'OroUIBundle::macros.html.twig' as UI %}
+    {% set modelAttrs = {} %}
+    {% set errors = [] %}
+    {% for field in form.children %}
+        {% if field.vars.errors is not empty %}
+            {% set fieldErrors = [] %}
+            {% for error in field.vars.errors %}
+                {% set fieldErrors = fieldErrors|merge([error.message]) %}
+            {% endfor %}
+            {% set errors = errors|merge([{
+                label: field.vars.label|trans,
+                name: field.vars.name,
+                messages: fieldErrors
+            }]) %}
+        {% endif %}
+        {% if field.vars.value is not empty %}
+            {% set modelAttrs = modelAttrs|merge({(field.vars.name): field.vars.value}) %}
+        {% endif %}
+        {% do field.setRendered %}
+    {% endfor %}
+
+    {{ form_errors(form) }}
+    <div {{ UI.renderPageComponentAttributes({
+        module: 'orocalendar/js/app/components/calendar-event-recurrence-component',
+        name: 'calendar-event-recurrence',
+        options: {
+            inputNamePrefixes: form.vars.full_name,
+            errors: errors,
+            modelAttrs: modelAttrs
+        }
+    }) }}></div>
+{% endblock %}

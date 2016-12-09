@@ -39,7 +39,8 @@
     {% set action %}
         <% if (editable) { %>
         <a href="#" class="action item-edit-button"
-           title="{{ 'oro.calendar.calendarevent.update_event'|trans({'{{ entity }}': entityName}) }}">
+           title="{{ 'oro.calendar.calendarevent.update_event'|trans({'{{ entity }}': entityName}) }}"
+           data-action-extra-options="{{ {dialogOptions: {width: 1000}}|json_encode }}">
             <i class="fa-pencil-square-o hide-text">{{ 'oro.calendar.calendarevent.update_event'|trans({'{{ entity }}': entityName}) }}</i>
             {{ 'oro.calendar.calendarevent.update_event'|trans({'{{ entity }}': entityName}) }}
         </a>

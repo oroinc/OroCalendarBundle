@@ -5,11 +5,12 @@
 </select>
 <input name="<%- inputNamePrefixes %>[interval]" value="<%- interval %>" class="no-uniform"/>
 <select name="<%- inputNamePrefixes %>[instance]">
+    <option></option>
     <% _.each(instanceOptions, function(option) { %>
     <option value="<%- option.value %>"<% if (option.selected) { %> selected<% } %>><%- option.label %></option>
     <% }) %>
 </select>
-<select name="<%- inputNamePrefixes %>[dayOfWeek]" class="no-uniform" multiple>
+<select name="<%- inputNamePrefixes %>[dayOfWeek][]" class="no-uniform" multiple>
     <% _.each(dayOfWeekOptions, function(option) { %>
     <option value="<%- option.value %>"<% if (option.selected) { %> selected<% } %>><%- option.label %></option>
     <% }) %>

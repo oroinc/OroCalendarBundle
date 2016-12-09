@@ -277,3 +277,24 @@ i.invitation-status.fa-question-circle {
   overflow: inherit;
   text-overflow: inherit;
 }
+
+.event-action-target-select-form {
+  padding: 10px 16px;
+  &__item {
+    margin-bottom: 10px;
+    [type="radio"] {
+      float: left;
+    }
+  }
+  &__item-title {
+    color: @bodyColor;
+    font-weight: bold;
+    font-size: 14px;
+    margin-left: 20px;
+  }
+  &__item-desc {
+    color: lighten(@bodyColor, 25%);
+    font-size: 12px;
+    margin-left: 20px;
+  }
+}

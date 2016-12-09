@@ -191,7 +191,6 @@ class UserCalendarProviderTest extends \PHPUnit_Framework_TestCase
                     'timeZone' => 'UTC'
                 ],
                 'recurrencePattern' => null,
-                'removable' => false,
                 'startEditable' => false,
                 'durationEditable' => false,
             ],
@@ -212,7 +211,6 @@ class UserCalendarProviderTest extends \PHPUnit_Framework_TestCase
                     'timeZone' => 'UTC'
                 ],
                 'recurrencePattern' => null,
-                'removable' => false,
                 'startEditable' => false,
                 'durationEditable' => false,
             ],

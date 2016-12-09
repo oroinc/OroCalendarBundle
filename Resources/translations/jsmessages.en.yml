@@ -36,6 +36,7 @@ oro:
                     repeat-every: "Repeat every"
                     repeat-on: "Repeat on"
                     ends: Ends
+                    summary: Summary
                 control-modes:
                     weekday: Weekday
                     never: Never
@@ -58,12 +59,42 @@ oro:
                     weekend-day: "Weekend Day"
                 warning:
                     some-months-have-fewer-days: "Some months have fewer than {{ number }} days. For these months, the occurence will fall on the last day of te month."
+                    removing-all-series: "Note that all events in the series will be removed if you uncheck Repeat option"
+                    removing-all-exceptions: "Note that all exceptions in the series will be removed if you change recurrence pattern"
                 validation:
                     dayOfWeek:
                         minMessage: "You must select at least {{ limit }} day"
+                patterns:
+                    occurrences: "{1} , end after 1 occurrence|]1,Inf[ , end after {{ count }} occurrences"
+                    end-date: ", end by {{ date }}"
+                    timezone: '({{ timeZone }} GMT{{ timezone_offset }})'
+                    daily: "{1} Daily every 1 day|]1,Inf[ Daily every {{ count }} days"
+                    weekly: "{1} Weekly every 1 week on {{ day }}|]1,Inf[ Weekly every {{ count }} weeks on {{ day }}"
+                    monthly: "{1} Monthly day {{ day }} of every 1 month|]1,Inf[ Monthly day {{ day }} of every {{ count }} months"
+                    monthnth: "{1} Monthly the {{ instance }} {{ day }} of every 1 month|]1,Inf[ Monthly the {{ instance }} {{ day }} of every {{ count }} months"
+                    yearly: "{1} Yearly every 1 year on {{ day }}|]1,Inf[ Yearly every {{ count }} years on {{ day }}"
+                    yearnth: "{1} Yearly every 1 year on the {{ instance }} {{ day }} of {{ month }}|]1,Inf[ Yearly every {{ count }} years on the {{ instance }} {{ day }} of {{ month }}"
+                    weekday: "Daily, every weekday"
+                days:
+                    weekday:            weekday
+                    weekend:            weekend
+                    day:                day
+            select-edit-type:
+                only-this-event:
+                    title: "Only this event"
+                    description: "All other eventsin series will remain the same"
+                all-events:
+                    title: "All events"
+                    description: "All events in the series will be changed.<br>Any changes made to other events will be kept."
+                apply: "Apply"
+            select-delete-type:
+                all-events:
+                    description: "All events in the series will be deleted."
+                apply: "Delete"
 "Add New Event": "Add New Event"
 "View Event": "View Event"
 "Edit Event": "Edit Event"
+"Delete Event": "Delete Event"
 "Sorry, calendar events were not loaded correctly": "Sorry, calendar events were not loaded correctly"
 "Sorry, calendar event was not saved correctly": "Sorry, calendar event was not saved correctly"
 "Sorry, the calendar adding was failed": "Sorry, the calendar adding was failed"
