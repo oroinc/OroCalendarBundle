@@ -29,8 +29,7 @@ class CalendarEventRecurrenceSubscriberTest extends \PHPUnit_Framework_TestCase
         $form->expects($this->any())
             ->method('has')
             ->withConsecutive(
-                ['recurrence'],
-                ['repeat']
+                ['recurrence']
             )
             ->willReturn(true);
         $form->expects($this->any())

@@ -17,7 +17,6 @@ class CalendarEventRecurrenceSubscriber implements EventSubscriberInterface
         return [
             FormEvents::PRE_SUBMIT   => 'preSubmit',
             FormEvents::PRE_SET_DATA => 'preSetData',
-            FormEvents::POST_SET_DATA => 'postSetData',
         ];
     }
 
@@ -30,8 +29,7 @@ class CalendarEventRecurrenceSubscriber implements EventSubscriberInterface
     }
 
     /**
-     * If "repeat" field is unchecked the old instance of recurrence should be removed.
-     * Or iff "recurrence" form field is empty the old instance of recurrence should be removed.
+     * If "recurrence" form field is empty the old instance of recurrence should be removed.
      *
      * @param FormEvent $event
      */
@@ -41,9 +39,8 @@ class CalendarEventRecurrenceSubscriber implements EventSubscriberInterface
         $data = $event->getData();
 
         $isRecurrence = $form->has('recurrence') && empty($data['recurrence']);
-        $isRepeatUnchecked = $form->has('repeat') && empty($data['repeat']);
 
-        if ($isRecurrence || $isRepeatUnchecked) {
+        if ($isRecurrence) {
             $recurrence = $form->get('recurrence')->getData();
             if ($recurrence) {
                 $form->get('recurrence')->setData(null);
@@ -75,29 +72,6 @@ class CalendarEventRecurrenceSubscriber implements EventSubscriberInterface
 
         if ($entity instanceof CalendarEvent && $entity->getRecurringEvent() && $form->has('recurrence')) {
             $form->remove('recurrence');
-        }
-    }
-
-    /**
-     * @param FormEvent $event
-     */
-    public function postSetData(FormEvent $event)
-    {
-        $this->enableRepeatFieldForRecurringEvent($event);
-    }
-
-    /**
-     * When form is shown for recurring event "repeat" field is marked as enabled.
-     *
-     * @param FormEvent $event
-     */
-    protected function enableRepeatFieldForRecurringEvent(FormEvent $event)
-    {
-        $form = $event->getForm();
-        $entity = $event->getData();
-
-        if ($entity instanceof CalendarEvent && $entity->getRecurrence() && $form->has('repeat')) {
-            $form->get('repeat')->setData(true);
         }
     }
 }
