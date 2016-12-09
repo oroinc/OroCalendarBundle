@@ -58,6 +58,7 @@ class LoadUserData extends AbstractFixture implements ContainerAwareInterface, D
             'reference' => 'oro_calendar:user:foo_user_1',
             'calendarReference' => 'oro_calendar:calendar:foo_user_1',
             'enabled' => true,
+            'isAdministrator' => true,
         ],
         [
             'username' => 'foo_user_2',
@@ -140,6 +141,13 @@ class LoadUserData extends AbstractFixture implements ContainerAwareInterface, D
         foreach ($this->data as $data) {
             /** @var User $user */
             $user = $userManager->createUser();
+
+            if (!empty($data['isAdministrator'])) {
+                $role = $manager->getRepository('OroUserBundle:Role')->findOneBy(['role' => 'ROLE_ADMINISTRATOR']);
+                $user->addRole($role);
+            }
+            unset($data['isAdministrator']);
+
             $this->resolveReferences($data, ['organization']);
             $this->setEntityPropertyValues(
                 $user,
