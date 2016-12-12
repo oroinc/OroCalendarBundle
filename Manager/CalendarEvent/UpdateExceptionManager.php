@@ -228,22 +228,42 @@ class UpdateExceptionManager
         CalendarEvent $originalEvent,
         CalendarEvent $exceptionEvent
     ) {
-        if ($exceptionEvent->getParent()) {
-            return;
-        }
-
-        if (!$this->hasEqualAttendees($originalEvent, $exceptionEvent)) {
-            // Exception has an overridden value list of attendees, it should not be synced now.
+        if ($exceptionEvent->getParent() || !$this->hasEqualAttendees($originalEvent, $exceptionEvent)) {
             return;
         }
 
         if (!$this->hasEqualAttendees($actualEvent, $originalEvent)) {
             // Attendees collection has been changed and now the change should be synced.
-            $exceptionEvent->getAttendees()->clear();
+            foreach ($exceptionEvent->getAttendees() as $attendee) {
+                $isPresent = false;
+                foreach ($actualEvent->getAttendees() as $sourceAttendee) {
+                    if ($sourceAttendee->isEqual($attendee)) {
+                        $isPresent = true;
+                    }
+                }
+
+                if (!$isPresent) {
+                    $exceptionEvent->removeAttendee($attendee);
+                } else {
+                    $attendee->setStatus(
+                        $originalEvent->getAttendeeByEmail($attendee->getEmail())->getStatus()
+                    );
+                }
+            }
+
             foreach ($actualEvent->getAttendees() as $sourceAttendee) {
-                $exceptionEvent->addAttendee(
-                    $this->createAttendeeCopy($sourceAttendee)
-                );
+                $isPresent = false;
+                foreach ($exceptionEvent->getAttendees() as $attendee) {
+                    if ($sourceAttendee->isEqual($attendee)) {
+                        $isPresent = true;
+                    }
+                }
+
+                if (!$isPresent) {
+                    $exceptionEvent->addAttendee(
+                        $this->createAttendeeCopy($sourceAttendee)
+                    );
+                }
             }
         }
     }
