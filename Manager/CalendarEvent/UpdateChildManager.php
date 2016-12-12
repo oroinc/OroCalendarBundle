@@ -89,6 +89,23 @@ class UpdateChildManager
 
         if (!empty($missingUsers)) {
             $this->createChildEvents($calendarEvent, $missingUsers, $organization);
+        } elseif (!$calendarEvent->getId() && $calendarEvent->getRecurringEvent()) {
+            //if it new exception with empty attendees,
+            //so the same exception should be added to all children of recurring event
+            foreach ($calendarEvent->getRecurringEvent()->getChildEvents() as $childEvent) {
+                $childException = new CalendarEvent();
+                $childException->setCalendar($childEvent->getCalendar())
+                    ->setTitle($calendarEvent->getTitle())
+                    ->setDescription($calendarEvent->getDescription())
+                    ->setStart($calendarEvent->getStart())
+                    ->setEnd($calendarEvent->getEnd())
+                    ->setOriginalStart($calendarEvent->getOriginalStart())
+                    ->setCancelled(true)
+                    ->setAllDay($calendarEvent->getAllDay())
+                    ->setRecurringEvent($childEvent);
+
+                $childEvent->addChildEvent($childException);
+            }
         }
     }
 
