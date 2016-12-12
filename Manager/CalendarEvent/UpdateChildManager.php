@@ -181,19 +181,30 @@ class UpdateChildManager
         }
 
         foreach ($parentEvent->getRecurringEventExceptions() as $parentException) {
-            // $exception will be parent for new exception of attendee
-            $childException = new CalendarEvent();
-            $childException->setCalendar($childEvent->getCalendar())
-                ->setTitle($parentException->getTitle())
-                ->setDescription($parentException->getDescription())
-                ->setStart($parentException->getStart())
-                ->setEnd($parentException->getEnd())
-                ->setOriginalStart($parentException->getOriginalStart())
-                ->setCancelled($parentException->isCancelled())
-                ->setAllDay($parentException->getAllDay())
-                ->setRecurringEvent($childEvent);
+            $isPresent = false;
 
-            $parentException->addChildEvent($childException);
+            foreach ($parentException->getChildEvents() as $existChildException) {
+                if ($existChildException->getCalendar()->getId() == $childEvent->getCalendar()->getId()) {
+                    $isPresent = true;
+                    $existChildException->setRecurringEvent($childEvent);
+                    break;
+                }
+            }
+
+            if (!$isPresent) {
+                $childException = new CalendarEvent();
+                $childException->setCalendar($childEvent->getCalendar())
+                    ->setTitle($parentException->getTitle())
+                    ->setDescription($parentException->getDescription())
+                    ->setStart($parentException->getStart())
+                    ->setEnd($parentException->getEnd())
+                    ->setOriginalStart($parentException->getOriginalStart())
+                    ->setCancelled($parentException->isCancelled())
+                    ->setAllDay($parentException->getAllDay())
+                    ->setRecurringEvent($childEvent);
+
+                $parentException->addChildEvent($childException);
+            }
         }
     }
 }
