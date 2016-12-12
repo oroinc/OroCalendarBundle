@@ -1,6 +1,6 @@
 <?php
 
-namespace Oro\Bundle\CalendarBundle\Tests\Functional\API;
+namespace Oro\Bundle\CalendarBundle\Tests\Functional\API\Rest;
 
 use Oro\Bundle\CalendarBundle\Entity\Attendee;
 use Oro\Bundle\CalendarBundle\Entity\CalendarEvent;
@@ -21,7 +21,7 @@ use Oro\Bundle\CalendarBundle\Tests\Functional\DataFixtures\LoadUserData;
  *
  * @dbIsolationPerTest
  */
-class RecurringEventManagingAttendeesTest extends AbstractTestCase
+class RecurringEventExceptionManagingAttendeesTest extends AbstractTestCase
 {
     protected function setUp()
     {
@@ -155,6 +155,7 @@ class RecurringEventManagingAttendeesTest extends AbstractTestCase
 
         $response = $this->getRestResponseContent(['statusCode' => 200, 'contentType' => 'application/json']);
 
+        /** @var CalendarEvent $recurringEvent */
         $recurringEvent = $this->getEntity(CalendarEvent::class, $recurringEventId)
             ->getChildEvents()
             ->getValues();
@@ -184,6 +185,7 @@ class RecurringEventManagingAttendeesTest extends AbstractTestCase
             ],
         ];
 
+        /** @var CalendarEvent $changedEventException */
         $changedEventException = $this->getEntity(CalendarEvent::class, $changedEventExceptionId)
             ->getChildEvents()
             ->getValues();
