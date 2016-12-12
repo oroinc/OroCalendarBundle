@@ -45,50 +45,23 @@ class UpdateChildManager
     }
 
     /**
-     * @param CalendarEvent $calendarEvent
-     */
-    protected function updateExistingChildEvents(CalendarEvent $calendarEvent)
-    {
-        foreach ($calendarEvent->getChildEvents() as $childEvent) {
-            $childEvent->setTitle($calendarEvent->getTitle())
-                ->setDescription($calendarEvent->getDescription())
-                ->setStart($calendarEvent->getStart())
-                ->setEnd($calendarEvent->getEnd())
-                ->setAllDay($calendarEvent->getAllDay());
-
-            // If event is exception of recurring event
-            if ($calendarEvent->getRecurringEvent() && $childEvent->getCalendar()) {
-                // Get respective recurring event in child calendar
-                $childRecurringEvent = $calendarEvent->getRecurringEvent()
-                    ->getChildEventByCalendar($childEvent->getCalendar());
-
-                // Associate child event with child recurring event
-                $childEvent->setRecurringEvent($childRecurringEvent);
-
-                // Sync original start
-                $childEvent->setOriginalStart($calendarEvent->getOriginalStart());
-            }
-        }
-    }
-
-    /**
      * Creates missing child events of the main event.
      *
      * Every attendee of the event should have a event in respective calendar.
      *
-     * @param CalendarEvent $calendarEvent
+     * @param CalendarEvent $parent
      * @param Organization $organization Current organization
      */
-    protected function createMissingChildEvents(CalendarEvent $calendarEvent, Organization $organization)
+    protected function createMissingChildEvents(CalendarEvent $parent, Organization $organization)
     {
-        $attendeeUsers = $this->getAttendeeUserIds($calendarEvent);
-        $calendarUsers = $this->getCalendarUserIds($calendarEvent);
+        $attendeeUsers = $this->getAttendeeUserIds($parent);
+        $calendarUsers = $this->getCalendarUserIds($parent);
 
         $missingUsers = array_diff($attendeeUsers, $calendarUsers);
         $missingUsers = array_intersect($missingUsers, $attendeeUsers);
 
         if (!empty($missingUsers)) {
-            $this->createChildEvents($calendarEvent, $missingUsers, $organization);
+            $this->createChildEvents($parent, $missingUsers, $organization);
         }
     }
 
@@ -145,55 +118,118 @@ class UpdateChildManager
     }
 
     /**
+     * Creates child events for $parent in calendars of users with ids in $targetCalendarOwnerIds
+     *
      * @param CalendarEvent $parent
      *
-     * @param array $userOwnerIds
+     * @param array $targetCalendarOwnerIds
      * @param Organization $organization Current organization
      */
-    protected function createChildEvents(CalendarEvent $parent, array $userOwnerIds, Organization $organization)
-    {
+    protected function createChildEvents(
+        CalendarEvent $parent,
+        array $targetCalendarOwnerIds,
+        Organization $organization
+    ) {
         /** @var CalendarRepository $calendarRepository */
         $calendarRepository = $this->doctrineHelper->getEntityRepository('OroCalendarBundle:Calendar');
 
         /** @var Calendar $calendar */
-        $calendars = $calendarRepository->findDefaultCalendars($userOwnerIds, $organization->getId());
+        $calendars = $calendarRepository->findDefaultCalendars($targetCalendarOwnerIds, $organization->getId());
 
         foreach ($calendars as $calendar) {
-            $childEvent = new CalendarEvent();
-            $childEvent->setCalendar($calendar);
-            $parent->addChildEvent($childEvent);
-
-            $childEvent->setRelatedAttendee($childEvent->findRelatedAttendee());
-
-            $this->copyRecurringEventExceptions($parent, $childEvent);
+            $child = $this->createChildCalendarEvent($calendar, $parent);
+            $this->copyRecurringEventExceptions($parent, $child);
         }
     }
 
     /**
-     * @param CalendarEvent $parentEvent
-     * @param CalendarEvent $childEvent
+     * @param Calendar $calendar
+     * @param CalendarEvent $parent
+     * @return CalendarEvent
      */
-    protected function copyRecurringEventExceptions(CalendarEvent $parentEvent, CalendarEvent $childEvent)
+    protected function createChildCalendarEvent(Calendar $calendar, CalendarEvent $parent)
     {
-        if (!$parentEvent->getRecurrence()) {
+        $result = $this->createCalendarEvent($calendar);
+        $result->setParent($parent);
+        $parent->addChildEvent($result);
+        $result->setRelatedAttendee($result->findRelatedAttendee());
+
+        return $result;
+    }
+
+    /**
+     * @param Calendar $calendar
+     * @return CalendarEvent
+     */
+    protected function createCalendarEvent(Calendar $calendar)
+    {
+        $result = new CalendarEvent();
+        $result->setCalendar($calendar);
+
+        return $result;
+    }
+
+    /**
+     * Copy exceptions of parent recurring event to every child recurring event.
+     *
+     * If parent recurring event has exception the same exception should exist in the calendar of
+     * guest user.
+     *
+     * @param CalendarEvent $parent
+     * @param CalendarEvent $child
+     */
+    protected function copyRecurringEventExceptions(CalendarEvent $parent, CalendarEvent $child)
+    {
+        if (!$parent->getRecurrence()) {
             // If this is not recurring event then there are no exceptions to copy
             return;
         }
 
-        foreach ($parentEvent->getRecurringEventExceptions() as $parentException) {
-            // $exception will be parent for new exception of attendee
-            $childException = new CalendarEvent();
-            $childException->setCalendar($childEvent->getCalendar())
-                ->setTitle($parentException->getTitle())
-                ->setDescription($parentException->getDescription())
-                ->setStart($parentException->getStart())
-                ->setEnd($parentException->getEnd())
-                ->setOriginalStart($parentException->getOriginalStart())
-                ->setCancelled($parentException->isCancelled())
-                ->setAllDay($parentException->getAllDay())
-                ->setRecurringEvent($childEvent);
+        foreach ($parent->getRecurringEventExceptions() as $parentException) {
+            $childException = $parentException->getChildEventByCalendar($child->getCalendar());
+            if ($childException) {
+                $childException->setRecurringEvent($child);
+            } else {
+                $childException = $this->createChildCalendarEvent($child->getCalendar(), $parentException);
+                $this->updateChildEvent($parentException, $childException);
+                $childException->setCancelled($parentException->isCancelled());
+            }
+        }
+    }
 
-            $parentException->addChildEvent($childException);
+    /**
+     * Update attributes of child events.
+     *
+     * @param CalendarEvent $parent
+     */
+    protected function updateExistingChildEvents(CalendarEvent $parent)
+    {
+        foreach ($parent->getChildEvents() as $child) {
+            $this->updateChildEvent($parent, $child);
+        }
+    }
+
+    /**
+     * Updates attributes of child event according to current state of parent event.
+     *
+     * @param CalendarEvent $parent
+     * @param CalendarEvent $child
+     */
+    protected function updateChildEvent(CalendarEvent $parent, CalendarEvent $child)
+    {
+        $child->setTitle($parent->getTitle())
+            ->setDescription($parent->getDescription())
+            ->setStart($parent->getStart())
+            ->setEnd($parent->getEnd())
+            ->setAllDay($parent->getAllDay());
+
+        if ($parent->getRecurringEvent()) {
+            // This event is an exception of recurring event
+            // Get recurring event from calendar of child event
+            $childRecurringEvent = $parent->getRecurringEvent()->getChildEventByCalendar($child->getCalendar());
+
+            $child->setRecurringEvent($childRecurringEvent)
+                ->setOriginalStart($parent->getOriginalStart());
         }
     }
 }

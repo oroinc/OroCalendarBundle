@@ -59,8 +59,8 @@ oro:
                     weekend-day: "Weekend Day"
                 warning:
                     some-months-have-fewer-days: "Some months have fewer than {{ number }} days. For these months, the occurence will fall on the last day of te month."
-                    removing-all-series: "Note that all events in the series will be removed if you uncheck Repeat option"
-                    removing-all-exceptions: "Note that all exceptions in the series will be removed if you change recurrence pattern"
+                    removing-all-series: "Note that all events in the series will be removed if you uncheck Repeat option."
+                    removing-all-exceptions: "Note that all exceptions in the series will be removed if you change recurrence pattern."
                 validation:
                     dayOfWeek:
                         minMessage: "You must select at least {{ limit }} day"
@@ -82,7 +82,7 @@ oro:
             select-edit-type:
                 only-this-event:
                     title: "Only this event"
-                    description: "All other eventsin series will remain the same"
+                    description: "All other events in series will remain the same."
                 all-events:
                     title: "All events"
                     description: "All events in the series will be changed.<br>Any changes made to other events will be kept."
