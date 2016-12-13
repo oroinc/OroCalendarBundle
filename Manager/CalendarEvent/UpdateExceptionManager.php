@@ -228,38 +228,33 @@ class UpdateExceptionManager
         CalendarEvent $originalEvent,
         CalendarEvent $exceptionEvent
     ) {
-        if ($exceptionEvent->getParent() || !$this->hasEqualAttendees($originalEvent, $exceptionEvent)) {
+        if ($exceptionEvent->getParent()) {
+            // Only child events should be updated
+            return;
+        }
+
+        if (!$this->hasEqualAttendees($originalEvent, $exceptionEvent)) {
+            // Exception has an overridden value of attendees list, it should not be synced now.
             return;
         }
 
         if (!$this->hasEqualAttendees($actualEvent, $originalEvent)) {
             // Attendees collection has been changed and now the change should be synced.
             foreach ($exceptionEvent->getAttendees() as $attendee) {
-                $isPresent = false;
-                foreach ($actualEvent->getAttendees() as $sourceAttendee) {
-                    if ($sourceAttendee->isEqual($attendee)) {
-                        $isPresent = true;
-                    }
-                }
-
-                if (!$isPresent) {
-                    $exceptionEvent->removeAttendee($attendee);
-                } else {
+                if ($actualEvent->getEqualAttendee($attendee)) {
+                    // Update status of the attendee in the exception
                     $attendee->setStatus(
                         $originalEvent->getAttendeeByEmail($attendee->getEmail())->getStatus()
                     );
+                } else {
+                    // Remove attendee from the exception since it was removed in the actual event
+                    $exceptionEvent->removeAttendee($attendee);
                 }
             }
 
             foreach ($actualEvent->getAttendees() as $sourceAttendee) {
-                $isPresent = false;
-                foreach ($exceptionEvent->getAttendees() as $attendee) {
-                    if ($sourceAttendee->isEqual($attendee)) {
-                        $isPresent = true;
-                    }
-                }
-
-                if (!$isPresent) {
+                if (!$exceptionEvent->getEqualAttendee($sourceAttendee)) {
+                    // Add attendee to the exception event since it was added in the actual event
                     $exceptionEvent->addAttendee(
                         $this->createAttendeeCopy($sourceAttendee)
                     );

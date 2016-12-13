@@ -25,7 +25,7 @@ use Oro\Bundle\CalendarBundle\Tests\Functional\DataFixtures\LoadUserData;
  *
  * @dbIsolationPerTest
  */
-class RecurringEventUpdateExceptionTest extends AbstractTestCase
+class RecurringEventRecurrenceUpdateExceptionTest extends AbstractTestCase
 {
     protected function setUp()
     {

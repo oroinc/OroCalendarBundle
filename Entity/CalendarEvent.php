@@ -780,6 +780,27 @@ class CalendarEvent extends ExtendCalendarEvent implements RemindableInterface, 
     }
 
     /**
+     * Get attendee of Calendar Event equal to passed instance of attendee.
+     *
+     * @param Attendee $attendee
+     * @return Attendee|null
+     */
+    public function getEqualAttendee(Attendee $attendee)
+    {
+        $result = null;
+
+        $attendees = $this->getAttendees();
+        foreach ($attendees as $actualAttendee) {
+            if ($attendee->isEqual($actualAttendee)) {
+                $result = $actualAttendee;
+                break;
+            }
+        }
+
+        return $result;
+    }
+
+    /**
      * Returns all attendees related to child events. This method should not be called using child event.
      *
      * @return Collection|Attendee[]
