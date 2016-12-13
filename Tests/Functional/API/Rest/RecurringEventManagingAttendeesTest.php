@@ -318,8 +318,7 @@ class RecurringEventManagingAttendeesTest extends AbstractTestCase
                 'content' => json_encode($exceptionData)
             ]
         );
-        $response = $this->getRestResponseContent(['statusCode' => 201, 'contentType' => 'application/json']);
-        $changedEventExceptionId = $response['id'];
+        $this->getRestResponseContent(['statusCode' => 201, 'contentType' => 'application/json']);
 
         // Step 3. Get events of added user via API and verify result is expected
         $this->restRequest(

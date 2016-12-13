@@ -66,18 +66,12 @@ class UpdateChildManager
             //if it new exception with empty attendees,
             //so the same exception should be added to all children of recurring event
             foreach ($parent->getRecurringEvent()->getChildEvents() as $childEvent) {
-                $childException = new CalendarEvent();
-                $childException->setCalendar($childEvent->getCalendar())
-                    ->setTitle($parent->getTitle())
-                    ->setDescription($parent->getDescription())
-                    ->setStart($parent->getStart())
-                    ->setEnd($parent->getEnd())
+                $childException = $this->createChildCalendarEvent($childEvent->getCalendar(), $childEvent);
+                $this->updateChildEvent($childEvent, $childException);
+                $childException
                     ->setOriginalStart($parent->getOriginalStart())
                     ->setCancelled(true)
-                    ->setAllDay($parent->getAllDay())
                     ->setRecurringEvent($childEvent);
-
-                $childEvent->addChildEvent($childException);
             }
         }
     }
@@ -210,31 +204,6 @@ class UpdateChildManager
                 $childException = $this->createChildCalendarEvent($child->getCalendar(), $parentException);
                 $this->updateChildEvent($parentException, $childException);
                 $childException->setCancelled($parentException->isCancelled());
-            }
-
-            $isPresent = false;
-
-            foreach ($parentException->getChildEvents() as $existChildException) {
-                if ($existChildException->getCalendar()->getId() == $child->getCalendar()->getId()) {
-                    $isPresent = true;
-                    $existChildException->setRecurringEvent($child);
-                    break;
-                }
-            }
-
-            if (!$isPresent) {
-                $childException = new CalendarEvent();
-                $childException->setCalendar($child->getCalendar())
-                    ->setTitle($parentException->getTitle())
-                    ->setDescription($parentException->getDescription())
-                    ->setStart($parentException->getStart())
-                    ->setEnd($parentException->getEnd())
-                    ->setOriginalStart($parentException->getOriginalStart())
-                    ->setCancelled($parentException->isCancelled())
-                    ->setAllDay($parentException->getAllDay())
-                    ->setRecurringEvent($child);
-
-                $parentException->addChildEvent($childException);
             }
         }
     }
