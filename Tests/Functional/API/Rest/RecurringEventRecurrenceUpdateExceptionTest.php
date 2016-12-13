@@ -1,6 +1,6 @@
 <?php
 
-namespace Oro\Bundle\CalendarBundle\Tests\Functional\API;
+namespace Oro\Bundle\CalendarBundle\Tests\Functional\API\Rest;
 
 use Oro\Bundle\CalendarBundle\Entity\Attendee;
 use Oro\Bundle\CalendarBundle\Entity\CalendarEvent;
@@ -25,7 +25,7 @@ use Oro\Bundle\CalendarBundle\Tests\Functional\DataFixtures\LoadUserData;
  *
  * @dbIsolationPerTest
  */
-class RecurringEventUpdateExceptionTest extends AbstractTestCase
+class RecurringEventRecurrenceUpdateExceptionTest extends AbstractTestCase
 {
     protected function setUp()
     {

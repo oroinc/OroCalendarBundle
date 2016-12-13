@@ -390,6 +390,19 @@ class CalendarEvent extends ExtendCalendarEvent implements RemindableInterface, 
     }
 
     /**
+     * Returns true if calendar is equal to the calendar in passed instance of calendar event.
+     *
+     * @param Calendar|null $otherCalendar
+     * @return bool
+     */
+    public function isCalendarEqual(Calendar $otherCalendar = null)
+    {
+        $actualCalendar = $this->getCalendar();
+        return $actualCalendar && $otherCalendar &&
+            ($actualCalendar === $otherCalendar || $actualCalendar->getId() == $otherCalendar->getId());
+    }
+
+    /**
      * Gets owning system calendar
      *
      * @return SystemCalendar|null
@@ -668,19 +681,19 @@ class CalendarEvent extends ExtendCalendarEvent implements RemindableInterface, 
     }
 
     /**
-     * @param Calendar $calendar
+     * @param Calendar|null $calendar
      *
      * @return CalendarEvent|null
      */
-    public function getChildEventByCalendar(Calendar $calendar)
+    public function getChildEventByCalendar(Calendar $calendar = null)
     {
+        if (!$calendar) {
+            return null;
+        }
+
         $result = $this->childEvents->filter(
-            function (CalendarEvent $item) use ($calendar) {
-                $itemCalendar = $item->getCalendar();
-                if (!$itemCalendar) {
-                    return false;
-                }
-                return $itemCalendar === $calendar || $itemCalendar->getId() == $calendar->getId();
+            function (CalendarEvent $child) use ($calendar) {
+                return $child->isCalendarEqual($calendar);
             }
         );
 
@@ -760,6 +773,27 @@ class CalendarEvent extends ExtendCalendarEvent implements RemindableInterface, 
                     $result = $attendee;
                     break;
                 }
+            }
+        }
+
+        return $result;
+    }
+
+    /**
+     * Get attendee of Calendar Event equal to passed instance of attendee.
+     *
+     * @param Attendee $attendee
+     * @return Attendee|null
+     */
+    public function getEqualAttendee(Attendee $attendee)
+    {
+        $result = null;
+
+        $attendees = $this->getAttendees();
+        foreach ($attendees as $actualAttendee) {
+            if ($attendee->isEqual($actualAttendee)) {
+                $result = $actualAttendee;
+                break;
             }
         }
 
@@ -1078,12 +1112,12 @@ class CalendarEvent extends ExtendCalendarEvent implements RemindableInterface, 
     /**
      * Returns true if related attendee user is equal to passed instance of user.
      *
-     * @param User $user
+     * @param User|null $otherUser
      * @return bool
      */
-    public function isRelatedAttendeeUserEqual(User $user)
+    public function isRelatedAttendeeUserEqual(User $otherUser = null)
     {
-        return $this->getRelatedAttendee() && $this->getRelatedAttendee()->isUserEqual($user);
+        return $otherUser && $this->getRelatedAttendee() && $this->getRelatedAttendee()->isUserEqual($otherUser);
     }
 
     /**

@@ -229,21 +229,36 @@ class UpdateExceptionManager
         CalendarEvent $exceptionEvent
     ) {
         if ($exceptionEvent->getParent()) {
+            // Only child events should be updated
             return;
         }
 
         if (!$this->hasEqualAttendees($originalEvent, $exceptionEvent)) {
-            // Exception has an overridden value list of attendees, it should not be synced now.
+            // Exception has an overridden value of attendees list, it should not be synced now.
             return;
         }
 
         if (!$this->hasEqualAttendees($actualEvent, $originalEvent)) {
             // Attendees collection has been changed and now the change should be synced.
-            $exceptionEvent->getAttendees()->clear();
+            foreach ($exceptionEvent->getAttendees() as $attendee) {
+                if ($actualEvent->getEqualAttendee($attendee)) {
+                    // Update status of the attendee in the exception
+                    $attendee->setStatus(
+                        $originalEvent->getAttendeeByEmail($attendee->getEmail())->getStatus()
+                    );
+                } else {
+                    // Remove attendee from the exception since it was removed in the actual event
+                    $exceptionEvent->removeAttendee($attendee);
+                }
+            }
+
             foreach ($actualEvent->getAttendees() as $sourceAttendee) {
-                $exceptionEvent->addAttendee(
-                    $this->createAttendeeCopy($sourceAttendee)
-                );
+                if (!$exceptionEvent->getEqualAttendee($sourceAttendee)) {
+                    // Add attendee to the exception event since it was added in the actual event
+                    $exceptionEvent->addAttendee(
+                        $this->createAttendeeCopy($sourceAttendee)
+                    );
+                }
             }
         }
     }
