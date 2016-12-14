@@ -71,7 +71,11 @@ class AttendeeRelationManager
      */
     public function getRelatedDisplayName(Attendee $attendee)
     {
-        return $attendee->getUser() ? $this->nameFormatter->format($attendee->getUser()) : $attendee->getDisplayName();
+        if ($attendee->getUser()) {
+            return $this->nameFormatter->format($attendee->getUser());
+        }
+
+        return $attendee->getDisplayName() . ($attendee->getEmail() ? (' <' . $attendee->getEmail() . '>') : '');
     }
 
     /**
