@@ -2,7 +2,6 @@
 
 namespace Oro\Bundle\CalendarBundle\Form\DataTransformer;
 
-use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\EntityManager;
 
 use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
@@ -28,18 +27,6 @@ class AttendeesToViewTransformer extends ContextsToViewTransformer
         parent::__construct($entityManager, $securityTokenStorage);
 
         $this->attendeeRelationManager = $attendeeRelationManager;
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function transform($value)
-    {
-        if ($value instanceof Collection) {
-            $value = $value->toArray();
-        }
-
-        return parent::transform($value);
     }
 
     /**

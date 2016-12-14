@@ -7,6 +7,7 @@ use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\JsonResponse;
 
+use Oro\Bundle\CalendarBundle\Entity\Attendee;
 use Oro\Bundle\CalendarBundle\Entity\CalendarEvent;
 use Oro\Bundle\CalendarBundle\Exception\CalendarEventRelatedAttendeeNotFoundException;
 use Oro\Bundle\CalendarBundle\Exception\StatusNotFoundException;
@@ -78,13 +79,33 @@ class AjaxCalendarEventController extends Controller
         $attendeeManager = $this->getAttendeeManager();
         $attendees = $attendeeManager->loadAttendeesByCalendarEventId($id);
 
+        $attendeeRelationManager = $this->get('oro_calendar.attendee_relation_manager');
+
+        $result = [];
+
+        foreach ($attendees as $attendee) {
+            $result[] = [
+                'text'        => $attendeeRelationManager->getRelatedDisplayName($attendee),
+                'displayName' => $attendee->getDisplayName(),
+                'email'       => $attendee->getEmail(),
+                'type'        => $attendee->getType() ? $attendee->getType()->getId() : null,
+                'status'      => $attendee->getStatus() ? $attendee->getStatus()->getId() : null,
+                'hidden'      => !$attendeeRelationManager->getRelatedEntity($attendee),
+                /**
+                 * Selected Value Id should additionally encoded because it should be used as string key
+                 * to compare with value
+                 */
+                'id'          => json_encode(
+                    [
+                        'entityClass' => Attendee::class,
+                        'entityId'    => $attendee->getId(),
+                    ]
+                )
+            ];
+        }
+
         return new JsonResponse([
-            'result'   => array_map(
-                function ($data) {
-                    return json_decode($data, true);
-                },
-                explode(';', $this->get('oro_calendar.attendees_to_view_transformer')->transform($attendees))
-            ),
+            'result'   => $result,
             'excluded' => $attendeeManager->createAttendeeExclusions($attendees),
         ]);
     }
