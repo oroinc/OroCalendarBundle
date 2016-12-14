@@ -9,6 +9,10 @@ api:
 #
 #        Oro\Bundle\CalendarBundle\Entity\CalendarEvent:
 #            delete_handler: oro_calendar.calendar_event.handler.delete
+#            filters:
+#                fields:
+#                    updatedAt:
+#                        exclude: false #add updateAt to filters
 #
 #        Oro\Bundle\CalendarBundle\Entity\CalendarProperty: ~
 #
