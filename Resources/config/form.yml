@@ -102,6 +102,7 @@ services:
         arguments:
             - '@oro_calendar.attendees_to_view_transformer'
             - '@oro_calendar.attendee_manager'
+            - '@oro_calendar.attendee_relation_manager'
         tags:
             - { name: form.type, alias: oro_calendar_event_attendees_select }
 
@@ -193,12 +194,8 @@ services:
         class: %oro_calendar.attendees_to_view_transformer.class%
         arguments:
             - '@doctrine.orm.entity_manager'
-            - '@oro_entity_config.config_manager'
-            - '@translator'
             - '@security.token_storage'
-            - '@event_dispatcher'
             - '@oro_calendar.attendee_relation_manager'
-            - '@oro_entity.entity_name_resolver'
 
     oro_calendar.user_ids_to_users.tranformer:
         class: %oro_calendar.user_ids_to_users.tranformer.class%
