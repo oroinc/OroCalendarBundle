@@ -131,10 +131,14 @@ class SystemCalendarProvider extends AbstractCalendarProvider
                 ->setParameter('invisibleIds', $invisibleIds);
         }
 
-        return $this->calendarEventNormalizer->getCalendarEvents(
+        $items = $this->calendarEventNormalizer->getCalendarEvents(
             $calendarId,
             //@TODO: Fix ACL for calendars providers
             $qb->getQuery()
         );
+
+        $items = $this->getExpandedRecurrences($items, $start, $end);
+
+        return $items;
     }
 }

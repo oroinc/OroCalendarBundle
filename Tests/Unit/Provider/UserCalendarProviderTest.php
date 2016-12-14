@@ -46,9 +46,9 @@ class UserCalendarProviderTest extends \PHPUnit_Framework_TestCase
         $this->provider = new UserCalendarProvider(
             $this->doctrineHelper,
             $this->entityNameResolver,
-            $this->calendarEventNormalizer,
-            $this->recurrenceModel
+            $this->calendarEventNormalizer
         );
+        $this->provider->setRecurrenceModel($this->recurrenceModel);
     }
 
     public function testGetCalendarDefaultValues()

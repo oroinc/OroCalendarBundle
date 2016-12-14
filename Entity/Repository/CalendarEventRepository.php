@@ -109,11 +109,14 @@ class CalendarEventRepository extends EntityRepository
         $qb = $this->getEventListQueryBuilder($extraFields)
             ->addSelect('c.id as calendar')
             ->innerJoin('e.systemCalendar', 'c')
+            ->leftJoin('e.parent', 'parent')
             ->andWhere('c.public = :public')
             ->setParameter('public', false);
 
+        $this->addRecurrenceData($qb);
         $this->addFilters($qb, $filters);
         $this->addTimeIntervalFilter($qb, $startDate, $endDate);
+        $this->addRecurrencesConditions($qb, $startDate, $endDate);
 
         return $qb;
     }

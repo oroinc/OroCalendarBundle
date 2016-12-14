@@ -6,9 +6,10 @@ use Doctrine\ORM\Proxy\Proxy;
 use Doctrine\ORM\AbstractQuery;
 
 use Oro\Bundle\CalendarBundle\Entity\CalendarEvent;
+use Oro\Bundle\ReminderBundle\Entity\Manager\ReminderManager;
+use Oro\Bundle\CalendarBundle\Entity\Repository\CalendarEventRepository;
 use Oro\Bundle\CalendarBundle\Manager\AttendeeManager;
 use Oro\Bundle\CalendarBundle\Manager\CalendarEventManager;
-use Oro\Bundle\ReminderBundle\Entity\Manager\ReminderManager;
 use Oro\Bundle\SecurityBundle\SecurityFacade;
 
 abstract class AbstractCalendarEventNormalizer
@@ -205,7 +206,7 @@ abstract class AbstractCalendarEventNormalizer
      * Returns ids of calendar events in the given list.
      *
      * @param array $items Element of array represents an event and should have key with name "id".
-     * @return integer
+     * @return array
      */
     protected function getCalendarEventIds(array $items)
     {
@@ -364,6 +365,37 @@ abstract class AbstractCalendarEventNormalizer
                 return strcmp($first['displayName'], $second['displayName']);
             }
         );
+    }
+
+    /**
+     * Shrink all fields related to recurrence data into a single field. This operation is required because repository
+     * will return a query with all fields of recurrence represented as separate keys.
+     *
+     * @see \Oro\Bundle\CalendarBundle\Entity\Repository\CalendarEventRepository
+     *
+     * @param array $item Calendar event data as an array.
+     */
+    protected function applyItemRecurrence(&$item)
+    {
+        if (isset($item['recurrence'])) {
+            // Recurrence field has already a value, no additional action is required
+            return;
+        }
+
+        $recurrence = [];
+        $recurrenceFieldPrefix = CalendarEventRepository::RECURRENCE_FIELD_PREFIX;
+        $isEmpty = true;
+        foreach ($item as $field => $value) {
+            if (substr($field, 0, strlen($recurrenceFieldPrefix)) === $recurrenceFieldPrefix) {
+                unset($item[$field]);
+                $recurrence[lcfirst(substr($field, strlen($recurrenceFieldPrefix)))] = $value;
+                $isEmpty = empty($value) ? $isEmpty : false;
+            }
+        }
+
+        if (!$isEmpty) {
+            $item['recurrence'] = $recurrence;
+        }
     }
 
     /**
