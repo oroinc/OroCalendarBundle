@@ -281,7 +281,6 @@ abstract class AbstractCalendarEventNormalizer
         $this->beforeApplyItemData($item);
         $this->onApplyItemData($item);
         $this->afterApplyItemData($item);
-
     }
 
     /**
