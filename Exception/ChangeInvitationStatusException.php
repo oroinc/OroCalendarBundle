@@ -12,7 +12,7 @@ class ChangeInvitationStatusException extends \Exception implements ExceptionInt
      *
      * @return self
      */
-    static public function changeInvitationStatusFailedWhenRelatedAttendeeNotExist()
+    public static function changeInvitationStatusFailedWhenRelatedAttendeeNotExist()
     {
         return new self('Cannot change invitation status of the event with no related attendee.');
     }
@@ -22,7 +22,7 @@ class ChangeInvitationStatusException extends \Exception implements ExceptionInt
      *
      * @return self
      */
-    static public function changeInvitationFailed()
+    public static function changeInvitationFailed()
     {
         return new self('Cannot change invitation status of the event.');
     }
@@ -33,7 +33,7 @@ class ChangeInvitationStatusException extends \Exception implements ExceptionInt
      * @param string $statusName
      * @return self
      */
-    static public function invitationStatusNotFound($statusName)
+    public static function invitationStatusNotFound($statusName)
     {
         return new self(
             sprintf(
@@ -42,5 +42,4 @@ class ChangeInvitationStatusException extends \Exception implements ExceptionInt
             )
         );
     }
-
 }

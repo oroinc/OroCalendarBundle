@@ -1177,7 +1177,7 @@ class RecurringEventAttributeUpdateExceptionTest extends AbstractTestCase
      * 1. Create recurring event without attendees.
      * 2. Create exception for the recurring event with updated title, description, time and with 2 attendees.
      * 3. Change recurring event with the same attendees as in exception.
-     * 4. Check the list of attendees is the same in each occurrence of recurring event including the exception.
+     * 4. Check the attendees list is the same in each occurrence of recurring event including the exception.
      *
      * @SuppressWarnings(PHPMD.ExcessiveMethodLength)
      */
@@ -1285,7 +1285,7 @@ class RecurringEventAttributeUpdateExceptionTest extends AbstractTestCase
             $response
         );
 
-        // Step 4. Check the list of attendees is the same in each occurrence of recurring event including the exception.
+        // Step 4. Check the attendees list is the same in each occurrence of recurring event including the exception.
         $this->restRequest(
             [
                 'method' => 'GET',
