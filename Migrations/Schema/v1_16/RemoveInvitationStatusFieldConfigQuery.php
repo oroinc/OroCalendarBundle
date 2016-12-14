@@ -38,9 +38,10 @@ class RemoveInvitationStatusFieldConfigQuery extends ParametrizedMigrationQuery
     }
 
     /**
-     * {@inheritdoc}
+     * @param LoggerInterface $logger
+     * @param bool|false $dryRun
      */
-    public function doExecute(LoggerInterface $logger, $dryRun = false)
+    protected function doExecute(LoggerInterface $logger, $dryRun = false)
     {
         $sql = 'DELETE FROM oro_entity_config_field WHERE field_name = ? '.
             'AND entity_id = (SELECT id FROM oro_entity_config WHERE class_name = ? LIMIT 1)';
