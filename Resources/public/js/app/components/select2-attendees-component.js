@@ -12,7 +12,6 @@ define(function(require) {
             Select2AttendeesComponent.__super__.initialize.call(this, options);
         },
         preConfig: function(config) {
-            var self = this;
             Select2AttendeesComponent.__super__.preConfig.call(this, config);
             config.maximumInputLength = 50;
 
@@ -29,10 +28,10 @@ define(function(require) {
                         .replace(disallowSymbolsPattern, '')
                         .trim();
                     var text = ''; //it is used as text for autocomplete item
-                    if (displayName == '') {
-                        text = email;
+                    if (displayName) {
+                        text = displayName + (email ? ' <' + email + '>' : '');
                     } else {
-                        text = displayName + (email == '' ? '' : ' <' + email + '>');
+                        text = email;
                     }
 
                     return {
