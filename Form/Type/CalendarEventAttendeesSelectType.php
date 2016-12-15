@@ -84,7 +84,7 @@ class CalendarEventAttendeesSelectType extends AbstractType
             foreach ($attendees as $attendee) {
                 $result[] = json_encode(
                     [
-                        'text'        => $this->attendeeRelationManager->getRelatedDisplayName($attendee),
+                        'text'        => $this->attendeeRelationManager->getDisplayName($attendee),
                         'displayName' => $attendee->getDisplayName(),
                         'email'       => $attendee->getEmail(),
                         'type'        => $attendee->getType() ? $attendee->getType()->getId() : null,

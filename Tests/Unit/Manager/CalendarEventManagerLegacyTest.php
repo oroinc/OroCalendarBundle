@@ -86,10 +86,15 @@ class CalendarEventManagerLegacyTest extends \PHPUnit_Framework_TestCase
                 ->disableOriginalConstructor()
                 ->getMock();
 
+        $attendeeManager = $this
+            ->getMockBuilder('Oro\Bundle\CalendarBundle\Manager\AttendeeManager')
+            ->disableOriginalConstructor()
+            ->getMock();
+
         $updateManager = new UpdateManager(
             new UpdateAttendeeManager($attendeeRelationManager, $doctrineHelper),
             new UpdateChildManager($doctrineHelper),
-            new UpdateExceptionManager()
+            new UpdateExceptionManager($attendeeManager)
         );
 
         $this->calendarEventManager = new CalendarEventManager(

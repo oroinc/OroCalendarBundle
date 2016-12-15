@@ -79,7 +79,7 @@ class AjaxCalendarEventController extends Controller
 
         foreach ($attendees as $attendee) {
             $result[] = [
-                'text'        => $attendeeRelationManager->getRelatedDisplayName($attendee),
+                'text'        => $attendeeRelationManager->getDisplayName($attendee),
                 'displayName' => $attendee->getDisplayName(),
                 'email'       => $attendee->getEmail(),
                 'type'        => $attendee->getType() ? $attendee->getType()->getId() : null,

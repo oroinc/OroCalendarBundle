@@ -3,6 +3,7 @@
 namespace Oro\Bundle\CalendarBundle\Manager;
 
 use Doctrine\Common\Persistence\ManagerRegistry;
+use Doctrine\Common\Util\ClassUtils;
 use Doctrine\ORM\QueryBuilder;
 
 use Oro\Bundle\CalendarBundle\Entity\Attendee;
@@ -38,20 +39,30 @@ class AttendeeRelationManager
     }
 
     /**
+     * Set related entity of the attendee.
+     *
+     * @param Attendee $attendee
      * @param object $relatedEntity
      *
-     * @return Attendee|null
+     * @throws \InvalidArgumentException If related entity type is not supported.
      */
-    public function createAttendee($relatedEntity)
+    public function setRelatedEntity(Attendee $attendee, $relatedEntity = null)
     {
-        if (!$relatedEntity instanceof User) {
-            return null;
+        if ($relatedEntity instanceof User) {
+            $attendee
+                ->setUser($relatedEntity)
+                ->setDisplayName($this->nameFormatter->format($relatedEntity))
+                ->setEmail($relatedEntity->getEmail());
+        } else {
+            // Only User is supported as related entity of attendee.
+            throw new \InvalidArgumentException(
+                sprintf(
+                    'Related entity must be an instance of "%s", "%s" is given.',
+                    User::class,
+                    is_object($relatedEntity) ? ClassUtils::getClass($relatedEntity) : gettype($relatedEntity)
+                )
+            );
         }
-
-        return (new Attendee())
-            ->setDisplayName($this->nameFormatter->format($relatedEntity))
-            ->setEmail($relatedEntity->getEmail())
-            ->setUser($relatedEntity);
     }
 
     /**
@@ -69,7 +80,7 @@ class AttendeeRelationManager
      *
      * @return string
      */
-    public function getRelatedDisplayName(Attendee $attendee)
+    public function getDisplayName(Attendee $attendee)
     {
         if ($attendee->getUser()) {
             return $this->nameFormatter->format($attendee->getUser());

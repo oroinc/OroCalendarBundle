@@ -10,7 +10,7 @@ use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorage;
 use Oro\Bundle\CalendarBundle\Autocomplete\AttendeeSearchHandler;
 use Oro\Bundle\CalendarBundle\Tests\Unit\Fixtures\Entity\Attendee;
 use Oro\Bundle\CalendarBundle\Tests\Unit\Fixtures\Entity\User;
-use Oro\Bundle\CalendarBundle\Manager\AttendeeRelationManager;
+use Oro\Bundle\CalendarBundle\Manager\AttendeeManager;
 use Oro\Bundle\EntityExtendBundle\Tests\Unit\Fixtures\TestEnumValue;
 use Oro\Bundle\SearchBundle\Engine\Indexer;
 use Oro\Bundle\SearchBundle\Query\Query;
@@ -28,8 +28,8 @@ class AttendeeSearchHandlerTest extends \PHPUnit_Framework_TestCase
     /** @var EntityRepository */
     protected $entityRepository;
 
-    /** @var \PHPUnit_Framework_MockObject_MockObject|AttendeeRelationManager */
-    protected $attendeeRelationManager;
+    /** @var \PHPUnit_Framework_MockObject_MockObject|AttendeeManager */
+    protected $attendeeManager;
 
     /** @var AttendeeSearchHandler */
     protected $attendeeSearchHandler;
@@ -71,8 +71,8 @@ class AttendeeSearchHandlerTest extends \PHPUnit_Framework_TestCase
 
         $dispatcher = $this->getMock('Symfony\Component\EventDispatcher\EventDispatcherInterface');
 
-        $this->attendeeRelationManager = $this
-            ->getMockBuilder('Oro\Bundle\CalendarBundle\Manager\AttendeeRelationManager')
+        $this->attendeeManager = $this
+            ->getMockBuilder('Oro\Bundle\CalendarBundle\Manager\AttendeeManager')
             ->disableOriginalConstructor()
             ->getMock();
 
@@ -98,7 +98,7 @@ class AttendeeSearchHandlerTest extends \PHPUnit_Framework_TestCase
             $dispatcher
         );
 
-        $this->attendeeSearchHandler->setAttendeeRelationManager($this->attendeeRelationManager);
+        $this->attendeeSearchHandler->setAttendeeManager($this->attendeeManager);
     }
 
     public function testSearch()
@@ -127,7 +127,7 @@ class AttendeeSearchHandlerTest extends \PHPUnit_Framework_TestCase
             ->with([1, 2])
             ->will($this->returnValue($users));
 
-        $this->attendeeRelationManager->expects($this->exactly(2))
+        $this->attendeeManager->expects($this->exactly(2))
             ->method('createAttendee')
             ->withConsecutive(
                 [$users[0]],
