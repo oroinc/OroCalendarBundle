@@ -13,6 +13,14 @@ class YearNthStrategy extends AbstractStrategy
     /**
      * {@inheritdoc}
      */
+    public function getName()
+    {
+        return 'recurrence_yearnth';
+    }
+
+    /**
+     * {@inheritdoc}
+     */
     public function getOccurrences(Entity\Recurrence $recurrence, \DateTime $start, \DateTime $end)
     {
         $result = [];
@@ -91,14 +99,6 @@ class YearNthStrategy extends AbstractStrategy
             $interval,
             ['%count%' => $interval, '%day%' => $day, '%instance%' => strtolower($instance), '%month%' => $month]
         );
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function getName()
-    {
-        return 'recurrence_yearnth';
     }
 
     /**
@@ -183,24 +183,26 @@ class YearNthStrategy extends AbstractStrategy
     /**
      * {@inheritdoc}
      */
-    public function getValidationErrorMessage(Entity\Recurrence $recurrence)
+    public function getRequiredProperties(Entity\Recurrence $recurrence)
     {
-        if ($recurrence->getInterval() % 12 !== 0) {
-            return "Parameter 'interval' value must be a multiple of 12 for YearNth recurrence pattern.";
-        }
+        return array_merge(
+            parent::getRequiredProperties($recurrence),
+            [
+                'instance',
+                'dayOfWeek',
+                'monthOfYear',
+            ]
+        );
+    }
 
-        if (!$recurrence->getInstance()) {
-            return "Parameter 'instance' value can't be empty for YearNth recurrence pattern.";
-        }
-
-        if (!$recurrence->getDayOfWeek()) {
-            return "Parameter 'dayOfWeek' can't be empty for YearNth recurrence pattern.";
-        }
-
-        if (!$recurrence->getMonthOfYear()) {
-            return "Parameter 'monthOfYear' can't be empty for YearNth recurrence pattern.";
-        }
-
-        return null;
+    /**
+     * The multiplier for yearly recurrence type is 12, so only values of interval from this sequence are supported:
+     * 12, 24, 36, ...
+     *
+     * {@inheritdoc}
+     */
+    public function getIntervalMultipleOf(Entity\Recurrence $recurrence)
+    {
+        return 12;
     }
 }

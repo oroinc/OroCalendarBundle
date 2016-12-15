@@ -9,8 +9,7 @@ use Symfony\Component\HttpFoundation\JsonResponse;
 
 use Oro\Bundle\CalendarBundle\Entity\Attendee;
 use Oro\Bundle\CalendarBundle\Entity\CalendarEvent;
-use Oro\Bundle\CalendarBundle\Exception\CalendarEventRelatedAttendeeNotFoundException;
-use Oro\Bundle\CalendarBundle\Exception\StatusNotFoundException;
+use Oro\Bundle\CalendarBundle\Exception\ChangeInvitationStatusException;
 use Oro\Bundle\CalendarBundle\Manager\AttendeeManager;
 
 /**
@@ -37,19 +36,14 @@ class AjaxCalendarEventController extends Controller
     public function changeStatus(CalendarEvent $entity, $status)
     {
         try {
-            $this->get('oro_calendar.calendar_event_manager')->changeStatus($entity, $status);
-        } catch (CalendarEventRelatedAttendeeNotFoundException $ex) {
+            $loggedUser = $this->get('oro_security.security_facade')->getLoggedUser();
+            $manager = $this->get('oro_calendar.calendar_event_manager');
+            $manager->changeInvitationStatus($entity, $status, $loggedUser);
+        } catch (ChangeInvitationStatusException $exception) {
             return new JsonResponse(
                 [
                     'successfull' => false,
-                    'message'     => $ex->getMessage(),
-                ]
-            );
-        } catch (StatusNotFoundException $ex) {
-            return new JsonResponse(
-                [
-                    'successfull' => false,
-                    'message'     => $ex->getMessage(),
+                    'message'     => $exception->getMessage(),
                 ]
             );
         }

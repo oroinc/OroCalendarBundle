@@ -50,7 +50,7 @@ class AttendeeSearchHandler extends ContextSearchHandler
                 'text'        => $attendee->getDisplayName(),
                 'displayName' => $attendee->getDisplayName(),
                 'email'       => $attendee->getEmail(),
-                'status'      => $attendee->getStatus() ? $attendee->getStatus()->getId() : null,
+                'status'      => $attendee->getStatusCode(),
                 'type'        => $attendee->getType() ? $attendee->getType()->getId() : null,
             ];
         }

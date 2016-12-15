@@ -15,7 +15,6 @@ class RestCalendarEventWithCancelledAndUpdatedRecurrentEventTest extends Abstrac
      */
     public function testCalendarEventWithCancelledAndUpdatedRecurrentEventTest()
     {
-        $this->markTestSkipped('Should be corrected after BAP-12699');
         $this->checkPreconditions();
 
         $startDate = '2016-02-07T09:00:00+00:00';
@@ -25,8 +24,8 @@ class RestCalendarEventWithCancelledAndUpdatedRecurrentEventTest extends Abstrac
 
         $attendeesData = [
             [
-                'displayName' => 'simple_user@example.com',
-                'email'       => 'simple_user@example.com',
+                'displayName' => 'system_user_1@example.com',
+                'email'       => 'system_user_1@example.com',
                 'status'      => Attendee::STATUS_NONE,
                 'type'        => Attendee::TYPE_REQUIRED,
             ],
@@ -66,7 +65,7 @@ class RestCalendarEventWithCancelledAndUpdatedRecurrentEventTest extends Abstrac
         $mainExceptionCalendarEventId = $this->addCalendarEventViaAPI($exceptionData);
         $mainExceptionEvent = $this->getCalendarEventById($mainExceptionCalendarEventId);
 
-        $simpleUser = $this->getReference('simple_user');
+        $simpleUser = $this->getReference('oro_calendar:user:system_user_1');
 
         $expectedEventsData = [
             [

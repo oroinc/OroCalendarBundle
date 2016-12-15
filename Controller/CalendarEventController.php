@@ -42,8 +42,15 @@ class CalendarEventController extends Controller
      */
     public function viewAction(CalendarEvent $entity)
     {
+        $loggedUser = $this->get('oro_security.security_facade')->getLoggedUser();
+        $canChangeInvitationStatus = $this->get('oro_calendar.calendar_event_manager')
+            ->canChangeInvitationStatus(
+                $entity,
+                $loggedUser
+            );
         return [
             'entity' => $entity,
+            'canChangeInvitationStatus' => $canChangeInvitationStatus
         ];
     }
 
@@ -59,10 +66,17 @@ class CalendarEventController extends Controller
      */
     public function infoAction(CalendarEvent $entity, $renderContexts)
     {
+        $loggedUser = $this->get('oro_security.security_facade')->getLoggedUser();
+        $canChangeInvitationStatus = $this->get('oro_calendar.calendar_event_manager')
+            ->canChangeInvitationStatus(
+                $entity,
+                $loggedUser
+            );
         return [
             'entity'         => $entity,
             'target'         => $this->getTargetEntity(),
-            'renderContexts' => (bool) $renderContexts
+            'renderContexts' => (bool) $renderContexts,
+            'canChangeInvitationStatus' => $canChangeInvitationStatus
         ];
     }
 

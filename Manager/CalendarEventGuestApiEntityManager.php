@@ -32,7 +32,9 @@ class CalendarEventGuestApiEntityManager extends ApiEntityManager
         $criteria    = $this->prepareQueryCriteria($limit ? : null, $page, $criteria, $orderBy);
 
         return $this->getRepository()->createQueryBuilder('e')
-            ->select('e.id, e.invitationStatus, u.email,' . sprintf('%s AS userFullName', $userNameDQL))
+            ->addSelect('e.id')
+            ->addSelect('u.email')
+            ->addSelect(sprintf('%s AS userFullName', $userNameDQL))
             ->join('e.calendar', 'c')
             ->join('c.owner', 'u')
             ->addCriteria($criteria);

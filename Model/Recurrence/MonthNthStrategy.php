@@ -10,6 +10,14 @@ class MonthNthStrategy extends AbstractStrategy
     /**
      * {@inheritdoc}
      */
+    public function getName()
+    {
+        return 'recurrence_monthnth';
+    }
+
+    /**
+     * {@inheritdoc}
+     */
     public function getOccurrences(Entity\Recurrence $recurrence, \DateTime $start, \DateTime $end)
     {
         $result = [];
@@ -85,14 +93,6 @@ class MonthNthStrategy extends AbstractStrategy
             $interval,
             ['%count%' => $interval, '%day%' => $day, '%instance%' => strtolower($instance)]
         );
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function getName()
-    {
-        return 'recurrence_monthnth';
     }
 
     /**
@@ -172,16 +172,14 @@ class MonthNthStrategy extends AbstractStrategy
     /**
      * {@inheritdoc}
      */
-    public function getValidationErrorMessage(Entity\Recurrence $recurrence)
+    public function getRequiredProperties(Entity\Recurrence $recurrence)
     {
-        if (!$recurrence->getInstance()) {
-            return "Parameter 'instance' value can't be empty for MonthNth recurrence pattern.";
-        }
-
-        if (!$recurrence->getDayOfWeek()) {
-            return "Parameter 'dayOfWeek' can't be empty for MonthNth recurrence pattern.";
-        }
-
-        return null;
+        return array_merge(
+            parent::getRequiredProperties($recurrence),
+            [
+                'instance',
+                'dayOfWeek'
+            ]
+        );
     }
 }

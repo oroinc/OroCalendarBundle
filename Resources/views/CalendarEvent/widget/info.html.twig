@@ -20,5 +20,8 @@
         {% if entity.recurringEvent %}
             {{ UI.renderProperty('oro.calendar.calendarevent.recurrence.exception.label'|trans, get_recurrence_text_value(entity.recurringEvent.recurrence)) }}
         {% endif %}
+        {% if canChangeInvitationStatus  %}
+            {% include 'OroCalendarBundle:CalendarEvent:invitationControl.html.twig' with {'entity': entity, 'triggerEventName': 'widget:doRefresh:activity-list-widget'} %}
+        {% endif %}
     </div>
 </div>

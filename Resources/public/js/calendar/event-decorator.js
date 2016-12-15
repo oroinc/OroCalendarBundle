@@ -9,7 +9,7 @@ define([
         templates: {
             reminderIcon: '<i class="reminder-status fa-bell-o" title="' + __('Reminders') + '"></i>',
             notRespondedIcon: '<i class="invitation-status fa-reply" title="' + __('Not responded') + '"></i>',
-            tentativelyIcon: '<i class="invitation-status fa-question-circle" title="' +
+            tentativeIcon: '<i class="invitation-status fa-question-circle" title="' +
                 __('Tentatively accepted') + '"></i>',
             acceptedIcon: '<i class="invitation-status fa-check" title="' + __('Accepted') + '"></i>'
         },
@@ -36,7 +36,7 @@ define([
                     $timePlace.prepend(this.templates.acceptedIcon);
                     break;
                 case 'tentative':
-                    $timePlace.prepend(this.templates.tentativelyIcon);
+                    $timePlace.prepend(this.templates.tentativeIcon);
                     break;
                 case 'declined':
                     $body.addClass('invitation-status-declined');

@@ -53,7 +53,6 @@ recurringEventNotInRangeWithExceptionInRange:
             start: '-4 day'
             end: '-4 day + 1 hour'
             allDay: false
-#            originalStart: '-7 day' # the same as start
             isCancelled: false
 
 recurringEventInRangeWithCancelledExceptionInRange:
@@ -74,7 +73,6 @@ recurringEventInRangeWithCancelledExceptionInRange:
             start: '-2 day'
             end: '-2 day + 1 hour'
             allDay: false
-#            originalStart: '-2 day' # the same as start
             isCancelled: true
 
 recurringEventInRangeWithCancelledExceptionNotInRange:
@@ -94,7 +92,6 @@ recurringEventInRangeWithCancelledExceptionNotInRange:
             start: '+7 day'
             end: '+7 day + 1 hour'
             allDay: false
-#            originalStart: '-2 day' # the same as start
             isCancelled: true
 
 recurringEventInRangeWithTimezone:

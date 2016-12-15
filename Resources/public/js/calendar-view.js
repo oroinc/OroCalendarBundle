@@ -83,7 +83,8 @@ define(function(require) {
             },
             colorManagerOptions: {
                 colors: null
-            }
+            },
+            invitationStatuses: []
         },
 
         /**
@@ -104,7 +105,8 @@ define(function(require) {
         eventsLoaded: {},
 
         listen: {
-            'layout:reposition mediator': 'onWindowResize'
+            'layout:reposition mediator': 'onWindowResize',
+            'widget_success:attendee_status:change mediator': 'onAttendeeStatusChange'
         },
 
         /**
@@ -206,7 +208,8 @@ define(function(require) {
                     connections: this.getConnectionCollection(),
                     viewTemplateSelector: this.options.eventsOptions.itemViewTemplateSelector,
                     formTemplateSelector: this.options.eventsOptions.itemFormTemplateSelector,
-                    colorManager: this.colorManager
+                    colorManager: this.colorManager,
+                    invitationStatuses: this.options.invitationStatuses
                 }));
                 // subscribe to event view collection events
                 this.listenTo(this.eventView, 'addEvent', this.handleEventViewAdd);
@@ -319,6 +322,11 @@ define(function(require) {
         onEventDeleted: function(eventModel) {
             this.getCalendarElement().fullCalendar('removeEvents', eventModel.id);
             this.trigger('event:deleted', eventModel);
+        },
+
+        onAttendeeStatusChange: function() {
+            this.updateEvents();
+            this.updateLayout();
         },
 
         onConnectionAdded: function() {

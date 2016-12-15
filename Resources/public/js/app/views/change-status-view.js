@@ -9,33 +9,30 @@ define([
     'use strict';
 
     var ChangeStatusView = BaseView.extend({
-        /**
-         * @constructor
-         */
-        initialize: function() {
-            this.$el.on('click.' + this.cid, _.bind(function(e) {
-                e.preventDefault();
-                this.sendUpdate();
-                return false;
-            }, this));
+
+        triggerEventName: '',
+
+        events: {
+            click: 'sendUpdate'
         },
 
-        /**
-         * @inheritDoc
-         */
-        dispose: function() {
-            if (!this.disposed && this.$el) {
-                this.$el.off('.' + this.cid);
-            }
-            ChangeStatusView.__super__.dispose.call(this);
+        initialize: function(options) {
+            ChangeStatusView.__super__.initialize.call(this, options);
+            this.triggerEventName = _.isEmpty(options.triggerEventName) ? '' : options.triggerEventName;
         },
 
-        sendUpdate: function() {
+        sendUpdate: function(e) {
+            e.preventDefault();
+            var triggerEventName = this.triggerEventName;
             $.ajax({
                 url: this.$el.attr('href'),
-                type: 'GET',
+                type: 'POST',
                 success: function() {
-                    mediator.execute('refreshPage');
+                    if (_.isEmpty(triggerEventName)) {
+                        mediator.execute('refreshPage');
+                    } else {
+                        mediator.trigger(triggerEventName);
+                    }
                 },
                 error: function(jqXHR) {
                     messenger.showErrorMessage(__('Sorry, unexpected error was occurred'), jqXHR.responseJSON);

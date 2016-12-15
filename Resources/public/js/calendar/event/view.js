@@ -28,7 +28,8 @@ define(function(require) {
             connections: null,
             colorManager: null,
             widgetRoute: null,
-            widgetOptions: null
+            widgetOptions: null,
+            invitationStatuses: []
         },
 
         /** @property {Object} */
@@ -55,6 +56,7 @@ define(function(require) {
 
             this.listenTo(this.model, 'sync', this.onModelSave);
             this.listenTo(this.model, 'destroy', this.onModelDelete);
+            this.listenTo(mediator, 'widget_success:attendee_status:change', this.onAttendeeStatusChange);
         },
 
         remove: function() {
@@ -72,6 +74,10 @@ define(function(require) {
         },
 
         onModelDelete: function() {
+            this.eventDialog.remove();
+        },
+
+        onAttendeeStatusChange: function() {
             this.eventDialog.remove();
         },
 
@@ -404,11 +410,16 @@ define(function(require) {
         getEventView: function() {
             // fetch calendar related connection
             var connection = this.options.connections.findWhere({calendarUid: this.model.get('calendarUid')});
+            var invitationUrls = [];
+            _.each(this.options.invitationStatuses, function(status) {
+                invitationUrls[status] = routing.generate('oro_calendar_event_' + status, {id: this.model.originalId});
+            }, this);
             var $element = $(this.viewTemplate(_.extend(this.model.toJSON(), {
                 formatter: fieldFormatter,
-                connection: connection ? connection.toJSON() : null
+                connection: connection ? connection.toJSON() : null,
+                invitationUrls: invitationUrls,
+                originalId: this.model.originalId
             })));
-
             var $contextsSource = $element.find('.activity-context-activity');
             this.activityContext = new ActivityContextComponent({
                 _sourceElement: $contextsSource,

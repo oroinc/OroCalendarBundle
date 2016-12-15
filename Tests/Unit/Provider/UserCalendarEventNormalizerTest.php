@@ -6,45 +6,57 @@ use Oro\Bundle\CalendarBundle\Entity\Calendar;
 use Oro\Bundle\CalendarBundle\Provider\UserCalendarEventNormalizer;
 use Oro\Bundle\CalendarBundle\Tests\Unit\Fixtures\Entity\Attendee;
 use Oro\Bundle\CalendarBundle\Tests\Unit\Fixtures\Entity\CalendarEvent;
+use Oro\Bundle\CalendarBundle\Tests\Unit\Fixtures\Entity\User;
 use Oro\Bundle\EntityExtendBundle\Tests\Unit\Fixtures\TestEnumValue;
 
 class UserCalendarEventNormalizerTest extends \PHPUnit_Framework_TestCase
 {
+    /** @var \PHPUnit_Framework_MockObject_MockObject */
+    protected $calendarEventManager;
+
+    /** @var \PHPUnit_Framework_MockObject_MockObject */
+    protected $attendeeManager;
+
     /** @var \PHPUnit_Framework_MockObject_MockObject */
     protected $reminderManager;
 
     /** @var \PHPUnit_Framework_MockObject_MockObject */
     protected $securityFacade;
 
-    /** @var \PHPUnit_Framework_MockObject_MockObject */
-    protected $attendeeManager;
-
     /** @var UserCalendarEventNormalizer */
     protected $normalizer;
 
     protected function setUp()
     {
-        $this->reminderManager = $this->getMockBuilder('Oro\Bundle\ReminderBundle\Entity\Manager\ReminderManager')
-            ->disableOriginalConstructor()
-            ->getMock();
-        $this->securityFacade  = $this->getMockBuilder('Oro\Bundle\SecurityBundle\SecurityFacade')
+        $this->calendarEventManager = $this->getMockBuilder('Oro\Bundle\CalendarBundle\Manager\CalendarEventManager')
             ->disableOriginalConstructor()
             ->getMock();
         $this->attendeeManager = $this->getMockBuilder('Oro\Bundle\CalendarBundle\Manager\AttendeeManager')
             ->disableOriginalConstructor()
             ->getMock();
+        $this->reminderManager = $this->getMockBuilder('Oro\Bundle\ReminderBundle\Entity\Manager\ReminderManager')
+            ->disableOriginalConstructor()
+            ->getMock();
+        $this->securityFacade = $this->getMockBuilder('Oro\Bundle\SecurityBundle\SecurityFacade')
+            ->disableOriginalConstructor()
+            ->getMock();
 
         $this->normalizer = new UserCalendarEventNormalizer(
+            $this->calendarEventManager,
+            $this->attendeeManager,
             $this->reminderManager,
-            $this->securityFacade,
-            $this->attendeeManager
+            $this->securityFacade
         );
     }
 
     /**
      * @dataProvider getCalendarEventsProvider
+     * @param array $events
+     * @param array $attendees
+     * @param array $editableInvitationStatus
+     * @param array $expected
      */
-    public function testGetCalendarEvents($events, $attendees, $expected)
+    public function testGetCalendarEvents(array $events, array $attendees, $editableInvitationStatus, array $expected)
     {
         $calendarId = 123;
 
@@ -69,15 +81,32 @@ class UserCalendarEventNormalizerTest extends \PHPUnit_Framework_TestCase
                 );
         }
 
+        if ($events) {
+            $loggedUser = new User();
+
+            $this->securityFacade->expects($this->once())
+                ->method('getLoggedUser')
+                ->willReturn($loggedUser);
+
+            $this->calendarEventManager->expects($this->once())
+                ->method('canChangeInvitationStatus')
+                ->with($this->isType('array'), $loggedUser)
+                ->willReturn($editableInvitationStatus);
+
+            $this->attendeeManager->expects($this->once())
+                ->method('getAttendeeListsByCalendarEventIds')
+                ->will($this->returnCallback(function ($calendarEventIds) use ($attendees) {
+                    return array_intersect_key($attendees, array_flip($calendarEventIds));
+                }));
+        } else {
+            $this->securityFacade->expects($this->never())->method($this->anything());
+            $this->calendarEventManager->expects($this->never())->method($this->anything());
+            $this->attendeeManager->expects($this->never())->method($this->anything());
+        }
+
         $this->reminderManager->expects($this->once())
             ->method('applyReminders')
             ->with($expected, 'Oro\Bundle\CalendarBundle\Entity\CalendarEvent');
-
-        $this->attendeeManager->expects($this->any())
-            ->method('getAttendeeListsByCalendarEventIds')
-            ->will($this->returnCallback(function ($calendarEventIds) use ($attendees) {
-                return array_intersect_key($attendees, array_flip($calendarEventIds));
-            }));
 
         $result = $this->normalizer->getCalendarEvents($calendarId, $query);
         $this->assertEquals($expected, $result);
@@ -91,99 +120,164 @@ class UserCalendarEventNormalizerTest extends \PHPUnit_Framework_TestCase
     public function getCalendarEventsProvider()
     {
         $startDate = new \DateTime();
-        $endDate   = $startDate->add(new \DateInterval('PT1H'));
+        $endDate = $startDate->add(new \DateInterval('PT1H'));
 
         return [
-            'no events'             => [
-                'events'                 => [],
-                'invitees'               => [],
-                'expected'               => []
+            'no events' => [
+                'events' => [],
+                'invitees' => [],
+                'editableInvitationStatus' => null,
+                'expected' => []
             ],
             'event without invitees' => [
-                'events'                 => [
+                'events' => [
                     [
-                        'calendar'         => 123,
-                        'id'               => 1,
-                        'title'            => 'test',
-                        'description'      => null,
-                        'start'            => $startDate,
-                        'end'              => $endDate,
-                        'allDay'           => false,
-                        'backgroundColor'  => null,
-                        'createdAt'        => null,
-                        'updatedAt'        => null,
-                        'parentEventId'    => null,
-                        'invitationStatus' => null,
+                        'calendar' => 123,
+                        'id' => 1,
+                        'title' => 'test',
+                        'description' => null,
+                        'start' => $startDate,
+                        'end' => $endDate,
+                        'allDay' => false,
+                        'backgroundColor' => null,
+                        'createdAt' => null,
+                        'updatedAt' => null,
+                        'parentEventId' => null,
+                        'invitationStatus' => CalendarEvent::STATUS_NONE,
+                        'relatedAttendeeUserId' => 1,
                     ],
                 ],
-                'invitees'               => [1 => []],
-                'expected'               => [
+                'attendees' => [1 => []],
+                'editableInvitationStatus' => false,
+                'expected' => [
                     [
-                        'calendar'         => 123,
-                        'id'               => 1,
-                        'title'            => 'test',
-                        'description'      => null,
-                        'start'            => $startDate->format('c'),
-                        'end'              => $endDate->format('c'),
-                        'allDay'           => false,
-                        'backgroundColor'  => null,
-                        'createdAt'        => null,
-                        'updatedAt'        => null,
-                        'parentEventId'    => null,
-                        'invitationStatus' => null,
-                        'attendees'        => [],
-                        'editable'         => true,
-                        'removable'        => true,
-                        'notifiable'       => false,
+                        'calendar' => 123,
+                        'id' => 1,
+                        'title' => 'test',
+                        'description' => null,
+                        'start' => $startDate->format('c'),
+                        'end' => $endDate->format('c'),
+                        'allDay' => false,
+                        'backgroundColor' => null,
+                        'createdAt' => null,
+                        'updatedAt' => null,
+                        'parentEventId' => null,
+                        'invitationStatus' => CalendarEvent::STATUS_NONE,
+                        'attendees' => [],
+                        'editable' => true,
+                        'editableInvitationStatus' => false,
+                        'removable' => true,
+                        'notifiable' => false,
                     ],
                 ]
             ],
             'event with invitees' => [
-                'events'                 => [
+                'events' => [
                     [
-                        'calendar'         => 123,
-                        'id'               => 1,
-                        'title'            => 'test',
-                        'description'      => null,
-                        'start'            => $startDate,
-                        'end'              => $endDate,
-                        'allDay'           => false,
-                        'backgroundColor'  => null,
-                        'createdAt'        => null,
-                        'updatedAt'        => null,
-                        'parentEventId'    => null,
-                        'invitationStatus' => null,
+                        'calendar' => 123,
+                        'id' => 1,
+                        'title' => 'test',
+                        'description' => null,
+                        'start' => $startDate,
+                        'end' => $endDate,
+                        'allDay' => false,
+                        'backgroundColor' => null,
+                        'createdAt' => null,
+                        'updatedAt' => null,
+                        'parentEventId' => null,
+                        'invitationStatus' => CalendarEvent::STATUS_NONE,
+                        'relatedAttendeeUserId' => 1,
                     ],
                 ],
-                'attendees'                => [
+                'attendees' => [
                     1 => [
                         [
                             'displayName' => 'user',
                             'email' => 'user@example.com',
+                            'userId' => null
                         ],
                     ],
                 ],
-                'expected'               => [
+                'editableInvitationStatus' => false,
+                'expected' => [
                     [
-                        'calendar'         => 123,
-                        'id'               => 1,
-                        'title'            => 'test',
-                        'description'      => null,
-                        'start'            => $startDate->format('c'),
-                        'end'              => $endDate->format('c'),
-                        'allDay'           => false,
-                        'backgroundColor'  => null,
-                        'createdAt'        => null,
-                        'updatedAt'        => null,
-                        'parentEventId'    => null,
-                        'invitationStatus' => null,
-                        'editable'         => true,
-                        'removable'        => true,
-                        'notifiable'       => true,
-                        'attendees'     => [
+                        'calendar' => 123,
+                        'id' => 1,
+                        'title' => 'test',
+                        'description' => null,
+                        'start' => $startDate->format('c'),
+                        'end' => $endDate->format('c'),
+                        'allDay' => false,
+                        'backgroundColor' => null,
+                        'createdAt' => null,
+                        'updatedAt' => null,
+                        'parentEventId' => null,
+                        'invitationStatus' => CalendarEvent::STATUS_NONE,
+                        'editable' => true,
+                        'editableInvitationStatus' => false,
+                        'removable' => true,
+                        'notifiable' => true,
+                        'attendees' => [
                             [
                                 'displayName' => 'user',
-                                'email'       => 'user@example.com',
+                                'email' => 'user@example.com',
+                                'userId' => null
+                            ],
+                        ],
+                    ],
+                ]
+            ],
+            'event with invitees and editable invitation status' => [
+                'events' => [
+                    [
+                        'calendar' => 123,
+                        'id' => 1,
+                        'title' => 'test',
+                        'description' => null,
+                        'start' => $startDate,
+                        'end' => $endDate,
+                        'allDay' => false,
+                        'backgroundColor' => null,
+                        'createdAt' => null,
+                        'updatedAt' => null,
+                        'parentEventId' => null,
+                        'invitationStatus' => CalendarEvent::STATUS_NONE,
+                        'relatedAttendeeUserId' => 1,
+                    ],
+                ],
+                'attendees' => [
+                    1 => [
+                        [
+                            'displayName' => 'user',
+                            'email' => 'user@example.com',
+                            'userId' => 1
+                        ],
+                    ],
+                ],
+                'editableInvitationStatus' => true,
+                'expected' => [
+                    [
+                        'calendar' => 123,
+                        'id' => 1,
+                        'title' => 'test',
+                        'description' => null,
+                        'start' => $startDate->format('c'),
+                        'end' => $endDate->format('c'),
+                        'allDay' => false,
+                        'backgroundColor' => null,
+                        'createdAt' => null,
+                        'updatedAt' => null,
+                        'parentEventId' => null,
+                        'invitationStatus' => CalendarEvent::STATUS_NONE,
+                        'editable' => true,
+                        'editableInvitationStatus' => true,
+                        'removable' => true,
+                        'notifiable' => true,
+                        'attendees' => [
+                            [
+                                'displayName' => 'user',
+                                'email' => 'user@example.com',
+                                'userId' => 1
                             ],
                         ],
                     ],
@@ -194,9 +288,24 @@ class UserCalendarEventNormalizerTest extends \PHPUnit_Framework_TestCase
 
     /**
      * @dataProvider getCalendarEventProvider
+     * @param array $event
+     * @param int $calendarId
+     * @param boolean $editableInvitationStatus
+     * @param array $expected
      */
-    public function testGetCalendarEvent($event, $calendarId, $expected)
+    public function testGetCalendarEvent(array $event, $calendarId, $editableInvitationStatus, array $expected)
     {
+        $loggedUser = new User();
+
+        $this->securityFacade->expects($this->once())
+            ->method('getLoggedUser')
+            ->willReturn($loggedUser);
+
+        $this->calendarEventManager->expects($this->once())
+            ->method('canChangeInvitationStatus')
+            ->with($this->isType('array'), $loggedUser)
+            ->willReturn($editableInvitationStatus);
+
         $this->securityFacade->expects($this->any())
             ->method('isGranted')
             ->will(
@@ -211,6 +320,9 @@ class UserCalendarEventNormalizerTest extends \PHPUnit_Framework_TestCase
         $this->reminderManager->expects($this->once())
             ->method('applyReminders')
             ->with([$expected], 'Oro\Bundle\CalendarBundle\Entity\CalendarEvent');
+
+        $this->attendeeManager->expects($this->never())
+            ->method('getAttendeeListsByCalendarEventIds');
 
         $result = $this->normalizer->getCalendarEvent(
             $this->buildCalendarEvent($event),
@@ -227,149 +339,150 @@ class UserCalendarEventNormalizerTest extends \PHPUnit_Framework_TestCase
     public function getCalendarEventProvider()
     {
         $startDate = new \DateTime();
-        $endDate   = $startDate->add(new \DateInterval('PT1H'));
+        $endDate = $startDate->add(new \DateInterval('PT1H'));
 
         return [
             'calendar not specified' => [
-                'event'      => [
-                    'calendar'         => 123,
-                    'id'               => 1,
-                    'title'            => 'test',
-                    'description'      => null,
-                    'start'            => $startDate,
-                    'end'              => $endDate,
-                    'allDay'           => false,
-                    'backgroundColor'  => null,
-                    'createdAt'        => null,
-                    'updatedAt'        => null,
-                    'parentEventId'    => null,
-                    'invitationStatus' => '',
-                    'invitedUsers'     => [],
-                    'attendees'        => [],
+                'event' => [
+                    'calendar' => 123,
+                    'id' => 1,
+                    'title' => 'test',
+                    'description' => null,
+                    'start' => $startDate,
+                    'end' => $endDate,
+                    'allDay' => false,
+                    'backgroundColor' => null,
+                    'createdAt' => null,
+                    'updatedAt' => null,
+                    'parentEventId' => null,
+                    'invitationStatus' => CalendarEvent::STATUS_NONE,
+                    'attendees' => [],
                     'recurringEventId' => null,
-                    'originalStart'    => null,
-                    'isCancelled'      => false,
+                    'originalStart' => null,
+                    'isCancelled' => false,
                 ],
                 'calendarId' => null,
-                'expected'   => [
-                    'calendar'         => 123,
-                    'id'               => 1,
-                    'title'            => 'test',
-                    'description'      => null,
-                    'start'            => $startDate->format('c'),
-                    'end'              => $endDate->format('c'),
-                    'allDay'           => false,
-                    'backgroundColor'  => null,
-                    'createdAt'        => null,
-                    'updatedAt'        => null,
-                    'parentEventId'    => null,
-                    'invitationStatus' => null,
-                    'editable'         => true,
-                    'removable'        => true,
-                    'notifiable'       => false,
-                    'invitedUsers'     => [],
-                    'attendees'        => [],
+                'editableInvitationStatus' => false,
+                'expected' => [
+                    'calendar' => 123,
+                    'id' => 1,
+                    'title' => 'test',
+                    'description' => null,
+                    'start' => $startDate->format('c'),
+                    'end' => $endDate->format('c'),
+                    'allDay' => false,
+                    'backgroundColor' => null,
+                    'createdAt' => null,
+                    'updatedAt' => null,
+                    'parentEventId' => null,
+                    'invitationStatus' => CalendarEvent::STATUS_NONE,
+                    'editable' => true,
+                    'editableInvitationStatus' => false,
+                    'removable' => true,
+                    'notifiable' => false,
+                    'attendees' => [],
                     'recurringEventId' => null,
-                    'originalStart'    => null,
-                    'isCancelled'      => false,
+                    'originalStart' => null,
+                    'isCancelled' => false,
                 ]
             ],
-            'own calendar'           => [
-                'event'      => [
-                    'calendar'         => 123,
-                    'id'               => 1,
-                    'title'            => 'test',
-                    'description'      => null,
-                    'start'            => $startDate,
-                    'end'              => $endDate,
-                    'allDay'           => false,
-                    'backgroundColor'  => null,
-                    'createdAt'        => null,
-                    'updatedAt'        => null,
-                    'parentEventId'    => null,
-                    'invitationStatus' => null,
-                    'attendees'        => [
+            'own calendar' => [
+                'event' => [
+                    'calendar' => 123,
+                    'id' => 1,
+                    'title' => 'test',
+                    'description' => null,
+                    'start' => $startDate,
+                    'end' => $endDate,
+                    'allDay' => false,
+                    'backgroundColor' => null,
+                    'createdAt' => null,
+                    'updatedAt' => null,
+                    'parentEventId' => null,
+                    'invitationStatus' => CalendarEvent::STATUS_NONE,
+                    'attendees' => [
                         [
                             'displayName' => 'user',
-                            'email'       => 'user@example.com',
-                            'status'      => Attendee::STATUS_NONE,
+                            'email' => 'user@example.com',
+                            'status' => Attendee::STATUS_NONE,
                         ]
                     ],
                     'recurringEventId' => null,
-                    'originalStart'    => null,
-                    'isCancelled'      => false,
+                    'originalStart' => null,
+                    'isCancelled' => false,
                 ],
                 'calendarId' => 123,
-                'expected'   => [
-                    'calendar'         => 123,
-                    'id'               => 1,
-                    'title'            => 'test',
-                    'description'      => null,
-                    'start'            => $startDate->format('c'),
-                    'end'              => $endDate->format('c'),
-                    'allDay'           => null,
-                    'backgroundColor'  => null,
-                    'createdAt'        => null,
-                    'updatedAt'        => null,
-                    'parentEventId'    => null,
-                    'invitationStatus' => null,
-                    'editable'         => true,
-                    'removable'        => true,
-                    'notifiable'       => true,
-                    'invitedUsers'     => [],
-                    'attendees'        => [
+                'editableInvitationStatus' => false,
+                'expected' => [
+                    'calendar' => 123,
+                    'id' => 1,
+                    'title' => 'test',
+                    'description' => null,
+                    'start' => $startDate->format('c'),
+                    'end' => $endDate->format('c'),
+                    'allDay' => null,
+                    'backgroundColor' => null,
+                    'createdAt' => null,
+                    'updatedAt' => null,
+                    'parentEventId' => null,
+                    'invitationStatus' => CalendarEvent::STATUS_NONE,
+                    'editable' => true,
+                    'editableInvitationStatus' => false,
+                    'removable' => true,
+                    'notifiable' => true,
+                    'attendees' => [
                         [
                             'displayName' => 'user',
-                            'email'       => 'user@example.com',
-                            'userId'      => null,
-                            'createdAt'   => null,
-                            'updatedAt'   => null,
-                            'status'      => Attendee::STATUS_NONE,
-                            'type'        => null,
+                            'email' => 'user@example.com',
+                            'userId' => null,
+                            'createdAt' => null,
+                            'updatedAt' => null,
+                            'status' => Attendee::STATUS_NONE,
+                            'type' => null,
                         ]
                     ],
                     'recurringEventId' => null,
-                    'originalStart'    => null,
-                    'isCancelled'      => false,
+                    'originalStart' => null,
+                    'isCancelled' => false,
                 ]
             ],
-            'another calendar'       => [
-                'event'      => [
-                    'calendar'         => 123,
-                    'id'               => 1,
-                    'title'            => 'test',
-                    'start'            => $startDate,
-                    'end'              => $endDate,
-                    'allDay'           => false,
-                    'backgroundColor'  => null,
-                    'createdAt'        => null,
-                    'updatedAt'        => null,
-                    'parentEventId'    => null,
+            'another calendar' => [
+                'event' => [
+                    'calendar' => 123,
+                    'id' => 1,
+                    'title' => 'test',
+                    'start' => $startDate,
+                    'end' => $endDate,
+                    'allDay' => false,
+                    'backgroundColor' => null,
+                    'createdAt' => null,
+                    'updatedAt' => null,
+                    'parentEventId' => null,
                     'invitationStatus' => CalendarEvent::STATUS_NONE,
-                    'invitedUsers'     => []
                 ],
                 'calendarId' => 456,
-                'expected'   => [
-                    'calendar'         => 123,
-                    'id'               => 1,
-                    'title'            => 'test',
-                    'description'      => null,
-                    'start'            => $startDate->format('c'),
-                    'end'              => $endDate->format('c'),
-                    'allDay'           => false,
-                    'backgroundColor'  => null,
-                    'createdAt'        => null,
-                    'updatedAt'        => null,
-                    'parentEventId'    => null,
-                    'invitationStatus' => null,
-                    'attendees'        => [],
-                    'editable'         => false,
-                    'removable'        => false,
-                    'notifiable'       => false,
-                    'invitedUsers'     => [],
+                'editableInvitationStatus' => false,
+                'expected' => [
+                    'calendar' => 123,
+                    'id' => 1,
+                    'title' => 'test',
+                    'description' => null,
+                    'start' => $startDate->format('c'),
+                    'end' => $endDate->format('c'),
+                    'allDay' => false,
+                    'backgroundColor' => null,
+                    'createdAt' => null,
+                    'updatedAt' => null,
+                    'parentEventId' => null,
+                    'invitationStatus' => CalendarEvent::STATUS_NONE,
+                    'attendees' => [],
+                    'editable' => false,
+                    'editableInvitationStatus' => false,
+                    'removable' => false,
+                    'notifiable' => false,
                     'recurringEventId' => null,
-                    'originalStart'    => null,
-                    'isCancelled'      => false,
+                    'originalStart' => null,
+                    'isCancelled' => false,
                 ]
             ],
         ];
@@ -401,14 +514,18 @@ class UserCalendarEventNormalizerTest extends \PHPUnit_Framework_TestCase
         if (!empty($data['end'])) {
             $event->setEnd($data['end']);
         }
+        if (isset($data['allDay'])) {
+            $event->setAllDay($data['allDay']);
+        }
         if (!empty($data['calendar'])) {
             $calendar = new Calendar();
+            $calendar->setOwner(new User(1));
             $event->setCalendar($calendar);
             $reflection = new \ReflectionProperty(get_class($calendar), 'id');
             $reflection->setAccessible(true);
             $reflection->setValue($calendar, $data['calendar']);
         }
-        
+
         if (!empty($data['attendees'])) {
             foreach ($data['attendees'] as $attendeeData) {
                 $attendee = new Attendee();
