@@ -63,11 +63,13 @@ class EmailSendProcessor
     {
         if (!$calendarEvent->getParent() && count($calendarEvent->getChildAttendees()) > 0) {
             foreach ($calendarEvent->getChildAttendees() as $attendee) {
-                $this->addEmailNotification(
-                    $attendee->getCalendarEvent(),
-                    [$attendee->getEmail()],
-                    self::CREATE_INVITE_TEMPLATE_NAME
-                );
+                if ($attendee->getEmail()) {
+                    $this->addEmailNotification(
+                        $attendee->getCalendarEvent(),
+                        [$attendee->getEmail()],
+                        self::CREATE_INVITE_TEMPLATE_NAME
+                    );
+                }
             }
             $this->process();
         }
@@ -101,7 +103,8 @@ class EmailSendProcessor
 
         // Send notification to new invitees
         foreach ($childAttendees as $attendee) {
-            if (false === $originalAttendees->contains($attendee)
+            if ($attendee->getEmail()
+                && false === $originalAttendees->contains($attendee)
                 && $attendee->getEmail() !== $this->getCurrentUserEmail()
             ) {
                 $this->addEmailNotification(
@@ -113,7 +116,8 @@ class EmailSendProcessor
         }
 
         foreach ($originalAttendees as $attendee) {
-            if (false === $childAttendees->contains($attendee)
+            if ($attendee->getEmail()
+                && false === $childAttendees->contains($attendee)
                 && $attendee->getEmail() !== $this->getCurrentUserEmail()
             ) {
                 $this->addEmailNotification(
@@ -164,11 +168,16 @@ class EmailSendProcessor
                     sprintf('Invitees try to send un-respond status %s', $statusCode)
                 );
         }
-        $this->addEmailNotification(
-            $calendarEvent,
-            $this->getParentEmail($calendarEvent),
-            $templateName
-        );
+
+        $parentEmail = $this->getParentEmail($calendarEvent);
+        if ($parentEmail) {
+            $this->addEmailNotification(
+                $calendarEvent,
+                $parentEmail,
+                $templateName
+            );
+        }
+
         $this->process();
     }
 
@@ -179,7 +188,7 @@ class EmailSendProcessor
      */
     public function sendDeleteEventNotification(CalendarEvent $calendarEvent)
     {
-        if ($calendarEvent->getParent()) {
+        if ($calendarEvent->getParent() && $this->getParentEmail($calendarEvent)) {
             $this->addEmailNotification(
                 $calendarEvent,
                 $this->getParentEmail($calendarEvent),
@@ -215,7 +224,9 @@ class EmailSendProcessor
         $emails = [];
         /** @var CalendarEvent $notifyEvent */
         foreach ($parentEvent->getChildAttendees() as $attendee) {
-            $emails[] = $attendee->getEmail();
+            if ($attendee->getEmail()) {
+                $emails[] = $attendee->getEmail();
+            }
         }
 
         return $emails;
