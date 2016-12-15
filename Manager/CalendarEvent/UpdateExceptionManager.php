@@ -114,9 +114,13 @@ class UpdateExceptionManager
     {
         foreach ($actualEvent->getRecurringEventExceptions() as $exceptionEvent) {
             $this->updateException($actualEvent, $originalEvent, $exceptionEvent);
+
+            $this->updateExceptions($exceptionEvent, $originalEvent);
         }
 
         foreach ($actualEvent->getChildEvents() as $childEvent) {
+            $this->updateException($actualEvent, $originalEvent, $childEvent);
+
             $this->updateExceptions($childEvent, $originalEvent);
         }
     }

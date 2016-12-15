@@ -14,13 +14,13 @@ class LoadOrganizationData extends AbstractFixture
      */
     protected $data = [
         [
-            'name' => 'Foo Inc.',
-            'enabled' => true,
+            'name'      => 'Foo Inc.',
+            'enabled'   => true,
             'reference' => 'oro_calendar:organization:foo',
         ],
         [
-            'name' => 'Bar Inc.',
-            'enabled' => true,
+            'name'      => 'Bar Inc.',
+            'enabled'   => true,
             'reference' => 'oro_calendar:organization:bar',
         ],
     ];
