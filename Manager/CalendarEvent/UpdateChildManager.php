@@ -70,7 +70,7 @@ class UpdateChildManager
             }
         }
 
-        $this->updateAttendeesCalendarEvents($calendarEvent, $newAttendeeUserIds);
+        $this->updateAttendeesCalendarEvents($calendarEvent);
     }
 
     /**
@@ -123,8 +123,8 @@ class UpdateChildManager
             $attendeeCalendarEvent = $calendarEvent->getChildEventByCalendar($calendar);
             if (!$attendeeCalendarEvent) {
                 $attendeeCalendarEvent = $this->createAttendeeCalendarEvent($calendar, $calendarEvent);
-                $this->updateAttendeeCalendarEvent($calendarEvent, $attendeeCalendarEvent);
             }
+            $attendeeCalendarEvent->setCancelled($calendarEvent->isCancelled());
 
             if ($calendarEvent->getRecurrence()) {
                 foreach ($calendarEvent->getRecurringEventExceptions() as $recurringEventException) {
@@ -150,7 +150,6 @@ class UpdateChildManager
                             $calendar,
                             $recurringEventException
                         );
-                        $this->updateAttendeeCalendarEvent($recurringEventException, $attendeeCalendarEventException);
                     }
                     $attendeeCalendarEventException->setCancelled($recurringEventException->isCancelled());
                 }
@@ -207,20 +206,22 @@ class UpdateChildManager
     }
 
     /**
-     * @param Calendar $calendar
-     * @param CalendarEvent $parent
+     * @param Calendar      $calendar
+     * @param CalendarEvent $calendarEvent
      *
      * @return CalendarEvent
      */
-    protected function createAttendeeCalendarEvent(Calendar $calendar, CalendarEvent $parent)
+    protected function createAttendeeCalendarEvent(Calendar $calendar, CalendarEvent $calendarEvent)
     {
-        $result = new CalendarEvent();
-        $result->setCalendar($calendar);
-        $result->setParent($parent);
-        $parent->addChildEvent($result);
-        $result->setRelatedAttendee($result->findRelatedAttendee());
+        $attendeeCalendarEvent = new CalendarEvent();
+        $attendeeCalendarEvent->setCalendar($calendar);
+        $attendeeCalendarEvent->setParent($calendarEvent);
+        $calendarEvent->addChildEvent($attendeeCalendarEvent);
+        $attendeeCalendarEvent->setRelatedAttendee($attendeeCalendarEvent->findRelatedAttendee());
 
-        return $result;
+        $this->updateAttendeeCalendarEvent($calendarEvent, $attendeeCalendarEvent);
+
+        return $attendeeCalendarEvent;
     }
 
     /**
@@ -242,17 +243,11 @@ class UpdateChildManager
      * Sync Attendee Events state with main event state
      *
      * @param CalendarEvent $calendarEvent
-     * @param int[]         $newAttendeeUserIds
      */
-    protected function updateAttendeesCalendarEvents(CalendarEvent $calendarEvent, array $newAttendeeUserIds)
+    protected function updateAttendeesCalendarEvents(CalendarEvent $calendarEvent)
     {
-        foreach ($calendarEvent->getChildEvents() as $child) {
-            $this->updateAttendeeCalendarEvent($calendarEvent, $child);
-            if ($child->getCalendar()
-                && $child->getCalendar()->getOwner()
-                && in_array($child->getCalendar()->getOwner()->getId(), $newAttendeeUserIds)) {
-                $child->setCancelled($calendarEvent->isCancelled());
-            }
+        foreach ($calendarEvent->getChildEvents() as $attendeeCalendarEvent) {
+            $this->updateAttendeeCalendarEvent($calendarEvent, $attendeeCalendarEvent);
         }
     }
 

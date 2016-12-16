@@ -264,6 +264,11 @@ class UpdateExceptionManager
                     );
                 }
             }
+
+            /**
+             * Update related attendee after attendees list was updated
+             */
+            $exceptionEvent->setRelatedAttendee($exceptionEvent->findRelatedAttendee());
         }
     }
 
