@@ -1369,17 +1369,17 @@ class RecurringEventAttributeUpdateExceptionTest extends AbstractTestCase
 
     /**
      * The test covers next use case:
-     * 1. Create recurring calendar event
-     * 2. Create exception event with 2 Attendees
-     * 3. Remove Attendees from Exception event
-     * 4. Add 2 Attendees to all Recurring event
-     * 5. Check Attendees has the same list of Calendar Events as Calendar Event Owner
+     * 1. Create recurring calendar event without attendees.
+     * 2. Create exception event with 2 attendees.
+     * 3. Remove attendees from exception event.
+     * 4. Add 2 attendees to all recurring events.
+     * 5. Check attendees has the same list of calendar events as calendar event owner.
      *
      * @SuppressWarnings(PHPMD.ExcessiveMethodLength)
      */
-    public function testCalendarEventForAttendeeUsersAddedOnSecondTime()
+    public function testCalendarEventForAttendeeUsersAddedWhenExceptionHadAttendeesBeforeAndExistWithoutAttendees()
     {
-        // Step 1. Create recurring event without attendees.
+        // Step 1. Create recurring calendar event without attendees.
         // Recurring event with occurrences: 2016-04-01, 2016-04-02, 2016-04-03, 2016-04-04
         $eventData = [
             'title'       => 'Test Recurring Event',
@@ -1411,7 +1411,7 @@ class RecurringEventAttributeUpdateExceptionTest extends AbstractTestCase
         /** @var CalendarEvent $recurringEvent */
         $recurringEvent = $this->getEntity(CalendarEvent::class, $response['id']);
 
-        // Step 2. Create exception event with 2 Attendees
+        // Step 2. Create exception event with 2 attendees.
         $exceptionData = [
             'title'            => 'Test Recurring Event Changed',
             'description'      => 'Test Recurring Event Description',
@@ -1448,7 +1448,7 @@ class RecurringEventAttributeUpdateExceptionTest extends AbstractTestCase
         $response = $this->getRestResponseContent(['statusCode' => 201, 'contentType' => 'application/json']);
         $exceptionEventId = $response['id'];
 
-        // Step 3. Remove Attendees from Exception event.
+        // Step 3. Remove attendees from exception event.
         $exceptionData['attendees'] = [];
         $this->restRequest(
             [
@@ -1468,7 +1468,7 @@ class RecurringEventAttributeUpdateExceptionTest extends AbstractTestCase
             $response
         );
 
-        // Step 4. Add 2 Attendees to all Recurring event
+        // Step 4. Add 2 attendees to all recurring events.
         $eventData['attendees'] = [
             [
                 'displayName' => $this->getReference('oro_calendar:user:foo_user_1')->getFullName(),
@@ -1501,7 +1501,7 @@ class RecurringEventAttributeUpdateExceptionTest extends AbstractTestCase
             $response
         );
 
-        // Step 5. Check Attendees has the same list of Calendar Events as Calendar Event Owner
+        // Step 5. Check attendees has the same list of calendar events as calendar event owner.
         $this->restRequest(
             [
                 'method' => 'GET',
@@ -1586,6 +1586,483 @@ class RecurringEventAttributeUpdateExceptionTest extends AbstractTestCase
         ];
 
         $this->assertResponseEquals($expectedResult, $response, false);
+    }
+
+    /**
+     * The test covers next use case:
+     * 1. Create recurring calendar event without attendees.
+     * 2. Create exception event with custom title, time, description.
+     * 3. Add 2 attendees to all recurring events.
+     * 4. Check attendees has the same list of calendar events as calendar event owner.
+     *
+     * @SuppressWarnings(PHPMD.ExcessiveMethodLength)
+     */
+    public function testCalendarEventForAttendeeUsersAddedWhenExceptionExistWithoutAttendees()
+    {
+        // Step 1. Create recurring event without attendees.
+        // Recurring event with occurrences: 2016-04-01, 2016-04-02, 2016-04-03, 2016-04-04
+        $eventData = [
+            'title'       => 'Test Recurring Event',
+            'description' => 'Test Recurring Event Description',
+            'allDay'      => false,
+            'calendar'    => $this->getReference('oro_calendar:calendar:foo_user_1')->getId(),
+            'start'       => '2016-04-01T01:00:00+00:00',
+            'end'         => '2016-04-01T02:00:00+00:00',
+            'updateExceptions' => true,
+            'backgroundColor' => '#FF0000',
+            'attendees' => [],
+            'recurrence'  => [
+                'timeZone'       => 'UTC',
+                'recurrenceType' => Recurrence::TYPE_DAILY,
+                'interval'       => 1,
+                'startTime'      => '2016-04-01T01:00:00+00:00',
+                'occurrences'    => 4,
+            ]
+        ];
+        $this->restRequest(
+            [
+                'method' => 'POST',
+                'url' => $this->getUrl('oro_api_post_calendarevent'),
+                'server' => $this->generateWsseAuthHeader('foo_user_1', 'foo_user_1_api_key'),
+                'content' => json_encode($eventData)
+            ]
+        );
+        $response = $this->getRestResponseContent(['statusCode' => 201, 'contentType' => 'application/json']);
+        /** @var CalendarEvent $recurringEvent */
+        $recurringEvent = $this->getEntity(CalendarEvent::class, $response['id']);
+
+        // Step 2. Create exception event with custom title, time, description.
+        $exceptionData = [
+            'title'            => 'Test Recurring Event Changed',
+            'description'      => 'Test Recurring Event Description',
+            'allDay'           => false,
+            'calendar'         => $this->getReference('oro_calendar:calendar:foo_user_1')->getId(),
+            'start'            => '2016-04-04T03:00:00+00:00',
+            'end'              => '2016-04-04T04:00:00+00:00',
+            'backgroundColor'  => '#FF0000',
+            'recurringEventId' => $recurringEvent->getId(),
+            'originalStart'    => '2016-04-04T01:00:00+00:00',
+            'attendees'        => [],
+        ];
+        $this->restRequest(
+            [
+                'method' => 'POST',
+                'url' => $this->getUrl('oro_api_post_calendarevent'),
+                'server' => $this->generateWsseAuthHeader('foo_user_1', 'foo_user_1_api_key'),
+                'content' => json_encode($exceptionData)
+            ]
+        );
+        $response = $this->getRestResponseContent(['statusCode' => 201, 'contentType' => 'application/json']);
+
+        // Step 3. Add 2 attendees to all recurring events.
+        $eventData['attendees'] = [
+            [
+                'displayName' => $this->getReference('oro_calendar:user:foo_user_1')->getFullName(),
+                'email' => 'foo_user_1@example.com',
+                'status' => Attendee::STATUS_ACCEPTED,
+                'type' => Attendee::TYPE_REQUIRED,
+            ],
+            [
+                'displayName' => $this->getReference('oro_calendar:user:foo_user_2')->getFullName(),
+                'email' => 'foo_user_2@example.com',
+                'status' => Attendee::STATUS_ACCEPTED,
+                'type' => Attendee::TYPE_REQUIRED,
+            ],
+        ];
+        $this->restRequest(
+            [
+                'method' => 'PUT',
+                'url' => $this->getUrl('oro_api_put_calendarevent', ['id' => $recurringEvent->getId()]),
+                'server' => $this->generateWsseAuthHeader('foo_user_1', 'foo_user_1_api_key'),
+                'content' => json_encode($eventData)
+            ]
+        );
+        $response = $this->getRestResponseContent(['statusCode' => 200, 'contentType' => 'application/json']);
+        $this->assertResponseEquals(
+            [
+                'notifiable' => false,
+                'invitationStatus' => Attendee::STATUS_ACCEPTED,
+                'editableInvitationStatus' => true,
+            ],
+            $response
+        );
+
+        // Step 4. Check attendees has the same list of calendar events as calendar event owner.
+        $this->restRequest(
+            [
+                'method' => 'GET',
+                'url' => $this->getUrl(
+                    'oro_api_get_calendarevents',
+                    [
+                        'calendar'    => $this->getReference('oro_calendar:calendar:foo_user_2')->getId(),
+                        'start'       => '2016-04-01T01:00:00+00:00',
+                        'end'         => '2016-04-30T01:00:00+00:00',
+                        'subordinate' => true,
+                    ]
+                ),
+                'server' => $this->generateWsseAuthHeader('foo_user_2', 'foo_user_2_api_key')
+            ]
+        );
+
+        $response = $this->getRestResponseContent(['statusCode' => 200, 'contentType' => 'application/json']);
+
+        $expectedAttendees = [
+            [
+                'displayName' => $this->getReference('oro_calendar:user:foo_user_1')->getFullName(),
+                'email' => 'foo_user_1@example.com',
+                'userId' => $this->getReference('oro_calendar:user:foo_user_1')->getId(),
+                'status' => Attendee::STATUS_ACCEPTED,
+                'type' => Attendee::TYPE_REQUIRED,
+            ],
+            [
+                'displayName' => $this->getReference('oro_calendar:user:foo_user_2')->getFullName(),
+                'email' => 'foo_user_2@example.com',
+                'userId' => $this->getReference('oro_calendar:user:foo_user_2')->getId(),
+                'status' => Attendee::STATUS_ACCEPTED,
+                'type' => Attendee::TYPE_REQUIRED,
+            ],
+        ];
+
+        $recurringEvent = $this->getEntity(CalendarEvent::class, $recurringEvent->getId());
+        $attendeeCalendarEvent = $recurringEvent->getChildEventByCalendar(
+            $this->getReference('oro_calendar:calendar:foo_user_2')
+        );
+        $attendeeExceptionCalendarEvent = $attendeeCalendarEvent->getRecurringEventExceptions()->first();
+        $expectedResult = [
+            [
+                'id'               => $attendeeCalendarEvent->getId(),
+                'title'            => 'Test Recurring Event',
+                'description'      => 'Test Recurring Event Description',
+                'allDay'           => false,
+                'calendar'         => $this->getReference('oro_calendar:calendar:foo_user_2')->getId(),
+                'start'            => '2016-04-01T01:00:00+00:00',
+                'end'              => '2016-04-01T02:00:00+00:00',
+                'attendees'        => $expectedAttendees,
+            ],
+            [
+                'id'               => $attendeeCalendarEvent->getId(),
+                'title'            => 'Test Recurring Event',
+                'description'      => 'Test Recurring Event Description',
+                'allDay'           => false,
+                'calendar'         => $this->getReference('oro_calendar:calendar:foo_user_2')->getId(),
+                'start'            => '2016-04-02T01:00:00+00:00',
+                'end'              => '2016-04-02T02:00:00+00:00',
+                'attendees'        => $expectedAttendees,
+            ],
+            [
+                'id'               => $attendeeCalendarEvent->getId(),
+                'title'            => 'Test Recurring Event',
+                'description'      => 'Test Recurring Event Description',
+                'allDay'           => false,
+                'calendar'         => $this->getReference('oro_calendar:calendar:foo_user_2')->getId(),
+                'start'            => '2016-04-03T01:00:00+00:00',
+                'end'              => '2016-04-03T02:00:00+00:00',
+                'attendees'        => $expectedAttendees,
+            ],
+            [
+                'id'               => $attendeeExceptionCalendarEvent->getId(),
+                'title'            => 'Test Recurring Event Changed',
+                'description'      => 'Test Recurring Event Description',
+                'allDay'           => false,
+                'calendar'         => $this->getReference('oro_calendar:calendar:foo_user_2')->getId(),
+                'start'            => '2016-04-04T03:00:00+00:00',
+                'end'              => '2016-04-04T04:00:00+00:00',
+                'attendees'        => $expectedAttendees,
+            ],
+        ];
+
+        $this->assertResponseEquals($expectedResult, $response, false);
+    }
+
+    /**
+     * The test covers next use case:
+     * 1. Create recurring calendar event with 2 attendees.
+     * 2. Create exception event with custom title, time, description and without attendees.
+     * 3. Check attendees have no event in the calendar where they were removed.
+     * 4. Check exception event for removed attendee has flag isCancelled=TRUE.
+     * 5. Add 2 attendees back to the exception event.
+     * 6. Check attendees has the same list of calendar events as calendar event owner.
+     * 7. Check exception event for attendee which was added after it was removd has flag isCancelled=FALSE.
+     *
+     * @SuppressWarnings(PHPMD.ExcessiveMethodLength)
+     */
+    public function testCalendarEventForAttendeeUsersAddedRemovedAndAddedOnSecondTime()
+    {
+        // Step 1. Create recurring calendar event with 2 attendees.
+        // Recurring event with occurrences: 2016-04-01, 2016-04-02, 2016-04-03, 2016-04-04
+        $eventData = [
+            'title'       => 'Test Recurring Event',
+            'description' => 'Test Recurring Event Description',
+            'allDay'      => false,
+            'calendar'    => $this->getReference('oro_calendar:calendar:foo_user_1')->getId(),
+            'start'       => '2016-04-01T01:00:00+00:00',
+            'end'         => '2016-04-01T02:00:00+00:00',
+            'updateExceptions' => true,
+            'backgroundColor' => '#FF0000',
+            'attendees' => [
+                [
+                    'displayName' => $this->getReference('oro_calendar:user:foo_user_1')->getFullName(),
+                    'email' => 'foo_user_1@example.com',
+                    'status' => Attendee::STATUS_ACCEPTED,
+                    'type' => Attendee::TYPE_REQUIRED,
+                ],
+                [
+                    'displayName' => $this->getReference('oro_calendar:user:foo_user_2')->getFullName(),
+                    'email' => 'foo_user_2@example.com',
+                    'status' => Attendee::STATUS_ACCEPTED,
+                    'type' => Attendee::TYPE_REQUIRED,
+                ],
+            ],
+            'recurrence'  => [
+                'timeZone'       => 'UTC',
+                'recurrenceType' => Recurrence::TYPE_DAILY,
+                'interval'       => 1,
+                'startTime'      => '2016-04-01T01:00:00+00:00',
+                'occurrences'    => 4,
+            ]
+        ];
+        $this->restRequest(
+            [
+                'method' => 'POST',
+                'url' => $this->getUrl('oro_api_post_calendarevent'),
+                'server' => $this->generateWsseAuthHeader('foo_user_1', 'foo_user_1_api_key'),
+                'content' => json_encode($eventData)
+            ]
+        );
+        $response = $this->getRestResponseContent(['statusCode' => 201, 'contentType' => 'application/json']);
+        /** @var CalendarEvent $recurringEvent */
+        $recurringEvent = $this->getEntity(CalendarEvent::class, $response['id']);
+
+        // Step 2. Create exception event with custom title, time, description and without attendees.
+        $exceptionData = [
+            'title'            => 'Test Recurring Event Changed',
+            'description'      => 'Test Recurring Event Description',
+            'allDay'           => false,
+            'calendar'         => $this->getReference('oro_calendar:calendar:foo_user_1')->getId(),
+            'start'            => '2016-04-04T03:00:00+00:00',
+            'end'              => '2016-04-04T04:00:00+00:00',
+            'backgroundColor'  => '#FF0000',
+            'recurringEventId' => $recurringEvent->getId(),
+            'originalStart'    => '2016-04-04T01:00:00+00:00',
+            'attendees'        => [],
+        ];
+        $this->restRequest(
+            [
+                'method' => 'POST',
+                'url' => $this->getUrl('oro_api_post_calendarevent'),
+                'server' => $this->generateWsseAuthHeader('foo_user_1', 'foo_user_1_api_key'),
+                'content' => json_encode($exceptionData)
+            ]
+        );
+        $response = $this->getRestResponseContent(['statusCode' => 201, 'contentType' => 'application/json']);
+        $exceptionEventId = $response['id'];
+
+        // Step 3. Check attendees have no event in the calendar where they were removed.
+        $this->restRequest(
+            [
+                'method' => 'GET',
+                'url' => $this->getUrl(
+                    'oro_api_get_calendarevents',
+                    [
+                        'calendar'    => $this->getReference('oro_calendar:calendar:foo_user_2')->getId(),
+                        'start'       => '2016-04-01T01:00:00+00:00',
+                        'end'         => '2016-04-30T01:00:00+00:00',
+                        'subordinate' => true,
+                    ]
+                ),
+                'server' => $this->generateWsseAuthHeader('foo_user_2', 'foo_user_2_api_key')
+            ]
+        );
+
+        $response = $this->getRestResponseContent(['statusCode' => 200, 'contentType' => 'application/json']);
+
+        $expectedAttendees = [
+            [
+                'displayName' => $this->getReference('oro_calendar:user:foo_user_1')->getFullName(),
+                'email' => 'foo_user_1@example.com',
+                'userId' => $this->getReference('oro_calendar:user:foo_user_1')->getId(),
+                'status' => Attendee::STATUS_ACCEPTED,
+                'type' => Attendee::TYPE_REQUIRED,
+            ],
+            [
+                'displayName' => $this->getReference('oro_calendar:user:foo_user_2')->getFullName(),
+                'email' => 'foo_user_2@example.com',
+                'userId' => $this->getReference('oro_calendar:user:foo_user_2')->getId(),
+                'status' => Attendee::STATUS_ACCEPTED,
+                'type' => Attendee::TYPE_REQUIRED,
+            ],
+        ];
+
+        $recurringEvent = $this->getEntity(CalendarEvent::class, $recurringEvent->getId());
+        $attendeeCalendarEvent = $recurringEvent->getChildEventByCalendar(
+            $this->getReference('oro_calendar:calendar:foo_user_2')
+        );
+
+        $expectedResult = [
+            [
+                'id'               => $attendeeCalendarEvent->getId(),
+                'title'            => 'Test Recurring Event',
+                'description'      => 'Test Recurring Event Description',
+                'allDay'           => false,
+                'calendar'         => $this->getReference('oro_calendar:calendar:foo_user_2')->getId(),
+                'start'            => '2016-04-01T01:00:00+00:00',
+                'end'              => '2016-04-01T02:00:00+00:00',
+                'attendees'        => $expectedAttendees,
+            ],
+            [
+                'id'               => $attendeeCalendarEvent->getId(),
+                'title'            => 'Test Recurring Event',
+                'description'      => 'Test Recurring Event Description',
+                'allDay'           => false,
+                'calendar'         => $this->getReference('oro_calendar:calendar:foo_user_2')->getId(),
+                'start'            => '2016-04-02T01:00:00+00:00',
+                'end'              => '2016-04-02T02:00:00+00:00',
+                'attendees'        => $expectedAttendees,
+            ],
+            [
+                'id'               => $attendeeCalendarEvent->getId(),
+                'title'            => 'Test Recurring Event',
+                'description'      => 'Test Recurring Event Description',
+                'allDay'           => false,
+                'calendar'         => $this->getReference('oro_calendar:calendar:foo_user_2')->getId(),
+                'start'            => '2016-04-03T01:00:00+00:00',
+                'end'              => '2016-04-03T02:00:00+00:00',
+                'attendees'        => $expectedAttendees,
+            ],
+            // The last event on 2016-04-04 should not be exposed
+        ];
+
+        $this->assertResponseEquals($expectedResult, $response, false);
+
+        // Step 4. Check exception event for removed attendee has flag isCancelled=TRUE.
+        /** @var CalendarEvent $attendeeExceptionCalendarEvent */
+        $attendeeExceptionCalendarEvent = $attendeeCalendarEvent->getRecurringEventExceptions()->first();
+        $this->assertTrue(
+            $attendeeExceptionCalendarEvent->isCancelled(),
+            'Failed assert exception event for removed attendee has flag isCancelled=TRUE.'
+        );
+
+        // Step 5. Add 2 attendees back to the exception event.
+        $exceptionData['attendees'] = [
+            [
+                'displayName' => $this->getReference('oro_calendar:user:foo_user_1')->getFullName(),
+                'email' => 'foo_user_1@example.com',
+                'status' => Attendee::STATUS_ACCEPTED,
+                'type' => Attendee::TYPE_REQUIRED,
+            ],
+            [
+                'displayName' => $this->getReference('oro_calendar:user:foo_user_2')->getFullName(),
+                'email' => 'foo_user_2@example.com',
+                'status' => Attendee::STATUS_ACCEPTED,
+                'type' => Attendee::TYPE_REQUIRED,
+            ],
+        ];
+        $this->restRequest(
+            [
+                'method' => 'PUT',
+                'url' => $this->getUrl('oro_api_put_calendarevent', ['id' => $exceptionEventId]),
+                'server' => $this->generateWsseAuthHeader('foo_user_1', 'foo_user_1_api_key'),
+                'content' => json_encode($exceptionData)
+            ]
+        );
+        $response = $this->getRestResponseContent(['statusCode' => 200, 'contentType' => 'application/json']);
+        $this->assertResponseEquals(
+            [
+                'notifiable' => true,
+                'invitationStatus' => Attendee::STATUS_ACCEPTED,
+                'editableInvitationStatus' => true,
+            ],
+            $response
+        );
+
+        // Step 6. Check attendees has the same list of calendar events as calendar event owner.
+        $this->restRequest(
+            [
+                'method' => 'GET',
+                'url' => $this->getUrl(
+                    'oro_api_get_calendarevents',
+                    [
+                        'calendar'    => $this->getReference('oro_calendar:calendar:foo_user_2')->getId(),
+                        'start'       => '2016-04-01T01:00:00+00:00',
+                        'end'         => '2016-04-30T01:00:00+00:00',
+                        'subordinate' => true,
+                    ]
+                ),
+                'server' => $this->generateWsseAuthHeader('foo_user_2', 'foo_user_2_api_key')
+            ]
+        );
+
+        $response = $this->getRestResponseContent(['statusCode' => 200, 'contentType' => 'application/json']);
+
+        $expectedAttendees = [
+            [
+                'displayName' => $this->getReference('oro_calendar:user:foo_user_1')->getFullName(),
+                'email' => 'foo_user_1@example.com',
+                'userId' => $this->getReference('oro_calendar:user:foo_user_1')->getId(),
+                'status' => Attendee::STATUS_ACCEPTED,
+                'type' => Attendee::TYPE_REQUIRED,
+            ],
+            [
+                'displayName' => $this->getReference('oro_calendar:user:foo_user_2')->getFullName(),
+                'email' => 'foo_user_2@example.com',
+                'userId' => $this->getReference('oro_calendar:user:foo_user_2')->getId(),
+                'status' => Attendee::STATUS_ACCEPTED,
+                'type' => Attendee::TYPE_REQUIRED,
+            ],
+        ];
+
+        $expectedResult = [
+            [
+                'id'               => $attendeeCalendarEvent->getId(),
+                'title'            => 'Test Recurring Event',
+                'description'      => 'Test Recurring Event Description',
+                'allDay'           => false,
+                'calendar'         => $this->getReference('oro_calendar:calendar:foo_user_2')->getId(),
+                'start'            => '2016-04-01T01:00:00+00:00',
+                'end'              => '2016-04-01T02:00:00+00:00',
+                'attendees'        => $expectedAttendees,
+            ],
+            [
+                'id'               => $attendeeCalendarEvent->getId(),
+                'title'            => 'Test Recurring Event',
+                'description'      => 'Test Recurring Event Description',
+                'allDay'           => false,
+                'calendar'         => $this->getReference('oro_calendar:calendar:foo_user_2')->getId(),
+                'start'            => '2016-04-02T01:00:00+00:00',
+                'end'              => '2016-04-02T02:00:00+00:00',
+                'attendees'        => $expectedAttendees,
+            ],
+            [
+                'id'               => $attendeeCalendarEvent->getId(),
+                'title'            => 'Test Recurring Event',
+                'description'      => 'Test Recurring Event Description',
+                'allDay'           => false,
+                'calendar'         => $this->getReference('oro_calendar:calendar:foo_user_2')->getId(),
+                'start'            => '2016-04-03T01:00:00+00:00',
+                'end'              => '2016-04-03T02:00:00+00:00',
+                'attendees'        => $expectedAttendees,
+            ],
+            [
+                'id'               => $attendeeExceptionCalendarEvent->getId(),
+                'title'            => 'Test Recurring Event Changed',
+                'description'      => 'Test Recurring Event Description',
+                'allDay'           => false,
+                'calendar'         => $this->getReference('oro_calendar:calendar:foo_user_2')->getId(),
+                'start'            => '2016-04-04T03:00:00+00:00',
+                'end'              => '2016-04-04T04:00:00+00:00',
+                'attendees'        => $expectedAttendees,
+            ],
+        ];
+
+        // @todo Fix issue in BAP-12986.
+        $this->assertResponseEquals($expectedResult, $response, false);
+
+        // Step 7. Check exception event for attendee which was added after it was removd has flag isCancelled=FALSE.
+        $attendeeExceptionCalendarEvent = $this->reloadEntity($attendeeExceptionCalendarEvent);
+        $this->assertFalse(
+            $attendeeExceptionCalendarEvent->isCancelled(),
+            'Failed assert exception event for removed attendee has flag isCancelled=TRUE.'
+        );
     }
 
     /**
