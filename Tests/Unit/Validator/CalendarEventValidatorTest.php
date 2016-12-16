@@ -14,10 +14,16 @@ class CalendarEventValidatorTest extends \PHPUnit_Framework_TestCase
     /** @var \PHPUnit_Framework_MockObject_MockObject */
     protected $context;
 
+    /** @var \PHPUnit_Framework_MockObject_MockObject */
+    protected $calendarEventManager;
+
     protected function setUp()
     {
         $this->constraint = new CalendarEvent();
         $this->context = $this->getMock('Symfony\Component\Validator\ExecutionContextInterface');
+        $this->calendarEventManager = $this->getMockBuilder('Oro\Bundle\CalendarBundle\Manager\CalendarEventManager')
+            ->disableOriginalConstructor()
+            ->getMock();
     }
 
     public function testValidateNoErrors()
@@ -33,9 +39,11 @@ class CalendarEventValidatorTest extends \PHPUnit_Framework_TestCase
     public function testValidateWithErrors()
     {
         $this->context->expects($this->at(0))
+            ->method('getRoot');
+        $this->context->expects($this->at(1))
             ->method('addViolation')
             ->with($this->equalTo("Parameter 'recurringEventId' can't have the same value as calendar event ID."));
-        $this->context->expects($this->at(1))
+        $this->context->expects($this->at(2))
             ->method('addViolation')
             ->with($this->equalTo("Parameter 'recurringEventId' can be set only for recurring calendar events."));
 
@@ -53,7 +61,7 @@ class CalendarEventValidatorTest extends \PHPUnit_Framework_TestCase
      */
     protected function getValidator()
     {
-        $validator = new CalendarEventValidator();
+        $validator = new CalendarEventValidator($this->calendarEventManager);
         $validator->initialize($this->context);
 
         return $validator;

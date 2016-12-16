@@ -438,6 +438,8 @@ services:
 
     oro_calendar.validator.calendar_event:
         class: '%oro_calendar.validator.calendar_event.class%'
+        arguments:
+            - '@oro_calendar.calendar_event_manager'
         tags:
             - { name: validator.constraint_validator, alias: oro_calendar.calendar_event_validator }
 

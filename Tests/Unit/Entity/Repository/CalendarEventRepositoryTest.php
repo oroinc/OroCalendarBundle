@@ -48,7 +48,7 @@ class CalendarEventRepositoryTest extends OrmTestCase
 
         $this->assertEquals(
             'SELECT e.id, e.title, e.description, e.start, e.end, e.allDay,'
-            . ' e.backgroundColor, e.createdAt, e.updatedAt'
+            . ' e.backgroundColor, e.createdAt, e.updatedAt, IDENTITY(e.recurringEvent) AS recurringEventId'
             . ' FROM Oro\Bundle\CalendarBundle\Entity\CalendarEvent e',
             $qb->getQuery()->getDQL()
         );
@@ -65,10 +65,10 @@ class CalendarEventRepositoryTest extends OrmTestCase
         $this->assertEquals(
             'SELECT e.id, e.title, e.description, e.start, e.end, e.allDay,'
             . ' e.backgroundColor, e.createdAt, e.updatedAt,'
+            . ' IDENTITY(e.recurringEvent) AS recurringEventId,'
             . ' (CASE WHEN (status.id IS NULL) THEN \'none\' ELSE status.id END) as invitationStatus,'
             . ' IDENTITY(e.parent) AS parentEventId,'
             . ' c.id as calendar,'
-            . ' IDENTITY(e.recurringEvent) AS recurringEventId,'
             . ' IDENTITY(relatedAttendee.user) AS relatedAttendeeUserId,'
             . ' e.originalStart, e.cancelled AS isCancelled,'
             . " r.recurrenceType as {$prefix}RecurrenceType, r.interval as {$prefix}Interval,"
@@ -112,10 +112,10 @@ class CalendarEventRepositoryTest extends OrmTestCase
         $this->assertEquals(
             'SELECT e.id, e.title, e.description, e.start, e.end, e.allDay,'
             . ' e.backgroundColor, e.createdAt, e.updatedAt,'
+            . ' IDENTITY(e.recurringEvent) AS recurringEventId,'
             . ' (CASE WHEN (status.id IS NULL) THEN \'none\' ELSE status.id END) as invitationStatus,'
             . ' IDENTITY(e.parent) AS parentEventId,'
             . ' c.id as calendar,'
-            . ' IDENTITY(e.recurringEvent) AS recurringEventId,'
             . ' IDENTITY(relatedAttendee.user) AS relatedAttendeeUserId,'
             . ' e.originalStart, e.cancelled AS isCancelled,'
             . " r.recurrenceType as {$prefix}RecurrenceType, r.interval as {$prefix}Interval,"
@@ -163,10 +163,10 @@ class CalendarEventRepositoryTest extends OrmTestCase
         $this->assertEquals(
             'SELECT e.id, e.title, e.description, e.start, e.end, e.allDay,'
             . ' e.backgroundColor, e.createdAt, e.updatedAt,'
+            . ' IDENTITY(e.recurringEvent) AS recurringEventId,'
             . ' (CASE WHEN (status.id IS NULL) THEN \'none\' ELSE status.id END) as invitationStatus,'
             . ' IDENTITY(e.parent) AS parentEventId,'
             . ' c.id as calendar,'
-            . ' IDENTITY(e.recurringEvent) AS recurringEventId,'
             . ' IDENTITY(relatedAttendee.user) AS relatedAttendeeUserId,'
             . ' e.originalStart, e.cancelled AS isCancelled,'
             . " r.recurrenceType as {$prefix}RecurrenceType, r.interval as {$prefix}Interval,"
@@ -214,11 +214,12 @@ class CalendarEventRepositoryTest extends OrmTestCase
         $prefix = CalendarEventRepository::RECURRENCE_FIELD_PREFIX;
         $this->assertEquals(
             'SELECT e.id, e.title, e.description, e.start, e.end, e.allDay,'
-            . ' e.backgroundColor, e.createdAt, e.updatedAt, e.status,'
+            . ' e.backgroundColor, e.createdAt, e.updatedAt,'
+            . ' IDENTITY(e.recurringEvent) AS recurringEventId,'
+            . ' e.status,'
             . ' (CASE WHEN (status.id IS NULL) THEN \'none\' ELSE status.id END) as invitationStatus,'
             . ' IDENTITY(e.parent) AS parentEventId,'
             . ' c.id as calendar,'
-            . ' IDENTITY(e.recurringEvent) AS recurringEventId,'
             . ' IDENTITY(relatedAttendee.user) AS relatedAttendeeUserId,'
             . ' e.originalStart, e.cancelled AS isCancelled,'
             . " r.recurrenceType as {$prefix}RecurrenceType, r.interval as {$prefix}Interval,"
@@ -256,7 +257,9 @@ class CalendarEventRepositoryTest extends OrmTestCase
 
         $this->assertEquals(
             'SELECT e.id, e.title, e.description, e.start, e.end, e.allDay,'
-            . ' e.backgroundColor, e.createdAt, e.updatedAt, c.id as calendar,'
+            . ' e.backgroundColor, e.createdAt, e.updatedAt,'
+            . ' IDENTITY(e.recurringEvent) AS recurringEventId,'
+            . ' c.id as calendar,'
             . ' r.recurrenceType as recurrenceRecurrenceType, r.interval as recurrenceInterval,'
             . 'r.dayOfWeek as recurrenceDayOfWeek, r.dayOfMonth as recurrenceDayOfMonth,'
             . 'r.monthOfYear as recurrenceMonthOfYear, r.startTime as recurrenceStartTime,'
@@ -293,7 +296,9 @@ class CalendarEventRepositoryTest extends OrmTestCase
 
         $this->assertEquals(
             'SELECT e.id, e.title, e.description, e.start, e.end, e.allDay,'
-            . ' e.backgroundColor, e.createdAt, e.updatedAt, c.id as calendar,'
+            . ' e.backgroundColor, e.createdAt, e.updatedAt,'
+            . ' IDENTITY(e.recurringEvent) AS recurringEventId,'
+            . ' c.id as calendar,'
             . ' r.recurrenceType as recurrenceRecurrenceType, r.interval as recurrenceInterval,'
             . 'r.dayOfWeek as recurrenceDayOfWeek, r.dayOfMonth as recurrenceDayOfMonth,'
             . 'r.monthOfYear as recurrenceMonthOfYear, r.startTime as recurrenceStartTime,'
@@ -332,7 +337,9 @@ class CalendarEventRepositoryTest extends OrmTestCase
 
         $this->assertEquals(
             'SELECT e.id, e.title, e.description, e.start, e.end, e.allDay,'
-            . ' e.backgroundColor, e.createdAt, e.updatedAt, c.id as calendar,'
+            . ' e.backgroundColor, e.createdAt, e.updatedAt,'
+            . ' IDENTITY(e.recurringEvent) AS recurringEventId,'
+            . ' c.id as calendar,'
             . ' r.recurrenceType as recurrenceRecurrenceType, r.interval as recurrenceInterval,'
             . 'r.dayOfWeek as recurrenceDayOfWeek, r.dayOfMonth as recurrenceDayOfMonth,'
             . 'r.monthOfYear as recurrenceMonthOfYear, r.startTime as recurrenceStartTime,'
@@ -367,7 +374,9 @@ class CalendarEventRepositoryTest extends OrmTestCase
 
         $this->assertEquals(
             'SELECT e.id, e.title, e.description, e.start, e.end, e.allDay,'
-            . ' e.backgroundColor, e.createdAt, e.updatedAt, c.id as calendar'
+            . ' e.backgroundColor, e.createdAt, e.updatedAt,'
+            . ' IDENTITY(e.recurringEvent) AS recurringEventId,'
+            . ' c.id as calendar'
             . ' FROM Oro\Bundle\CalendarBundle\Entity\CalendarEvent e'
             . ' INNER JOIN e.systemCalendar c'
             . ' WHERE '
@@ -394,7 +403,9 @@ class CalendarEventRepositoryTest extends OrmTestCase
 
         $this->assertEquals(
             'SELECT e.id, e.title, e.description, e.start, e.end, e.allDay,'
-            . ' e.backgroundColor, e.createdAt, e.updatedAt, c.id as calendar'
+            . ' e.backgroundColor, e.createdAt, e.updatedAt,'
+            . ' IDENTITY(e.recurringEvent) AS recurringEventId,'
+            . ' c.id as calendar'
             . ' FROM Oro\Bundle\CalendarBundle\Entity\CalendarEvent e'
             . ' INNER JOIN e.systemCalendar c'
             . ' WHERE '
@@ -423,7 +434,9 @@ class CalendarEventRepositoryTest extends OrmTestCase
 
         $this->assertEquals(
             'SELECT e.id, e.title, e.description, e.start, e.end, e.allDay,'
-            . ' e.backgroundColor, e.createdAt, e.updatedAt, c.id as calendar'
+            . ' e.backgroundColor, e.createdAt, e.updatedAt,'
+            . ' IDENTITY(e.recurringEvent) AS recurringEventId,'
+            . ' c.id as calendar'
             . ' FROM Oro\Bundle\CalendarBundle\Entity\CalendarEvent e'
             . ' INNER JOIN e.systemCalendar c'
             . ' WHERE '

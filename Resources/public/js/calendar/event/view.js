@@ -588,6 +588,11 @@ define(function(require) {
             if (!$calendarUid.length) {
                 return;
             }
+            if (this.model.get('recurringEventId') || this.exceptionEventData) {
+                $calendarUid.attr('disabled', 'disabled');
+                return;
+            }
+
             if (form.find(this.selectors.attendees).val()) {
                 $calendarUid.attr('disabled', 'disabled');
                 $calendarUid.parent().attr('title', __('The calendar cannot be changed because the event has guests'));

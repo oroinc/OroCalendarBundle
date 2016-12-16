@@ -5,3 +5,6 @@
 "This value should be a multiple of {{ multiple_of_value }}.": "This value should be a multiple of {{ multiple_of_value }}."
 "This value should be one of the values: {{ allowed_values }}.": "This value should be one of the values: {{ allowed_values }}."
 "One or more of the given values is not one of the values: {{ allowed_values }}.": "One or more of the given values is not one of the values: {{ allowed_values }}."
+"Parameter 'recurringEventId' can not have the same value as calendar event ID.": "Parameter 'recurringEventId' can not have the same value as calendar event ID."
+"Parameter 'recurringEventId' can be set only for recurring calendar events.": "Parameter 'recurringEventId' can be set only for recurring calendar events."
+"Calendar of calendar event exception can not be changed.": "Calendar of calendar event exception can not be changed."

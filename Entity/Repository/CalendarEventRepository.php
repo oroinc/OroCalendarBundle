@@ -54,7 +54,6 @@ class CalendarEventRepository extends EntityRepository
             )
             ->addSelect('IDENTITY(e.parent) AS parentEventId')
             ->addSelect('c.id as calendar')
-            ->addSelect('IDENTITY(e.recurringEvent) AS recurringEventId')
             ->addSelect('IDENTITY(relatedAttendee.user) AS relatedAttendeeUserId')
             ->addSelect('e.originalStart')
             ->addSelect('e.cancelled AS isCancelled')
@@ -158,7 +157,7 @@ class CalendarEventRepository extends EntityRepository
         $qb = $this->createQueryBuilder('e')
             ->select(
                 'e.id, e.title, e.description, e.start, e.end, e.allDay,'
-                . ' e.backgroundColor, e.createdAt, e.updatedAt'
+                . ' e.backgroundColor, e.createdAt, e.updatedAt, IDENTITY(e.recurringEvent) AS recurringEventId'
             );
         if ($extraFields) {
             foreach ($extraFields as $field) {

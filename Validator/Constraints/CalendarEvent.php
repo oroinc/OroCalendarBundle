@@ -6,6 +6,10 @@ use Symfony\Component\Validator\Constraint;
 
 class CalendarEvent extends Constraint
 {
+    public $selfRelationMessage = 'Parameter \'recurringEventId\' can\'t have the same value as calendar event ID.';
+    public $wrongRecurrenceMessage = 'Parameter \'recurringEventId\' can be set only for recurring calendar events.';
+    public $cantChangeCalendarMessage = 'Calendar of calendar event exception can not be changed.';
+
     /**
      * {@inheritdoc}
      */
