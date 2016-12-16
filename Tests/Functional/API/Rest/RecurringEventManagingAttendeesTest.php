@@ -162,24 +162,24 @@ class RecurringEventManagingAttendeesTest extends AbstractTestCase
         $expectedAttendees = [
             [
                 'displayName' => $this->getReference('oro_calendar:user:foo_user_1')->getFullName(),
-                'email' => 'foo_user_1@example.com',
-                'userId' => $this->getReference('oro_calendar:user:foo_user_1')->getId(),
-                'status' => Attendee::STATUS_ACCEPTED,
-                'type' => Attendee::TYPE_REQUIRED,
-                'createdAt' => $recurringEvent->getAttendeeByEmail('foo_user_1@example.com')
+                'email'       => 'foo_user_1@example.com',
+                'userId'      => $this->getReference('oro_calendar:user:foo_user_1')->getId(),
+                'status'      => Attendee::STATUS_ACCEPTED,
+                'type'        => Attendee::TYPE_REQUIRED,
+                'createdAt'   => $recurringEvent->getAttendeeByEmail('foo_user_1@example.com')
                     ->getCreatedAt()->format(DATE_RFC3339),
-                'updatedAt' => $recurringEvent->getAttendeeByEmail('foo_user_1@example.com')
+                'updatedAt'   => $recurringEvent->getAttendeeByEmail('foo_user_1@example.com')
                     ->getUpdatedAt()->format(DATE_RFC3339),
             ],
             [
                 'displayName' => $this->getReference('oro_calendar:user:foo_user_2')->getFullName(),
-                'email' => 'foo_user_2@example.com',
-                'userId' => $this->getReference('oro_calendar:user:foo_user_2')->getId(),
-                'status' => Attendee::STATUS_ACCEPTED,
-                'type' => Attendee::TYPE_REQUIRED,
-                'createdAt' => $recurringEvent->getAttendeeByEmail('foo_user_2@example.com')
+                'email'       => 'foo_user_2@example.com',
+                'userId'      => $this->getReference('oro_calendar:user:foo_user_2')->getId(),
+                'status'      => Attendee::STATUS_ACCEPTED,
+                'type'        => Attendee::TYPE_REQUIRED,
+                'createdAt'   => $recurringEvent->getAttendeeByEmail('foo_user_2@example.com')
                     ->getCreatedAt()->format(DATE_RFC3339),
-                'updatedAt' => $recurringEvent->getAttendeeByEmail('foo_user_2@example.com')
+                'updatedAt'   => $recurringEvent->getAttendeeByEmail('foo_user_2@example.com')
                     ->getUpdatedAt()->format(DATE_RFC3339),
             ],
         ];
@@ -211,24 +211,24 @@ class RecurringEventManagingAttendeesTest extends AbstractTestCase
                 'attendees'        => [
                     [
                         'displayName' => $this->getReference('oro_calendar:user:foo_user_1')->getFullName(),
-                        'email' => 'foo_user_1@example.com',
-                        'userId' => $this->getReference('oro_calendar:user:foo_user_1')->getId(),
-                        'status' => Attendee::STATUS_ACCEPTED,
-                        'type' => Attendee::TYPE_REQUIRED,
-                        'createdAt' => $changedEventException->getAttendeeByEmail('foo_user_1@example.com')
+                        'email'       => 'foo_user_1@example.com',
+                        'userId'      => $this->getReference('oro_calendar:user:foo_user_1')->getId(),
+                        'status'      => Attendee::STATUS_ACCEPTED,
+                        'type'        => Attendee::TYPE_REQUIRED,
+                        'createdAt'   => $changedEventException->getAttendeeByEmail('foo_user_1@example.com')
                             ->getCreatedAt()->format(DATE_RFC3339),
-                        'updatedAt' => $changedEventException->getAttendeeByEmail('foo_user_1@example.com')
+                        'updatedAt'   => $changedEventException->getAttendeeByEmail('foo_user_1@example.com')
                             ->getUpdatedAt()->format(DATE_RFC3339),
                     ],
                     [
                         'displayName' => $this->getReference('oro_calendar:user:foo_user_2')->getFullName(),
-                        'email' => 'foo_user_2@example.com',
-                        'userId' => $this->getReference('oro_calendar:user:foo_user_2')->getId(),
-                        'status' => Attendee::STATUS_ACCEPTED,
-                        'type' => Attendee::TYPE_REQUIRED,
-                        'createdAt' => $changedEventException->getAttendeeByEmail('foo_user_2@example.com')
+                        'email'       => 'foo_user_2@example.com',
+                        'userId'      => $this->getReference('oro_calendar:user:foo_user_2')->getId(),
+                        'status'      => Attendee::STATUS_ACCEPTED,
+                        'type'        => Attendee::TYPE_REQUIRED,
+                        'createdAt'   => $changedEventException->getAttendeeByEmail('foo_user_2@example.com')
                             ->getCreatedAt()->format(DATE_RFC3339),
-                        'updatedAt' => $changedEventException->getAttendeeByEmail('foo_user_2@example.com')
+                        'updatedAt'   => $changedEventException->getAttendeeByEmail('foo_user_2@example.com')
                             ->getUpdatedAt()->format(DATE_RFC3339),
                     ],
                 ]

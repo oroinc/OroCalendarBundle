@@ -54,7 +54,7 @@ class UpdateManager
         $allowUpdateExceptions
     ) {
         $this->updateAttendeeManager->onEventUpdate($actualEvent, $organization);
-        $this->updateChildManager->onEventUpdate($actualEvent, $organization);
+        $this->updateChildManager->onEventUpdate($actualEvent, $originalEvent, $organization);
 
         if ($allowUpdateExceptions) {
             $this->updateExceptionManager->onEventUpdate($actualEvent, $originalEvent);

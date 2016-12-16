@@ -1425,23 +1425,23 @@ class RecurringEventAttributeUpdateExceptionTest extends AbstractTestCase
             'attendees' => [
                 [
                     'displayName' => $this->getReference('oro_calendar:user:foo_user_1')->getFullName(),
-                    'email' => 'foo_user_1@example.com',
-                    'status' => Attendee::STATUS_ACCEPTED,
-                    'type' => Attendee::TYPE_REQUIRED,
+                    'email'       => 'foo_user_1@example.com',
+                    'status'      => Attendee::STATUS_ACCEPTED,
+                    'type'        => Attendee::TYPE_REQUIRED,
                 ],
                 [
                     'displayName' => $this->getReference('oro_calendar:user:foo_user_2')->getFullName(),
-                    'email' => 'foo_user_2@example.com',
-                    'status' => Attendee::STATUS_ACCEPTED,
-                    'type' => Attendee::TYPE_REQUIRED,
+                    'email'       => 'foo_user_2@example.com',
+                    'status'      => Attendee::STATUS_ACCEPTED,
+                    'type'        => Attendee::TYPE_REQUIRED,
                 ]
             ],
         ];
         $this->restRequest(
             [
-                'method' => 'POST',
-                'url' => $this->getUrl('oro_api_post_calendarevent'),
-                'server' => $this->generateWsseAuthHeader('foo_user_1', 'foo_user_1_api_key'),
+                'method'  => 'POST',
+                'url'     => $this->getUrl('oro_api_post_calendarevent'),
+                'server'  => $this->generateWsseAuthHeader('foo_user_1', 'foo_user_1_api_key'),
                 'content' => json_encode($exceptionData)
             ]
         );
@@ -1452,9 +1452,9 @@ class RecurringEventAttributeUpdateExceptionTest extends AbstractTestCase
         $exceptionData['attendees'] = [];
         $this->restRequest(
             [
-                'method' => 'PUT',
-                'url' => $this->getUrl('oro_api_put_calendarevent', ['id' => $exceptionEventId]),
-                'server' => $this->generateWsseAuthHeader('foo_user_1', 'foo_user_1_api_key'),
+                'method'  => 'PUT',
+                'url'     => $this->getUrl('oro_api_put_calendarevent', ['id' => $exceptionEventId]),
+                'server'  => $this->generateWsseAuthHeader('foo_user_1', 'foo_user_1_api_key'),
                 'content' => json_encode($exceptionData)
             ]
         );
@@ -1472,30 +1472,30 @@ class RecurringEventAttributeUpdateExceptionTest extends AbstractTestCase
         $eventData['attendees'] = [
             [
                 'displayName' => $this->getReference('oro_calendar:user:foo_user_1')->getFullName(),
-                'email' => 'foo_user_1@example.com',
-                'status' => Attendee::STATUS_ACCEPTED,
-                'type' => Attendee::TYPE_REQUIRED,
+                'email'       => 'foo_user_1@example.com',
+                'status'      => Attendee::STATUS_ACCEPTED,
+                'type'        => Attendee::TYPE_REQUIRED,
             ],
             [
                 'displayName' => $this->getReference('oro_calendar:user:foo_user_2')->getFullName(),
-                'email' => 'foo_user_2@example.com',
-                'status' => Attendee::STATUS_ACCEPTED,
-                'type' => Attendee::TYPE_REQUIRED,
+                'email'       => 'foo_user_2@example.com',
+                'status'      => Attendee::STATUS_ACCEPTED,
+                'type'        => Attendee::TYPE_REQUIRED,
             ],
         ];
         $this->restRequest(
             [
-                'method' => 'PUT',
-                'url' => $this->getUrl('oro_api_put_calendarevent', ['id' => $recurringEvent->getId()]),
-                'server' => $this->generateWsseAuthHeader('foo_user_1', 'foo_user_1_api_key'),
+                'method'  => 'PUT',
+                'url'     => $this->getUrl('oro_api_put_calendarevent', ['id' => $recurringEvent->getId()]),
+                'server'  => $this->generateWsseAuthHeader('foo_user_1', 'foo_user_1_api_key'),
                 'content' => json_encode($eventData)
             ]
         );
         $response = $this->getRestResponseContent(['statusCode' => 200, 'contentType' => 'application/json']);
         $this->assertResponseEquals(
             [
-                'notifiable' => false,
-                'invitationStatus' => Attendee::STATUS_ACCEPTED,
+                'notifiable'               => false,
+                'invitationStatus'         => Attendee::STATUS_ACCEPTED,
                 'editableInvitationStatus' => true,
             ],
             $response
@@ -1523,17 +1523,17 @@ class RecurringEventAttributeUpdateExceptionTest extends AbstractTestCase
         $expectedAttendees = [
             [
                 'displayName' => $this->getReference('oro_calendar:user:foo_user_1')->getFullName(),
-                'email' => 'foo_user_1@example.com',
-                'userId' => $this->getReference('oro_calendar:user:foo_user_1')->getId(),
-                'status' => Attendee::STATUS_ACCEPTED,
-                'type' => Attendee::TYPE_REQUIRED,
+                'email'       => 'foo_user_1@example.com',
+                'userId'      => $this->getReference('oro_calendar:user:foo_user_1')->getId(),
+                'status'      => Attendee::STATUS_ACCEPTED,
+                'type'        => Attendee::TYPE_REQUIRED,
             ],
             [
                 'displayName' => $this->getReference('oro_calendar:user:foo_user_2')->getFullName(),
-                'email' => 'foo_user_2@example.com',
-                'userId' => $this->getReference('oro_calendar:user:foo_user_2')->getId(),
-                'status' => Attendee::STATUS_ACCEPTED,
-                'type' => Attendee::TYPE_REQUIRED,
+                'email'       => 'foo_user_2@example.com',
+                'userId'      => $this->getReference('oro_calendar:user:foo_user_2')->getId(),
+                'status'      => Attendee::STATUS_ACCEPTED,
+                'type'        => Attendee::TYPE_REQUIRED,
             ],
         ];
 
@@ -1621,9 +1621,9 @@ class RecurringEventAttributeUpdateExceptionTest extends AbstractTestCase
         ];
         $this->restRequest(
             [
-                'method' => 'POST',
-                'url' => $this->getUrl('oro_api_post_calendarevent'),
-                'server' => $this->generateWsseAuthHeader('foo_user_1', 'foo_user_1_api_key'),
+                'method'  => 'POST',
+                'url'     => $this->getUrl('oro_api_post_calendarevent'),
+                'server'  => $this->generateWsseAuthHeader('foo_user_1', 'foo_user_1_api_key'),
                 'content' => json_encode($eventData)
             ]
         );
@@ -1646,9 +1646,9 @@ class RecurringEventAttributeUpdateExceptionTest extends AbstractTestCase
         ];
         $this->restRequest(
             [
-                'method' => 'POST',
-                'url' => $this->getUrl('oro_api_post_calendarevent'),
-                'server' => $this->generateWsseAuthHeader('foo_user_1', 'foo_user_1_api_key'),
+                'method'  => 'POST',
+                'url'     => $this->getUrl('oro_api_post_calendarevent'),
+                'server'  => $this->generateWsseAuthHeader('foo_user_1', 'foo_user_1_api_key'),
                 'content' => json_encode($exceptionData)
             ]
         );
@@ -1658,30 +1658,30 @@ class RecurringEventAttributeUpdateExceptionTest extends AbstractTestCase
         $eventData['attendees'] = [
             [
                 'displayName' => $this->getReference('oro_calendar:user:foo_user_1')->getFullName(),
-                'email' => 'foo_user_1@example.com',
-                'status' => Attendee::STATUS_ACCEPTED,
-                'type' => Attendee::TYPE_REQUIRED,
+                'email'       => 'foo_user_1@example.com',
+                'status'      => Attendee::STATUS_ACCEPTED,
+                'type'        => Attendee::TYPE_REQUIRED,
             ],
             [
                 'displayName' => $this->getReference('oro_calendar:user:foo_user_2')->getFullName(),
-                'email' => 'foo_user_2@example.com',
-                'status' => Attendee::STATUS_ACCEPTED,
-                'type' => Attendee::TYPE_REQUIRED,
+                'email'       => 'foo_user_2@example.com',
+                'status'      => Attendee::STATUS_ACCEPTED,
+                'type'        => Attendee::TYPE_REQUIRED,
             ],
         ];
         $this->restRequest(
             [
-                'method' => 'PUT',
-                'url' => $this->getUrl('oro_api_put_calendarevent', ['id' => $recurringEvent->getId()]),
-                'server' => $this->generateWsseAuthHeader('foo_user_1', 'foo_user_1_api_key'),
+                'method'  => 'PUT',
+                'url'     => $this->getUrl('oro_api_put_calendarevent', ['id' => $recurringEvent->getId()]),
+                'server'  => $this->generateWsseAuthHeader('foo_user_1', 'foo_user_1_api_key'),
                 'content' => json_encode($eventData)
             ]
         );
         $response = $this->getRestResponseContent(['statusCode' => 200, 'contentType' => 'application/json']);
         $this->assertResponseEquals(
             [
-                'notifiable' => false,
-                'invitationStatus' => Attendee::STATUS_ACCEPTED,
+                'notifiable'               => false,
+                'invitationStatus'         => Attendee::STATUS_ACCEPTED,
                 'editableInvitationStatus' => true,
             ],
             $response
@@ -1709,17 +1709,17 @@ class RecurringEventAttributeUpdateExceptionTest extends AbstractTestCase
         $expectedAttendees = [
             [
                 'displayName' => $this->getReference('oro_calendar:user:foo_user_1')->getFullName(),
-                'email' => 'foo_user_1@example.com',
-                'userId' => $this->getReference('oro_calendar:user:foo_user_1')->getId(),
-                'status' => Attendee::STATUS_ACCEPTED,
-                'type' => Attendee::TYPE_REQUIRED,
+                'email'       => 'foo_user_1@example.com',
+                'userId'      => $this->getReference('oro_calendar:user:foo_user_1')->getId(),
+                'status'      => Attendee::STATUS_ACCEPTED,
+                'type'        => Attendee::TYPE_REQUIRED,
             ],
             [
                 'displayName' => $this->getReference('oro_calendar:user:foo_user_2')->getFullName(),
-                'email' => 'foo_user_2@example.com',
-                'userId' => $this->getReference('oro_calendar:user:foo_user_2')->getId(),
-                'status' => Attendee::STATUS_ACCEPTED,
-                'type' => Attendee::TYPE_REQUIRED,
+                'email'       => 'foo_user_2@example.com',
+                'userId'      => $this->getReference('oro_calendar:user:foo_user_2')->getId(),
+                'status'      => Attendee::STATUS_ACCEPTED,
+                'type'        => Attendee::TYPE_REQUIRED,
             ],
         ];
 
