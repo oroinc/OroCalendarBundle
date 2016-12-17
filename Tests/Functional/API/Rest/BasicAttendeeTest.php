@@ -10,20 +10,9 @@ use Oro\Bundle\CalendarBundle\Entity\CalendarEvent;
 /**
  * The test covers basic operations with attendees of simple calendar events:
  *
- * Types of attendees covered:
- * - attendee related to user by email
- * - attendee related to user from different organization by email
- * - attendee not related to user
- *
- * Operations covered:
- * - add attendee while creating new simple event
- * - add attendee while updating existing simple event
- * - remove attendee while updating existing simple event
- *
- * Resources used:
- * - create event (oro_api_post_calendarevent)
- * - update event (oro_api_put_calendarevent)
- * - get event (oro_api_get_calendarevent)
+ * Use cases covered:
+ * - Create regular calendar event with attendee related to user.
+ * - Create regular calendar event with attendee not related to any user.
  *
  * @dbIsolation
  */
@@ -39,12 +28,11 @@ class BasicAttendeeTest extends AbstractTestCase
     /**
      * Create regular calendar event with attendee related to user.
      *
-     * Create regular calendar event with attendee related to user existing in the same organization.
-     * It is expected attendee has id of related user.
-     * It is expected attendee has "required" type by default.
-     * It is expected attendee has "status" none by default.
+     * Steps:
+     * 1. Create new calendar event with user attendee.
+     * 2. Get created event and verify all properties in the response..
      */
-    public function testCreateSimpleCalendarEventWithUserAttendee()
+    public function testCreateRegularCalendarEventWithAttendeeRelatedToUser()
     {
         // Step 1. Create new calendar event with attendees related to user.
         $this->restRequest(
@@ -144,12 +132,13 @@ class BasicAttendeeTest extends AbstractTestCase
     /**
      * Create regular calendar event with attendee not related to any user.
      *
-     * Create regular calendar event with attendee not related to any user.
-     * It is expected to have the attendee exist without related user.
+     * Steps:
+     * 1. Create regular calendar event with attendee not related to any user.
+     * 2. Get created event and verify all properties in the response.
      *
      * @SuppressWarnings(PHPMD.ExcessiveMethodLength)
      */
-    public function testCreateSimpleCalendarEventWithNonUserAttendee()
+    public function testCreateRegularCalendarEventWithAttendeeNotRelatedToAnyUser()
     {
         // Step 1. Create regular calendar event with attendee not related to any user.
         $this->restRequest(
@@ -251,12 +240,13 @@ class BasicAttendeeTest extends AbstractTestCase
     /**
      * Create regular calendar event with attendee related to user from other organization.
      *
-     * Create regular calendar event with attendee related to user existing in different organization.
-     * It is expected to not create a relation between the attendee and user from other organization.
+     * Steps:
+     * 1. Create regular calendar event with attendee not related to any user.
+     * 2. Get created event and verify all properties in the response.
      *
      * @SuppressWarnings(PHPMD.ExcessiveMethodLength)
      */
-    public function testCreateSimpleCalendarEventWithUserAttendeeFromOtherOrganization()
+    public function testCreateRegularCalendarEventWithAttendeeRelatedToUserFromOtherOrganization()
     {
         // Step 1. Create regular calendar event with attendee not related to any user.
         $this->restRequest(
@@ -358,13 +348,14 @@ class BasicAttendeeTest extends AbstractTestCase
     /**
      * Update regular calendar event with already existing attendees.
      *
-     * Create regular calendar event with 1 attendee.
-     * Then update the event with 2 new attendees.
-     * It is expected to have only 2 new attendees in the event and to not have previous attendee.
+     * Steps:
+     * 1. Create new calendar event with attendees related to user.
+     * 2. Update the calendar event with 2 new attendees.
+     * 3. Get the event and verify the response contain only 2 new attendees.
      *
      * @SuppressWarnings(PHPMD.ExcessiveMethodLength)
      */
-    public function testUpdateSimpleCalendarEventWithExistingAttendees()
+    public function testUpdateRegularCalendarEventWithAlreadyExistingAttendees()
     {
         // Step 1. Create new calendar event with attendees related to user.
         $this->restRequest(
@@ -520,13 +511,14 @@ class BasicAttendeeTest extends AbstractTestCase
     /**
      * Update regular calendar event with empty list of attendees to remove existed attendees.
      *
-     * Create regular calendar event with 2 attendees.
-     * Then update the event with empty attendees.
-     * It is expected to have no attendees in the event as a result.
+     * Steps:
+     * 1. Create new calendar event with attendees related to user.
+     * 2. Update the calendar event with empty list of attendees.
+     * 3. Get the event and verfy the response contain only 2 new attendees.
      *
      * @SuppressWarnings(PHPMD.ExcessiveMethodLength)
      */
-    public function testUpdateSimpleCalendarEventWithEmptyAttendees()
+    public function testUpdateRregularCalendarEventWithEmptyListOfAttendeesToremoveExistedAttendees()
     {
         // Step 1. Create new calendar event with attendees related to user.
         $this->restRequest(
