@@ -11,17 +11,8 @@ use Oro\Bundle\CalendarBundle\Tests\Functional\DataFixtures\LoadUserData;
 /**
  * The test covers recurring event exceptions clear logic.
  *
- * Operations covered:
- * - change recurrence without allowance to clear exceptions.
- * - change recurrence with allowance to clear exceptions.
- * - empty existing recurrence with allowance to clear exceptions.
- * - empty existing recurrence without allowance to clear exceptions.
- * - change other event data but not recurrence to not clear exceptions.
- *
- * Resources used:
- * - create event (oro_api_post_calendarevent)
- * - update event (oro_api_put_calendarevent)
- * - get events (oro_api_get_calendarevents)
+ * Use cases covered:
+ * - Update recurring event clears or updates exceptions.
  *
  * @dbIsolationPerTest
  */
@@ -35,12 +26,17 @@ class RecurringEventRecurrenceUpdateExceptionTest extends AbstractTestCase
     }
 
     /**
-     * Create recurring calendar event and exceptions.
+     * Update recurring event clears or updates exceptions.
      *
-     * Change event recurrence and verify exceptions are cleared.
-     * Verify exceptions are cleared when recurrence was changed/empty and clear allowed.
-     * Verify exceptions are not cleared when recurrence was changed/empty and clear not allowed.
-     * Verify exceptions are not cleared when recurrence was not changed.
+     * Step:
+     * 1. Create new recurring event without guests.
+     * 2, Create first exception with cancelled flag for the recurring event.
+     * 3. Create another exception for the recurring event with different title, description and start time.
+     * 4. Check the events exposed in the API without cancelled exception and with modified second exception.
+     * 5. Change recurring event.
+     * 6. Check the events exposed in the API as expected:
+     *   - without exception events if recurrence pattern was changed,
+     *   - or without cancelled exception and with modified second exception if recurrence pattern was not changed.
      *
      * @dataProvider updateExceptionsDataProvider
      *
@@ -50,12 +46,12 @@ class RecurringEventRecurrenceUpdateExceptionTest extends AbstractTestCase
      *
      * @SuppressWarnings(PHPMD.ExcessiveMethodLength)
      */
-    public function testUpdateRecurringEventRecurrenceClearsExceptions(
+    public function testUpdateRecurringEventRecurrenceClearsOrUpdateExceptions(
         array $changedEventData,
         $expectExceptionsCleared,
         $expectRemoveRecurrence = false
     ) {
-        // Step 1. Create new recurring event
+        // Step 1. Create new recurring event without guests.
         // Recurring event with occurrences: 2016-04-25, 2016-05-08, 2016-05-09, 2016-05-22
         $eventData = [
             'title'       => 'Test Recurring Event',
@@ -92,7 +88,7 @@ class RecurringEventRecurrenceUpdateExceptionTest extends AbstractTestCase
         /** @var CalendarEvent $recurringEvent */
         $recurringEvent = $this->getEntity(CalendarEvent::class, $response['id']);
 
-        // Step 2. Create exception for the recurring event, exception represents cancelled event
+        // Step 2. Create first exception with cancelled flag for the recurring event.
         $this->restRequest(
             [
                 'method' => 'POST',
@@ -122,7 +118,7 @@ class RecurringEventRecurrenceUpdateExceptionTest extends AbstractTestCase
         /** @var CalendarEvent $newEvent */
         $cancelledEventException = $this->getEntity(CalendarEvent::class, $response['id']);
 
-        // Step 3. Create exception for the recurring event, exception represents changed event
+        // Step 3. Create another exception for the recurring event with different title, description and start time.
         $this->restRequest(
             [
                 'method' => 'POST',
@@ -151,7 +147,7 @@ class RecurringEventRecurrenceUpdateExceptionTest extends AbstractTestCase
         /** @var CalendarEvent $newEvent */
         $changedEventException = $this->getEntity(CalendarEvent::class, $response['id']);
 
-        // Step 4. Get events via API and verify result is expected
+        // Step 4. Check the events exposed in the API without cancelled exception and with modified second exception.
         $this->restRequest(
             [
                 'method' => 'GET',
@@ -282,7 +278,9 @@ class RecurringEventRecurrenceUpdateExceptionTest extends AbstractTestCase
             $response
         );
 
-        // Step 6. Get events via API and verify result is expected
+        // Step 6. Check the events exposed in the API as expected:
+        //  - without exception events if recurrence pattern was changed,
+        //  - or without cancelled exception and with modified second exception if recurrence pattern was not changed.
         $this->restRequest(
             [
                 'method' => 'GET',
