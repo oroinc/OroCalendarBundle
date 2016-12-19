@@ -217,7 +217,9 @@ class CalendarEventManagerLegacyTest extends \PHPUnit_Framework_TestCase
             ->setAttendees($attendees)
             ->setCalendar($calendar);
 
-        $this->calendarEventManager->onEventUpdate($event, clone $event, new Organization(), false);
+        $originalEvent = clone $event;
+        $originalEvent->setAttendees(new ArrayCollection());
+        $this->calendarEventManager->onEventUpdate($event, $originalEvent, new Organization(), false);
 
         $this->assertCount(1, $event->getChildEvents());
         $this->assertSame($attendees->get(1), $event->getChildEvents()->first()->findRelatedAttendee());

@@ -36,33 +36,41 @@ class UpdateChildManager
      * Actualize child events state after parent event was updated
      *
      * @param CalendarEvent $calendarEvent Actual calendar event.
-     * @param Organization $organization Current organization
+     * @param CalendarEvent $originalEvent Actual calendar event.
+     * @param Organization  $organization Current organization
      */
-    public function onEventUpdate(CalendarEvent $calendarEvent, Organization $organization)
-    {
-        $this->createMissingChildEvents($calendarEvent, $organization);
-        $this->updateExistingChildEvents($calendarEvent);
-    }
+    public function onEventUpdate(
+        CalendarEvent $calendarEvent,
+        CalendarEvent $originalEvent,
+        Organization $organization
+    ) {
+        $attendeeUserIds = $this->getAttendeeUserIds($calendarEvent);
+        $calendarUserIds = $this->getAttendeeUserIds($originalEvent);
 
-    /**
-     * Creates missing child events of the main event.
-     *
-     * Every attendee of the event should have a event in respective calendar.
-     *
-     * @param CalendarEvent $parent
-     * @param Organization $organization Current organization
-     */
-    protected function createMissingChildEvents(CalendarEvent $parent, Organization $organization)
-    {
-        $attendeeUsers = $this->getAttendeeUserIds($parent);
-        $calendarUsers = $this->getCalendarUserIds($parent);
-
-        $missingUsers = array_diff($attendeeUsers, $calendarUsers);
-        $missingUsers = array_intersect($missingUsers, $attendeeUsers);
-
-        if (!empty($missingUsers)) {
-            $this->createChildEvents($parent, $missingUsers, $organization);
+        $newAttendeeUserIds = array_diff($attendeeUserIds, $calendarUserIds);
+        if ($newAttendeeUserIds) {
+            $this->createCalendarEventsCopiesForNewAttendees(
+                $calendarEvent,
+                $originalEvent,
+                $organization,
+                $newAttendeeUserIds
+            );
         }
+
+        $isExceptionalCalendarEvent = !is_null($calendarEvent->getRecurringEvent());
+        if ($isExceptionalCalendarEvent) {
+            $mainEventAttendeeIds = $this->getAttendeeUserIds($calendarEvent->getRecurringEvent());
+            $removedAttendeeUserIds = array_diff($mainEventAttendeeIds, $attendeeUserIds);
+            if ($removedAttendeeUserIds) {
+                $this->createCalendarEventCopiesForRemovedAttendees(
+                    $calendarEvent,
+                    $organization,
+                    $removedAttendeeUserIds
+                );
+            }
+        }
+
+        $this->updateAttendeesCalendarEvents($calendarEvent);
     }
 
     /**
@@ -74,148 +82,182 @@ class UpdateChildManager
      */
     protected function getAttendeeUserIds(CalendarEvent $calendarEvent)
     {
+        $calendar = $calendarEvent->getCalendar();
+        $calendarEventOwnerId = $calendar && $calendar->getOwner()
+            ? $calendar->getOwner()->getId()
+            : null;
+
         $result = [];
 
-        if ($calendarEvent->getRecurringEvent() && $calendarEvent->isCancelled()) {
-            // Attendees of cancelled exception are taken from recurring event.
-            $attendees = $calendarEvent->getRecurringEvent()->getAttendees();
-        } else {
-            $attendees = $calendarEvent->getAttendees();
-        }
-
+        $attendees = $calendarEvent->getAttendees();
         foreach ($attendees as $attendee) {
-            if ($attendee->getUser()) {
-                $result[] = $attendee->getUser()->getId();
+            if (!$attendee->getUser()) {
+                continue;
             }
+
+            $userId = $attendee->getUser()->getId();
+            if ($calendarEventOwnerId && $calendarEventOwnerId === $userId) {
+                continue;
+            }
+
+            $result[] = $userId;
         }
 
         return $result;
     }
 
     /**
-     * Get ids of users which have this event in their calendar.
+     * @param CalendarEvent $calendarEvent
+     * @param CalendarEvent $originalEvent
+     * @param Organization  $organization
+     * @param array         $newAttendeeUserIds
+     */
+    protected function createCalendarEventsCopiesForNewAttendees(
+        CalendarEvent $calendarEvent,
+        CalendarEvent $originalEvent,
+        Organization $organization,
+        array $newAttendeeUserIds
+    ) {
+        $newAttendeesCalendars = $this->getUsersDefaultCalendars($newAttendeeUserIds, $organization);
+        foreach ($newAttendeesCalendars as $calendar) {
+            $attendeeCalendarEvent = $calendarEvent->getChildEventByCalendar($calendar);
+            if (!$attendeeCalendarEvent) {
+                $attendeeCalendarEvent = $this->createAttendeeCalendarEvent($calendar, $calendarEvent);
+            }
+            $attendeeCalendarEvent->setCancelled($calendarEvent->isCancelled());
+
+            if ($calendarEvent->getRecurrence()) {
+                foreach ($calendarEvent->getRecurringEventExceptions() as $recurringEventException) {
+                    $attendeeCalendarEventException = $recurringEventException->getChildEventByCalendar($calendar);
+                    /**
+                     * Attendee Calendar Event Recurring Event Exception Should be linked
+                     * to new Attendee Calendar Event Recurring Event if it was created after exception
+                     */
+                    if ($attendeeCalendarEventException) {
+                        $attendeeCalendarEventException->setRecurringEvent($attendeeCalendarEvent);
+                    }
+
+                    $isAttendeesListsChanged = $this->isAttendeesListsChanged($originalEvent, $recurringEventException);
+                    if ($isAttendeesListsChanged) {
+                        continue;
+                    }
+
+                    /**
+                     * Create new Attendee Calendar Event Exception or reactivate existing one
+                     */
+                    if (!$attendeeCalendarEventException) {
+                        $attendeeCalendarEventException = $this->createAttendeeCalendarEvent(
+                            $calendar,
+                            $recurringEventException
+                        );
+                    }
+                    $attendeeCalendarEventException->setCancelled($recurringEventException->isCancelled());
+                }
+            }
+        }
+    }
+
+    /**
+     * @param CalendarEvent $calendarEvent
+     * @param CalendarEvent $originalCalendarEvent
      *
+     * @return bool
+     */
+    protected function isAttendeesListsChanged(CalendarEvent $calendarEvent, CalendarEvent $originalCalendarEvent)
+    {
+        $calendarEventAttendees = $calendarEvent->getAttendees();
+        $originalCalendarEventAttendees = $originalCalendarEvent->getAttendees();
+        if (count($calendarEventAttendees) != count($originalCalendarEventAttendees)) {
+            return true;
+        }
+
+        $calendarEventAttendeeIds = [];
+        foreach ($calendarEventAttendees as $calendarEventAttendee) {
+            $calendarEventAttendeeIds[$calendarEventAttendee->getUser()->getId()] = true;
+        }
+
+        foreach ($originalCalendarEventAttendees as $originalCalendarEventAttendee) {
+            if (!isset($calendarEventAttendeeIds[$originalCalendarEventAttendee->getUser()->getId()])) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    /**
+     * @param CalendarEvent $calendarEvent
+     * @param Organization  $organization
+     * @param array         $removedAttendeeUserIds
+     */
+    protected function createCalendarEventCopiesForRemovedAttendees(
+        CalendarEvent $calendarEvent,
+        Organization $organization,
+        array $removedAttendeeUserIds
+    ) {
+        $removedAttendeesCalendars = $this->getUsersDefaultCalendars($removedAttendeeUserIds, $organization);
+        foreach ($removedAttendeesCalendars as $calendar) {
+            $attendeeCalendarEvent = $calendarEvent->getChildEventByCalendar($calendar);
+            if (!$attendeeCalendarEvent) {
+                $attendeeCalendarEvent = $this->createAttendeeCalendarEvent($calendar, $calendarEvent);
+                $attendeeCalendarEvent->setCancelled(true);
+            }
+        }
+    }
+
+    /**
+     * @param Calendar      $calendar
      * @param CalendarEvent $calendarEvent
      *
-     * @return array
+     * @return CalendarEvent
      */
-    protected function getCalendarUserIds(CalendarEvent $calendarEvent)
+    protected function createAttendeeCalendarEvent(Calendar $calendar, CalendarEvent $calendarEvent)
     {
-        $result = [];
+        $attendeeCalendarEvent = new CalendarEvent();
+        $attendeeCalendarEvent->setCalendar($calendar);
+        $attendeeCalendarEvent->setParent($calendarEvent);
+        $calendarEvent->addChildEvent($attendeeCalendarEvent);
+        $attendeeCalendarEvent->setRelatedAttendee($attendeeCalendarEvent->findRelatedAttendee());
 
-        $calendar = $calendarEvent->getCalendar();
-        if ($calendar && $calendar->getOwner()) {
-            $result[] = $calendar->getOwner()->getId();
-        }
+        $this->updateAttendeeCalendarEvent($calendarEvent, $attendeeCalendarEvent);
 
-        foreach ($calendarEvent->getChildEvents() as $childEvent) {
-            $childEventCalendar = $childEvent->getCalendar();
-            if ($childEventCalendar && $childEventCalendar->getOwner()) {
-                $result[] = $childEventCalendar->getOwner()->getId();
-            }
-        }
-        return $result;
+        return $attendeeCalendarEvent;
     }
 
     /**
-     * Creates child events for $parent in calendars of users with ids in $targetCalendarOwnerIds
+     * @param int[]        $userIds
+     * @param Organization $organization
      *
-     * @param CalendarEvent $parent
-     *
-     * @param array $targetCalendarOwnerIds
-     * @param Organization $organization Current organization
+     * @return Calendar[]
      */
-    protected function createChildEvents(
-        CalendarEvent $parent,
-        array $targetCalendarOwnerIds,
-        Organization $organization
-    ) {
+    protected function getUsersDefaultCalendars(array $userIds, Organization $organization)
+    {
         /** @var CalendarRepository $calendarRepository */
         $calendarRepository = $this->doctrineHelper->getEntityRepository('OroCalendarBundle:Calendar');
 
         /** @var Calendar $calendar */
-        $calendars = $calendarRepository->findDefaultCalendars($targetCalendarOwnerIds, $organization->getId());
+        return $calendarRepository->findDefaultCalendars($userIds, $organization->getId());
+    }
 
-        foreach ($calendars as $calendar) {
-            $child = $this->createChildCalendarEvent($calendar, $parent);
-            $this->copyRecurringEventExceptions($parent, $child);
+    /**
+     * Sync Attendee Events state with main event state
+     *
+     * @param CalendarEvent $calendarEvent
+     */
+    protected function updateAttendeesCalendarEvents(CalendarEvent $calendarEvent)
+    {
+        foreach ($calendarEvent->getChildEvents() as $attendeeCalendarEvent) {
+            $this->updateAttendeeCalendarEvent($calendarEvent, $attendeeCalendarEvent);
         }
     }
 
     /**
-     * @param Calendar $calendar
-     * @param CalendarEvent $parent
-     * @return CalendarEvent
-     */
-    protected function createChildCalendarEvent(Calendar $calendar, CalendarEvent $parent)
-    {
-        $result = $this->createCalendarEvent($calendar);
-        $result->setParent($parent);
-        $parent->addChildEvent($result);
-        $result->setRelatedAttendee($result->findRelatedAttendee());
-
-        return $result;
-    }
-
-    /**
-     * @param Calendar $calendar
-     * @return CalendarEvent
-     */
-    protected function createCalendarEvent(Calendar $calendar)
-    {
-        $result = new CalendarEvent();
-        $result->setCalendar($calendar);
-
-        return $result;
-    }
-
-    /**
-     * Copy exceptions of parent recurring event to every child recurring event.
-     *
-     * If parent recurring event has exception the same exception should exist in the calendar of
-     * guest user.
+     * Sync Single Attendee Event state with main event state
      *
      * @param CalendarEvent $parent
      * @param CalendarEvent $child
      */
-    protected function copyRecurringEventExceptions(CalendarEvent $parent, CalendarEvent $child)
-    {
-        if (!$parent->getRecurrence()) {
-            // If this is not recurring event then there are no exceptions to copy
-            return;
-        }
-
-        foreach ($parent->getRecurringEventExceptions() as $parentException) {
-            $childException = $parentException->getChildEventByCalendar($child->getCalendar());
-            if ($childException) {
-                $childException->setRecurringEvent($child);
-            } else {
-                $childException = $this->createChildCalendarEvent($child->getCalendar(), $parentException);
-                $this->updateChildEvent($parentException, $childException);
-                $childException->setCancelled($parentException->isCancelled());
-            }
-        }
-    }
-
-    /**
-     * Update attributes of child events.
-     *
-     * @param CalendarEvent $parent
-     */
-    protected function updateExistingChildEvents(CalendarEvent $parent)
-    {
-        foreach ($parent->getChildEvents() as $child) {
-            $this->updateChildEvent($parent, $child);
-        }
-    }
-
-    /**
-     * Updates attributes of child event according to current state of parent event.
-     *
-     * @param CalendarEvent $parent
-     * @param CalendarEvent $child
-     */
-    protected function updateChildEvent(CalendarEvent $parent, CalendarEvent $child)
+    protected function updateAttendeeCalendarEvent(CalendarEvent $parent, CalendarEvent $child)
     {
         $child->setTitle($parent->getTitle())
             ->setDescription($parent->getDescription())

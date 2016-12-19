@@ -1176,12 +1176,12 @@ class CalendarEvent extends ExtendCalendarEvent implements RemindableInterface, 
     {
         if ($this->id) {
             $this->id = null;
-            $this->reminders = new ArrayCollection($this->reminders->toArray());
-            $this->childEvents = new ArrayCollection($this->childEvents->toArray());
-            $this->attendees = new ArrayCollection($this->attendees->toArray());
-            $this->recurringEventExceptions = new ArrayCollection($this->recurringEventExceptions->toArray());
-            $this->recurrence = $this->recurrence ? clone $this->recurrence : null;
         }
+        $this->reminders = new ArrayCollection($this->reminders->toArray());
+        $this->childEvents = new ArrayCollection($this->childEvents->toArray());
+        $this->attendees = new ArrayCollection($this->attendees->toArray());
+        $this->recurringEventExceptions = new ArrayCollection($this->recurringEventExceptions->toArray());
+        $this->recurrence = $this->recurrence ? clone $this->recurrence : null;
     }
 
     /**
