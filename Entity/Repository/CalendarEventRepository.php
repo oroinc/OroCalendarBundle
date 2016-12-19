@@ -55,8 +55,6 @@ class CalendarEventRepository extends EntityRepository
             ->addSelect('IDENTITY(e.parent) AS parentEventId')
             ->addSelect('c.id as calendar')
             ->addSelect('IDENTITY(relatedAttendee.user) AS relatedAttendeeUserId')
-            ->addSelect('e.originalStart')
-            ->addSelect('e.cancelled AS isCancelled')
             ->leftJoin('e.relatedAttendee', 'relatedAttendee')
             ->leftJoin('e.parent', 'parent')
             ->leftJoin('relatedAttendee.status', 'status')
@@ -136,11 +134,14 @@ class CalendarEventRepository extends EntityRepository
         $qb = $this->getEventListQueryBuilder($extraFields)
             ->addSelect('c.id as calendar')
             ->innerJoin('e.systemCalendar', 'c')
+            ->leftJoin('e.parent', 'parent')
             ->andWhere('c.public = :public')
             ->setParameter('public', true);
 
+        $this->addRecurrenceData($qb);
         $this->addFilters($qb, $filters);
         $this->addTimeIntervalFilter($qb, $startDate, $endDate);
+        $this->addRecurrencesConditions($qb, $startDate, $endDate);
 
         return $qb;
     }
@@ -155,10 +156,7 @@ class CalendarEventRepository extends EntityRepository
     public function getEventListQueryBuilder($extraFields = [])
     {
         $qb = $this->createQueryBuilder('e')
-            ->select(
-                'e.id, e.title, e.description, e.start, e.end, e.allDay,'
-                . ' e.backgroundColor, e.createdAt, e.updatedAt, IDENTITY(e.recurringEvent) AS recurringEventId'
-            );
+            ->select($this->getBaseFields());
         if ($extraFields) {
             foreach ($extraFields as $field) {
                 $qb->addSelect('e.' . $field);
@@ -324,5 +322,26 @@ class CalendarEventRepository extends EntityRepository
         }
 
         return $result;
+    }
+
+    /**
+     * @return array
+     */
+    public function getBaseFields()
+    {
+        return [
+            'e.id',
+            'e.title',
+            'e.description',
+            'e.start',
+            'e.end',
+            'e.allDay',
+            'e.backgroundColor',
+            'e.createdAt',
+            'e.updatedAt',
+            'e.originalStart',
+            'IDENTITY(e.recurringEvent) AS recurringEventId',
+            'e.cancelled AS isCancelled'
+        ];
     }
 }

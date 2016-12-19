@@ -47,9 +47,7 @@ class CalendarEventRepositoryTest extends OrmTestCase
         $qb = $repo->getEventListQueryBuilder();
 
         $this->assertEquals(
-            'SELECT e.id, e.title, e.description, e.start, e.end, e.allDay,'
-            . ' e.backgroundColor, e.createdAt, e.updatedAt, IDENTITY(e.recurringEvent) AS recurringEventId'
-            . ' FROM Oro\Bundle\CalendarBundle\Entity\CalendarEvent e',
+            $this->getBaseSelectString() . ' FROM Oro\Bundle\CalendarBundle\Entity\CalendarEvent e',
             $qb->getQuery()->getDQL()
         );
     }
@@ -63,14 +61,11 @@ class CalendarEventRepositoryTest extends OrmTestCase
 
         $prefix = CalendarEventRepository::RECURRENCE_FIELD_PREFIX;
         $this->assertEquals(
-            'SELECT e.id, e.title, e.description, e.start, e.end, e.allDay,'
-            . ' e.backgroundColor, e.createdAt, e.updatedAt,'
-            . ' IDENTITY(e.recurringEvent) AS recurringEventId,'
+            $this->getBaseSelectString() . ','
             . ' (CASE WHEN (status.id IS NULL) THEN \'none\' ELSE status.id END) as invitationStatus,'
             . ' IDENTITY(e.parent) AS parentEventId,'
             . ' c.id as calendar,'
             . ' IDENTITY(relatedAttendee.user) AS relatedAttendeeUserId,'
-            . ' e.originalStart, e.cancelled AS isCancelled,'
             . " r.recurrenceType as {$prefix}RecurrenceType, r.interval as {$prefix}Interval,"
             . "r.dayOfWeek as {$prefix}DayOfWeek, r.dayOfMonth as {$prefix}DayOfMonth,"
             . "r.monthOfYear as {$prefix}MonthOfYear, r.startTime as {$prefix}StartTime,"
@@ -110,14 +105,11 @@ class CalendarEventRepositoryTest extends OrmTestCase
 
         $prefix = CalendarEventRepository::RECURRENCE_FIELD_PREFIX;
         $this->assertEquals(
-            'SELECT e.id, e.title, e.description, e.start, e.end, e.allDay,'
-            . ' e.backgroundColor, e.createdAt, e.updatedAt,'
-            . ' IDENTITY(e.recurringEvent) AS recurringEventId,'
+            $this->getBaseSelectString() . ','
             . ' (CASE WHEN (status.id IS NULL) THEN \'none\' ELSE status.id END) as invitationStatus,'
             . ' IDENTITY(e.parent) AS parentEventId,'
             . ' c.id as calendar,'
             . ' IDENTITY(relatedAttendee.user) AS relatedAttendeeUserId,'
-            . ' e.originalStart, e.cancelled AS isCancelled,'
             . " r.recurrenceType as {$prefix}RecurrenceType, r.interval as {$prefix}Interval,"
             . "r.dayOfWeek as {$prefix}DayOfWeek, r.dayOfMonth as {$prefix}DayOfMonth,"
             . "r.monthOfYear as {$prefix}MonthOfYear, r.startTime as {$prefix}StartTime,"
@@ -161,14 +153,11 @@ class CalendarEventRepositoryTest extends OrmTestCase
 
         $prefix = CalendarEventRepository::RECURRENCE_FIELD_PREFIX;
         $this->assertEquals(
-            'SELECT e.id, e.title, e.description, e.start, e.end, e.allDay,'
-            . ' e.backgroundColor, e.createdAt, e.updatedAt,'
-            . ' IDENTITY(e.recurringEvent) AS recurringEventId,'
+            $this->getBaseSelectString() . ','
             . ' (CASE WHEN (status.id IS NULL) THEN \'none\' ELSE status.id END) as invitationStatus,'
             . ' IDENTITY(e.parent) AS parentEventId,'
             . ' c.id as calendar,'
             . ' IDENTITY(relatedAttendee.user) AS relatedAttendeeUserId,'
-            . ' e.originalStart, e.cancelled AS isCancelled,'
             . " r.recurrenceType as {$prefix}RecurrenceType, r.interval as {$prefix}Interval,"
             . "r.dayOfWeek as {$prefix}DayOfWeek, r.dayOfMonth as {$prefix}DayOfMonth,"
             . "r.monthOfYear as {$prefix}MonthOfYear, r.startTime as {$prefix}StartTime,"
@@ -213,15 +202,12 @@ class CalendarEventRepositoryTest extends OrmTestCase
 
         $prefix = CalendarEventRepository::RECURRENCE_FIELD_PREFIX;
         $this->assertEquals(
-            'SELECT e.id, e.title, e.description, e.start, e.end, e.allDay,'
-            . ' e.backgroundColor, e.createdAt, e.updatedAt,'
-            . ' IDENTITY(e.recurringEvent) AS recurringEventId,'
+            $this->getBaseSelectString() . ','
             . ' e.status,'
             . ' (CASE WHEN (status.id IS NULL) THEN \'none\' ELSE status.id END) as invitationStatus,'
             . ' IDENTITY(e.parent) AS parentEventId,'
             . ' c.id as calendar,'
             . ' IDENTITY(relatedAttendee.user) AS relatedAttendeeUserId,'
-            . ' e.originalStart, e.cancelled AS isCancelled,'
             . " r.recurrenceType as {$prefix}RecurrenceType, r.interval as {$prefix}Interval,"
             . "r.dayOfWeek as {$prefix}DayOfWeek, r.dayOfMonth as {$prefix}DayOfMonth,"
             . "r.monthOfYear as {$prefix}MonthOfYear, r.startTime as {$prefix}StartTime,"
@@ -256,9 +242,7 @@ class CalendarEventRepositoryTest extends OrmTestCase
         $qb = $repo->getSystemEventListByTimeIntervalQueryBuilder(new \DateTime(), new \DateTime());
 
         $this->assertEquals(
-            'SELECT e.id, e.title, e.description, e.start, e.end, e.allDay,'
-            . ' e.backgroundColor, e.createdAt, e.updatedAt,'
-            . ' IDENTITY(e.recurringEvent) AS recurringEventId,'
+            $this->getBaseSelectString() . ','
             . ' c.id as calendar,'
             . ' r.recurrenceType as recurrenceRecurrenceType, r.interval as recurrenceInterval,'
             . 'r.dayOfWeek as recurrenceDayOfWeek, r.dayOfMonth as recurrenceDayOfMonth,'
@@ -295,9 +279,7 @@ class CalendarEventRepositoryTest extends OrmTestCase
         );
 
         $this->assertEquals(
-            'SELECT e.id, e.title, e.description, e.start, e.end, e.allDay,'
-            . ' e.backgroundColor, e.createdAt, e.updatedAt,'
-            . ' IDENTITY(e.recurringEvent) AS recurringEventId,'
+            $this->getBaseSelectString() . ','
             . ' c.id as calendar,'
             . ' r.recurrenceType as recurrenceRecurrenceType, r.interval as recurrenceInterval,'
             . 'r.dayOfWeek as recurrenceDayOfWeek, r.dayOfMonth as recurrenceDayOfMonth,'
@@ -336,9 +318,7 @@ class CalendarEventRepositoryTest extends OrmTestCase
         );
 
         $this->assertEquals(
-            'SELECT e.id, e.title, e.description, e.start, e.end, e.allDay,'
-            . ' e.backgroundColor, e.createdAt, e.updatedAt,'
-            . ' IDENTITY(e.recurringEvent) AS recurringEventId,'
+            $this->getBaseSelectString() . ','
             . ' c.id as calendar,'
             . ' r.recurrenceType as recurrenceRecurrenceType, r.interval as recurrenceInterval,'
             . 'r.dayOfWeek as recurrenceDayOfWeek, r.dayOfMonth as recurrenceDayOfMonth,'
@@ -373,9 +353,7 @@ class CalendarEventRepositoryTest extends OrmTestCase
         $qb = $repo->getPublicEventListByTimeIntervalQueryBuilder(new \DateTime(), new \DateTime());
 
         $this->assertEquals(
-            'SELECT e.id, e.title, e.description, e.start, e.end, e.allDay,'
-            . ' e.backgroundColor, e.createdAt, e.updatedAt,'
-            . ' IDENTITY(e.recurringEvent) AS recurringEventId,'
+            $this->getBaseSelectString() . ','
             . ' c.id as calendar'
             . ' FROM Oro\Bundle\CalendarBundle\Entity\CalendarEvent e'
             . ' INNER JOIN e.systemCalendar c'
@@ -402,9 +380,7 @@ class CalendarEventRepositoryTest extends OrmTestCase
         );
 
         $this->assertEquals(
-            'SELECT e.id, e.title, e.description, e.start, e.end, e.allDay,'
-            . ' e.backgroundColor, e.createdAt, e.updatedAt,'
-            . ' IDENTITY(e.recurringEvent) AS recurringEventId,'
+            $this->getBaseSelectString() . ','
             . ' c.id as calendar'
             . ' FROM Oro\Bundle\CalendarBundle\Entity\CalendarEvent e'
             . ' INNER JOIN e.systemCalendar c'
@@ -433,9 +409,7 @@ class CalendarEventRepositoryTest extends OrmTestCase
         );
 
         $this->assertEquals(
-            'SELECT e.id, e.title, e.description, e.start, e.end, e.allDay,'
-            . ' e.backgroundColor, e.createdAt, e.updatedAt,'
-            . ' IDENTITY(e.recurringEvent) AS recurringEventId,'
+            $this->getBaseSelectString() . ','
             . ' c.id as calendar'
             . ' FROM Oro\Bundle\CalendarBundle\Entity\CalendarEvent e'
             . ' INNER JOIN e.systemCalendar c'
@@ -471,5 +445,16 @@ class CalendarEventRepositoryTest extends OrmTestCase
         );
 
         $this->assertEquals($parentEventIds, $qb->getQuery()->getParameter('parentEventIds')->getValue());
+    }
+
+    /**
+     * @return string
+     */
+    protected function getBaseSelectString()
+    {
+        /** @var CalendarEventRepository $repo */
+        $repo = $this->em->getRepository('OroCalendarBundle:CalendarEvent');
+
+        return 'SELECT ' . implode(', ', $repo->getBaseFields());
     }
 }

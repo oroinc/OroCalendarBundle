@@ -247,6 +247,8 @@ services:
             - '@oro_calendar.system_calendar_config'
             - '@oro_security.security_facade'
         public: false
+        calls:
+            - [ setRecurrenceModel, ['@oro_calendar.model.recurrence'] ]
         tags:
             - { name: oro_calendar.calendar_provider, alias: public }
 

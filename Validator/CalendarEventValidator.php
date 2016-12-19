@@ -34,28 +34,57 @@ class CalendarEventValidator extends ConstraintValidator
     }
 
     /**
+     *
      * @param CalendarEvent $value
      * @param Constraints\CalendarEvent $constraint
      */
     public function validateCalendarEvent(CalendarEvent $value, Constraints\CalendarEvent $constraint)
     {
-        $recurringEvent = $value->getRecurringEvent();
-        $rootContext = $this->context->getRoot();
-        if ($recurringEvent && $recurringEvent->getId() === $value->getId()) {
+        $this->validateSelfRelation($value, $constraint);
+        $this->validateRecurrence($value, $constraint);
+        $this->validateCalendarUid($value, $constraint);
+    }
+
+    /**
+     * @param CalendarEvent $value
+     * @param Constraints\CalendarEvent $constraint
+     */
+    protected function validateSelfRelation(CalendarEvent $value, Constraints\CalendarEvent $constraint)
+    {
+        if ($value->getRecurringEvent() && $value->getRecurringEvent()->getId() === $value->getId()) {
             $this->context->addViolation($constraint->selfRelationMessage);
         }
+    }
 
-        if ($recurringEvent && $recurringEvent->getRecurrence() === null) {
+    /**
+     * @param CalendarEvent $value
+     * @param Constraints\CalendarEvent $constraint
+     */
+    protected function validateRecurrence(CalendarEvent $value, Constraints\CalendarEvent $constraint)
+    {
+        if ($value->getRecurringEvent() && $value->getRecurringEvent()->getRecurrence() === null) {
             $this->context->addViolation($constraint->wrongRecurrenceMessage);
         }
+    }
+
+    /**
+     * @param CalendarEvent $value
+     * @param Constraints\CalendarEvent $constraint
+     */
+    protected function validateCalendarUid(CalendarEvent $value, Constraints\CalendarEvent $constraint)
+    {
+        $recurringEvent = $value->getRecurringEvent();
+        $rootContext = $this->context->getRoot();
 
         if ($rootContext instanceof FormInterface && $recurringEvent) {
-            $calendarId = $rootContext->get('calendar') ?
-                $rootContext->get('calendar')->getData() :
-                null;
-            $calendarAlias = $rootContext->get('calendarAlias') ?
-                $rootContext->get('calendarAlias')->getData() :
-                Calendar::CALENDAR_ALIAS;
+            $calendarId = null;
+            if ($rootContext->get('calendar') && $rootContext->get('calendar')->getData()) {
+                $calendarId = $rootContext->get('calendar')->getData();
+            }
+            $calendarAlias = Calendar::CALENDAR_ALIAS;
+            if ($rootContext->get('calendarAlias') && $rootContext->get('calendarAlias')->getData()) {
+                $calendarAlias = $rootContext->get('calendarAlias')->getData();
+            }
             if ($calendarId) {
                 // This is case for front-end form templates and API form. The case is used for all types of events.
                 // Simple forms of any kind of events (regular, recurrent, system, system recurrent)
