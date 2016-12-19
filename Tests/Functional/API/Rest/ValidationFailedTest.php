@@ -9,11 +9,8 @@ use Oro\Bundle\CalendarBundle\Tests\Functional\DataFixtures\LoadUserData;
 /**
  * The test covers validation errors triggered in calendar events API.
  *
- * Operations covered:
- * - create new event with invalid data required data
- *
- * Resources used:
- * - create event (oro_api_post_calendarevent)
+ * Use cases covered:
+ * - Create recurring calendar event with invalid fields of recurrence.
  *
  * @dbIsolation
  */
@@ -29,14 +26,15 @@ class ValidationErrorTest extends AbstractValidationErrorTestCase
     /**
      * Create recurring calendar event with invalid fields of recurrence.
      *
-     * Verify expected validation errors in the response.
+     * Steps:
+     * 1. Create regular calendar event using minimal required data in the request.
      *
      * @param array $recurrence
      * @param array $errors
      *
      * @dataProvider recurrenceValidationFailedDataProvider
      */
-    public function testRecurrenceValidationFailed(array $recurrence, array $errors)
+    public function testCreateRecurringCalendarEventWithInvalidFieldsOfRecurrencearray(array $recurrence, array $errors)
     {
         // Step 1. Create regular calendar event using minimal required data in the request.
         $eventData = [

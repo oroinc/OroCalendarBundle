@@ -9,15 +9,21 @@ use Oro\Component\PropertyAccess\PropertyAccessor;
 /**
  * Responsible to actualize the state of recurring event exception state after main event was updated.
  *
- * When exception event is created it can have some attributes overwritten and some attributes with original values.
+ * When exception event is created it can have some attributes overridden and some attributes with the original values.
  * For example exception event can be created with different title, but all other attributes could have the same
- * value as original recurring event,
+ * value as in original recurring event,
  *
- * When recurring event is updated its' exceptions should be also updated according to next rules
+ * List of attributes being synced:
+ * - title
+ * - description
+ * - backgroundColor
+ * - allDay
+ * - attendees
  *
+ * When recurring event is updated its' exceptions' attributes should be also updated according to next rules:
  * 1) If recurrence pattern or start/end date was updated then all exceptions should be cleared.
- * 2) If attribute has overwritten value in the exception then its' value should remain the same.
- * 3) If attribute has the value in the exception same as in recurring event then its' value should be updated.
+ * 2) If attribute has overridden value in the exception then its' value should remain the same in the exception.
+ * 3) If attribute has the same value in the exception as in recurring event then its' value should be updated.
  */
 class UpdateExceptionManager
 {
@@ -127,9 +133,13 @@ class UpdateExceptionManager
     {
         foreach ($actualEvent->getRecurringEventExceptions() as $exceptionEvent) {
             $this->updateException($actualEvent, $originalEvent, $exceptionEvent);
+
+            $this->updateExceptions($exceptionEvent, $originalEvent);
         }
 
         foreach ($actualEvent->getChildEvents() as $childEvent) {
+            $this->updateException($actualEvent, $originalEvent, $childEvent);
+
             $this->updateExceptions($childEvent, $originalEvent);
         }
     }
@@ -272,6 +282,11 @@ class UpdateExceptionManager
                     );
                 }
             }
+
+            /**
+             * Update related attendee after attendees list was updated
+             */
+            $exceptionEvent->setRelatedAttendee($exceptionEvent->findRelatedAttendee());
         }
     }
 
