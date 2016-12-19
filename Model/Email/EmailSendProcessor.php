@@ -67,7 +67,8 @@ class EmailSendProcessor
                     $this->addEmailNotification(
                         $attendee->getCalendarEvent(),
                         [$attendee->getEmail()],
-                        self::CREATE_INVITE_TEMPLATE_NAME
+                        self::CREATE_INVITE_TEMPLATE_NAME,
+                        ['hasUser' => $attendee->getUser() ? true : false]
                     );
                 }
             }
@@ -93,11 +94,17 @@ class EmailSendProcessor
 
         // Send notification to existing invitees if event was changed
         if (count($childAttendees) > 0 && $notify) {
-            $this->addEmailNotification(
-                $calendarEvent,
-                $this->getChildEmails($calendarEvent),
-                self::UPDATE_INVITE_TEMPLATE_NAME
-            );
+            foreach ($calendarEvent->getChildAttendees() as $attendee) {
+                if ($attendee->getEmail()) {
+                    $emails[] = $attendee->getEmail();
+                    $this->addEmailNotification(
+                        $calendarEvent,
+                        [$attendee->getEmail()],
+                        self::UPDATE_INVITE_TEMPLATE_NAME,
+                        ['hasUser' => $attendee->getUser() ? true : false]
+                    );
+                }
+            }
             $this->process();
         }
 
@@ -110,7 +117,8 @@ class EmailSendProcessor
                 $this->addEmailNotification(
                     $attendee->getCalendarEvent(),
                     [$attendee->getEmail()],
-                    self::CREATE_INVITE_TEMPLATE_NAME
+                    self::CREATE_INVITE_TEMPLATE_NAME,
+                    ['hasUser' => $attendee->getUser() ? true : false]
                 );
             }
         }
@@ -123,7 +131,8 @@ class EmailSendProcessor
                 $this->addEmailNotification(
                     $attendee->getCalendarEvent(),
                     [$attendee->getEmail()],
-                    self::UN_INVITE_TEMPLATE_NAME
+                    self::UN_INVITE_TEMPLATE_NAME,
+                    ['hasUser' => $attendee->getUser() ? true : false]
                 );
             }
         }
@@ -174,7 +183,8 @@ class EmailSendProcessor
             $this->addEmailNotification(
                 $calendarEvent,
                 $parentEmail,
-                $templateName
+                $templateName,
+                ['hasUser' => $calendarEvent->getParent()->getRelatedAttendee()->getUser() ? true : false]
             );
         }
 
@@ -208,7 +218,12 @@ class EmailSendProcessor
     public function process()
     {
         foreach ($this->emailNotifications as $notification) {
-            $this->emailNotificationManager->process($notification->getEntity(), [$notification]);
+            $this->emailNotificationManager->process(
+                $notification->getEntity(),
+                [$notification],
+                null,
+                $notification->getParams()
+            );
         }
         $this->emailNotifications = [];
         $this->em->flush();
@@ -254,12 +269,13 @@ class EmailSendProcessor
      * @param array         $emails
      * @param string        $templateName
      */
-    protected function addEmailNotification(CalendarEvent $entity, $emails, $templateName)
+    protected function addEmailNotification(CalendarEvent $entity, $emails, $templateName, $params = [])
     {
         $emailNotification = new EmailNotification($this->em);
         $emailNotification->setEmails($emails);
         $emailNotification->setCalendarEvent($entity);
         $emailNotification->setTemplateName($templateName);
+        $emailNotification->setParams($params);
         $this->emailNotifications[] = $emailNotification;
     }
 

@@ -27,6 +27,9 @@ class EmailNotification implements EmailNotificationInterface
     /** @var array */
     protected $emails = [];
 
+    /** @var array */
+    protected $params = [];
+
     /**
      * @param ObjectManager  $em
      */
@@ -109,5 +112,25 @@ class EmailNotification implements EmailNotificationInterface
         }
 
         return reset($templates);
+    }
+
+    /**
+     * @param array $params
+     *
+     * @return EmailNotification
+     */
+    public function setParams($params)
+    {
+        $this->params = $params;
+
+        return $this;
+    }
+
+    /**
+     * @return array
+     */
+    public function getParams()
+    {
+        return $this->params;
     }
 }
