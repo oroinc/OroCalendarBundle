@@ -354,15 +354,21 @@ class CalendarEventRepositoryTest extends OrmTestCase
 
         $this->assertEquals(
             $this->getBaseSelectString() . ','
-            . ' c.id as calendar'
+            . ' c.id as calendar,'
+            . ' r.recurrenceType as recurrenceRecurrenceType, r.interval as recurrenceInterval,'
+            . 'r.dayOfWeek as recurrenceDayOfWeek, r.dayOfMonth as recurrenceDayOfMonth,'
+            . 'r.monthOfYear as recurrenceMonthOfYear, r.startTime as recurrenceStartTime,'
+            . 'r.endTime as recurrenceEndTime, r.occurrences as recurrenceOccurrences,'
+            . 'r.instance as recurrenceInstance, r.id as recurrenceId, r.timeZone as recurrenceTimeZone,'
+            . ' r.calculatedEndTime as recurrenceCalculatedEndTime'
             . ' FROM Oro\Bundle\CalendarBundle\Entity\CalendarEvent e'
             . ' INNER JOIN e.systemCalendar c'
-            . ' WHERE '
-            . 'c.public = :public'
-            . ' AND ('
-            . '(e.start < :start AND e.end >= :start) OR '
-            . '(e.start <= :end AND e.end > :end) OR'
-            . '(e.start >= :start AND e.end < :end))'
+            . ' LEFT JOIN e.parent parent LEFT JOIN OroCalendarBundle:Recurrence r WITH'
+            . ' (parent.id IS NOT NULL AND parent.recurrence = r.id) OR (parent.id IS NULL AND e.recurrence = r.id)'
+            . ' WHERE (c.public = :public AND ((e.start < :start AND e.end >= :start)'
+            . ' OR (e.start <= :end AND e.end > :end) OR(e.start >= :start AND e.end < :end))) OR '
+            . '(r.startTime <= :endDate AND r.calculatedEndTime >= :startDate) OR'
+            . ' (e.originalStart IS NOT NULL AND e.originalStart <= :endDate AND e.originalStart >= :startDate)'
             . ' ORDER BY c.id, e.start ASC',
             $qb->getQuery()->getDQL()
         );
@@ -381,15 +387,21 @@ class CalendarEventRepositoryTest extends OrmTestCase
 
         $this->assertEquals(
             $this->getBaseSelectString() . ','
-            . ' c.id as calendar'
+            . ' c.id as calendar,'
+            . ' r.recurrenceType as recurrenceRecurrenceType, r.interval as recurrenceInterval,'
+            . 'r.dayOfWeek as recurrenceDayOfWeek, r.dayOfMonth as recurrenceDayOfMonth,'
+            . 'r.monthOfYear as recurrenceMonthOfYear, r.startTime as recurrenceStartTime,'
+            . 'r.endTime as recurrenceEndTime, r.occurrences as recurrenceOccurrences,'
+            . 'r.instance as recurrenceInstance, r.id as recurrenceId, r.timeZone as recurrenceTimeZone,'
+            . ' r.calculatedEndTime as recurrenceCalculatedEndTime'
             . ' FROM Oro\Bundle\CalendarBundle\Entity\CalendarEvent e'
             . ' INNER JOIN e.systemCalendar c'
-            . ' WHERE '
-            . 'c.public = :public AND e.allDay = :allDay'
-            . ' AND ('
-            . '(e.start < :start AND e.end >= :start) OR '
-            . '(e.start <= :end AND e.end > :end) OR'
-            . '(e.start >= :start AND e.end < :end))'
+            . ' LEFT JOIN e.parent parent LEFT JOIN OroCalendarBundle:Recurrence r WITH'
+            . ' (parent.id IS NOT NULL AND parent.recurrence = r.id) OR (parent.id IS NULL AND e.recurrence = r.id)'
+            . ' WHERE (c.public = :public AND e.allDay = :allDay AND ((e.start < :start AND e.end >= :start)'
+            . ' OR (e.start <= :end AND e.end > :end) OR(e.start >= :start AND e.end < :end))) OR '
+            . '(r.startTime <= :endDate AND r.calculatedEndTime >= :startDate) OR'
+            . ' (e.originalStart IS NOT NULL AND e.originalStart <= :endDate AND e.originalStart >= :startDate)'
             . ' ORDER BY c.id, e.start ASC',
             $qb->getQuery()->getDQL()
         );
@@ -410,15 +422,21 @@ class CalendarEventRepositoryTest extends OrmTestCase
 
         $this->assertEquals(
             $this->getBaseSelectString() . ','
-            . ' c.id as calendar'
+            . ' c.id as calendar,'
+            . ' r.recurrenceType as recurrenceRecurrenceType, r.interval as recurrenceInterval,'
+            . 'r.dayOfWeek as recurrenceDayOfWeek, r.dayOfMonth as recurrenceDayOfMonth,'
+            . 'r.monthOfYear as recurrenceMonthOfYear, r.startTime as recurrenceStartTime,'
+            . 'r.endTime as recurrenceEndTime, r.occurrences as recurrenceOccurrences,'
+            . 'r.instance as recurrenceInstance, r.id as recurrenceId, r.timeZone as recurrenceTimeZone,'
+            . ' r.calculatedEndTime as recurrenceCalculatedEndTime'
             . ' FROM Oro\Bundle\CalendarBundle\Entity\CalendarEvent e'
             . ' INNER JOIN e.systemCalendar c'
-            . ' WHERE '
-            . 'c.public = :public AND e.allDay = :allDay'
-            . ' AND ('
-            . '(e.start < :start AND e.end >= :start) OR '
-            . '(e.start <= :end AND e.end > :end) OR'
-            . '(e.start >= :start AND e.end < :end))'
+            . ' LEFT JOIN e.parent parent LEFT JOIN OroCalendarBundle:Recurrence r WITH'
+            . ' (parent.id IS NOT NULL AND parent.recurrence = r.id) OR (parent.id IS NULL AND e.recurrence = r.id)'
+            . ' WHERE (c.public = :public AND e.allDay = :allDay AND ((e.start < :start AND e.end >= :start)'
+            . ' OR (e.start <= :end AND e.end > :end) OR(e.start >= :start AND e.end < :end))) OR '
+            . '(r.startTime <= :endDate AND r.calculatedEndTime >= :startDate) OR'
+            . ' (e.originalStart IS NOT NULL AND e.originalStart <= :endDate AND e.originalStart >= :startDate)'
             . ' ORDER BY c.id, e.start ASC',
             $qb->getQuery()->getDQL()
         );

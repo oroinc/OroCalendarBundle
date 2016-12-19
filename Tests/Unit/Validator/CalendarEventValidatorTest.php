@@ -39,13 +39,13 @@ class CalendarEventValidatorTest extends \PHPUnit_Framework_TestCase
     public function testValidateWithErrors()
     {
         $this->context->expects($this->at(0))
-            ->method('getRoot');
-        $this->context->expects($this->at(1))
             ->method('addViolation')
             ->with($this->equalTo("Parameter 'recurringEventId' can't have the same value as calendar event ID."));
-        $this->context->expects($this->at(2))
+        $this->context->expects($this->at(1))
             ->method('addViolation')
             ->with($this->equalTo("Parameter 'recurringEventId' can be set only for recurring calendar events."));
+        $this->context->expects($this->at(2))
+            ->method('getRoot');
 
         $calendarEvent = new CalendarEventEntity();
         $recurringEvent = new CalendarEventEntity();
