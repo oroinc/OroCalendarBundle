@@ -1,1 +1,17 @@
-{{ get_recurrence_text_value(record.getValue('recurrence')) }}
+{% set parent = record.getValue('parent') %}
+{% if parent %}
+    {% set recurringEvent = parent.recurringEvent %}
+    {% if recurringEvent  %}
+        {{ get_recurrence_text_value(recurringEvent.recurrence) }}
+    {% else %}
+        {{ get_recurrence_text_value(parent.recurrence) }}
+    {% endif %}
+{% else %}
+    {% set recurringEvent = record.getValue('recurringEvent') %}
+    {% if recurringEvent  %}
+        {{ get_recurrence_text_value(recurringEvent.recurrence) }}
+    {% else %}
+        {{ get_recurrence_text_value(record.getValue('recurrence')) }}
+    {% endif %}
+{% endif %}
+

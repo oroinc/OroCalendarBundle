@@ -16,6 +16,11 @@ datagrids:
                     - owner.id as ownerId
                     - relatedAttendeeUser.id as relatedAttendeeUserId
                     - (CASE WHEN (recurrence.id IS NULL) THEN false ELSE true END) as is_recurrent
+                    - recurringEvent
+                    - recurringEventRecurrence
+                    - parent
+                    - parentRecurringEvent
+                    - parentRecurringEventRecurrence
                 from:
                     - { table: %oro_calendar.calendar_event.entity.class%, alias: event }
                 join:
@@ -25,6 +30,10 @@ datagrids:
                         - { join: ra.status, alias: status }
                         - { join: ra.user, alias: relatedAttendeeUser }
                         - { join: event.recurrence, alias: recurrence }
+                        - { join: event.recurringEvent, alias: recurringEvent }
+                        - { join: recurringEvent.recurrence, alias: recurringEventRecurrence }
+                        - { join: parent.recurringEvent, alias: parentRecurringEvent }
+                        - { join: parentRecurringEvent.recurrence, alias: parentRecurringEventRecurrence }
                     inner:
                         - { join: event.calendar, alias: calendar }
                         - { join: calendar.owner, alias: owner }
