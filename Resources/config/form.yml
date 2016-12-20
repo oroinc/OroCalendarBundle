@@ -191,7 +191,7 @@ services:
         arguments:
             - '@doctrine.orm.entity_manager'
             - '@security.token_storage'
-            - '@oro_calendar.attendee_relation_manager'
+            - '@oro_calendar.attendee_manager'
 
     oro_calendar.user_ids_to_users.tranformer:
         class: %oro_calendar.user_ids_to_users.tranformer.class%
