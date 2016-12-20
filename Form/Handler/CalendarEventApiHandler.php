@@ -143,7 +143,7 @@ class CalendarEventApiHandler
             } else {
                 $this->emailSendProcessor->sendUpdateParentEventNotification(
                     $entity,
-                    $originalEntity->getAttendees(),
+                    $originalEntity,
                     true
                 );
             }

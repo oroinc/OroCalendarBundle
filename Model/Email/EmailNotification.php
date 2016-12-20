@@ -4,11 +4,10 @@ namespace Oro\Bundle\CalendarBundle\Model\Email;
 
 use Doctrine\Common\Persistence\ObjectManager;
 
-use Oro\Bundle\EmailBundle\Entity\EmailTemplate;
-
-use Oro\Bundle\ReminderBundle\Exception\InvalidArgumentException;
-use Oro\Bundle\NotificationBundle\Model\EmailNotificationInterface;
 use Oro\Bundle\CalendarBundle\Entity\CalendarEvent;
+use Oro\Bundle\EmailBundle\Entity\EmailTemplate;
+use Oro\Bundle\NotificationBundle\Model\EmailNotificationInterface;
+use Oro\Bundle\ReminderBundle\Exception\InvalidArgumentException;
 
 class EmailNotification implements EmailNotificationInterface
 {
@@ -16,7 +15,7 @@ class EmailNotification implements EmailNotificationInterface
     const ENTITY_CLASS_NAME = 'Oro\Bundle\CalendarBundle\Entity\CalendarEvent';
 
     /** @var ObjectManager */
-    protected $em;
+    protected $entityManager;
 
     /** @var CalendarEvent */
     protected $calendarEvent;
@@ -27,16 +26,12 @@ class EmailNotification implements EmailNotificationInterface
     /** @var array */
     protected $emails = [];
 
-    /** @var array */
-    protected $params = [];
-
     /**
-     * @param ObjectManager  $em
+     * @param ObjectManager $em
      */
-    public function __construct(
-        ObjectManager $em
-    ) {
-        $this->em = $em;
+    public function __construct(ObjectManager $em)
+    {
+        $this->entityManager = $em;
     }
 
     /**
@@ -56,9 +51,10 @@ class EmailNotification implements EmailNotificationInterface
     }
 
     /**
+     * @param array $emails
      * @param $emails
      */
-    public function setEmails($emails)
+    public function setEmails(array $emails)
     {
         $this->emails = $emails;
     }
@@ -96,7 +92,7 @@ class EmailNotification implements EmailNotificationInterface
      */
     protected function loadTemplate($className, $templateName)
     {
-        $repository = $this->em->getRepository(self::TEMPLATE_ENTITY);
+        $repository = $this->entityManager->getRepository(self::TEMPLATE_ENTITY);
         $templates  = $repository->findBy(array('entityName' => $className, 'name' => $templateName));
 
         if (!$templates) {
@@ -112,25 +108,5 @@ class EmailNotification implements EmailNotificationInterface
         }
 
         return reset($templates);
-    }
-
-    /**
-     * @param array $params
-     *
-     * @return EmailNotification
-     */
-    public function setParams($params)
-    {
-        $this->params = $params;
-
-        return $this;
-    }
-
-    /**
-     * @return array
-     */
-    public function getParams()
-    {
-        return $this->params;
     }
 }
