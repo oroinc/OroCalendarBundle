@@ -93,7 +93,7 @@ class CalendarEventApiHandler
                 } elseif (!$entity->getId() && $entity->getRecurringEvent()) {
                     $this->activityManager->setActivityTargets(
                         $entity,
-                        $entity->getRecurringEvent()->getActivityTargetEntities()
+                        $entity->getRecurringEvent()->getActivityTargets()
                     );
                 }
 

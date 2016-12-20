@@ -9,6 +9,23 @@ api:
 #
 #        Oro\Bundle\CalendarBundle\Entity\CalendarEvent:
 #            delete_handler: oro_calendar.calendar_event.handler.delete
+#            fields:
+#               activityTargets:
+#                   description: A records to which the Calendar event record associated with
+#                   data_type: association:manyToMany:activity
+#            subresources:
+#                activityTargets:
+#                    actions:
+#                        get_subresource:
+#                            documentation: Get full information about records to which the calendar event associated
+#                        get_relationship:
+#                            documentation: Get records to which the calendar event associated
+#                        add_relationship:
+#                            documentation: Associate records with the calendar event
+#                        update_relationship:
+#                            documentation: Completely replace association between records and the calendar event
+#                        delete_relationship:
+#                            documentation: Delete association between records and the calendar event
 #            filters:
 #                fields:
 #                    updatedAt:
