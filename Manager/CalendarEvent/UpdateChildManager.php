@@ -130,28 +130,35 @@ class UpdateChildManager
                 foreach ($calendarEvent->getRecurringEventExceptions() as $recurringEventException) {
                     $attendeeCalendarEventException = $recurringEventException->getChildEventByCalendar($calendar);
                     /**
-                     * Attendee Calendar Event Recurring Event Exception Should be linked
-                     * to new Attendee Calendar Event Recurring Event if it was created after exception
+                     * Existed Attendee Exceptional Recurring Calendar Event
+                     * Should be associated with new Attendee Recurring Calendar Event
                      */
                     if ($attendeeCalendarEventException) {
                         $attendeeCalendarEventException->setRecurringEvent($attendeeCalendarEvent);
                     }
 
                     $isAttendeesListsChanged = $this->isAttendeesListsChanged($originalEvent, $recurringEventException);
-                    if ($isAttendeesListsChanged) {
-                        continue;
-                    }
-
-                    /**
-                     * Create new Attendee Calendar Event Exception or reactivate existing one
-                     */
                     if (!$attendeeCalendarEventException) {
                         $attendeeCalendarEventException = $this->createAttendeeCalendarEvent(
                             $calendar,
                             $recurringEventException
                         );
+
+                        /**
+                         * In case if Calendar Event Exception has changed Attendees List
+                         * Exception should not be visible on new Attendee User Calendar
+                         */
+                        if ($isAttendeesListsChanged) {
+                            $attendeeCalendarEventException->setCancelled(true);
+                        }
                     }
-                    $attendeeCalendarEventException->setCancelled($recurringEventException->isCancelled());
+                    /**
+                     * Reactivate Attendee User Calendar Event Exception in case if
+                     * Calendar Event Exception has not changed Attendees List
+                     */
+                    if (!$isAttendeesListsChanged) {
+                        $attendeeCalendarEventException->setCancelled($recurringEventException->isCancelled());
+                    }
                 }
             }
         }

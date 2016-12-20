@@ -2083,6 +2083,16 @@ class RecurringEventUpdateExceptionTest extends AbstractTestCase
                 'end'              => '2016-04-03T04:00:00+00:00',
                 'attendees'        => $expectedAttendees,
             ],
+            [
+                'id'               => $recurringEvent->getId(),
+                'title'            => 'Test Recurring Event',
+                'description'      => 'Test Recurring Event Description',
+                'allDay'           => false,
+                'calendar'         => $this->getReference('oro_calendar:calendar:foo_user_1')->getId(),
+                'start'            => '2016-04-04T01:00:00+00:00',
+                'end'              => '2016-04-04T02:00:00+00:00',
+                'attendees'        => $expectedAttendees,
+            ],
         ];
 
         $this->assertResponseEquals($expectedResponse, $response, false);
@@ -2157,6 +2167,17 @@ class RecurringEventUpdateExceptionTest extends AbstractTestCase
                 'calendar'         => $this->getReference('oro_calendar:calendar:foo_user_2')->getId(),
                 'start'            => '2016-04-03T03:00:00+00:00',
                 'end'              => '2016-04-03T04:00:00+00:00',
+                'attendees'        => $expectedAttendees,
+            ],
+
+            [
+                'id'               => $attendeeCalendarEvent->getId(),
+                'title'            => 'Test Recurring Event',
+                'description'      => 'Test Recurring Event Description',
+                'allDay'           => false,
+                'calendar'         => $this->getReference('oro_calendar:calendar:foo_user_2')->getId(),
+                'start'            => '2016-04-04T01:00:00+00:00',
+                'end'              => '2016-04-04T02:00:00+00:00',
                 'attendees'        => $expectedAttendees,
             ],
         ];
