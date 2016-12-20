@@ -1,5 +1,3 @@
-{% import 'OroCalendarBundle::invitations.html.twig' as invitations %}
-
 {% macro calendar_event_view_template(id) %}
 
 <script type="text/template" id="activity-context-activity-list">
@@ -23,6 +21,12 @@
 
 <script type="text/html" id="{{ id }}">
     {% import 'OroUIBundle::macros.html.twig' as UI %}
+    {% import 'OroCalendarBundle::invitations.html.twig' as invitations %}
+    {% macro rawLink(parameters) %}
+        {% spaceless %}
+            <a href="{{ parameters.path }}" {% for dataItemName,dataItemValue in parameters.data %} data-{{ dataItemName }}="{{ dataItemValue|e('html_attr')|raw }}"{% endfor %} title="{{ parameters.title }}">{{ parameters.label|trim }}</a>
+        {% endspaceless %}
+    {% endmacro %}
     <div class="widget-content">
         <div class="row-fluid form-horizontal">
             <div class="responsive-block">
@@ -52,6 +56,40 @@
                 }); %>
                 <% if (attendeesView.length > 0) { %>
                     {{ UI.renderAttribute('oro.calendar.calendarevent.attendees.label'|trans, '<div class="calendar-event-guests-widget"><%= attendeesView.join(", ") %></div>') }}
+                <% } %>
+                <% if (editableInvitationStatus) { %>
+                    <% var properties = []; %>
+                    {% set statuses=[
+                        constant('Oro\\Bundle\\CalendarBundle\\Entity\\CalendarEvent::STATUS_ACCEPTED'),
+                        constant('Oro\\Bundle\\CalendarBundle\\Entity\\CalendarEvent::STATUS_TENTATIVE'),
+                        constant('Oro\\Bundle\\CalendarBundle\\Entity\\CalendarEvent::STATUS_DECLINED'),
+                    ] %}
+                    {% for status in statuses %}
+                        <% if (invitationStatus !== "{{ status }}") { %>
+                            <% var link='{{
+                                    _self.rawLink({
+                                        'label': invitations.calendar_event_invitation_going_status(status),
+                                        'title': invitations.calendar_event_invitation_going_status(status),
+                                        'path': '%path%',
+                                        'data':  {
+                                            'page-component-module': 'oroui/js/app/components/view-component',
+                                            'page-component-options': {
+                                                'view':'orocalendar/js/app/views/change-status-view',
+                                                'triggerEventName': 'widget_success:attendee_status:change'
+                                            }|json_encode
+                                        }
+                                    })
+                                }}';
+                                link = link.replace('%path%', invitationUrls["{{ status }}"]);
+                                properties.push(link);
+                            %>
+                        <% } else { %>
+                            <% properties.push('{{ invitations.calendar_event_invitation_going_status(status) }}'); %>
+                        <% } %>
+                    {% endfor %}
+                    <div class="invitation-response">
+                        {{ UI.renderHtmlProperty('oro.calendar.calendarevent.action.going_status.label'|trans, '<%= formatter.html(properties.join("&nbsp")) %>') }}
+                    </div>
                 <% } %>
 
                 <div class="activity-context-activity">

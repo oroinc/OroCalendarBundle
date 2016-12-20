@@ -13,6 +13,14 @@ class YearlyStrategy extends MonthlyStrategy
     /**
      * {@inheritdoc}
      */
+    public function getName()
+    {
+        return 'recurrence_yearly';
+    }
+
+    /**
+     * {@inheritdoc}
+     */
     public function supports(Entity\Recurrence $recurrence)
     {
         return $recurrence->getRecurrenceType() === Recurrence::TYPE_YEARLY;
@@ -39,14 +47,6 @@ class YearlyStrategy extends MonthlyStrategy
     /**
      * {@inheritdoc}
      */
-    public function getName()
-    {
-        return 'recurrence_yearly';
-    }
-
-    /**
-     * {@inheritdoc}
-     */
     protected function getFirstOccurrence(Entity\Recurrence $recurrence)
     {
         $dayOfMonth = $recurrence->getDayOfMonth();
@@ -65,29 +65,24 @@ class YearlyStrategy extends MonthlyStrategy
     /**
      * {@inheritdoc}
      */
-    public function getValidationErrorMessage(Entity\Recurrence $recurrence)
+    public function getRequiredProperties(Entity\Recurrence $recurrence)
     {
-        if ($recurrence->getInterval() % 12 !== 0) {
-            return "Parameter 'interval' value must be a multiple of 12 for Yearly recurrence pattern.";
-        }
+        return array_merge(
+            parent::getRequiredProperties($recurrence),
+            [
+                'monthOfYear',
+            ]
+        );
+    }
 
-        if (!$recurrence->getDayOfMonth()) {
-            return "Parameter 'dayOfMonth' can't be empty for Yearly recurrence pattern.";
-        }
-
-        if (!$recurrence->getMonthOfYear()) {
-            return "Parameter 'monthOfYear' can't be empty for Yearly recurrence pattern.";
-        }
-
-        $currentDate = new \DateTime('now', $recurrence->getStartTime()->getTimezone());
-        $currentDate->setDate($currentDate->format('Y'), $recurrence->getMonthOfYear(), 1);
-        $daysInMonth = (int)$currentDate->format('t');
-
-        if ($daysInMonth < $recurrence->getDayOfMonth()) {
-            return "Parameters 'dayOfMonth' and 'monthOfYear' values are invalid:"
-            . " such date doesn't exist(Yearly recurrence pattern).";
-        }
-
-        return null;
+    /**
+     * The multiplier for yearly recurrence type is 12, so only values of interval from this sequence are supported:
+     * 12, 24, 36, ...
+     *
+     * {@inheritdoc}
+     */
+    public function getIntervalMultipleOf(Entity\Recurrence $recurrence)
+    {
+        return 12;
     }
 }

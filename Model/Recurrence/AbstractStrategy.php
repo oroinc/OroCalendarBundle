@@ -11,6 +11,11 @@ use Oro\Bundle\LocaleBundle\Formatter\DateTimeFormatter;
 
 abstract class AbstractStrategy implements StrategyInterface
 {
+    /**
+     * Maximum value of interval field.
+     */
+    const MAX_INTERVAL = 999;
+
     /** @var TranslatorInterface */
     protected $translator;
 
@@ -237,5 +242,36 @@ abstract class AbstractStrategy implements StrategyInterface
         }
 
         return $result;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getMaxInterval(Entity\Recurrence $recurrence)
+    {
+        return static::MAX_INTERVAL;
+    }
+
+    /**
+     * By default the multiplier is NULL so any value of interval is supported.
+     *
+     * {@inheritdoc}
+     */
+    public function getIntervalMultipleOf(Entity\Recurrence $recurrence)
+    {
+        return 1;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getRequiredProperties(Entity\Recurrence $recurrence)
+    {
+        return [
+            'recurrenceType',
+            'interval',
+            'startTime',
+            'timeZone',
+        ];
     }
 }

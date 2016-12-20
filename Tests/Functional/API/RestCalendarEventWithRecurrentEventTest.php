@@ -13,94 +13,6 @@ use Oro\Bundle\CalendarBundle\Model\Recurrence;
 class RestCalendarEventWithRecurrentEventTest extends AbstractCalendarEventTest
 {
     /**
-     * @dataProvider postRecurringEventValidationDataProvider
-     *
-     * @param $recurringEventParameters
-     */
-    public function testPostRecurringEventValidation($recurringEventParameters)
-    {
-        $this->client->request('POST', $this->getUrl('oro_api_post_calendarevent'), $recurringEventParameters);
-        $this->getJsonResponseContent($this->client->getResponse(), 400);
-    }
-
-    /**
-     * @return array
-     */
-    public function postRecurringEventValidationDataProvider()
-    {
-        return [
-            'Should return validation error if interval is "0"' => [
-                [
-                    'title' => 'Test Recurring Event',
-                    'description' => 'Test Recurring Event Description',
-                    'start' => gmdate(DATE_RFC3339),
-                    'end' => gmdate(DATE_RFC3339),
-                    'allDay' => true,
-                    'backgroundColor' => '#FF0000',
-                    'calendar' => self::DEFAULT_USER_CALENDAR_ID,
-                    'recurrence' => [
-                        'recurrenceType' => Recurrence::TYPE_DAILY,
-                        'interval' => 0,
-                        'instance' => null,
-                        'dayOfWeek' => [],
-                        'dayOfMonth' => null,
-                        'monthOfYear' => null,
-                        'startTime' => gmdate(DATE_RFC3339),
-                        'endTime' => null,
-                        'occurrences' => null,
-                        'timeZone' => 'UTC'
-                    ],
-                ]
-            ],
-            'Should return validation error if timezone is empty' => [
-                [
-                    'title' => 'Test Recurring Event',
-                    'description' => 'Test Recurring Event Description',
-                    'start' => gmdate(DATE_RFC3339),
-                    'end' => gmdate(DATE_RFC3339),
-                    'allDay' => true,
-                    'backgroundColor' => '#FF0000',
-                    'calendar' => self::DEFAULT_USER_CALENDAR_ID,
-                    'recurrence' => [
-                        'recurrenceType' => Recurrence::TYPE_DAILY,
-                        'interval' => 1,
-                        'instance' => null,
-                        'dayOfWeek' => [],
-                        'dayOfMonth' => null,
-                        'monthOfYear' => null,
-                        'startTime' => gmdate(DATE_RFC3339),
-                        'endTime' => null,
-                        'occurrences' => null,
-                        'timeZone' => ''
-                    ],
-                ]
-            ],
-            'Should return validation error if timezone is not provided' => [
-                [
-                    'title' => 'Test Recurring Event',
-                    'description' => 'Test Recurring Event Description',
-                    'start' => gmdate(DATE_RFC3339),
-                    'end' => gmdate(DATE_RFC3339),
-                    'allDay' => true,
-                    'backgroundColor' => '#FF0000',
-                    'calendar' => self::DEFAULT_USER_CALENDAR_ID,
-                    'recurrence' => [
-                        'recurrenceType' => Recurrence::TYPE_DAILY,
-                        'interval' => 1,
-                        'instance' => null,
-                        'dayOfWeek' => [],
-                        'dayOfMonth' => null,
-                        'monthOfYear' => null,
-                        'startTime' => gmdate(DATE_RFC3339),
-                        'endTime' => null,
-                        'occurrences' => null,
-                    ],
-                ]
-            ]
-        ];
-    }
-
-    /**
      * Creates recurring event.
      *
      * @return array
@@ -321,8 +233,10 @@ class RestCalendarEventWithRecurrentEventTest extends AbstractCalendarEventTest
         $event = $this->getContainer()->get('doctrine')->getRepository('OroCalendarBundle:CalendarEvent')
             ->find($data['id']);
         $this->assertCount(1, $event->getChildEvents());
+        $this->assertNotNull($event->getRecurringEvent());
+        $this->assertCount(1, $event->getRecurringEvent()->getChildEvents());
         $this->assertEquals(
-            $event->getRecurringEvent()->getchildEvents()->first()->getId(),
+            $event->getRecurringEvent()->getChildEvents()->first()->getId(),
             $event->getChildEvents()->first()->getRecurringEvent()->getId()
         );
         $this->assertEquals(self::$recurringEventExceptionParameters['isCancelled'], $event->isCancelled());

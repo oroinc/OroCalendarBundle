@@ -4,6 +4,7 @@ namespace Oro\Bundle\CalendarBundle\Tests\Functional\API;
 
 use Oro\Bundle\CalendarBundle\Entity\Attendee;
 use Oro\Bundle\CalendarBundle\Model\Recurrence;
+use Oro\Bundle\CalendarBundle\Tests\Functional\DataFixtures\LoadUserData;
 
 /**
  * @dbIsolation
@@ -12,9 +13,8 @@ class RecurringEventWithAttendeesAndExceptionTest extends AbstractUseCaseTestCas
 {
     protected function setUp()
     {
-        $this->markTestSkipped('Should be corrected after BAP-12699');
         $this->initClient([], $this->generateWsseAuthHeader(), true);
-        $this->loadFixtures(['Oro\Bundle\UserBundle\Tests\Functional\DataFixtures\LoadUserData'], true);
+        $this->loadFixtures([LoadUserData::class], true);
     }
 
     /**
@@ -31,8 +31,8 @@ class RecurringEventWithAttendeesAndExceptionTest extends AbstractUseCaseTestCas
 
         $attendeesData = [
             [
-                'displayName' => 'simple_user@example.com',
-                'email'       => 'simple_user@example.com',
+                'displayName' => 'system_user_1@example.com',
+                'email'       => 'system_user_1@example.com',
                 'status'      => Attendee::STATUS_NONE,
                 'type'        => Attendee::TYPE_REQUIRED,
             ],
@@ -72,7 +72,7 @@ class RecurringEventWithAttendeesAndExceptionTest extends AbstractUseCaseTestCas
         $mainExceptionCalendarEventId = $this->addCalendarEventViaAPI($exceptionData);
         $mainExceptionEvent = $this->getCalendarEventById($mainExceptionCalendarEventId);
 
-        $simpleUser = $this->getReference('simple_user');
+        $simpleUser = $this->getReference('oro_calendar:user:system_user_1');
 
         $expectedEventsData = [
             [
@@ -269,8 +269,8 @@ class RecurringEventWithAttendeesAndExceptionTest extends AbstractUseCaseTestCas
 
         $attendeesData = [
             [
-                'displayName' => 'simple_user@example.com',
-                'email'       => 'simple_user@example.com',
+                'displayName' => 'system_user_1@example.com',
+                'email'       => 'system_user_1@example.com',
                 'status'      => Attendee::STATUS_NONE,
                 'type'        => Attendee::TYPE_REQUIRED,
             ],
@@ -310,7 +310,7 @@ class RecurringEventWithAttendeesAndExceptionTest extends AbstractUseCaseTestCas
         $mainExceptionCalendarEventId = $this->addCalendarEventViaAPI($exceptionData);
         $mainExceptionEvent = $this->getCalendarEventById($mainExceptionCalendarEventId);
 
-        $simpleUser = $this->getReference('simple_user');
+        $simpleUser = $this->getReference('oro_calendar:user:system_user_1');
 
         $expectedEventsData = [
             [

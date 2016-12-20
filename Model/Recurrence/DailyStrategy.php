@@ -8,6 +8,19 @@ use Oro\Bundle\CalendarBundle\Model\Recurrence;
 class DailyStrategy extends AbstractStrategy
 {
     /**
+     * Maximum value of interval field for daily strategy is different.
+     */
+    const MAX_INTERVAL = 99;
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getName()
+    {
+        return 'recurrence_daily';
+    }
+
+    /**
      * {@inheritdoc}
      */
     public function getOccurrences(Entity\Recurrence $recurrence, \DateTime $start, \DateTime $end)
@@ -63,14 +76,6 @@ class DailyStrategy extends AbstractStrategy
     }
 
     /**
-     * {@inheritdoc}
-     */
-    public function getName()
-    {
-        return 'recurrence_daily';
-    }
-
-    /**
      * Returns occurrence date according to last occurrence date and recurrence interval.
      *
      * @param integer $interval A number of days.
@@ -92,17 +97,5 @@ class DailyStrategy extends AbstractStrategy
             $recurrence->getInterval() * ($recurrence->getOccurrences() - 1),
             $recurrence->getStartTime()
         );
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function getValidationErrorMessage(Entity\Recurrence $recurrence)
-    {
-        if ($recurrence->getInterval() > 99) {
-            return "Parameter 'interval' can't be more than 99 for Daily recurrence pattern";
-        }
-
-        return null;
     }
 }

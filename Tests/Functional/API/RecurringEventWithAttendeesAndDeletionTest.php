@@ -17,12 +17,10 @@ class RecurringEventWithAttendeesAndDeletionTest extends AbstractUseCaseTestCase
      */
     public function testRecurringEventWithAttendeesAndDeletion()
     {
-        $this->markTestSkipped('Should be corrected after BAP-12699');
-
         $this->checkPreconditions();
 
         /** @var User $simpleUser */
-        $simpleUser = $this->getReference('simple_user');
+        $simpleUser = $this->getReference('oro_calendar:user:system_user_1');
         $attendees = [
             [
                 'displayName' => sprintf('%s %s', $simpleUser->getFirstName(), $simpleUser->getLastName()),

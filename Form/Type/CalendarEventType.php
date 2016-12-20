@@ -2,46 +2,17 @@
 
 namespace Oro\Bundle\CalendarBundle\Form\Type;
 
-use Doctrine\Common\Persistence\ManagerRegistry;
-
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
-use Symfony\Component\Form\FormEvent;
-use Symfony\Component\Form\FormEvents;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\Form\FormView;
-use Symfony\Component\OptionsResolver\OptionsResolverInterface;
+use Symfony\Component\OptionsResolver\OptionsResolver;
 
-use Oro\Bundle\CalendarBundle\Entity\CalendarEvent;
+use Oro\Bundle\CalendarBundle\Form\EventListener\CalendarEventRecurrenceSubscriber;
 use Oro\Bundle\CalendarBundle\Form\EventListener\CalendarUidSubscriber;
-use Oro\Bundle\CalendarBundle\Form\EventListener\ChildEventsSubscriber;
-use Oro\Bundle\SecurityBundle\SecurityFacade;
 
 class CalendarEventType extends AbstractType
 {
-    /** @var ManagerRegistry */
-    protected $registry;
-
-    /** @var SecurityFacade */
-    protected $securityFacade;
-
-    /**
-     * @param ManagerRegistry $registry
-     * @param SecurityFacade $securityFacade
-     */
-    public function __construct(ManagerRegistry $registry, SecurityFacade $securityFacade)
-    {
-        $this->registry = $registry;
-        $this->securityFacade = $securityFacade;
-    }
-
-    /** @var array */
-    protected $editableFieldsForRecurrence = [
-        'title',
-        'description',
-        'contexts',
-    ];
-
     /**
      * @SuppressWarnings(PHPMD.ExcessiveMethodLength)
      *
@@ -137,25 +108,13 @@ class CalendarEventType extends AbstractType
             );
 
         $builder->addEventSubscriber(new CalendarUidSubscriber());
-        $builder->addEventSubscriber(new ChildEventsSubscriber($this->registry, $this->securityFacade));
-        $builder->addEventListener(FormEvents::PRE_SUBMIT, function (FormEvent $event) {
-            $form = $event->getForm();
-            $data = $event->getData();
-            if (empty($data['recurrence'])) {
-                $recurrence = $form->get('recurrence')->getData();
-                if ($recurrence) {
-                    $form->get('recurrence')->setData(null);
-                }
-                unset($data['recurrence']);
-                $event->setData($data);
-            }
-        });
+        $builder->addEventSubscriber(new CalendarEventRecurrenceSubscriber());
     }
 
     /**
-     *M-BM- {@inheritdoc}
+     * {@inheritdoc}
      */
-    public function setDefaultOptions(OptionsResolverInterface $resolver)
+    public function configureOptions(OptionsResolver $resolver)
     {
         $resolver->setDefaults(
             [
@@ -185,7 +144,7 @@ class CalendarEventType extends AbstractType
     }
 
     /**
-     *M-BM- {@inheritdoc}
+     * {@inheritdoc}
      */
     public function getName()
     {

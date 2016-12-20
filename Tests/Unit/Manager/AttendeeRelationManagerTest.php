@@ -29,7 +29,7 @@ class AttendeeRelationManagerTest extends \PHPUnit_Framework_TestCase
             ->disableOriginalConstructor()
             ->getMock();
         $userRepository->expects($this->any())
-            ->method('findUsersByEmails')
+            ->method('findUsersByEmailsAndOrganization')
             ->will($this->returnCallback(function (array $emails) {
                 return array_values(array_intersect_key($this->users, array_flip($emails)));
             }));

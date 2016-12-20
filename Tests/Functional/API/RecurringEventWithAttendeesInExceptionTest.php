@@ -56,8 +56,8 @@ class RecurringEventWithAttendeesInExceptionTest extends AbstractUseCaseTestCase
             'end'              => $exceptionEnd,
             'attendees'        => [
                 [
-                    'displayName' => 'simple_user@example.com',
-                    'email'       => 'simple_user@example.com',
+                    'displayName' => 'system_user_1@example.com',
+                    'email'       => 'system_user_1@example.com',
                     'status'      => Attendee::STATUS_NONE,
                     'type'        => Attendee::TYPE_REQUIRED,
                 ],
@@ -66,7 +66,7 @@ class RecurringEventWithAttendeesInExceptionTest extends AbstractUseCaseTestCase
         $mainExceptionCalendarEventId = $this->addCalendarEventViaAPI($exceptionData);
         $mainExceptionEvent = $this->getCalendarEventById($mainExceptionCalendarEventId);
 
-        $simpleUser = $this->getReference('simple_user');
+        $simpleUser = $this->getReference('oro_calendar:user:system_user_1');
         $expectedEventsData = [
             [
                 'start'       => '2016-03-12T09:00:00+00:00',

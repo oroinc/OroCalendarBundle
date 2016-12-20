@@ -30,7 +30,7 @@ class DelegateStrategyTest extends \PHPUnit_Framework_TestCase
         $this->assertAttributeEquals(['bar' => $bar,'foo' => $foo], 'elements', $this->strategy);
     }
 
-    public function testSupports()
+    public function testSupportsReturnTrue()
     {
         $recurrence = new Recurrence();
         $this->assertFalse($this->strategy->supports($recurrence));
@@ -53,42 +53,11 @@ class DelegateStrategyTest extends \PHPUnit_Framework_TestCase
         $this->assertTrue($this->strategy->supports($recurrence));
     }
 
-    public function testGetOccurrences()
+    public function testSupportsReturnFalse()
     {
         $recurrence = new Recurrence();
-        $foo = $this->createStrategy('foo');
-        $bar = $this->createStrategy('bar');
-        $this->strategy->add($foo);
-        $this->strategy->add($bar);
+        $this->assertFalse($this->strategy->supports($recurrence));
 
-        $foo->expects($this->once())
-            ->method('supports')
-            ->with($recurrence)
-            ->will($this->returnValue(false));
-
-        $now = new \DateTime();
-        $bar->expects($this->once())
-            ->method('supports')
-            ->with($recurrence)
-            ->will($this->returnValue(true));
-        $bar->expects($this->once())
-            ->method('getOccurrences')
-            ->willReturn($now);
-
-        $this->assertEquals($now, $this->strategy->getOccurrences($recurrence, new \DateTime(), new \DateTime()));
-    }
-
-    /**
-     * @expectedException \InvalidArgumentException
-     */
-    public function testGetOccurrencesForNotExistingStrategy()
-    {
-        $this->strategy->getOccurrences(new Recurrence(), new \DateTime(), new \DateTime());
-    }
-
-    public function testGetTextValue()
-    {
-        $recurrence = new Recurrence();
         $foo = $this->createStrategy('foo');
         $bar = $this->createStrategy('bar');
         $this->strategy->add($foo);
@@ -102,58 +71,22 @@ class DelegateStrategyTest extends \PHPUnit_Framework_TestCase
         $bar->expects($this->once())
             ->method('supports')
             ->with($recurrence)
-            ->will($this->returnValue(true));
-        $bar->expects($this->once())
-            ->method('getTextValue')
-            ->willReturn('val');
-
-        $this->assertEquals('val', $this->strategy->getTextValue($recurrence));
-    }
-
-    /**
-     * @expectedException \InvalidArgumentException
-     */
-    public function testGetTextValueForNonExistingStrategy()
-    {
-        $this->strategy->getTextValue(new Recurrence());
-    }
-
-    public function testGetCalculatedEndTime()
-    {
-        $recurrence = new Recurrence();
-        $foo = $this->createStrategy('foo');
-        $bar = $this->createStrategy('bar');
-        $this->strategy->add($foo);
-        $this->strategy->add($bar);
-
-        $foo->expects($this->once())
-            ->method('supports')
-            ->with($recurrence)
             ->will($this->returnValue(false));
 
-        $endTime = new \DateTime();
-        $bar->expects($this->once())
-            ->method('supports')
-            ->with($recurrence)
-            ->will($this->returnValue(true));
-        $bar->expects($this->once())
-            ->method('getCalculatedEndTime')
-            ->willReturn($endTime);
-
-        $this->assertEquals($endTime, $this->strategy->getCalculatedEndTime($recurrence));
+        $this->assertFalse($this->strategy->supports($recurrence));
     }
 
     /**
-     * @expectedException \InvalidArgumentException
+     * @param string $method
+     * @param array $arguments
+     * @param mixed $returnValue
+     *
+     * @dataProvider delegateMethodsDataProvider
      */
-    public function testGetCalculatedEndTimeForNonExistingStrategy()
+    public function testDelegateMethodWorks($method, array $arguments, $returnValue)
     {
-        $this->strategy->getCalculatedEndTime(new Recurrence());
-    }
+        $recurrence = $arguments[0];
 
-    public function testGetValidationErrorMessage()
-    {
-        $recurrence = new Recurrence();
         $foo = $this->createStrategy('foo');
         $bar = $this->createStrategy('bar');
         $this->strategy->add($foo);
@@ -168,19 +101,89 @@ class DelegateStrategyTest extends \PHPUnit_Framework_TestCase
             ->method('supports')
             ->with($recurrence)
             ->will($this->returnValue(true));
-        $bar->expects($this->once())
-            ->method('getValidationErrorMessage')
-            ->willReturn('val');
 
-        $this->assertEquals('val', $this->strategy->getValidationErrorMessage($recurrence));
+        $mocker = $bar->expects($this->once())
+            ->method($method);
+
+        call_user_func_array([$mocker, 'with'], $arguments);
+
+        $mocker->willReturn($returnValue);
+
+        $this->assertEquals($returnValue, call_user_func_array([$this->strategy, $method], $arguments));
     }
 
     /**
-     * @expectedException \InvalidArgumentException
+     * @return array
      */
-    public function testGetValidationErrorMessageForNonExistingStrategy()
+    public function delegateMethodsDataProvider()
     {
-        $this->strategy->getValidationErrorMessage(new Recurrence());
+        $recurrence = new Recurrence();
+        $start = new \DateTime('2016-10-10 10:00:00');
+        $end = new \DateTime('2016-11-10 10:00:00');
+
+        return [
+            'getTextValue' => [
+                'method' => 'getTextValue',
+                'arguments' => [$recurrence],
+                'returnValue' => 'foo',
+            ],
+            'getCalculatedEndTime' => [
+                'method' => 'getCalculatedEndTime',
+                'arguments' => [$recurrence],
+                'returnValue' => new \DateTime(),
+            ],
+            'getMaxInterval' => [
+                'method' => 'getMaxInterval',
+                'arguments' => [$recurrence],
+                'returnValue' => 1,
+            ],
+            'getIntervalMultipleOf' => [
+                'method' => 'getIntervalMultipleOf',
+                'arguments' => [$recurrence],
+                'returnValue' => 1,
+            ],
+            'getRequiredProperties' => [
+                'method' => 'getRequiredProperties',
+                'arguments' => [$recurrence],
+                'returnValue' => ['interval', 'startTime', 'timeZone'],
+            ],
+            'getOccurrences' => [
+                'method' => 'getOccurrences',
+                'arguments' => [$recurrence, $start, $end],
+                'returnValue' => [new \DateTime()],
+            ],
+        ];
+    }
+
+    /**
+     * @param string $method
+     * @param array $arguments
+     *
+     * @dataProvider delegateMethodsDataProvider
+     * @expectedException \InvalidArgumentException
+     * @expectedExceptionMessage Recurrence type "baz" is not supported.
+     */
+    public function testDelegateMethodRaiseExceptionWhenStrategyNotMatched($method, array $arguments)
+    {
+        $recurrence = $arguments[0];
+        $recurrence->setRecurrenceType('baz');
+
+        $foo = $this->createStrategy('foo');
+        $bar = $this->createStrategy('bar');
+        $this->strategy->add($foo);
+        $this->strategy->add($bar);
+
+        $foo->expects($this->once())
+            ->method('supports')
+            ->with($recurrence)
+            ->will($this->returnValue(false));
+
+        $bar->expects($this->once())
+            ->method('supports')
+            ->with($recurrence)
+            ->will($this->returnValue(false));
+
+        call_user_func_array([$this->strategy, $method], $arguments);
     }
 
     /**

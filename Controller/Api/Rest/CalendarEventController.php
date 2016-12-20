@@ -380,24 +380,14 @@ class CalendarEventController extends RestController implements ClassResourceInt
     {
         parent::fixFormData($data, $entity);
 
-        if (isset($data['allDay']) && ($data['allDay'] === 'false' || $data['allDay'] === '0')) {
-            $data['allDay'] = false;
-        }
-
-        if (isset($data['isCancelled']) && ($data['isCancelled'] === 'false' || $data['isCancelled'] === '0')) {
-            $data['isCancelled'] = false;
-        }
-
-        if (isset($data['use_hangout']) && ($data['use_hangout'] === 'false' || $data['use_hangout'] === '0')) {
-            $data['use_hangout'] = false;
-        }
-
-        if (isset($data['attendees']) && ($data['attendees'] === '')) {
-            $data['attendees'] = null;
-        }
-
         // remove auxiliary attributes if any
-        unset($data['updatedAt'], $data['editable'], $data['removable'], $data['notifiable']);
+        unset(
+            $data['updatedAt'],
+            $data['editable'],
+            $data['editableInvitationStatus'],
+            $data['removable'],
+            $data['notifiable']
+        );
 
         return true;
     }
@@ -453,8 +443,9 @@ class CalendarEventController extends RestController implements ClassResourceInt
         $response        = parent::createResponseData($entity);
         $serializedEvent = $this->get('oro_calendar.calendar_event_normalizer.user')->getCalendarEvent($entity);
 
-        $response['notifiable']       = $serializedEvent['notifiable'];
-        $response['invitationStatus'] = (string)$serializedEvent['invitationStatus'];
+        $response['notifiable']               = $serializedEvent['notifiable'];
+        $response['invitationStatus']         = (string)$serializedEvent['invitationStatus'];
+        $response['editableInvitationStatus'] = $serializedEvent['editableInvitationStatus'];
 
         return $response;
     }

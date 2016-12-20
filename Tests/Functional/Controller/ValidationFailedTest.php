@@ -1,0 +1,199 @@
+<?php
+
+namespace Oro\Bundle\CalendarBundle\Tests\Functional\Controller;
+
+use Symfony\Component\DomCrawler\Crawler;
+
+use Oro\Bundle\CalendarBundle\Model\Recurrence;
+use Oro\Bundle\CalendarBundle\Tests\Functional\AbstractValidationErrorTestCase;
+use Oro\Bundle\CalendarBundle\Tests\Functional\DataFixtures\LoadUserData;
+
+/**
+ * The test covers validation errors triggered in calendar events form available on separate page.
+ *
+ * Operations covered:
+ * - create new event with invalid data required data
+ *
+ * Resources used:
+ * - create event (oro_calendar_event_create)
+ *
+ * @dbIsolation
+ */
+class ValidationFailedTest extends AbstractValidationErrorTestCase
+{
+    protected function setUp()
+    {
+        $this->initClient([], $this->generateBasicAuthHeader());
+        $this->client->useHashNavigation(true);
+        $this->loadFixtures([LoadUserData::class]);
+    }
+
+    /**
+     * Create recurring calendar event with invalid fields of recurrence.
+     *
+     * Verify expected validation errors of recurrence fields in the response.
+     *
+     * @param array $recurrence
+     * @param array $errors
+     *
+     * @dataProvider recurrenceValidationFailedDataProvider
+     */
+    public function testRecurrenceValidationFailed(array $recurrence, array $errors)
+    {
+        $formData = [
+            'title' => 'Recurring event',
+            'start' => '2016-10-14T22:00:00+00:00',
+            'end' => '2016-10-14T23:00:00+00:00',
+            'recurrence' => $recurrence,
+        ];
+
+        // Request is made directly without using crawler to be able to pass invalid values to the form.
+        $crawler = $this->client->request(
+            'POST',
+            $this->getUrl('oro_calendar_event_create'),
+            [
+                'oro_calendar_event_form' => $formData
+            ],
+            [],
+            []
+        );
+
+        $result = $this->client->getResponse();
+
+        $this->assertHtmlResponseStatusCodeEquals($result, 200);
+
+        $calendarEvent = $this->getEntityRepository('OroCalendarBundle:CalendarEvent')
+            ->findOneBy(['title' => $formData['title']]);
+        $this->assertNull($calendarEvent, 'Failed asserting the event was not created due to validation error.');
+
+        $regularFieldsValidationErrors = $this->getFormFieldsValidationErrors(
+            $crawler,
+            'oro_calendar_event_form',
+            'oro_calendar_event_form_',
+            [
+                'title',
+                'description',
+                'start',
+                'end',
+                'allDay',
+                'backgroundColor',
+            ]
+        );
+
+        $this->assertEmpty(
+            $regularFieldsValidationErrors,
+            'Failed asserting regular fields of event don\'t have validation errors.'
+        );
+
+        $recurrenceFieldsValidationErrors = $this->getRecurrenceErrors($crawler);
+
+        $this->sortArrayByKeyRecursively($recurrenceFieldsValidationErrors);
+        $this->sortArrayByKeyRecursively($errors);
+
+        $this->assertEquals(
+            $errors,
+            $recurrenceFieldsValidationErrors,
+            'Failed asserting recurrence validation errors are expected.'
+        );
+    }
+
+    /**
+     * Returns a list of errors in the form found for given $fieldNames
+     *
+     * @param Crawler $crawler
+     * @param string $formId
+     * @param string $fieldIdPrefix
+     * @param array $fieldNames
+     * @return array
+     */
+    protected function getFormFieldsValidationErrors(Crawler $crawler, $formId, $fieldIdPrefix, array $fieldNames)
+    {
+        $result = [];
+
+        foreach ($fieldNames as $fieldName) {
+            $fieldIdContains = $fieldIdPrefix . $fieldName;
+            $errors = $this->getFormFieldValidationErrors($crawler, $formId, $fieldIdContains);
+            if ($errors) {
+                $result[$fieldName] = $errors;
+            }
+        }
+
+        return $result;
+    }
+
+    /**
+     * Returns array of validation error of the field.
+     *
+     * @param Crawler $crawler
+     * @param string $formIdContains
+     * @param string $fieldIdContains
+     * @return array
+     */
+    protected function getFormFieldValidationErrors(Crawler $crawler, $formIdContains, $fieldIdContains)
+    {
+        $formXPath = sprintf('//form[contains(@id, "%s")]', $formIdContains);
+
+        $fieldLabelXPath = sprintf(
+            '//div[contains(@class, "control-label")]/label[contains(@for, "%s")]',
+            $fieldIdContains
+        );
+
+        $fieldLabelCrawler = $crawler->filterXPath($formXPath . $fieldLabelXPath);
+
+        if (1 !== $fieldLabelCrawler->count()) {
+            $this->fail(
+                sprintf(
+                    'Failed to find field with id containing "%s" of form with id containing "%s"',
+                    $fieldIdContains,
+                    $formIdContains
+                )
+            );
+        }
+
+        $validationErrorsXPath = $formXPath . $fieldLabelXPath .
+            '/../../div[contains(@class, "validation-error")]/span[contains(@class, "validation-failed")]';
+
+        $validationErrorsCrawler = $crawler->filterXPath($validationErrorsXPath);
+
+        $result = [];
+
+        $validationErrorsCrawler->each(
+            function (Crawler $validationErrorNode) use (&$result) {
+                $result[] = $validationErrorNode->text();
+            }
+        );
+
+        return $result;
+    }
+
+    /**
+     * Returns array of validation errors of the 'recurrence' fields.
+     *
+     * @param Crawler $crawler
+     *
+     * @return array
+     */
+    protected function getRecurrenceErrors(Crawler $crawler)
+    {
+        $component = 'orocalendar/js/app/components/calendar-event-recurrence-component';
+        $errorsXPath = sprintf(
+            '//div[contains(@data-page-component-module, "%s")]/@data-page-component-options',
+            $component
+        );
+
+        $componentOptions = json_decode($crawler->filterXPath($errorsXPath)->text(), true);
+
+        $errors = $componentOptions['errors'];
+
+        if (count($errors) == 0) {
+            return [];
+        }
+
+        $result = [];
+        foreach ($errors as $error) {
+            $result[$error['name']] = $error['messages'];
+        }
+
+        return $result;
+    }
+}

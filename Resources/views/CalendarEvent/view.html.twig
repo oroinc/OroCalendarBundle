@@ -7,10 +7,6 @@
 {% oro_title_set({params : {"%entity.title%": entity.title|default('N/A') }}) %}
 
 {% block navButtons %}
-    {% if app.user and entity.relatedAttendee and entity.relatedAttendee.user and app.user.id == entity.relatedAttendee.user.id  %}
-        {% include 'OroCalendarBundle:CalendarEvent:invitationButtons.html.twig' with {'entity': entity} %}
-    {% endif %}
-
     {% if entity.parent is empty and resource_granted('EDIT', entity) %}
         {# Button for add context on the activity list item view page #}
         {{ AC.addContextButton(entity) }}
@@ -50,15 +46,13 @@
 {% block breadcrumbs %}
     {{ parent() }}
     <div class="pull-left">
-        {% set relatedAttendee = entity.relatedAttendee %}
-        {% if relatedAttendee and relatedAttendee.status %}
-            {% set invitationClass = invitations.get_invitatition_badge_class(relatedAttendee.status.id) %}
-            {% if entity.relatedAttendee.status and invitationClass %}
-                <div class="invitation-status badge badge-{{ invitationClass }} status-{{ invitationClass }}">
-                    <i class="icon-status-{{ invitationClass }} fa-circle"></i>
-                    {{ entity.relatedAttendee.status.name }}
-                </div>
-            {% endif %}
+        {% set statusCode = entity.invitationStatus %}
+        {% set invitationClass = invitations.get_invitatition_badge_class(statusCode) %}
+        {% if invitationClass %}
+            <div class="invitation-status badge badge-{{ invitationClass }} status-{{ invitationClass }}">
+                <i class="icon-status-{{ invitationClass }} fa-circle"></i>
+                {{ invitations.calendar_event_invitation_status(statusCode) }}
+            </div>
         {% endif %}
     </div>
 {% endblock breadcrumbs %}
@@ -81,6 +75,9 @@
                 {% endif %}
                 {% if entity.recurringEvent %}
                     {{ UI.renderProperty('oro.calendar.calendarevent.recurrence.exception.label'|trans, get_recurrence_text_value(entity.recurringEvent.recurrence)) }}
+                {% endif %}
+                {% if canChangeInvitationStatus is defined and canChangeInvitationStatus %}
+                    {% include 'OroCalendarBundle:CalendarEvent:invitationControl.html.twig' with {'entity': entity, 'triggerEventName': ''} %}
                 {% endif %}
             </div>
             <div class="responsive-block">

@@ -2,21 +2,21 @@
 
 namespace Oro\Bundle\CalendarBundle\Form\Handler;
 
-use Doctrine\Common\Collections\ArrayCollection;
-use Doctrine\Common\Persistence\ObjectManager;
+use Doctrine\Common\Persistence\ManagerRegistry;
+use Doctrine\ORM\EntityManager;
 
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Security\Core\Exception\AccessDeniedException;
 
 use Oro\Bundle\ActivityBundle\Manager\ActivityManager;
-use Oro\Bundle\EntityBundle\Tools\EntityRoutingHelper;
-use Oro\Bundle\CalendarBundle\Entity\Attendee;
 use Oro\Bundle\CalendarBundle\Entity\CalendarEvent;
 use Oro\Bundle\CalendarBundle\Entity\Calendar;
+use Oro\Bundle\CalendarBundle\Manager\CalendarEventManager;
 use Oro\Bundle\CalendarBundle\Model\Email\EmailSendProcessor;
-use Oro\Bundle\UserBundle\Entity\User;
+use Oro\Bundle\EntityBundle\Tools\EntityRoutingHelper;
 use Oro\Bundle\SecurityBundle\SecurityFacade;
+use Oro\Bundle\UserBundle\Entity\User;
 
 class CalendarEventHandler
 {
@@ -26,8 +26,8 @@ class CalendarEventHandler
     /** @var Request */
     protected $request;
 
-    /** @var ObjectManager */
-    protected $manager;
+    /** @var ManagerRegistry */
+    protected $doctrine;
 
     /** @var ActivityManager */
     protected $activityManager;
@@ -41,31 +41,39 @@ class CalendarEventHandler
     /** @var EmailSendProcessor */
     protected $emailSendProcessor;
 
+    /** @var CalendarEventManager */
+    protected $calendarEventManager;
+
     /**
-     * @param FormInterface               $form
-     * @param Request                     $request
-     * @param ObjectManager               $manager
-     * @param ActivityManager             $activityManager
-     * @param EntityRoutingHelper         $entityRoutingHelper
-     * @param SecurityFacade              $securityFacade
-     * @param EmailSendProcessor          $emailSendProcessor
+     * CalendarEventHandler constructor.
+     *
+     * @param FormInterface $form
+     * @param Request $request
+     * @param ManagerRegistry $doctrine
+     * @param ActivityManager $activityManager
+     * @param EntityRoutingHelper $entityRoutingHelper
+     * @param SecurityFacade $securityFacade
+     * @param EmailSendProcessor $emailSendProcessor
+     * @param CalendarEventManager $calendarEventManager
      */
     public function __construct(
         FormInterface $form,
         Request $request,
-        ObjectManager $manager,
+        ManagerRegistry $doctrine,
         ActivityManager $activityManager,
         EntityRoutingHelper $entityRoutingHelper,
         SecurityFacade $securityFacade,
-        EmailSendProcessor $emailSendProcessor
+        EmailSendProcessor $emailSendProcessor,
+        CalendarEventManager $calendarEventManager
     ) {
         $this->form                        = $form;
         $this->request                     = $request;
-        $this->manager                     = $manager;
+        $this->doctrine                    = $doctrine;
         $this->activityManager             = $activityManager;
         $this->entityRoutingHelper         = $entityRoutingHelper;
         $this->securityFacade              = $securityFacade;
         $this->emailSendProcessor          = $emailSendProcessor;
+        $this->calendarEventManager        = $calendarEventManager;
     }
 
     /**
@@ -95,8 +103,8 @@ class CalendarEventHandler
         $this->form->setData($entity);
 
         if (in_array($this->request->getMethod(), array('POST', 'PUT'))) {
-            // create array collection of attendees to have have original attendees at disposal later
-            $originalAttendees = new ArrayCollection($entity->getAttendees()->toArray());
+            // clone entity to have original values later
+            $originalEntity = clone $entity;
 
             $this->ensureCalendarSet($entity);
 
@@ -112,19 +120,16 @@ class CalendarEventHandler
                         $contexts = array_merge($contexts, [$owner]);
                     }
                     $this->activityManager->setActivityTargets($entity, $contexts);
+                } elseif (!$entity->getId() && $entity->getRecurringEvent()) {
+                    $this->activityManager->setActivityTargets(
+                        $entity,
+                        $entity->getRecurringEvent()->getActivityTargetEntities()
+                    );
                 }
 
                 $this->processTargetEntity($entity);
 
-                $notifyInvitedUsers = $this->form->has('notifyInvitedUsers')
-                    ? $this->form->get('notifyInvitedUsers')->getData() === 'true'
-                    : false;
-                
-                $this->onSuccess(
-                    $entity,
-                    $originalAttendees,
-                    $notifyInvitedUsers
-                );
+                $this->onSuccess($entity, $originalEntity);
 
                 return true;
             }
@@ -148,7 +153,7 @@ class CalendarEventHandler
         }
 
         /** @var Calendar $defaultCalendar */
-        $defaultCalendar = $this->manager
+        $defaultCalendar = $this->getEntityManager()
             ->getRepository('OroCalendarBundle:Calendar')
             ->findDefaultCalendar(
                 $this->securityFacade->getLoggedUser()->getId(),
@@ -160,23 +165,30 @@ class CalendarEventHandler
     /**
      * "Success" form handler
      *
-     * @param CalendarEvent              $entity
-     * @param ArrayCollection|Attendee[] $originalAttendees
-     * @param boolean                    $notify
+     * @param CalendarEvent $entity
+     * @param CalendarEvent $originalEntity
      */
-    protected function onSuccess(CalendarEvent $entity, ArrayCollection $originalAttendees, $notify)
+    protected function onSuccess(CalendarEvent $entity, CalendarEvent $originalEntity)
     {
+        $this->calendarEventManager->onEventUpdate(
+            $entity,
+            $originalEntity,
+            $this->securityFacade->getOrganization(),
+            true
+        );
+
         $new = $entity->getId() ? false : true;
-        $this->manager->persist($entity);
-        $this->manager->flush();
+        $this->getEntityManager()->persist($entity);
+        $this->getEntityManager()->flush();
+
 
         if ($new) {
             $this->emailSendProcessor->sendInviteNotification($entity);
         } else {
             $this->emailSendProcessor->sendUpdateParentEventNotification(
                 $entity,
-                $originalAttendees,
-                $notify
+                $originalEntity->getAttendees(),
+                $this->shouldNotifyInvitedUsers()
             );
         }
     }
@@ -218,7 +230,7 @@ class CalendarEventHandler
                 && $targetEntityId !== $this->securityFacade->getLoggedUserId()
             ) {
                 /** @var Calendar $defaultCalendar */
-                $defaultCalendar = $this->manager
+                $defaultCalendar = $this->getEntityManager()
                     ->getRepository('OroCalendarBundle:Calendar')
                     ->findDefaultCalendar($targetEntity->getId(), $targetEntity->getOrganization()->getId());
                 $entity->setCalendar($defaultCalendar);
@@ -226,5 +238,23 @@ class CalendarEventHandler
         }
 
         return $this;
+    }
+
+    /**
+     * If API request contains a property "notifyInvitedUsers" with TRUE value, notification should be send.
+     *
+     * @return bool
+     */
+    protected function shouldNotifyInvitedUsers()
+    {
+        return $this->form->has('notifyInvitedUsers') && $this->form->get('notifyInvitedUsers')->getData();
+    }
+
+    /**
+     * @return EntityManager
+     */
+    protected function getEntityManager()
+    {
+        return $this->doctrine->getManager();
     }
 }

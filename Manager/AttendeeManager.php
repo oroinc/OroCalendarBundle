@@ -8,7 +8,6 @@ use Doctrine\Common\Util\ClassUtils;
 use Oro\Bundle\CalendarBundle\Entity\Attendee;
 use Oro\Bundle\CalendarBundle\Entity\Repository\AttendeeRepository;
 use Oro\Bundle\CalendarBundle\Entity\Repository\CalendarEventRepository;
-use Oro\Bundle\CalendarBundle\Manager\AttendeeRelationManager;
 use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
 
 class AttendeeManager
@@ -83,6 +82,8 @@ class AttendeeManager
     }
 
     /**
+     * Returns list of attendees for calendar events.
+     *
      * @param array $calendarEventIds
      *
      * @return array

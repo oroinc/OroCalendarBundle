@@ -4,13 +4,13 @@ namespace Oro\Bundle\CalendarBundle\Tests\Functional\DataFixtures;
 
 use Symfony\Component\Yaml\Yaml;
 
-use Doctrine\Common\DataFixtures\AbstractFixture;
 use Doctrine\Common\DataFixtures\DependentFixtureInterface;
 use Doctrine\Common\Persistence\ObjectManager;
 
 use Oro\Bundle\CalendarBundle\Entity\Attendee;
 use Oro\Bundle\CalendarBundle\Entity\CalendarEvent;
 use Oro\Bundle\CalendarBundle\Entity\Recurrence;
+use Oro\Bundle\TestFrameworkBundle\Test\DataFixtures\AbstractFixture;
 
 class LoadCalendarEventData extends AbstractFixture implements DependentFixtureInterface
 {
@@ -22,9 +22,7 @@ class LoadCalendarEventData extends AbstractFixture implements DependentFixtureI
      */
     public function getDependencies()
     {
-        return [
-            'Oro\Bundle\UserBundle\Tests\Functional\DataFixtures\LoadUserData'
-        ];
+        return [LoadUserData::class];
     }
 
     /**
@@ -39,67 +37,64 @@ class LoadCalendarEventData extends AbstractFixture implements DependentFixtureI
             $organization->getId()
         );
         $fileName = __DIR__ . DIRECTORY_SEPARATOR . 'calendar_event_fixture.yml';
-        $data = Yaml::parse(file_get_contents($fileName));
+        $records = Yaml::parse(file_get_contents($fileName));
 
-        foreach ($data as $item) {
-            $start = date_create($item['start'], new \DateTimeZone('UTC'));
+        foreach ($records as $data) {
+            $data['start'] = new \DateTime($data['start'], new \DateTimeZone('UTC'));
+            $data['end'] = new \DateTime($data['end'], new \DateTimeZone('UTC'));
             $event = new CalendarEvent();
-            $event->setCalendar($calendar)
-                ->setTitle($item['title'])
-                ->setStart($start)
-                ->setEnd(date_create($item['end'], new \DateTimeZone('UTC')))
-                ->setAllDay($item['allDay']);
-            if (!empty($item['recurrence'])) {
+            $event->setCalendar($calendar);
+            $this->setEntityPropertyValues($event, $data, ['reference', 'recurrence', 'exceptions']);
+
+            if (!empty($data['recurrence'])) {
                 $recurrence = new Recurrence();
-                $recurrence->setRecurrenceType($item['recurrence']['type'])
-                    ->setInterval($item['recurrence']['interval'])
-                    ->setOccurrences($item['recurrence']['occurrences'])
-                    ->setTimeZone($item['recurrence']['timeZone'])
-                    ->setStartTime(
-                        date_create($item['recurrence']['startTime'], new \DateTimeZone('UTC'))
-                    );
+                if (isset($data['recurrence']['type'])) {
+                    $data['recurrence']['recurrenceType'] = $data['recurrence']['type'];
+                    unset($data['recurrence']['type']);
+                }
+                $data['recurrence']['startTime'] = new \DateTime(
+                    $data['recurrence']['startTime'],
+                    new \DateTimeZone('UTC')
+                );
+                $this->setEntityPropertyValues($recurrence, $data['recurrence']);
                 $event->setRecurrence($recurrence);
             }
-            if (!empty($item['exceptions'])) {
-                foreach ($item['exceptions'] as $exceptionItem) {
+
+            if (!empty($data['exceptions'])) {
+                foreach ($data['exceptions'] as $exceptionData) {
                     $exception = new CalendarEvent();
-                    $exception->setCalendar($calendar)
-                        ->setTitle($exceptionItem['title'])
-                        ->setStart(
-                            date_create($exceptionItem['start'], new \DateTimeZone('UTC'))
-                        )
-                        ->setEnd(
-                            date_create($exceptionItem['end'], new \DateTimeZone('UTC'))
-                        )
-                        ->setAllDay($exceptionItem['allDay'])
-                        ->setCancelled($exceptionItem['isCancelled'])
-                        ->setOriginalStart($start)
-                        ->setRecurringEvent($event);
+                    $exception->setCalendar($calendar);
+                    $exceptionData['start'] = new \DateTime($exceptionData['start'], new \DateTimeZone('UTC'));
+                    $exceptionData['end'] = new \DateTime($exceptionData['end'], new \DateTimeZone('UTC'));
+                    $exceptionData['originalStart'] = $data['start'];
+                    if (isset($exceptionData['isCancelled'])) {
+                        $exceptionData['cancelled'] = $exceptionData['isCancelled'];
+                        unset($exceptionData['isCancelled']);
+                    }
+                    $this->setEntityPropertyValues($exception, $exceptionData);
+
                     $event->addRecurringEventException($exception);
                 }
             }
+
             $manager->persist($event);
-            if (!empty($item['reference'])) {
-                $this->setReference($item['reference'], $event);
+
+            if (!empty($data['reference'])) {
+                $this->setReference($data['reference'], $event);
             }
         }
 
         $event    = new CalendarEvent();
         $attendee = new Attendee();
-        $userName = 'user'.mt_rand(0, 100);
+        $userName = 'user' . mt_rand(0, 100);
         $attendee->setEmail($userName.'@example.com');
         $attendee->setDisplayName($userName);
-        $attendee->setUser($this->getReference('simple_user'));
+        $attendee->setUser($this->getReference('oro_calendar:user:system_user_1'));
         $event->setCalendar($calendar)
             ->setTitle(self::CALENDAR_EVENT_WITH_ATTENDEE)
-            ->setStart(
-                date_create('+1 year', new \DateTimeZone('UTC'))
-            )
-            ->setEnd(
-                date_create('+1 year', new \DateTimeZone('UTC'))
-            )
-            ->setAllDay($item['allDay']);
-        $event->setRelatedAttendee($attendee);
+            ->setStart(new \DateTime('+1 year', new \DateTimeZone('UTC')))
+            ->setEnd(new \DateTime('+1 year + 1 hour', new \DateTimeZone('UTC')))
+            ->setAllDay(false);
         $manager->persist($event);
 
         $manager->flush();

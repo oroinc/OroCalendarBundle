@@ -7,7 +7,7 @@ use Oro\Bundle\UserBundle\Tests\Unit\Stub\UserStub as BaseUser;
 class User extends BaseUser
 {
     /**
-     * @param int|null $id
+     * @param integer|null $id
      */
     public function __construct($id = null)
     {

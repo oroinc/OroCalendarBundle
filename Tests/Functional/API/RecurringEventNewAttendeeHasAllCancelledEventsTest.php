@@ -4,6 +4,7 @@ namespace Oro\Bundle\CalendarBundle\Tests\Functional\API;
 
 use Oro\Bundle\CalendarBundle\Entity\CalendarEvent;
 use Oro\Bundle\CalendarBundle\Model\Recurrence;
+use Oro\Bundle\CalendarBundle\Tests\Functional\DataFixtures\LoadUserData;
 use Oro\Bundle\CalendarBundle\Tests\Unit\Fixtures\Entity\Attendee;
 use Oro\Bundle\UserBundle\Entity\User;
 
@@ -14,9 +15,8 @@ class RecurringEventNewAttendeeHasAllCancelledEventsTest extends AbstractUseCase
 {
     protected function setUp()
     {
-        $this->markTestSkipped('Should be corrected after BAP-12699');
         $this->initClient([], $this->generateWsseAuthHeader(), true);
-        $this->loadFixtures(['Oro\Bundle\CalendarBundle\Tests\Functional\DataFixtures\LoadUserData'], true);
+        $this->loadFixtures([LoadUserData::class], true);
     }
 
     /**
@@ -27,7 +27,7 @@ class RecurringEventNewAttendeeHasAllCancelledEventsTest extends AbstractUseCase
         $this->checkPreconditions();
 
         /** @var User $attendeeUser1 */
-        $attendeeUser1 = $this->getReference('simple_user_1');
+        $attendeeUser1 = $this->getReference('oro_calendar:user:system_user_1');
         $attendee1 = [
             'displayName' => sprintf('%s %s', $attendeeUser1->getFirstName(), $attendeeUser1->getLastName()),
             'email'       => $attendeeUser1->getEmail(),
@@ -177,7 +177,7 @@ class RecurringEventNewAttendeeHasAllCancelledEventsTest extends AbstractUseCase
         // Add one more attendee to entire series of recurring event
 
         /** @var User $attendeeUser2 */
-        $attendeeUser2 = $this->getReference('simple_user_2');
+        $attendeeUser2 = $this->getReference('oro_calendar:user:system_user_2');
         $attendee2 = [
             'displayName' => sprintf('%s %s', $attendeeUser2->getFirstName(), $attendeeUser2->getLastName()),
             'email'       => $attendeeUser2->getEmail(),

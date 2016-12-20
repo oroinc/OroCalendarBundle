@@ -18,11 +18,6 @@ use Oro\Bundle\UserBundle\Entity\User;
  *          "entity"={
  *              "icon"="fa-info-circle"
  *          },
- *          "security"={
- *              "type"="ACL",
- *              "permissions"="VIEW;CREATE;EDIT;DELETE",
- *              "group_name"=""
- *          },
  *          "activity"={
  *              "immutable"=true
  *          }
@@ -77,12 +72,14 @@ class Attendee extends ExtendAttendee
     /**
      * @var CalendarEvent
      *
+     * NOTE: The column supports NULL intentionally. Doctrine inserts record into "oro_calendar_event_attendee" first
+     * before record of "oro_calendar_event" is inserted, so NULL has to be supported to not trigger DB violatation.
+     *
      * @ORM\ManyToOne(
      *     targetEntity="Oro\Bundle\CalendarBundle\Entity\CalendarEvent",
-     *     inversedBy="attendees",
-     *     cascade={"persist"}
+     *     inversedBy="attendees"
      * )
-     * @ORM\JoinColumn(name="calendar_event_id", referencedColumnName="id", nullable=false, onDelete="CASCADE")
+     * @ORM\JoinColumn(name="calendar_event_id", referencedColumnName="id", nullable=true, onDelete="CASCADE")
      */
     protected $calendarEvent;
 
@@ -131,6 +128,19 @@ class Attendee extends ExtendAttendee
     }
 
     /**
+     * Returns invitation status code of the attendee based on related status. If there is no related status
+     * then returns "none" status (@see CalendarEvent::STATUS_NONE).
+     *
+     * @return string Status id (@see CalendarEvent::STATUS_*)
+     */
+    public function getStatusCode()
+    {
+        $status = $this->getStatus();
+
+        return $status ? $status->getId() : CalendarEvent::STATUS_NONE;
+    }
+
+    /**
      * @param string $email
      *
      * @return Attendee
@@ -175,7 +185,7 @@ class Attendee extends ExtendAttendee
      *
      * @return Attendee
      */
-    public function setUser(User $user)
+    public function setUser(User $user = null)
     {
         $this->user = $user;
 
@@ -269,5 +279,49 @@ class Attendee extends ExtendAttendee
     public function __toString()
     {
         return (string) $this->displayName;
+    }
+
+    /**
+     * Compares instance with another instance. Returns TRUE if instances have the same user, email and display name.
+     *
+     * @param Attendee|null $other
+     *
+     * @return bool
+     */
+    public function isEqual($other)
+    {
+        if (!$other instanceof Attendee) {
+            return false;
+        }
+
+        return
+            $this->isUserEqual($other->getUser()) &&
+            $this->isEmailEqual($other->getEmail()) &&
+            0 === strcmp($this->getDisplayName(), $other->getDisplayName());
+    }
+
+    /**
+     * Will return TRUE if both users exist and if they are referencing the same users or if both users are not exist.
+     *
+     * @param User|null $user
+     * @return bool
+     */
+    public function isUserEqual(User $user = null)
+    {
+        $actualUser = $this->getUser();
+        return $actualUser === $user || ($user && $actualUser && $actualUser->getId() == $user->getId());
+    }
+
+    /**
+     * Case-insensitive compares of attendees email. Will return TRUE if both emails exist and if they are
+     * case-insensitive equal or if both emails are not exist.
+     *
+     * @param string|null $email
+     * @return bool
+     */
+    public function isEmailEqual($email)
+    {
+        $actualEmail = $this->getEmail();
+        return $actualEmail === $email || 0 === strcasecmp($actualEmail, $email);
     }
 }

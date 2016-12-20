@@ -1,23 +1,28 @@
 <?php
 
-namespace Oro\Bundle\CalendarBundle\Tests\Unit\Form\EventListener;
+namespace Oro\Bundle\CalendarBundle\Tests\Unit\Manager;
 
 use Doctrine\Common\Collections\ArrayCollection;
 
-use Symfony\Component\Form\FormEvent;
-use Symfony\Component\Form\FormEvents;
-
 use Oro\Bundle\CalendarBundle\Entity\Calendar;
 use Oro\Bundle\CalendarBundle\Entity\CalendarEvent;
-use Oro\Bundle\CalendarBundle\Form\EventListener\ChildEventsSubscriber;
+use Oro\Bundle\CalendarBundle\Manager\CalendarEvent\UpdateAttendeeManager;
+use Oro\Bundle\CalendarBundle\Manager\CalendarEvent\UpdateChildManager;
+use Oro\Bundle\CalendarBundle\Manager\CalendarEvent\UpdateExceptionManager;
+use Oro\Bundle\CalendarBundle\Manager\CalendarEvent\UpdateManager;
+use Oro\Bundle\CalendarBundle\Manager\CalendarEventManager;
 use Oro\Bundle\CalendarBundle\Tests\Unit\Fixtures\Entity\Attendee;
-use Oro\Bundle\FilterBundle\Tests\Unit\Filter\Fixtures\TestEnumValue;
 use Oro\Bundle\CalendarBundle\Tests\Unit\Fixtures\Entity\User;
+use Oro\Bundle\FilterBundle\Tests\Unit\Filter\Fixtures\TestEnumValue;
+use Oro\Bundle\OrganizationBundle\Entity\Organization;
 
-class ChildEventsSubscriberTest extends \PHPUnit_Framework_TestCase
+/**
+ * Old tests moved after remove of \Oro\Bundle\CalendarBundle\Tests\Unit\Form\EventListener\ChildEventsSubscriberTest.
+ */
+class CalendarEventManagerLegacyTest extends \PHPUnit_Framework_TestCase
 {
-    /** @var ChildEventsSubscriber */
-    protected $childEventsSubscriber;
+    /** @var CalendarEventManager */
+    protected $calendarEventManager;
 
     public function setUp()
     {
@@ -51,69 +56,89 @@ class ChildEventsSubscriberTest extends \PHPUnit_Framework_TestCase
                 ['OroCalendarBundle:Calendar', null, $repository],
             ]));
 
+        $attendeeRelationManager = $this
+            ->getMockBuilder('Oro\Bundle\CalendarBundle\Manager\AttendeeRelationManager')
+            ->disableOriginalConstructor()
+            ->getMock();
+
+        $doctrineHelper = $this->getMockBuilder('Oro\Bundle\EntityBundle\ORM\DoctrineHelper')
+            ->disableOriginalConstructor()
+            ->getMock();
+
+        $doctrineHelper->expects($this->any())
+            ->method('getEntityRepository')
+            ->will($this->returnValueMap([
+                ['Extend\Entity\EV_Ce_Attendee_Status', $repository],
+                ['Extend\Entity\EV_Ce_Attendee_Type', $repository],
+                ['OroCalendarBundle:Calendar', $repository],
+            ]));
+
+
         $securityFacade = $this->getMockBuilder('Oro\Bundle\SecurityBundle\SecurityFacade')
             ->disableOriginalConstructor()
             ->getMock();
 
-        $this->childEventsSubscriber = new ChildEventsSubscriber(
-            $registry,
-            $securityFacade
+        $entityNameResolver = $this->getMockBuilder('Oro\Bundle\EntityBundle\Provider\EntityNameResolver')
+            ->disableOriginalConstructor()
+            ->getMock();
+
+        $calendarConfig = $this->getMockBuilder('Oro\Bundle\CalendarBundle\Provider\SystemCalendarConfig')
+                ->disableOriginalConstructor()
+                ->getMock();
+
+        $updateManager = new UpdateManager(
+            new UpdateAttendeeManager($attendeeRelationManager, $doctrineHelper),
+            new UpdateChildManager($doctrineHelper),
+            new UpdateExceptionManager()
+        );
+
+        $this->calendarEventManager = new CalendarEventManager(
+            $updateManager,
+            $doctrineHelper,
+            $securityFacade,
+            $entityNameResolver,
+            $calendarConfig
         );
     }
 
-    public function testGetSubscribedEvents()
+    public function testOnEventUpdate()
     {
-        $this->assertEquals(
-            [
-                FormEvents::POST_SUBMIT => 'postSubmit',
-                FormEvents::PRE_SUBMIT => 'preSubmit',
-            ],
-            $this->childEventsSubscriber->getSubscribedEvents()
-        );
-    }
+        $firstEventAttendee = new Attendee(1);
+        $firstEventAttendee->setEmail('first@example.com');
 
-    public function testOnSubmit()
-    {
         // set default empty data
-        $firstEvent = new CalendarEvent();
-        $firstEvent->setTitle('1');
-        $secondEvent = new CalendarEvent();
-        $secondEvent->setTitle('2');
+        $firstEvent = $this->getCalendarEventWithExpectedRelatedAttendee($firstEventAttendee)->setTitle('1');
+
+        $secondEventAttendee = new Attendee(2);
+        $secondEventAttendee->setEmail('second@example.com');
+
+        $secondEvent = $this->getCalendarEventWithExpectedRelatedAttendee($secondEventAttendee)->setTitle('2');
+
         $eventWithoutRelatedAttendee = new CalendarEvent();
         $eventWithoutRelatedAttendee->setTitle('3');
 
-        $parentEvent = new CalendarEvent();
-        $parentEvent->setTitle('parent title')
-            ->setRelatedAttendee(new Attendee())
+        $parentEventAttendee = new Attendee(3);
+        $parentEvent = $this->getCalendarEventWithExpectedRelatedAttendee($parentEventAttendee)
+            ->setTitle('parent title')
             ->setDescription('parent description')
             ->setStart(new \DateTime('now'))
             ->setEnd(new \DateTime('now'))
-            ->setAllDay(true);
-        $parentEvent->addChildEvent($firstEvent)
+            ->setAllDay(true)
+            ->addAttendee($parentEventAttendee)
+            ->addChildEvent($firstEvent)
+            ->addAttendee($firstEventAttendee)
             ->addChildEvent($secondEvent)
+            ->addAttendee($secondEventAttendee)
             ->addChildEvent($eventWithoutRelatedAttendee);
 
-        $firstEvent->setRelatedAttendee(
-            (new Attendee())
-                ->setEmail('first@example.com')
-        );
-        $secondEvent->setRelatedAttendee(
-            (new Attendee())
-                ->setEmail('second@example.com')
-        );
-
-        $form = $this->getMock('Symfony\Component\Form\FormInterface');
-        $form->expects($this->any())
-            ->method('getData')
-            ->will($this->returnValue($parentEvent));
 
         // assert default data with default status
-        $this->childEventsSubscriber->postSubmit(new FormEvent($form, []));
+        $this->calendarEventManager->onEventUpdate($parentEvent, clone $parentEvent, new Organization(), false);
 
-        $this->assertEquals(CalendarEvent::STATUS_ACCEPTED, $parentEvent->getInvitationStatus());
+        $this->assertEquals(CalendarEvent::STATUS_NONE, $parentEvent->getInvitationStatus());
         $this->assertEquals(CalendarEvent::STATUS_NONE, $firstEvent->getInvitationStatus());
         $this->assertEquals(CalendarEvent::STATUS_NONE, $secondEvent->getInvitationStatus());
-        $this->assertEquals(null, $eventWithoutRelatedAttendee->getInvitationStatus());
+        $this->assertEquals(CalendarEvent::STATUS_NONE, $eventWithoutRelatedAttendee->getInvitationStatus());
         $this->assertEventDataEquals($parentEvent, $firstEvent);
         $this->assertEventDataEquals($parentEvent, $secondEvent);
         $this->assertEventDataEquals($parentEvent, $eventWithoutRelatedAttendee);
@@ -125,23 +150,23 @@ class ChildEventsSubscriberTest extends \PHPUnit_Framework_TestCase
             ->setEnd(new \DateTime('tomorrow'))
             ->setAllDay(false);
 
-        $parentEvent->getRelatedAttendee()->setStatus(
+        $parentEvent->findRelatedAttendee()->setStatus(
             new TestEnumValue(CalendarEvent::STATUS_ACCEPTED, CalendarEvent::STATUS_ACCEPTED)
         );
-        $firstEvent->getRelatedAttendee()->setStatus(
+        $firstEvent->findRelatedAttendee()->setStatus(
             new TestEnumValue(CalendarEvent::STATUS_DECLINED, CalendarEvent::STATUS_DECLINED)
         );
-        $secondEvent->getRelatedAttendee()->setStatus(
+        $secondEvent->findRelatedAttendee()->setStatus(
             new TestEnumValue(CalendarEvent::STATUS_TENTATIVE, CalendarEvent::STATUS_TENTATIVE)
         );
 
         // assert modified data
-        $this->childEventsSubscriber->postSubmit(new FormEvent($form, []));
+        $this->calendarEventManager->onEventUpdate($parentEvent, clone $parentEvent, new Organization(), false);
 
         $this->assertEquals(CalendarEvent::STATUS_ACCEPTED, $parentEvent->getInvitationStatus());
         $this->assertEquals(CalendarEvent::STATUS_DECLINED, $firstEvent->getInvitationStatus());
         $this->assertEquals(CalendarEvent::STATUS_TENTATIVE, $secondEvent->getInvitationStatus());
-        $this->assertEquals(null, $eventWithoutRelatedAttendee->getInvitationStatus());
+        $this->assertEquals(CalendarEvent::STATUS_NONE, $eventWithoutRelatedAttendee->getInvitationStatus());
         $this->assertEventDataEquals($parentEvent, $firstEvent);
         $this->assertEventDataEquals($parentEvent, $secondEvent);
         $this->assertEventDataEquals($parentEvent, $eventWithoutRelatedAttendee);
@@ -163,14 +188,9 @@ class ChildEventsSubscriberTest extends \PHPUnit_Framework_TestCase
             ->setAttendees($attendees)
             ->setCalendar($calendar);
 
-        $form = $this->getMock('Symfony\Component\Form\FormInterface');
-        $form->expects($this->any())
-            ->method('getData')
-            ->will($this->returnValue($event));
+        $this->calendarEventManager->onEventUpdate($event, clone $event, new Organization(), false);
 
-        $this->childEventsSubscriber->postSubmit(new FormEvent($form, []));
-
-        $this->assertEquals($attendees->first(), $event->getRelatedAttendee());
+        $this->assertEquals($attendees->first(), $event->findRelatedAttendee());
     }
 
     public function testAddEvents()
@@ -192,15 +212,12 @@ class ChildEventsSubscriberTest extends \PHPUnit_Framework_TestCase
             ->setAttendees($attendees)
             ->setCalendar($calendar);
 
-        $form = $this->getMock('Symfony\Component\Form\FormInterface');
-        $form->expects($this->any())
-            ->method('getData')
-            ->will($this->returnValue($event));
-
-        $this->childEventsSubscriber->postSubmit(new FormEvent($form, []));
+        $originalEvent = clone $event;
+        $originalEvent->setAttendees(new ArrayCollection());
+        $this->calendarEventManager->onEventUpdate($event, $originalEvent, new Organization(), false);
 
         $this->assertCount(1, $event->getChildEvents());
-        $this->assertSame($attendees->get(1), $event->getChildEvents()->first()->getRelatedAttendee());
+        $this->assertSame($attendees->get(1), $event->getChildEvents()->first()->findRelatedAttendee());
     }
 
     public function testUpdateAttendees()
@@ -224,12 +241,7 @@ class ChildEventsSubscriberTest extends \PHPUnit_Framework_TestCase
             ->setAttendees($attendees)
             ->setCalendar($calendar);
 
-        $form = $this->getMock('Symfony\Component\Form\FormInterface');
-        $form->expects($this->any())
-            ->method('getData')
-            ->will($this->returnValue($event));
-
-        $this->childEventsSubscriber->postSubmit(new FormEvent($form, []));
+        $this->calendarEventManager->onEventUpdate($event, clone $event, new Organization(), false);
 
         $this->assertEquals('attendee@example.com', $attendees->get(0)->getDisplayName());
         $this->assertEquals('attendee2@example.com', $attendees->get(1)->getDisplayName());
@@ -246,5 +258,25 @@ class ChildEventsSubscriberTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals($expected->getStart(), $actual->getStart());
         $this->assertEquals($expected->getEnd(), $actual->getEnd());
         $this->assertEquals($expected->getAllDay(), $actual->getAllDay());
+    }
+
+
+    /**
+     * @param Attendee $relatedAttendee
+     * @return CalendarEvent|\PHPUnit_Framework_MockObject_MockObject
+     */
+    protected function getCalendarEventWithExpectedRelatedAttendee(Attendee $relatedAttendee)
+    {
+        $result = $this->getMockBuilder(CalendarEvent::class)
+            ->setMethods(['findRelatedAttendee'])
+            ->getMock();
+
+        $result->expects($this->any())
+            ->method('findRelatedAttendee')
+            ->will($this->returnValue($relatedAttendee));
+
+        $result->setRelatedAttendee($relatedAttendee);
+
+        return $result;
     }
 }

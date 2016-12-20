@@ -7,9 +7,13 @@ use Doctrine\ORM\EntityManager;
 
 use Oro\Bundle\CalendarBundle\Entity\Calendar;
 use Oro\Bundle\CalendarBundle\Entity\CalendarEvent;
+use Oro\Bundle\CalendarBundle\Tests\Functional\DataFixtures\LoadUserData;
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 use Oro\Bundle\UserBundle\Entity\User;
 
+/**
+ * @deprecated Use \Oro\Bundle\CalendarBundle\Tests\Functional\AbstractTestCase instead.
+ */
 class AbstractUseCaseTestCase extends WebTestCase
 {
     const DEFAULT_USER_CALENDAR_ID = 1;
@@ -17,7 +21,7 @@ class AbstractUseCaseTestCase extends WebTestCase
     protected function setUp()
     {
         $this->initClient([], $this->generateWsseAuthHeader());
-        $this->loadFixtures(['Oro\Bundle\UserBundle\Tests\Functional\DataFixtures\LoadUserData']);
+        $this->loadFixtures([LoadUserData::class]);
     }
 
     /**

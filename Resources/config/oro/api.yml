@@ -26,6 +26,10 @@ api:
 #                            documentation: Completely replace association between records and the calendar event
 #                        delete_relationship:
 #                            documentation: Delete association between records and the calendar event
+#            filters:
+#                fields:
+#                    updatedAt:
+#                        exclude: false #add updateAt to filters
 #
 #        Oro\Bundle\CalendarBundle\Entity\CalendarProperty: ~
 #

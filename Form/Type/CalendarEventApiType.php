@@ -2,50 +2,25 @@
 
 namespace Oro\Bundle\CalendarBundle\Form\Type;
 
-use Doctrine\Common\Persistence\ManagerRegistry;
-
+use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\DateTimeType;
 use Symfony\Component\Form\FormBuilderInterface;
-use Symfony\Component\HttpFoundation\RequestStack;
-use Symfony\Component\OptionsResolver\OptionsResolverInterface;
+use Symfony\Component\OptionsResolver\OptionsResolver;
 
 use Oro\Bundle\CalendarBundle\Form\EventListener\AttendeesSubscriber;
-use Oro\Bundle\CalendarBundle\Form\EventListener\ChildEventsSubscriber;
 use Oro\Bundle\CalendarBundle\Manager\CalendarEventManager;
-use Oro\Bundle\SecurityBundle\SecurityFacade;
-use Oro\Bundle\SoapBundle\Form\EventListener\PatchSubscriber;
 use Oro\Bundle\CalendarBundle\Form\EventListener\CalendarEventApiTypeSubscriber;
-use Oro\Bundle\CalendarBundle\Manager\AttendeeRelationManager;
+use Oro\Bundle\CalendarBundle\Form\EventListener\CalendarEventRecurrenceSubscriber;
+use Oro\Bundle\SoapBundle\Form\EventListener\PatchSubscriber;
 
-class CalendarEventApiType extends CalendarEventType
+class CalendarEventApiType extends AbstractType
 {
     /** @var CalendarEventManager */
     protected $calendarEventManager;
 
-    /** @var RequestStack */
-    protected $requestStack;
-
-    /** @var AttendeeRelationManager */
-    protected $attendeeRelationManager;
-
-    /**
-     * @param CalendarEventManager $calendarEventManager
-     * @param ManagerRegistry      $registry
-     * @param SecurityFacade       $securityFacade
-     * @param RequestStack         $requestStack
-     * @param AttendeeRelationManager $attendeeRelationManager
-     */
-    public function __construct(
-        CalendarEventManager $calendarEventManager,
-        ManagerRegistry $registry,
-        SecurityFacade $securityFacade,
-        RequestStack $requestStack,
-        AttendeeRelationManager $attendeeRelationManager
-    ) {
-        parent::__construct($registry, $securityFacade);
+    public function __construct(CalendarEventManager $calendarEventManager)
+    {
         $this->calendarEventManager = $calendarEventManager;
-        $this->requestStack         = $requestStack;
-        $this->attendeeRelationManager = $attendeeRelationManager;
     }
 
     /**
@@ -114,7 +89,7 @@ class CalendarEventApiType extends CalendarEventType
                         ],
                     ]
                 )
-                ->addEventSubscriber(new AttendeesSubscriber($this->attendeeRelationManager))
+                ->addEventSubscriber(new AttendeesSubscriber())
             )
             ->add('notifyInvitedUsers', 'hidden', ['mapped' => false])
             ->add(
@@ -163,33 +138,25 @@ class CalendarEventApiType extends CalendarEventType
                     'required' => false,
                     'property_path' => 'cancelled',
                 ]
+            )
+            ->add(
+                'updateExceptions',
+                'checkbox',
+                [
+                    'required' => false,
+                    'mapped' => false,
+                ]
             );
 
-        /** @deprecated since 1.10 'invitedUsers' field was replaced by field 'attendees' */
-        $builder->add(
-            'invitedUsers',
-            'oro_user_multiselect',
-            [
-                'required' => false,
-                'mapped'   => false,
-            ]
-        );
-
         $builder->addEventSubscriber(new PatchSubscriber());
-        $builder->addEventSubscriber(new CalendarEventApiTypeSubscriber(
-            $this->calendarEventManager,
-            $this->requestStack
-        ));
-        $builder->addEventSubscriber(new ChildEventsSubscriber(
-            $this->registry,
-            $this->securityFacade
-        ));
+        $builder->addEventSubscriber(new CalendarEventRecurrenceSubscriber());
+        $builder->addEventSubscriber(new CalendarEventApiTypeSubscriber($this->calendarEventManager));
     }
 
     /**
      * {@inheritdoc}
      */
-    public function setDefaultOptions(OptionsResolverInterface $resolver)
+    public function configureOptions(OptionsResolver $resolver)
     {
         $resolver->setDefaults(
             [
