@@ -13,6 +13,9 @@ api:
 #               activityTargets:
 #                   description: A records to which the Calendar event record associated with
 #                   data_type: association:manyToMany:activity
+#            filters:
+#                fields:
+#                    updatedAt: ~ # enable manually because this field is not indexed
 #            subresources:
 #                activityTargets:
 #                    actions:
@@ -26,10 +29,6 @@ api:
 #                            documentation: Completely replace association between records and the calendar event
 #                        delete_relationship:
 #                            documentation: Delete association between records and the calendar event
-#            filters:
-#                fields:
-#                    updatedAt:
-#                        exclude: false #add updateAt to filters
 #
 #        Oro\Bundle\CalendarBundle\Entity\CalendarProperty: ~
 #
