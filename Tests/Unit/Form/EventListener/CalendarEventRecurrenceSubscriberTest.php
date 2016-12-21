@@ -21,8 +21,8 @@ class CalendarEventRecurrenceSubscriberTest extends \PHPUnit_Framework_TestCase
 
     public function testPreSubmitShouldRemoveRecurrence()
     {
-        $form = $this->getMock('Symfony\Component\Form\FormInterface');
-        $recurrenceForm = $this->getMock('Symfony\Component\Form\FormInterface');
+        $form = $this->createMock('Symfony\Component\Form\FormInterface');
+        $recurrenceForm = $this->createMock('Symfony\Component\Form\FormInterface');
         $recurrence = new Recurrence();
 
         $event = new FormEvent($form, ['id' => 1, 'recurrence' => []]);

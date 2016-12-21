@@ -17,8 +17,8 @@ class AttendeeTest extends AbstractEntityTest
      */
     public function getSetDataProvider()
     {
-        $user          = $this->getMock('Oro\Bundle\UserBundle\Entity\User');
-        $calendarEvent = $this->getMock('Oro\Bundle\CalendarBundle\Entity\CalendarEvent');
+        $user          = $this->createMock('Oro\Bundle\UserBundle\Entity\User');
+        $calendarEvent = $this->createMock('Oro\Bundle\CalendarBundle\Entity\CalendarEvent');
         $date          = new \DateTime('now');
 
         return [

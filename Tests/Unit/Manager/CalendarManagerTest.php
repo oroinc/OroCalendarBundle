@@ -27,8 +27,8 @@ class CalendarManagerTest extends \PHPUnit_Framework_TestCase
 
         $this->manager = new CalendarManager($this->calendarPropertyProvider);
 
-        $this->provider1 = $this->getMock('Oro\Bundle\CalendarBundle\Provider\CalendarProviderInterface');
-        $this->provider2 = $this->getMock('Oro\Bundle\CalendarBundle\Provider\CalendarProviderInterface');
+        $this->provider1 = $this->createMock('Oro\Bundle\CalendarBundle\Provider\CalendarProviderInterface');
+        $this->provider2 = $this->createMock('Oro\Bundle\CalendarBundle\Provider\CalendarProviderInterface');
 
         $this->manager->addProvider('provider1', $this->provider1);
         $this->manager->addProvider('provider2', $this->provider2);
