@@ -35,7 +35,7 @@ class AttendeeRelationManagerTest extends \PHPUnit_Framework_TestCase
                 return array_values(array_intersect_key($this->users, array_flip($emails)));
             }));
 
-        $registry = $this->getMock('Doctrine\Common\Persistence\ManagerRegistry');
+        $registry = $this->createMock('Doctrine\Common\Persistence\ManagerRegistry');
         $registry
             ->expects($this->any())
             ->method('getRepository')
@@ -82,8 +82,8 @@ class AttendeeRelationManagerTest extends \PHPUnit_Framework_TestCase
 
     public function testSetRelatedEntityWithIncorrectTypeFails()
     {
-        $this->setExpectedException(
-            'InvalidArgumentException',
+        $this->expectException('InvalidArgumentException');
+        $this->expectExceptionMessage(
             'Related entity must be an instance of "Oro\Bundle\UserBundle\Entity\User", "stdClass" is given.'
         );
 

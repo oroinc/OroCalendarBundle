@@ -96,10 +96,8 @@ class CreateCalendarEventActionTest extends \PHPUnit_Framework_TestCase
         $this->registry->method('getManagerForClass')->willReturn($em);
 
         if ($exceptionMessage) {
-            $this->setExpectedException(
-                '\Oro\Component\Action\Exception\InvalidParameterException',
-                $exceptionMessage
-            );
+            $this->expectException('\Oro\Component\Action\Exception\InvalidParameterException');
+            $this->expectExceptionMessage($exceptionMessage);
         }
 
         $action = $this->getAction();

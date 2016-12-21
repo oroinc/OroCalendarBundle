@@ -27,7 +27,7 @@ class EmailNotificationTest extends \PHPUnit_Framework_TestCase
     protected function setUp()
     {
         $this->em = $this
-            ->getMock('Doctrine\Common\Persistence\ObjectManager');
+            ->createMock('Doctrine\Common\Persistence\ObjectManager');
 
         $this->notification = new EmailNotification($this->em);
     }
@@ -50,15 +50,13 @@ class EmailNotificationTest extends \PHPUnit_Framework_TestCase
      * @param string $exceptionMessage
      * @param array  $templates
      * @dataProvider templateProvider
+     * @expectedException \Oro\Bundle\ReminderBundle\Exception\InvalidArgumentException
      */
     public function testGetTemplateFromRepository($exceptionMessage, $templates)
     {
-        $this->setExpectedException(
-            'Oro\\Bundle\\ReminderBundle\\Exception\\InvalidArgumentException',
-            $exceptionMessage
-        );
+        $this->expectExceptionMessage($exceptionMessage);
 
-        $repository = $this->getMock('Doctrine\Common\Persistence\ObjectRepository');
+        $repository = $this->createMock('Doctrine\Common\Persistence\ObjectRepository');
         $repository
             ->expects($this->any())
             ->method('find')

@@ -61,7 +61,7 @@ class DateEarlierThanValidatorTest extends \PHPUnit_Framework_TestCase
             ->method('has')
             ->will($this->returnValue(true));
 
-        $this->context = $this->getMock('\Symfony\Component\Validator\ExecutionContextInterface');
+        $this->context = $this->createMock('\Symfony\Component\Validator\ExecutionContextInterface');
         $this->context->expects($this->any())
             ->method('getRoot')
             ->will($this->returnValue($form));
@@ -107,7 +107,7 @@ class DateEarlierThanValidatorTest extends \PHPUnit_Framework_TestCase
         $data->start = new \DateTime();
         $data->end = new \DateTime();
         
-        $this->context = $this->getMock('\Symfony\Component\Validator\ExecutionContextInterface');
+        $this->context = $this->createMock('\Symfony\Component\Validator\ExecutionContextInterface');
         $this->context->expects($this->any())
             ->method('getRoot')
             ->will($this->returnValue($data));
@@ -152,10 +152,10 @@ class DateEarlierThanValidatorTest extends \PHPUnit_Framework_TestCase
 
     public function testNotExistingFormData()
     {
-        $formConfig = $this->getMock('\Symfony\Component\Form\FormConfigInterface');
+        $formConfig = $this->createMock('\Symfony\Component\Form\FormConfigInterface');
         $form = new Form($formConfig);
 
-        $this->context = $this->getMock('\Symfony\Component\Validator\ExecutionContextInterface');
+        $this->context = $this->createMock('\Symfony\Component\Validator\ExecutionContextInterface');
         $this->context->expects($this->any())
             ->method('getRoot')
             ->will($this->returnValue($form));
