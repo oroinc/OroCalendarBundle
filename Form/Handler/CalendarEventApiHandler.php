@@ -137,7 +137,7 @@ class CalendarEventApiHandler
 
         $entityManager->flush();
 
-        if ($this->shouldNotifyInvitedUsers()) {
+        if (!$entity->getSystemCalendar() && $this->shouldNotifyInvitedUsers()) {
             if ($new) {
                 $this->emailSendProcessor->sendInviteNotification($entity);
             } else {
