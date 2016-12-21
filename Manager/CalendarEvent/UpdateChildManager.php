@@ -136,10 +136,6 @@ class UpdateChildManager
                          */
                         $attendeeCalendarEventException->setRecurringEvent($attendeeCalendarEvent);
                     } else {
-                        /**
-                         * Existed Attendee Exceptional Recurring Calendar Event
-                         * Should be associated with new Attendee Recurring Calendar Event
-                         */
                         $attendeeCalendarEventException = $this->createAttendeeCalendarEvent(
                             $calendar,
                             $recurringEventException
