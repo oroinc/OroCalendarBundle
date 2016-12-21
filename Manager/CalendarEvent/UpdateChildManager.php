@@ -119,16 +119,16 @@ class UpdateChildManager
         array $newAttendeeUserIds
     ) {
         $newAttendeesCalendars = $this->getUsersDefaultCalendars($newAttendeeUserIds, $organization);
-        foreach ($newAttendeesCalendars as $calendar) {
-            $attendeeCalendarEvent = $calendarEvent->getChildEventByCalendar($calendar);
+        foreach ($newAttendeesCalendars as $attendeeCalendar) {
+            $attendeeCalendarEvent = $calendarEvent->getChildEventByCalendar($attendeeCalendar);
             if (!$attendeeCalendarEvent) {
-                $attendeeCalendarEvent = $this->createAttendeeCalendarEvent($calendar, $calendarEvent);
+                $attendeeCalendarEvent = $this->createAttendeeCalendarEvent($attendeeCalendar, $calendarEvent);
             }
             $attendeeCalendarEvent->setCancelled($calendarEvent->isCancelled());
 
             if ($calendarEvent->getRecurrence()) {
                 foreach ($calendarEvent->getRecurringEventExceptions() as $recurringEventException) {
-                    $attendeeCalendarEventException = $recurringEventException->getChildEventByCalendar($calendar);
+                    $attendeeCalendarEventException = $recurringEventException->getChildEventByCalendar($attendeeCalendar);
                     if ($attendeeCalendarEventException) {
                         /**
                          * If Exceptional Calendar Event for Attendee is already exist it should be linked with
@@ -137,46 +137,29 @@ class UpdateChildManager
                         $attendeeCalendarEventException->setRecurringEvent($attendeeCalendarEvent);
                     } else {
                         $attendeeCalendarEventException = $this->createAttendeeCalendarEvent(
-                            $calendar,
+                            $attendeeCalendar,
                             $recurringEventException
                         );
                     }
 
                     $attendeeCalendarEventException->setCancelled($recurringEventException->isCancelled());
+
                     /**
-                     * Exceptional Calendar Event for Attendee should be canceled in case if
-                     * Attendee list was changed and there is no such attendees in Exceptional Event Attendees List
+                     * Exception calendar event for attendee should be canceled if all next conditions apply:
+                     * - Attendees of the exception has overridden value, different from attendees in recurring event.
+                     * - Related attendee of the exception event is not in the list of attendees in recurring event.
                      */
-                    $isAttendeesListsChanged = !$originalEvent->hasEqualAttendees($recurringEventException);
-                    if ($isAttendeesListsChanged) {
-                        $hasEqualAttendee = $this->hasAttendeeWithEqualUser(
-                            $recurringEventException,
-                            $calendar->getOwner()->getId()
-                        );
-                        if (!$hasEqualAttendee) {
+                    $isOverriddenAttendees = !$originalEvent->hasEqualAttendees($recurringEventException);
+                    if ($isOverriddenAttendees) {
+                        $recurringEventHasAttendee = (bool)$recurringEventException
+                            ->getAttendeeByCalendar($attendeeCalendar);
+                        if (!$recurringEventHasAttendee) {
                             $attendeeCalendarEventException->setCancelled(true);
                         }
                     }
                 }
             }
         }
-    }
-
-    /**
-     * @param CalendarEvent $calendarEvent
-     * @param int           $userId
-     *
-     * @return bool
-     */
-    protected function hasAttendeeWithEqualUser(CalendarEvent $calendarEvent, $userId)
-    {
-        foreach ($calendarEvent->getAttendees() as $attendee) {
-            if ($attendee->getUser() && $attendee->getUser()->getId() == $userId) {
-                return true;
-            }
-        }
-
-        return false;
     }
 
     /**

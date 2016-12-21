@@ -23,6 +23,7 @@ use Oro\Bundle\CalendarBundle\Tests\Functional\DataFixtures\LoadUserData;
  * - Add user attendee in exception event when the attendee was previously removed from exception event.
  * - Replace non-user attendee in recurring event replaces the attendee in exception event.
  * - Non-user attendee removed from recurring event removed from exception event.
+ * - Exception event with overridden attendees not added on calendar of new attendee added to recurring event.
  *
  * @dbIsolationPerTest
  *
@@ -3074,18 +3075,17 @@ class RecurringEventUpdateExceptionTest extends AbstractTestCase
     }
 
     /**
-     * Canceled exception event created for new Recurring Event Attendee if it was not exist in
-     * Exception Attendees list and Exception Attendees list was changed
+     * Exception event with overridden attendees not added on calendar of new attendee added to recurring event.
      *
      * Steps:
      * 1. Create recurring event with two attendees "A" and "B".
      * 2. Create exception for the recurring event with attendee "C" without user and attendee "D" with user.
      * 3. Update recurring calendar event, add attendee "E" to all recurring events.
-     * 4. Check events in calendar of attendee "E" user.
+     * 4. Check exception event is not added on the calendar of attendee "E" user.
      *
      * @SuppressWarnings(PHPMD.ExcessiveMethodLength)
      */
-    public function testExceptionEventWithCustomAttendeesListWasNotExistOnNewAttendeeCalendar()
+    public function testExceptionEventWithOverriddenAttendeesNotAddedOnCalendarOfNewAttendeeAddedToRecurringEvent()
     {
         // Step 1. Create recurring event with two attendees "A" and "B".
         // Recurring event with occurrences: 2016-04-01, 2016-04-02, 2016-04-03
@@ -3202,7 +3202,7 @@ class RecurringEventUpdateExceptionTest extends AbstractTestCase
             $response
         );
 
-        // Step 4. Check events in calendar of attendee "E" user.
+        // Step 4. Check exception event is not added on the calendar of attendee "E" user.
         $this->restRequest(
             [
                 'method' => 'GET',

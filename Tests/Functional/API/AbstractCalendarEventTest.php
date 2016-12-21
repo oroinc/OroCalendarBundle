@@ -10,6 +10,8 @@ use Oro\Bundle\TestFrameworkBundle\Tests\Functional\DataFixtures\LoadActivityTar
 
 /**
  * @dbIsolation
+ *
+ * @deprecated Use \Oro\Bundle\CalendarBundle\Tests\Functional\AbstractTestCase instead.
  */
 abstract class AbstractCalendarEventTest extends WebTestCase
 {

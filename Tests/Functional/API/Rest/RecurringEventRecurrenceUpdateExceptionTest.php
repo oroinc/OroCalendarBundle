@@ -12,7 +12,12 @@ use Oro\Bundle\CalendarBundle\Tests\Functional\DataFixtures\LoadUserData;
  * The test covers recurring event exceptions clear logic.
  *
  * Use cases covered:
- * - Update recurring event clears or updates exceptions.
+ * - Update recurring event recurrence clears exceptions when "updateExceptions"=True.
+ * - Update recurring event recurrence doesn't clear exceptions when "updateExceptions"=False.
+ * - Update recurring event without recurrence change doesn't change exceptions when "updateExceptions"=True.
+ * - Update recurring event "start" and "end" clears exceptions when "updateExceptions"=True.
+ * - Remove recurring event recurrence clears exceptions when "updateExceptions"=True.
+ * - Remove recurring event recurrence doesn't clear exceptions when "updateExceptions"=False.
  *
  * @SuppressWarnings(PHPMD.ExcessiveClassLength)
  *
@@ -28,19 +33,19 @@ class RecurringEventRecurrenceUpdateExceptionTest extends AbstractTestCase
     }
 
     /**
-     * Update recurring event clears or updates exceptions.
+     * Update recurring event recurrence clears exceptions when "updateExceptions"=True.
      *
      * Step:
      * 1. Create new recurring event without guests.
      * 2, Create first exception with cancelled flag for the recurring event.
      * 3. Create another exception for the recurring event with different title, description and start time.
      * 4. Check the events exposed in the API without cancelled exception and with modified second exception.
-     * 5. Update Recurrence for recurring with updateExceptions flag === true
-     * 6. Check exceptional event was removed
+     * 5. Update Recurrence for recurring with updateExceptions flag === true.
+     * 6. Check exceptional event was removed.
      *
      * @SuppressWarnings(PHPMD.ExcessiveMethodLength)
      */
-    public function testUpdateRecurringEventRecurrenceClearsExceptionsWhenUpdateExceptionIsTrue()
+    public function testUpdateRecurringEventRecurrenceClearsExceptionsWhenUpdateExceptionsIsTrue()
     {
         // Step 1. Create new recurring event without guests.
         // Recurring event with occurrences: 2016-04-25, 2016-05-08, 2016-05-09, 2016-05-22
@@ -231,7 +236,7 @@ class RecurringEventRecurrenceUpdateExceptionTest extends AbstractTestCase
             $response
         );
 
-        // Step 6. Check exceptional event was removed
+        // Step 6. Check exceptional event was removed.
         $this->restRequest(
             [
                 'method' => 'GET',
@@ -299,19 +304,19 @@ class RecurringEventRecurrenceUpdateExceptionTest extends AbstractTestCase
     }
 
     /**
-     * Update recurring event clears or updates exceptions.
+     * Update recurring event recurrence doesn't clear exceptions when "updateExceptions"=False.
      *
      * Step:
      * 1. Create new recurring event without guests.
      * 2, Create first exception with cancelled flag for the recurring event.
      * 3. Create another exception for the recurring event with different title, description and start time.
      * 4. Check the events exposed in the API without cancelled exception and with modified second exception.
-     * 5. Update Recurrence for recurring event with updateExceptions flag === false
-     * 6. Check exceptional event presented
+     * 5. Update Recurrence for recurring event with updateExceptions flag === false.
+     * 6. Check exceptional event presented.
      *
      * @SuppressWarnings(PHPMD.ExcessiveMethodLength)
      */
-    public function testUpdateRecurringEventRecurrenceDoesNotClearExceptionsWhenUpdateExceptionIsFalse()
+    public function testUpdateRecurringEventRecurrenceDoesNotClearExceptionsWhenUpdateExceptionsIsFalse()
     {
         // Step 1. Create new recurring event without guests.
         // Recurring event with occurrences: 2016-04-25, 2016-05-08, 2016-05-09, 2016-05-22
@@ -467,7 +472,7 @@ class RecurringEventRecurrenceUpdateExceptionTest extends AbstractTestCase
         ];
         $this->assertResponseEquals($responseWithExceptions, $response, false);
 
-        // Step 5. Update Recurrence for recurring event with updateExceptions flag === false
+        // Step 5. Update Recurrence for recurring event with updateExceptions flag === false.
         $changedEventData = $eventData;
         $changedEventData['recurrence'] = [
             'timeZone'       => 'UTC',
@@ -502,7 +507,7 @@ class RecurringEventRecurrenceUpdateExceptionTest extends AbstractTestCase
             $response
         );
 
-        // Step 6. Check exceptional event presented
+        // Step 6. Check exceptional event presented.
         $this->restRequest(
             [
                 'method' => 'GET',
@@ -539,7 +544,7 @@ class RecurringEventRecurrenceUpdateExceptionTest extends AbstractTestCase
     }
 
     /**
-     * Update recurring event clears or updates exceptions.
+     * Update recurring event without recurrence change doesn't change exceptions when "updateExceptions"=True.
      *
      * Step:
      * 1. Create new recurring event without guests.
@@ -551,7 +556,7 @@ class RecurringEventRecurrenceUpdateExceptionTest extends AbstractTestCase
      *
      * @SuppressWarnings(PHPMD.ExcessiveMethodLength)
      */
-    public function testUpdateRecurringEventWithoutRecurrenceChangeDoesNotChangeExceptionsWhenUpdateExceptionIsTrue()
+    public function testUpdateRecurringEventWithoutRecurrenceChangeDoesNotChangeExceptionsWhenUpdateExceptionsIsTrue()
     {
         // Step 1. Create new recurring event without guests.
         // Recurring event with occurrences: 2016-04-25, 2016-05-08, 2016-05-09, 2016-05-22
@@ -772,7 +777,7 @@ class RecurringEventRecurrenceUpdateExceptionTest extends AbstractTestCase
     }
 
     /**
-     * Update recurring event clears or updates exceptions.
+     * Update recurring event "start" and "end" clears exceptions when "updateExceptions"=True.
      *
      * Step:
      * 1. Create new recurring event without guests.
@@ -780,11 +785,11 @@ class RecurringEventRecurrenceUpdateExceptionTest extends AbstractTestCase
      * 3. Create another exception for the recurring event with different title, description and start time.
      * 4. Check the events exposed in the API without cancelled exception and with modified second exception.
      * 5. Update recurring event change start and end dates, updateExceptions flag === true
-     * 6. Check exceptional event was removed
+     * 6. Check exceptional event was removed.
      *
      * @SuppressWarnings(PHPMD.ExcessiveMethodLength)
      */
-    public function testUpdateRecurringEventStartEndDatesClearExceptionsWhenUpdateExceptionIsTrue()
+    public function testUpdateRecurringEventStartEndDatesClearsExceptionsWhenUpdateExceptionsIsTrue()
     {
         // Step 1. Create new recurring event without guests.
         // Recurring event with occurrences: 2016-04-25, 2016-05-08, 2016-05-09, 2016-05-22
@@ -968,7 +973,7 @@ class RecurringEventRecurrenceUpdateExceptionTest extends AbstractTestCase
             $response
         );
 
-        // Step 6. Check exceptional event was removed
+        // Step 6. Check exceptional event was removed.
         $this->restRequest(
             [
                 'method' => 'GET',
@@ -1046,19 +1051,19 @@ class RecurringEventRecurrenceUpdateExceptionTest extends AbstractTestCase
     }
 
     /**
-     * Update recurring event clears or updates exceptions.
+     * Remove recurring event recurrence clears exceptions when "updateExceptions"=True.
      *
      * Step:
      * 1. Create new recurring event without guests.
      * 2, Create first exception with cancelled flag for the recurring event.
      * 3. Create another exception for the recurring event with different title, description and start time.
      * 4. Check the events exposed in the API without cancelled exception and with modified second exception.
-     * 5. Update recurring event remove recurrence, updateExceptions flag === true
-     * 6. Check exceptional event was removed and occurrences was removed
+     * 5. Update recurring event remove recurrence, updateExceptions flag === true.
+     * 6. Check exceptional event was removed and occurrences were removed.
      *
      * @SuppressWarnings(PHPMD.ExcessiveMethodLength)
      */
-    public function testRemoveRecurringEventRecurrenceClearExceptionsWhenUpdateExceptionIsTrue()
+    public function testRemoveRecurringEventRecurrenceClearsExceptionsWhenUpdateExceptionsIsTrue()
     {
         // Step 1. Create new recurring event without guests.
         // Recurring event with occurrences: 2016-04-25, 2016-05-08, 2016-05-09, 2016-05-22
@@ -1214,7 +1219,7 @@ class RecurringEventRecurrenceUpdateExceptionTest extends AbstractTestCase
         ];
         $this->assertResponseEquals($responseWithExceptions, $response, false);
 
-        // Step 5. Update recurring event remove recurrence, updateExceptions flag === true
+        // Step 5. Update recurring event remove recurrence, updateExceptions flag === true.
         $changedEventData = $eventData;
         $changedEventData['recurrence'] = null;
         $changedEventData['updateExceptions'] = true;
@@ -1241,7 +1246,7 @@ class RecurringEventRecurrenceUpdateExceptionTest extends AbstractTestCase
             $response
         );
 
-        // Step 6. Check exceptional event was removed and occurrences was removed
+        // Step 6. Check exceptional event was removed and occurrences were removed.
         $this->restRequest(
             [
                 'method' => 'GET',
@@ -1289,7 +1294,7 @@ class RecurringEventRecurrenceUpdateExceptionTest extends AbstractTestCase
     }
 
     /**
-     * Update recurring event clears or updates exceptions.
+     * Remove recurring event recurrence doesn't clear exceptions when "updateExceptions"=False.
      *
      * Step:
      * 1. Create new recurring event without guests.
@@ -1297,11 +1302,11 @@ class RecurringEventRecurrenceUpdateExceptionTest extends AbstractTestCase
      * 3. Create another exception for the recurring event with different title, description and start time.
      * 4. Check the events exposed in the API without cancelled exception and with modified second exception.
      * 5. Update recurring event remove recurrence, updateExceptions flag === false
-     * 6. Check exceptional event was not removed but occurrences was removed
+     * 6. Check exceptional event was not removed but occurrences were removed.
      *
      * @SuppressWarnings(PHPMD.ExcessiveMethodLength)
      */
-    public function testRemoveRecurringEventRecurrenceWasNotClearExceptionsWhenUpdateExceptionIsFalse()
+    public function testRemoveRecurringEventRecurrenceDoesntClearExceptionsWhenUpdateExceptionIsFalse()
     {
         // Step 1. Create new recurring event without guests.
         // Recurring event with occurrences: 2016-04-25, 2016-05-08, 2016-05-09, 2016-05-22
@@ -1484,7 +1489,7 @@ class RecurringEventRecurrenceUpdateExceptionTest extends AbstractTestCase
             $response
         );
 
-        // Step 6. Check exceptional event was not removed but occurrences was removed
+        // Step 6. Check exceptional event was not removed but occurrences were removed.
         $this->restRequest(
             [
                 'method' => 'GET',
