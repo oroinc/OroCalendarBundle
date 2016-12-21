@@ -57,7 +57,7 @@ class CalendarEventApiHandlerTest extends \PHPUnit_Framework_TestCase
         $this->request = new Request();
         $this->request->request = new ParameterBag($formData);
 
-        $this->form = $this->getMock('Symfony\Component\Form\FormInterface');
+        $this->form = $this->createMock('Symfony\Component\Form\FormInterface');
 
         $this->form->expects($this->once())
             ->method('setData')
@@ -314,7 +314,7 @@ class CalendarEventApiHandlerTest extends \PHPUnit_Framework_TestCase
         $valueMapGet = [];
 
         foreach ($values as $name => $value) {
-            $field = $this->getMock('Symfony\Component\Form\FormInterface');
+            $field = $this->createMock('Symfony\Component\Form\FormInterface');
             $field->expects($this->any())
                 ->method('getData')
                 ->willReturn($value);

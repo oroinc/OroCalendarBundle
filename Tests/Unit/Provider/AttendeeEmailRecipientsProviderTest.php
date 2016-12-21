@@ -25,7 +25,7 @@ class AttendeeEmailRecipientsProviderTest extends \PHPUnit_Framework_TestCase
             ->disableOriginalConstructor()
             ->getMock();
 
-        $registry = $this->getMock('Doctrine\Common\Persistence\ManagerRegistry');
+        $registry = $this->createMock('Doctrine\Common\Persistence\ManagerRegistry');
         $registry->expects($this->any())
             ->method('getRepository')
             ->with('Oro\Bundle\CalendarBundle\Entity\Attendee')

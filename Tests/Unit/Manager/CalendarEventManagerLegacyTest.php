@@ -47,7 +47,7 @@ class CalendarEventManagerLegacyTest extends \PHPUnit_Framework_TestCase
                 );
             }));
 
-        $registry = $this->getMock('Doctrine\Common\Persistence\ManagerRegistry');
+        $registry = $this->createMock('Doctrine\Common\Persistence\ManagerRegistry');
         $registry->expects($this->any())
             ->method('getRepository')
             ->will($this->returnValueMap([
@@ -135,7 +135,6 @@ class CalendarEventManagerLegacyTest extends \PHPUnit_Framework_TestCase
             ->addChildEvent($secondEvent)
             ->addAttendee($secondEventAttendee)
             ->addChildEvent($eventWithoutRelatedAttendee);
-
 
         // assert default data with default status
         $this->calendarEventManager->onEventUpdate($parentEvent, clone $parentEvent, new Organization(), false);

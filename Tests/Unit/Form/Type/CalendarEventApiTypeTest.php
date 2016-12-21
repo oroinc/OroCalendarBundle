@@ -301,7 +301,7 @@ class CalendarEventApiTypeTest extends TypeTestCase
      */
     protected function loadTypes()
     {
-        $searchHandler = $this->getMock('Oro\Bundle\FormBundle\Autocomplete\SearchHandlerInterface');
+        $searchHandler = $this->createMock('Oro\Bundle\FormBundle\Autocomplete\SearchHandlerInterface');
         $searchHandler->expects($this->any())
             ->method('getEntityName')
             ->will($this->returnValue('OroUserBundle:User'));

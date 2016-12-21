@@ -51,15 +51,15 @@ class CalendarEventApiTypeSubscriberTest extends \PHPUnit_Framework_TestCase
      */
     public function testPostSubmitDataShouldNotSetCalendar($calendar, CalendarEvent $calendarEvent = null)
     {
-        $form = $this->getMock('Symfony\Component\Form\FormInterface');
+        $form = $this->createMock('Symfony\Component\Form\FormInterface');
         $event = new FormEvent($form, $calendarEvent);
 
-        $calendarForm = $this->getMock('Symfony\Component\Form\FormInterface');
+        $calendarForm = $this->createMock('Symfony\Component\Form\FormInterface');
         $calendarForm->expects($this->any())
             ->method('getData')
             ->will($this->returnValue($calendar));
 
-        $calendarAliasForm = $this->getMock('Symfony\Component\Form\FormInterface');
+        $calendarAliasForm = $this->createMock('Symfony\Component\Form\FormInterface');
 
         $form->expects($this->any())
             ->method('get')
@@ -95,15 +95,15 @@ class CalendarEventApiTypeSubscriberTest extends \PHPUnit_Framework_TestCase
      */
     public function testPostSubmitDataShouldSetCalendar(CalendarEvent $calendarEvent, $calendar, $alias, $expectedAlias)
     {
-        $form = $this->getMock('Symfony\Component\Form\FormInterface');
+        $form = $this->createMock('Symfony\Component\Form\FormInterface');
         $event = new FormEvent($form, $calendarEvent);
 
-        $calendarForm = $this->getMock('Symfony\Component\Form\FormInterface');
+        $calendarForm = $this->createMock('Symfony\Component\Form\FormInterface');
         $calendarForm->expects($this->any())
             ->method('getData')
             ->will($this->returnValue($calendar));
 
-        $calendarAliasForm = $this->getMock('Symfony\Component\Form\FormInterface');
+        $calendarAliasForm = $this->createMock('Symfony\Component\Form\FormInterface');
         $calendarAliasForm->expects($this->any())
             ->method('getData')
             ->will($this->returnValue($alias));

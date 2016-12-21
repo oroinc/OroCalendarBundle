@@ -37,7 +37,7 @@ class SystemCalendarTypeTest extends TypeTestCase
         $this->configManager = $this->getMockBuilder('Oro\Bundle\ConfigBundle\Config\ConfigManager')
             ->disableOriginalConstructor()
             ->getMock();
-        $this->translator    = $this->getMock('Symfony\Component\Translation\TranslatorInterface');
+        $this->translator    = $this->createMock('Symfony\Component\Translation\TranslatorInterface');
         $this->configManager->expects($this->any())
             ->method('get')
             ->with('oro_calendar.calendar_colors')

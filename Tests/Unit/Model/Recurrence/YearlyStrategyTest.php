@@ -20,7 +20,7 @@ class YearlyStrategyTest extends AbstractTestStrategy
         $this->validator = $this->getMockBuilder('Symfony\Component\Validator\Validator\ValidatorInterface')
             ->getMock();
         /** @var \PHPUnit_Framework_MockObject_MockObject|TranslatorInterface */
-        $translator = $this->getMock('Symfony\Component\Translation\TranslatorInterface');
+        $translator = $this->createMock('Symfony\Component\Translation\TranslatorInterface');
         $translator->expects($this->any())
             ->method('transChoice')
             ->will(

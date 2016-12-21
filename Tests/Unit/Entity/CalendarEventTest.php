@@ -360,7 +360,7 @@ class CalendarEventTest extends \PHPUnit_Framework_TestCase
 
     public function testAttendees()
     {
-        $attendee  = $this->getMock('Oro\Bundle\CalendarBundle\Entity\Attendee');
+        $attendee  = $this->createMock('Oro\Bundle\CalendarBundle\Entity\Attendee');
         $attendees = new ArrayCollection([$attendee]);
 
         $calendarEvent = new CalendarEvent();
@@ -633,8 +633,8 @@ class CalendarEventTest extends \PHPUnit_Framework_TestCase
         $email = 'test@example.com';
         $event = new CalendarEvent();
 
-        $attendee1 = $this->getMock(Attendee::class);
-        $attendee2 = $this->getMock(Attendee::class);
+        $attendee1 = $this->createMock(Attendee::class);
+        $attendee2 = $this->createMock(Attendee::class);
 
         $event->addAttendee($attendee1);
         $event->addAttendee($attendee2);
@@ -666,8 +666,8 @@ class CalendarEventTest extends \PHPUnit_Framework_TestCase
         $event = new CalendarEvent();
 
 
-        $attendee1 = $this->getMock(Attendee::class);
-        $attendee2 = $this->getMock(Attendee::class);
+        $attendee1 = $this->createMock(Attendee::class);
+        $attendee2 = $this->createMock(Attendee::class);
 
         $event->addAttendee($attendee1);
         $event->addAttendee($attendee2);
