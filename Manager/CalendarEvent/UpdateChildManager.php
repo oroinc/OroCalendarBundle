@@ -129,35 +129,37 @@ class UpdateChildManager
             if ($calendarEvent->getRecurrence()) {
                 foreach ($calendarEvent->getRecurringEventExceptions() as $recurringEventException) {
                     $attendeeCalendarEventException = $recurringEventException->getChildEventByCalendar($calendar);
-                    /**
-                     * Existed Attendee Exceptional Recurring Calendar Event
-                     * Should be associated with new Attendee Recurring Calendar Event
-                     */
                     if ($attendeeCalendarEventException) {
+                        /**
+                         * If Exceptional Calendar Event for Attendee is already exist it should be linked with
+                         * new Recurring Calendar Event
+                         */
                         $attendeeCalendarEventException->setRecurringEvent($attendeeCalendarEvent);
-                    }
-
-                    $isAttendeesListsChanged = $this->isAttendeesListsChanged($originalEvent, $recurringEventException);
-                    if (!$attendeeCalendarEventException) {
+                    } else {
+                        /**
+                         * Existed Attendee Exceptional Recurring Calendar Event
+                         * Should be associated with new Attendee Recurring Calendar Event
+                         */
                         $attendeeCalendarEventException = $this->createAttendeeCalendarEvent(
                             $calendar,
                             $recurringEventException
                         );
+                    }
 
-                        /**
-                         * In case if Calendar Event Exception has changed Attendees List
-                         * Exception should not be visible on new Attendee User Calendar
-                         */
-                        if ($isAttendeesListsChanged) {
+                    $attendeeCalendarEventException->setCancelled($recurringEventException->isCancelled());
+                    /**
+                     * Exceptional Calendar Event for Attendee should be canceled in case if
+                     * Attendee list was changed and there is no such attendees in Exceptional Event Attendees List
+                     */
+                    $isAttendeesListsChanged = !$originalEvent->hasEqualAttendees($recurringEventException);
+                    if ($isAttendeesListsChanged) {
+                        $hasEqualAttendee = $this->hasAttendeeWithEqualUser(
+                            $recurringEventException,
+                            $calendar->getOwner()->getId()
+                        );
+                        if (!$hasEqualAttendee) {
                             $attendeeCalendarEventException->setCancelled(true);
                         }
-                    }
-                    /**
-                     * Reactivate Attendee User Calendar Event Exception in case if
-                     * Calendar Event Exception has not changed Attendees List
-                     */
-                    if (!$isAttendeesListsChanged) {
-                        $attendeeCalendarEventException->setCancelled($recurringEventException->isCancelled());
                     }
                 }
             }
@@ -166,25 +168,14 @@ class UpdateChildManager
 
     /**
      * @param CalendarEvent $calendarEvent
-     * @param CalendarEvent $originalCalendarEvent
+     * @param int           $userId
      *
      * @return bool
      */
-    protected function isAttendeesListsChanged(CalendarEvent $calendarEvent, CalendarEvent $originalCalendarEvent)
+    protected function hasAttendeeWithEqualUser(CalendarEvent $calendarEvent, $userId)
     {
-        $calendarEventAttendees = $calendarEvent->getAttendees();
-        $originalCalendarEventAttendees = $originalCalendarEvent->getAttendees();
-        if (count($calendarEventAttendees) != count($originalCalendarEventAttendees)) {
-            return true;
-        }
-
-        $calendarEventAttendeeIds = [];
-        foreach ($calendarEventAttendees as $calendarEventAttendee) {
-            $calendarEventAttendeeIds[$calendarEventAttendee->getUser()->getId()] = true;
-        }
-
-        foreach ($originalCalendarEventAttendees as $originalCalendarEventAttendee) {
-            if (!isset($calendarEventAttendeeIds[$originalCalendarEventAttendee->getUser()->getId()])) {
+        foreach ($calendarEvent->getAttendees() as $attendee) {
+            if ($attendee->getUser() && $attendee->getUser()->getId() == $userId) {
                 return true;
             }
         }

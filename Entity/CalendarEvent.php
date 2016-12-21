@@ -787,17 +787,14 @@ class CalendarEvent extends ExtendCalendarEvent implements RemindableInterface, 
      */
     public function getEqualAttendee(Attendee $attendee)
     {
-        $result = null;
-
         $attendees = $this->getAttendees();
         foreach ($attendees as $actualAttendee) {
             if ($attendee->isEqual($actualAttendee)) {
-                $result = $actualAttendee;
-                break;
+                return $actualAttendee;
             }
         }
 
-        return $result;
+        return null;
     }
 
     /**
