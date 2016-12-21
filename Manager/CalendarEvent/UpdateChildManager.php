@@ -128,7 +128,9 @@ class UpdateChildManager
 
             if ($calendarEvent->getRecurrence()) {
                 foreach ($calendarEvent->getRecurringEventExceptions() as $recurringEventException) {
-                    $attendeeCalendarEventException = $recurringEventException->getChildEventByCalendar($attendeeCalendar);
+                    $attendeeCalendarEventException = $recurringEventException
+                        ->getChildEventByCalendar($attendeeCalendar);
+
                     if ($attendeeCalendarEventException) {
                         /**
                          * If Exceptional Calendar Event for Attendee is already exist it should be linked with
