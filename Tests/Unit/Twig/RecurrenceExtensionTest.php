@@ -60,6 +60,10 @@ class RecurrenceExtensionTest extends \PHPUnit_Framework_TestCase
                     $this->extension,
                     'getRecurrenceTextValue'
                 ),
+                'get_event_recurrence_pattern' => new \Twig_Function_Method(
+                    $this->extension,
+                    'getEventRecurrencePattern'
+                ),
             ],
             $this->extension->getFunctions()
         );

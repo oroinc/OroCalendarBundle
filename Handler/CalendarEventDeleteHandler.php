@@ -131,6 +131,8 @@ class CalendarEventDeleteHandler extends DeleteHandler
     public function processDelete($entity, ObjectManager $em)
     {
         $this->checkPermissions($entity, $em);
+        // entity is cloned to have all attributes in delete notification email
+        $clonedEntity = clone $entity;
 
         if ($this->shouldCancelInsteadDelete() && $entity->getRecurringEvent()) {
             $event = $entity->getParent() ? : $entity;
@@ -158,7 +160,7 @@ class CalendarEventDeleteHandler extends DeleteHandler
         $em->flush();
         
         if ($this->shouldSendNotification()) {
-            $this->emailSendProcessor->sendDeleteEventNotification($entity);
+            $this->emailSendProcessor->sendDeleteEventNotification($clonedEntity);
         }
     }
     
