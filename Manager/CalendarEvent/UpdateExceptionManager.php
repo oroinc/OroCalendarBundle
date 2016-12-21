@@ -196,7 +196,9 @@ class UpdateExceptionManager
             'title',
             'description',
             'allDay',
-            'backgroundColor'
+            'backgroundColor',
+            'calendar',
+            'systemCalendar'
         ];
     }
 
