@@ -171,7 +171,6 @@ class CalendarEventApiHandlerTest extends \PHPUnit_Framework_TestCase
 
         ReflectionUtil::setId($this->entity, 123);
         $this->entity->addAttendee(new Attendee());
-        $originalAttendees = new ArrayCollection($this->entity->getAttendees()->toArray());
 
         $this->setExpectedFormValues(['notifyInvitedUsers' => true]);
 
@@ -183,7 +182,7 @@ class CalendarEventApiHandlerTest extends \PHPUnit_Framework_TestCase
         $this->emailSendProcessor
             ->expects($this->once())
             ->method('sendUpdateParentEventNotification')
-            ->with($this->entity, $originalAttendees, true);
+            ->with($this->entity, clone $this->entity, true);
 
         $this->handler->process($this->entity);
     }

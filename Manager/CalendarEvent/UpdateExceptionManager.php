@@ -2,8 +2,8 @@
 
 namespace Oro\Bundle\CalendarBundle\Manager\CalendarEvent;
 
-use Oro\Bundle\CalendarBundle\Entity\Attendee;
 use Oro\Bundle\CalendarBundle\Entity\CalendarEvent;
+use Oro\Bundle\CalendarBundle\Manager\AttendeeManager;
 use Oro\Component\PropertyAccess\PropertyAccessor;
 
 /**
@@ -28,9 +28,22 @@ use Oro\Component\PropertyAccess\PropertyAccessor;
 class UpdateExceptionManager
 {
     /**
+     * @var AttendeeManager
+     */
+    protected $attendeeManager;
+
+    /**
      * @var PropertyAccessor
      */
     protected $propertyAccessor;
+
+    /**
+     * @param AttendeeManager $attendeeManager
+     */
+    public function __construct(AttendeeManager $attendeeManager)
+    {
+        $this->attendeeManager = $attendeeManager;
+    }
 
     /**
      * Actualize state of recurring event exceptions after recurring event was updated.
@@ -251,11 +264,10 @@ class UpdateExceptionManager
         if (!$this->hasEqualAttendees($actualEvent, $originalEvent)) {
             // Attendees collection has been changed and now the change should be synced.
             foreach ($exceptionEvent->getAttendees() as $attendee) {
-                if ($actualEvent->getEqualAttendee($attendee)) {
+                $equalAttendee = $actualEvent->getEqualAttendee($attendee);
+                if ($equalAttendee) {
                     // Update status of the attendee in the exception
-                    $attendee->setStatus(
-                        $originalEvent->getAttendeeByEmail($attendee->getEmail())->getStatus()
-                    );
+                    $attendee->setStatus($equalAttendee->getStatus());
                 } else {
                     // Remove attendee from the exception since it was removed in the actual event
                     $exceptionEvent->removeAttendee($attendee);
@@ -266,7 +278,7 @@ class UpdateExceptionManager
                 if (!$exceptionEvent->getEqualAttendee($sourceAttendee)) {
                     // Add attendee to the exception event since it was added in the actual event
                     $exceptionEvent->addAttendee(
-                        $this->createAttendeeCopy($sourceAttendee)
+                        $this->attendeeManager->createAttendeeCopy($sourceAttendee)
                     );
                 }
             }
@@ -288,23 +300,5 @@ class UpdateExceptionManager
     protected function hasEqualAttendees(CalendarEvent $source, CalendarEvent $target)
     {
         return $source->hasEqualAttendees($target);
-    }
-
-    /**
-     * Creates a copy of attendee with same email, type, status, user and display name.
-     *
-     * @param Attendee $source
-     * @return Attendee
-     */
-    protected function createAttendeeCopy(Attendee $source)
-    {
-        $attendee = new Attendee();
-        $attendee->setDisplayName($source->getDisplayName())
-            ->setEmail($source->getEmail())
-            ->setType($source->getType())
-            ->setStatus($source->getStatus())
-            ->setUser($source->getUser());
-
-        return $attendee;
     }
 }

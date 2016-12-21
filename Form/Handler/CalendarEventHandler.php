@@ -187,7 +187,7 @@ class CalendarEventHandler
         } else {
             $this->emailSendProcessor->sendUpdateParentEventNotification(
                 $entity,
-                $originalEntity->getAttendees(),
+                $originalEntity,
                 $this->shouldNotifyInvitedUsers()
             );
         }

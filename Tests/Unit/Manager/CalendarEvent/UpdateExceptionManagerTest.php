@@ -4,11 +4,17 @@ namespace Oro\Bundle\CalendarBundle\Tests\Unit\Manager;
 
 use Oro\Bundle\CalendarBundle\Entity\CalendarEvent;
 use Oro\Bundle\CalendarBundle\Entity\Recurrence;
+use Oro\Bundle\CalendarBundle\Manager\AttendeeManager;
 use Oro\Bundle\CalendarBundle\Manager\CalendarEvent\UpdateExceptionManager;
 use Oro\Component\PropertyAccess\PropertyAccessor;
 
 class UpdateExceptionManagerTest extends \PHPUnit_Framework_TestCase
 {
+    /**
+     * @var \PHPUnit_Framework_MockObject_MockObject|AttendeeManager
+     */
+    protected $attendeeManager;
+
     /**
      * @var UpdateExceptionManager
      */
@@ -16,7 +22,12 @@ class UpdateExceptionManagerTest extends \PHPUnit_Framework_TestCase
 
     protected function setUp()
     {
-        $this->manager = new UpdateExceptionManager();
+        $this->attendeeManager = $this
+            ->getMockBuilder('Oro\Bundle\CalendarBundle\Manager\AttendeeManager')
+            ->disableOriginalConstructor()
+            ->getMock();
+
+        $this->manager = new UpdateExceptionManager($this->attendeeManager);
     }
 
     /**

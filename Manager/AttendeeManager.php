@@ -29,6 +29,44 @@ class AttendeeManager
     }
 
     /**
+     * Creates new instance of Attendee related to passed entity.
+     *
+     * @param object|null $relatedEntity
+     *
+     * @return Attendee
+     * @throws \InvalidArgumentException If related entity type is not supported.
+     */
+    public function createAttendee($relatedEntity = null)
+    {
+        $result = new Attendee();
+
+        if ($relatedEntity) {
+            $this->attendeeRelationManager->setRelatedEntity($result, $relatedEntity);
+        }
+
+        return $result;
+    }
+
+    /**
+     * Creates a copy of attendee with same email, type, status, user and display name.
+     *
+     * @param Attendee $source
+     *
+     * @return Attendee
+     */
+    public function createAttendeeCopy(Attendee $source)
+    {
+        $result = $this->createAttendee();
+        $result->setDisplayName($source->getDisplayName())
+            ->setEmail($source->getEmail())
+            ->setType($source->getType())
+            ->setStatus($source->getStatus())
+            ->setUser($source->getUser());
+
+        return $result;
+    }
+
+    /**
      * @param int $id
      *
      * @return Attendee[]
