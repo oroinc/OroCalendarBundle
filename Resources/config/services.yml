@@ -188,6 +188,8 @@ services:
     oro_calendar.calendar_event.update_exception_manager:
         class: 'Oro\Bundle\CalendarBundle\Manager\CalendarEvent\UpdateExceptionManager'
         public: false
+        arguments:
+            - '@oro_calendar.attendee_manager'
 
     oro_calendar.calendar_manager:
         class: %oro_calendar.calendar_manager.class%
@@ -304,7 +306,6 @@ services:
         arguments:
             - '@oro_notification.manager.email_notification'
             - '@doctrine.orm.entity_manager'
-            - '@oro_security.security_facade'
 
     oro_calendar.listener.datagrid.system_calendar:
         class: %oro_calendar.listener.datagrid.system_calendar.class%
@@ -365,7 +366,7 @@ services:
         class: Oro\Bundle\CalendarBundle\Autocomplete\AttendeeSearchHandler
         parent: oro_activity.form.handler.autocomplete
         calls:
-            - [setAttendeeRelationManager, ['@oro_calendar.attendee_relation_manager']]
+            - [setAttendeeManager, ['@oro_calendar.attendee_manager']]
 
 
     # Recurrence Strategies

@@ -73,7 +73,7 @@ class UpdateManagerTest extends \PHPUnit_Framework_TestCase
 
         $this->updateChildManager->expects($this->once())
             ->method('onEventUpdate')
-            ->with($entity, $organization);
+            ->with($entity, $originalEntity, $organization);
 
         $this->updateExceptionManager->expects($this->once())
             ->method('onEventUpdate')

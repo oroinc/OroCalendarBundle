@@ -681,11 +681,11 @@ class CalendarEvent extends ExtendCalendarEvent implements RemindableInterface, 
     }
 
     /**
-     * @param Calendar|null $calendar
+     * @param Calendar $calendar
      *
      * @return CalendarEvent|null
      */
-    public function getChildEventByCalendar(Calendar $calendar = null)
+    public function getChildEventByCalendar(Calendar $calendar)
     {
         if (!$calendar) {
             return null;
@@ -698,6 +698,29 @@ class CalendarEvent extends ExtendCalendarEvent implements RemindableInterface, 
         );
 
         return $result->count() ? $result->first() : null;
+    }
+
+    /**
+     * Returns this event or one its' children where related attendee is matching the given instance.
+     *
+     * @param Attendee $attendee
+     *
+     * @return CalendarEvent|null
+     */
+    public function getEventByRelatedAttendee(Attendee $attendee)
+    {
+        if ($this->getRelatedAttendee() && $this->getRelatedAttendee()->isEqual($attendee)) {
+            return $this;
+        }
+
+        foreach ($this->getChildEvents() as $childEvent) {
+            $childRelatedAttendee = $childEvent->getRelatedAttendee() ?: $childEvent->findRelatedAttendee();
+            if ($attendee->isEqual($childRelatedAttendee)) {
+                return $childEvent;
+            }
+        }
+
+        return null;
     }
 
     /**
@@ -1176,12 +1199,13 @@ class CalendarEvent extends ExtendCalendarEvent implements RemindableInterface, 
     {
         if ($this->id) {
             $this->id = null;
-            $this->reminders = new ArrayCollection($this->reminders->toArray());
-            $this->childEvents = new ArrayCollection($this->childEvents->toArray());
-            $this->attendees = new ArrayCollection($this->attendees->toArray());
-            $this->recurringEventExceptions = new ArrayCollection($this->recurringEventExceptions->toArray());
-            $this->recurrence = $this->recurrence ? clone $this->recurrence : null;
         }
+        $this->reminders = new ArrayCollection($this->reminders->toArray());
+        $this->parent = $this->parent ? clone $this->parent : null;
+        $this->childEvents = new ArrayCollection($this->childEvents->toArray());
+        $this->attendees = new ArrayCollection($this->attendees->toArray());
+        $this->recurringEventExceptions = new ArrayCollection($this->recurringEventExceptions->toArray());
+        $this->recurrence = $this->recurrence ? clone $this->recurrence : null;
     }
 
     /**
