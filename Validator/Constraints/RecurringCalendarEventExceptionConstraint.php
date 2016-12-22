@@ -4,7 +4,7 @@ namespace Oro\Bundle\CalendarBundle\Validator\Constraints;
 
 use Symfony\Component\Validator\Constraint;
 
-class CalendarEvent extends Constraint
+class RecurringCalendarEventExceptionConstraint extends Constraint
 {
     public $selfRelationMessage = 'Parameter \'recurringEventId\' can\'t have the same value as calendar event ID.';
     public $wrongRecurrenceMessage = 'Parameter \'recurringEventId\' can be set only for recurring calendar events.';
@@ -23,6 +23,6 @@ class CalendarEvent extends Constraint
      */
     public function validatedBy()
     {
-        return 'oro_calendar.calendar_event_validator';
+        return 'oro_calendar.recurring_calendar_event_exception_validator';
     }
 }

@@ -235,15 +235,6 @@ class UserCalendarEventNormalizer extends AbstractCalendarEventNormalizer
     /**
      * {@inheritdoc}
      */
-    protected function onApplyItemData(array &$item)
-    {
-        parent::onApplyItemData($item);
-        $this->applyItemRecurrence($item);
-    }
-
-    /**
-     * {@inheritdoc}
-     */
     protected function afterApplyItemData(array &$item)
     {
         parent::afterApplyItemData($item);

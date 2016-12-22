@@ -14,13 +14,4 @@ class PublicCalendarEventNormalizer extends AbstractCalendarEventNormalizer
             $item['removable'] = false;
         }
     }
-
-    /**
-     * {@inheritdoc}
-     */
-    protected function onApplyItemData(array &$item)
-    {
-        parent::onApplyItemData($item);
-        $this->applyItemRecurrence($item);
-    }
 }

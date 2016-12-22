@@ -6,10 +6,10 @@ use Doctrine\ORM\Proxy\Proxy;
 use Doctrine\ORM\AbstractQuery;
 
 use Oro\Bundle\CalendarBundle\Entity\CalendarEvent;
-use Oro\Bundle\ReminderBundle\Entity\Manager\ReminderManager;
 use Oro\Bundle\CalendarBundle\Entity\Repository\CalendarEventRepository;
 use Oro\Bundle\CalendarBundle\Manager\AttendeeManager;
 use Oro\Bundle\CalendarBundle\Manager\CalendarEventManager;
+use Oro\Bundle\ReminderBundle\Entity\Manager\ReminderManager;
 use Oro\Bundle\SecurityBundle\SecurityFacade;
 
 abstract class AbstractCalendarEventNormalizer
@@ -306,6 +306,7 @@ abstract class AbstractCalendarEventNormalizer
     protected function onApplyItemData(array &$item)
     {
         $this->applyItemAttendees($item);
+        $this->applyItemRecurrence($item);
     }
 
     /**

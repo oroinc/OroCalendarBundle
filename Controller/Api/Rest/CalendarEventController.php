@@ -3,6 +3,7 @@
 namespace Oro\Bundle\CalendarBundle\Controller\Api\Rest;
 
 use Symfony\Component\Form\Form;
+use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 
@@ -26,7 +27,6 @@ use Oro\Bundle\SoapBundle\Form\Handler\ApiFormHandler;
 use Oro\Bundle\SoapBundle\Controller\Api\Rest\RestController;
 use Oro\Bundle\SoapBundle\Entity\Manager\ApiEntityManager;
 use Oro\Bundle\SoapBundle\Request\Parameters\Filter\HttpDateTimeParameterFilter;
-use Oro\Bundle\SoapBundle\Request\Parameters\Filter\IdentifierToReferenceFilter;
 use Oro\Bundle\SecurityBundle\Exception\ForbiddenException;
 use Oro\Bundle\EntityConfigBundle\Config\ConfigInterface;
 use Oro\Bundle\EntityExtendBundle\EntityConfig\ExtendScope;
@@ -105,39 +105,36 @@ class CalendarEventController extends RestController implements ClassResourceInt
      * )
      * @AclAncestor("oro_calendar_event_view")
      *
+     * @param Request $request
+     *
      * @return Response
      */
-    public function cgetAction()
+    public function cgetAction(Request $request)
     {
-        $calendarId   = (int)$this->getRequest()->get('calendar');
-        $subordinate  = (true == $this->getRequest()->get('subordinate'));
+        $calendarId   = (int)$request->get('calendar');
+        $subordinate  = (true == $request->get('subordinate'));
         $extendFields = $this->getExtendFieldNames('Oro\Bundle\CalendarBundle\Entity\CalendarEvent');
         $qb           = null;
-        if ($this->getRequest()->get('start') && $this->getRequest()->get('end')) {
+        if ($request->get('start') && $request->get('end')) {
             $result = $this->get('oro_calendar.calendar_manager')->getCalendarEvents(
                 $this->get('oro_security.security_facade')->getOrganization()->getId(),
                 $this->getUser()->getId(),
                 $calendarId,
-                new \DateTime($this->getRequest()->get('start')),
-                new \DateTime($this->getRequest()->get('end')),
+                new \DateTime($request->get('start')),
+                new \DateTime($request->get('end')),
                 $subordinate,
                 $extendFields
             );
-        } elseif ($this->getRequest()->get('page') && $this->getRequest()->get('limit')) {
+        } elseif ($request->get('page') && $request->get('limit')) {
             $dateParamFilter  = new HttpDateTimeParameterFilter();
             $filterParameters = ['createdAt' => $dateParamFilter, 'updatedAt' => $dateParamFilter];
             $parameters = ['createdAt', 'updatedAt'];
-            if ($this->getRequest()->get('recurringEventId')) {
-                $filterParameters['recurringEventId'] = new IdentifierToReferenceFilter(
-                    $this->getDoctrine(),
-                    'OroCalendarBundle:CalendarEvent'
-                );
-                $parameters[] = 'recurringEventId';
-            }
+
+            $recurringEventId = $request->get('recurringEventId');
+
             $filterCriteria   = $this->getFilterCriteria(
                 $parameters,
-                $filterParameters,
-                ['recurringEventId' => 'recurringEvent']
+                $filterParameters
             );
 
             /** @var CalendarEventRepository $repo */
@@ -145,10 +142,11 @@ class CalendarEventController extends RestController implements ClassResourceInt
             $qb    = $repo->getUserEventListByRecurringEventQueryBuilder(
                 $filterCriteria,
                 $extendFields,
-                (int)$this->getRequest()->get('recurringEventId')
+                $recurringEventId
             );
-            $page  = (int)$this->getRequest()->get('page', 1);
-            $limit = (int)$this->getRequest()->get('limit', self::ITEMS_PER_PAGE);
+
+            $page  = (int)$request->get('page', 1);
+            $limit = (int)$request->get('limit', self::ITEMS_PER_PAGE);
             $qb
                 ->andWhere('c.id = :calendarId')
                 ->setParameter('calendarId', $calendarId);

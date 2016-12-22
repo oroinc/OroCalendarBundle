@@ -4,10 +4,11 @@ namespace Oro\Bundle\CalendarBundle\Provider;
 
 use Oro\Bundle\CalendarBundle\Entity;
 use Oro\Bundle\CalendarBundle\Entity\Repository\CalendarEventRepository;
+use Oro\Bundle\CalendarBundle\Model;
 use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
 use Oro\Bundle\EntityBundle\Provider\EntityNameResolver;
 
-class UserCalendarProvider extends AbstractCalendarProvider
+class UserCalendarProvider extends AbstractRecurrenceAwareCalendarProvider
 {
     /** @var EntityNameResolver */
     protected $entityNameResolver;
@@ -19,15 +20,17 @@ class UserCalendarProvider extends AbstractCalendarProvider
      * UserCalendarProvider constructor.
      *
      * @param DoctrineHelper $doctrineHelper
+     * @param Model\Recurrence $recurrence
      * @param EntityNameResolver $entityNameResolver
      * @param AbstractCalendarEventNormalizer $calendarEventNormalizer
      */
     public function __construct(
         DoctrineHelper $doctrineHelper,
+        Model\Recurrence $recurrence,
         EntityNameResolver $entityNameResolver,
         AbstractCalendarEventNormalizer $calendarEventNormalizer
     ) {
-        parent::__construct($doctrineHelper);
+        parent::__construct($doctrineHelper, $recurrence);
         $this->entityNameResolver      = $entityNameResolver;
         $this->calendarEventNormalizer = $calendarEventNormalizer;
     }
@@ -101,6 +104,7 @@ class UserCalendarProvider extends AbstractCalendarProvider
                 ->andWhere('1 = 0');
         }
 
+        // @TODO: Fix ACL for calendars providers in BAP-12973.
         $items = $this->calendarEventNormalizer->getCalendarEvents($calendarId, $qb->getQuery());
         $items = $this->getExpandedRecurrences($items, $start, $end);
 

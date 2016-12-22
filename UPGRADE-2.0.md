@@ -24,13 +24,17 @@ UPGRADE FROM 1.10 to 2.0
 - Removed deprecated constants of `Oro\Bundle\CalendarBundle\Entity\CalendarEvent`: `NOT_RESPONDED`, `TENTATIVELY_ACCEPTED`, `ACCEPTED`, `DECLINED`.
 - Removed deprecation of method `Oro\Bundle\CalendarBundle\Entity\CalendarEvent::getInvitationStatus`.
 - Removed method `Oro\Bundle\CalendarBundle\Entity\CalendarEvent::getEventByAttendee`. Added method `Oro\Bundle\CalendarBundle\Entity\CalendarEvent::getChildEventByAttendee` instead.
+- Removed method `Oro\Bundle\CalendarBundle\Entity\Repository\CalendarEventRepository::getInvitedUsersByParentsQueryBuilder`.
+- Changed scope of method `Oro\Bundle\CalendarBundle\Entity\Repository\CalendarEventRepository::getEventListQueryBuilder` to `protected`.
+- Removed method `Oro\Bundle\CalendarBundle\Entity\Repository\CalendarEventRepository::addRecurrencesConditions`, logic of this method moved to method `addTimeIntervalFilter`.
 - Refactored form subscribers and event listeners in `Oro\Bundle\CalendarBundle\Form\EventListener`. Changed signature of constructors of these classes.
 - Removed class `Oro\Bundle\CalendarBundle\Form\\EventListener\ChildEventsSubscriber`. The logic was refactored moved to classes in `Oro\Bundle\CalendarBundle\Manager\CalendarEvent` namespace.
 - Refactored form handlers in `Oro\Bundle\CalendarBundle\Form\Handler` namespace. Changed signature of constructors of these classes.
 - Refactored form types in `Oro\Bundle\CalendarBundle\Form\Type`. Changed signature of constructors of these classes. 
 - Removed method `Oro\Bundle\CalendarBundle\Model\Recurrence\StrategyInterface::getValidationErrorMessage`. Added methods to the interface: `getMaxInterval`, `getIntervalMultipleOf`, `getRequiredProperties`. Removed method `Oro\Bundle\CalendarBundle\Model\Recurrence::getValidationErrorMessage`. 
-- Validation logic is moved from strategies to `Oro\Bundle\CalendarBundle\Validator\RecurrenceValidator`. Changed validation rules of entity `Oro\Bundle\CalendarBundle\Entity\Recurrence`.
-- Refactored normalizers in `Oro\Bundle\CalendarBundle\Provider`. Changed signature of the constructors. Protected methods were removedL `applyAdditionalData`, `applyPermissions`, `addAttendeesToCalendarEvents`.
+- Validation logic is moved from strategies to `Oro\Bundle\CalendarBundle\Validator\RecurrenceValidator`. Changed validation rules of entities `Oro\Bundle\CalendarBundle\Entity\Recurrence` and `Oro\Bundle\CalendarBundle\Entity\CalendarEvent`.
+- Refactored normalizers in `Oro\Bundle\CalendarBundle\Provider`. Changed signature of the constructors. Protected methods were removed `applyAdditionalData`, `applyPermissions`, `addAttendeesToCalendarEvents`.
+- Refactored providers in `Oro\Bundle\CalendarBundle\Provider`. Parent class is changed to `Oro\Bundle\CalendarBundle\Provider\AbstractRecurrenceAwareCalendarProvider`. Logic related to recurring events moved to parent class.
 - Changed configuration of the grids `calendar-event-grid`. `base-system-calendar-event-grid`, `calendar-event-for-context-grid`.
 - Removed class `Oro\Bundle\CalendarBundle\Form\Type\ExceptionFormType`.
 - Updated view templates `OroCalendarBundle:CalendarEvent:view.html.twig` and `OroCalendarBundle:CalendarEvent:widget\info.html.twig`. Added property `canChangeInvitationStatus` into the templates which is passed from the respective controller action. 
@@ -46,3 +50,4 @@ UPGRADE FROM 1.10 to 2.0
 - Changed signature of method `Oro\Bundle\CalendarBundle\Model\Email\EmailNotification::setEmails`, added `array` type hint.
 - Changed scope of method `Oro\Bundle\CalendarBundle\Model\Email\EmailSendProcessor::process` to protected.
 - Changed signature of method `Oro\Bundle\CalendarBundle\Model\Email\EmailSendProcessor::sendUpdateParentEventNotification`.
+- Changed signature of method `Oro\Bundle\CalendarBundle\Controller\Api\Rest\CalendarEventController::cgetAction`, added argument for request.
