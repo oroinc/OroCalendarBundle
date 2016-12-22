@@ -82,7 +82,7 @@ class EmailSendProcessor
         $this->addAttendeesEmailNotifications(
             $calendarEvent,
             $calendarEvent->getAttendees()->toArray(),
-            self::CREATE_INVITE_TEMPLATE_NAME
+            $calendarEvent->isCancelled() ? self::CANCEL_INVITE_TEMPLATE_NAME : self::CREATE_INVITE_TEMPLATE_NAME
         );
         $this->process();
     }
