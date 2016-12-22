@@ -1294,14 +1294,6 @@ class CalendarEvent extends ExtendCalendarEvent implements RemindableInterface, 
     }
 
     /**
-     *
-     */
-    protected function cloneChildEvent()
-    {
-
-    }
-
-    /**
      * Compares attendees of the event with other event.
      *
      * @param CalendarEvent $other
