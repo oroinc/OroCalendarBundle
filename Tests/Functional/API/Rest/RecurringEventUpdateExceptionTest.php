@@ -162,7 +162,7 @@ class RecurringEventUpdateExceptionTest extends AbstractTestCase
         $response = $this->getRestResponseContent(['statusCode' => 200, 'contentType' => 'application/json']);
         $this->assertResponseEquals(
             [
-                'notifiable' => false,
+                'notifiable' => true,
                 'invitationStatus' => Attendee::STATUS_NONE,
                 'editableInvitationStatus' => false,
             ],
@@ -244,6 +244,59 @@ class RecurringEventUpdateExceptionTest extends AbstractTestCase
             }
         }
         $this->assertResponseEquals($expectedResponse, $response, false);
+    }
+
+    /**
+     * @return array
+     */
+    public function updateExceptionsDataProvider()
+    {
+        return [
+            'All simple attributes should be changed, but title' => [
+                'changedEventData' => [
+                    'title' => 'New Test Recurring Event Title',
+                    'description' => 'New Description',
+                    'allDay'      => true,
+                    'backgroundColor' => '#0000FF'
+                ],
+                'exceptionChangedData' => [
+                    'title' => 'Test Recurring Event Changed'
+                ]
+            ],
+            'All simple attributes should be changed, but description' => [
+                'changedEventData' => [
+                    'title' => 'New Test Recurring Event Title',
+                    'description' => 'New Description',
+                    'allDay'      => true,
+                    'backgroundColor' => '#0000FF'
+                ],
+                'exceptionChangedData' => [
+                    'description' => 'Test Recurring Event Description Changed',
+                ]
+            ],
+            'All simple attributes should be changed, but allDay' => [
+                'changedEventData' => [
+                    'title' => 'New Test Recurring Event Title',
+                    'description' => 'New Description',
+                    'allDay'      => true,
+                    'backgroundColor' => '#0000FF'
+                ],
+                'exceptionChangedData' => [
+                    'allDay'      => true,
+                ]
+            ],
+            'All simple attributes should be changed, but backgroundColor' => [
+                'changedEventData' => [
+                    'title' => 'New Test Recurring Event Title',
+                    'description' => 'New Description',
+                    'allDay'      => true,
+                    'backgroundColor' => '#0000FF'
+                ],
+                'exceptionChangedData' => [
+                    'backgroundColor' => '#FF00FF',
+                ]
+            ],
+        ];
     }
 
     /**
@@ -364,7 +417,7 @@ class RecurringEventUpdateExceptionTest extends AbstractTestCase
         $response = $this->getRestResponseContent(['statusCode' => 200, 'contentType' => 'application/json']);
         $this->assertResponseEquals(
             [
-                'notifiable' => false,
+                'notifiable' => true,
                 'invitationStatus' => Attendee::STATUS_ACCEPTED,
                 'editableInvitationStatus' => true,
             ],
@@ -431,59 +484,6 @@ class RecurringEventUpdateExceptionTest extends AbstractTestCase
         ];
 
         $this->assertResponseEquals($expectedResponse, $response, false);
-    }
-
-    /**
-     * @return array
-     */
-    public function updateExceptionsDataProvider()
-    {
-        return [
-            'All simple attributes should be changed, but title' => [
-                'changedEventData' => [
-                    'title' => 'New Test Recurring Event Title',
-                    'description' => 'New Description',
-                    'allDay'      => true,
-                    'backgroundColor' => '#0000FF'
-                ],
-                'exceptionChangedData' => [
-                    'title' => 'Test Recurring Event Changed'
-                ]
-            ],
-            'All simple attributes should be changed, but description' => [
-                'changedEventData' => [
-                    'title' => 'New Test Recurring Event Title',
-                    'description' => 'New Description',
-                    'allDay'      => true,
-                    'backgroundColor' => '#0000FF'
-                ],
-                'exceptionChangedData' => [
-                    'description' => 'Test Recurring Event Description Changed',
-                ]
-            ],
-            'All simple attributes should be changed, but allDay' => [
-                'changedEventData' => [
-                    'title' => 'New Test Recurring Event Title',
-                    'description' => 'New Description',
-                    'allDay'      => true,
-                    'backgroundColor' => '#0000FF'
-                ],
-                'exceptionChangedData' => [
-                    'allDay'      => true,
-                ]
-            ],
-            'All simple attributes should be changed, but backgroundColor' => [
-                'changedEventData' => [
-                    'title' => 'New Test Recurring Event Title',
-                    'description' => 'New Description',
-                    'allDay'      => true,
-                    'backgroundColor' => '#0000FF'
-                ],
-                'exceptionChangedData' => [
-                    'backgroundColor' => '#FF00FF',
-                ]
-            ],
-        ];
     }
 
     /**
@@ -598,7 +598,7 @@ class RecurringEventUpdateExceptionTest extends AbstractTestCase
         $response = $this->getRestResponseContent(['statusCode' => 200, 'contentType' => 'application/json']);
         $this->assertResponseEquals(
             [
-                'notifiable' => false,
+                'notifiable' => true,
                 'invitationStatus' => Attendee::STATUS_ACCEPTED,
                 'editableInvitationStatus' => true,
             ],
@@ -1078,7 +1078,7 @@ class RecurringEventUpdateExceptionTest extends AbstractTestCase
         $response = $this->getRestResponseContent(['statusCode' => 200, 'contentType' => 'application/json']);
         $this->assertResponseEquals(
             [
-                'notifiable' => false,
+                'notifiable' => true,
                 'invitationStatus' => Attendee::STATUS_NONE,
                 'editableInvitationStatus' => false,
             ],
@@ -1381,7 +1381,7 @@ class RecurringEventUpdateExceptionTest extends AbstractTestCase
         $response = $this->getRestResponseContent(['statusCode' => 200, 'contentType' => 'application/json']);
         $this->assertResponseEquals(
             [
-                'notifiable' => false,
+                'notifiable' => true,
                 'invitationStatus' => Attendee::STATUS_ACCEPTED,
                 'editableInvitationStatus' => true,
             ],
@@ -1720,7 +1720,7 @@ class RecurringEventUpdateExceptionTest extends AbstractTestCase
         $response = $this->getRestResponseContent(['statusCode' => 200, 'contentType' => 'application/json']);
         $this->assertResponseEquals(
             [
-                'notifiable'               => false,
+                'notifiable'               => true,
                 'invitationStatus'         => Attendee::STATUS_ACCEPTED,
                 'editableInvitationStatus' => true,
             ],
@@ -2010,7 +2010,7 @@ class RecurringEventUpdateExceptionTest extends AbstractTestCase
         $response = $this->getRestResponseContent(['statusCode' => 200, 'contentType' => 'application/json']);
         $this->assertResponseEquals(
             [
-                'notifiable'               => false,
+                'notifiable'               => true,
                 'invitationStatus'         => Attendee::STATUS_ACCEPTED,
                 'editableInvitationStatus' => true,
             ],
@@ -2657,7 +2657,7 @@ class RecurringEventUpdateExceptionTest extends AbstractTestCase
         $response = $this->getRestResponseContent(['statusCode' => 200, 'contentType' => 'application/json']);
         $this->assertResponseEquals(
             [
-                'notifiable' => false,
+                'notifiable' => true,
                 'invitationStatus' => Attendee::STATUS_NONE,
                 'editableInvitationStatus' => false,
             ],
@@ -2938,7 +2938,7 @@ class RecurringEventUpdateExceptionTest extends AbstractTestCase
         $response = $this->getRestResponseContent(['statusCode' => 200, 'contentType' => 'application/json']);
         $this->assertResponseEquals(
             [
-                'notifiable' => false,
+                'notifiable' => true,
                 'invitationStatus' => Attendee::STATUS_NONE,
                 'editableInvitationStatus' => false,
             ],
@@ -3195,7 +3195,7 @@ class RecurringEventUpdateExceptionTest extends AbstractTestCase
         $response = $this->getRestResponseContent(['statusCode' => 200, 'contentType' => 'application/json']);
         $this->assertResponseEquals(
             [
-                'notifiable'               => false,
+                'notifiable'               => true,
                 'invitationStatus'         => Attendee::STATUS_NONE,
                 'editableInvitationStatus' => false,
             ],

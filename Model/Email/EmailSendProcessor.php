@@ -23,9 +23,9 @@ use Oro\Bundle\UserBundle\Entity\User;
  *      - calendar_invitation_uninvite              - Send to existed attendees removed from the the event.
  *      - calendar_invitation_delete_parent_event   - Send to existed attendees when the event is removed.
  *  Available variables in the template:
- *      - entity                                    - Child event in the calendar of recipient user.
- *                                                    If recipient is an attendee without related user then
- *                                                    it represents the event in calendar of owner user.
+ *      - entity                                    - Case 1: Child event in the calendar of recipient user.
+ *                                                  - Case 2: If recipient is an attendee without related user then
+ *                                                            it represents the event in calendar of owner user.
  *
  * 2) Emails sent to owner of the calendar event.
  *  Templates:
@@ -34,7 +34,7 @@ use Oro\Bundle\UserBundle\Entity\User;
  *      - calendar_invitation_tentative             - Send when attendee tentatively accepts the event.
  *      - calendar_invitation_delete_child_event    - Send when attendee removes the event from own calendar.
  *  Available variables in the template:
- *      - entity                                    - Target child event in the calendar of recipient user.
+ *      - entity                                    - Calendar event of main owner's, e.g. parent event for attendee.
  */
 class EmailSendProcessor
 {
@@ -160,15 +160,13 @@ class EmailSendProcessor
      * @param CalendarEvent $calendarEvent
      * @param string        $email          Recipient's email
      * @param string        $templateName
-     * @param array         $params
      *
      * @return EmailNotification
      */
     protected function createEmailNotification(
         CalendarEvent $calendarEvent,
         $email,
-        $templateName,
-        array $params = []
+        $templateName
     ) {
         $result = new EmailNotification($this->entityManager);
         $result->setEmails([$email]);

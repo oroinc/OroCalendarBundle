@@ -318,6 +318,15 @@ class CalendarEvent extends ExtendCalendarEvent implements RemindableInterface, 
     protected $cancelled = false;
 
     /**
+     * System flag to indicate clone method of child event is in progress.
+     *
+     * @internal
+     *
+     * @var bool
+     */
+    protected $childEventCloneInProgress = false;
+
+    /**
      * CalendarEvent constructor.
      */
     public function __construct()
@@ -1213,12 +1222,14 @@ class CalendarEvent extends ExtendCalendarEvent implements RemindableInterface, 
     }
 
     /**
-     * The implementation should provides possibility to compare main relations of
-     * event with original state before update.
+     * The implementation should provides possibility to:
+     * - Compare main relations of event with original state before update.
+     * - Get access to previous state of the event in emain notifications.
      *
      * @see \Oro\Bundle\CalendarBundle\Form\Handler\CalendarEventHandler::process
      * @see \Oro\Bundle\CalendarBundle\Form\Handler\CalendarEventApiHandler::process
      * @see \Oro\Bundle\CalendarBundle\Form\Handler\SystemCalendarEventHandler::process
+     * @see \Oro\Bundle\CalendarBundle\Model\Email\EmailSendProcessor::sendUpdateParentEventNotification
      */
     public function __clone()
     {
@@ -1226,11 +1237,68 @@ class CalendarEvent extends ExtendCalendarEvent implements RemindableInterface, 
             $this->id = null;
         }
         $this->reminders = new ArrayCollection($this->reminders->toArray());
-        $this->parent = $this->parent ? clone $this->parent : null;
-        $this->childEvents = new ArrayCollection($this->childEvents->toArray());
+
+        // To avoid recursion do not clone parent for child event since it is already a clone
+        if ($this->parent && !$this->childEventCloneInProgress) {
+            $this->parent = clone $this->parent;
+        }
+
+        $this->childEvents = $this->cloneChildEvents($this->childEvents, $this);
         $this->attendees = new ArrayCollection($this->attendees->toArray());
         $this->recurringEventExceptions = new ArrayCollection($this->recurringEventExceptions->toArray());
-        $this->recurrence = $this->recurrence ? clone $this->recurrence : null;
+
+        if ($this->recurrence) {
+            $this->recurrence = clone $this->recurrence;
+        }
+
+        $this->childEventCloneInProgress = false;
+    }
+
+    /**
+     * Clone collection with all elements.
+     *
+     * @param Collection $collection
+     * @return Collection
+     */
+    protected function cloneCollection(Collection $collection)
+    {
+        $result = new ArrayCollection();
+
+        foreach ($collection as $key => $item) {
+            $result->set($key, clone $item);
+        }
+
+        return $result;
+    }
+
+    /**
+     * Clone collection of child events with all elements.
+     *
+     * @param Collection|CalendarEvent[] $collection
+     * @param CalendarEvent $parent
+     * @return Collection
+     */
+    protected function cloneChildEvents(Collection $collection, CalendarEvent $parent)
+    {
+        $result = new ArrayCollection();
+
+        foreach ($collection as $key => $item) {
+            $item->childEventCloneInProgress = true;
+            $clonedItem = clone $item;
+            $result->set($key, $clonedItem);
+            $clonedItem->parent = $parent;
+            $item->childEventCloneInProgress = false;
+        }
+
+        return $result;
+    }
+
+    /**
+     *
+     */
+    protected function cloneChildEvent()
+    {
+
     }
 
     /**

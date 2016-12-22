@@ -211,8 +211,7 @@ class UserCalendarEventNormalizer extends AbstractCalendarEventNormalizer
 
         $item['notifiable'] =
             empty($item['parentEventId'])
-            && !empty($item['attendees'])
-            && empty($item['recurrence']);
+            && !empty($item['attendees']);
 
         $item['editableInvitationStatus'] = $this->canChangeInvitationStatus($item);
     }
