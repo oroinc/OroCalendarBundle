@@ -48,8 +48,8 @@ parameters:
 
     oro_calendar.model.recurrence.class:                         Oro\Bundle\CalendarBundle\Model\Recurrence
 
-    oro_calendar.validator.recurrence.class:                     Oro\Bundle\CalendarBundle\Validator\RecurrenceValidator
-    oro_calendar.validator.calendar_event.class:                 Oro\Bundle\CalendarBundle\Validator\CalendarEventValidator
+    oro_calendar.validator.recurrence.class:                          Oro\Bundle\CalendarBundle\Validator\RecurrenceValidator
+    oro_calendar.validator.recurring_calendar_event_exception.class:  Oro\Bundle\CalendarBundle\Validator\RecurringCalendarEventExceptionValidator
 
 services:
     oro_calendar.listener.entity_listener:
@@ -220,9 +220,9 @@ services:
         class: %oro_calendar.calendar_provider.user.class%
         arguments:
             - '@oro_entity.doctrine_helper'
+            - '@oro_calendar.model.recurrence'
             - '@oro_entity.entity_name_resolver'
             - '@oro_calendar.calendar_event_normalizer.user'
-            - '@oro_calendar.model.recurrence'
         public: false
         tags:
             - { name: oro_calendar.calendar_provider, alias: user }
@@ -231,6 +231,7 @@ services:
         class: %oro_calendar.calendar_provider.system.class%
         arguments:
             - '@oro_entity.doctrine_helper'
+            - '@oro_calendar.model.recurrence'
             - '@oro_calendar.calendar_event_normalizer.system'
             - '@oro_calendar.system_calendar_config'
             - '@oro_security.security_facade'
@@ -242,6 +243,7 @@ services:
         class: %oro_calendar.calendar_provider.public.class%
         arguments:
             - '@oro_entity.doctrine_helper'
+            - '@oro_calendar.model.recurrence'
             - '@oro_calendar.calendar_event_normalizer.public'
             - '@oro_calendar.system_calendar_config'
             - '@oro_security.security_facade'
@@ -275,7 +277,7 @@ services:
         arguments:
             - '@doctrine.orm.entity_manager'
             - '@oro_attachment.manager'
-            - %oro_user.entity.class%
+            - '%oro_user.entity.class%'
             - '@oro_entity_config.link.security_context'
             - '@oro_security.ownership_tree_provider'
             - '@oro_security.acl_helper'
@@ -434,10 +436,12 @@ services:
         tags:
             - { name: validator.constraint_validator, alias: oro_calendar.recurrence_validator }
 
-    oro_calendar.validator.calendar_event:
-        class: '%oro_calendar.validator.calendar_event.class%'
+    oro_calendar.validator.recurring_calendar_event_exception:
+        class: '%oro_calendar.validator.recurring_calendar_event_exception.class%'
+        arguments:
+            - '@oro_calendar.calendar_event_manager'
         tags:
-            - { name: validator.constraint_validator, alias: oro_calendar.calendar_event_validator }
+            - { name: validator.constraint_validator, alias: oro_calendar.recurring_calendar_event_exception_validator }
 
     oro_calendar.datagrid.mass_action.handler.delete:
         class: Oro\Bundle\CalendarBundle\Datagrid\MassAction\DeleteMassActionHandler

@@ -5,13 +5,14 @@ namespace Oro\Bundle\CalendarBundle\Provider;
 use Oro\Bundle\CalendarBundle\Entity\Repository\CalendarEventRepository;
 use Oro\Bundle\CalendarBundle\Entity\Repository\SystemCalendarRepository;
 use Oro\Bundle\CalendarBundle\Entity\SystemCalendar;
+use Oro\Bundle\CalendarBundle\Model;
 use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
 use Oro\Bundle\SecurityBundle\SecurityFacade;
 
 /**
  * Represents system wide calendars
  */
-class PublicCalendarProvider extends AbstractCalendarProvider
+class PublicCalendarProvider extends AbstractRecurrenceAwareCalendarProvider
 {
     /** @var AbstractCalendarEventNormalizer */
     protected $calendarEventNormalizer;
@@ -24,17 +25,19 @@ class PublicCalendarProvider extends AbstractCalendarProvider
 
     /**
      * @param DoctrineHelper                  $doctrineHelper
+     * @param Model\Recurrence                $recurrence
      * @param AbstractCalendarEventNormalizer $calendarEventNormalizer
      * @param SystemCalendarConfig            $calendarConfig
      * @param SecurityFacade                  $securityFacade
      */
     public function __construct(
         DoctrineHelper $doctrineHelper,
+        Model\Recurrence $recurrence,
         AbstractCalendarEventNormalizer $calendarEventNormalizer,
         SystemCalendarConfig $calendarConfig,
         SecurityFacade $securityFacade
     ) {
-        parent::__construct($doctrineHelper);
+        parent::__construct($doctrineHelper, $recurrence);
         $this->calendarEventNormalizer = $calendarEventNormalizer;
         $this->calendarConfig          = $calendarConfig;
         $this->securityFacade          = $securityFacade;
@@ -112,6 +115,11 @@ class PublicCalendarProvider extends AbstractCalendarProvider
                 ->setParameter('invisibleIds', $invisibleIds);
         }
 
-        return $this->calendarEventNormalizer->getCalendarEvents($calendarId, $qb->getQuery());
+        // @TODO: Fix ACL for calendars providers in BAP-12973.
+        $items = $this->calendarEventNormalizer->getCalendarEvents($calendarId, $qb->getQuery());
+
+        $items = $this->getExpandedRecurrences($items, $start, $end);
+
+        return $items;
     }
 }

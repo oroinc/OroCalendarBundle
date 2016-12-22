@@ -787,19 +787,47 @@ class CalendarEvent extends ExtendCalendarEvent implements RemindableInterface, 
      */
     public function getAttendeeByEmail($email)
     {
-        $result = null;
-
         if ($email) {
             $attendees = $this->getAttendees();
             foreach ($attendees as $attendee) {
                 if ($attendee->isEmailEqual($email)) {
-                    $result = $attendee;
-                    break;
+                    return $attendee;
                 }
             }
         }
 
-        return $result;
+        return null;
+    }
+
+    /**
+     * Get attendee of Calendar Event by related User of Attendee.
+     *
+     * @param User $user
+     *
+     * @return Attendee|null
+     */
+    public function getAttendeeByUser(User $user)
+    {
+        $attendees = $this->getAttendees();
+        foreach ($attendees as $attendee) {
+            if ($attendee->isUserEqual($user)) {
+                return $attendee;
+            }
+        }
+
+        return null;
+    }
+
+    /**
+     * Get attendee of Calendar Event by Calendar owned by related User of Attendee.
+     *
+     * @param Calendar $calendar
+     *
+     * @return Attendee|null
+     */
+    public function getAttendeeByCalendar(Calendar $calendar)
+    {
+        return $calendar->getOwner() ? $this->getAttendeeByUser($calendar->getOwner()) : null;
     }
 
     /**
@@ -810,17 +838,14 @@ class CalendarEvent extends ExtendCalendarEvent implements RemindableInterface, 
      */
     public function getEqualAttendee(Attendee $attendee)
     {
-        $result = null;
-
         $attendees = $this->getAttendees();
         foreach ($attendees as $actualAttendee) {
             if ($attendee->isEqual($actualAttendee)) {
-                $result = $actualAttendee;
-                break;
+                return $actualAttendee;
             }
         }
 
-        return $result;
+        return null;
     }
 
     /**

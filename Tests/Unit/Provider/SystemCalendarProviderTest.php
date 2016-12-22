@@ -22,6 +22,9 @@ class SystemCalendarProviderTest extends \PHPUnit_Framework_TestCase
     /** @var \PHPUnit_Framework_MockObject_MockObject */
     protected $securityFacade;
 
+    /** @var \PHPUnit_Framework_MockObject_MockObject */
+    protected $recurrenceModel;
+
     /** @var SystemCalendarProvider */
     protected $provider;
 
@@ -41,9 +44,14 @@ class SystemCalendarProviderTest extends \PHPUnit_Framework_TestCase
         $this->securityFacade          = $this->getMockBuilder('Oro\Bundle\SecurityBundle\SecurityFacade')
             ->disableOriginalConstructor()
             ->getMock();
+        $this->recurrenceModel =
+            $this->getMockBuilder('Oro\Bundle\CalendarBundle\Model\Recurrence')
+                ->disableOriginalConstructor()
+                ->getMock();
 
         $this->provider = new SystemCalendarProvider(
             $this->doctrineHelper,
+            $this->recurrenceModel,
             $this->calendarEventNormalizer,
             $this->calendarConfig,
             $this->securityFacade

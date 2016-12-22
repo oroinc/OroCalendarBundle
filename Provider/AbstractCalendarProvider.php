@@ -6,10 +6,14 @@ use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
 
 abstract class AbstractCalendarProvider implements CalendarProviderInterface
 {
-    /** @var DoctrineHelper */
+    /**
+     * @var DoctrineHelper
+     */
     protected $doctrineHelper;
 
-    /** @param DoctrineHelper $doctrineHelper */
+    /**
+     * @param DoctrineHelper $doctrineHelper
+     */
     public function __construct(DoctrineHelper $doctrineHelper)
     {
         $this->doctrineHelper = $doctrineHelper;

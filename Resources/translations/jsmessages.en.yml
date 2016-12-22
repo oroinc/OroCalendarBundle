@@ -58,7 +58,7 @@ oro:
                     weekday: Weekday
                     weekend-day: "Weekend Day"
                 warning:
-                    some-months-have-fewer-days: "Some months have fewer than {{ number }} days. For these months, the occurence will fall on the last day of te month."
+                    some-months-have-fewer-days: "Some months have fewer than {{ number }} days. For these months, the occurence will fall on the last day of the month."
                     removing-all-series: "Note that all events in the series will be removed if you uncheck Repeat option."
                     removing-all-exceptions: "Note that all exceptions in the series will be removed if you change recurrence pattern."
                 validation:

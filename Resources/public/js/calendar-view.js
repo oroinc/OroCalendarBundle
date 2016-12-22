@@ -792,7 +792,9 @@ define(function(require) {
 
             options.eventAfterRender = _.bind(function(fcEvent, $el) {
                 var event = this.collection.get(fcEvent.id);
-                eventDecorator.decorate(event, $el);
+                if (event) {
+                    eventDecorator.decorate(event, $el);
+                }
             }, this);
 
             return options;

@@ -120,7 +120,7 @@ oro:
             related_attendee.label: Related Attendee
 
             recurrence.label:      Recurrence
-            recurrence.exception.label: Part of Recurrence
+            recurrence.exception.label: Part of Series
             recurrence.alias.recurrent: Recurrent
             recurrence.na: N/A
             recurring_event_exceptions.label: Recurring Event Exceptions
