@@ -244,6 +244,8 @@ define(function(require) {
 
         saveModel: function() {
             var errors;
+            //calendarUid value should be processed by form and value should be sent to backend
+            this.eventDialog.form.find(this.selectors.calendarUid).removeAttr('disabled');
             this.model.set(this.getEventFormData());
             if (this.exceptionEventData !== null) {
                 this.model.set({
@@ -593,7 +595,8 @@ define(function(require) {
                 return;
             }
 
-            if (form.find(this.selectors.attendees).val()) {
+            var $attendeesSelect = form.find(this.selectors.attendees);
+            if ($attendeesSelect.val() && $attendeesSelect.select2('data').length > 0) {
                 $calendarUid.attr('disabled', 'disabled');
                 $calendarUid.parent().attr('title', __('The calendar cannot be changed because the event has guests'));
                 // fix select2 dynamic change disabled
@@ -605,7 +608,7 @@ define(function(require) {
                 }
             } else {
                 $calendarUid.removeAttr('disabled');
-                $calendarUid.removeAttr('title');
+                $calendarUid.parent().removeAttr('title');
                 // fix select2 dynamic change disabled
                 if ($calendarUid.parent().hasClass('disabled')) {
                     $calendarUid.parent().removeClass('disabled');
