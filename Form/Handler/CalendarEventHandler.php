@@ -181,8 +181,9 @@ class CalendarEventHandler
         $this->getEntityManager()->persist($entity);
         $this->getEntityManager()->flush();
 
-
-        if ($new) {
+        if ($entity->isCancelled()) {
+            $this->emailSendProcessor->sendCancelEventNotification($entity);
+        } elseif ($new) {
             $this->emailSendProcessor->sendInviteNotification($entity);
         } else {
             $this->emailSendProcessor->sendUpdateParentEventNotification(

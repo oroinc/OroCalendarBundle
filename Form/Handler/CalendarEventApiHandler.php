@@ -138,7 +138,9 @@ class CalendarEventApiHandler
         $entityManager->flush();
 
         if (!$entity->getSystemCalendar() && $this->shouldNotifyInvitedUsers()) {
-            if ($new) {
+            if ($entity->isCancelled()) {
+                $this->emailSendProcessor->sendCancelEventNotification($entity);
+            } elseif ($new) {
                 $this->emailSendProcessor->sendInviteNotification($entity);
             } else {
                 $this->emailSendProcessor->sendUpdateParentEventNotification(

@@ -82,7 +82,7 @@ class EmailSendProcessor
         $this->addAttendeesEmailNotifications(
             $calendarEvent,
             $calendarEvent->getAttendees()->toArray(),
-            $calendarEvent->isCancelled() ? self::CANCEL_INVITE_TEMPLATE_NAME : self::CREATE_INVITE_TEMPLATE_NAME
+            self::CREATE_INVITE_TEMPLATE_NAME
         );
         $this->process();
     }
@@ -381,7 +381,9 @@ class EmailSendProcessor
      */
     public function sendDeleteEventNotification(CalendarEvent $calendarEvent)
     {
-        if ($calendarEvent->getParent()) {
+        if ($calendarEvent->isCancelled()) {
+            $this->sendCancelEventNotification($calendarEvent);
+        } elseif ($calendarEvent->getParent()) {
             $ownerUser = $this->getCalendarOwnerUser($calendarEvent->getParent());
             // Send notification to owner of the event when attendee had removed his child event.
             $this->addUserEmailNotifications($calendarEvent, $ownerUser, self::REMOVE_CHILD_TEMPLATE_NAME);
@@ -393,6 +395,21 @@ class EmailSendProcessor
                 self::CANCEL_INVITE_TEMPLATE_NAME
             );
         }
+        $this->process();
+    }
+
+    /**
+     * Send notification to attendees when occurrence of series is cancelled, or event exception is cancelled.
+     *
+     * @param CalendarEvent $event
+     */
+    public function sendCancelEventNotification(CalendarEvent $event)
+    {
+        $this->addAttendeesEmailNotifications(
+            $event,
+            $event->getAttendees()->toArray(),
+            self::CANCEL_INVITE_TEMPLATE_NAME
+        );
         $this->process();
     }
 }
