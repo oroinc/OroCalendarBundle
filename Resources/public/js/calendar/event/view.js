@@ -182,6 +182,7 @@ define(function(require) {
             this.disposePageComponents();
             this.eventDialog.setTitle(__('Delete Event'));
             this.eventDialog.setContent(view.$el);
+            this.eventDialog.widget.dialog('option', 'width', 375);
             // subscribe to 'delete event' event
             this.eventDialog.getAction('apply', 'adopted', _.bind(function(applyAction) {
                 applyAction.on('click', _.bind(function(e) {
