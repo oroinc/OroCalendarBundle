@@ -348,11 +348,11 @@ abstract class AbstractValidationErrorTestCase extends AbstractTestCase
                     'startTime' => $startTime,
                     'timeZone' => 'UTC',
                     'monthOfYear' => 11,
-                    'dayOfMonth' => 31,
+                    'dayOfMonth' => 32,
                 ],
                 'errors' => [
                     'dayOfMonth' => [
-                        'This value should be 30 or less.'
+                        'This value should be 31 or less.'
                     ]
                 ]
             ],

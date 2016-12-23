@@ -342,40 +342,6 @@ class RecurrenceValidatorTest extends \PHPUnit_Framework_TestCase
         $this->validator->validate($recurrence, $this->constraint);
     }
 
-    public function testRecurrenceHasWrongDayOfMonth()
-    {
-        $recurrence =  new Entity\Recurrence();
-        $recurrence->setInterval(1);
-        $recurrence->setRecurrenceType(Model\Recurrence::TYPE_YEARLY);
-        $recurrence->setMonthOfYear(11);
-        $recurrence->setDayOfMonth(31);
-
-        $this->model->expects($this->once())
-            ->method('getRequiredProperties')
-            ->with($recurrence)
-            ->willReturn([]);
-
-        $this->model->expects($this->once())
-            ->method('getMaxInterval')
-            ->with($recurrence)
-            ->willReturn(999);
-
-        $this->model->expects($this->once())
-            ->method('getIntervalMultipleOf')
-            ->with($recurrence)
-            ->willReturn(1);
-
-        $this->expectAddViolation(
-            $this->at(0),
-            'This value should be {{ limit }} or less.',
-            ['{{ limit }}' => 30],
-            $recurrence->getDayOfMonth(),
-            'dayOfMonth'
-        );
-
-        $this->validator->validate($recurrence, $this->constraint);
-    }
-
     /**
      * @param \PHPUnit_Framework_MockObject_Matcher_Invocation $matcher
      * @param string $message
