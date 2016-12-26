@@ -159,7 +159,7 @@ class RestCalendarEventWithAttendeesTest extends WebTestCase
                     [
                         'displayName' => 'attendee with email and with type = null',
                         'email'       => 'type-null@email.com',
-                        'type'        => null,
+                        'type'        => Attendee::TYPE_REQUIRED,
                         'userId'      => null,
                         'status'      => 'none',
                     ],
@@ -168,7 +168,7 @@ class RestCalendarEventWithAttendeesTest extends WebTestCase
                         'email'       => 'unknown-type@email.com',
                         'userId'      => null,
                         'status'      => 'none',
-                        'type'        => null,
+                        'type'        => Attendee::TYPE_REQUIRED,
                     ],
                     [
                         'displayName' => 'attendee without email',
@@ -179,7 +179,7 @@ class RestCalendarEventWithAttendeesTest extends WebTestCase
                     ],
                     [
                         'displayName' => 'attendee without email and with type = null',
-                        'type'        => null,
+                        'type'        => Attendee::TYPE_REQUIRED,
                         'email'       => null,
                         'userId'      => null,
                         'status'      => 'none',
