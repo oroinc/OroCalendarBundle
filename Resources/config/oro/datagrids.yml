@@ -95,9 +95,11 @@ datagrids:
                     type: boolean
                     data_name: is_recurrent
                 invitationStatus:
-                    type: enum
-                    enum_code: ce_attendee_status
+                    type: single_choice
                     data_name: invitationStatus
+                    options:
+                        field_options:
+                            choices: "@oro_entity_extend.enum_value_provider->getEnumChoicesByCode('ce_attendee_status')"
         properties:
             id: ~
             view_link:
