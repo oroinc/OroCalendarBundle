@@ -325,8 +325,7 @@ define(function(require) {
         },
 
         onAttendeeStatusChange: function() {
-            this.updateEvents();
-            this.updateLayout();
+            this.refreshView();
         },
 
         onConnectionAdded: function() {
