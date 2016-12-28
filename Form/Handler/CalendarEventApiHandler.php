@@ -2,68 +2,10 @@
 
 namespace Oro\Bundle\CalendarBundle\Form\Handler;
 
-use Symfony\Component\Form\FormInterface;
-use Symfony\Component\HttpFoundation\Request;
-
-use Doctrine\Common\Persistence\ManagerRegistry;
-use Doctrine\ORM\EntityManager;
-
-use Oro\Bundle\ActivityBundle\Manager\ActivityManager;
 use Oro\Bundle\CalendarBundle\Entity\CalendarEvent;
-use Oro\Bundle\CalendarBundle\Manager\CalendarEventManager;
-use Oro\Bundle\CalendarBundle\Model\Email\EmailSendProcessor;
-use Oro\Bundle\SecurityBundle\SecurityFacade;
 
-class CalendarEventApiHandler
+class CalendarEventApiHandler extends AbstractCalendarEventHandler
 {
-    /** @var FormInterface */
-    protected $form;
-
-    /** @var Request */
-    protected $request;
-
-    /** @var ManagerRegistry */
-    protected $doctrine;
-
-    /** @var EmailSendProcessor */
-    protected $emailSendProcessor;
-
-    /** @var ActivityManager */
-    protected $activityManager;
-
-    /** @var SecurityFacade */
-    protected $securityFacade;
-
-    /** @var CalendarEventManager */
-    protected $calendarEventManager;
-
-    /**
-     * @param FormInterface        $form
-     * @param Request              $request
-     * @param ManagerRegistry      $doctrine
-     * @param SecurityFacade       $securityFacade
-     * @param EmailSendProcessor   $emailSendProcessor
-     * @param ActivityManager      $activityManager
-     * @param CalendarEventManager $calendarEventManager
-     */
-    public function __construct(
-        FormInterface $form,
-        Request $request,
-        ManagerRegistry $doctrine,
-        SecurityFacade $securityFacade,
-        EmailSendProcessor $emailSendProcessor,
-        ActivityManager $activityManager,
-        CalendarEventManager $calendarEventManager
-    ) {
-        $this->form                 = $form;
-        $this->request              = $request;
-        $this->doctrine             = $doctrine;
-        $this->emailSendProcessor   = $emailSendProcessor;
-        $this->activityManager      = $activityManager;
-        $this->securityFacade       = $securityFacade;
-        $this->calendarEventManager = $calendarEventManager;
-    }
-
     /**
      * Process form
      *
@@ -107,77 +49,18 @@ class CalendarEventApiHandler
     }
 
     /**
-     * "Success" form handler
-     *
-     * @param CalendarEvent $entity
-     * @param CalendarEvent $originalEntity
+     * {@inheritdoc}
      */
-    protected function onSuccess(CalendarEvent $entity, CalendarEvent $originalEntity)
-    {
-        $this->calendarEventManager->onEventUpdate(
-            $entity,
-            $originalEntity,
-            $this->securityFacade->getOrganization(),
-            $this->allowUpdateExceptions()
-        );
-
-        $new = $entity->getId() ? false : true;
-
-        $entityManager = $this->getEntityManager();
-
-        if ($entity->isCancelled()) {
-            $event = $entity->getParent() ? : $entity;
-            $childEvents = $event->getChildEvents();
-            foreach ($childEvents as $childEvent) {
-                $childEvent->setCancelled(true);
-            }
-        }
-
-        $entityManager->persist($entity);
-
-        $entityManager->flush();
-
-        if (!$entity->getSystemCalendar() && $this->shouldNotifyInvitedUsers()) {
-            if ($entity->isCancelled()) {
-                $this->emailSendProcessor->sendCancelEventNotification($entity);
-            } elseif ($new) {
-                $this->emailSendProcessor->sendInviteNotification($entity);
-            } else {
-                $this->emailSendProcessor->sendUpdateParentEventNotification(
-                    $entity,
-                    $originalEntity,
-                    true
-                );
-            }
-        }
-    }
-
-    /**
-     * If API request contains a property "notifyInvitedUsers" with TRUE value, notification should be send.
-     *
-     * @return bool
-     */
-    protected function shouldNotifyInvitedUsers()
+    protected function allowSendNotifications()
     {
         return $this->form->has('notifyInvitedUsers') && $this->form->get('notifyInvitedUsers')->getData();
     }
 
     /**
-     * If API request contains a property "updateExceptions" exceptions of recurring event are allowed to clear
-     * and update if necessary.
-     *
-     * @return bool
+     * {@inheritdoc}
      */
     protected function allowUpdateExceptions()
     {
         return $this->form->has('updateExceptions') && $this->form->get('updateExceptions')->getData();
-    }
-
-    /**
-     * @return EntityManager
-     */
-    protected function getEntityManager()
-    {
-        return $this->doctrine->getManager();
     }
 }

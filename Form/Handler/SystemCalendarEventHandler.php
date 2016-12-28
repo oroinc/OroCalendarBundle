@@ -2,68 +2,10 @@
 
 namespace Oro\Bundle\CalendarBundle\Form\Handler;
 
-use Doctrine\Common\Persistence\ManagerRegistry;
-use Doctrine\ORM\EntityManager;
-
-use Symfony\Component\Form\FormInterface;
-use Symfony\Component\HttpFoundation\Request;
-
-use Oro\Bundle\ActivityBundle\Manager\ActivityManager;
 use Oro\Bundle\CalendarBundle\Entity\CalendarEvent;
-use Oro\Bundle\CalendarBundle\Manager\CalendarEventManager;
-use Oro\Bundle\SecurityBundle\SecurityFacade;
 
-class SystemCalendarEventHandler
+class SystemCalendarEventHandler extends AbstractCalendarEventHandler
 {
-    /** @var FormInterface */
-    protected $form;
-
-    /** @var Request */
-    protected $request;
-
-    /** @var ManagerRegistry */
-    protected $doctrine;
-
-    /** @var ActivityManager */
-    protected $activityManager;
-
-    /** @var CalendarEventManager */
-    protected $calendarEventManager;
-
-    /**
-     * @param FormInterface        $form
-     * @param Request              $request
-     * @param ManagerRegistry      $doctrine
-     * @param SecurityFacade       $securityFacade
-     * @param ActivityManager      $activityManager
-     * @param CalendarEventManager $calendarEventManager
-     */
-    public function __construct(
-        FormInterface $form,
-        Request $request,
-        ManagerRegistry $doctrine,
-        SecurityFacade $securityFacade,
-        ActivityManager $activityManager,
-        CalendarEventManager $calendarEventManager
-    ) {
-        $this->form                 = $form;
-        $this->request              = $request;
-        $this->doctrine             = $doctrine;
-        $this->securityFacade       = $securityFacade;
-        $this->activityManager      = $activityManager;
-        $this->calendarEventManager = $calendarEventManager;
-    }
-
-    /**
-     * Get form, that build into handler, via handler service
-     *
-     * @return FormInterface
-     */
-    public function getForm()
-    {
-        return $this->form;
-    }
-
     /**
      * Process form
      *
@@ -103,29 +45,18 @@ class SystemCalendarEventHandler
     }
 
     /**
-     * "Success" form handler
-     *
-     * @param CalendarEvent $entity
-     * @param CalendarEvent $originalEntity
+     * {@inheritdoc}
      */
-    protected function onSuccess(CalendarEvent $entity, CalendarEvent $originalEntity)
+    protected function allowUpdateExceptions()
     {
-        $this->calendarEventManager->onEventUpdate(
-            $entity,
-            $originalEntity,
-            $this->securityFacade->getOrganization(),
-            false
-        );
-
-        $this->getEntityManager()->persist($entity);
-        $this->getEntityManager()->flush();
+        return true;
     }
 
     /**
-     * @return EntityManager
+     * {@inheritdoc}
      */
-    protected function getEntityManager()
+    protected function allowSendNotifications()
     {
-        return $this->doctrine->getManager();
+        return false;
     }
 }

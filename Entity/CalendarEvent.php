@@ -1229,7 +1229,7 @@ class CalendarEvent extends ExtendCalendarEvent implements RemindableInterface, 
      * @see \Oro\Bundle\CalendarBundle\Form\Handler\CalendarEventHandler::process
      * @see \Oro\Bundle\CalendarBundle\Form\Handler\CalendarEventApiHandler::process
      * @see \Oro\Bundle\CalendarBundle\Form\Handler\SystemCalendarEventHandler::process
-     * @see \Oro\Bundle\CalendarBundle\Model\Email\EmailSendProcessor::sendUpdateParentEventNotification
+     * @see \Oro\Bundle\CalendarBundle\Model\Email\EmailNotificationProcessor::sendUpdateParentEventNotification
      */
     public function __clone()
     {
@@ -1252,23 +1252,6 @@ class CalendarEvent extends ExtendCalendarEvent implements RemindableInterface, 
         }
 
         $this->childEventCloneInProgress = false;
-    }
-
-    /**
-     * Clone collection with all elements.
-     *
-     * @param Collection $collection
-     * @return Collection
-     */
-    protected function cloneCollection(Collection $collection)
-    {
-        $result = new ArrayCollection();
-
-        foreach ($collection as $key => $item) {
-            $result->set($key, clone $item);
-        }
-
-        return $result;
     }
 
     /**

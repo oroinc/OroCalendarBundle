@@ -52,7 +52,7 @@ class AjaxCalendarEventController extends Controller
             ->getManagerForClass('Oro\Bundle\CalendarBundle\Entity\CalendarEvent')
             ->flush();
 
-        $this->get('oro_calendar.send_processor.email')->sendRespondNotification($entity);
+        $this->get('oro_calendar.calendar_event.notification_manager')->onChangeInvitationStatus($entity);
 
         return new JsonResponse(['successful' => true]);
     }
