@@ -222,6 +222,17 @@ class NotificationManager
                     $this->getCalendarOwnerUser($calendarEvent),
                     $existedAttendees
                 );
+
+                //if calendar event exceptions were cleared,
+                // cancel notification should be sent to extra attendees in these exceptions
+                if (count($calendarEvent->getRecurringEventExceptions()->toArray()) == 0
+                    && count($originalCalendarEvent->getRecurringEventExceptions()->toArray()) != 0
+                ) {
+                    $this->addDeleteEventExceptionWithExtraAttendeesNotification(
+                        $originalCalendarEvent,
+                        $this->getCalendarOwnerUser($calendarEvent)
+                    );
+                }
             }
 
             // Add notification to new attendees
@@ -404,6 +415,8 @@ class NotificationManager
                 $ownerUser,
                 $calendarEvent->getAttendees()->toArray()
             );
+
+            $this->addDeleteEventExceptionWithExtraAttendeesNotification($calendarEvent, $ownerUser);
         }
         $this->sendAddedNotifications();
     }
@@ -419,5 +432,36 @@ class NotificationManager
         User $ownerUser
     ) {
         $this->emailNotificationSender->addDeleteChildCalendarEventNotifications($calendarEvent, $ownerUser);
+    }
+
+    /**
+     * Adds notifications for attendees that are present in exception of recurrent event,
+     * but absent in recurring event
+     *
+     * @param CalendarEvent $calendarEvent
+     * @param User $ownerUser
+     *
+     * @return NotificationManager
+     */
+    protected function addDeleteEventExceptionWithExtraAttendeesNotification(
+        CalendarEvent $calendarEvent,
+        User $ownerUser
+    ) {
+        foreach ($calendarEvent->getRecurringEventExceptions() as $eventException) {
+            $eventExceptionAttendees = $eventException->getAttendees();
+            foreach ($eventExceptionAttendees as $eventExceptionAttendee) {
+                $attendeeEmail = $eventExceptionAttendee->getEmail();
+                $isCancelled = $eventException->isCancelled();
+                if ($attendeeEmail && !$isCancelled && !$calendarEvent->getAttendeeByEmail($attendeeEmail)) {
+                    $this->addCancelNotifications(
+                        $eventException,
+                        $ownerUser,
+                        [$eventExceptionAttendee]
+                    );
+                }
+            }
+        }
+
+        return $this;
     }
 }
