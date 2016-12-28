@@ -8,6 +8,11 @@ use Symfony\Component\HttpFoundation\RequestStack;
 use Oro\Bundle\CalendarBundle\Entity\CalendarEvent;
 use Oro\Bundle\CalendarBundle\Entity\SystemCalendar;
 use Oro\Bundle\CalendarBundle\Handler\CalendarEventDeleteHandler;
+use Oro\Bundle\CalendarBundle\Manager\CalendarEvent\NotificationManager;
+use Oro\Bundle\CalendarBundle\Provider\SystemCalendarConfig;
+use Oro\Bundle\OrganizationBundle\Ownership\OwnerDeletionManager;
+use Oro\Bundle\SecurityBundle\SecurityFacade;
+use Oro\Bundle\SoapBundle\Entity\Manager\ApiEntityManager;
 
 class CalendarEventDeleteHandlerTest extends \PHPUnit_Framework_TestCase
 {
@@ -21,7 +26,7 @@ class CalendarEventDeleteHandlerTest extends \PHPUnit_Framework_TestCase
     protected $manager;
 
     /** @var \PHPUnit_Framework_MockObject_MockObject */
-    protected $emailSendProcessor;
+    protected $notificationManager;
 
     /** @var RequestStack */
     protected $requestStack;
@@ -31,25 +36,23 @@ class CalendarEventDeleteHandlerTest extends \PHPUnit_Framework_TestCase
 
     protected function setUp()
     {
-        $this->securityFacade     = $this->getMockBuilder('Oro\Bundle\SecurityBundle\SecurityFacade')
+        $this->securityFacade     = $this->getMockBuilder(SecurityFacade::class)
             ->disableOriginalConstructor()
             ->getMock();
-        $this->calendarConfig     = $this->getMockBuilder('Oro\Bundle\CalendarBundle\Provider\SystemCalendarConfig')
+        $this->calendarConfig     = $this->getMockBuilder(SystemCalendarConfig::class)
             ->disableOriginalConstructor()
             ->getMock();
-        $this->manager            = $this->getMockBuilder('Oro\Bundle\SoapBundle\Entity\Manager\ApiEntityManager')
+        $this->manager            = $this->getMockBuilder(ApiEntityManager::class)
             ->disableOriginalConstructor()
             ->getMock();
-        $this->emailSendProcessor = $this->getMockBuilder('Oro\Bundle\CalendarBundle\Model\Email\EmailSendProcessor')
+        $this->notificationManager = $this->getMockBuilder(NotificationManager::class)
             ->disableOriginalConstructor()
             ->getMock();
-        $objectManager            = $this->getMockBuilder('Doctrine\Common\Persistence\ObjectManager')
-            ->disableOriginalConstructor()
-            ->getMock();
+        $objectManager            = $this->createMock('Doctrine\Common\Persistence\ObjectManager');
         $this->manager->expects($this->any())
             ->method('getObjectManager')
             ->will($this->returnValue($objectManager));
-        $ownerDeletionManager = $this->getMockBuilder('Oro\Bundle\OrganizationBundle\Ownership\OwnerDeletionManager')
+        $ownerDeletionManager = $this->getMockBuilder(OwnerDeletionManager::class)
             ->disableOriginalConstructor()
             ->getMock();
         $this->requestStack = new RequestStack();
@@ -58,7 +61,7 @@ class CalendarEventDeleteHandlerTest extends \PHPUnit_Framework_TestCase
         $this->handler->setCalendarConfig($this->calendarConfig);
         $this->handler->setSecurityFacade($this->securityFacade);
         $this->handler->setOwnerDeletionManager($ownerDeletionManager);
-        $this->handler->setEmailSendProcessor($this->emailSendProcessor);
+        $this->handler->setNotificationManager($this->notificationManager);
         $this->handler->setRequestStack($this->requestStack);
     }
 
@@ -166,8 +169,8 @@ class CalendarEventDeleteHandlerTest extends \PHPUnit_Framework_TestCase
         $this->requestStack->push(new Request(['notifyInvitedUsers' => true]));
 
         $event = new CalendarEvent();
-        $this->emailSendProcessor->expects($this->once())
-            ->method('sendDeleteEventNotification')
+        $this->notificationManager->expects($this->once())
+            ->method('onDelete')
             ->with($event);
 
         $this->handler->processDelete($event, $this->manager->getObjectManager());
@@ -176,8 +179,8 @@ class CalendarEventDeleteHandlerTest extends \PHPUnit_Framework_TestCase
     public function testProcessDeleteShouldSendNotificationIfRequestIsNull()
     {
         $event = new CalendarEvent();
-        $this->emailSendProcessor->expects($this->once())
-            ->method('sendDeleteEventNotification')
+        $this->notificationManager->expects($this->once())
+            ->method('onDelete')
             ->with($event);
 
         $this->handler->processDelete($event, $this->manager->getObjectManager());
@@ -187,8 +190,8 @@ class CalendarEventDeleteHandlerTest extends \PHPUnit_Framework_TestCase
     {
         $this->requestStack->push(new Request());
 
-        $this->emailSendProcessor->expects($this->never())
-            ->method('sendDeleteEventNotification');
+        $this->notificationManager->expects($this->never())
+            ->method('onDelete');
 
         $this->handler->processDelete(new CalendarEvent(), $this->manager->getObjectManager());
     }
