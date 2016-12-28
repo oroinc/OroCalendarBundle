@@ -51,9 +51,9 @@ define(function(require) {
                 attendees = _.union(attendees, parentEventModel.previous('attendees'));
             }
             if (!_.isEmpty(attendees)) {
-                result = Boolean(this.main.getConnectionCollection().find(function(connection) {
-                    return -1 !== attendees.indexOf(connection.get('userId'));
-                }, this));
+                result = this.main.getConnectionCollection().filter(function(connection) {
+                    return _.findWhere(attendees, {userId: connection.get('userId')});
+                }, this).length > 0;
             }
             return result;
         },
@@ -94,7 +94,7 @@ define(function(require) {
             eventModel.set('editable', eventModel.get('editable') && !this.hasParentEvent(eventModel), {silent: true});
             if (this.hasLoadedGuestEvents(eventModel)) {
                 if (eventModel.hasChanged('attendees')) {
-                    eventModel.once('sync', this.main.updateEvents, this.main);
+                    this.listenToOnce(eventModel, 'sync', _.bind(this.main.updateEvents, this.main));
                     return;
                 }
                 // update linked events

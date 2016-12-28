@@ -12,9 +12,11 @@ use Oro\Bundle\CalendarBundle\Entity\Attendee;
 use Oro\Bundle\CalendarBundle\Entity\CalendarEvent;
 use Oro\Bundle\CalendarBundle\Form\Handler\CalendarEventApiHandler;
 use Oro\Bundle\CalendarBundle\Manager\CalendarEventManager;
+use Oro\Bundle\CalendarBundle\Manager\CalendarEvent\NotificationManager;
 use Oro\Bundle\CalendarBundle\Tests\Unit\ReflectionUtil;
-use Oro\Bundle\UserBundle\Entity\User;
 use Oro\Bundle\OrganizationBundle\Entity\Organization;
+use Oro\Bundle\SecurityBundle\SecurityFacade;
+use Oro\Bundle\UserBundle\Entity\User;
 
 class CalendarEventApiHandlerTest extends \PHPUnit_Framework_TestCase
 {
@@ -28,7 +30,7 @@ class CalendarEventApiHandlerTest extends \PHPUnit_Framework_TestCase
     protected $securityFacade;
 
     /** @var \PHPUnit_Framework_MockObject_MockObject */
-    protected $emailSendProcessor;
+    protected $notificationManager;
 
     /** @var CalendarEvent */
     protected $entity;
@@ -71,36 +73,32 @@ class CalendarEventApiHandlerTest extends \PHPUnit_Framework_TestCase
             ->method('isValid')
             ->willReturn(true);
 
-        $doctrine = $this->getMockBuilder('Doctrine\Common\Persistence\ManagerRegistry')
-            ->disableOriginalConstructor()
-            ->getMock();
+        $doctrine = $this->createMock('Doctrine\Common\Persistence\ManagerRegistry');
 
-        $objectManager = $this->getMockBuilder('Doctrine\Common\Persistence\ObjectManager')
-            ->disableOriginalConstructor()
-            ->getMock();
+        $objectManager = $this->createMock('Doctrine\Common\Persistence\ObjectManager');
 
         $doctrine->expects($this->any())
             ->method('getManager')
             ->will($this->returnValue($objectManager));
 
         $this->organization = new Organization();
-        $securityFacade = $this->getMockBuilder('Oro\Bundle\SecurityBundle\SecurityFacade')
+        $securityFacade = $this->getMockBuilder(SecurityFacade::class)
             ->disableOriginalConstructor()
             ->getMock();
         $securityFacade->expects($this->any())
             ->method('getOrganization')
             ->willReturn($this->organization);
 
-        $this->emailSendProcessor = $this->getMockBuilder('Oro\Bundle\CalendarBundle\Model\Email\EmailSendProcessor')
+        $this->notificationManager = $this->getMockBuilder(NotificationManager::class)
             ->disableOriginalConstructor()
             ->getMock();
 
-        $this->activityManager = $this->getMockBuilder('Oro\Bundle\ActivityBundle\Manager\ActivityManager')
+        $this->activityManager = $this->getMockBuilder(ActivityManager::class)
             ->disableOriginalConstructor()
             ->getMock();
 
         $this->calendarEventManager = $this
-            ->getMockBuilder('Oro\Bundle\CalendarBundle\Manager\CalendarEventManager')
+            ->getMockBuilder(CalendarEventManager::class)
             ->disableOriginalConstructor()
             ->getMock();
 
@@ -112,14 +110,15 @@ class CalendarEventApiHandlerTest extends \PHPUnit_Framework_TestCase
             ->method('flush');
 
         $this->handler = new CalendarEventApiHandler(
-            $this->form,
             $this->request,
             $doctrine,
             $securityFacade,
-            $this->emailSendProcessor,
             $this->activityManager,
-            $this->calendarEventManager
+            $this->calendarEventManager,
+            $this->notificationManager
         );
+
+        $this->handler->setForm($this->form);
     }
 
     public function testProcessWithContexts()
@@ -179,9 +178,9 @@ class CalendarEventApiHandlerTest extends \PHPUnit_Framework_TestCase
             ->method('onEventUpdate')
             ->with($this->entity, clone $this->entity, $this->organization, false);
 
-        $this->emailSendProcessor
+        $this->notificationManager
             ->expects($this->once())
-            ->method('sendUpdateParentEventNotification')
+            ->method('onUpdate')
             ->with($this->entity, clone $this->entity, true);
 
         $this->handler->process($this->entity);
@@ -199,7 +198,7 @@ class CalendarEventApiHandlerTest extends \PHPUnit_Framework_TestCase
             ->method('onEventUpdate')
             ->with($this->entity, clone $this->entity, $this->organization, false);
 
-        $this->emailSendProcessor
+        $this->notificationManager
             ->expects($this->never())
             ->method($this->anything());
 
@@ -218,7 +217,7 @@ class CalendarEventApiHandlerTest extends \PHPUnit_Framework_TestCase
             ->method('onEventUpdate')
             ->with($this->entity, clone $this->entity, $this->organization, false);
 
-        $this->emailSendProcessor
+        $this->notificationManager
             ->expects($this->never())
             ->method($this->anything());
 
@@ -236,9 +235,9 @@ class CalendarEventApiHandlerTest extends \PHPUnit_Framework_TestCase
             ->method('onEventUpdate')
             ->with($this->entity, clone $this->entity, $this->organization, false);
 
-        $this->emailSendProcessor
+        $this->notificationManager
             ->expects($this->once())
-            ->method('sendInviteNotification')
+            ->method('onCreate')
             ->with($this->entity);
 
         $this->handler->process($this->entity);
@@ -255,7 +254,7 @@ class CalendarEventApiHandlerTest extends \PHPUnit_Framework_TestCase
             ->method('onEventUpdate')
             ->with($this->entity, clone $this->entity, $this->organization, false);
 
-        $this->emailSendProcessor
+        $this->notificationManager
             ->expects($this->never())
             ->method($this->anything());
 
@@ -273,7 +272,7 @@ class CalendarEventApiHandlerTest extends \PHPUnit_Framework_TestCase
             ->method('onEventUpdate')
             ->with($this->entity, clone $this->entity, $this->organization, false);
 
-        $this->emailSendProcessor
+        $this->notificationManager
             ->expects($this->never())
             ->method($this->anything());
 

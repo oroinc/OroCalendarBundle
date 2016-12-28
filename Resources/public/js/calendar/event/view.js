@@ -554,7 +554,8 @@ define(function(require) {
                         email: attendee.email,
                         fullName: attendee.text,
                         status: attendee.status,
-                        type: attendee.type
+                        type: attendee.type,
+                        userId: attendee.userId
                     };
                 });
             }

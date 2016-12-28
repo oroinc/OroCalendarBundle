@@ -1,48 +1,42 @@
 parameters:
-    oro_calendar.calendar_event.form.type.class:                   Oro\Bundle\CalendarBundle\Form\Type\CalendarEventType
-    oro_calendar.calendar_event.form.type.api.class:               Oro\Bundle\CalendarBundle\Form\Type\CalendarEventApiType
-    oro_calendar.calendar_event.form.handler.class:                Oro\Bundle\CalendarBundle\Form\Handler\CalendarEventHandler
-    oro_calendar.calendar_event.form.handler.api.class:            Oro\Bundle\CalendarBundle\Form\Handler\CalendarEventApiHandler
-    oro_calendar.oro_calendar_event_attendees_select.form.type.class: Oro\Bundle\CalendarBundle\Form\Type\CalendarEventAttendeesSelectType
-    oro_calendar.oro_calendar_event_attendees_api.form.type.class: Oro\Bundle\CalendarBundle\Form\Type\CalendarEventAttendeesApiType
-    oro_calendar.calendar_property.form.type.api.class:            Oro\Bundle\CalendarBundle\Form\Type\CalendarPropertyApiType
-    oro_calendar.calendar_property.form.handler.api.class:         Oro\Bundle\CalendarBundle\Form\Handler\CalendarPropertyApiHandler
-    oro_calendar.calendar_choice.form.type.class:                  Oro\Bundle\CalendarBundle\Form\Type\CalendarChoiceType
-    oro_calendar.calendar_choice_template.form.type.class:         Oro\Bundle\CalendarBundle\Form\Type\CalendarChoiceTemplateType
-    oro_calendar.system_calendar.form.handler.class:               Oro\Bundle\CalendarBundle\Form\Handler\SystemCalendarHandler
-    oro_calendar.system_calendar.form.type.class:                  Oro\Bundle\CalendarBundle\Form\Type\SystemCalendarType
-    oro_calendar.system_calendar_event.form.handler.class:         Oro\Bundle\CalendarBundle\Form\Handler\SystemCalendarEventHandler
-    oro_calendar.extension.acl_label.class:                        Oro\Bundle\CalendarBundle\Form\Extension\AclObjectLabelTypeExtension
-    oro_calendar.attendees_to_view_transformer.class:              Oro\Bundle\CalendarBundle\Form\DataTransformer\AttendeesToViewTransformer
-    oro_calendar.user_ids_to_users.tranformer.class:               Oro\Bundle\FormBundle\Form\DataTransformer\EntitiesToIdsTransformer
-    oro_calendar.recurrence.form.type.class:                       Oro\Bundle\CalendarBundle\Form\Type\RecurrenceFormType
+    oro_calendar.calendar_event.form.type.class:            Oro\Bundle\CalendarBundle\Form\Type\CalendarEventType
+    oro_calendar.calendar_event.form.type.api.class:        Oro\Bundle\CalendarBundle\Form\Type\CalendarEventApiType
+    oro_calendar.attendees_select.form.type.class:          Oro\Bundle\CalendarBundle\Form\Type\CalendarEventAttendeesSelectType
+    oro_calendar.attendees_select.transformer.class:        Oro\Bundle\CalendarBundle\Form\DataTransformer\AttendeesToViewTransformer
+    oro_calendar.attendees_api.form.type.class:             Oro\Bundle\CalendarBundle\Form\Type\CalendarEventAttendeesApiType
+    oro_calendar.calendar_property.form.type.api.class:     Oro\Bundle\CalendarBundle\Form\Type\CalendarPropertyApiType
+    oro_calendar.calendar_property.form.handler.api.class:  Oro\Bundle\CalendarBundle\Form\Handler\CalendarPropertyApiHandler
+    oro_calendar.calendar_choice.form.type.class:           Oro\Bundle\CalendarBundle\Form\Type\CalendarChoiceType
+    oro_calendar.calendar_choice_template.form.type.class:  Oro\Bundle\CalendarBundle\Form\Type\CalendarChoiceTemplateType
+    oro_calendar.system_calendar.form.handler.class:        Oro\Bundle\CalendarBundle\Form\Handler\SystemCalendarHandler
+    oro_calendar.system_calendar.form.type.class:           Oro\Bundle\CalendarBundle\Form\Type\SystemCalendarType
+    oro_calendar.extension.acl_label.class:                 Oro\Bundle\CalendarBundle\Form\Extension\AclObjectLabelTypeExtension
+    oro_calendar.recurrence.form.type.class:                Oro\Bundle\CalendarBundle\Form\Type\RecurrenceFormType
 
 services:
     oro_calendar.calendar_event.form.type:
-        class: %oro_calendar.calendar_event.form.type.class%
+        class: '%oro_calendar.calendar_event.form.type.class%'
         tags:
             - { name: form.type, alias: oro_calendar_event }
 
     oro_calendar.calendar_event.form.type.api:
-        class: %oro_calendar.calendar_event.form.type.api.class%
-        scope: request
+        class: '%oro_calendar.calendar_event.form.type.api.class%'
+        scope: 'request'
         arguments:
             - '@oro_calendar.calendar_event_manager'
         tags:
             - { name: form.type, alias: oro_calendar_event_api }
 
     oro_calendar.calendar_event.form:
-        class:           Symfony\Component\Form\Form
-        factory_method:  createNamed
-        factory_service: form.factory
+        class:    'Symfony\Component\Form\Form'
+        factory: 'form.factory:createNamed'
         arguments:
             - "oro_calendar_event_form"
             - "oro_calendar_event"
 
     oro_calendar.calendar_event.form.template:
-        class:           Symfony\Component\Form\Form
-        factory_method:  createNamed
-        factory_service: form.factory
+        class:   'Symfony\Component\Form\Form'
+        factory: 'form.factory:createNamed'
         arguments:
             - "oro_calendar_event_form"
             - "oro_calendar_event"
@@ -50,102 +44,105 @@ services:
             - {allow_change_calendar: true, layout_template: true}
 
     oro_calendar.calendar_event.form.api:
-        class:           Symfony\Component\Form\Form
-        factory_method:  createNamed
-        factory_service: form.factory
+        class:   'Symfony\Component\Form\Form'
+        factory: 'form.factory:createNamed'
         arguments:
             - ~
             - "oro_calendar_event_api"
 
-    oro_calendar.calendar_event.form.handler:
-        class: %oro_calendar.calendar_event.form.handler.class%
-        scope: request
+    oro_calendar.calendar_event.form.handler.abstract:
+        class: 'Oro\Bundle\CalendarBundle\Form\Handler\AbstractCalendarEventHandler'
+        scope: 'request'
+        abstract: true
         arguments:
-            - '@oro_calendar.calendar_event.form'
             - '@request'
             - '@doctrine'
-            - '@oro_activity.manager'
-            - '@oro_entity.routing_helper'
             - '@oro_security.security_facade'
-            - '@oro_calendar.send_processor.email'
+            - '@oro_activity.manager'
             - '@oro_calendar.calendar_event_manager'
+            - '@oro_calendar.calendar_event.notification_manager'
+
+    oro_calendar.calendar_event.form.handler:
+        class: 'Oro\Bundle\CalendarBundle\Form\Handler\CalendarEventHandler'
+        parent: 'oro_calendar.calendar_event.form.handler.abstract'
+        scope: 'request'
+        calls:
+            - ['setForm', ['@oro_calendar.calendar_event.form']]
+            - ['setEntityRoutingHelper', ['@oro_entity.routing_helper']]
 
     oro_calendar.system_calendar_event.form.handler:
-        class: %oro_calendar.system_calendar_event.form.handler.class%
-        scope: request
-        arguments:
-            - '@oro_calendar.calendar_event.form'
-            - '@request'
-            - '@doctrine'
-            - '@oro_security.security_facade'
-            - '@oro_activity.manager'
-            - '@oro_calendar.calendar_event_manager'
+        class: 'Oro\Bundle\CalendarBundle\Form\Handler\SystemCalendarEventHandler'
+        parent: 'oro_calendar.calendar_event.form.handler.abstract'
+        scope: 'request'
+        calls:
+            - ['setForm', ['@oro_calendar.calendar_event.form']]
+
 
     oro_calendar.calendar_event.form.handler.api:
-        class: %oro_calendar.calendar_event.form.handler.api.class%
-        scope: request
-        arguments:
-            - '@oro_calendar.calendar_event.form.api'
-            - '@request'
-            - '@doctrine'
-            - '@oro_security.security_facade'
-            - '@oro_calendar.send_processor.email'
-            - '@oro_activity.manager'
-            - '@oro_calendar.calendar_event_manager'
+        class: 'Oro\Bundle\CalendarBundle\Form\Handler\CalendarEventApiHandler'
+        parent: 'oro_calendar.calendar_event.form.handler.abstract'
+        scope: 'request'
+        calls:
+            - ['setForm', ['@oro_calendar.calendar_event.form.api']]
 
-    oro_calendar.oro_calendar_event_attendees_select.form.type:
-        class: %oro_calendar.oro_calendar_event_attendees_select.form.type.class%
+    oro_calendar.attendees_select.form.type:
+        class: '%oro_calendar.attendees_select.form.type.class%'
         arguments:
-            - '@oro_calendar.attendees_to_view_transformer'
+            - '@oro_calendar.attendees_select.transformer'
             - '@oro_calendar.attendee_manager'
             - '@oro_calendar.attendee_relation_manager'
         tags:
             - { name: form.type, alias: oro_calendar_event_attendees_select }
 
-    oro_calendar.oro_calendar_event_attendees_api.form.type:
-        class: %oro_calendar.oro_calendar_event_attendees_api.form.type.class%
+    oro_calendar.attendees_select.transformer:
+        class: '%oro_calendar.attendees_select.transformer.class%'
+        arguments:
+            - '@doctrine.orm.entity_manager'
+            - '@security.token_storage'
+            - '@oro_calendar.attendee_manager'
+
+    oro_calendar.attendees_api.form.type:
+        class: '%oro_calendar.attendees_api.form.type.class%'
         tags:
             - { name: form.type, alias: oro_calendar_event_attendees_api }
 
     oro_calendar.calendar_property.form.type.api:
-        class: %oro_calendar.calendar_property.form.type.api.class%
+        class: '%oro_calendar.calendar_property.form.type.api.class%'
         tags:
             - { name: form.type, alias: oro_calendar_property_api }
 
     oro_calendar.calendar_property.form.api:
-        class:           Symfony\Component\Form\Form
-        factory_method:  createNamed
-        factory_service: form.factory
+        class:    'Symfony\Component\Form\Form'
+        factory: 'form.factory:createNamed'
         arguments:
             - ~
             - "oro_calendar_property_api"
 
     oro_calendar.calendar_property.form.soap.api:
-        class:           Symfony\Component\Form\Form
-        factory_method:  createNamed
-        factory_service: form.factory
+        class:    'Symfony\Component\Form\Form'
+        factory: 'form.factory:createNamed'
         arguments:
             - "calendarProperty"
             - "oro_calendar_property_api"
 
     oro_calendar.calendar_property.form.handler.api:
-        class: %oro_calendar.calendar_property.form.handler.api.class%
-        scope: request
+        class: '%oro_calendar.calendar_property.form.handler.api.class%'
+        scope: 'request'
         arguments:
             - '@oro_calendar.calendar_property.form.api'
             - '@request'
             - '@doctrine.orm.entity_manager'
 
     oro_calendar.calendar_property.form.handler.soap.api:
-        class: %oro_calendar.calendar_property.form.handler.api.class%
-        scope: request
+        class: '%oro_calendar.calendar_property.form.handler.api.class%'
+        scope: 'request'
         arguments:
             - '@oro_calendar.calendar_property.form.soap.api'
             - '@request'
             - '@doctrine.orm.entity_manager'
 
     oro_calendar.calendar_choice.form.type:
-        class: %oro_calendar.calendar_choice.form.type.class%
+        class: '%oro_calendar.calendar_choice.form.type.class%'
         arguments:
             - '@oro_calendar.calendar_event_manager'
             - '@translator'
@@ -153,12 +150,12 @@ services:
             - { name: form.type, alias: oro_calendar_choice }
 
     oro_calendar.calendar_choice_template.form.type:
-        class: %oro_calendar.calendar_choice_template.form.type.class%
+        class: '%oro_calendar.calendar_choice_template.form.type.class%'
         tags:
             - { name: form.type, alias: oro_calendar_choice_template }
 
     oro_calendar.system_calendar.form.type:
-        class: %oro_calendar.system_calendar.form.type.class%
+        class: '%oro_calendar.system_calendar.form.type.class%'
         arguments:
             - '@oro_security.security_facade'
             - '@oro_calendar.system_calendar_config'
@@ -166,15 +163,14 @@ services:
             - { name: form.type, alias: oro_system_calendar }
 
     oro_calendar.system_calendar.form:
-            class:           Symfony\Component\Form\Form
-            factory_method:  createNamed
-            factory_service: form.factory
-            arguments:
-                - "oro_system_calendar_form"
-                - "oro_system_calendar"
+        class:   'Symfony\Component\Form\Form'
+        factory: 'form.factory:createNamed'
+        arguments:
+            - "oro_system_calendar_form"
+            - "oro_system_calendar"
 
     oro_calendar.system_calendar.form.handler:
-        class: %oro_calendar.system_calendar.form.handler.class%
+        class: '%oro_calendar.system_calendar.form.handler.class%'
         scope: request
         arguments:
             - '@oro_calendar.system_calendar.form'
@@ -182,23 +178,9 @@ services:
             - '@doctrine.orm.entity_manager'
 
     oro_calendar.extension.acl_label:
-        class: %oro_calendar.extension.acl_label.class%
+        class: '%oro_calendar.extension.acl_label.class%'
         tags:
             - { name: form.type_extension, alias: oro_acl_label }
-
-    oro_calendar.attendees_to_view_transformer:
-        class: %oro_calendar.attendees_to_view_transformer.class%
-        arguments:
-            - '@doctrine.orm.entity_manager'
-            - '@security.token_storage'
-            - '@oro_calendar.attendee_manager'
-
-    oro_calendar.user_ids_to_users.tranformer:
-        class: %oro_calendar.user_ids_to_users.tranformer.class%
-        arguments:
-            - @=service('doctrine').getManagerForClass(parameter('oro_user.entity.class'))
-            - %oro_user.entity.class%
-        public: false
 
     oro_calendar.recurrence.form.type:
         class: '%oro_calendar.recurrence.form.type.class%'

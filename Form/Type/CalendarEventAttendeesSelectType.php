@@ -89,6 +89,7 @@ class CalendarEventAttendeesSelectType extends AbstractType
                         'email'       => $attendee->getEmail(),
                         'type'        => $attendee->getType() ? $attendee->getType()->getId() : null,
                         'status'      => $attendee->getStatus() ? $attendee->getStatus()->getId() : null,
+                        'userId'      => $attendee->getUser() ? $attendee->getUser()->getId() : null,
                         /**
                          * Selected Value Id should additionally encoded because it should be used as string key
                          * to compare with value
