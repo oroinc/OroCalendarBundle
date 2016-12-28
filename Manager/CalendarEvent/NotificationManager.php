@@ -368,32 +368,13 @@ class NotificationManager
         }
 
         // Invitation status change notification should be send.
-        $this->addInvitationStatusChangeNotifications(
+        $this->emailNotificationSender->addInvitationStatusChangeNotifications(
             $calendarEvent,
             $this->getCalendarOwnerUser($calendarEvent->getParent()),
             $attendee->getStatusCode()
         );
 
         $this->sendAddedNotifications();
-    }
-
-    /**
-     * Add notifications when invitation status of the event was changed.
-     *
-     * @param CalendarEvent $calendarEvent  Calendar event of attendee for the notification.
-     * @param User          $ownerUser      Owner user of main calendar event.
-     * @param string        $statusCode     New code of invitation status.
-     */
-    protected function addInvitationStatusChangeNotifications(
-        CalendarEvent $calendarEvent,
-        User $ownerUser,
-        $statusCode
-    ) {
-        $this->emailNotificationSender->addInvitationStatusChangeNotifications(
-            $calendarEvent,
-            $ownerUser,
-            $statusCode
-        );
     }
 
     /**
@@ -406,7 +387,7 @@ class NotificationManager
         if ($calendarEvent->getParent()) {
             $ownerUser = $this->getCalendarOwnerUser($calendarEvent->getParent());
             // Add notification to owner of the event when attendee had removed the event from his own calendar.
-            $this->addDeleteChildCalendarEventNotifications($calendarEvent, $ownerUser);
+            $this->emailNotificationSender->addDeleteChildCalendarEventNotifications($calendarEvent, $ownerUser);
         } else {
             $ownerUser = $this->getCalendarOwnerUser($calendarEvent);
             // Cancel notification should be send to attendees.
@@ -419,19 +400,6 @@ class NotificationManager
             $this->addDeleteEventExceptionWithExtraAttendeesNotification($calendarEvent, $ownerUser);
         }
         $this->sendAddedNotifications();
-    }
-
-    /**
-     * Add notifications when attendee deleted his child event from own calendar.
-     *
-     * @param CalendarEvent $calendarEvent  Calendar event of attendee for the notification.
-     * @param User          $ownerUser      Owner user of main calendar event.
-     */
-    protected function addDeleteChildCalendarEventNotifications(
-        CalendarEvent $calendarEvent,
-        User $ownerUser
-    ) {
-        $this->emailNotificationSender->addDeleteChildCalendarEventNotifications($calendarEvent, $ownerUser);
     }
 
     /**
