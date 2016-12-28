@@ -52,7 +52,7 @@ class AjaxCalendarEventController extends Controller
             ->getManagerForClass('Oro\Bundle\CalendarBundle\Entity\CalendarEvent')
             ->flush();
 
-        $this->get('oro_calendar.send_processor.email')->sendRespondNotification($entity);
+        $this->get('oro_calendar.calendar_event.notification_manager')->onChangeInvitationStatus($entity);
 
         return new JsonResponse(['successful' => true]);
     }
@@ -84,6 +84,7 @@ class AjaxCalendarEventController extends Controller
                 'email'       => $attendee->getEmail(),
                 'type'        => $attendee->getType() ? $attendee->getType()->getId() : null,
                 'status'      => $attendee->getStatus() ? $attendee->getStatus()->getId() : null,
+                'userId'      => $attendee->getUser() ? $attendee->getUser()->getId() : null,
                 /**
                  * Selected Value Id should additionally encoded because it should be used as string key
                  * to compare with value

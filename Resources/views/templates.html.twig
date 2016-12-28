@@ -7,10 +7,10 @@
 
             <% if (entity.get('link')) { %>
                 <a href="<%- entity.get('link') %>">
-                    <span class="context-label"><%- entity.get('title') %></span>
+                    <span class="context-label" title="<%- entity.get('title') %>"><%- entity.get('title') %></span>
                 </a>
             <% } else { %>
-                <span class="context-label"><%- entity.get('title') %></span>
+                <span class="context-label" title="<%- entity.get('title') %>"><%- entity.get('title') %></span>
             <% } %>
             <% if (editable) { %>
                 <i class="fa-close"></i>

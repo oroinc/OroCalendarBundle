@@ -2,88 +2,26 @@
 
 namespace Oro\Bundle\CalendarBundle\Form\Handler;
 
-use Doctrine\Common\Persistence\ManagerRegistry;
-use Doctrine\ORM\EntityManager;
-
-use Symfony\Component\Form\FormInterface;
-use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Security\Core\Exception\AccessDeniedException;
 
-use Oro\Bundle\ActivityBundle\Manager\ActivityManager;
 use Oro\Bundle\CalendarBundle\Entity\CalendarEvent;
 use Oro\Bundle\CalendarBundle\Entity\Calendar;
-use Oro\Bundle\CalendarBundle\Manager\CalendarEventManager;
-use Oro\Bundle\CalendarBundle\Model\Email\EmailSendProcessor;
 use Oro\Bundle\EntityBundle\Tools\EntityRoutingHelper;
-use Oro\Bundle\SecurityBundle\SecurityFacade;
 use Oro\Bundle\UserBundle\Entity\User;
 
-class CalendarEventHandler
+class CalendarEventHandler extends AbstractCalendarEventHandler
 {
-    /** @var FormInterface */
-    protected $form;
-
-    /** @var Request */
-    protected $request;
-
-    /** @var ManagerRegistry */
-    protected $doctrine;
-
-    /** @var ActivityManager */
-    protected $activityManager;
-
-    /** @var EntityRoutingHelper */
+    /**
+     * @var EntityRoutingHelper
+     */
     protected $entityRoutingHelper;
 
-    /** @var SecurityFacade */
-    protected $securityFacade;
-
-    /** @var EmailSendProcessor */
-    protected $emailSendProcessor;
-
-    /** @var CalendarEventManager */
-    protected $calendarEventManager;
-
     /**
-     * CalendarEventHandler constructor.
-     *
-     * @param FormInterface $form
-     * @param Request $request
-     * @param ManagerRegistry $doctrine
-     * @param ActivityManager $activityManager
      * @param EntityRoutingHelper $entityRoutingHelper
-     * @param SecurityFacade $securityFacade
-     * @param EmailSendProcessor $emailSendProcessor
-     * @param CalendarEventManager $calendarEventManager
      */
-    public function __construct(
-        FormInterface $form,
-        Request $request,
-        ManagerRegistry $doctrine,
-        ActivityManager $activityManager,
-        EntityRoutingHelper $entityRoutingHelper,
-        SecurityFacade $securityFacade,
-        EmailSendProcessor $emailSendProcessor,
-        CalendarEventManager $calendarEventManager
-    ) {
-        $this->form                        = $form;
-        $this->request                     = $request;
-        $this->doctrine                    = $doctrine;
-        $this->activityManager             = $activityManager;
-        $this->entityRoutingHelper         = $entityRoutingHelper;
-        $this->securityFacade              = $securityFacade;
-        $this->emailSendProcessor          = $emailSendProcessor;
-        $this->calendarEventManager        = $calendarEventManager;
-    }
-
-    /**
-     * Get form, that build into handler, via handler service
-     *
-     * @return FormInterface
-     */
-    public function getForm()
+    public function setEntityRoutingHelper(EntityRoutingHelper $entityRoutingHelper)
     {
-        return $this->form;
+        $this->entityRoutingHelper = $entityRoutingHelper;
     }
 
     /**
@@ -141,6 +79,18 @@ class CalendarEventHandler
     /**
      * @param CalendarEvent $entity
      *
+     * @throws AccessDeniedException
+     */
+    protected function checkPermission(CalendarEvent $entity)
+    {
+        if ($entity->getParent() !== null) {
+            throw new AccessDeniedException();
+        }
+    }
+
+    /**
+     * @param CalendarEvent $entity
+     *
      * @throws \LogicException
      */
     protected function ensureCalendarSet(CalendarEvent $entity)
@@ -160,49 +110,6 @@ class CalendarEventHandler
                 $this->securityFacade->getOrganization()->getId()
             );
         $entity->setCalendar($defaultCalendar);
-    }
-
-    /**
-     * "Success" form handler
-     *
-     * @param CalendarEvent $entity
-     * @param CalendarEvent $originalEntity
-     */
-    protected function onSuccess(CalendarEvent $entity, CalendarEvent $originalEntity)
-    {
-        $this->calendarEventManager->onEventUpdate(
-            $entity,
-            $originalEntity,
-            $this->securityFacade->getOrganization(),
-            true
-        );
-
-        $new = $entity->getId() ? false : true;
-        $this->getEntityManager()->persist($entity);
-        $this->getEntityManager()->flush();
-
-
-        if ($new) {
-            $this->emailSendProcessor->sendInviteNotification($entity);
-        } else {
-            $this->emailSendProcessor->sendUpdateParentEventNotification(
-                $entity,
-                $originalEntity,
-                $this->shouldNotifyInvitedUsers()
-            );
-        }
-    }
-
-    /**
-     * @param CalendarEvent $entity
-     *
-     * @throws AccessDeniedException
-     */
-    protected function checkPermission(CalendarEvent $entity)
-    {
-        if ($entity->getParent() !== null) {
-            throw new AccessDeniedException();
-        }
     }
 
     /**
@@ -241,20 +148,18 @@ class CalendarEventHandler
     }
 
     /**
-     * If API request contains a property "notifyInvitedUsers" with TRUE value, notification should be send.
-     *
-     * @return bool
+     * {@inheritdoc}
      */
-    protected function shouldNotifyInvitedUsers()
+    protected function allowSendNotifications()
     {
-        return $this->form->has('notifyInvitedUsers') && $this->form->get('notifyInvitedUsers')->getData();
+        return true;
     }
 
     /**
-     * @return EntityManager
+     * {@inheritdoc}
      */
-    protected function getEntityManager()
+    protected function allowUpdateExceptions()
     {
-        return $this->doctrine->getManager();
+        return true;
     }
 }

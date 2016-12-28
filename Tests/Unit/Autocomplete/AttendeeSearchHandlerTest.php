@@ -163,6 +163,7 @@ class AttendeeSearchHandlerTest extends \PHPUnit_Framework_TestCase
                         'email'       => 'user1@example.com',
                         'status'      => 'test',
                         'type'        => 'test',
+                        'userId'      => 1,
                     ],
                     [
                         'id'          => json_encode(
@@ -176,6 +177,7 @@ class AttendeeSearchHandlerTest extends \PHPUnit_Framework_TestCase
                         'email'       => 'user2@example.com',
                         'status'      => 'test',
                         'type'        => 'test',
+                        'userId'      => 2,
                     ],
                 ],
                 'more'    => false,

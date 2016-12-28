@@ -244,6 +244,10 @@ class UpdateChildManager
             ->setEnd($parent->getEnd())
             ->setAllDay($parent->getAllDay());
 
+        if ($parent->isCancelled()) {
+            $child->setCancelled(true);
+        }
+
         if ($parent->getRecurringEvent()) {
             // This event is an exception of recurring event
             // Get recurring event from calendar of child event
