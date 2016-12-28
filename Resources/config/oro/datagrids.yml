@@ -172,7 +172,7 @@ datagrids:
                 data_identifier: event.id
                 handler: oro_calendar.datagrid.mass_action.handler.delete
         options:
-            entityHint: calendar_events
+            entityHint: calendar event
             entity_pagination: true
 
     widget-base-calendar-event-grid:
@@ -212,7 +212,7 @@ datagrids:
         properties:
             id: ~
         options:
-            entityHint: calendar_events
+            entityHint: calendar event
 
     activity-calendar-event-grid:
         extends: widget-base-calendar-event-grid
@@ -405,7 +405,7 @@ datagrids:
                 icon:          trash-o
                 link:          delete_link
         options:
-            entityHint: calendar_events
+            entityHint: calendar event
             entity_pagination: true
 
     system-calendar-event-grid:
@@ -505,7 +505,7 @@ datagrids:
         extended_entity_name: %oro_calendar.calendar_event.entity.class%
         acl_resource: oro_calendar_event_view
         options:
-            entityHint: calendar_events
+            entityHint: calendar event
             entity_pagination: true
             toolbarOptions:
                 pageSize:
