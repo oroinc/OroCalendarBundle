@@ -92,6 +92,9 @@ class CalendarEventType extends AbstractType
                     'layout_template' => $options['layout_template'],
                 ]
             )
+            /**
+             * @deprecated since 2.0 and will be removed after 2.2, use notifyAttendees instead.
+             */
             ->add(
                 'notifyInvitedUsers',
                 'hidden',
@@ -99,6 +102,7 @@ class CalendarEventType extends AbstractType
                     'mapped' => false
                 ]
             )
+            ->add('notifyAttendees', 'hidden', ['mapped' => false])
             ->add(
                 'recurrence',
                 'oro_calendar_event_recurrence',

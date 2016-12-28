@@ -95,9 +95,7 @@ abstract class AbstractCalendarEventHandler
         $this->getEntityManager()->persist($entity);
         $this->getEntityManager()->flush();
 
-        if ($this->allowSendNotifications()) {
-            $this->sendNotifications($entity, $originalEntity, $isNew);
-        }
+        $this->sendNotifications($entity, $originalEntity, $isNew);
     }
 
     /**
@@ -116,23 +114,22 @@ abstract class AbstractCalendarEventHandler
      */
     protected function sendNotifications(CalendarEvent $entity, CalendarEvent $originalEntity, $isNew)
     {
+        $this->notificationManager->setStrategy($this->getSendNotificationsStrategy());
         if ($isNew) {
             $this->notificationManager->onCreate($entity);
         } else {
-            $this->notificationManager->onUpdate(
-                $entity,
-                $originalEntity,
-                true // @todo Fix hard-coded value in BAP-13079, BAP-13080
-            );
+            $this->notificationManager->onUpdate($entity, $originalEntity);
         }
     }
 
     /**
-     * Returns TRUE if notifications should be send.
+     * @see NotificationManager::ALL_NOTIFICATIONS_STRATEGY
+     * @see NotificationManager::NONE_NOTIFICATIONS_STRATEGY
+     * @see NotificationManager::ADDED_OR_DELETED_NOTIFICATIONS_STRATEGY
      *
-     * @return bool
+     * @return string
      */
-    abstract protected function allowSendNotifications();
+    abstract protected function getSendNotificationsStrategy();
 
     /**
      * @return EntityManager

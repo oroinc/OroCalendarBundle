@@ -181,7 +181,7 @@ class CalendarEventApiHandlerTest extends \PHPUnit_Framework_TestCase
         $this->notificationManager
             ->expects($this->once())
             ->method('onUpdate')
-            ->with($this->entity, clone $this->entity, true);
+            ->with($this->entity, clone $this->entity);
 
         $this->handler->process($this->entity);
     }
@@ -199,8 +199,12 @@ class CalendarEventApiHandlerTest extends \PHPUnit_Framework_TestCase
             ->with($this->entity, clone $this->entity, $this->organization, false);
 
         $this->notificationManager
-            ->expects($this->never())
-            ->method($this->anything());
+            ->expects($this->once())
+            ->method('setStrategy')
+            ->with(NotificationManager::NONE_NOTIFICATIONS_STRATEGY);
+        $this->notificationManager
+            ->expects($this->once())
+            ->method('onUpdate');
 
         $this->handler->process($this->entity);
     }
@@ -218,8 +222,12 @@ class CalendarEventApiHandlerTest extends \PHPUnit_Framework_TestCase
             ->with($this->entity, clone $this->entity, $this->organization, false);
 
         $this->notificationManager
-            ->expects($this->never())
-            ->method($this->anything());
+            ->expects($this->once())
+            ->method('setStrategy')
+            ->with(NotificationManager::NONE_NOTIFICATIONS_STRATEGY);
+        $this->notificationManager
+            ->expects($this->once())
+            ->method('onUpdate');
 
         $this->handler->process($this->entity);
     }
@@ -255,8 +263,12 @@ class CalendarEventApiHandlerTest extends \PHPUnit_Framework_TestCase
             ->with($this->entity, clone $this->entity, $this->organization, false);
 
         $this->notificationManager
-            ->expects($this->never())
-            ->method($this->anything());
+            ->expects($this->once())
+            ->method('setStrategy')
+            ->with(NotificationManager::NONE_NOTIFICATIONS_STRATEGY);
+        $this->notificationManager
+            ->expects($this->once())
+            ->method('onCreate');
 
         $this->handler->process($this->entity);
     }
@@ -273,8 +285,12 @@ class CalendarEventApiHandlerTest extends \PHPUnit_Framework_TestCase
             ->with($this->entity, clone $this->entity, $this->organization, false);
 
         $this->notificationManager
-            ->expects($this->never())
-            ->method($this->anything());
+            ->expects($this->once())
+            ->method('setStrategy')
+            ->with(NotificationManager::NONE_NOTIFICATIONS_STRATEGY);
+        $this->notificationManager
+            ->expects($this->once())
+            ->method('onCreate');
 
         $this->handler->process($this->entity);
     }

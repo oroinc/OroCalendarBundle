@@ -3,6 +3,7 @@
 namespace Oro\Bundle\CalendarBundle\Form\Handler;
 
 use Oro\Bundle\CalendarBundle\Entity\CalendarEvent;
+use Oro\Bundle\CalendarBundle\Manager\CalendarEvent\NotificationManager;
 
 class SystemCalendarEventHandler extends AbstractCalendarEventHandler
 {
@@ -55,8 +56,8 @@ class SystemCalendarEventHandler extends AbstractCalendarEventHandler
     /**
      * {@inheritdoc}
      */
-    protected function allowSendNotifications()
+    protected function getSendNotificationsStrategy()
     {
-        return false;
+        return NotificationManager::NONE_NOTIFICATIONS_STRATEGY;
     }
 }

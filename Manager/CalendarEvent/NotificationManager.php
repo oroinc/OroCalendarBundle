@@ -22,10 +22,19 @@ use Oro\Bundle\UserBundle\Entity\User;
  */
 class NotificationManager
 {
+    const ALL_NOTIFICATIONS_STRATEGY = 'all';
+    const NONE_NOTIFICATIONS_STRATEGY = 'none';
+    const ADDED_OR_DELETED_NOTIFICATIONS_STRATEGY = 'added_or_deleted';
+
     /**
      * @var EmailNotificationSender
      */
     protected $emailNotificationSender;
+
+    /**
+     * @var string
+     */
+    protected $strategy = self::ALL_NOTIFICATIONS_STRATEGY;
 
     /**
      * EmailNotificationHandler constructor.
@@ -38,6 +47,22 @@ class NotificationManager
     }
 
     /**
+     * Could be one of next values: none, all, added_or_deleted
+     * @see NotificationManager::ALL_NOTIFICATIONS_STRATEGY
+     * @see NotificationManager::NONE_NOTIFICATIONS_STRATEGY
+     * @see NotificationManager::ADDED_OR_DELETED_NOTIFICATIONS_STRATEGY
+     * @param string $strategy
+     *
+     * @return NotificationManager
+     */
+    public function setStrategy($strategy)
+    {
+        $this->strategy = $strategy;
+
+        return $this;
+    }
+
+    /**
      * Handle calendar event notification on create of the event.
      *
      * @param CalendarEvent $calendarEvent Actual calendar event.
@@ -45,9 +70,16 @@ class NotificationManager
      */
     public function onCreate(CalendarEvent $calendarEvent)
     {
-        if ($calendarEvent->getSystemCalendar()) {
-            // Notifications are not supported for events in system calendars
-        } elseif ($calendarEvent->isCancelled()) {
+        /**
+         * Notifications should not be sent in next cases:
+         * 1) Strategy is 'none'
+         * 2) Calendar Event belongs to System Calendar
+         */
+        if ($this->strategy === static::NONE_NOTIFICATIONS_STRATEGY || $calendarEvent->getSystemCalendar()) {
+            return;
+        }
+
+        if ($calendarEvent->isCancelled()) {
             // A new recurring calendar event exception was created as cancelled.
             if (!$calendarEvent->getRecurringEvent()) {
                 // Check the event for consistency, since this case is valid only for exceptions of recurring event.
@@ -161,11 +193,13 @@ class NotificationManager
      *
      * @param CalendarEvent $calendarEvent          Actual calendar event.
      * @param CalendarEvent $originalCalendarEvent  Original calendar event.
-     * @param bool          $notifyExistedUsers     Used skip notification for existed users when the event was updated.
-     *                                              Added or removed users will receive notification in any case.
      */
-    public function onUpdate(CalendarEvent $calendarEvent, CalendarEvent $originalCalendarEvent, $notifyExistedUsers)
+    public function onUpdate(CalendarEvent $calendarEvent, CalendarEvent $originalCalendarEvent)
     {
+        if ($this->strategy === static::NONE_NOTIFICATIONS_STRATEGY) {
+            return;
+        }
+
         if ($calendarEvent->getSystemCalendar()) {
             // If the event calendar was "user" and then it was changed to "system"
             // the attendees of the event in "user" calendar should receive cancel notification,
@@ -211,7 +245,7 @@ class NotificationManager
         } elseif (!$calendarEvent->isCancelled()) {
             // Regular case for update of the event.
 
-            if ($notifyExistedUsers) {
+            if ($this->strategy === static::ALL_NOTIFICATIONS_STRATEGY) {
                 // Add update notification for attendees which existed in the event originally and exist now.
                 $existedAttendees = $this->getExistedAttendees(
                     $originalCalendarEvent->getAttendees(),
@@ -343,7 +377,7 @@ class NotificationManager
      */
     public function onChangeInvitationStatus(CalendarEvent $calendarEvent)
     {
-        if (!$calendarEvent->getParent()) {
+        if ($this->strategy === static::NONE_NOTIFICATIONS_STRATEGY || !$calendarEvent->getParent()) {
             // Method is applicable only for child events.
             return;
         }
@@ -392,6 +426,10 @@ class NotificationManager
      */
     public function onDelete(CalendarEvent $calendarEvent)
     {
+        if ($this->strategy === static::NONE_NOTIFICATIONS_STRATEGY) {
+            return;
+        }
+
         if ($calendarEvent->getParent()) {
             $ownerUser = $this->getCalendarOwnerUser($calendarEvent->getParent());
             // Add notification to owner of the event when attendee had removed the event from his own calendar.

@@ -47,7 +47,9 @@ class NotificationManagerTest extends \PHPUnit_Framework_TestCase
         $this->emailNotificationSender->expects($this->never())
             ->method($this->anything());
 
-        $this->notificationManager->onCreate($calendarEvent);
+        $this->notificationManager
+            ->setStrategy(NotificationManager::ALL_NOTIFICATIONS_STRATEGY)
+            ->onCreate($calendarEvent);
     }
 
     public function testSendNotificationOnCreateOfRegularCalendarEvent()
@@ -72,7 +74,9 @@ class NotificationManagerTest extends \PHPUnit_Framework_TestCase
         $this->emailNotificationSender->expects($this->once())
             ->method('sendAddedNotifications');
 
-        $this->notificationManager->onCreate($calendarEvent);
+        $this->notificationManager
+            ->setStrategy(NotificationManager::ALL_NOTIFICATIONS_STRATEGY)
+            ->onCreate($calendarEvent);
     }
 
     public function testSendCancelNotificationOnCreateOfCancelledExceptionInRecurringCalendarEvent()
@@ -101,7 +105,9 @@ class NotificationManagerTest extends \PHPUnit_Framework_TestCase
         $this->emailNotificationSender->expects($this->once())
             ->method('sendAddedNotifications');
 
-        $this->notificationManager->onCreate($calendarEvent);
+        $this->notificationManager
+            ->setStrategy(NotificationManager::ALL_NOTIFICATIONS_STRATEGY)
+            ->onCreate($calendarEvent);
     }
 
     public function testFailOnCreateOfCancelledExceptionWithoutRecurringCalendarEvent()
@@ -126,7 +132,9 @@ class NotificationManagerTest extends \PHPUnit_Framework_TestCase
         $this->emailNotificationSender->expects($this->never())
             ->method($this->anything());
 
-        $this->notificationManager->onCreate($calendarEvent);
+        $this->notificationManager
+            ->setStrategy(NotificationManager::ALL_NOTIFICATIONS_STRATEGY)
+            ->onCreate($calendarEvent);
     }
 
     public function testSendCancelNotificationOnUpdateOfCalendarOfEventFromUserToSystem()
@@ -157,7 +165,9 @@ class NotificationManagerTest extends \PHPUnit_Framework_TestCase
         $this->emailNotificationSender->expects($this->once())
             ->method('sendAddedNotifications');
 
-        $this->notificationManager->onUpdate($calendarEvent, $originalCalendarEvent, false);
+        $this->notificationManager
+            ->setStrategy(NotificationManager::ALL_NOTIFICATIONS_STRATEGY)
+            ->onUpdate($calendarEvent, $originalCalendarEvent);
     }
 
     public function testSendNoNotificationOnUpdateOfSystemCalendarEvent()
@@ -173,7 +183,9 @@ class NotificationManagerTest extends \PHPUnit_Framework_TestCase
         $this->emailNotificationSender->expects($this->never())
             ->method($this->anything());
 
-        $this->notificationManager->onUpdate($calendarEvent, $originalCalendarEvent, false);
+        $this->notificationManager
+            ->setStrategy(NotificationManager::ALL_NOTIFICATIONS_STRATEGY)
+            ->onUpdate($calendarEvent, $originalCalendarEvent);
     }
 
     public function testSendCancelNotificationOnUpdateForCancelledExceptionInRecurringCalendarEvent()
@@ -205,7 +217,9 @@ class NotificationManagerTest extends \PHPUnit_Framework_TestCase
         $this->emailNotificationSender->expects($this->once())
             ->method('sendAddedNotifications');
 
-        $this->notificationManager->onUpdate($calendarEvent, $originalCalendarEvent, false);
+        $this->notificationManager
+            ->setStrategy(NotificationManager::ALL_NOTIFICATIONS_STRATEGY)
+            ->onUpdate($calendarEvent, $originalCalendarEvent);
     }
 
     public function testSendNoNotificationOnUpdateForCancelledExceptionInRecurringCalendarEventIfItWasCancelledBefore()
@@ -233,7 +247,9 @@ class NotificationManagerTest extends \PHPUnit_Framework_TestCase
         $this->emailNotificationSender->expects($this->never())
             ->method($this->anything());
 
-        $this->notificationManager->onUpdate($calendarEvent, $originalCalendarEvent, false);
+        $this->notificationManager
+            ->setStrategy(NotificationManager::ALL_NOTIFICATIONS_STRATEGY)
+            ->onUpdate($calendarEvent, $originalCalendarEvent);
     }
 
     public function testFailOnUpdateForCancelledExceptionWithoutRecurringCalendarEvent()
@@ -262,7 +278,9 @@ class NotificationManagerTest extends \PHPUnit_Framework_TestCase
         $this->emailNotificationSender->expects($this->never())
             ->method($this->anything());
 
-        $this->notificationManager->onCreate($calendarEvent);
+        $this->notificationManager
+            ->setStrategy(NotificationManager::ALL_NOTIFICATIONS_STRATEGY)
+            ->onCreate($calendarEvent);
     }
 
     public function testSendInviteNotificationOnUpdateForReactivatedEventExceptionWhenItWasCancelledBefore()
@@ -294,7 +312,9 @@ class NotificationManagerTest extends \PHPUnit_Framework_TestCase
         $this->emailNotificationSender->expects($this->once())
             ->method('sendAddedNotifications');
 
-        $this->notificationManager->onUpdate($calendarEvent, $originalCalendarEvent, false);
+        $this->notificationManager
+            ->setStrategy(NotificationManager::ALL_NOTIFICATIONS_STRATEGY)
+            ->onUpdate($calendarEvent, $originalCalendarEvent);
     }
 
     public function testSendAllUpdateInviteCancelNotificationOnUpdateForAllNotChangedAddedAndRemovedAttendees()
@@ -351,7 +371,9 @@ class NotificationManagerTest extends \PHPUnit_Framework_TestCase
         $this->emailNotificationSender->expects($this->once())
             ->method('sendAddedNotifications');
 
-        $this->notificationManager->onUpdate($calendarEvent, $originalCalendarEvent, true);
+        $this->notificationManager
+            ->setStrategy(NotificationManager::ALL_NOTIFICATIONS_STRATEGY)
+            ->onUpdate($calendarEvent, $originalCalendarEvent);
     }
 
     public function testSendOnlyInviteAndCancelNotificationOnUpdateWhenNotifyExistedUsersIsFalse()
@@ -407,7 +429,9 @@ class NotificationManagerTest extends \PHPUnit_Framework_TestCase
         $this->emailNotificationSender->expects($this->once())
             ->method('sendAddedNotifications');
 
-        $this->notificationManager->onUpdate($calendarEvent, $originalCalendarEvent, false);
+        $this->notificationManager
+            ->setStrategy(NotificationManager::ADDED_OR_DELETED_NOTIFICATIONS_STRATEGY)
+            ->onUpdate($calendarEvent, $originalCalendarEvent);
     }
 
     public function testSendNoNotificationsOnChangeInvitationStatusForCalendarEventOwner()
@@ -428,7 +452,9 @@ class NotificationManagerTest extends \PHPUnit_Framework_TestCase
         $this->emailNotificationSender->expects($this->never())
             ->method($this->anything());
 
-        $this->notificationManager->onChangeInvitationStatus($calendarEvent);
+        $this->notificationManager
+            ->setStrategy(NotificationManager::ALL_NOTIFICATIONS_STRATEGY)
+            ->onChangeInvitationStatus($calendarEvent);
     }
 
     public function testFailOnChangeInvitationStatusForCalendarEventWithoutRelatedAttendee()
@@ -456,7 +482,9 @@ class NotificationManagerTest extends \PHPUnit_Framework_TestCase
         $this->emailNotificationSender->expects($this->never())
             ->method($this->anything());
 
-        $this->notificationManager->onChangeInvitationStatus($calendarEvent);
+        $this->notificationManager
+            ->setStrategy(NotificationManager::ALL_NOTIFICATIONS_STRATEGY)
+            ->onChangeInvitationStatus($calendarEvent);
     }
 
     public function testFailOnChangeInvitationStatusForCalendarEventWithoutOwnerOfParentEvent()
@@ -486,7 +514,9 @@ class NotificationManagerTest extends \PHPUnit_Framework_TestCase
         $this->emailNotificationSender->expects($this->never())
             ->method($this->anything());
 
-        $this->notificationManager->onChangeInvitationStatus($calendarEvent);
+        $this->notificationManager
+            ->setStrategy(NotificationManager::ALL_NOTIFICATIONS_STRATEGY)
+            ->onChangeInvitationStatus($calendarEvent);
     }
 
     public function testSendNotificationOnChangeInvitationStatus()
@@ -532,7 +562,9 @@ class NotificationManagerTest extends \PHPUnit_Framework_TestCase
         $this->emailNotificationSender->expects($this->once())
             ->method('sendAddedNotifications');
 
-        $this->notificationManager->onChangeInvitationStatus($calendarEvent);
+        $this->notificationManager
+            ->setStrategy(NotificationManager::ALL_NOTIFICATIONS_STRATEGY)
+            ->onChangeInvitationStatus($calendarEvent);
     }
 
     public function testFailOnDeleteOfParentCalendarEventWithoutOwner()
@@ -550,7 +582,9 @@ class NotificationManagerTest extends \PHPUnit_Framework_TestCase
         $this->emailNotificationSender->expects($this->never())
             ->method($this->anything());
 
-        $this->notificationManager->onDelete($calendarEvent);
+        $this->notificationManager
+            ->setStrategy(NotificationManager::ALL_NOTIFICATIONS_STRATEGY)
+            ->onDelete($calendarEvent);
     }
 
     public function testFailOnDeleteOfChildCalendarEventWithoutOwner()
@@ -578,7 +612,9 @@ class NotificationManagerTest extends \PHPUnit_Framework_TestCase
         $this->emailNotificationSender->expects($this->never())
             ->method($this->anything());
 
-        $this->notificationManager->onDelete($calendarEvent);
+        $this->notificationManager
+            ->setStrategy(NotificationManager::ALL_NOTIFICATIONS_STRATEGY)
+            ->onDelete($calendarEvent);
     }
 
     public function testSendCancelNotificationOnDeleteOfParentCalendarEvent()
@@ -613,7 +649,9 @@ class NotificationManagerTest extends \PHPUnit_Framework_TestCase
                 [$attendee]
             );
 
-        $this->notificationManager->onDelete($parentCalendarEvent);
+        $this->notificationManager
+            ->setStrategy(NotificationManager::ALL_NOTIFICATIONS_STRATEGY)
+            ->onDelete($parentCalendarEvent);
     }
 
     public function testSendCancelNotificationOnDeleteOfChildCalendarEvent()
@@ -645,6 +683,8 @@ class NotificationManagerTest extends \PHPUnit_Framework_TestCase
                 $ownerUser
             );
 
-        $this->notificationManager->onDelete($calendarEvent);
+        $this->notificationManager
+            ->setStrategy(NotificationManager::ALL_NOTIFICATIONS_STRATEGY)
+            ->onDelete($calendarEvent);
     }
 }

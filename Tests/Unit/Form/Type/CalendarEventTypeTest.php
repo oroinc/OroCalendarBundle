@@ -139,6 +139,15 @@ class CalendarEventTypeTest extends \PHPUnit_Framework_TestCase
         $builder->expects($this->at(9))
             ->method('add')
             ->with(
+                'notifyAttendees',
+                'hidden',
+                ['mapped' => false]
+            )
+            ->will($this->returnSelf());
+
+        $builder->expects($this->at(10))
+            ->method('add')
+            ->with(
                 'recurrence',
                 'oro_calendar_event_recurrence',
                 [

@@ -193,6 +193,7 @@ services:
     oro_calendar.calendar_event.notification_manager:
         class: 'Oro\Bundle\CalendarBundle\Manager\CalendarEvent\NotificationManager'
         public: true
+        scope: prototype
         arguments:
             - '@oro_calendar.email.notification_sender'
 

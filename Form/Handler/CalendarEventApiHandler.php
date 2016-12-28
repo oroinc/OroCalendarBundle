@@ -3,6 +3,7 @@
 namespace Oro\Bundle\CalendarBundle\Form\Handler;
 
 use Oro\Bundle\CalendarBundle\Entity\CalendarEvent;
+use Oro\Bundle\CalendarBundle\Manager\CalendarEvent\NotificationManager;
 
 class CalendarEventApiHandler extends AbstractCalendarEventHandler
 {
@@ -51,9 +52,20 @@ class CalendarEventApiHandler extends AbstractCalendarEventHandler
     /**
      * {@inheritdoc}
      */
-    protected function allowSendNotifications()
+    protected function getSendNotificationsStrategy()
     {
-        return $this->form->has('notifyInvitedUsers') && $this->form->get('notifyInvitedUsers')->getData();
+        if ($this->form->has('notifyAttendees') && $this->form->get('notifyAttendees')->getData()) {
+            return $this->form->get('notifyAttendees')->getData();
+        }
+
+        /**
+         * @deprecated since 2.0 and will be removed after 2.2, use notifyAttendees instead.
+         */
+        if ($this->form->has('notifyInvitedUsers') && $this->form->get('notifyInvitedUsers')->getData()) {
+            return NotificationManager::ALL_NOTIFICATIONS_STRATEGY;
+        }
+
+        return NotificationManager::NONE_NOTIFICATIONS_STRATEGY;
     }
 
     /**

@@ -160,10 +160,11 @@ class CalendarEventDeleteHandler extends DeleteHandler
         }
 
         $em->flush();
-        
+
+        $this->notificationManager->setStrategy(NotificationManager::ALL_NOTIFICATIONS_STRATEGY);
         if ($this->shouldSendNotification()) {
             if ($cancelled) {
-                $this->notificationManager->onUpdate($entity, $clonedEntity, true);
+                $this->notificationManager->onUpdate($entity, $clonedEntity);
             } else {
                 $this->notificationManager->onDelete($entity);
             }
