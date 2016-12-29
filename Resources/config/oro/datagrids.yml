@@ -47,7 +47,20 @@ datagrids:
                     and:
                         - targetCalendar.owner = @oro_security.security_facade->getLoggedUserId
                         - event.cancelled = false
-                groupBy: event.id, calendar.name, owner.firstName, owner.lastName, parentId, ownerId, status.id, relatedAttendeeUser.id, recurrence.id
+                groupBy: >
+                    event.id,
+                    calendar.name,
+                    owner.firstName,
+                    owner.lastName,
+                    parent.id,
+                    owner.id,
+                    status.id,
+                    relatedAttendeeUser.id,
+                    recurrence.id,
+                    recurringEvent.id,
+                    recurringEventRecurrence.id,
+                    parentRecurringEvent.id,
+                    parentRecurringEventRecurrence.id
         columns:
             title:
                 label: oro.calendar.calendarevent.title.label
