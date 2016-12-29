@@ -4,8 +4,6 @@ namespace Oro\Bundle\CalendarBundle\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
 
-use BeSimple\SoapBundle\ServiceDefinition\Annotation as Soap;
-
 use Oro\Bundle\CalendarBundle\Model\ExtendCalendarProperty;
 use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\Config;
 
@@ -51,7 +49,6 @@ class CalendarProperty extends ExtendCalendarProperty
      * @ORM\Id
      * @ORM\Column(type="integer")
      * @ORM\GeneratedValue(strategy="AUTO")
-     * @Soap\ComplexType("int", nillable=true)
      */
     protected $id;
 
@@ -60,7 +57,6 @@ class CalendarProperty extends ExtendCalendarProperty
      *
      * @ORM\ManyToOne(targetEntity="Calendar")
      * @ORM\JoinColumn(name="target_calendar_id", referencedColumnName="id", nullable=false, onDelete="CASCADE")
-     * @Soap\ComplexType("Oro\Bundle\CalendarBundle\Entity\Calendar")
      */
     protected $targetCalendar;
 
@@ -68,7 +64,6 @@ class CalendarProperty extends ExtendCalendarProperty
      * @var string
      *
      * @ORM\Column(name="calendar_alias", type="string", length=32)
-     * @Soap\ComplexType("string")
      */
     protected $calendarAlias;
 
@@ -76,7 +71,6 @@ class CalendarProperty extends ExtendCalendarProperty
      * @var int
      *
      * @ORM\Column(name="calendar_id", type="integer")
-     * @Soap\ComplexType("int")
      */
     protected $calendar;
 
@@ -84,7 +78,6 @@ class CalendarProperty extends ExtendCalendarProperty
      * @var int
      *
      * @ORM\Column(name="position", type="integer", options={"default"=0})
-     * @Soap\ComplexType("int", nillable=true)
      */
     protected $position = 0;
 
@@ -92,7 +85,6 @@ class CalendarProperty extends ExtendCalendarProperty
      * @var boolean
      *
      * @ORM\Column(name="visible", type="boolean", options={"default"=true})
-     * @Soap\ComplexType("boolean", nillable=true)
      */
     protected $visible = true;
 
@@ -100,7 +92,6 @@ class CalendarProperty extends ExtendCalendarProperty
      * @var string|null
      *
      * @ORM\Column(name="background_color", type="string", length=7, nullable=true)
-     * @Soap\ComplexType("string", nillable=true)
      */
     protected $backgroundColor;
 

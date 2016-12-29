@@ -2,11 +2,11 @@
 
 namespace Oro\Bundle\CalendarBundle\Tests\Unit\Validator;
 
-use Oro\Bundle\CalendarBundle\Validator\CalendarEventValidator;
-use Oro\Bundle\CalendarBundle\Validator\Constraints\CalendarEvent;
-use Oro\Bundle\CalendarBundle\Entity\CalendarEvent as CalendarEventEntity;
+use Oro\Bundle\CalendarBundle\Entity\CalendarEvent;
+use Oro\Bundle\CalendarBundle\Validator\Constraints\RecurringCalendarEventExceptionConstraint;
+use Oro\Bundle\CalendarBundle\Validator\RecurringCalendarEventExceptionValidator;
 
-class CalendarEventValidatorTest extends \PHPUnit_Framework_TestCase
+class RecurringCalendarEventExceptionValidatorTest extends \PHPUnit_Framework_TestCase
 {
     /** @var CalendarEvent */
     protected $constraint;
@@ -14,10 +14,16 @@ class CalendarEventValidatorTest extends \PHPUnit_Framework_TestCase
     /** @var \PHPUnit_Framework_MockObject_MockObject */
     protected $context;
 
+    /** @var \PHPUnit_Framework_MockObject_MockObject */
+    protected $calendarEventManager;
+
     protected function setUp()
     {
-        $this->constraint = new CalendarEvent();
-        $this->context = $this->getMock('Symfony\Component\Validator\ExecutionContextInterface');
+        $this->constraint = new RecurringCalendarEventExceptionConstraint();
+        $this->context = $this->createMock('Symfony\Component\Validator\ExecutionContextInterface');
+        $this->calendarEventManager = $this->getMockBuilder('Oro\Bundle\CalendarBundle\Manager\CalendarEventManager')
+            ->disableOriginalConstructor()
+            ->getMock();
     }
 
     public function testValidateNoErrors()
@@ -25,7 +31,7 @@ class CalendarEventValidatorTest extends \PHPUnit_Framework_TestCase
         $this->context->expects($this->never())
             ->method('addViolation');
 
-        $calendarEvent = new CalendarEventEntity();
+        $calendarEvent = new CalendarEvent();
 
         $this->getValidator()->validate($calendarEvent, $this->constraint);
     }
@@ -38,9 +44,11 @@ class CalendarEventValidatorTest extends \PHPUnit_Framework_TestCase
         $this->context->expects($this->at(1))
             ->method('addViolation')
             ->with($this->equalTo("Parameter 'recurringEventId' can be set only for recurring calendar events."));
+        $this->context->expects($this->at(2))
+            ->method('getRoot');
 
-        $calendarEvent = new CalendarEventEntity();
-        $recurringEvent = new CalendarEventEntity();
+        $calendarEvent = new CalendarEvent();
+        $recurringEvent = new CalendarEvent();
         $this->setId($recurringEvent, 666);
         $this->setId($calendarEvent, 666);
         $calendarEvent->setRecurringEvent($recurringEvent);
@@ -49,11 +57,11 @@ class CalendarEventValidatorTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * @return CalendarEventValidator
+     * @return RecurringCalendarEventExceptionValidator
      */
     protected function getValidator()
     {
-        $validator = new CalendarEventValidator();
+        $validator = new RecurringCalendarEventExceptionValidator($this->calendarEventManager);
         $validator->initialize($this->context);
 
         return $validator;

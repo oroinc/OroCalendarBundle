@@ -57,7 +57,7 @@ class RecurrenceValidatorTest extends \PHPUnit_Framework_TestCase
     protected function setUp()
     {
         $this->constraint = new Recurrence();
-        $this->context = $this->getMock('Symfony\Component\Validator\Context\ExecutionContextInterface');
+        $this->context = $this->createMock('Symfony\Component\Validator\Context\ExecutionContextInterface');
 
         $this->model = $this->getMockBuilder('Oro\Bundle\CalendarBundle\Model\Recurrence')
             ->disableOriginalConstructor()
@@ -390,7 +390,7 @@ class RecurrenceValidatorTest extends \PHPUnit_Framework_TestCase
         $invalidValue,
         $path
     ) {
-        $builder = $this->getMock('Symfony\Component\Validator\Violation\ConstraintViolationBuilderInterface');
+        $builder = $this->createMock('Symfony\Component\Validator\Violation\ConstraintViolationBuilderInterface');
 
         $this->context->expects($matcher)
             ->method('buildViolation')

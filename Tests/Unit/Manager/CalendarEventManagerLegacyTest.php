@@ -47,7 +47,7 @@ class CalendarEventManagerLegacyTest extends \PHPUnit_Framework_TestCase
                 );
             }));
 
-        $registry = $this->getMock('Doctrine\Common\Persistence\ManagerRegistry');
+        $registry = $this->createMock('Doctrine\Common\Persistence\ManagerRegistry');
         $registry->expects($this->any())
             ->method('getRepository')
             ->will($this->returnValueMap([
@@ -86,10 +86,15 @@ class CalendarEventManagerLegacyTest extends \PHPUnit_Framework_TestCase
                 ->disableOriginalConstructor()
                 ->getMock();
 
+        $attendeeManager = $this
+            ->getMockBuilder('Oro\Bundle\CalendarBundle\Manager\AttendeeManager')
+            ->disableOriginalConstructor()
+            ->getMock();
+
         $updateManager = new UpdateManager(
             new UpdateAttendeeManager($attendeeRelationManager, $doctrineHelper),
             new UpdateChildManager($doctrineHelper),
-            new UpdateExceptionManager()
+            new UpdateExceptionManager($attendeeManager)
         );
 
         $this->calendarEventManager = new CalendarEventManager(
@@ -130,7 +135,6 @@ class CalendarEventManagerLegacyTest extends \PHPUnit_Framework_TestCase
             ->addChildEvent($secondEvent)
             ->addAttendee($secondEventAttendee)
             ->addChildEvent($eventWithoutRelatedAttendee);
-
 
         // assert default data with default status
         $this->calendarEventManager->onEventUpdate($parentEvent, clone $parentEvent, new Organization(), false);
@@ -212,7 +216,9 @@ class CalendarEventManagerLegacyTest extends \PHPUnit_Framework_TestCase
             ->setAttendees($attendees)
             ->setCalendar($calendar);
 
-        $this->calendarEventManager->onEventUpdate($event, clone $event, new Organization(), false);
+        $originalEvent = clone $event;
+        $originalEvent->setAttendees(new ArrayCollection());
+        $this->calendarEventManager->onEventUpdate($event, $originalEvent, new Organization(), false);
 
         $this->assertCount(1, $event->getChildEvents());
         $this->assertSame($attendees->get(1), $event->getChildEvents()->first()->findRelatedAttendee());

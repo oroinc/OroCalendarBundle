@@ -4,12 +4,18 @@ namespace Oro\Bundle\CalendarBundle\Tests\Unit\Form\Handler;
 
 use Symfony\Component\HttpFoundation\Request;
 
-use Oro\Bundle\CalendarBundle\Tests\Unit\ReflectionUtil;
-use Oro\Bundle\CalendarBundle\Tests\Unit\Fixtures\Entity\CalendarEvent;
+use Oro\Bundle\ActivityBundle\Manager\ActivityManager;
+use Oro\Bundle\CalendarBundle\Manager\CalendarEvent\NotificationManager;
+use Oro\Bundle\EntityBundle\Tools\EntityRoutingHelper;
+use Oro\Bundle\SecurityBundle\SecurityFacade;
+
 use Oro\Bundle\CalendarBundle\Form\Handler\CalendarEventHandler;
 use Oro\Bundle\CalendarBundle\Manager\CalendarEventManager;
-use Oro\Bundle\UserBundle\Entity\User;
+use Oro\Bundle\CalendarBundle\Tests\Unit\ReflectionUtil;
+use Oro\Bundle\CalendarBundle\Tests\Unit\Fixtures\Entity\CalendarEvent;
 use Oro\Bundle\OrganizationBundle\Entity\Organization;
+
+use Oro\Bundle\UserBundle\Entity\User;
 
 class CalendarEventHandlerTest extends \PHPUnit_Framework_TestCase
 {
@@ -44,64 +50,59 @@ class CalendarEventHandlerTest extends \PHPUnit_Framework_TestCase
     protected $organization;
 
     /** @var \PHPUnit_Framework_MockObject_MockObject */
-    protected $emailSendProcessor;
+    protected $notificationManager;
 
     protected function setUp()
     {
-        $this->form                = $this->getMockBuilder('Symfony\Component\Form\Form')
-            ->disableOriginalConstructor()
-            ->getMock();
+        $this->form                = $this->createMock('Symfony\Component\Form\Form');
         $this->request             = new Request();
 
-        $this->objectManager                  = $this->getMockBuilder('Doctrine\Common\Persistence\ObjectManager')
-            ->disableOriginalConstructor()
-            ->getMock();
+        $this->objectManager       = $this->createMock('Doctrine\Common\Persistence\ObjectManager');
 
-        $doctrine = $this->getMockBuilder('Doctrine\Common\Persistence\ManagerRegistry')
-            ->disableOriginalConstructor()
-            ->getMock();
+        $doctrine = $this->createMock('Doctrine\Common\Persistence\ManagerRegistry');
 
         $doctrine->expects($this->any())
             ->method('getManager')
             ->will($this->returnValue($this->objectManager));
 
-        $this->activityManager     = $this->getMockBuilder('Oro\Bundle\ActivityBundle\Manager\ActivityManager')
+        $this->activityManager     = $this->getMockBuilder(ActivityManager::class)
             ->disableOriginalConstructor()
             ->getMock();
 
-        $this->entityRoutingHelper = $this->getMockBuilder('Oro\Bundle\EntityBundle\Tools\EntityRoutingHelper')
+        $this->entityRoutingHelper = $this->getMockBuilder(EntityRoutingHelper::class)
             ->disableOriginalConstructor()
             ->getMock();
 
         $this->organization = new Organization();
-        $this->securityFacade      = $this->getMockBuilder('Oro\Bundle\SecurityBundle\SecurityFacade')
+        $this->securityFacade      = $this->getMockBuilder(SecurityFacade::class)
             ->disableOriginalConstructor()
             ->getMock();
         $this->securityFacade->expects($this->any())
             ->method('getOrganization')
             ->willReturn($this->organization);
 
-        $this->emailSendProcessor = $this->getMockBuilder('Oro\Bundle\CalendarBundle\Model\Email\EmailSendProcessor')
+        $this->notificationManager = $this->getMockBuilder(NotificationManager::class)
             ->disableOriginalConstructor()
             ->getMock();
 
         $this->calendarEventManager = $this
-            ->getMockBuilder('Oro\Bundle\CalendarBundle\Manager\CalendarEventManager')
+            ->getMockBuilder(CalendarEventManager::class)
             ->disableOriginalConstructor()
             ->getMock();
 
         $this->entity = new CalendarEvent();
 
         $this->handler = new CalendarEventHandler(
-            $this->form,
             $this->request,
             $doctrine,
-            $this->activityManager,
-            $this->entityRoutingHelper,
             $this->securityFacade,
-            $this->emailSendProcessor,
-            $this->calendarEventManager
+            $this->activityManager,
+            $this->calendarEventManager,
+            $this->notificationManager
         );
+
+        $this->handler->setForm($this->form);
+        $this->handler->setEntityRoutingHelper($this->entityRoutingHelper);
     }
 
     public function testProcessGetRequestWithCalendar()

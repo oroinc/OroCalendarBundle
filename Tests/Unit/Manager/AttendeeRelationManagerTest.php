@@ -6,6 +6,7 @@ use Oro\Bundle\CalendarBundle\Manager\AttendeeRelationManager;
 use Oro\Bundle\CalendarBundle\Entity\Attendee as AttendeeEntity;
 use Oro\Bundle\CalendarBundle\Tests\Unit\Fixtures\Entity\Attendee;
 use Oro\Bundle\CalendarBundle\Tests\Unit\Fixtures\Entity\User;
+use Oro\Bundle\LocaleBundle\Formatter\NameFormatter;
 use Oro\Bundle\UserBundle\Entity\Email;
 
 class AttendeeRelationManagerTest extends \PHPUnit_Framework_TestCase
@@ -34,7 +35,7 @@ class AttendeeRelationManagerTest extends \PHPUnit_Framework_TestCase
                 return array_values(array_intersect_key($this->users, array_flip($emails)));
             }));
 
-        $registry = $this->getMock('Doctrine\Common\Persistence\ManagerRegistry');
+        $registry = $this->createMock('Doctrine\Common\Persistence\ManagerRegistry');
         $registry
             ->expects($this->any())
             ->method('getRepository')
@@ -55,19 +56,47 @@ class AttendeeRelationManagerTest extends \PHPUnit_Framework_TestCase
             ->disableOriginalConstructor()
             ->getMock();
 
-        $this->attendeeRelationManager = new AttendeeRelationManager($registry, $nameFormatter, $dqlNameFormatter);
+        $this->attendeeRelationManager = new AttendeeRelationManager(
+            $registry,
+            $nameFormatter,
+            $dqlNameFormatter
+        );
     }
 
-    /**
-     * @dataProvider createAttendeeProvider
-     */
-    public function testCreateAttendee($relatedEntity, $expectedAttendee)
+    public function testSetRelatedEntityWithUserWorks()
     {
-        $this->assertEquals($expectedAttendee, $this->attendeeRelationManager->createAttendee($relatedEntity));
+        $attendee = new Attendee();
+
+        $user = new User();
+        $user
+            ->setFirstName('John')
+            ->setLastName('Doe')
+            ->setEmail('john.doe@example.com');
+
+        $this->attendeeRelationManager->setRelatedEntity($attendee, $user);
+
+        $this->assertEquals('John Doe', $attendee->getDisplayName());
+        $this->assertEquals('john.doe@example.com', $attendee->getEmail());
+        $this->assertSame($user, $attendee->getUser());
     }
 
-    public function createAttendeeProvider()
+    public function testSetRelatedEntityWithIncorrectTypeFails()
     {
+        $this->expectException('InvalidArgumentException');
+        $this->expectExceptionMessage(
+            'Related entity must be an instance of "Oro\Bundle\UserBundle\Entity\User", "stdClass" is given.'
+        );
+
+        $attendee = new Attendee();
+
+        $entity = new \stdClass();
+
+        $this->attendeeRelationManager->setRelatedEntity($attendee, $entity);
+    }
+
+    public function setRelatedEntityDataProvider()
+    {
+        $attendee = new Attendee();
         $user = (new User())
             ->setFirstName('first')
             ->setLastName('last')
@@ -76,14 +105,11 @@ class AttendeeRelationManagerTest extends \PHPUnit_Framework_TestCase
         return [
             [
                 null,
-                null
-            ],
-            [
-                new AttendeeEntity(),
-                null,
+                $attendee
             ],
             [
                 $user,
+                $attendee,
                 (new AttendeeEntity())
                     ->setDisplayName('first last')
                     ->setEmail('email@example.com')
@@ -102,14 +128,14 @@ class AttendeeRelationManagerTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * @dataProvider getRelatedDisplayNameProvider
+     * @dataProvider getDisplayNameProvider
      */
-    public function testGetRelatedDisplayName($attendee, $expectedDisplayName)
+    public function testGetDisplayName($attendee, $expectedDisplayName)
     {
-        $this->assertEquals($expectedDisplayName, $this->attendeeRelationManager->getRelatedDisplayName($attendee));
+        $this->assertEquals($expectedDisplayName, $this->attendeeRelationManager->getDisplayName($attendee));
     }
 
-    public function getRelatedDisplayNameProvider()
+    public function getDisplayNameProvider()
     {
         return [
             [

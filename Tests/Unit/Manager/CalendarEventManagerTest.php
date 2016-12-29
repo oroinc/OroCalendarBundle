@@ -301,7 +301,7 @@ class CalendarEventManagerTest extends \PHPUnit_Framework_TestCase
 
         $status = new TestEnumValue(CalendarEvent::STATUS_ACCEPTED, CalendarEvent::STATUS_ACCEPTED);
 
-        $statusRepository = $this->getMock('Doctrine\Common\Persistence\ObjectRepository');
+        $statusRepository = $this->createMock('Doctrine\Common\Persistence\ObjectRepository');
         $statusRepository->expects($this->any())
             ->method('find')
             ->with(CalendarEvent::STATUS_ACCEPTED)
@@ -344,7 +344,7 @@ class CalendarEventManagerTest extends \PHPUnit_Framework_TestCase
         $user = new User();
         $user->setId(100);
 
-        $statusRepository = $this->getMock('Doctrine\Common\Persistence\ObjectRepository');
+        $statusRepository = $this->createMock('Doctrine\Common\Persistence\ObjectRepository');
         $statusRepository->expects($this->any())
             ->method('find')
             ->with(CalendarEvent::STATUS_ACCEPTED)
@@ -374,7 +374,7 @@ class CalendarEventManagerTest extends \PHPUnit_Framework_TestCase
 
         $status = new TestEnumValue(CalendarEvent::STATUS_ACCEPTED, CalendarEvent::STATUS_ACCEPTED);
 
-        $statusRepository = $this->getMock('Doctrine\Common\Persistence\ObjectRepository');
+        $statusRepository = $this->createMock('Doctrine\Common\Persistence\ObjectRepository');
         $statusRepository->expects($this->any())
             ->method('find')
             ->with(CalendarEvent::STATUS_ACCEPTED)

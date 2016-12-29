@@ -5,13 +5,13 @@ namespace Oro\Bundle\CalendarBundle\Autocomplete;
 use Doctrine\Common\Util\ClassUtils;
 
 use Oro\Bundle\ActivityBundle\Autocomplete\ContextSearchHandler;
-use Oro\Bundle\CalendarBundle\Manager\AttendeeRelationManager;
+use Oro\Bundle\CalendarBundle\Manager\AttendeeManager;
 use Oro\Bundle\SearchBundle\Query\Result\Item;
 
 class AttendeeSearchHandler extends ContextSearchHandler
 {
-    /** @var AttendeeRelationManager */
-    protected $attendeeRelationManager;
+    /** @var AttendeeManager */
+    protected $attendeeManager;
 
     /**
      * {@inheritdoc}
@@ -32,13 +32,7 @@ class AttendeeSearchHandler extends ContextSearchHandler
 
         $result = [];
         foreach ($objects as $object) {
-            $attendee = $this->attendeeRelationManager->createAttendee($object);
-            if (!$attendee) {
-                throw new \LogicException(
-                    'Attendee couldn\'t be created for "%s" entity',
-                    ClassUtils::getClass($object)
-                );
-            }
+            $attendee = $this->attendeeManager->createAttendee($object);
 
             $result[] = [
                 'id'          => json_encode(
@@ -52,6 +46,7 @@ class AttendeeSearchHandler extends ContextSearchHandler
                 'email'       => $attendee->getEmail(),
                 'status'      => $attendee->getStatusCode(),
                 'type'        => $attendee->getType() ? $attendee->getType()->getId() : null,
+                'userId'      => $attendee->getUser() ? $attendee->getUser()->getId() : null
             ];
         }
 
@@ -82,13 +77,13 @@ class AttendeeSearchHandler extends ContextSearchHandler
     }
 
     /**
-     * @param AttendeeRelationManager $attendeeRelationManager
+     * @param AttendeeManager $attendeeManager
      *
      * @return AttendeeSearchHandler
      */
-    public function setAttendeeRelationManager(AttendeeRelationManager $attendeeRelationManager)
+    public function setAttendeeManager(AttendeeManager $attendeeManager)
     {
-        $this->attendeeRelationManager = $attendeeRelationManager;
+        $this->attendeeManager = $attendeeManager;
 
         return $this;
     }

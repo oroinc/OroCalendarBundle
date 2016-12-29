@@ -2,7 +2,6 @@
 
 namespace Oro\Bundle\CalendarBundle\Tests\Unit\Provider;
 
-use Doctrine\ORM\Query\Expr;
 use Oro\Bundle\CalendarBundle\Entity\SystemCalendar;
 use Oro\Bundle\CalendarBundle\Provider\PublicCalendarProvider;
 use Oro\Bundle\CalendarBundle\Tests\Unit\ReflectionUtil;
@@ -17,6 +16,9 @@ class PublicCalendarProviderTest extends \PHPUnit_Framework_TestCase
 
     /** @var \PHPUnit_Framework_MockObject_MockObject */
     protected $calendarConfig;
+
+    /** @var \PHPUnit_Framework_MockObject_MockObject */
+    protected $recurrenceModel;
 
     /** @var \PHPUnit_Framework_MockObject_MockObject */
     protected $securityFacade;
@@ -40,9 +42,14 @@ class PublicCalendarProviderTest extends \PHPUnit_Framework_TestCase
         $this->securityFacade          = $this->getMockBuilder('Oro\Bundle\SecurityBundle\SecurityFacade')
             ->disableOriginalConstructor()
             ->getMock();
+        $this->recurrenceModel =
+            $this->getMockBuilder('Oro\Bundle\CalendarBundle\Model\Recurrence')
+                ->disableOriginalConstructor()
+                ->getMock();
 
         $this->provider = new PublicCalendarProvider(
             $this->doctrineHelper,
+            $this->recurrenceModel,
             $this->calendarEventNormalizer,
             $this->calendarConfig,
             $this->securityFacade

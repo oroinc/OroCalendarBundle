@@ -35,7 +35,7 @@ class AttendeesSubscriberTest extends \PHPUnit_Framework_TestCase
      */
     public function testPreSubmit($eventData, $formData, $expectedData)
     {
-        $form = $this->getMock('Symfony\Component\Form\FormInterface');
+        $form = $this->createMock('Symfony\Component\Form\FormInterface');
         $form->expects($this->any())
             ->method('getData')
             ->will($this->returnValue($formData));

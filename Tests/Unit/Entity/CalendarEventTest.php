@@ -360,7 +360,7 @@ class CalendarEventTest extends \PHPUnit_Framework_TestCase
 
     public function testAttendees()
     {
-        $attendee  = $this->getMock('Oro\Bundle\CalendarBundle\Entity\Attendee');
+        $attendee  = $this->createMock('Oro\Bundle\CalendarBundle\Entity\Attendee');
         $attendees = new ArrayCollection([$attendee]);
 
         $calendarEvent = new CalendarEvent();
@@ -633,8 +633,8 @@ class CalendarEventTest extends \PHPUnit_Framework_TestCase
         $email = 'test@example.com';
         $event = new CalendarEvent();
 
-        $attendee1 = $this->getMock(Attendee::class);
-        $attendee2 = $this->getMock(Attendee::class);
+        $attendee1 = $this->createMock(Attendee::class);
+        $attendee2 = $this->createMock(Attendee::class);
 
         $event->addAttendee($attendee1);
         $event->addAttendee($attendee2);
@@ -660,14 +660,13 @@ class CalendarEventTest extends \PHPUnit_Framework_TestCase
         $this->assertNull($event->getAttendeeByEmail($email));
     }
 
-    public function testGetAttendeeByEmailReturnsFalseWhenNoAttendeesAreMatched()
+    public function testGetAttendeeByEmailReturnsFalseWhenNoAttendeeIsMatched()
     {
         $email = 'test@example.com';
         $event = new CalendarEvent();
 
-
-        $attendee1 = $this->getMock(Attendee::class);
-        $attendee2 = $this->getMock(Attendee::class);
+        $attendee1 = $this->createMock(Attendee::class);
+        $attendee2 = $this->createMock(Attendee::class);
 
         $event->addAttendee($attendee1);
         $event->addAttendee($attendee2);
@@ -683,5 +682,143 @@ class CalendarEventTest extends \PHPUnit_Framework_TestCase
             ->will($this->returnValue(false));
 
         $this->assertNull($event->getAttendeeByEmail($email));
+    }
+
+    public function testGetAttendeeByUserReturnsTrueWhenAttendeeIsMatched()
+    {
+        $user = new User();
+        $event = new CalendarEvent();
+
+        $attendee1 = $this->createMock(Attendee::class);
+        $attendee2 = $this->createMock(Attendee::class);
+
+        $event->addAttendee($attendee1);
+        $event->addAttendee($attendee2);
+
+        $attendee1->expects($this->once())
+            ->method('isUserEqual')
+            ->with($user)
+            ->will($this->returnValue(false));
+
+        $attendee2->expects($this->once())
+            ->method('isUserEqual')
+            ->with($user)
+            ->will($this->returnValue(true));
+
+        $this->assertSame($attendee2, $event->getAttendeeByUser($user));
+    }
+
+    public function testGetAttendeeByUserReturnsFalseWhenNoAttendeesExist()
+    {
+        $user = new User();
+        $event = new CalendarEvent();
+
+        $this->assertNull($event->getAttendeeByUser($user));
+    }
+
+    public function testGetAttendeeByUserReturnsFalseWhenNoAttendeeIsMatched()
+    {
+        $user = new User();
+        $event = new CalendarEvent();
+
+        $attendee1 = $this->createMock(Attendee::class);
+        $attendee2 = $this->createMock(Attendee::class);
+
+        $event->addAttendee($attendee1);
+        $event->addAttendee($attendee2);
+
+        $attendee1->expects($this->once())
+            ->method('isUserEqual')
+            ->with($user)
+            ->will($this->returnValue(false));
+
+        $attendee2->expects($this->once())
+            ->method('isUserEqual')
+            ->with($user)
+            ->will($this->returnValue(false));
+
+        $this->assertNull($event->getAttendeeByUser($user));
+    }
+
+    public function testGetAttendeeByCalendarReturnsTrueWhenAttendeeIsMatched()
+    {
+        $user = new User();
+        $calendar = new Calendar();
+        $calendar->setOwner($user);
+        $event = new CalendarEvent();
+
+        $attendee1 = $this->createMock(Attendee::class);
+        $attendee2 = $this->createMock(Attendee::class);
+
+        $event->addAttendee($attendee1);
+        $event->addAttendee($attendee2);
+
+        $attendee1->expects($this->once())
+            ->method('isUserEqual')
+            ->with($user)
+            ->will($this->returnValue(false));
+
+        $attendee2->expects($this->once())
+            ->method('isUserEqual')
+            ->with($user)
+            ->will($this->returnValue(true));
+
+        $this->assertSame($attendee2, $event->getAttendeeByCalendar($calendar));
+    }
+
+    public function testGetAttendeeByCalendarReturnsFalseWhenNoAttendeesExist()
+    {
+        $user = new User();
+        $calendar = new Calendar();
+        $calendar->setOwner($user);
+        $event = new CalendarEvent();
+
+        $this->assertNull($event->getAttendeeByCalendar($calendar));
+    }
+
+    public function testGetAttendeeByCalendarReturnsFalseWhenNoAttendeeIsMatched()
+    {
+        $user = new User();
+        $calendar = new Calendar();
+        $calendar->setOwner($user);
+        $event = new CalendarEvent();
+
+        $attendee1 = $this->createMock(Attendee::class);
+        $attendee2 = $this->createMock(Attendee::class);
+
+        $event->addAttendee($attendee1);
+        $event->addAttendee($attendee2);
+
+        $attendee1->expects($this->once())
+            ->method('isUserEqual')
+            ->with($user)
+            ->will($this->returnValue(false));
+
+        $attendee2->expects($this->once())
+            ->method('isUserEqual')
+            ->with($user)
+            ->will($this->returnValue(false));
+
+        $this->assertNull($event->getAttendeeByCalendar($calendar));
+    }
+
+    public function testGetAttendeeByCalendarReturnsFalseWhenCalendarHasNoOwner()
+    {
+        $calendar = new Calendar();
+        $event = new CalendarEvent();
+
+        $attendee1 = $this->createMock(Attendee::class);
+        $attendee2 = $this->createMock(Attendee::class);
+
+        $event->addAttendee($attendee1);
+        $event->addAttendee($attendee2);
+
+        $attendee1->expects($this->never())
+            ->method($this->anything());
+
+        $attendee2->expects($this->never())
+            ->method($this->anything());
+
+        $this->assertNull($event->getAttendeeByCalendar($calendar));
     }
 }
