@@ -1,1 +1,7 @@
-{{ get_recurrence_text_value(record.getValue('recurrence')) }}
+{% set originalEvent = record.getValue('parent') ? record.getValue('parent') : record.getRootEntity() %}
+{% if originalEvent.recurringEvent  %}
+    {{ get_recurrence_text_value(originalEvent.recurringEvent.recurrence) }}
+{% else %}
+    {{ get_recurrence_text_value(originalEvent.recurrence) }}
+{% endif %}
+

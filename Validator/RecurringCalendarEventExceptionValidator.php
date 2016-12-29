@@ -71,7 +71,8 @@ class RecurringCalendarEventExceptionValidator extends ConstraintValidator
         CalendarEvent $value,
         RecurringCalendarEventExceptionConstraint $constraint
     ) {
-        if ($value->getRecurringEvent() && $value->getRecurringEvent()->getRecurrence() === null) {
+        if ($value->getRecurringEvent() && $value->getRecurringEvent()->getRecurrence() === null
+            && $value->getRecurringEvent()->getParent() === null) {
             $this->context->addViolation($constraint->wrongRecurrenceMessage);
         }
     }
