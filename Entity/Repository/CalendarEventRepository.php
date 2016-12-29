@@ -46,7 +46,7 @@ class CalendarEventRepository extends EntityRepository
         $qb = $this->getEventListQueryBuilder($filters, $extraFields)
             ->addSelect(
                 sprintf(
-                    '(CASE WHEN (status.id IS NULL) THEN \'%s\' ELSE status.id END) as invitationStatus',
+                    'COALESCE(status.id, \'%s\') as invitationStatus',
                     CalendarEvent::STATUS_NONE
                 )
             )
