@@ -16,11 +16,13 @@ class SystemCalendarEventHandler extends AbstractCalendarEventHandler
      */
     public function process(CalendarEvent $entity)
     {
+        $request = $this->getRequest();
+
         $this->form->setData($entity);
 
-        if (in_array($this->request->getMethod(), array('POST', 'PUT'))) {
+        if (in_array($request->getMethod(), array('POST', 'PUT'))) {
             $originalEntity = clone $entity;
-            $this->form->submit($this->request);
+            $this->form->submit($request);
 
             if ($this->form->isValid()) {
                 // TODO: should be refactored after finishing BAP-8722

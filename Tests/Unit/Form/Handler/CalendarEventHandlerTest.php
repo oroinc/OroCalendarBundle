@@ -3,6 +3,7 @@
 namespace Oro\Bundle\CalendarBundle\Tests\Unit\Form\Handler;
 
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\RequestStack;
 
 use Oro\Bundle\ActivityBundle\Manager\ActivityManager;
 use Oro\Bundle\CalendarBundle\Manager\CalendarEvent\NotificationManager;
@@ -21,6 +22,9 @@ class CalendarEventHandlerTest extends \PHPUnit_Framework_TestCase
 {
     /** @var \PHPUnit_Framework_MockObject_MockObject */
     protected $form;
+
+    /** @var RequestStack */
+    protected $requestStack;
 
     /** @var Request */
     protected $request;
@@ -55,7 +59,9 @@ class CalendarEventHandlerTest extends \PHPUnit_Framework_TestCase
     protected function setUp()
     {
         $this->form                = $this->createMock('Symfony\Component\Form\Form');
-        $this->request             = new Request();
+        $this->request = new Request();
+        $this->requestStack = new RequestStack();
+        $this->requestStack->push($this->request);
 
         $this->objectManager       = $this->createMock('Doctrine\Common\Persistence\ObjectManager');
 
@@ -93,7 +99,7 @@ class CalendarEventHandlerTest extends \PHPUnit_Framework_TestCase
         $this->entity = new CalendarEvent();
 
         $this->handler = new CalendarEventHandler(
-            $this->request,
+            $this->requestStack,
             $doctrine,
             $this->securityFacade,
             $this->activityManager,

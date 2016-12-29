@@ -147,15 +147,8 @@ define(function(require) {
                     }, this);
 
                     this.modal = GuestNotifierView.createConfirmNotificationDialog();
-
-                    this.modal.on('ok', _.bind(function() {
-                        attrs.notifyInvitedUsers = true;
-                        deferredConfirmation.resolve();
-                        _.defer(cleanUp);
-                    }, this));
-
                     this.modal.on('cancel', _.bind(function() {
-                        attrs.notifyInvitedUsers = false;
+                        attrs.notifyAttendees = 'added_or_deleted';
                         deferredConfirmation.resolve();
                         _.defer(cleanUp);
                     }, this));

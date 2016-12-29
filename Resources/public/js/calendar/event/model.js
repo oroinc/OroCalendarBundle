@@ -41,7 +41,8 @@ define(function(require) {
             recurringEventId: null,
             originalStart: null,
             isCancelled: null,
-            updateExceptions: true
+            updateExceptions: true,
+            notifyAttendees: 'all'
         },
 
         initialize: function() {
@@ -100,11 +101,6 @@ define(function(require) {
                 modelData.attendees,
                 _.partial(_.pick, _, 'displayName', 'email', 'status', 'type')
             );
-
-            if (!this.get('id')) {
-                modelData.notifyInvitedUsers = true;
-            }
-
             options.contentType = 'application/json';
             options.data = JSON.stringify(modelData);
 

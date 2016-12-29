@@ -2,6 +2,7 @@
 
 namespace Oro\Bundle\CalendarBundle\Form\Handler;
 
+use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Security\Core\Exception\AccessDeniedException;
 
 use Oro\Bundle\CalendarBundle\Entity\CalendarEvent;
@@ -37,17 +38,19 @@ class CalendarEventHandler extends AbstractCalendarEventHandler
      */
     public function process(CalendarEvent $entity)
     {
+        $request = $this->getRequest();
+
         $this->checkPermission($entity);
 
         $this->form->setData($entity);
 
-        if (in_array($this->request->getMethod(), array('POST', 'PUT'))) {
+        if (in_array($request->getMethod(), array('POST', 'PUT'))) {
             // clone entity to have original values later
             $originalEntity = clone $entity;
 
             $this->ensureCalendarSet($entity);
 
-            $this->form->submit($this->request);
+            $this->form->submit($request);
 
             if ($this->form->isValid()) {
                 // TODO: should be refactored after finishing BAP-8722
@@ -66,7 +69,7 @@ class CalendarEventHandler extends AbstractCalendarEventHandler
                     );
                 }
 
-                $this->processTargetEntity($entity);
+                $this->processTargetEntity($entity, $request);
 
                 $this->onSuccess($entity, $originalEntity);
 
@@ -114,21 +117,22 @@ class CalendarEventHandler extends AbstractCalendarEventHandler
     }
 
     /**
-     * @param $entity
+     * @param         $entity
+     * @param Request $request
      *
      * @return CalendarEventHandler
      */
-    protected function processTargetEntity($entity)
+    protected function processTargetEntity($entity, Request $request)
     {
-        $targetEntityClass = $this->entityRoutingHelper->getEntityClassName($this->request);
+        $targetEntityClass = $this->entityRoutingHelper->getEntityClassName($request);
         if ($targetEntityClass) {
-            $targetEntityId = $this->entityRoutingHelper->getEntityId($this->request);
+            $targetEntityId = $this->entityRoutingHelper->getEntityId($request);
             $targetEntity   = $this->entityRoutingHelper->getEntityReference(
                 $targetEntityClass,
                 $targetEntityId
             );
 
-            $action = $this->entityRoutingHelper->getAction($this->request);
+            $action = $this->entityRoutingHelper->getAction($request);
             if ($action === 'activity') {
                 $this->activityManager->addActivityTarget($entity, $targetEntity);
             }

@@ -29,7 +29,8 @@ define([
             this.isModalShown = false;
 
             this.$form.parent().on('submit.' + this.cid, _.bind(function(e) {
-                if (!this.isModalShown && this.getFormState() !== this.formInitialState) {
+                var hasAttendees = this.$form.find('input[name*="[attendees]"]').val().indexOf('entityId') >= 0;
+                if (!this.isModalShown && this.getFormState() !== this.formInitialState && hasAttendees) {
                     this.getConfirmDialog().open();
                     this.isModalShown = true;
                     e.preventDefault();
@@ -57,12 +58,12 @@ define([
             if (!this.confirmModal) {
                 this.confirmModal = GuestNotifierView.createConfirmNotificationDialog();
                 this.listenTo(this.confirmModal, 'ok', _.bind(function() {
-                    this.$form.find('input[name*="[notifyInvitedUsers]"]').val(true);
+                    this.$form.find('input[name*="[notifyAttendees]"]').val('all');
                     this.$form.submit();
                     this.isModalShown = false;
                 }, this));
                 this.listenTo(this.confirmModal, 'cancel', _.bind(function() {
-                    this.$form.find('input[name*="[notifyInvitedUsers]"]').val('');
+                    this.$form.find('input[name*="[notifyAttendees]"]').val('added_or_deleted');
                     this.$form.submit();
                     this.isModalShown = false;
                 }, this));

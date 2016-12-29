@@ -1222,9 +1222,11 @@ class CalendarEvent extends ExtendCalendarEvent implements RemindableInterface, 
     }
 
     /**
+     * @todo: Move this logic to separate service or use another approach to get previous state of the event
+     *
      * The implementation should provides possibility to:
      * - Compare main relations of event with original state before update.
-     * - Get access to previous state of the event in emain notifications.
+     * - Get access to previous state of the event in email notifications.
      *
      * @see \Oro\Bundle\CalendarBundle\Form\Handler\CalendarEventHandler::process
      * @see \Oro\Bundle\CalendarBundle\Form\Handler\CalendarEventApiHandler::process
@@ -1233,9 +1235,6 @@ class CalendarEvent extends ExtendCalendarEvent implements RemindableInterface, 
      */
     public function __clone()
     {
-        if ($this->id) {
-            $this->id = null;
-        }
         $this->reminders = new ArrayCollection($this->reminders->toArray());
 
         // To avoid recursion do not clone parent for child event since it is already a clone

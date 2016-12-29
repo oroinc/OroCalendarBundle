@@ -7,6 +7,7 @@ use Doctrine\ORM\EntityManager;
 
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\RequestStack;
 
 use Oro\Bundle\ActivityBundle\Manager\ActivityManager;
 use Oro\Bundle\CalendarBundle\Entity\CalendarEvent;
@@ -19,8 +20,8 @@ abstract class AbstractCalendarEventHandler
     /** @var FormInterface */
     protected $form;
 
-    /** @var Request */
-    protected $request;
+    /** @var RequestStack */
+    protected $requestStack;
 
     /** @var ManagerRegistry */
     protected $doctrine;
@@ -35,22 +36,22 @@ abstract class AbstractCalendarEventHandler
     protected $calendarEventManager;
 
     /**
-     * @param Request               $request
-     * @param ManagerRegistry       $doctrine
-     * @param SecurityFacade        $securityFacade
+     * @param RequestStack         $requestStack
+     * @param ManagerRegistry      $doctrine
+     * @param SecurityFacade       $securityFacade
      * @param ActivityManager      $activityManager
-     * @param CalendarEventManager  $calendarEventManager
-     * @param NotificationManager   $notificationManager
+     * @param CalendarEventManager $calendarEventManager
+     * @param NotificationManager  $notificationManager
      */
     public function __construct(
-        Request $request,
+        RequestStack $requestStack,
         ManagerRegistry $doctrine,
         SecurityFacade $securityFacade,
         ActivityManager $activityManager,
         CalendarEventManager $calendarEventManager,
         NotificationManager $notificationManager
     ) {
-        $this->request              = $request;
+        $this->requestStack         = $requestStack;
         $this->doctrine             = $doctrine;
         $this->securityFacade       = $securityFacade;
         $this->activityManager      = $activityManager;
@@ -137,5 +138,18 @@ abstract class AbstractCalendarEventHandler
     protected function getEntityManager()
     {
         return $this->doctrine->getManager();
+    }
+
+    /**
+     * @return Request
+     */
+    protected function getRequest()
+    {
+        $request = $this->requestStack->getCurrentRequest();
+        if (!$request) {
+            throw new \RuntimeException('Request was not found');
+        }
+
+        return $request;
     }
 }

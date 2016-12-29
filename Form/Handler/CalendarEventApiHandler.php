@@ -15,18 +15,20 @@ class CalendarEventApiHandler extends AbstractCalendarEventHandler
      */
     public function process(CalendarEvent $entity)
     {
+        $request = $this->getRequest();
+
         $this->form->setData($entity);
 
-        if (in_array($this->request->getMethod(), ['POST', 'PUT'])) {
+        if (in_array($request->getMethod(), ['POST', 'PUT'])) {
             // clone entity to have original values later
-            $originaEntity = clone $entity;
+            $originalEntity = clone $entity;
 
-            $this->form->submit($this->request->request->all());
+            $this->form->submit($request->request->all());
 
             if ($this->form->isValid()) {
                 // TODO: should be refactored after finishing BAP-8722
                 // Contexts handling should be moved to common for activities form handler
-                if ($this->form->has('contexts') && $this->request->request->has('contexts')) {
+                if ($this->form->has('contexts') && $request->request->has('contexts')) {
                     $contexts = $this->form->get('contexts')->getData();
                     $owner = $entity->getCalendar() ? $entity->getCalendar()->getOwner() : null;
                     if ($owner && $owner->getId()) {
@@ -40,7 +42,7 @@ class CalendarEventApiHandler extends AbstractCalendarEventHandler
                     );
                 }
 
-                $this->onSuccess($entity, $originaEntity);
+                $this->onSuccess($entity, $originalEntity);
 
                 return true;
             }

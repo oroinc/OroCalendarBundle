@@ -4,6 +4,7 @@ namespace Oro\Bundle\CalendarBundle\Datagrid;
 
 use Symfony\Bundle\FrameworkBundle\Routing\Router;
 
+use Oro\Bundle\CalendarBundle\Manager\CalendarEvent\NotificationManager;
 use Oro\Bundle\DataGridBundle\Datasource\ResultRecord;
 
 class CalendarEventGridHelper
@@ -39,8 +40,8 @@ class CalendarEventGridHelper
             return $router->generate(
                 $route,
                 [
-                    'id'                 => $record->getValue('id'),
-                    'notifyInvitedUsers' => true,
+                    'id'              => $record->getValue('id'),
+                    'notifyAttendees' => NotificationManager::ALL_NOTIFICATIONS_STRATEGY,
                 ]
             );
         };

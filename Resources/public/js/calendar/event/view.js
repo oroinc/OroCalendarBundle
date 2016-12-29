@@ -288,7 +288,7 @@ define(function(require) {
                 } else {
                     options.url = this.model.url();
                 }
-                options.url += '?notifyInvitedUsers=true';
+                options.url += '?notifyAttendees=all';
                 this.model.destroy(options);
             } catch (err) {
                 this.showError(err);

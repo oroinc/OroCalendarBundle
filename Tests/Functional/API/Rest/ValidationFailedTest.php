@@ -97,6 +97,7 @@ class ValidationErrorTest extends AbstractValidationErrorTestCase
                     'id' => [],
                     'isCancelled' => [],
                     'notifyInvitedUsers' => [],
+                    'notifyAttendees' => [],
                     'originalStart' => [],
                     'recurrence' => [
                         'children' => array_replace(
