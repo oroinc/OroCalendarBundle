@@ -35,7 +35,7 @@ class ActionPermissionProviderTest extends \PHPUnit_Framework_TestCase
      */
     public function testGetInvitationPermissions(array $params, array $expected)
     {
-        $record = $this->getMock('Oro\Bundle\DataGridBundle\Datasource\ResultRecordInterface');
+        $record = $this->createMock('Oro\Bundle\DataGridBundle\Datasource\ResultRecordInterface');
         $user   = new User();
         $user->setId(self::ADMIN);
 

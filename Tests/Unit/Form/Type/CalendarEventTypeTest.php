@@ -14,14 +14,14 @@ class CalendarEventTypeTest extends \PHPUnit_Framework_TestCase
 
     protected function setUp()
     {
-        $repository = $this->getMock('Doctrine\Common\Persistence\ObjectRepository');
+        $repository = $this->createMock('Doctrine\Common\Persistence\ObjectRepository');
         $repository->expects($this->any())
             ->method('find')
             ->will($this->returnCallback(function ($id) {
                 return new TestEnumValue($id, $id);
             }));
 
-        $managerRegistry = $this->getMock('Doctrine\Common\Persistence\ManagerRegistry');
+        $managerRegistry = $this->createMock('Doctrine\Common\Persistence\ManagerRegistry');
         $managerRegistry->expects($this->any())
             ->method('getRepository')
             ->with('Extend\Entity\EV_Ce_Attendee_Status')

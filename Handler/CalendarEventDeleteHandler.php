@@ -8,13 +8,13 @@ use Doctrine\ORM\EntityNotFoundException;
 use Symfony\Component\HttpFoundation\RequestStack;
 
 use Oro\Bundle\CalendarBundle\Entity\CalendarEvent;
+use Oro\Bundle\CalendarBundle\Entity\SystemCalendar;
+use Oro\Bundle\CalendarBundle\Manager\CalendarEvent\NotificationManager;
+use Oro\Bundle\CalendarBundle\Provider\SystemCalendarConfig;
 use Oro\Bundle\SecurityBundle\Exception\ForbiddenException;
 use Oro\Bundle\SecurityBundle\SecurityFacade;
-use Oro\Bundle\SoapBundle\Handler\DeleteHandler;
-use Oro\Bundle\CalendarBundle\Entity\SystemCalendar;
-use Oro\Bundle\CalendarBundle\Provider\SystemCalendarConfig;
-use Oro\Bundle\CalendarBundle\Model\Email\EmailSendProcessor;
 use Oro\Bundle\SoapBundle\Entity\Manager\ApiEntityManager;
+use Oro\Bundle\SoapBundle\Handler\DeleteHandler;
 
 class CalendarEventDeleteHandler extends DeleteHandler
 {
@@ -27,8 +27,8 @@ class CalendarEventDeleteHandler extends DeleteHandler
     /** @var SecurityFacade */
     protected $securityFacade;
 
-    /** @var EmailSendProcessor */
-    protected $emailSendProcessor;
+    /** @var NotificationManager */
+    protected $notificationManager;
 
     /**
      * @param RequestStack $requestStack
@@ -43,13 +43,13 @@ class CalendarEventDeleteHandler extends DeleteHandler
     }
 
     /**
-     * @param EmailSendProcessor $emailSendProcessor
+     * @param NotificationManager $notificationManager
      *
      * @return CalendarEventDeleteHandler
      */
-    public function setEmailSendProcessor(EmailSendProcessor $emailSendProcessor)
+    public function setNotificationManager(NotificationManager $notificationManager)
     {
-        $this->emailSendProcessor = $emailSendProcessor;
+        $this->notificationManager = $notificationManager;
 
         return $this;
     }
@@ -131,6 +131,9 @@ class CalendarEventDeleteHandler extends DeleteHandler
     public function processDelete($entity, ObjectManager $em)
     {
         $this->checkPermissions($entity, $em);
+        // entity is cloned to have all attributes in delete notification email
+        $clonedEntity = clone $entity;
+        $cancelled = false;
 
         if ($this->shouldCancelInsteadDelete() && $entity->getRecurringEvent()) {
             $event = $entity->getParent() ? : $entity;
@@ -140,6 +143,7 @@ class CalendarEventDeleteHandler extends DeleteHandler
             foreach ($childEvents as $childEvent) {
                 $childEvent->setCancelled(true);
             }
+            $cancelled = true;
         } else {
             if ($entity->getRecurrence() && $entity->getRecurrence()->getId()) {
                 $em->remove($entity->getRecurrence());
@@ -158,7 +162,11 @@ class CalendarEventDeleteHandler extends DeleteHandler
         $em->flush();
         
         if ($this->shouldSendNotification()) {
-            $this->emailSendProcessor->sendDeleteEventNotification($entity);
+            if ($cancelled) {
+                $this->notificationManager->onUpdate($entity, $clonedEntity, true);
+            } else {
+                $this->notificationManager->onDelete($entity);
+            }
         }
     }
     

@@ -10,12 +10,9 @@ use Oro\Bundle\CalendarBundle\Entity\CalendarEvent;
 /**
  * The test covers basic CRUD operations with simple calendar event.
  *
- * Operations covered:
- * - create new event with minimal required data
- *
- * Resources used:
- * - create event (oro_api_post_calendarevent)
- * - get event (oro_api_get_calendarevent)
+ * Use cases covered:
+ * - Create regular calendar event with minimal required data.
+ * - Create simple event with from url encoded content.
  *
  * @dbIsolation
  */
@@ -29,11 +26,13 @@ class BasicCrudTest extends AbstractTestCase
     }
 
     /**
-     * Create regular calendar event.
+     * Create regular calendar event with minimal required data.
      *
-     * Create of simple event with minimal required data.
+     * Steps:
+     * 1. Create regular calendar event using minimal required data in the request.
+     * 2. Get created event and verify all properties in the response.
      */
-    public function testCreateSimpleCalendarEvent()
+    public function testCreateRegularCalendarEventWithMinimalRequiredData()
     {
         // Step 1. Create regular calendar event using minimal required data in the request.
         $this->restRequest(
@@ -114,9 +113,11 @@ class BasicCrudTest extends AbstractTestCase
     }
 
     /**
-     * Create regular calendar event.
+     * Create simple event with from url encoded content.
      *
-     * Create of simple event with minimal required data.
+     * Steps:
+     * 1. Create regular calendar event using minimal required data in the request.
+     * 2. Get created event and verify all properties in the response.
      */
     public function testCreateSimpleCalendarEventWithFormUrlEncodedContent()
     {

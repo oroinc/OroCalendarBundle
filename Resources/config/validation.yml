@@ -1,6 +1,6 @@
 Oro\Bundle\CalendarBundle\Entity\CalendarEvent:
     constraints:
-        - Oro\Bundle\CalendarBundle\Validator\Constraints\CalendarEvent: ~
+        - Oro\Bundle\CalendarBundle\Validator\Constraints\RecurringCalendarEventExceptionConstraint: ~
     properties:
         title:
             - NotBlank:     ~

@@ -318,6 +318,15 @@ class CalendarEvent extends ExtendCalendarEvent implements RemindableInterface, 
     protected $cancelled = false;
 
     /**
+     * System flag to indicate clone method of child event is in progress.
+     *
+     * @internal
+     *
+     * @var bool
+     */
+    protected $childEventCloneInProgress = false;
+
+    /**
      * CalendarEvent constructor.
      */
     public function __construct()
@@ -681,11 +690,11 @@ class CalendarEvent extends ExtendCalendarEvent implements RemindableInterface, 
     }
 
     /**
-     * @param Calendar|null $calendar
+     * @param Calendar $calendar
      *
      * @return CalendarEvent|null
      */
-    public function getChildEventByCalendar(Calendar $calendar = null)
+    public function getChildEventByCalendar(Calendar $calendar)
     {
         if (!$calendar) {
             return null;
@@ -698,6 +707,29 @@ class CalendarEvent extends ExtendCalendarEvent implements RemindableInterface, 
         );
 
         return $result->count() ? $result->first() : null;
+    }
+
+    /**
+     * Returns this event or one its' children where related attendee is matching the given instance.
+     *
+     * @param Attendee $attendee
+     *
+     * @return CalendarEvent|null
+     */
+    public function getEventByRelatedAttendee(Attendee $attendee)
+    {
+        if ($this->getRelatedAttendee() && $this->getRelatedAttendee()->isEqual($attendee)) {
+            return $this;
+        }
+
+        foreach ($this->getChildEvents() as $childEvent) {
+            $childRelatedAttendee = $childEvent->getRelatedAttendee() ?: $childEvent->findRelatedAttendee();
+            if ($attendee->isEqual($childRelatedAttendee)) {
+                return $childEvent;
+            }
+        }
+
+        return null;
     }
 
     /**
@@ -764,19 +796,47 @@ class CalendarEvent extends ExtendCalendarEvent implements RemindableInterface, 
      */
     public function getAttendeeByEmail($email)
     {
-        $result = null;
-
         if ($email) {
             $attendees = $this->getAttendees();
             foreach ($attendees as $attendee) {
                 if ($attendee->isEmailEqual($email)) {
-                    $result = $attendee;
-                    break;
+                    return $attendee;
                 }
             }
         }
 
-        return $result;
+        return null;
+    }
+
+    /**
+     * Get attendee of Calendar Event by related User of Attendee.
+     *
+     * @param User $user
+     *
+     * @return Attendee|null
+     */
+    public function getAttendeeByUser(User $user)
+    {
+        $attendees = $this->getAttendees();
+        foreach ($attendees as $attendee) {
+            if ($attendee->isUserEqual($user)) {
+                return $attendee;
+            }
+        }
+
+        return null;
+    }
+
+    /**
+     * Get attendee of Calendar Event by Calendar owned by related User of Attendee.
+     *
+     * @param Calendar $calendar
+     *
+     * @return Attendee|null
+     */
+    public function getAttendeeByCalendar(Calendar $calendar)
+    {
+        return $calendar->getOwner() ? $this->getAttendeeByUser($calendar->getOwner()) : null;
     }
 
     /**
@@ -787,17 +847,14 @@ class CalendarEvent extends ExtendCalendarEvent implements RemindableInterface, 
      */
     public function getEqualAttendee(Attendee $attendee)
     {
-        $result = null;
-
         $attendees = $this->getAttendees();
         foreach ($attendees as $actualAttendee) {
             if ($attendee->isEqual($actualAttendee)) {
-                $result = $actualAttendee;
-                break;
+                return $actualAttendee;
             }
         }
 
-        return $result;
+        return null;
     }
 
     /**
@@ -1165,23 +1222,58 @@ class CalendarEvent extends ExtendCalendarEvent implements RemindableInterface, 
     }
 
     /**
-     * The implementation should provides possibility to compare main relations of
-     * event with original state before update.
+     * The implementation should provides possibility to:
+     * - Compare main relations of event with original state before update.
+     * - Get access to previous state of the event in emain notifications.
      *
      * @see \Oro\Bundle\CalendarBundle\Form\Handler\CalendarEventHandler::process
      * @see \Oro\Bundle\CalendarBundle\Form\Handler\CalendarEventApiHandler::process
      * @see \Oro\Bundle\CalendarBundle\Form\Handler\SystemCalendarEventHandler::process
+     * @see \Oro\Bundle\CalendarBundle\Model\Email\EmailNotificationProcessor::sendUpdateParentEventNotification
      */
     public function __clone()
     {
         if ($this->id) {
             $this->id = null;
-            $this->reminders = new ArrayCollection($this->reminders->toArray());
-            $this->childEvents = new ArrayCollection($this->childEvents->toArray());
-            $this->attendees = new ArrayCollection($this->attendees->toArray());
-            $this->recurringEventExceptions = new ArrayCollection($this->recurringEventExceptions->toArray());
-            $this->recurrence = $this->recurrence ? clone $this->recurrence : null;
         }
+        $this->reminders = new ArrayCollection($this->reminders->toArray());
+
+        // To avoid recursion do not clone parent for child event since it is already a clone
+        if ($this->parent && !$this->childEventCloneInProgress) {
+            $this->parent = clone $this->parent;
+        }
+
+        $this->childEvents = $this->cloneChildEvents($this->childEvents, $this);
+        $this->attendees = new ArrayCollection($this->attendees->toArray());
+        $this->recurringEventExceptions = new ArrayCollection($this->recurringEventExceptions->toArray());
+
+        if ($this->recurrence) {
+            $this->recurrence = clone $this->recurrence;
+        }
+
+        $this->childEventCloneInProgress = false;
+    }
+
+    /**
+     * Clone collection of child events with all elements.
+     *
+     * @param Collection|CalendarEvent[] $collection
+     * @param CalendarEvent $parent
+     * @return Collection
+     */
+    protected function cloneChildEvents(Collection $collection, CalendarEvent $parent)
+    {
+        $result = new ArrayCollection();
+
+        foreach ($collection as $key => $item) {
+            $item->childEventCloneInProgress = true;
+            $clonedItem = clone $item;
+            $result->set($key, $clonedItem);
+            $clonedItem->parent = $parent;
+            $item->childEventCloneInProgress = false;
+        }
+
+        return $result;
     }
 
     /**

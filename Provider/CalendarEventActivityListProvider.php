@@ -176,7 +176,7 @@ class CalendarEventActivityListProvider implements
      */
     public function getTargetEntities($entity)
     {
-        return $entity->getActivityTargetEntities();
+        return $entity->getActivityTargets();
     }
 
     /**

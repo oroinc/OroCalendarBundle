@@ -2,6 +2,9 @@
 
 namespace Oro\Bundle\CalendarBundle\Tests\Unit\Form\Handler;
 
+use Oro\Bundle\ActivityBundle\Manager\ActivityManager;
+use Oro\Bundle\CalendarBundle\Manager\CalendarEvent\NotificationManager;
+use Oro\Bundle\SecurityBundle\SecurityFacade;
 use Symfony\Component\HttpFoundation\Request;
 
 use Oro\Bundle\CalendarBundle\Entity\CalendarEvent;
@@ -41,51 +44,54 @@ class SystemCalendarEventHandlerTest extends \PHPUnit_Framework_TestCase
     /** @var \PHPUnit_Framework_MockObject_MockObject|CalendarEventManager */
     protected $calendarEventManager;
 
+    /** @var \PHPUnit_Framework_MockObject_MockObject */
+    protected $notificationManager;
+
     protected function setUp()
     {
-        $this->form = $this->getMockBuilder('Symfony\Component\Form\Form')
-            ->disableOriginalConstructor()
-            ->getMock();
+        $this->form = $this->createMock('Symfony\Component\Form\Form');
         $this->request = new Request();
 
-        $this->objectManager = $this->getMockBuilder('Doctrine\Common\Persistence\ObjectManager')
-            ->disableOriginalConstructor()
-            ->getMock();
+        $this->objectManager = $this->createMock('Doctrine\Common\Persistence\ObjectManager');
 
-        $doctrine = $this->getMockBuilder('Doctrine\Common\Persistence\ManagerRegistry')
-            ->disableOriginalConstructor()
-            ->getMock();
+        $doctrine = $this->createMock('Doctrine\Common\Persistence\ManagerRegistry');
 
         $doctrine->expects($this->any())
             ->method('getManager')
             ->will($this->returnValue($this->objectManager));
 
         $this->organization = new Organization();
-        $this->securityFacade = $this->getMockBuilder('Oro\Bundle\SecurityBundle\SecurityFacade')
+        $this->securityFacade = $this->getMockBuilder(SecurityFacade::class)
             ->disableOriginalConstructor()
             ->getMock();
         $this->securityFacade->expects($this->any())
             ->method('getOrganization')
             ->willReturn($this->organization);
 
-        $this->activityManager     = $this->getMockBuilder('Oro\Bundle\ActivityBundle\Manager\ActivityManager')
+        $this->activityManager     = $this->getMockBuilder(ActivityManager::class)
             ->disableOriginalConstructor()
             ->getMock();
 
         $this->calendarEventManager = $this
-            ->getMockBuilder('Oro\Bundle\CalendarBundle\Manager\CalendarEventManager')
+            ->getMockBuilder(CalendarEventManager::class)
+            ->disableOriginalConstructor()
+            ->getMock();
+
+        $this->notificationManager = $this
+            ->getMockBuilder(NotificationManager::class)
             ->disableOriginalConstructor()
             ->getMock();
 
         $this->entity  = new CalendarEvent();
         $this->handler = new SystemCalendarEventHandler(
-            $this->form,
             $this->request,
             $doctrine,
             $this->securityFacade,
             $this->activityManager,
-            $this->calendarEventManager
+            $this->calendarEventManager,
+            $this->notificationManager
         );
+        $this->handler->setForm($this->form);
     }
 
     public function testProcessWithContexts()
@@ -181,7 +187,7 @@ class SystemCalendarEventHandlerTest extends \PHPUnit_Framework_TestCase
             ->will($this->returnValue(true));
         $this->calendarEventManager->expects($this->once())
             ->method('onEventUpdate')
-            ->with($this->entity, clone $this->entity, $this->organization, false);
+            ->with($this->entity, clone $this->entity, $this->organization, true);
         $this->objectManager->expects($this->once())
             ->method('persist');
         $this->objectManager->expects($this->once())

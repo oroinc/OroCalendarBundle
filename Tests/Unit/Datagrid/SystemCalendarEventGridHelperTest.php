@@ -26,7 +26,7 @@ class SystemCalendarEventGridHelperTest extends \PHPUnit_Framework_TestCase
      */
     public function testGetPublicActionConfigurationClosure($isGranted, $expected)
     {
-        $record = $this->getMock('Oro\Bundle\DataGridBundle\Datasource\ResultRecordInterface');
+        $record = $this->createMock('Oro\Bundle\DataGridBundle\Datasource\ResultRecordInterface');
 
         $this->securityFacade->expects($this->once())
             ->method('isGranted')
@@ -57,7 +57,7 @@ class SystemCalendarEventGridHelperTest extends \PHPUnit_Framework_TestCase
      */
     public function testGetSystemActionConfigurationClosure($isGranted, $expected)
     {
-        $record = $this->getMock('Oro\Bundle\DataGridBundle\Datasource\ResultRecordInterface');
+        $record = $this->createMock('Oro\Bundle\DataGridBundle\Datasource\ResultRecordInterface');
 
         $this->securityFacade->expects($this->once())
             ->method('isGranted')
