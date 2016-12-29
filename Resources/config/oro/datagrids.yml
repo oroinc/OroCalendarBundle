@@ -7,7 +7,7 @@ datagrids:
                 select:
                     - partial event.{ id, start, recurrence, cancelled }
                     - event.id
-                    - CONCAT(CASE WHEN calendar.name IS NOT NULL THEN calendar.name ELSE CONCAT_WS(' ', owner.firstName, owner.lastName) END, '') AS name
+                    - COALESCE(calendar.name, CONCAT_WS(' ', owner.firstName, owner.lastName)) AS name
                     - event.title
                     - event.start
                     - event.end
@@ -15,7 +15,7 @@ datagrids:
                     - parent.id as parentId
                     - owner.id as ownerId
                     - relatedAttendeeUser.id as relatedAttendeeUserId
-                    - (CASE WHEN (recurrence.id IS NULL) THEN false ELSE true END) as is_recurrent
+                    - (CASE WHEN (event.recurrence IS NOT NULL OR parent.recurrence IS NOT NULL) THEN true ELSE false END) as is_recurrent
                     - recurringEvent
                     - recurringEventRecurrence
                     - parent
