@@ -88,20 +88,38 @@ class UpdateAttendeeManager
                 continue;
             }
 
-            if ($calendarEvent->getCalendar() && $attendee->isUserEqual($calendarEvent->getCalendar()->getOwner())) {
-                $organizerAttendeeType = $this->getAttendeeType(Attendee::TYPE_ORGANIZER);
-                $attendee->setType($organizerAttendeeType);
+            if ($this->isAttendeeRelatedToCalendarEventOwnerUser($calendarEvent, $attendee)) {
+                $ownerUserAttendeeType = $this->getAttendeeTypeForCalendarEventOwnerUser();
+                $attendee->setType($ownerUserAttendeeType);
             } else {
-                $defaultAttendeeType = $this->getDefaultAttendeeType();
+                $defaultAttendeeType = $this->getAttendeeTypeByDefault();
                 $attendee->setType($defaultAttendeeType);
             }
         }
     }
 
     /**
+     * @param CalendarEvent $calendarEvent
+     * @param Attendee $attendee
+     * @return bool
+     */
+    protected function isAttendeeRelatedToCalendarEventOwnerUser(CalendarEvent $calendarEvent, Attendee $attendee)
+    {
+        return $calendarEvent->getCalendar() && $attendee->isUserEqual($calendarEvent->getCalendar()->getOwner());
+    }
+
+    /**
      * @return null|AbstractEnumValue
      */
-    protected function getDefaultAttendeeType()
+    protected function getAttendeeTypeForCalendarEventOwnerUser()
+    {
+        return $this->getAttendeeType(Attendee::TYPE_ORGANIZER);
+    }
+
+    /**
+     * @return null|AbstractEnumValue
+     */
+    protected function getAttendeeTypeByDefault()
     {
         return $this->getAttendeeType(Attendee::TYPE_REQUIRED);
     }

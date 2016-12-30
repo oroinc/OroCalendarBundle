@@ -11,7 +11,7 @@ datagrids:
                     - event.title
                     - event.start
                     - event.end
-                    - COALESCE(status.id, 'Oro\Bundle\CalendarBundle\Entity\CalendarEvent::STATUS_NONE') as invitationStatus
+                    - COALESCE(status.id, 'Oro\Bundle\CalendarBundle\Entity\Attendee::STATUS_NONE') as invitationStatus
                     - parent.id as parentId
                     - owner.id as ownerId
                     - relatedAttendeeUser.id as relatedAttendeeUserId
