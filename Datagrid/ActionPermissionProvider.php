@@ -3,7 +3,7 @@
 namespace Oro\Bundle\CalendarBundle\Datagrid;
 
 use Oro\Bundle\DataGridBundle\Datasource\ResultRecordInterface;
-use Oro\Bundle\CalendarBundle\Entity\CalendarEvent;
+use Oro\Bundle\CalendarBundle\Entity\Attendee;
 use Oro\Bundle\SecurityBundle\SecurityFacade;
 use Oro\Bundle\UserBundle\Entity\User;
 
@@ -40,21 +40,21 @@ class ActionPermissionProvider
                 $ownerId,
                 $relatedAttendeeUserId,
                 $invitationStatus,
-                CalendarEvent::STATUS_ACCEPTED
+                Attendee::STATUS_ACCEPTED
             ),
             'decline'     => $this->isAvailableResponseButton(
                 $user,
                 $ownerId,
                 $relatedAttendeeUserId,
                 $invitationStatus,
-                CalendarEvent::STATUS_DECLINED
+                Attendee::STATUS_DECLINED
             ),
             'tentative' => $this->isAvailableResponseButton(
                 $user,
                 $ownerId,
                 $relatedAttendeeUserId,
                 $invitationStatus,
-                CalendarEvent::STATUS_TENTATIVE
+                Attendee::STATUS_TENTATIVE
             ),
             'view'        => true,
             'update'      => $isEditable

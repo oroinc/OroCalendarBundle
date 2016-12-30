@@ -231,13 +231,13 @@ class EmailNotificationSender
         $statusCode
     ) {
         switch ($statusCode) {
-            case CalendarEvent::STATUS_ACCEPTED:
+            case Attendee::STATUS_ACCEPTED:
                 $templateName = self::NOTIFICATION_TEMPLATE_STATUS_ACCEPTED;
                 break;
-            case CalendarEvent::STATUS_TENTATIVE:
+            case Attendee::STATUS_TENTATIVE:
                 $templateName = self::NOTIFICATION_TEMPLATE_STATUS_TENTATIVE;
                 break;
-            case CalendarEvent::STATUS_DECLINED:
+            case Attendee::STATUS_DECLINED:
                 $templateName = self::NOTIFICATION_TEMPLATE_STATUS_DECLINED;
                 break;
             default:

@@ -11,7 +11,6 @@ use Oro\Bundle\CalendarBundle\Tests\Unit\ReflectionUtil;
 use Oro\Bundle\EntityExtendBundle\Tests\Unit\Fixtures\TestEnumValue;
 use Oro\Bundle\OrganizationBundle\Entity\Organization;
 use Oro\Bundle\CalendarBundle\Tests\Unit\Fixtures\Entity\User;
-use Oro\Component\PropertyAccess\PropertyAccessor;
 
 class CalendarEventManagerTest extends \PHPUnit_Framework_TestCase
 {
@@ -299,12 +298,12 @@ class CalendarEventManagerTest extends \PHPUnit_Framework_TestCase
         $user = new User();
         $user->setId(100);
 
-        $status = new TestEnumValue(CalendarEvent::STATUS_ACCEPTED, CalendarEvent::STATUS_ACCEPTED);
+        $status = new TestEnumValue(Attendee::STATUS_ACCEPTED, Attendee::STATUS_ACCEPTED);
 
         $statusRepository = $this->createMock('Doctrine\Common\Persistence\ObjectRepository');
         $statusRepository->expects($this->any())
             ->method('find')
-            ->with(CalendarEvent::STATUS_ACCEPTED)
+            ->with(Attendee::STATUS_ACCEPTED)
             ->will($this->returnValue($status));
 
         $this->doctrineHelper->expects($this->any())
@@ -317,10 +316,10 @@ class CalendarEventManagerTest extends \PHPUnit_Framework_TestCase
 
         $event = $this->getCalendarEventWithExpectedRelatedAttendee($attendee);
 
-        $this->assertNotEquals(CalendarEvent::STATUS_ACCEPTED, $event->getInvitationStatus());
+        $this->assertNotEquals(Attendee::STATUS_ACCEPTED, $event->getInvitationStatus());
 
-        $this->manager->changeInvitationStatus($event, CalendarEvent::STATUS_ACCEPTED, $user);
-        $this->assertEquals(CalendarEvent::STATUS_ACCEPTED, $event->getInvitationStatus());
+        $this->manager->changeInvitationStatus($event, Attendee::STATUS_ACCEPTED, $user);
+        $this->assertEquals(Attendee::STATUS_ACCEPTED, $event->getInvitationStatus());
     }
 
     /**
@@ -332,7 +331,7 @@ class CalendarEventManagerTest extends \PHPUnit_Framework_TestCase
         $user = new User();
         $user->setId(100);
         $event = new CalendarEvent();
-        $this->manager->changeInvitationStatus($event, CalendarEvent::STATUS_ACCEPTED, $user);
+        $this->manager->changeInvitationStatus($event, Attendee::STATUS_ACCEPTED, $user);
     }
 
     /**
@@ -347,7 +346,7 @@ class CalendarEventManagerTest extends \PHPUnit_Framework_TestCase
         $statusRepository = $this->createMock('Doctrine\Common\Persistence\ObjectRepository');
         $statusRepository->expects($this->any())
             ->method('find')
-            ->with(CalendarEvent::STATUS_ACCEPTED)
+            ->with(Attendee::STATUS_ACCEPTED)
             ->will($this->returnValue(null));
 
         $this->doctrineHelper->expects($this->any())
@@ -360,7 +359,7 @@ class CalendarEventManagerTest extends \PHPUnit_Framework_TestCase
 
         $event = $this->getCalendarEventWithExpectedRelatedAttendee($attendee);
 
-        $this->manager->changeInvitationStatus($event, CalendarEvent::STATUS_ACCEPTED, $user);
+        $this->manager->changeInvitationStatus($event, Attendee::STATUS_ACCEPTED, $user);
     }
 
     /**
@@ -372,12 +371,12 @@ class CalendarEventManagerTest extends \PHPUnit_Framework_TestCase
         $user = new User();
         $user->setId(100);
 
-        $status = new TestEnumValue(CalendarEvent::STATUS_ACCEPTED, CalendarEvent::STATUS_ACCEPTED);
+        $status = new TestEnumValue(Attendee::STATUS_ACCEPTED, Attendee::STATUS_ACCEPTED);
 
         $statusRepository = $this->createMock('Doctrine\Common\Persistence\ObjectRepository');
         $statusRepository->expects($this->any())
             ->method('find')
-            ->with(CalendarEvent::STATUS_ACCEPTED)
+            ->with(Attendee::STATUS_ACCEPTED)
             ->will($this->returnValue($status));
 
         $this->doctrineHelper->expects($this->any())
@@ -390,7 +389,7 @@ class CalendarEventManagerTest extends \PHPUnit_Framework_TestCase
 
         $event = $this->getCalendarEventWithExpectedRelatedAttendee($attendee);
 
-        $this->manager->changeInvitationStatus($event, CalendarEvent::STATUS_ACCEPTED, $user);
+        $this->manager->changeInvitationStatus($event, Attendee::STATUS_ACCEPTED, $user);
     }
 
     /**

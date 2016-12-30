@@ -129,15 +129,15 @@ class Attendee extends ExtendAttendee
 
     /**
      * Returns invitation status code of the attendee based on related status. If there is no related status
-     * then returns "none" status (@see CalendarEvent::STATUS_NONE).
+     * then returns "none" status (@see Attendee::STATUS_NONE).
      *
-     * @return string Status id (@see CalendarEvent::STATUS_*)
+     * @return string Status id (@see Attendee::STATUS_*)
      */
     public function getStatusCode()
     {
         $status = $this->getStatus();
 
-        return $status ? $status->getId() : CalendarEvent::STATUS_NONE;
+        return $status ? $status->getId() : Attendee::STATUS_NONE;
     }
 
     /**

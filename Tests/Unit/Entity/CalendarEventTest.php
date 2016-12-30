@@ -146,16 +146,16 @@ class CalendarEventTest extends \PHPUnit_Framework_TestCase
         $calendarEvent->setRelatedAttendee($attendee);
 
         $attendee->setStatus(
-            new TestEnumValue(CalendarEvent::STATUS_ACCEPTED, CalendarEvent::STATUS_ACCEPTED)
+            new TestEnumValue(Attendee::STATUS_ACCEPTED, Attendee::STATUS_ACCEPTED)
         );
-        $this->assertEquals(CalendarEvent::STATUS_ACCEPTED, $calendarEvent->getInvitationStatus());
-        $this->assertEquals(CalendarEvent::STATUS_ACCEPTED, $calendarEvent->getRelatedAttendee()->getStatus());
+        $this->assertEquals(Attendee::STATUS_ACCEPTED, $calendarEvent->getInvitationStatus());
+        $this->assertEquals(Attendee::STATUS_ACCEPTED, $calendarEvent->getRelatedAttendee()->getStatus());
 
         $attendee->setStatus(
-            new TestEnumValue(CalendarEvent::STATUS_TENTATIVE, CalendarEvent::STATUS_TENTATIVE)
+            new TestEnumValue(Attendee::STATUS_TENTATIVE, Attendee::STATUS_TENTATIVE)
         );
-        $this->assertEquals(CalendarEvent::STATUS_TENTATIVE, $calendarEvent->getInvitationStatus());
-        $this->assertEquals(CalendarEvent::STATUS_TENTATIVE, $calendarEvent->getRelatedAttendee()->getStatus());
+        $this->assertEquals(Attendee::STATUS_TENTATIVE, $calendarEvent->getInvitationStatus());
+        $this->assertEquals(Attendee::STATUS_TENTATIVE, $calendarEvent->getRelatedAttendee()->getStatus());
     }
 
     public function testInvitationStatusNoneWhenAttendeesDoNotExist()
@@ -167,7 +167,7 @@ class CalendarEventTest extends \PHPUnit_Framework_TestCase
         $calendarEvent = new CalendarEvent();
         $calendarEvent->setCalendar($calendar);
 
-        $this->assertEquals(CalendarEvent::STATUS_NONE, $calendarEvent->getInvitationStatus());
+        $this->assertEquals(Attendee::STATUS_NONE, $calendarEvent->getInvitationStatus());
     }
 
     public function testChildren()

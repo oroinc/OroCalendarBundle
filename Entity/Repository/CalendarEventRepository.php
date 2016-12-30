@@ -7,7 +7,7 @@ use Doctrine\ORM\EntityRepository;
 use Doctrine\ORM\Query\Expr;
 use Doctrine\ORM\QueryBuilder;
 
-use Oro\Bundle\CalendarBundle\Entity\CalendarEvent;
+use Oro\Bundle\CalendarBundle\Entity\Attendee;
 
 class CalendarEventRepository extends EntityRepository
 {
@@ -47,7 +47,7 @@ class CalendarEventRepository extends EntityRepository
             ->addSelect(
                 sprintf(
                     'COALESCE(status.id, \'%s\') as invitationStatus',
-                    CalendarEvent::STATUS_NONE
+                    Attendee::STATUS_NONE
                 )
             )
             ->addSelect('IDENTITY(e.parent) AS parentEventId')
