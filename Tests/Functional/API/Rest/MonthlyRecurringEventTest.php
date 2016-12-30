@@ -12,7 +12,7 @@ use Oro\Bundle\CalendarBundle\Tests\Functional\AbstractTestCase;
  *
  * Use cases covered:
  * - Expanding of recurring event with recurrence pattern "Monthly Day X of every Y month(s)" in case when X is greater
- * than count of days in Y month.
+ *   than count of days in Y month.
  *
  * @dbIsolation
  */
@@ -25,13 +25,13 @@ class MonthlyRecurringEventTest extends AbstractTestCase
     }
 
     /**
-     * Test of expanding of event with pattern "Monthly Day X of every Y month(s)" in case when X is greater
-     * than count of days in Y month.
+     * Expanding of recurring event with recurrence pattern "Monthly Day X of every Y month(s)"
+     * in case when X is greater than count of days in Y month.
      *
      * Steps:
      * 1. Create new calendar event with pattern "Monthly Day 31 of every 1 month(s) Start Thu 1/1/2015 No end date".
-     * 2. Get expanded events and verify all properties in response. The significant part of response verification
-     * is count of events and "start", "end" properties.
+     * 2. Get expanded events and verify all properties in response.
+     *    The significant part of response verification is count of events and "start", "end" properties.
      */
     public function testExpandingOfEventWithBorderConditionsOfDayOfMonth()
     {
@@ -66,6 +66,7 @@ class MonthlyRecurringEventTest extends AbstractTestCase
         );
 
         // Step 2. Get expanded events and verify all properties in response.
+        //         The significant part of response verification is count of events and "start", "end" properties.
         $response = $this->getRestResponseContent(['statusCode' => 201, 'contentType' => 'application/json']);
         /** @var CalendarEvent $recurringEvent */
         $recurringEvent = $this->getEntity(CalendarEvent::class, $response['id']);

@@ -39,7 +39,7 @@ class YearlyStrategy extends MonthlyStrategy
         $date->setDate(
             $date->format('Y'),
             $recurrence->getMonthOfYear(),
-            $this->getAdjustedDayOfMonth($recurrence, $date)
+            $this->getDayOfMonthInValidRange($recurrence, $date)
         );
         $date = $this->dateTimeFormatter->formatDay($date);
 
@@ -62,7 +62,7 @@ class YearlyStrategy extends MonthlyStrategy
         $occurrenceDate->setDate(
             $occurrenceDate->format('Y'),
             $monthOfYear,
-            $this->getAdjustedDayOfMonth($recurrence, $occurrenceDate)
+            $this->getDayOfMonthInValidRange($recurrence, $occurrenceDate)
         );
 
         if ($occurrenceDate < $recurrence->getStartTime()) {

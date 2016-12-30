@@ -11,8 +11,8 @@ use Oro\Bundle\CalendarBundle\Tests\Functional\AbstractTestCase;
  * The test covers operations with yearly recurring events.
  *
  * Use cases covered:
- * - Expanding of recurring event with recurrence pattern "Yearly every X year(s) on Y month Z day" in case when Z
- * is greater than count of days in Y month.
+ * - Expanding of recurring event with recurrence pattern "Yearly every X year(s) on Y month Z day" in case
+ *   when Z is greater than count of days in Y month.
  *
  * @dbIsolation
  */
@@ -25,35 +25,32 @@ class YearlyRecurringEventTest extends AbstractTestCase
     }
 
     /**
-     * Test of expanding of event with pattern "Yearly every X year(s) on Y month Z day" in case when Z is greater
-     * than count of days in Y month.
-     * Please note, that, for example, pattern "Monthly Day 31 of every 12 months Start Wed 11/30/2016 No end date"
-     * is passed by "OroCRM for Outlook" add-in as pattern
-     * "Yearly Day 31 of every 1 year Start Sun 2/1/2015 No end date".
+     * Test of expanding of event with pattern "Yearly every X year(s) on Y month Z day" in case
+     * when Z is greater than count of days in Y month.
      *
      * Steps:
-     * 1. Create new calendar event with pattern "Yearly Day 31 of every 1 year Start Sun 2/1/2015 No end date".
-     * 2. Get expanded events and verify all properties in response. The significant part of response verification
-     * is count of events and "start", "end" properties.
+     * 1. Create new calendar event with pattern "Yearly Day 31 of every 1 year Start Sun 2/28/2015 No end date".
+     * 2. Get expanded events and verify all properties in response.
+     *    The significant part of response verification is count of events and "start", "end" properties.
      */
     public function testExpandingOfEventWithBorderConditionsOfDayOfMonth()
     {
         // Step 1. Create new calendar event with pattern
-        // "Yearly Day 31 of every 1 year Start Sun 2/1/2015 No end date".
+        // "Yearly Day 31 of every 1 year Start Sun 2/28/2015 No end date".
         $eventData = [
             'title'       => 'Test Yearly Recurring Event',
             'description' => 'Test Yearly Recurring Event Description',
             'allDay'      => false,
             'calendar'    => $this->getReference('oro_calendar:calendar:foo_user_1')->getId(),
-            'start'       => '2015-02-01T09:00:00+00:00',
-            'end'         => '2015-02-01T09:30:00+00:00',
+            'start'       => '2015-02-28T09:00:00+00:00',
+            'end'         => '2015-02-28T09:30:00+00:00',
             'recurrence'  => [
                 'timeZone'       => 'UTC',
                 'recurrenceType' => Recurrence::TYPE_YEARLY,
                 'interval'       => 12,
                 'monthOfYear'    => 2, // February
                 'dayOfMonth'     => 31,
-                'startTime'      => '2015-02-01T09:00:00+00:00',
+                'startTime'      => '2015-02-28T09:00:00+00:00',
                 'occurrences'    => null,
                 'endTime'        => null,
             ],
@@ -69,6 +66,7 @@ class YearlyRecurringEventTest extends AbstractTestCase
         );
 
         // Step 2. Get expanded events and verify all properties in response.
+        //         The significant part of response verification is count of events and "start", "end" properties.
         $response = $this->getRestResponseContent(['statusCode' => 201, 'contentType' => 'application/json']);
         /** @var CalendarEvent $recurringEvent */
         $recurringEvent = $this->getEntity(CalendarEvent::class, $response['id']);

@@ -88,10 +88,30 @@ class MonthlyStrategy extends AbstractStrategy
         $result->setDate(
             $result->format('Y'),
             $result->format('m'),
-            $this->getAdjustedDayOfMonth($recurrence, $result)
+            $this->getDayOfMonthInValidRange($recurrence, $result)
         );
 
         return $result;
+    }
+
+    /**
+     * This method aimed to return day of month in valid range according to max days of month of $occurrenceDate.
+     *
+     * For example, if $recurrence has pattern "Monthly day 31 of every 1 month", then the method will return:
+     * - 31 for $occurrenceDate in January;
+     * - 29 for $occurrenceDate for February of leap year;
+     * - 28 for $occurrenceDate for February of usual year;
+     *
+     * @param Entity\Recurrence $recurrence
+     * @param \DateTime $occurrenceDate
+     *
+     * @return int|null
+     */
+    protected function getDayOfMonthInValidRange(Entity\Recurrence $recurrence, \DateTime $occurrenceDate)
+    {
+        $daysInMonth = (int)$occurrenceDate->format('t');
+
+        return ($recurrence->getDayOfMonth() > $daysInMonth) ? $daysInMonth : $recurrence->getDayOfMonth();
     }
 
     /**
@@ -107,7 +127,7 @@ class MonthlyStrategy extends AbstractStrategy
         $occurrenceDate->setDate(
             $occurrenceDate->format('Y'),
             $occurrenceDate->format('m'),
-            $this->getAdjustedDayOfMonth($recurrence, $occurrenceDate)
+            $this->getDayOfMonthInValidRange($recurrence, $occurrenceDate)
         );
 
         if ($occurrenceDate->format('d') < $recurrence->getStartTime()->format('d')) {
@@ -144,23 +164,5 @@ class MonthlyStrategy extends AbstractStrategy
             parent::getRequiredProperties($recurrence),
             ['dayOfMonth']
         );
-    }
-
-    /**
-     * This method aimed to correct/adjust $dayOfMonth.
-     * For example, if event is repeated by pattern "Monthly day 31 of every 1 month",
-     * then for January $dayOfMonth=31; for February $dayOfMonth=29 at leap year
-     * and for February $dayOfMonth=28 at usual year; for April $dayOfMonth=30 and so on.
-     *
-     * @param Entity\Recurrence $recurrence
-     * @param \DateTime $occurrenceDate
-     *
-     * @return int|null
-     */
-    protected function getAdjustedDayOfMonth(Entity\Recurrence $recurrence, \DateTime $occurrenceDate)
-    {
-        $daysInMonth = (int)$occurrenceDate->format('t');
-
-        return ($recurrence->getDayOfMonth() > $daysInMonth) ? $daysInMonth : $recurrence->getDayOfMonth();
     }
 }
