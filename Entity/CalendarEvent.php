@@ -77,11 +77,6 @@ class CalendarEvent extends ExtendCalendarEvent implements RemindableInterface, 
 {
     use DatesAwareTrait;
 
-    const STATUS_NONE      = 'none';
-    const STATUS_TENTATIVE = 'tentative';
-    const STATUS_ACCEPTED  = 'accepted';
-    const STATUS_DECLINED  = 'declined';
-
     /**
      * @ORM\Id
      * @ORM\Column(name="id", type="integer")
@@ -758,18 +753,18 @@ class CalendarEvent extends ExtendCalendarEvent implements RemindableInterface, 
 
     /**
      * Returns invitation status of the event based on related attendee. If there is no related attendee then returns
-     * "none" status (@see CalendarEvent::STATUS_NONE).
+     * "none" status (@see Attendee::STATUS_NONE).
      *
      * @see CalendarEvent::getRelatedAttendee()
      *
-     * @return string Status id (@see CalendarEvent::STATUS_*)
+     * @return string Status id (@see Attendee::STATUS_*)
      */
     public function getInvitationStatus()
     {
         $relatedAttendee = $this->getRelatedAttendee();
 
         if (!$relatedAttendee) {
-            return CalendarEvent::STATUS_NONE;
+            return Attendee::STATUS_NONE;
         }
 
         return $relatedAttendee->getStatusCode();

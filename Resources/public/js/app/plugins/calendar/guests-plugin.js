@@ -28,10 +28,11 @@ define(function(require) {
             var result = false;
             var parentEventId = eventModel.get('parentEventId');
             var alias = eventModel.get('calendarAlias');
+            var self = this;
             if (parentEventId) {
                 result = Boolean(this.main.getConnectionCollection().find(function(c) {
                     return c.get('calendarAlias') === alias &&
-                        this.collection.get(c.get('calendarUid') + '_' + parentEventId);
+                        self.main.collection.get(c.get('calendarUid') + '_' + parentEventId);
                 }, this));
             }
             return result;

@@ -114,12 +114,13 @@ class UpdateExceptionManager
      */
     protected function clearExceptions(CalendarEvent $event)
     {
+        foreach ($event->getRecurringEventExceptions() as $exception) {
+            $exception->getChildEvents()->clear();
+        }
         $event->getRecurringEventExceptions()->clear();
 
-        if ($event->getParent()) {
-            foreach ($event->getChildEvents() as $childEvent) {
-                $this->clearExceptions($childEvent);
-            }
+        foreach ($event->getChildEvents() as $childEvent) {
+            $childEvent->getRecurringEventExceptions()->clear();
         }
     }
 

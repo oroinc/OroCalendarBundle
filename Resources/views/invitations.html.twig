@@ -42,23 +42,23 @@
 {% endmacro %}
 
 {% macro get_invitatition_badge_class(invitationStatus) %}
-    {%- if invitationStatus == constant('Oro\\Bundle\\CalendarBundle\\Entity\\CalendarEvent::STATUS_TENTATIVE') -%}
+    {%- if invitationStatus == constant('Oro\\Bundle\\CalendarBundle\\Entity\\Attendee::STATUS_TENTATIVE') -%}
         tentatively
-    {%- elseif invitationStatus == constant('Oro\\Bundle\\CalendarBundle\\Entity\\CalendarEvent::STATUS_ACCEPTED') -%}
+    {%- elseif invitationStatus == constant('Oro\\Bundle\\CalendarBundle\\Entity\\Attendee::STATUS_ACCEPTED') -%}
         enabled
-    {%- elseif invitationStatus == constant('Oro\\Bundle\\CalendarBundle\\Entity\\CalendarEvent::STATUS_DECLINED') -%}
+    {%- elseif invitationStatus == constant('Oro\\Bundle\\CalendarBundle\\Entity\\Attendee::STATUS_DECLINED') -%}
         disabled
     {%- endif -%}
 {% endmacro %}
 
 {% macro get_invitatition_status_class(invitationStatus) %}
-    {%- if invitationStatus == constant('Oro\\Bundle\\CalendarBundle\\Entity\\CalendarEvent::STATUS_NONE') -%}
+    {%- if invitationStatus == constant('Oro\\Bundle\\CalendarBundle\\Entity\\Attendee::STATUS_NONE') -%}
         fa-reply
-    {%- elseif invitationStatus == constant('Oro\\Bundle\\CalendarBundle\\Entity\\CalendarEvent::STATUS_TENTATIVE') -%}
+    {%- elseif invitationStatus == constant('Oro\\Bundle\\CalendarBundle\\Entity\\Attendee::STATUS_TENTATIVE') -%}
         fa-question
-    {%- elseif invitationStatus == constant('Oro\\Bundle\\CalendarBundle\\Entity\\CalendarEvent::STATUS_ACCEPTED') -%}
+    {%- elseif invitationStatus == constant('Oro\\Bundle\\CalendarBundle\\Entity\\Attendee::STATUS_ACCEPTED') -%}
         fa-check
-    {%- elseif invitationStatus == constant('Oro\\Bundle\\CalendarBundle\\Entity\\CalendarEvent::STATUS_DECLINED') -%}
+    {%- elseif invitationStatus == constant('Oro\\Bundle\\CalendarBundle\\Entity\\Attendee::STATUS_DECLINED') -%}
         fa-close
     {%- endif -%}
 {% endmacro %}

@@ -11,6 +11,10 @@ UPGRADE FROM 1.10 to 2.0
 
 #Other changes
 - Removed dependency from `Oro\Bundle\SecurityBundle\SecurityFacade` in `Oro\Bundle\CalendarBundle\Model\Email\EmailSendProcessor`.
+- Removed constant `Oro\Bundle\CalendarBundle\Entity\CalendarEvent::STATUS_NONE`. Use `Oro\Bundle\CalendarBundle\Entity\Attendee::STATUS_NONE`.
+- Removed constant `Oro\Bundle\CalendarBundle\Entity\CalendarEvent::STATUS_TENTATIVE`. Use `Oro\Bundle\CalendarBundle\Entity\Attendee::STATUS_TENTATIVE`.
+- Removed constant `Oro\Bundle\CalendarBundle\Entity\CalendarEvent::STATUS_ACCEPTED`. Use `Oro\Bundle\CalendarBundle\Entity\Attendee::STATUS_ACCEPTED`.
+- Removed constant `Oro\Bundle\CalendarBundle\Entity\CalendarEvent::STATUS_DECLINED`. Use `Oro\Bundle\CalendarBundle\Entity\Attendee::STATUS_DECLINED`.
 - A new property `editableInvitationStatus` was added to the API of calendar events. This property is read-only and means that current API user is able to change invitation status of the event.
 - A new property `updateExceptions` was added to the API of calendar events. By default is FALSE. Passing TRUE value will trigger synchronization of exceptions of recurring calendar events. 
 - Deprecated property `invitedUsers` was removed from the API.

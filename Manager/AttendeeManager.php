@@ -154,6 +154,6 @@ class AttendeeManager
             }
         }
 
-        return $result += array_fill_keys($calendarEventIds, []);
+        return $result + array_fill_keys($calendarEventIds, []);
     }
 }
