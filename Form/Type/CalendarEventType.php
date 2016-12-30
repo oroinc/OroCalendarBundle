@@ -7,12 +7,27 @@ use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\Form\FormView;
 use Symfony\Component\OptionsResolver\OptionsResolver;
+use Symfony\Component\Validator\Constraints\Choice;
 
+use Oro\Bundle\CalendarBundle\Manager\CalendarEvent\NotificationManager;
 use Oro\Bundle\CalendarBundle\Form\EventListener\CalendarEventRecurrenceSubscriber;
 use Oro\Bundle\CalendarBundle\Form\EventListener\CalendarUidSubscriber;
 
 class CalendarEventType extends AbstractType
 {
+    /**
+     * @var NotificationManager
+     */
+    protected $notificationManager;
+
+    /**
+     * @param NotificationManager $notificationManager
+     */
+    public function __construct(NotificationManager $notificationManager)
+    {
+        $this->notificationManager = $notificationManager;
+    }
+
     /**
      * @SuppressWarnings(PHPMD.ExcessiveMethodLength)
      *
@@ -102,7 +117,18 @@ class CalendarEventType extends AbstractType
                     'mapped' => false
                 ]
             )
-            ->add('notifyAttendees', 'hidden', ['mapped' => false])
+            ->add(
+                'notifyAttendees',
+                'hidden',
+                [
+                    'mapped' => false,
+                    'constraints' => new Choice(
+                        [
+                            'choices' => $this->notificationManager->getApplicableStrategies()
+                        ]
+                    )
+                ]
+            )
             ->add(
                 'recurrence',
                 'oro_calendar_event_recurrence',

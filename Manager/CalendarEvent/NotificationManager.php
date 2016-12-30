@@ -63,6 +63,18 @@ class NotificationManager
     }
 
     /**
+     * @return array
+     */
+    public function getApplicableStrategies()
+    {
+        return [
+            static::ALL_NOTIFICATIONS_STRATEGY,
+            static::ADDED_OR_DELETED_NOTIFICATIONS_STRATEGY,
+            static::NONE_NOTIFICATIONS_STRATEGY
+        ];
+    }
+
+    /**
      * Handle calendar event notification on create of the event.
      *
      * @param CalendarEvent $calendarEvent Actual calendar event.

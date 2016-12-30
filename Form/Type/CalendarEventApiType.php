@@ -6,7 +6,9 @@ use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\DateTimeType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
+use Symfony\Component\Validator\Constraints\Choice;
 
+use Oro\Bundle\CalendarBundle\Manager\CalendarEvent\NotificationManager;
 use Oro\Bundle\CalendarBundle\Form\EventListener\AttendeesSubscriber;
 use Oro\Bundle\CalendarBundle\Manager\CalendarEventManager;
 use Oro\Bundle\CalendarBundle\Form\EventListener\CalendarEventApiTypeSubscriber;
@@ -15,12 +17,24 @@ use Oro\Bundle\SoapBundle\Form\EventListener\PatchSubscriber;
 
 class CalendarEventApiType extends AbstractType
 {
-    /** @var CalendarEventManager */
+    /**
+     * @var CalendarEventManager
+     */
     protected $calendarEventManager;
 
-    public function __construct(CalendarEventManager $calendarEventManager)
+    /**
+     * @var NotificationManager
+     */
+    protected $notificationManager;
+
+    /**
+     * @param CalendarEventManager $calendarEventManager
+     * @param NotificationManager  $notificationManager
+     */
+    public function __construct(CalendarEventManager $calendarEventManager, NotificationManager $notificationManager)
     {
         $this->calendarEventManager = $calendarEventManager;
+        $this->notificationManager = $notificationManager;
     }
 
     /**
@@ -95,7 +109,19 @@ class CalendarEventApiType extends AbstractType
              * @deprecated since 2.0 and will be removed after 2.2, use notifyAttendees instead.
              */
             ->add('notifyInvitedUsers', 'hidden', ['mapped' => false])
-            ->add('notifyAttendees', 'hidden', ['mapped' => false])
+            ->add(
+                'notifyAttendees',
+                'hidden',
+                [
+                    'mapped'         => false,
+                    'error_bubbling' => false,
+                    'constraints'    => new Choice(
+                        [
+                            'choices' => $this->notificationManager->getApplicableStrategies()
+                        ]
+                    )
+                ]
+            )
             ->add(
                 'createdAt',
                 'datetime',

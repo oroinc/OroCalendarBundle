@@ -16,14 +16,16 @@ parameters:
 services:
     oro_calendar.calendar_event.form.type:
         class: '%oro_calendar.calendar_event.form.type.class%'
+        arguments:
+            - '@oro_calendar.calendar_event.notification_manager='
         tags:
             - { name: form.type, alias: oro_calendar_event }
 
     oro_calendar.calendar_event.form.type.api:
         class: '%oro_calendar.calendar_event.form.type.api.class%'
-        scope: 'request'
         arguments:
             - '@oro_calendar.calendar_event_manager'
+            - '@oro_calendar.calendar_event.notification_manager='
         tags:
             - { name: form.type, alias: oro_calendar_event_api }
 

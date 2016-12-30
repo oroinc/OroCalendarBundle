@@ -1217,7 +1217,8 @@ class CalendarEvent extends ExtendCalendarEvent implements RemindableInterface, 
     }
 
     /**
-     * @todo: Move this logic to separate service or use another approach to get previous state of the event
+     * @todo: After implementation of BAP-13212 this logic should be moved to separate service
+     * or another approach should be used to get the previous state of the event
      *
      * The implementation should provides possibility to:
      * - Compare main relations of event with original state before update.
