@@ -8,6 +8,7 @@ use Oro\Bundle\CalendarBundle\Entity\Attendee;
 use Oro\Bundle\CalendarBundle\Entity\CalendarEvent;
 use Oro\Bundle\CalendarBundle\Manager\AttendeeRelationManager;
 use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
+use Oro\Bundle\EntityExtendBundle\Entity\AbstractEnumValue;
 use Oro\Bundle\EntityExtendBundle\Tools\ExtendHelper;
 use Oro\Bundle\OrganizationBundle\Entity\Organization;
 
@@ -54,6 +55,8 @@ class UpdateAttendeeManager
 
         $this->setDefaultAttendeeStatus($calendarEvent->getAttendees());
 
+        $this->setAttendeesType($calendarEvent);
+
         $this->updateAttendeeDisplayNames($calendarEvent->getAttendees());
     }
 
@@ -69,10 +72,71 @@ class UpdateAttendeeManager
 
             $statusEnum = $this->doctrineHelper
                 ->getEntityRepository(ExtendHelper::buildEnumValueClassName(Attendee::STATUS_ENUM_CODE))
-                ->find(CalendarEvent::STATUS_NONE);
+                ->find(Attendee::STATUS_NONE);
 
             $attendee->setStatus($statusEnum);
         }
+    }
+
+    /**
+     * @param CalendarEvent $calendarEvent
+     */
+    protected function setAttendeesType(CalendarEvent $calendarEvent)
+    {
+        foreach ($calendarEvent->getAttendees() as $attendee) {
+            if (!$attendee || $attendee->getType()) {
+                continue;
+            }
+
+            if ($this->isAttendeeRelatedToCalendarEventOwnerUser($calendarEvent, $attendee)) {
+                $ownerUserAttendeeType = $this->getAttendeeTypeForCalendarEventOwnerUser();
+                $attendee->setType($ownerUserAttendeeType);
+            } else {
+                $defaultAttendeeType = $this->getAttendeeTypeByDefault();
+                $attendee->setType($defaultAttendeeType);
+            }
+        }
+    }
+
+    /**
+     * @param CalendarEvent $calendarEvent
+     * @param Attendee $attendee
+     * @return bool
+     */
+    protected function isAttendeeRelatedToCalendarEventOwnerUser(CalendarEvent $calendarEvent, Attendee $attendee)
+    {
+        return $calendarEvent->getCalendar() && $attendee->isUserEqual($calendarEvent->getCalendar()->getOwner());
+    }
+
+    /**
+     * @return null|AbstractEnumValue
+     */
+    protected function getAttendeeTypeForCalendarEventOwnerUser()
+    {
+        return $this->getAttendeeType(Attendee::TYPE_ORGANIZER);
+    }
+
+    /**
+     * @return null|AbstractEnumValue
+     */
+    protected function getAttendeeTypeByDefault()
+    {
+        return $this->getAttendeeType(Attendee::TYPE_REQUIRED);
+    }
+
+    /**
+     * @param string $id
+     *
+     * @return null|AbstractEnumValue
+     */
+    protected function getAttendeeType($id)
+    {
+        /** @var AbstractEnumValue $attendeeType */
+        $attendeeType = $this->doctrineHelper
+            ->getEntityRepository(ExtendHelper::buildEnumValueClassName(Attendee::TYPE_ENUM_CODE))
+            ->find($id);
+
+        return $attendeeType;
     }
 
     /**
