@@ -115,11 +115,13 @@ class CalendarEventApiType extends AbstractType
                 [
                     'mapped'         => false,
                     'error_bubbling' => false,
-                    'constraints'    => new Choice(
-                        [
-                            'choices' => $this->notificationManager->getApplicableStrategies()
-                        ]
-                    )
+                    'constraints'    => [
+                        new Choice(
+                            [
+                                'choices' => $this->notificationManager->getApplicableStrategies()
+                            ]
+                        )
+                    ]
                 ]
             )
             ->add(

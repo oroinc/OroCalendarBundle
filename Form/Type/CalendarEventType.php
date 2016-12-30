@@ -122,11 +122,13 @@ class CalendarEventType extends AbstractType
                 'hidden',
                 [
                     'mapped' => false,
-                    'constraints' => new Choice(
-                        [
-                            'choices' => $this->notificationManager->getApplicableStrategies()
-                        ]
-                    )
+                    'constraints' => [
+                        new Choice(
+                            [
+                                'choices' => $this->notificationManager->getApplicableStrategies()
+                            ]
+                        )
+                    ]
                 ]
             )
             ->add(
