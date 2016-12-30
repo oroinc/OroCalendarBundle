@@ -343,23 +343,6 @@ class Recurrence
     }
 
     /**
-     * This method aimed to correct/adjust $dayOfMonth.
-     * For example, if event is repeated by pattern "Monthly day 31 of every 1 month",
-     * than for January $dayOfMonth=31; for February $dayOfMonth=29 at leap year
-     * and for February $dayOfMonth=28 at usual year; for April $dayOfMonth=30 and so on.
-     *
-     * @param \DateTime $occurrenceDate
-     *
-     * @return int|null
-     */
-    public function getAdjustedDayOfMonth(\DateTime $occurrenceDate)
-    {
-        $daysInMonth = (int)$occurrenceDate->format('t');
-
-        return ($this->getDayOfMonth() > $daysInMonth) ? $daysInMonth : $this->getDayOfMonth();
-    }
-
-    /**
      * Sets monthOfYear.
      *
      * @param integer|null $monthOfYear

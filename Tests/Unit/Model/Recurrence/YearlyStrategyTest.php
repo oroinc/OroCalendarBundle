@@ -253,6 +253,23 @@ class YearlyStrategyTest extends AbstractTestStrategy
                 'expected' => [
                 ],
             ],
+            // data for testing of adjusting day of month
+            'monthly on day 31 of every 1 year for usual one' => [
+                'params' => [
+                    'interval' => 12,
+                    'monthOfYear' => 2,
+                    'dayOfMonth' => 31,
+                    'occurrences' => null,
+                    'start' => '2015-01-01',
+                    'end' => '2018-01-01',
+                    'startTime' => '2015-02-01',
+                ],
+                'expected' => [
+                    '2015-02-28',
+                    '2016-02-29',
+                    '2017-02-28',
+                ],
+            ],
         ];
     }
 

@@ -288,6 +288,44 @@ class MonthlyStrategyTest extends AbstractTestStrategy
                     '2015-03-30',
                 ],
             ],
+            // data for testing of adjusting day of month
+            'monthly on day 31 of every 1 month for usual year' => [
+                'params' => [
+                    'interval' => 1,
+                    'dayOfMonth' => 31,
+                    'occurrences' => null,
+                    'start' => '2015-01-01',
+                    'end' => '2016-01-01',
+                    'startTime' => '2015-01-01',
+                ],
+                'expected' => [
+                    '2015-01-31',
+                    '2015-02-28',
+                    '2015-03-31',
+                    '2015-04-30',
+                    '2015-05-31',
+                    '2015-06-30',
+                    '2015-07-31',
+                    '2015-08-31',
+                    '2015-09-30',
+                    '2015-10-31',
+                    '2015-11-30',
+                    '2015-12-31',
+                ],
+            ],
+            'dayOfMonth greater than days in month in February of leap year' => [
+                'params' => [
+                    'interval' => 1,
+                    'dayOfMonth' => 31,
+                    'occurrences' => null,
+                    'start' => '2016-02-01',
+                    'end' => '2016-03-01',
+                    'startTime' => '2016-02-01',
+                ],
+                'expected' => [
+                    '2016-02-29',
+                ],
+            ],
         ];
     }
 

@@ -36,7 +36,11 @@ class YearlyStrategy extends MonthlyStrategy
         // Some monthly patterns are equivalent to yearly patterns.
         // In these cases, day should be adjusted to fit last day of month.
         // For example "Monthly day 31 of every 12 months, start Wed 11/30/2016" === "Yearly every 1 year on Nov 30".
-        $date->setDate($date->format('Y'), $recurrence->getMonthOfYear(), $recurrence->getAdjustedDayOfMonth($date));
+        $date->setDate(
+            $date->format('Y'),
+            $recurrence->getMonthOfYear(),
+            $this->getAdjustedDayOfMonth($recurrence, $date)
+        );
         $date = $this->dateTimeFormatter->formatDay($date);
 
         return $this->getFullRecurrencePattern(
@@ -58,7 +62,7 @@ class YearlyStrategy extends MonthlyStrategy
         $occurrenceDate->setDate(
             $occurrenceDate->format('Y'),
             $monthOfYear,
-            $recurrence->getAdjustedDayOfMonth($occurrenceDate)
+            $this->getAdjustedDayOfMonth($recurrence, $occurrenceDate)
         );
 
         if ($occurrenceDate < $recurrence->getStartTime()) {

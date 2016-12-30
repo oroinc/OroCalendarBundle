@@ -24,7 +24,6 @@ class MonthlyStrategy extends AbstractStrategy
         $occurrenceDate = $this->getFirstOccurrence($recurrence);
         $interval = $recurrence->getInterval();
         $fromStartInterval = 1;
-        $dayOfMonth = $recurrence->getDayOfMonth();
 
         if ($start > $occurrenceDate) {
             $dateInterval = $start->diff($occurrenceDate);
@@ -89,7 +88,7 @@ class MonthlyStrategy extends AbstractStrategy
         $result->setDate(
             $result->format('Y'),
             $result->format('m'),
-            $recurrence->getAdjustedDayOfMonth($result)
+            $this->getAdjustedDayOfMonth($recurrence, $result)
         );
 
         return $result;
@@ -108,7 +107,7 @@ class MonthlyStrategy extends AbstractStrategy
         $occurrenceDate->setDate(
             $occurrenceDate->format('Y'),
             $occurrenceDate->format('m'),
-            $recurrence->getAdjustedDayOfMonth($occurrenceDate)
+            $this->getAdjustedDayOfMonth($recurrence, $occurrenceDate)
         );
 
         if ($occurrenceDate->format('d') < $recurrence->getStartTime()->format('d')) {
@@ -145,5 +144,23 @@ class MonthlyStrategy extends AbstractStrategy
             parent::getRequiredProperties($recurrence),
             ['dayOfMonth']
         );
+    }
+
+    /**
+     * This method aimed to correct/adjust $dayOfMonth.
+     * For example, if event is repeated by pattern "Monthly day 31 of every 1 month",
+     * then for January $dayOfMonth=31; for February $dayOfMonth=29 at leap year
+     * and for February $dayOfMonth=28 at usual year; for April $dayOfMonth=30 and so on.
+     *
+     * @param Entity\Recurrence $recurrence
+     * @param \DateTime $occurrenceDate
+     *
+     * @return int|null
+     */
+    protected function getAdjustedDayOfMonth(Entity\Recurrence $recurrence, \DateTime $occurrenceDate)
+    {
+        $daysInMonth = (int)$occurrenceDate->format('t');
+
+        return ($recurrence->getDayOfMonth() > $daysInMonth) ? $daysInMonth : $recurrence->getDayOfMonth();
     }
 }
