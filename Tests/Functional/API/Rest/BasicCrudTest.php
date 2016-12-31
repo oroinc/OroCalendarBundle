@@ -18,6 +18,8 @@ use Oro\Bundle\CalendarBundle\Entity\CalendarEvent;
  * - Delete attendee of calendar event changes "updatedAt" field.
  *
  * @dbIsolation
+ *
+ * @SuppressWarnings(PHPMD.ExcessiveClassLength)
  */
 class BasicCrudTest extends AbstractTestCase
 {
@@ -210,6 +212,8 @@ CONTENT;
      * 2. Wait for 1 second.
      * 3. Update event and change only attribute in recurrence data.
      * 4. Get event and check the "updatedAt" value has been modified.
+     *
+     * @SuppressWarnings(PHPMD.ExcessiveMethodLength)
      */
     public function testUpdateRecurrenceDataOfRecurringCalendarEventChangesUpdatedAtField()
     {
@@ -321,6 +325,8 @@ CONTENT;
      * 2. Wait for 1 second.
      * 3. Update event and delete 1 attendee.
      * 4. Get event and check the "updatedAt" value has been modified.
+     *
+     * @SuppressWarnings(PHPMD.ExcessiveMethodLength)
      */
     public function testDeleteAttendeeOfCalendarEventChangesUpdatedAtField()
     {
