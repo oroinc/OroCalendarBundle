@@ -14,6 +14,9 @@ use Oro\Bundle\CalendarBundle\Tests\Functional\AbstractTestCase;
  * - Expanding of recurring event with recurrence pattern "Yearly every X year(s) on Y month Z day" in case
  *   when Z is greater than count of days in Y month.
  *
+ * - Test of expanding of event with pattern "Yearly every X year(s) on Y month Z day" in case
+ *   when Z=29 and Y=February and it checks 'recurrencePattern' is the same for several years.
+ *
  * @dbIsolation
  */
 class YearlyRecurringEventTest extends AbstractTestCase
@@ -128,8 +131,8 @@ class YearlyRecurringEventTest extends AbstractTestCase
      *
      * Steps:
      * 1. Create new calendar event with pattern "Yearly Day 29 of every 1 year Start Sun 12/28/2016 No end date".
-     * Step 2. Get expanded events and verify all properties in response.
-     *         The significant part of response verification is 'recurrencePattern'.
+     * 2. Get expanded events and verify all properties in response.
+     *    The significant part of response verification is 'recurrencePattern'.
      */
     public function testTextPatternOfEventWithDifferentYearsInStarttimeAndStart()
     {
