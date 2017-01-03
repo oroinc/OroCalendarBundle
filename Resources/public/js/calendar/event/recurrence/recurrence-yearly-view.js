@@ -10,16 +10,15 @@ define(function(require) {
         relatedFields: ['recurrenceType', 'interval', 'instance', 'dayOfWeek', 'dayOfMonth', 'monthOfYear'],
 
         getTemplateData: function() {
-            var self = this;
             var data = RecurrenceYearlyView.__super__.getTemplateData.apply(this, arguments);
             if (data.interval && data.interval >= 12) {
                 data.interval /= 12;
             }
             data.monthsOptions = _.map(this.model.RECURRENCE_MONTHS, function(item, key) {
                 return {
-                    'value': key,
-                    'text': item,
-                    'selected': Number(key) === Number(self.model.get('monthOfYear'))
+                    value: key,
+                    text: item,
+                    selected: Number(key) === Number(data.monthOfYear)
                 };
             });
             return data;
