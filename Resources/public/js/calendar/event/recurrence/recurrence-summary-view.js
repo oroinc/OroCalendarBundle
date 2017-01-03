@@ -84,13 +84,16 @@ define(function(require) {
             if (Number(data.dayOfMonth) > 0) {
                 var dayInCurrentYear = new Date(data.startTime);
                 dayInCurrentYear.setMonth(data.monthOfYear - 1);
+                //use leap year for the 29th of February
+                dayInCurrentYear.setYear(2016);
                 // adjust dateOfMonth to fit last day of month.
                 var daysInMonth = Number(
-                    new Date(new Date(data.startTime).getFullYear(), data.monthOfYear, 0).getDate()
+                    //use some leap year and first day of month, so it is possible to get the 29th of February later
+                    new Date(2016, data.monthOfYear, 0).getDate()
                 );
                 var dayOfMonth = (Number(data.dayOfMonth) > daysInMonth) ? daysInMonth : Number(data.dayOfMonth);
                 dayInCurrentYear.setDate(dayOfMonth);
-                data.day = datetimeFormatter.formatSmartDateTime(dayInCurrentYear);
+                data.day = datetimeFormatter.formatDayDateTime(dayInCurrentYear);
             }
             return data;
         },
