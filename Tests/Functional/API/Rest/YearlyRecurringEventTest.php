@@ -133,6 +133,8 @@ class YearlyRecurringEventTest extends AbstractTestCase
      * 1. Create new calendar event with pattern "Yearly Day 29 of every 1 year Start Sun 12/28/2016 No end date".
      * 2. Get expanded events and verify all properties in response.
      *    The significant part of response verification is 'recurrencePattern'.
+     *
+     * @SuppressWarnings(PHPMD.ExcessiveMethodLength)
      */
     public function testTextPatternOfEventWithDifferentYearsInStarttimeAndStart()
     {
