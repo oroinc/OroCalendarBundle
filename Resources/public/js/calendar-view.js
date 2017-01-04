@@ -683,11 +683,11 @@ define(function(require) {
         },
 
         showMiscError: function(err) {
-            this._showError(__('Sorry, unexpected error was occurred'), err);
+            this._showError(__('Sorry, an unexpected error has occurred.'), err);
         },
 
         showUpdateError: function(err) {
-            this._showError(__('Sorry, the calendar updating was failed'), err);
+            this._showError(__('Sorry, the calendar update has failed.'), err);
         },
 
         _showError: function(message, err) {

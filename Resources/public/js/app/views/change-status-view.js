@@ -35,7 +35,7 @@ define([
                     }
                 },
                 error: function(jqXHR) {
-                    messenger.showErrorMessage(__('Sorry, unexpected error was occurred'), jqXHR.responseJSON);
+                    messenger.showErrorMessage(__('Sorry, an unexpected error has occurred.'), jqXHR.responseJSON);
                 }
             });
         }
