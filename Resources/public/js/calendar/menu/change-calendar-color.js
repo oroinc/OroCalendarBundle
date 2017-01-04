@@ -144,7 +144,7 @@ define([
                         }, this),
                         error: _.bind(function(model, response) {
                             savingMsg.close();
-                            this._showError(__('Sorry, the calendar updating was failed'), response.responseJSON || {});
+                            this._showError(__('Sorry, the calendar update has failed.'), response.responseJSON || {});
                             this.connectionsView.setItemVisibility($connection,
                                 this.model.get('visible') ? this.model.get('backgroundColor') : '');
                             this.connectionsView._actionSyncObject.reject();
@@ -152,13 +152,13 @@ define([
                     });
                 } catch (err) {
                     savingMsg.close();
-                    this._showError(__('Sorry, unexpected error was occurred'), err);
+                    this._showError(__('Sorry, an unexpected error has occurred.'), err);
                     this.connectionsView.setItemVisibility($connection,
                         this.model.get('visible') ? this.model.get('backgroundColor') : '');
                     this.connectionsView._actionSyncObject.reject();
                 }
             } else {
-                this._showError(__('Sorry, synchronization error was occurred'), '');
+                this._showError(__('Sorry, a synchronization error has occurred.'), '');
             }
         },
 

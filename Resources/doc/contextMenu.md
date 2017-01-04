@@ -81,14 +81,14 @@ execute: function (model, actionSyncObject) {
             }, this),
             error: _.bind(function (model, response) {
                 removingMsg.close();
-                this._showError(__('Sorry, the calendar removing was failed'), response.responseJSON || {});
+                this._showError(__('Sorry, the calendar removal has failed.'), response.responseJSON || {});
                 $connection.show();
                 actionSyncObject.reject();
             }, this)
         });
     } catch (err) {
         removingMsg.close();
-        this._showError(__('Sorry, unexpected error was occurred'), err);
+        this._showError(__('Sorry, an unexpected error has occurred.'), err);
         $connection.show();
         this.actionSyncObject.reject();
     }
