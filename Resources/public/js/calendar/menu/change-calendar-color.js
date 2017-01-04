@@ -158,7 +158,7 @@ define([
                     this.connectionsView._actionSyncObject.reject();
                 }
             } else {
-                this._showError(__('Sorry, synchronization error has occurred.'), '');
+                this._showError(__('Sorry, a synchronization error has occurred.'), '');
             }
         },
 

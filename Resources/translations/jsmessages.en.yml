@@ -100,7 +100,7 @@ oro:
 "Sorry, the calendar addition has failed.": "Sorry, the calendar addition has failed."
 "Sorry, the calendar excluding was failed": "Sorry, the calendar removal has failed."
 "Sorry, the calendar update has failed.": "Sorry, the calendar update has failed."
-"Sorry, synchronization error has occurred.": "Sorry, synchronization error has occurred."
+"Sorry, a synchronization error has occurred.": "Sorry, a synchronization error has occurred."
 "The calendar cannot be changed because the event has guests": "The calendar cannot be changed because the event has guests"
 "Notify guests title": "Notification confirmation"
 "Notify guests message": "Do you want to notify all invited users about changes?"
