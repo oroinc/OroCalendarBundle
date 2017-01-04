@@ -59,5 +59,26 @@ class UpdateManager
         if ($allowUpdateExceptions) {
             $this->updateExceptionManager->onEventUpdate($actualEvent, $originalEvent);
         }
+
+        $this->setUpdatedAt($actualEvent, $originalEvent);
+    }
+
+    /**
+     * When only recurrence or attendees collection was updated calendar event is not
+     * added to UoW as updated entity and we need to force update of "updateAt" field to have
+     * API clients know about the updated happened.
+     *
+     * @param CalendarEvent $calendarEvent
+     * @param CalendarEvent $originalEvent
+     */
+    protected function setUpdatedAt(CalendarEvent $calendarEvent, CalendarEvent $originalEvent)
+    {
+        $hasUpdatedAttendees = !$calendarEvent->hasEqualAttendees($originalEvent);
+        $hasUpdatedRecurrence = $calendarEvent->getRecurrence()
+            && !$calendarEvent->getRecurrence()->isEqual($originalEvent->getRecurrence());
+
+        if ($hasUpdatedAttendees || $hasUpdatedRecurrence) {
+            $calendarEvent->setUpdatedAt(new \DateTime('now', new \DateTimeZone('UTC')));
+        }
     }
 }

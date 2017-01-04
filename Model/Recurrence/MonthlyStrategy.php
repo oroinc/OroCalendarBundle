@@ -24,13 +24,12 @@ class MonthlyStrategy extends AbstractStrategy
         $occurrenceDate = $this->getFirstOccurrence($recurrence);
         $interval = $recurrence->getInterval();
         $fromStartInterval = 1;
-        $dayOfMonth = $recurrence->getDayOfMonth();
 
         if ($start > $occurrenceDate) {
             $dateInterval = $start->diff($occurrenceDate);
             $fromStartInterval = (int)$dateInterval->format('%y') * 12 + (int)$dateInterval->format('m');
             $fromStartInterval = floor($fromStartInterval / $interval);
-            $occurrenceDate = $this->getNextOccurrence($fromStartInterval++ * $interval, $dayOfMonth, $occurrenceDate);
+            $occurrenceDate = $this->getNextOccurrence($fromStartInterval++ * $interval, $recurrence, $occurrenceDate);
         }
 
         $occurrences = $recurrence->getOccurrences();
@@ -42,7 +41,7 @@ class MonthlyStrategy extends AbstractStrategy
                 $result[] = $occurrenceDate;
             }
             $fromStartInterval++;
-            $occurrenceDate = $this->getNextOccurrence($interval, $dayOfMonth, $occurrenceDate);
+            $occurrenceDate = $this->getNextOccurrence($interval, $recurrence, $occurrenceDate);
         }
 
         return $result;
@@ -75,22 +74,44 @@ class MonthlyStrategy extends AbstractStrategy
      * Returns occurrence date according to last occurrence date and recurrence interval.
      *
      * @param integer $interval A number of months.
-     * @param integer $dayOfMonth
+     * @param Entity\Recurrence $recurrence
      * @param \DateTime $date
      *
      * @return \DateTime
      */
-    protected function getNextOccurrence($interval, $dayOfMonth, \DateTime $date)
+    protected function getNextOccurrence($interval, Entity\Recurrence $recurrence, \DateTime $date)
     {
         $currentDate = clone $date;
         $currentDate->setDate($currentDate->format('Y'), $currentDate->format('m'), 1);
 
         $result = new \DateTime("+{$interval} month {$currentDate->format('c')}");
-        $daysInMonth = (int)$result->format('t');
-        $dayOfMonth = ($daysInMonth < $dayOfMonth) ? $daysInMonth : $dayOfMonth;
-        $result->setDate($result->format('Y'), $result->format('m'), $dayOfMonth);
+        $result->setDate(
+            $result->format('Y'),
+            $result->format('m'),
+            $this->getDayOfMonthInValidRange($recurrence, $result)
+        );
 
         return $result;
+    }
+
+    /**
+     * This method aimed to return day of month in valid range according to max days of month of $occurrenceDate.
+     *
+     * For example, if $recurrence has pattern "Monthly day 31 of every 1 month", then the method will return:
+     * - 31 for $occurrenceDate in January;
+     * - 29 for $occurrenceDate for February of leap year;
+     * - 28 for $occurrenceDate for February of usual year;
+     *
+     * @param Entity\Recurrence $recurrence
+     * @param \DateTime $occurrenceDate
+     *
+     * @return int|null
+     */
+    protected function getDayOfMonthInValidRange(Entity\Recurrence $recurrence, \DateTime $occurrenceDate)
+    {
+        $daysInMonth = (int)$occurrenceDate->format('t');
+
+        return ($recurrence->getDayOfMonth() > $daysInMonth) ? $daysInMonth : $recurrence->getDayOfMonth();
     }
 
     /**
@@ -102,16 +123,17 @@ class MonthlyStrategy extends AbstractStrategy
      */
     protected function getFirstOccurrence(Entity\Recurrence $recurrence)
     {
-        $dayOfMonth = $recurrence->getDayOfMonth();
         $occurrenceDate = clone $recurrence->getStartTime();
-        $daysInMonth = (int)$occurrenceDate->format('t');
-        $dayOfMonth = ($daysInMonth < $dayOfMonth) ? $daysInMonth : $dayOfMonth;
-        $occurrenceDate->setDate($occurrenceDate->format('Y'), $occurrenceDate->format('m'), $dayOfMonth);
+        $occurrenceDate->setDate(
+            $occurrenceDate->format('Y'),
+            $occurrenceDate->format('m'),
+            $this->getDayOfMonthInValidRange($recurrence, $occurrenceDate)
+        );
 
         if ($occurrenceDate->format('d') < $recurrence->getStartTime()->format('d')) {
             $occurrenceDate = $this->getNextOccurrence(
                 $recurrence->getInterval(),
-                $recurrence->getDayOfMonth(),
+                $recurrence,
                 $occurrenceDate
             );
         }
@@ -128,7 +150,7 @@ class MonthlyStrategy extends AbstractStrategy
 
         return $this->getNextOccurrence(
             ($recurrence->getOccurrences() - 1) * $recurrence->getInterval(),
-            $recurrence->getDayOfMonth(),
+            $recurrence,
             $occurrenceDate
         );
     }

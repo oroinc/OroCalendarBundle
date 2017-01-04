@@ -300,15 +300,15 @@ define([
         },
 
         showAddError: function(err) {
-            this._showError(__('Sorry, the calendar adding was failed'), err);
+            this._showError(__('Sorry, the calendar addition has failed.'), err);
         },
 
         showUpdateError: function(err) {
-            this._showError(__('Sorry, the calendar updating was failed'), err);
+            this._showError(__('Sorry, the calendar update has failed.'), err);
         },
 
         showMiscError: function(err) {
-            this._showError(__('Sorry, unexpected error was occurred'), err);
+            this._showError(__('Sorry, an unexpected error has occurred.'), err);
         },
 
         _showError: function(message, err) {

@@ -16,8 +16,9 @@ define(function(require) {
             }
             data.monthsOptions = _.map(this.model.RECURRENCE_MONTHS, function(item, key) {
                 return {
-                    'value': key,
-                    'text': item
+                    value: key,
+                    text: item,
+                    selected: Number(key) === Number(data.monthOfYear)
                 };
             });
             return data;

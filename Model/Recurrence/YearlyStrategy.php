@@ -32,9 +32,16 @@ class YearlyStrategy extends MonthlyStrategy
     public function getTextValue(Entity\Recurrence $recurrence)
     {
         $interval = (int)($recurrence->getInterval() / 12);
-        $currentDate = new \DateTime('now', $recurrence->getStartTime()->getTimezone());
-        $currentDate->setDate($currentDate->format('Y'), $recurrence->getMonthOfYear(), $recurrence->getDayOfMonth());
-        $date = $this->dateTimeFormatter->formatDay($currentDate);
+        $date = $recurrence->getStartTime();
+        // Some monthly patterns are equivalent to yearly patterns.
+        // In these cases, day should be adjusted to fit last day of month.
+        // For example "Monthly day 31 of every 12 months, start Wed 11/30/2016" === "Yearly every 1 year on Nov 30".
+        $date->setDate(
+            $date->format('Y'),
+            $recurrence->getMonthOfYear(),
+            $this->getDayOfMonthInValidRange($recurrence, $date)
+        );
+        $date = $this->dateTimeFormatter->formatDay($date);
 
         return $this->getFullRecurrencePattern(
             $recurrence,
@@ -49,14 +56,17 @@ class YearlyStrategy extends MonthlyStrategy
      */
     protected function getFirstOccurrence(Entity\Recurrence $recurrence)
     {
-        $dayOfMonth = $recurrence->getDayOfMonth();
         $monthOfYear = $recurrence->getMonthOfYear();
         $interval = $recurrence->getInterval(); // a number of months, which is a multiple of 12
         $occurrenceDate = clone $recurrence->getStartTime();
-        $occurrenceDate->setDate($occurrenceDate->format('Y'), $monthOfYear, $dayOfMonth);
+        $occurrenceDate->setDate(
+            $occurrenceDate->format('Y'),
+            $monthOfYear,
+            $this->getDayOfMonthInValidRange($recurrence, $occurrenceDate)
+        );
 
         if ($occurrenceDate < $recurrence->getStartTime()) {
-            $occurrenceDate = $this->getNextOccurrence($interval, $recurrence->getDayOfMonth(), $occurrenceDate);
+            $occurrenceDate = $this->getNextOccurrence($interval, $recurrence, $occurrenceDate);
         }
 
         return $occurrenceDate;

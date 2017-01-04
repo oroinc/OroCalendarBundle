@@ -48,7 +48,6 @@ class RecurrenceValidator extends ConstraintValidator
         $this->validateInterval($value, $constraint);
         $this->validateEndTime($value, $constraint);
         $this->validateDayOfWeek($value, $constraint);
-        $this->validateDayOfMonth($value, $constraint);
     }
 
     /**
@@ -259,56 +258,6 @@ class RecurrenceValidator extends ConstraintValidator
                 $path
             );
         }
-    }
-
-    /**
-     * Validates day of month.
-     *
-     * @param Entity\Recurrence $value
-     * @param Constraints\Recurrence $constraint
-     */
-    protected function validateDayOfMonth(Entity\Recurrence $value, Constraints\Recurrence $constraint)
-    {
-        $monthOfYear = $value->getMonthOfYear();
-        $dayOfMonth = $value->getDayOfMonth();
-
-        if (null === $dayOfMonth) {
-            return;
-        }
-
-        // Validate dayOfMonth >= 1
-        $this->validateRange(
-            $dayOfMonth,
-            1,
-            null,
-            $constraint,
-            'dayOfMonth'
-        );
-
-        if (null === $monthOfYear) {
-            // If monthOfYear is not defined the rest of the validation logic is not applicable.
-            return;
-        }
-
-        if ($monthOfYear < 1 || $monthOfYear > 12) {
-            // Invalid value of monthOfYear is validated by a separate rule in validation.yml.
-            return;
-        }
-
-        // Validate the value according to selected monthOfYear
-        // @todo Investigate logic of Outlook and take into account edge case with 29th of February and leap year.
-
-        $currentDate = new \DateTime('now', new \DateTimeZone('UTC'));
-        $currentDate->setDate($currentDate->format('Y'), $value->getMonthOfYear(), 1);
-        $daysInMonth = (int)$currentDate->format('t');
-
-        $this->validateRange(
-            $dayOfMonth,
-            null,
-            $daysInMonth,
-            $constraint,
-            'dayOfMonth'
-        );
     }
 
     /**

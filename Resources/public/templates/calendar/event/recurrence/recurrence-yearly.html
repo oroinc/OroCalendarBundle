@@ -23,7 +23,7 @@
                 <select data-related-field="monthOfYear">
                     <% _.each(monthsOptions, function (option) { %>
                     <option value="<%= option.value %>"
-                    <% if (option.value === monthOfYear) { %> selected="selected"<% } %>>
+                    <% if (option.selected) { %> selected="selected"<% } %>>
                     <%- option.text %>
                     </option>
                     <% }); %>

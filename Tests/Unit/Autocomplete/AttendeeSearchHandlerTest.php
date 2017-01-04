@@ -104,8 +104,8 @@ class AttendeeSearchHandlerTest extends \PHPUnit_Framework_TestCase
     public function testSearch()
     {
         $items = [
-            new Item($this->om, 'entity', 1, 'record1'),
-            new Item($this->om, 'entity', 2, 'record2'),
+            new Item('entity', 1, 'record1'),
+            new Item('entity', 2, 'record2'),
         ];
 
         $users = [

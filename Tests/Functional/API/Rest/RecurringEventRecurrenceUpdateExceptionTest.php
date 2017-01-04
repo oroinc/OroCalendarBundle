@@ -18,6 +18,8 @@ use Oro\Bundle\CalendarBundle\Tests\Functional\DataFixtures\LoadUserData;
  * - Update recurring event "start" and "end" clears exceptions when "updateExceptions"=true.
  * - Remove recurring event recurrence clears exceptions when "updateExceptions"=true.
  * - Remove recurring event recurrence doesn't clear exceptions when "updateExceptions"=False.
+ * - Remove recurring event recurrence clears exceptions when "updateExceptions"=true and "notifyInvitedUsers"=true
+ *   and when recurring event has attendees but one of the exceptions doesn't have attendees.
  *
  * @SuppressWarnings(PHPMD.ExcessiveClassLength)
  *
