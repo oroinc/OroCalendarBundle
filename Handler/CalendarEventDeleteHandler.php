@@ -83,6 +83,7 @@ class CalendarEventDeleteHandler extends DeleteHandler
      */
     protected function checkPermissions($entity, ObjectManager $em)
     {
+        /** @var CalendarEvent $entity */
         /** @var SystemCalendar|null $calendar */
         $calendar = $entity->getSystemCalendar();
         if ($calendar) {
@@ -104,6 +105,11 @@ class CalendarEventDeleteHandler extends DeleteHandler
                 }
             }
         } else {
+            // for regular calendar event, check access by it's calendar
+            // todo: Temporary solution. Should be deleted in scope of BAP-13256
+            if (!$this->securityFacade->isGranted('VIEW', $entity->getCalendar())) {
+                throw new ForbiddenException('Access denied.');
+            }
             parent::checkPermissions($entity, $em);
         }
     }
