@@ -32,9 +32,7 @@ class YearlyStrategy extends MonthlyStrategy
     public function getTextValue(Entity\Recurrence $recurrence)
     {
         $interval = (int)($recurrence->getInterval() / 12);
-        $date = clone $recurrence->getStartTime();
-        //set some leap year and first day of month, so it is possible to get the 29th of February later
-        $date->setDate(2016, $recurrence->getMonthOfYear(), 1);
+        $date = $recurrence->getStartTime();
         // Some monthly patterns are equivalent to yearly patterns.
         // In these cases, day should be adjusted to fit last day of month.
         // For example "Monthly day 31 of every 12 months, start Wed 11/30/2016" === "Yearly every 1 year on Nov 30".
