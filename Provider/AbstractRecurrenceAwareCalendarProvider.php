@@ -198,6 +198,8 @@ abstract class AbstractRecurrenceAwareCalendarProvider extends AbstractCalendarP
                         ),
                         $timeZone
                     );
+
+                    $this->adjustEndDateWithDST($endDate, $newStartDate, $recurrenceTimezone);
                     $newItem['end'] = $endDate->format('c');
                     $newItem['startEditable'] = false;
                     $newItem['durationEditable'] = false;
@@ -207,6 +209,28 @@ abstract class AbstractRecurrenceAwareCalendarProvider extends AbstractCalendarP
         }
 
         return $occurrences;
+    }
+
+    /**
+     * Adjusts end date to +/- 1 hour if start and end date are in different daylight saving time
+     *
+     * @param \DateTime $endDate
+     * @param \DateTime $startDate
+     * @param \DateTimeZone $timeZone
+     */
+    protected function adjustEndDateWithDST(\DateTime $endDate, \DateTime $startDate, \DateTimeZone $timeZone)
+    {
+        $end = clone $endDate;
+        $start = clone $startDate;
+
+        $end->setTimezone($timeZone);
+        $start->setTimezone($timeZone);
+
+        if ($start->format('I') === "0" && $end->format('I') === "1") {
+            $endDate->modify('-1 hour');
+        } elseif ($start->format('I') === "1" && $end->format('I') === "0") {
+            $endDate->modify('+1 hour');
+        }
     }
 
     /**
