@@ -34,6 +34,8 @@ class DailyRecurringEventTest extends AbstractTestCase
      *    The significant part of response verification is correct "end" property according to DST starts.
      * 3. Get expanded events and verify all properties in response.
      *    The significant part of response verification is correct "end" property according to DST ends.
+     *
+     * @SuppressWarnings(PHPMD.ExcessiveMethodLength)
      */
     public function testExpandingOfEventWithChangedDST()
     {
