@@ -5,7 +5,6 @@ define(function(require) {
     var BaseView = require('oroui/js/app/views/base/view');
 
     ActionTargetSelectView = BaseView.extend({
-        className: 'widget-content',
         template: require('tpl!orocalendar/templates/calendar/event/action-target-select.html'),
         actionType: null,
         initialize: function(options) {

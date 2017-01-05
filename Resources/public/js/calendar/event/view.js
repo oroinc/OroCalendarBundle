@@ -14,17 +14,12 @@ define(function(require) {
     var DeleteConfirmation = require('oroui/js/delete-confirmation');
     var fieldFormatter = require('oroform/js/formatter/field');
     var ActivityContextComponent = require('oroactivity/js/app/components/activity-context-activity-component');
-    var ActionTargetSelectView = require('orocalendar/js/calendar/event/action-target-select-view');
 
-    /**
-     * @export  orocalendar/js/calendar/event/view
-     * @class   orocalendar.calendar.event.View
-     * @extends BaseView
-     */
     CalendarEventView = BaseView.extend({
         /** @property {Object} */
         options: {
             calendar: null,
+            commonEventBus: null,
             connections: null,
             colorManager: null,
             widgetRoute: null,
@@ -41,7 +36,9 @@ define(function(require) {
             contexts: 'input[name$="[contexts]"]'
         },
 
-        exceptionEventData: null,
+        predefinedAttrs: {
+            isException: false
+        },
 
         /** @property {Array} */
         userCalendarOnlyFields: [
@@ -53,6 +50,7 @@ define(function(require) {
             this.options = _.defaults(_.pick(options || {}, _.keys(this.options)), this.options);
             this.viewTemplate = _.template($(options.viewTemplateSelector).html());
             this.template = _.template($(options.formTemplateSelector).html());
+            this.setPredefinedAttrs({});
 
             this.listenTo(this.model, 'sync', this.onModelSave);
             this.listenTo(this.model, 'destroy', this.onModelDelete);
@@ -66,6 +64,15 @@ define(function(require) {
                 delete this.activityContext;
             }
             CalendarEventView.__super__.remove.apply(this, arguments);
+        },
+
+        /**
+         * Updates object of predefined attributes and provides default values from its prototype
+         *
+         * @param {Object} attrs
+         */
+        setPredefinedAttrs: function(attrs) {
+            this.predefinedAttrs = _.extend(Object.create(CalendarEventView.prototype.predefinedAttrs), attrs);
         },
 
         onModelSave: function() {
@@ -92,9 +99,9 @@ define(function(require) {
                     resizable: false,
                     width: 475,
                     autoResize: true,
-                    close: _.bind(this.dispose, this)
+                    close: _.bind(this.disposePageComponents, this)
                 }),
-                submitHandler: _.bind(this.saveModel, this)
+                submitHandler: _.bind(this.onEventFormSubmit, this)
             };
 
             if (this.options.widgetRoute) {
@@ -115,18 +122,16 @@ define(function(require) {
                 _.omit(widgetOptions, ['dialogOptions']),
                 defaultOptions
             ));
+            this.listenTo(this.eventDialog, 'widgetRemove', this.dispose);
             this.eventDialog.render();
 
             // subscribe to 'delete event' event
             this.eventDialog.getAction('delete', 'adopted', _.bind(function(deleteAction) {
-                var callback = this.model.get('recurrence') ? this._onDeleteTargetSelect : this._onDeleteDialogAction;
-                deleteAction.on('click', callback.bind(this));
+                deleteAction.on('click', _.bind(this._onClickDeleteDialogAction, this));
             }, this));
             // subscribe to 'switch to edit' event
             this.eventDialog.getAction('edit', 'adopted', _.bind(function(editAction) {
-                var callback = this.model.get('recurrence') ? this._onEditTargetSelect : this._onEditDialogAction;
-                this.exceptionEventData = null;
-                editAction.on('click', callback.bind(this));
+                editAction.on('click', _.bind(this._onClickEditDialogAction, this));
             }, this));
 
             // init loading mask control
@@ -135,76 +140,31 @@ define(function(require) {
             });
 
             this.showLoadingMask();
-            this.initLayout({model: this.model})
-                .always(_.bind(this._hideMask, this));
+            this.initLayout({
+                model: this.model,
+                commonEventBus: this.options.commonEventBus
+            }).always(_.bind(this._hideMask, this));
 
             return this;
         },
 
-        /**
-         * Displays form in popup that allows to select single event or whole of series event to edit
-         *
-         * @param {jQuery.Event} e
-         */
-        _onEditTargetSelect: function(e) {
-            var view = new ActionTargetSelectView({
-                autoRender: true,
-                actionType: 'edit'
-            });
-            this.eventDialog.setTitle(__('Edit Event'));
-            this.eventDialog.setContent(view.$el);
-            // subscribe to 'delete event' event
-            this.eventDialog.getAction('apply', 'adopted', _.bind(function(applyAction) {
-                applyAction.on('click', _.bind(function(e) {
-                    if (view.getValue() === 'exception') {
-                        this.exceptionEventData = {
-                            originalStart: this.model.get('start')
-                        };
-                    } else {
-                        this.exceptionEventData = null;
-                    }
-                    this._onEditDialogAction(e);
-                }, this));
-            }, this));
+        _executePreAction: function(preactionName) {
+            var promises = [];
+            var $dialog = this.eventDialog.widget.closest('.ui-dialog');
+            $dialog.addClass('invisible');
+            this.options.commonEventBus.trigger('event:' + preactionName, this.model, promises, this.predefinedAttrs);
+            return $.when.apply($, promises)
+                .done(_.bind(function() {
+                    var attrs = _.extend.apply(_, arguments);
+                    this.setPredefinedAttrs(attrs);
+                    $dialog.removeClass('invisible');
+                }, this))
+                .fail(_.bind(this.eventDialog.remove, this.eventDialog));
         },
 
-        /**
-         * Displays form in popup that allows to select single event or whole of series event to delete
-         *
-         * @param {jQuery.Event} e
-         */
-        _onDeleteTargetSelect: function(e) {
-            var deleteUrl = $(e.currentTarget).data('url');
-            var view = new ActionTargetSelectView({
-                autoRender: true,
-                actionType: 'delete'
-            });
-            this.disposePageComponents();
-            this.eventDialog.setTitle(__('Delete Event'));
-            this.eventDialog.setContent(view.$el);
-            this.eventDialog.widget.dialog('option', 'width', 375);
-            // subscribe to 'delete event' event
-            this.eventDialog.getAction('apply', 'adopted', _.bind(function(applyAction) {
-                applyAction.on('click', _.bind(function(e) {
-                    if (view.getValue() === 'exception') {
-                        this.exceptionEventData = {
-                            originalStart: this.model.get('start'),
-                            isCancelled: true
-                        };
-                        this.model.once('sync', function(model) {
-                            model.set({id: null});
-                            model.collection.remove(model);
-                        }, this);
-                        this.saveModel();
-                    } else {
-                        this.exceptionEventData = null;
-                        this.model.once('destroy', function(model, collection) {
-                            collection.trigger('toRefresh');
-                        });
-                        this.deleteModel(deleteUrl);
-                    }
-                }, this));
-            }, this));
+        _onClickEditDialogAction: function(e) {
+            this._executePreAction('beforeEdit')
+                .then(_.bind(this._onEditDialogAction, this, e));
         },
 
         _onEditDialogAction: function(e) {
@@ -216,48 +176,67 @@ define(function(require) {
             this.eventDialog.widget.dialog('option', 'width', 1000);
             // subscribe to 'delete event' event
             this.eventDialog.getAction('delete', 'adopted', _.bind(function(deleteAction) {
-                var callback = this.model.get('recurrence') ? this._onDeleteTargetSelect : this._onDeleteDialogAction;
-                deleteAction.on('click', callback.bind(this));
+                deleteAction.on('click', _.bind(this._onClickDeleteDialogAction, this));
             }, this));
             this.showLoadingMask();
-            this.initLayout({model: this.model})
-                .always(_.bind(this._hideMask, this));
+            this.initLayout({
+                model: this.model,
+                commonEventBus: this.options.commonEventBus
+            }).always(_.bind(this._hideMask, this));
+        },
+
+        _onClickDeleteDialogAction: function(e) {
+            this._executePreAction('beforeDelete')
+                .then(_.bind(this._onDeleteDialogAction, this, e));
         },
 
         _onDeleteDialogAction: function(e) {
             var $el = $(e.currentTarget);
             var deleteUrl = $el.data('url');
             var deleteConfirmationMessage = $el.data('message');
+            if (this.model.get('recurrence')) {
+                if (this.predefinedAttrs.isException) {
+                    this.model.once('sync', function(model) {
+                        model.set({id: null});
+                        // restore back originalId from recurringEventId to allow destroying properly
+                        // other related guest events, (backend sets new id for a deleted occurrence
+                        // of recurring event, since it is represented as exceptionEvent with the flag isCancelled)
+                        model.originalId = model.get('recurringEventId');
+                        model.destroy();
+                    }, this);
+                    this._saveEventFromData({});
+                } else {
+                    this.setPredefinedAttrs({});
+                    this.deleteModel(deleteUrl);
+                }
+            } else {
+                this._confirmDeleteAction(deleteConfirmationMessage, _.bind(this.deleteModel, this, deleteUrl));
+                e.preventDefault();
+            }
+        },
+
+        _confirmDeleteAction: function(message, callback) {
             if (this.model.get('recurringEventId')) {
-                deleteConfirmationMessage = deleteConfirmationMessage +
-                    '<br/>' +
-                    __('Only this particular event will be deleted from the series.');
+                message += '<br/>' + __('Only this particular event will be deleted from the series.');
             }
             var confirm = new DeleteConfirmation({
-                content: deleteConfirmationMessage
+                content: message
             });
-            e.preventDefault();
-            confirm.on('ok', _.bind(function() {
-                this.deleteModel(deleteUrl);
-            }, this));
+            confirm.on('ok', callback);
             confirm.open();
         },
 
-        saveModel: function() {
-            var errors;
+        onEventFormSubmit: function() {
             //calendarUid value should be processed by form and value should be sent to backend
-            this.eventDialog.form.find(this.selectors.calendarUid).removeAttr('disabled');
-            this.model.set(this.getEventFormData());
-            if (this.exceptionEventData !== null) {
-                this.model.set({
-                    'id': null,
-                    'recurringEventId': this.model.originalId,
-                    'originalStart': this.exceptionEventData.originalStart,
-                    'recurrence': null,
-                    'isCancelled': _.result(this.exceptionEventData, 'isCancelled') || null
-                });
-                this.model.originalId = null;
-            }
+            this.eventDialog.$('form ' + this.selectors.calendarUid).removeAttr('disabled');
+            this._saveEventFromData(this.getEventFormData());
+        },
+
+        _saveEventFromData: function(formData) {
+            this.options.commonEventBus.trigger('eventForm:fetchData', this.model, formData, this.predefinedAttrs);
+            this.model.set(formData);
+
+            var errors;
             if (this.model.isValid()) {
                 this.showSavingMask();
                 try {
@@ -436,14 +415,13 @@ define(function(require) {
         },
 
         getEventForm: function() {
-            var modelData = this.model.toJSON();
-            var templateData = _.extend(this.getEventFormTemplateData(!modelData.id), modelData);
-            var form = this.fillForm(this.template(templateData), modelData);
+            var templateData = this.getEventFormTemplateData();
+            var form = this.fillForm(this.template(templateData), templateData);
             var calendarColors = this.options.colorManager.getCalendarColors(this.model.get('calendarUid'));
 
             form.find(this.selectors.backgroundColor)
                 .data('page-component-options').emptyColor = calendarColors.backgroundColor;
-            if (modelData.calendarAlias !== 'user') {
+            if (templateData.calendarAlias !== 'user') {
                 this._showUserCalendarOnlyFields(form, false);
             }
             this._toggleCalendarUidByInvitedUsers(form);
@@ -592,7 +570,7 @@ define(function(require) {
             if (!$calendarUid.length) {
                 return;
             }
-            if (this.model.get('recurringEventId') || this.exceptionEventData) {
+            if (this.model.get('recurringEventId') || this.predefinedAttrs.isException) {
                 $calendarUid.attr('disabled', 'disabled');
                 return;
             }
@@ -649,7 +627,9 @@ define(function(require) {
             return current;
         },
 
-        getEventFormTemplateData: function(isNew) {
+        getEventFormTemplateData: function() {
+            var isNew = this.model.isNew();
+            var formData = this.model.toJSON();
             var templateType = '';
             var calendars = [];
             var ownCalendar = null;
@@ -680,11 +660,14 @@ define(function(require) {
                 }
             }
 
-            return {
+            _.extend(formData, {
                 calendarUidTemplateType: templateType,
-                calendars: calendars,
-                editAsException: this.exceptionEventData !== null
-            };
+                calendars: calendars
+            });
+
+            this.options.commonEventBus.trigger('eventForm:setupData', this.model, formData, this.predefinedAttrs);
+
+            return formData;
         }
     });
 

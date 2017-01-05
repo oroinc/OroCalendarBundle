@@ -8,11 +8,8 @@ define(function(require) {
     var BaseComponent = require('oroui/js/app/components/base/component');
 
     CalendarEventRecurrenceComponent = BaseComponent.extend({
-        /** @type {Object|null} */
-        _initModelData: null,
-
-        /** @type {Boolean} */
-        _eventEditFormIsChanged: false,
+        /** @type {Backbone.Event|null} */
+        commonEventBus: null,
 
         /**
          * @constructor
@@ -25,15 +22,12 @@ define(function(require) {
                 // if there's event model, take recurrence attributes from there
                 modelAttrs = this.model.get('recurrence');
             }
+            _.extend(this, _.pick(options, 'commonEventBus'));
             var viewOptions = this._prepareEventRecurrenceViewOptions(options);
-            this.recurrenceModel = this._initEventRecurrenceModel(modelAttrs);
             this.recurrenceView = this._initEventRecurrenceView(_.extend(viewOptions, {
-                model: this.recurrenceModel
+                model: this._initEventRecurrenceModel(modelAttrs)
             }));
-            this._initModelData = this.recurrenceModel.toJSON();
             this.listenTo(this.recurrenceView, 'formChanged', this._handleFormChange);
-            this.listenTo(this.recurrenceView, 'formSubmit', this._handleFormSubmit);
-
         },
 
         /**
@@ -71,26 +65,6 @@ define(function(require) {
             return _.extend(_.pick(options, 'inputNamePrefixes', 'errors'), {
                 el: options._sourceElement
             });
-        },
-
-        _handleFormChange: function() {
-            this._eventEditFormIsChanged = true;
-        },
-
-        _handleFormSubmit: function() {
-            var eventModel = this.model;
-            if (
-                !eventModel || // if not event model -- nothing to refresh
-                !this._eventEditFormIsChanged || // if not touched -- no need to refresh
-                // initially recurrent as turned off and it stays the same -- no need to refresh
-                this.recurrenceModel.isEmptyRecurrence() && this.recurrenceModel.isEqual(this._initModelData)
-            ) {
-                return;
-            }
-            eventModel.off('sync',  null, this);
-            eventModel.once('sync', function() {
-                eventModel.collection.trigger('toRefresh');
-            }, this);
         }
     });
 
