@@ -55,6 +55,7 @@ oro:
                         third: Third
                         fourth: Fourth
                         last: Last
+                    day: Day
                     weekday: Weekday
                     weekend-day: "Weekend Day"
                 warning:
