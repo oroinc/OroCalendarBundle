@@ -23,6 +23,16 @@
       width: 95px;
       margin: 0 6px 0 0;
     }
+    .ui-datepicker-dialog-is-below, .timepicker-dialog-is-below {
+      + span.validation-failed {
+        min-height: 38px;
+        top: -74px;
+        &:after {
+          left: 78px;
+          margin-top: -2px;
+        }
+      }
+    }
   }
   &__item:last-child label {
     margin-bottom: 0;
