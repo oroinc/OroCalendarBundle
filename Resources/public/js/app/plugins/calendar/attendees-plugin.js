@@ -79,7 +79,7 @@ define(function(require) {
         onEventAdded: function(eventModel) {
             eventModel.set('editable', eventModel.get('editable') && !this.hasParentEvent(eventModel), {silent: true});
             if (this.hasLoadedAttendeeEvents(eventModel)) {
-                this.main.updateEvents();
+                this.main.refreshView();
             }
         },
 
@@ -95,7 +95,7 @@ define(function(require) {
             eventModel.set('editable', eventModel.get('editable') && !this.hasParentEvent(eventModel), {silent: true});
             if (this.hasLoadedAttendeeEvents(eventModel)) {
                 if (eventModel.hasChanged('attendees')) {
-                    this.listenToOnce(eventModel, 'sync', _.bind(this.main.updateEvents, this.main));
+                    this.listenToOnce(eventModel, 'sync', _.bind(this.main.refreshView, this.main));
                     return;
                 }
                 // update linked events
@@ -119,7 +119,11 @@ define(function(require) {
             var i;
             if (this.hasLoadedAttendeeEvents(eventModel)) {
                 // remove guests
-                attendeeEventModels = this.findAttendeeEventModels(eventModel);
+                attendeeEventModels = _.filter(this.findAttendeeEventModels(eventModel), function(attendeeEventModel) {
+                    // in case there are multiple related guest models (sequence of recurring event)
+                    // delete only with same start date
+                    return attendeeEventModel.get('start') === eventModel.get('start');
+                });
                 for (i = 0; i < attendeeEventModels.length; i++) {
                     this.main.getCalendarElement().fullCalendar('removeEvents', attendeeEventModels[i].id);
                     this.main.collection.remove(attendeeEventModels[i]);

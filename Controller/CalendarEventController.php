@@ -42,6 +42,8 @@ class CalendarEventController extends Controller
      */
     public function viewAction(CalendarEvent $entity)
     {
+        $this->checkPermissionByParentCalendar($entity, 'view');
+
         $loggedUser = $this->get('oro_security.security_facade')->getLoggedUser();
         $canChangeInvitationStatus = $this->get('oro_calendar.calendar_event_manager')
             ->canChangeInvitationStatus(
@@ -66,6 +68,8 @@ class CalendarEventController extends Controller
      */
     public function infoAction(CalendarEvent $entity, $renderContexts)
     {
+        $this->checkPermissionByParentCalendar($entity, 'view');
+
         $loggedUser = $this->get('oro_security.security_facade')->getLoggedUser();
         $canChangeInvitationStatus = $this->get('oro_calendar.calendar_event_manager')
             ->canChangeInvitationStatus(
@@ -135,6 +139,8 @@ class CalendarEventController extends Controller
      */
     public function updateAction(CalendarEvent $entity)
     {
+        $this->checkPermissionByParentCalendar($entity, 'edit');
+
         $formAction = $this->get('router')->generate('oro_calendar_event_update', ['id' => $entity->getId()]);
 
         return $this->update($entity, $formAction);
@@ -207,5 +213,26 @@ class CalendarEventController extends Controller
         }
 
         return $entityRoutingHelper->getEntity($targetEntityClass, $targetEntityId);
+    }
+
+    /**
+     * Checks access to manipulate the calendar event by it's calendar
+     * todo: Temporary solution. Should be deleted in scope of BAP-13256
+     *
+     * @param CalendarEvent $entity
+     * @param string        $action
+     */
+    protected function checkPermissionByParentCalendar(CalendarEvent $entity, $action)
+    {
+        $calendar = $entity->getCalendar();
+        if (!$calendar) {
+            throw $this->createNotFoundException('A system calendar event.');
+        }
+
+        if (!$this->get('oro_security.security_facade')->isGranted('VIEW', $calendar)) {
+            throw $this->createAccessDeniedException(
+                sprintf('You does not have no access to %s this calendar event', $action)
+            );
+        }
     }
 }

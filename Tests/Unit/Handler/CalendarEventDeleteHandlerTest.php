@@ -71,6 +71,10 @@ class CalendarEventDeleteHandlerTest extends \PHPUnit_Framework_TestCase
             ->method('find')
             ->will($this->returnValue(new CalendarEvent()));
 
+        $this->securityFacade->expects($this->once())
+            ->method('isGranted')
+            ->willReturn(true);
+
         $this->handler->handleDelete(1, $this->manager);
     }
 
@@ -173,6 +177,10 @@ class CalendarEventDeleteHandlerTest extends \PHPUnit_Framework_TestCase
             ->method('onDelete')
             ->with($event, NotificationManager::ALL_NOTIFICATIONS_STRATEGY);
 
+        $this->securityFacade->expects($this->once())
+            ->method('isGranted')
+            ->willReturn(true);
+
         $this->handler->processDelete($event, $this->manager->getObjectManager());
     }
 
@@ -185,6 +193,10 @@ class CalendarEventDeleteHandlerTest extends \PHPUnit_Framework_TestCase
             ->method('onDelete')
             ->with($event, NotificationManager::NONE_NOTIFICATIONS_STRATEGY);
 
+        $this->securityFacade->expects($this->once())
+            ->method('isGranted')
+            ->willReturn(true);
+
         $this->handler->processDelete($event, $this->manager->getObjectManager());
     }
 
@@ -194,6 +206,10 @@ class CalendarEventDeleteHandlerTest extends \PHPUnit_Framework_TestCase
         $this->notificationManager->expects($this->once())
             ->method('onDelete')
             ->with($event, NotificationManager::ALL_NOTIFICATIONS_STRATEGY);
+
+        $this->securityFacade->expects($this->once())
+            ->method('isGranted')
+            ->willReturn(true);
 
         $this->handler->processDelete($event, $this->manager->getObjectManager());
     }
@@ -207,6 +223,32 @@ class CalendarEventDeleteHandlerTest extends \PHPUnit_Framework_TestCase
             ->method('onDelete')
             ->with($event, NotificationManager::NONE_NOTIFICATIONS_STRATEGY);
 
+        $this->securityFacade->expects($this->once())
+            ->method('isGranted')
+            ->willReturn(true);
+
         $this->handler->processDelete($event, $this->manager->getObjectManager());
+    }
+
+    /**
+     * @expectedException \Oro\Bundle\SecurityBundle\Exception\ForbiddenException
+     * @expectedExceptionMessage Access denied.
+     */
+    public function testHandleDeleteInCaseIfUserHaveNoAccessToCallendar()
+    {
+        $calendarEvent = new CalendarEvent();
+        $calendar = new Calendar();
+        $calendarEvent->setCalendar($calendar);
+
+        $this->manager->expects($this->once())
+            ->method('find')
+            ->will($this->returnValue($calendarEvent));
+
+        $this->securityFacade->expects($this->once())
+            ->method('isGranted')
+            ->with('VIEW', $calendar)
+            ->willReturn(false);
+
+        $this->handler->handleDelete(1, $this->manager);
     }
 }
