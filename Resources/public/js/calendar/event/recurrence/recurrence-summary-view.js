@@ -90,7 +90,7 @@ define(function(require) {
                 );
                 var dayOfMonth = (Number(data.dayOfMonth) > daysInMonth) ? daysInMonth : Number(data.dayOfMonth);
                 dayInCurrentYear.setDate(dayOfMonth);
-                data.day = datetimeFormatter.formatSmartDateTime(dayInCurrentYear);
+                data.day = datetimeFormatter.formatDayDateTime(dayInCurrentYear);
             }
             return data;
         },

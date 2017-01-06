@@ -44,7 +44,7 @@ define(function(require) {
         },
 
         _daysInMonth: function(month) {
-            var fullYear = new Date().getFullYear();
+            var fullYear = new Date(this.model.get('startTime')).getFullYear();
             return new Date(fullYear, month, 0).getDate();
         },
 
