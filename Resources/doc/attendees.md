@@ -32,8 +32,11 @@ PUT /api/rest/latest/calendarevents/1
     "notifyAttendees" : all
 }
 ```
-By default `notifyAttendees` could be one of next values: `all|none|added_or_deleted`.
-
+Next values of `notifyAttendees` are supported: 
+- `all` - notification will be send to all attendees. 
+- `none` - notification will be not send. 
+- `added_or_deleted` - notification will be send only to attendees which were added or removed via the request (i.e. such option could be used when PUT request updates the attendees of event).
+ 
 In API DELETE request it's possible to pass parameter `notifyAttendees`. For example:
 
 ```

@@ -157,7 +157,11 @@ class CalendarEventHandler extends AbstractCalendarEventHandler
      */
     protected function getSendNotificationsStrategy()
     {
-        return NotificationManager::ALL_NOTIFICATIONS_STRATEGY;
+        if ($this->form->has('notifyAttendees') && $this->form->get('notifyAttendees')->getData()) {
+            return $this->form->get('notifyAttendees')->getData();
+        }
+
+        return NotificationManager::NONE_NOTIFICATIONS_STRATEGY;
     }
 
     /**

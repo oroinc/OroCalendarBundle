@@ -167,7 +167,6 @@ class UserCalendarEventNormalizerTest extends \PHPUnit_Framework_TestCase
                         'editable' => true,
                         'editableInvitationStatus' => false,
                         'removable' => true,
-                        'notifiable' => false,
                     ],
                 ]
             ],
@@ -216,7 +215,6 @@ class UserCalendarEventNormalizerTest extends \PHPUnit_Framework_TestCase
                         'editable' => true,
                         'editableInvitationStatus' => false,
                         'removable' => true,
-                        'notifiable' => true,
                         'attendees' => [
                             [
                                 'displayName' => 'user',
@@ -272,7 +270,6 @@ class UserCalendarEventNormalizerTest extends \PHPUnit_Framework_TestCase
                         'editable' => true,
                         'editableInvitationStatus' => true,
                         'removable' => true,
-                        'notifiable' => true,
                         'attendees' => [
                             [
                                 'displayName' => 'user',
@@ -379,7 +376,6 @@ class UserCalendarEventNormalizerTest extends \PHPUnit_Framework_TestCase
                     'editable' => true,
                     'editableInvitationStatus' => false,
                     'removable' => true,
-                    'notifiable' => false,
                     'attendees' => [],
                     'recurringEventId' => null,
                     'originalStart' => null,
@@ -429,7 +425,6 @@ class UserCalendarEventNormalizerTest extends \PHPUnit_Framework_TestCase
                     'editable' => true,
                     'editableInvitationStatus' => false,
                     'removable' => true,
-                    'notifiable' => true,
                     'attendees' => [
                         [
                             'displayName' => 'user',
@@ -479,7 +474,6 @@ class UserCalendarEventNormalizerTest extends \PHPUnit_Framework_TestCase
                     'editable' => false,
                     'editableInvitationStatus' => false,
                     'removable' => false,
-                    'notifiable' => false,
                     'recurringEventId' => null,
                     'originalStart' => null,
                     'isCancelled' => false,

@@ -135,15 +135,6 @@ class CalendarEventTypeTest extends \PHPUnit_Framework_TestCase
         $builder->expects($this->at(8))
             ->method('add')
             ->with(
-                'notifyInvitedUsers',
-                'hidden',
-                ['mapped' => false]
-            )
-            ->will($this->returnSelf());
-
-        $builder->expects($this->at(9))
-            ->method('add')
-            ->with(
                 'notifyAttendees',
                 'hidden',
                 [
@@ -153,7 +144,7 @@ class CalendarEventTypeTest extends \PHPUnit_Framework_TestCase
             )
             ->will($this->returnSelf());
 
-        $builder->expects($this->at(10))
+        $builder->expects($this->at(9))
             ->method('add')
             ->with(
                 'recurrence',

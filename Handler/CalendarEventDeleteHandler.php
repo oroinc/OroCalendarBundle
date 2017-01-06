@@ -161,11 +161,10 @@ class CalendarEventDeleteHandler extends DeleteHandler
 
         $em->flush();
 
-        $this->notificationManager->setStrategy($this->getNotificationStrategy());
         if ($cancelled) {
-            $this->notificationManager->onUpdate($entity, $clonedEntity);
+            $this->notificationManager->onUpdate($entity, $clonedEntity, $this->getNotificationStrategy());
         } else {
-            $this->notificationManager->onDelete($entity);
+            $this->notificationManager->onDelete($entity, $this->getNotificationStrategy());
         }
     }
     
@@ -179,15 +178,7 @@ class CalendarEventDeleteHandler extends DeleteHandler
             return NotificationManager::ALL_NOTIFICATIONS_STRATEGY;
         }
 
-        if ($request->query->has('notifyAttendees')) {
-            return $request->query->get('notifyAttendees');
-        }
-
-        if ($request->query->get('notifyInvitedUsers', false)) {
-            return NotificationManager::ALL_NOTIFICATIONS_STRATEGY;
-        }
-
-        return NotificationManager::NONE_NOTIFICATIONS_STRATEGY;
+        return $request->query->get('notifyAttendees', NotificationManager::NONE_NOTIFICATIONS_STRATEGY);
     }
 
     /**

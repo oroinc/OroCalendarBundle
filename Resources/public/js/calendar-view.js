@@ -21,7 +21,7 @@ define(function(require) {
     var dateTimeFormatter = require('orolocale/js/formatter/datetime');
     var localeSettings = require('orolocale/js/locale-settings');
     var PluginManager = require('oroui/js/app/plugins/plugin-manager');
-    var GuestsPlugin = require('orocalendar/js/app/plugins/calendar/guests-plugin');
+    var AttendeesPlugin = require('orocalendar/js/app/plugins/calendar/attendees-plugin');
     var persistentStorage = require('oroui/js/persistent-storage');
     require('fullcalendar');
 
@@ -162,7 +162,7 @@ define(function(require) {
             this.colorManager = new ColorManager(this.options.colorManagerOptions);
 
             this.pluginManager = new PluginManager(this);
-            this.pluginManager.enable(GuestsPlugin);
+            this.pluginManager.enable(AttendeesPlugin);
         },
 
         onWindowResize: function() {

@@ -6,7 +6,7 @@ define([
 ], function(_, __, BaseView, Modal) {
     'use strict';
 
-    var GuestNotifierView = BaseView.extend({
+    var AttendeeNotifierView = BaseView.extend({
         /** @property {Array} */
         exclusions: [
             'input[name="input_action"]',
@@ -29,8 +29,7 @@ define([
             this.isModalShown = false;
 
             this.$form.parent().on('submit.' + this.cid, _.bind(function(e) {
-                var hasAttendees = this.$form.find('input[name*="[attendees]"]').val().indexOf('entityId') >= 0;
-                if (!this.isModalShown && this.getFormState() !== this.formInitialState && hasAttendees) {
+                if (!this.isModalShown && this.getFormState() !== this.formInitialState && this.hasAttendees()) {
                     this.getConfirmDialog().open();
                     this.isModalShown = true;
                     e.preventDefault();
@@ -51,12 +50,16 @@ define([
                     delete this.confirmModal;
                 }
             }
-            GuestNotifierView.__super__.dispose.call(this);
+            AttendeeNotifierView.__super__.dispose.call(this);
+        },
+
+        hasAttendees: function () {
+            return this.$form.find('input[name*="[attendees]"]').val().indexOf('entityId') >= 0;
         },
 
         getConfirmDialog: function() {
             if (!this.confirmModal) {
-                this.confirmModal = GuestNotifierView.createConfirmNotificationDialog();
+                this.confirmModal = AttendeeNotifierView.createConfirmNotificationDialog();
                 this.listenTo(this.confirmModal, 'ok', _.bind(function() {
                     this.$form.find('input[name*="[notifyAttendees]"]').val('all');
                     this.$form.submit();
@@ -102,5 +105,5 @@ define([
         }
     });
 
-    return GuestNotifierView;
+    return AttendeeNotifierView;
 });

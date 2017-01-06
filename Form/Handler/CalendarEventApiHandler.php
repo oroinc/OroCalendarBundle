@@ -60,13 +60,6 @@ class CalendarEventApiHandler extends AbstractCalendarEventHandler
             return $this->form->get('notifyAttendees')->getData();
         }
 
-        /**
-         * @deprecated since 2.0 and will be removed after 2.2, use notifyAttendees instead.
-         */
-        if ($this->form->has('notifyInvitedUsers') && $this->form->get('notifyInvitedUsers')->getData()) {
-            return NotificationManager::ALL_NOTIFICATIONS_STRATEGY;
-        }
-
         return NotificationManager::NONE_NOTIFICATIONS_STRATEGY;
     }
 

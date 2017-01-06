@@ -110,7 +110,6 @@ class CalendarConnectionControllerTest extends WebTestCase
                 'start'            => '2016-05-04T11:29:46+00:00',
                 'end'              => '2016-05-04T11:29:46+00:00',
                 'allDay'           => true,
-                'notifiable'       => true,
                 'calendarAlias'    => 'user',
                 'attendees'        => [
                     [
@@ -231,9 +230,6 @@ class CalendarConnectionControllerTest extends WebTestCase
             $expectedCalendarEvent,
         ];
 
-        $expectedCalendarEvents[0]['notifiable'] = true;
-        $expectedCalendarEvents[1]['notifiable'] = false;
-
         $this->assertEquals(
             $expectedCalendarEvents,
             [
@@ -259,7 +255,6 @@ class CalendarConnectionControllerTest extends WebTestCase
                 'end'              => null,
                 'allDay'           => null,
                 'attendees'        => null,
-                'notifiable'       => null,
                 'calendarAlias'    => null,
                 'recurrence'       => null,
             ]

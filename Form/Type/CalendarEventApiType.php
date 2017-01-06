@@ -105,10 +105,6 @@ class CalendarEventApiType extends AbstractType
                 )
                 ->addEventSubscriber(new AttendeesSubscriber())
             )
-            /**
-             * @deprecated since 2.0 and will be removed after 2.2, use notifyAttendees instead.
-             */
-            ->add('notifyInvitedUsers', 'hidden', ['mapped' => false])
             ->add(
                 'notifyAttendees',
                 'hidden',
@@ -118,7 +114,7 @@ class CalendarEventApiType extends AbstractType
                     'constraints'    => [
                         new Choice(
                             [
-                                'choices' => $this->notificationManager->getApplicableStrategies()
+                                'choices' => $this->notificationManager->getSupportedStrategies()
                             ]
                         )
                     ]

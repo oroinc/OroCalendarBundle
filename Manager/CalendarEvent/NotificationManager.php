@@ -12,29 +12,36 @@ use Oro\Bundle\UserBundle\Entity\User;
 /**
  * Can decide to send notification in case when event is created, updated or deleted.
  *
- * Responsible for 2 things:
- * - identify what kind of notification should be send for the event.
- * - what attendees should be notified.
- *
- * Actual send of the notification is performed in the email notification sender.
+ * Has next responsibilities:
+ * - Identify what kind of notification should be send.
+ * - Identify attendees receivers of the notification.
+ * - elegate sending of notification to email notification sender.
  *
  * @see \Oro\Bundle\CalendarBundle\Model\Email\EmailNotificationProcessor
  */
 class NotificationManager
 {
+    /**
+     * Send notification to each attendee of the event.
+     */
     const ALL_NOTIFICATIONS_STRATEGY = 'all';
+
+    /**
+     * Do not send any notifications.
+     */
     const NONE_NOTIFICATIONS_STRATEGY = 'none';
+
+    /**
+     * Send notification only to added or deleted attendees. Used only in onUpdate method.
+     *
+     * @see NotificationManager::onUpdate
+     */
     const ADDED_OR_DELETED_NOTIFICATIONS_STRATEGY = 'added_or_deleted';
 
     /**
      * @var EmailNotificationSender
      */
     protected $emailNotificationSender;
-
-    /**
-     * @var string
-     */
-    protected $strategy = self::ALL_NOTIFICATIONS_STRATEGY;
 
     /**
      * EmailNotificationHandler constructor.
@@ -47,25 +54,11 @@ class NotificationManager
     }
 
     /**
-     * Could be one of next values: none, all, added_or_deleted
-     * @see NotificationManager::ALL_NOTIFICATIONS_STRATEGY
-     * @see NotificationManager::NONE_NOTIFICATIONS_STRATEGY
-     * @see NotificationManager::ADDED_OR_DELETED_NOTIFICATIONS_STRATEGY
-     * @param string $strategy
+     * Get list of all supported strategies.
      *
-     * @return NotificationManager
-     */
-    public function setStrategy($strategy)
-    {
-        $this->strategy = $strategy;
-
-        return $this;
-    }
-
-    /**
      * @return array
      */
-    public function getApplicableStrategies()
+    public function getSupportedStrategies()
     {
         return [
             static::ALL_NOTIFICATIONS_STRATEGY,
@@ -77,17 +70,21 @@ class NotificationManager
     /**
      * Handle calendar event notification on create of the event.
      *
-     * @param CalendarEvent $calendarEvent Actual calendar event.
+     * @param CalendarEvent $calendarEvent  Actual calendar event.
+     * @param string        $strategy       Could be one of next values: none, all.
      * @throws \InvalidArgumentException When calendar event is cancelled and has no relation to recurring event.
+     *
+     * @see NotificationManager::ALL_NOTIFICATIONS_STRATEGY
+     * @see NotificationManager::ADDED_OR_DELETED_NOTIFICATIONS_STRATEGY
      */
-    public function onCreate(CalendarEvent $calendarEvent)
+    public function onCreate(CalendarEvent $calendarEvent, $strategy)
     {
         /**
          * Notifications should not be sent in next cases:
          * 1) Strategy is 'none'
          * 2) Calendar Event belongs to System Calendar
          */
-        if ($this->strategy === static::NONE_NOTIFICATIONS_STRATEGY || $calendarEvent->getSystemCalendar()) {
+        if ($strategy === static::NONE_NOTIFICATIONS_STRATEGY || $calendarEvent->getSystemCalendar()) {
             return;
         }
 
@@ -205,10 +202,15 @@ class NotificationManager
      *
      * @param CalendarEvent $calendarEvent          Actual calendar event.
      * @param CalendarEvent $originalCalendarEvent  Original calendar event.
+     * @param string        $strategy               Could be one of next values: none, all, added_or_deleted.
+     *
+     * @see NotificationManager::ALL_NOTIFICATIONS_STRATEGY
+     * @see NotificationManager::NONE_NOTIFICATIONS_STRATEGY
+     * @see NotificationManager::ADDED_OR_DELETED_NOTIFICATIONS_STRATEGY
      */
-    public function onUpdate(CalendarEvent $calendarEvent, CalendarEvent $originalCalendarEvent)
+    public function onUpdate(CalendarEvent $calendarEvent, CalendarEvent $originalCalendarEvent, $strategy)
     {
-        if ($this->strategy === static::NONE_NOTIFICATIONS_STRATEGY) {
+        if ($strategy === static::NONE_NOTIFICATIONS_STRATEGY) {
             return;
         }
 
@@ -257,7 +259,7 @@ class NotificationManager
         } elseif (!$calendarEvent->isCancelled()) {
             // Regular case for update of the event.
 
-            if ($this->strategy === static::ALL_NOTIFICATIONS_STRATEGY) {
+            if ($strategy === static::ALL_NOTIFICATIONS_STRATEGY) {
                 // Add update notification for attendees which existed in the event originally and exist now.
                 $existedAttendees = $this->getExistedAttendees(
                     $originalCalendarEvent->getAttendees(),
@@ -386,10 +388,14 @@ class NotificationManager
      * Handle calendar event notification on update of status of attendee of the event.
      *
      * @param CalendarEvent $calendarEvent Actual calendar event of attendee who changed invitation status.
+     * @param string        $strategy      Could be one of next values: none, all.
+     *
+     * @see NotificationManager::ALL_NOTIFICATIONS_STRATEGY
+     * @see NotificationManager::NONE_NOTIFICATIONS_STRATEGY
      */
-    public function onChangeInvitationStatus(CalendarEvent $calendarEvent)
+    public function onChangeInvitationStatus(CalendarEvent $calendarEvent, $strategy)
     {
-        if ($this->strategy === static::NONE_NOTIFICATIONS_STRATEGY || !$calendarEvent->getParent()) {
+        if ($strategy === static::NONE_NOTIFICATIONS_STRATEGY || !$calendarEvent->getParent()) {
             // Method is applicable only for child events.
             return;
         }
@@ -435,10 +441,14 @@ class NotificationManager
      * Handle calendar event notification on delete of the event.
      *
      * @param CalendarEvent $calendarEvent Actual calendar event which was deleted.
+     * @param string        $strategy      Could be one of next values: none, all.
+     *
+     * @see NotificationManager::ALL_NOTIFICATIONS_STRATEGY
+     * @see NotificationManager::NONE_NOTIFICATIONS_STRATEGY
      */
-    public function onDelete(CalendarEvent $calendarEvent)
+    public function onDelete(CalendarEvent $calendarEvent, $strategy)
     {
-        if ($this->strategy === static::NONE_NOTIFICATIONS_STRATEGY) {
+        if ($strategy === static::NONE_NOTIFICATIONS_STRATEGY) {
             return;
         }
 

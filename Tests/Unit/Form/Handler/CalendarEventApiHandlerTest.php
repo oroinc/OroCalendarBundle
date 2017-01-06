@@ -172,32 +172,6 @@ class CalendarEventApiHandlerTest extends \PHPUnit_Framework_TestCase
         $this->assertSame($defaultCalendar, $this->entity->getCalendar());
     }
 
-    public function testProcessPutWithNotifyInvitedUsersTrueWorks()
-    {
-        $this->request->setMethod('PUT');
-
-        ReflectionUtil::setId($this->entity, 123);
-        $this->entity->addAttendee(new Attendee());
-
-        $this->setExpectedFormValues(['notifyInvitedUsers' => true]);
-
-        $this->calendarEventManager
-            ->expects($this->once())
-            ->method('onEventUpdate')
-            ->with($this->entity, clone $this->entity, $this->organization, false);
-
-        $this->notificationManager
-            ->expects($this->once())
-            ->method('setStrategy')
-            ->with(NotificationManager::ALL_NOTIFICATIONS_STRATEGY);
-        $this->notificationManager
-            ->expects($this->once())
-            ->method('onUpdate')
-            ->with($this->entity, clone $this->entity);
-
-        $this->handler->process($this->entity);
-    }
-
     public function testProcessPutWithNotifyAttendeesAllWorks()
     {
         $this->request->setMethod('PUT');
@@ -214,12 +188,8 @@ class CalendarEventApiHandlerTest extends \PHPUnit_Framework_TestCase
 
         $this->notificationManager
             ->expects($this->once())
-            ->method('setStrategy')
-            ->with(NotificationManager::ALL_NOTIFICATIONS_STRATEGY);
-        $this->notificationManager
-            ->expects($this->once())
             ->method('onUpdate')
-            ->with($this->entity, clone $this->entity);
+            ->with($this->entity, clone $this->entity, NotificationManager::ALL_NOTIFICATIONS_STRATEGY);
 
         $this->handler->process($this->entity);
     }
@@ -244,35 +214,8 @@ class CalendarEventApiHandlerTest extends \PHPUnit_Framework_TestCase
 
         $this->notificationManager
             ->expects($this->once())
-            ->method('setStrategy')
-            ->with(NotificationManager::ADDED_OR_DELETED_NOTIFICATIONS_STRATEGY);
-        $this->notificationManager
-            ->expects($this->once())
             ->method('onUpdate')
-            ->with($this->entity, clone $this->entity);
-
-        $this->handler->process($this->entity);
-    }
-
-    public function testProcessPutWithNotifyInvitedUsersFalseWorks()
-    {
-        ReflectionUtil::setId($this->entity, 123);
-        $this->request->setMethod('PUT');
-
-        $this->setExpectedFormValues(['notifyInvitedUsers' => false]);
-
-        $this->calendarEventManager
-            ->expects($this->once())
-            ->method('onEventUpdate')
-            ->with($this->entity, clone $this->entity, $this->organization, false);
-
-        $this->notificationManager
-            ->expects($this->once())
-            ->method('setStrategy')
-            ->with(NotificationManager::NONE_NOTIFICATIONS_STRATEGY);
-        $this->notificationManager
-            ->expects($this->once())
-            ->method('onUpdate');
+            ->with($this->entity, clone $this->entity, NotificationManager::ADDED_OR_DELETED_NOTIFICATIONS_STRATEGY);
 
         $this->handler->process($this->entity);
     }
@@ -293,16 +236,13 @@ class CalendarEventApiHandlerTest extends \PHPUnit_Framework_TestCase
 
         $this->notificationManager
             ->expects($this->once())
-            ->method('setStrategy')
-            ->with(NotificationManager::NONE_NOTIFICATIONS_STRATEGY);
-        $this->notificationManager
-            ->expects($this->once())
-            ->method('onUpdate');
+            ->method('onUpdate')
+            ->with($this->entity, clone $this->entity, NotificationManager::NONE_NOTIFICATIONS_STRATEGY);
 
         $this->handler->process($this->entity);
     }
 
-    public function testProcessPutWithNotifyInvitedUsersNotPassedWorks()
+    public function testProcessPutWithNotifyAttendeesNotPassedWorks()
     {
         ReflectionUtil::setId($this->entity, 123);
         $this->request->setMethod('PUT');
@@ -316,74 +256,8 @@ class CalendarEventApiHandlerTest extends \PHPUnit_Framework_TestCase
 
         $this->notificationManager
             ->expects($this->once())
-            ->method('setStrategy')
-            ->with(NotificationManager::NONE_NOTIFICATIONS_STRATEGY);
-        $this->notificationManager
-            ->expects($this->once())
-            ->method('onUpdate');
-
-        $this->handler->process($this->entity);
-    }
-
-    public function testProcessPostWithNotifyInvitedUsersWorks()
-    {
-        $this->request->setMethod('POST');
-
-        $this->setExpectedFormValues(['notifyInvitedUsers' => true]);
-
-        $this->calendarEventManager
-            ->expects($this->once())
-            ->method('onEventUpdate')
-            ->with($this->entity, clone $this->entity, $this->organization, false);
-
-        $this->notificationManager
-            ->expects($this->once())
-            ->method('onCreate')
-            ->with($this->entity);
-
-        $this->handler->process($this->entity);
-    }
-
-    public function testProcessPostWithNotifyInvitedUsersFalseWorks()
-    {
-        $this->request->setMethod('POST');
-
-        $this->setExpectedFormValues(['notifyInvitedUsers' => false]);
-
-        $this->calendarEventManager
-            ->expects($this->once())
-            ->method('onEventUpdate')
-            ->with($this->entity, clone $this->entity, $this->organization, false);
-
-        $this->notificationManager
-            ->expects($this->once())
-            ->method('setStrategy')
-            ->with(NotificationManager::NONE_NOTIFICATIONS_STRATEGY);
-        $this->notificationManager
-            ->expects($this->once())
-            ->method('onCreate');
-
-        $this->handler->process($this->entity);
-    }
-
-    public function testProcessPostWithNotifyInvitedUsersNotPassedWorks()
-    {
-        $this->request->setMethod('POST');
-
-        $this->setExpectedFormValues([]);
-
-        $this->calendarEventManager
-            ->expects($this->once())
-            ->method('onEventUpdate')
-            ->with($this->entity, clone $this->entity, $this->organization, false);
-
-        $this->notificationManager
-            ->expects($this->once())
-            ->method('setStrategy')
-            ->with(NotificationManager::NONE_NOTIFICATIONS_STRATEGY);
-        $this->notificationManager
-            ->expects($this->once())
-            ->method('onCreate');
+            ->method('onUpdate')
+            ->with($this->entity, clone $this->entity, NotificationManager::NONE_NOTIFICATIONS_STRATEGY);
 
         $this->handler->process($this->entity);
     }
@@ -401,11 +275,8 @@ class CalendarEventApiHandlerTest extends \PHPUnit_Framework_TestCase
 
         $this->notificationManager
             ->expects($this->once())
-            ->method('setStrategy')
-            ->with(NotificationManager::NONE_NOTIFICATIONS_STRATEGY);
-        $this->notificationManager
-            ->expects($this->once())
-            ->method('onCreate');
+            ->method('onCreate')
+            ->with($this->entity, NotificationManager::NONE_NOTIFICATIONS_STRATEGY);
 
         $this->handler->process($this->entity);
     }
@@ -429,7 +300,7 @@ class CalendarEventApiHandlerTest extends \PHPUnit_Framework_TestCase
      */
     protected function setExpectedFormValues(array $values)
     {
-        $fields = ['contexts', 'notifyInvitedUsers', 'notifyAttendees', 'updateExceptions'];
+        $fields = ['contexts', 'notifyAttendees', 'updateExceptions'];
 
         $valueMapHas = [];
 

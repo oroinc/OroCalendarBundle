@@ -163,7 +163,7 @@ class CalendarEventApiTypeTest extends TypeTestCase
 
         $this->notificationManager
             ->expects($this->any())
-            ->method('getApplicableStrategies')
+            ->method('getSupportedStrategies')
             ->willReturn([]);
 
         $form = $this->factory->create(
@@ -219,7 +219,7 @@ class CalendarEventApiTypeTest extends TypeTestCase
 
         $this->notificationManager
             ->expects($this->any())
-            ->method('getApplicableStrategies')
+            ->method('getSupportedStrategies')
             ->willReturn([]);
 
         $form = $this->factory->create(

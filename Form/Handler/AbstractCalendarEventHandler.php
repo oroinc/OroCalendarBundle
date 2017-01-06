@@ -115,11 +115,10 @@ abstract class AbstractCalendarEventHandler
      */
     protected function sendNotifications(CalendarEvent $entity, CalendarEvent $originalEntity, $isNew)
     {
-        $this->notificationManager->setStrategy($this->getSendNotificationsStrategy());
         if ($isNew) {
-            $this->notificationManager->onCreate($entity);
+            $this->notificationManager->onCreate($entity, $this->getSendNotificationsStrategy());
         } else {
-            $this->notificationManager->onUpdate($entity, $originalEntity);
+            $this->notificationManager->onUpdate($entity, $originalEntity, $this->getSendNotificationsStrategy());
         }
     }
 

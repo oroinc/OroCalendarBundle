@@ -164,47 +164,14 @@ class CalendarEventDeleteHandlerTest extends \PHPUnit_Framework_TestCase
         $this->handler->handleDelete(1, $this->manager);
     }
 
-    public function testProcessDeleteShouldSendNotificationIfNotifyInvitedUsersTrue()
-    {
-        $this->requestStack->push(new Request(['notifyInvitedUsers' => true]));
-
-        $event = new CalendarEvent();
-        $this->notificationManager->expects($this->once())
-            ->method('setStrategy')
-            ->with(NotificationManager::ALL_NOTIFICATIONS_STRATEGY);
-        $this->notificationManager->expects($this->once())
-            ->method('onDelete')
-            ->with($event);
-
-        $this->handler->processDelete($event, $this->manager->getObjectManager());
-    }
-
-    public function testProcessDeleteShouldNotSendNotificationIfNotifyInvitedUsersFalse()
-    {
-        $this->requestStack->push(new Request(['notifyInvitedUsers' => false]));
-
-        $event = new CalendarEvent();
-        $this->notificationManager->expects($this->once())
-            ->method('setStrategy')
-            ->with(NotificationManager::NONE_NOTIFICATIONS_STRATEGY);
-        $this->notificationManager->expects($this->once())
-            ->method('onDelete')
-            ->with($event);
-
-        $this->handler->processDelete($event, $this->manager->getObjectManager());
-    }
-
     public function testProcessDeleteShouldSendNotificationIfNotifyAttendeesIsAll()
     {
         $this->requestStack->push(new Request(['notifyAttendees' => NotificationManager::ALL_NOTIFICATIONS_STRATEGY]));
 
         $event = new CalendarEvent();
         $this->notificationManager->expects($this->once())
-            ->method('setStrategy')
-            ->with(NotificationManager::ALL_NOTIFICATIONS_STRATEGY);
-        $this->notificationManager->expects($this->once())
             ->method('onDelete')
-            ->with($event);
+            ->with($event, NotificationManager::ALL_NOTIFICATIONS_STRATEGY);
 
         $this->handler->processDelete($event, $this->manager->getObjectManager());
     }
@@ -215,11 +182,8 @@ class CalendarEventDeleteHandlerTest extends \PHPUnit_Framework_TestCase
 
         $event = new CalendarEvent();
         $this->notificationManager->expects($this->once())
-            ->method('setStrategy')
-            ->with(NotificationManager::NONE_NOTIFICATIONS_STRATEGY);
-        $this->notificationManager->expects($this->once())
             ->method('onDelete')
-            ->with($event);
+            ->with($event, NotificationManager::NONE_NOTIFICATIONS_STRATEGY);
 
         $this->handler->processDelete($event, $this->manager->getObjectManager());
     }
@@ -228,11 +192,8 @@ class CalendarEventDeleteHandlerTest extends \PHPUnit_Framework_TestCase
     {
         $event = new CalendarEvent();
         $this->notificationManager->expects($this->once())
-            ->method('setStrategy')
-            ->with(NotificationManager::ALL_NOTIFICATIONS_STRATEGY);
-        $this->notificationManager->expects($this->once())
             ->method('onDelete')
-            ->with($event);
+            ->with($event, NotificationManager::ALL_NOTIFICATIONS_STRATEGY);
 
         $this->handler->processDelete($event, $this->manager->getObjectManager());
     }
@@ -243,11 +204,8 @@ class CalendarEventDeleteHandlerTest extends \PHPUnit_Framework_TestCase
         $this->requestStack->push(new Request());
 
         $this->notificationManager->expects($this->once())
-            ->method('setStrategy')
-            ->with(NotificationManager::NONE_NOTIFICATIONS_STRATEGY);
-        $this->notificationManager->expects($this->once())
             ->method('onDelete')
-            ->with($event);
+            ->with($event, NotificationManager::NONE_NOTIFICATIONS_STRATEGY);
 
         $this->handler->processDelete($event, $this->manager->getObjectManager());
     }

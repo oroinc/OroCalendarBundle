@@ -96,7 +96,6 @@ class ValidationErrorTest extends AbstractValidationErrorTestCase
                     'end' => [],
                     'id' => [],
                     'isCancelled' => [],
-                    'notifyInvitedUsers' => [],
                     'notifyAttendees' => [],
                     'originalStart' => [],
                     'recurrence' => [
@@ -173,7 +172,6 @@ class ValidationErrorTest extends AbstractValidationErrorTestCase
                         'end' => [],
                         'id' => [],
                         'isCancelled' => [],
-                        'notifyInvitedUsers' => [],
                         'notifyAttendees' => [
                             'errors' => ['The value you selected is not a valid choice.']
                         ],

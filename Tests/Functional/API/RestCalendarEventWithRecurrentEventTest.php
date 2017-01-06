@@ -2,6 +2,7 @@
 
 namespace Oro\Bundle\CalendarBundle\Tests\Functional\API;
 
+use Oro\Bundle\CalendarBundle\Entity\Attendee;
 use Oro\Bundle\CalendarBundle\Entity\CalendarEvent;
 use Oro\Bundle\CalendarBundle\Model\Recurrence;
 
@@ -100,7 +101,7 @@ class RestCalendarEventWithRecurrentEventTest extends AbstractCalendarEventTest
             $recurringEventParameters
         );
         $result = $this->getJsonResponseContent($this->client->getResponse(), 200);
-        $this->assertTrue($result['notifiable']);
+        $this->assertEquals(Attendee::STATUS_NONE, $result['invitationStatus']);
 
         $event = $this->getContainer()->get('doctrine')->getRepository('OroCalendarBundle:CalendarEvent')
             ->findOneBy(['id' => $data['id']]);
@@ -229,7 +230,6 @@ class RestCalendarEventWithRecurrentEventTest extends AbstractCalendarEventTest
         );
 
         $result = $this->getJsonResponseContent($this->client->getResponse(), 200);
-        $this->assertTrue($result['notifiable']);
         $event = $this->getContainer()->get('doctrine')->getRepository('OroCalendarBundle:CalendarEvent')
             ->find($data['id']);
         $this->assertCount(1, $event->getChildEvents());

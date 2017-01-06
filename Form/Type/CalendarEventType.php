@@ -107,16 +107,6 @@ class CalendarEventType extends AbstractType
                     'layout_template' => $options['layout_template'],
                 ]
             )
-            /**
-             * @deprecated since 2.0 and will be removed after 2.2, use notifyAttendees instead.
-             */
-            ->add(
-                'notifyInvitedUsers',
-                'hidden',
-                [
-                    'mapped' => false
-                ]
-            )
             ->add(
                 'notifyAttendees',
                 'hidden',
@@ -125,7 +115,7 @@ class CalendarEventType extends AbstractType
                     'constraints' => [
                         new Choice(
                             [
-                                'choices' => $this->notificationManager->getApplicableStrategies()
+                                'choices' => $this->notificationManager->getSupportedStrategies()
                             ]
                         )
                     ]

@@ -17,7 +17,7 @@ services:
     oro_calendar.calendar_event.form.type:
         class: '%oro_calendar.calendar_event.form.type.class%'
         arguments:
-            - '@oro_calendar.calendar_event.notification_manager='
+            - '@oro_calendar.calendar_event.notification_manager'
         tags:
             - { name: form.type, alias: oro_calendar_event }
 
@@ -25,7 +25,7 @@ services:
         class: '%oro_calendar.calendar_event.form.type.api.class%'
         arguments:
             - '@oro_calendar.calendar_event_manager'
-            - '@oro_calendar.calendar_event.notification_manager='
+            - '@oro_calendar.calendar_event.notification_manager'
         tags:
             - { name: form.type, alias: oro_calendar_event_api }
 
@@ -61,7 +61,7 @@ services:
             - '@oro_security.security_facade'
             - '@oro_activity.manager'
             - '@oro_calendar.calendar_event_manager'
-            - '@oro_calendar.calendar_event.notification_manager='
+            - '@oro_calendar.calendar_event.notification_manager'
 
     oro_calendar.calendar_event.form.handler:
         class: 'Oro\Bundle\CalendarBundle\Form\Handler\CalendarEventHandler'

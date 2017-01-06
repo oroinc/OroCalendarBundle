@@ -242,7 +242,7 @@ class CalendarEventHandlerTest extends \PHPUnit_Framework_TestCase
             ->method('has')
             ->withConsecutive(
                 ['contexts'],
-                ['notifyInvitedUsers']
+                ['notifyAttendees']
             )
             ->will($this->returnValue(true));
 
