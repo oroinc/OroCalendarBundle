@@ -67,7 +67,6 @@ class BasicAttendeeTest extends AbstractTestCase
         $this->assertResponseEquals(
             [
                 'id' => $response['id'],
-                'notifiable' => true,
                 'invitationStatus' => Attendee::STATUS_NONE,
                 'editableInvitationStatus' => false,
             ],
@@ -116,7 +115,6 @@ class BasicAttendeeTest extends AbstractTestCase
                 'editable' => true,
                 'editableInvitationStatus' => false,
                 'removable' => true,
-                'notifiable' => true,
                 'backgroundColor' => null,
                 'invitationStatus' => Attendee::STATUS_NONE,
                 'recurringEventId' => null,
@@ -175,7 +173,6 @@ class BasicAttendeeTest extends AbstractTestCase
         $this->assertResponseEquals(
             [
                 'id' => $response['id'],
-                'notifiable' => true,
                 'invitationStatus' => Attendee::STATUS_NONE,
                 'editableInvitationStatus' => false,
             ],
@@ -224,7 +221,6 @@ class BasicAttendeeTest extends AbstractTestCase
                 'editable' => true,
                 'editableInvitationStatus' => false,
                 'removable' => true,
-                'notifiable' => true,
                 'backgroundColor' => null,
                 'invitationStatus' => Attendee::STATUS_NONE,
                 'recurringEventId' => null,
@@ -283,7 +279,6 @@ class BasicAttendeeTest extends AbstractTestCase
         $this->assertResponseEquals(
             [
                 'id' => $response['id'],
-                'notifiable' => true,
                 'invitationStatus' => Attendee::STATUS_NONE,
                 'editableInvitationStatus' => false,
             ],
@@ -332,7 +327,6 @@ class BasicAttendeeTest extends AbstractTestCase
                 'editable' => true,
                 'editableInvitationStatus' => false,
                 'removable' => true,
-                'notifiable' => true,
                 'backgroundColor' => null,
                 'invitationStatus' => Attendee::STATUS_NONE,
                 'recurringEventId' => null,
@@ -392,7 +386,6 @@ class BasicAttendeeTest extends AbstractTestCase
         $this->assertResponseEquals(
             [
                 'id' => $response['id'],
-                'notifiable' => true,
                 'invitationStatus' => Attendee::STATUS_NONE,
                 'editableInvitationStatus' => false,
             ],
@@ -433,7 +426,6 @@ class BasicAttendeeTest extends AbstractTestCase
         );
         $this->assertResponseEquals(
             [
-                'notifiable' => true,
                 'invitationStatus' => Attendee::STATUS_NONE,
                 'editableInvitationStatus' => false,
             ],
@@ -495,7 +487,6 @@ class BasicAttendeeTest extends AbstractTestCase
                 'editable' => true,
                 'editableInvitationStatus' => false,
                 'removable' => true,
-                'notifiable' => true,
                 'backgroundColor' => null,
                 'invitationStatus' => Attendee::STATUS_NONE,
                 'recurringEventId' => null,
@@ -561,7 +552,6 @@ class BasicAttendeeTest extends AbstractTestCase
         $this->assertResponseEquals(
             [
                 'id' => $response['id'],
-                'notifiable' => true,
                 'invitationStatus' => Attendee::STATUS_NONE,
                 'editableInvitationStatus' => false,
             ],
@@ -589,7 +579,6 @@ class BasicAttendeeTest extends AbstractTestCase
         );
         $this->assertResponseEquals(
             [
-                'notifiable' => false,
                 'invitationStatus' => Attendee::STATUS_NONE,
                 'editableInvitationStatus' => false,
             ],
@@ -627,7 +616,6 @@ class BasicAttendeeTest extends AbstractTestCase
                 'attendees' => [],
                 'editable' => true,
                 'removable' => true,
-                'notifiable' => false,
                 'backgroundColor' => null,
                 'invitationStatus' => Attendee::STATUS_NONE,
                 'recurringEventId' => null,

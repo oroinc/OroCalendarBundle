@@ -34,7 +34,7 @@ class ValidationErrorTest extends AbstractValidationErrorTestCase
      *
      * @dataProvider recurrenceValidationFailedDataProvider
      */
-    public function testCreateRecurringCalendarEventWithInvalidFieldsOfRecurrencearray(array $recurrence, array $errors)
+    public function testCreateRecurringCalendarEventWithInvalidFieldsOfRecurrenceArray(array $recurrence, array $errors)
     {
         // Step 1. Create regular calendar event using minimal required data in the request.
         $eventData = [
@@ -96,7 +96,7 @@ class ValidationErrorTest extends AbstractValidationErrorTestCase
                     'end' => [],
                     'id' => [],
                     'isCancelled' => [],
-                    'notifyInvitedUsers' => [],
+                    'notifyAttendees' => [],
                     'originalStart' => [],
                     'recurrence' => [
                         'children' => array_replace(
@@ -123,5 +123,82 @@ class ValidationErrorTest extends AbstractValidationErrorTestCase
                 ],
             ],
         ];
+    }
+
+    public function testNotifyAttendeesValidationRejectRequestIfNotificationStrategyIsUnknown()
+    {
+        $eventData = [
+            'title' => 'Recurring event',
+            'start' => '2016-10-14T22:00:00+00:00',
+            'end' => '2016-10-14T23:00:00+00:00',
+            'recurrence' => [],
+            'notifyAttendees' => 'unknown_notification_strategy'
+        ];
+
+        $this->restRequest(
+            [
+                'method' => 'POST',
+                'url' => $this->getUrl('oro_api_post_calendarevent'),
+                'server' => $this->generateWsseAuthHeader('foo_user_1', 'foo_user_1_api_key'),
+                'content' => json_encode($eventData)
+            ]
+        );
+
+        $response = $this->getRestResponseContent(
+            [
+                'statusCode' => 400,
+                'contentType' => 'application/json'
+            ]
+        );
+
+        $calendarEvent = $this->getEntityRepository('OroCalendarBundle:CalendarEvent')
+            ->findOneBy(['title' => $eventData['title']]);
+        $this->assertNull($calendarEvent, 'Failed asserting the event was not created due to validation error.');
+
+        $this->assertResponseEquals(
+            [
+                'code' => 400,
+                'message' => 'Validation Failed',
+                'errors' => [
+                    'children' => [
+                        'allDay' => [],
+                        'attendees' => [],
+                        'backgroundColor' => [],
+                        'calendar' => [],
+                        'calendarAlias' => [],
+                        'createdAt' => [],
+                        'contexts' => [],
+                        'description' => [],
+                        'end' => [],
+                        'id' => [],
+                        'isCancelled' => [],
+                        'notifyAttendees' => [
+                            'errors' => ['The value you selected is not a valid choice.']
+                        ],
+                        'originalStart' => [],
+                        'recurrence' => [
+                            'children' => [
+                                'dayOfMonth' => [],
+                                'dayOfWeek' => [],
+                                'endTime' => [],
+                                'instance' => [],
+                                'interval' => [],
+                                'monthOfYear' => [],
+                                'occurrences' => [],
+                                'recurrenceType' => [],
+                                'startTime' => [],
+                                'timeZone' => [],
+                            ],
+                        ],
+                        'recurringEventId' => [],
+                        'reminders' => [],
+                        'start' => [],
+                        'title' => [],
+                        'updateExceptions' => [],
+                    ],
+                ],
+            ],
+            $response
+        );
     }
 }

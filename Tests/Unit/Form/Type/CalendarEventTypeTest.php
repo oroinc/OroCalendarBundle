@@ -3,10 +3,15 @@
 namespace Oro\Bundle\CalendarBundle\Tests\Unit\Form\Type;
 
 use Oro\Bundle\CalendarBundle\Form\Type\CalendarEventType;
+use Oro\Bundle\CalendarBundle\Manager\CalendarEvent\NotificationManager;
 use Oro\Bundle\EntityExtendBundle\Tests\Unit\Fixtures\TestEnumValue;
+use Symfony\Component\Validator\Constraints\Choice;
 
 class CalendarEventTypeTest extends \PHPUnit_Framework_TestCase
 {
+    /** @var \PHPUnit_Framework_MockObject_MockObject */
+    protected $notificationManager;
+
     /**
      * @var CalendarEventType
      */
@@ -27,11 +32,11 @@ class CalendarEventTypeTest extends \PHPUnit_Framework_TestCase
             ->with('Extend\Entity\EV_Ce_Attendee_Status')
             ->will($this->returnValue($repository));
 
-        $calendarEventManager = $this->getMockBuilder('Oro\Bundle\CalendarBundle\Manager\CalendarEventManager')
+        $this->notificationManager = $this->getMockBuilder(NotificationManager::class)
             ->disableOriginalConstructor()
             ->getMock();
 
-        $this->type = new CalendarEventType($calendarEventManager);
+        $this->type = new CalendarEventType($this->notificationManager);
     }
 
     /**
@@ -130,9 +135,12 @@ class CalendarEventTypeTest extends \PHPUnit_Framework_TestCase
         $builder->expects($this->at(8))
             ->method('add')
             ->with(
-                'notifyInvitedUsers',
+                'notifyAttendees',
                 'hidden',
-                ['mapped' => false]
+                [
+                    'mapped' => false,
+                    'constraints' => [new Choice()]
+                ]
             )
             ->will($this->returnSelf());
 

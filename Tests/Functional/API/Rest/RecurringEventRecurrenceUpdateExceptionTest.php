@@ -4,6 +4,7 @@ namespace Oro\Bundle\CalendarBundle\Tests\Functional\API\Rest;
 
 use Oro\Bundle\CalendarBundle\Entity\Attendee;
 use Oro\Bundle\CalendarBundle\Entity\CalendarEvent;
+use Oro\Bundle\CalendarBundle\Manager\CalendarEvent\NotificationManager;
 use Oro\Bundle\CalendarBundle\Model\Recurrence;
 use Oro\Bundle\CalendarBundle\Tests\Functional\AbstractTestCase;
 use Oro\Bundle\CalendarBundle\Tests\Functional\DataFixtures\LoadUserData;
@@ -18,7 +19,7 @@ use Oro\Bundle\CalendarBundle\Tests\Functional\DataFixtures\LoadUserData;
  * - Update recurring event "start" and "end" clears exceptions when "updateExceptions"=true.
  * - Remove recurring event recurrence clears exceptions when "updateExceptions"=true.
  * - Remove recurring event recurrence doesn't clear exceptions when "updateExceptions"=False.
- * - Remove recurring event recurrence clears exceptions when "updateExceptions"=true and "notifyInvitedUsers"=true
+ * - Remove recurring event recurrence clears exceptions when "updateExceptions"=true and "notifyAttendees"=all
  *   and when recurring event has attendees but one of the exceptions doesn't have attendees.
  *
  * @SuppressWarnings(PHPMD.ExcessiveClassLength)
@@ -231,7 +232,6 @@ class RecurringEventRecurrenceUpdateExceptionTest extends AbstractTestCase
         );
         $this->assertResponseEquals(
             [
-                'notifiable' => false,
                 'invitationStatus' => Attendee::STATUS_NONE,
                 'editableInvitationStatus' => false,
             ],
@@ -502,7 +502,6 @@ class RecurringEventRecurrenceUpdateExceptionTest extends AbstractTestCase
         );
         $this->assertResponseEquals(
             [
-                'notifiable' => false,
                 'invitationStatus' => Attendee::STATUS_NONE,
                 'editableInvitationStatus' => false,
             ],
@@ -735,7 +734,6 @@ class RecurringEventRecurrenceUpdateExceptionTest extends AbstractTestCase
         );
         $this->assertResponseEquals(
             [
-                'notifiable' => false,
                 'invitationStatus' => Attendee::STATUS_NONE,
                 'editableInvitationStatus' => false,
             ],
@@ -968,7 +966,6 @@ class RecurringEventRecurrenceUpdateExceptionTest extends AbstractTestCase
         );
         $this->assertResponseEquals(
             [
-                'notifiable' => false,
                 'invitationStatus' => Attendee::STATUS_NONE,
                 'editableInvitationStatus' => false,
             ],
@@ -1241,7 +1238,6 @@ class RecurringEventRecurrenceUpdateExceptionTest extends AbstractTestCase
         );
         $this->assertResponseEquals(
             [
-                'notifiable' => false,
                 'invitationStatus' => Attendee::STATUS_NONE,
                 'editableInvitationStatus' => false,
             ],
@@ -1484,7 +1480,6 @@ class RecurringEventRecurrenceUpdateExceptionTest extends AbstractTestCase
         );
         $this->assertResponseEquals(
             [
-                'notifiable' => false,
                 'invitationStatus' => Attendee::STATUS_NONE,
                 'editableInvitationStatus' => false,
             ],
@@ -1563,14 +1558,14 @@ class RecurringEventRecurrenceUpdateExceptionTest extends AbstractTestCase
     }
 
     /**
-     * Remove recurring event recurrence clears exceptions when "updateExceptions"=true and "notifyInvitedUsers"=true
+     * Remove recurring event recurrence clears exceptions when "updateExceptions"=true and "notifyAttendees"=all
      * and when recurring event has attendees but one of the exceptions doesn't have attendees.
      *
      * Step:
      * 1. Create new recurring event with attendees.
      * 2. Create exception by removing all attendees.
      * 3. Check the events exposed in the API with removed attendees in the exception.
-     * 4. Update recurring event and remove recurrence with "updateExceptions"=true and "notifyInvitedUsers"=true.
+     * 4. Update recurring event and remove recurrence with "updateExceptions"=true and "notifyAttendees"=all.
      * 5. Check exceptional event was removed and occurrences were removed.
      *
      * @SuppressWarnings(PHPMD.ExcessiveMethodLength)
@@ -1632,7 +1627,6 @@ class RecurringEventRecurrenceUpdateExceptionTest extends AbstractTestCase
 
         $this->assertResponseEquals(
             [
-                'notifiable' => true,
                 'invitationStatus' => Attendee::STATUS_ACCEPTED,
                 'editableInvitationStatus' => true,
                 'id' => $response['id'],
@@ -1756,11 +1750,11 @@ class RecurringEventRecurrenceUpdateExceptionTest extends AbstractTestCase
         $this->assertResponseEquals($expectedResponse, $response, false);
 
         // Step 4. Update recurring event and remove recurrence with "updateExceptions"=true
-        // and "notifyInvitedUsers"=true.
+        // and "notifyAttendees"=all.
         $changedEventData = $eventData;
         $changedEventData['recurrence'] = null;
         $changedEventData['updateExceptions'] = true;
-        $changedEventData['notifyInvitedUsers'] = true;
+        $changedEventData['notifyAttendees'] = NotificationManager::ALL_NOTIFICATIONS_STRATEGY;
         $this->restRequest(
             [
                 'method'  => 'PUT',
@@ -1777,7 +1771,6 @@ class RecurringEventRecurrenceUpdateExceptionTest extends AbstractTestCase
         );
         $this->assertResponseEquals(
             [
-                'notifiable' => true,
                 'invitationStatus' => Attendee::STATUS_ACCEPTED,
                 'editableInvitationStatus' => true,
             ],

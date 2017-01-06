@@ -40,6 +40,10 @@ define(function(require) {
             });
             data.groupWeekDayOptions =  [
                 {
+                    value: 'day',
+                    text: 'day',
+                    selected: _.haveEqualSet(this.model.RECURRENCE_DAYOFWEEK, data.dayOfWeek)
+                }, {
                     value: 'weekday',
                     text: 'weekday',
                     selected: _.haveEqualSet(this.model.RECURRENCE_WEEKDAYS, data.dayOfWeek)
@@ -102,6 +106,8 @@ define(function(require) {
                 value.dayOfWeek = _.clone(this.model.RECURRENCE_WEEKDAYS);
             } else if (value.dayOfWeek === 'weekend-day') {
                 value.dayOfWeek = _.clone(this.model.RECURRENCE_WEEKENDS);
+            } else if (value.dayOfWeek === 'day') {
+                value.dayOfWeek = _.clone(this.model.RECURRENCE_DAYOFWEEK);
             } else if (value.dayOfWeek && !_.isArray(value.dayOfWeek)) {
                 value.dayOfWeek = [value.dayOfWeek];
             }

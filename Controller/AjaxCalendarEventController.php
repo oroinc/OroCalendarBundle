@@ -11,6 +11,7 @@ use Oro\Bundle\CalendarBundle\Entity\Attendee;
 use Oro\Bundle\CalendarBundle\Entity\CalendarEvent;
 use Oro\Bundle\CalendarBundle\Exception\ChangeInvitationStatusException;
 use Oro\Bundle\CalendarBundle\Manager\AttendeeManager;
+use Oro\Bundle\CalendarBundle\Manager\CalendarEvent\NotificationManager;
 
 /**
  * @Route("/event/ajax")
@@ -52,7 +53,10 @@ class AjaxCalendarEventController extends Controller
             ->getManagerForClass('Oro\Bundle\CalendarBundle\Entity\CalendarEvent')
             ->flush();
 
-        $this->get('oro_calendar.calendar_event.notification_manager')->onChangeInvitationStatus($entity);
+        $this->get('oro_calendar.calendar_event.notification_manager')->onChangeInvitationStatus(
+            $entity,
+            NotificationManager::ALL_NOTIFICATIONS_STRATEGY
+        );
 
         return new JsonResponse(['successful' => true]);
     }

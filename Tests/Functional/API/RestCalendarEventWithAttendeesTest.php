@@ -4,9 +4,9 @@ namespace Oro\Bundle\CalendarBundle\Tests\Functional\API;
 
 use Doctrine\Common\Collections\Collection;
 
+use Oro\Bundle\CalendarBundle\Entity\Attendee;
 use Oro\Bundle\CalendarBundle\Tests\Functional\DataFixtures\LoadUserData;
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
-use Oro\Bundle\CalendarBundle\Entity\Attendee;
 use Oro\Bundle\UserBundle\Entity\User;
 
 /**
@@ -140,7 +140,6 @@ class RestCalendarEventWithAttendeesTest extends WebTestCase
                 'parentEventId'    => null,
                 'editable'         => true,
                 'removable'        => true,
-                'notifiable'       => true,
                 'attendees'        => [
                     [
                         'displayName' => sprintf('%s %s', $user->getFirstName(), $user->getLastName()),
@@ -254,7 +253,7 @@ class RestCalendarEventWithAttendeesTest extends WebTestCase
         );
 
         $result = $this->getJsonResponseContent($this->client->getResponse(), 200);
-        $this->assertTrue($result['notifiable']);
+        $this->assertEquals(Attendee::STATUS_NONE, $result['invitationStatus']);
 
         return $id;
     }
@@ -295,7 +294,6 @@ class RestCalendarEventWithAttendeesTest extends WebTestCase
                 'parentEventId'    => null,
                 'editable'         => true,
                 'removable'        => true,
-                'notifiable'       => true,
                 'attendees'        => [
                     [
                         'displayName' => 'Ext',
@@ -379,7 +377,6 @@ class RestCalendarEventWithAttendeesTest extends WebTestCase
                     'parentEventId'    => null,
                     'editable'         => true,
                     'removable'        => true,
-                    'notifiable'       => true,
                     'calendarAlias'    => 'user',
                     'attendees'        => [
                         [
@@ -527,7 +524,6 @@ class RestCalendarEventWithAttendeesTest extends WebTestCase
                 'attendees'        => null,
                 'editable'         => null,
                 'removable'        => null,
-                'notifiable'       => null,
                 'calendarAlias'    => null,
             ]
         );
@@ -640,7 +636,6 @@ class RestCalendarEventWithAttendeesTest extends WebTestCase
                 'parentEventId'    => null,
                 'editable'         => true,
                 'removable'        => true,
-                'notifiable'       => true,
             ],
             $this->extractInterestingResponseData($result)
         );
@@ -689,7 +684,7 @@ class RestCalendarEventWithAttendeesTest extends WebTestCase
         );
 
         $result = $this->getJsonResponseContent($this->client->getResponse(), 200);
-        $this->assertFalse($result['notifiable']);
+        $this->assertEquals(Attendee::STATUS_NONE, $result['invitationStatus']);
 
         return $id;
     }
@@ -728,7 +723,6 @@ class RestCalendarEventWithAttendeesTest extends WebTestCase
                 'parentEventId'    => null,
                 'editable'         => true,
                 'removable'        => true,
-                'notifiable'       => false,
                 'attendees'        => [],
             ],
             $this->extractInterestingResponseData($result)

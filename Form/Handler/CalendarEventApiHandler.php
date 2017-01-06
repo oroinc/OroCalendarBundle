@@ -3,6 +3,7 @@
 namespace Oro\Bundle\CalendarBundle\Form\Handler;
 
 use Oro\Bundle\CalendarBundle\Entity\CalendarEvent;
+use Oro\Bundle\CalendarBundle\Manager\CalendarEvent\NotificationManager;
 
 class CalendarEventApiHandler extends AbstractCalendarEventHandler
 {
@@ -14,18 +15,20 @@ class CalendarEventApiHandler extends AbstractCalendarEventHandler
      */
     public function process(CalendarEvent $entity)
     {
+        $request = $this->getRequest();
+
         $this->form->setData($entity);
 
-        if (in_array($this->request->getMethod(), ['POST', 'PUT'])) {
+        if (in_array($request->getMethod(), ['POST', 'PUT'])) {
             // clone entity to have original values later
-            $originaEntity = clone $entity;
+            $originalEntity = clone $entity;
 
-            $this->form->submit($this->request->request->all());
+            $this->form->submit($request->request->all());
 
             if ($this->form->isValid()) {
                 // TODO: should be refactored after finishing BAP-8722
                 // Contexts handling should be moved to common for activities form handler
-                if ($this->form->has('contexts') && $this->request->request->has('contexts')) {
+                if ($this->form->has('contexts') && $request->request->has('contexts')) {
                     $contexts = $this->form->get('contexts')->getData();
                     $owner = $entity->getCalendar() ? $entity->getCalendar()->getOwner() : null;
                     if ($owner && $owner->getId()) {
@@ -39,7 +42,7 @@ class CalendarEventApiHandler extends AbstractCalendarEventHandler
                     );
                 }
 
-                $this->onSuccess($entity, $originaEntity);
+                $this->onSuccess($entity, $originalEntity);
 
                 return true;
             }
@@ -51,9 +54,13 @@ class CalendarEventApiHandler extends AbstractCalendarEventHandler
     /**
      * {@inheritdoc}
      */
-    protected function allowSendNotifications()
+    protected function getSendNotificationsStrategy()
     {
-        return $this->form->has('notifyInvitedUsers') && $this->form->get('notifyInvitedUsers')->getData();
+        if ($this->form->has('notifyAttendees') && $this->form->get('notifyAttendees')->getData()) {
+            return $this->form->get('notifyAttendees')->getData();
+        }
+
+        return NotificationManager::NONE_NOTIFICATIONS_STRATEGY;
     }
 
     /**

@@ -23,20 +23,24 @@ This logic uses email of `OroCalendarEvent:Attendee` to find `OroUserBundle:User
 
 When event is updated in UI user is asked to confirm notification of attendees.
  
-In API POST or PUT request it's possible to pass property `notifyInvitedUsers`. For example:
+In API POST or PUT request it's possible to pass property `notifyAttendees`. For example:
 
 ```
 PUT /api/rest/latest/calendarevents/1
 {
     "title" : "Test Event",
-    "notifyInvitedUsers" : false
+    "notifyAttendees" : all
 }
 ```
-
-In API DELETE request it's possible to pass parameter `notifyInvitedUsers`. For example:
+Next values of `notifyAttendees` are supported: 
+- `all` - notification will be send to all attendees. 
+- `none` - notification will be not send. 
+- `added_or_deleted` - notification will be send only to attendees which were added or removed via the request (i.e. such option could be used when PUT request updates the attendees of event).
+ 
+In API DELETE request it's possible to pass parameter `notifyAttendees`. For example:
 
 ```
-DELETE /api/rest/latest/calendarevents/1?notifyInvitedUsers=true
+DELETE /api/rest/latest/calendarevents/1?notifyAttendees=all
 ```
 
 #### AttendeeRelationManager

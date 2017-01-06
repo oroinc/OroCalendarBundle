@@ -55,7 +55,7 @@
                     return attendeeName;
                 }); %>
                 <% if (attendeesView.length > 0) { %>
-                    {{ UI.renderAttribute('oro.calendar.calendarevent.attendees.label'|trans, '<div class="calendar-event-guests-widget"><%= attendeesView.join(", ") %></div>') }}
+                    {{ UI.renderAttribute('oro.calendar.calendarevent.attendees.label'|trans, '<div class="calendar-event-attendees-widget"><%= attendeesView.join(", ") %></div>') }}
                 <% } %>
                 <% if (editableInvitationStatus) { %>
                     <% var properties = []; %>
@@ -164,13 +164,11 @@
         <% if (!recurrence) { %>
             {{ form_row(form.reminders) }}
         <% } %>
-        {{ form_row(form.notifyInvitedUsers) }}
+        {{ form_row(form.notifyAttendees) }}
         {% for child in form.children if child.vars.extra_field is defined and child.vars.extra_field %}
             {{ form_row(child) }}
         {% endfor %}
-        <% if (typeof notifiable !== 'undefined' && notifiable) { %>
-            {{ invitations.notifyGuestsComponent() }}
-        <% } %>
+        {{ invitations.notify_attendees_component() }}
     {% endset %}
 
     <div class="widget-content">

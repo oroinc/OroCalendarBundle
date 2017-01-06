@@ -10,6 +10,7 @@ use Oro\Bundle\CalendarBundle\Entity\SystemCalendar;
 use Oro\Bundle\CalendarBundle\Handler\CalendarEventDeleteHandler;
 use Oro\Bundle\CalendarBundle\Manager\CalendarEvent\NotificationManager;
 use Oro\Bundle\CalendarBundle\Provider\SystemCalendarConfig;
+use Oro\Bundle\CalendarBundle\Tests\Unit\Fixtures\Entity\Calendar;
 use Oro\Bundle\OrganizationBundle\Ownership\OwnerDeletionManager;
 use Oro\Bundle\SecurityBundle\SecurityFacade;
 use Oro\Bundle\SoapBundle\Entity\Manager\ApiEntityManager;
@@ -70,6 +71,10 @@ class CalendarEventDeleteHandlerTest extends \PHPUnit_Framework_TestCase
         $this->manager->expects($this->once())
             ->method('find')
             ->will($this->returnValue(new CalendarEvent()));
+
+        $this->securityFacade->expects($this->once())
+            ->method('isGranted')
+            ->willReturn(true);
 
         $this->handler->handleDelete(1, $this->manager);
     }
@@ -164,14 +169,34 @@ class CalendarEventDeleteHandlerTest extends \PHPUnit_Framework_TestCase
         $this->handler->handleDelete(1, $this->manager);
     }
 
-    public function testProcessDeleteShouldSendNotificationIfQueryIsPresent()
+    public function testProcessDeleteShouldSendNotificationIfNotifyAttendeesIsAll()
     {
-        $this->requestStack->push(new Request(['notifyInvitedUsers' => true]));
+        $this->requestStack->push(new Request(['notifyAttendees' => NotificationManager::ALL_NOTIFICATIONS_STRATEGY]));
 
         $event = new CalendarEvent();
         $this->notificationManager->expects($this->once())
             ->method('onDelete')
-            ->with($event);
+            ->with($event, NotificationManager::ALL_NOTIFICATIONS_STRATEGY);
+
+        $this->securityFacade->expects($this->once())
+            ->method('isGranted')
+            ->willReturn(true);
+
+        $this->handler->processDelete($event, $this->manager->getObjectManager());
+    }
+
+    public function testProcessDeleteShouldNotSendNotificationIfNotifyAttendeesIsNone()
+    {
+        $this->requestStack->push(new Request(['notifyAttendees' => NotificationManager::NONE_NOTIFICATIONS_STRATEGY]));
+
+        $event = new CalendarEvent();
+        $this->notificationManager->expects($this->once())
+            ->method('onDelete')
+            ->with($event, NotificationManager::NONE_NOTIFICATIONS_STRATEGY);
+
+        $this->securityFacade->expects($this->once())
+            ->method('isGranted')
+            ->willReturn(true);
 
         $this->handler->processDelete($event, $this->manager->getObjectManager());
     }
@@ -181,18 +206,50 @@ class CalendarEventDeleteHandlerTest extends \PHPUnit_Framework_TestCase
         $event = new CalendarEvent();
         $this->notificationManager->expects($this->once())
             ->method('onDelete')
-            ->with($event);
+            ->with($event, NotificationManager::ALL_NOTIFICATIONS_STRATEGY);
+
+        $this->securityFacade->expects($this->once())
+            ->method('isGranted')
+            ->willReturn(true);
 
         $this->handler->processDelete($event, $this->manager->getObjectManager());
     }
 
-    public function testProcessDeleteshouldNotSendNotification()
+    public function testProcessDeleteShouldNotSendNotification()
     {
+        $event = new CalendarEvent();
         $this->requestStack->push(new Request());
 
-        $this->notificationManager->expects($this->never())
-            ->method('onDelete');
+        $this->notificationManager->expects($this->once())
+            ->method('onDelete')
+            ->with($event, NotificationManager::NONE_NOTIFICATIONS_STRATEGY);
 
-        $this->handler->processDelete(new CalendarEvent(), $this->manager->getObjectManager());
+        $this->securityFacade->expects($this->once())
+            ->method('isGranted')
+            ->willReturn(true);
+
+        $this->handler->processDelete($event, $this->manager->getObjectManager());
+    }
+
+    /**
+     * @expectedException \Oro\Bundle\SecurityBundle\Exception\ForbiddenException
+     * @expectedExceptionMessage Access denied.
+     */
+    public function testHandleDeleteInCaseIfUserHaveNoAccessToCallendar()
+    {
+        $calendarEvent = new CalendarEvent();
+        $calendar = new Calendar();
+        $calendarEvent->setCalendar($calendar);
+
+        $this->manager->expects($this->once())
+            ->method('find')
+            ->will($this->returnValue($calendarEvent));
+
+        $this->securityFacade->expects($this->once())
+            ->method('isGranted')
+            ->with('VIEW', $calendar)
+            ->willReturn(false);
+
+        $this->handler->handleDelete(1, $this->manager);
     }
 }

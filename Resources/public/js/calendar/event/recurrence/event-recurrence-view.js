@@ -2,7 +2,6 @@ define(function(require) {
     'use strict';
 
     var EventRecurrenceView;
-    var moment = require('moment');
     var _ = require('underscore');
     var __ = require('orotranslation/js/translator');
     var template = require('tpl!orocalendar/templates/calendar/event/recurrence/recurrence.html');
@@ -61,8 +60,6 @@ define(function(require) {
             EventRecurrenceView.__super__.initialize.call(this, options);
             if (this.model.isEmptyRecurrence()) {
                 this.syncRecurrenceStart();
-            } else {
-                this.actualizeEventDuration();
             }
         },
 
@@ -253,16 +250,6 @@ define(function(require) {
 
         syncRecurrenceStart: function() {
             this.model.set('startTime', this.$eventStart.val());
-        },
-
-        actualizeEventDuration: function() {
-            var occurrenceStart = this.$eventStart.val();
-            var occurrenceEnd = this.$eventEnd.val();
-            var recurrenceStart = this.model.get('startTime');
-            var duration = moment(occurrenceEnd).diff(occurrenceStart);
-            var recurringEventEnd = moment(recurrenceStart).add(duration, 'ms').tz('UTC').format();
-            this.$eventStart.val(recurrenceStart).trigger('change');
-            this.$eventEnd.val(recurringEventEnd).trigger('change');
         },
 
         switchRepeatView: function(repeatViewName) {

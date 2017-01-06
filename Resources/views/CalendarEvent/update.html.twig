@@ -51,7 +51,6 @@
         }
     } %}
 
-    {# @todo Verify the condition in the code of the last element in data (notifyGuestsComponent) is correct #}
     {% set dataBlocks = [{
         'title': 'General Information'|trans,
         'class': 'active',
@@ -65,8 +64,8 @@
                     form.calendarUid is defined ? form_row(form.calendarUid) : null,
                     form_row(form.attendees),
                     entity.recurrence is null ? form_row(form.reminders) : null,
-                    form_row(form.notifyInvitedUsers),
-                    entity.relatedAttendee and entity.relatedAttendee.status and entity.parent is null and entity.childAttendees is not empty and entity.recurrence is null ? invitations.notifyGuestsComponent() : null
+                    form_row(form.notifyAttendees),
+                    invitations.notify_attendees_component()
                 ]
             },
             {

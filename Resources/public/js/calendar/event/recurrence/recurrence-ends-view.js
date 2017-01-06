@@ -41,8 +41,9 @@ define(function(require) {
                     altFormat: 'yy-mm-dd',
                     changeMonth: true,
                     changeYear: true,
-                    yearRange: '-80:+1',
-                    showButtonPanel: true
+                    yearRange: '-1:+80',
+                    showButtonPanel: true,
+                    minDate: new Date(this.minDatetime)
                 }
             }));
             return this;
@@ -52,6 +53,10 @@ define(function(require) {
             this.$('[data-related-field="endTime"]')
                 .attr('data-validation', JSON.stringify({}))
                 .data('validation', {DateTime: {min: minDatetime}, NotBlank: {}});
+            var dateTimePickerView = this.subview('date-time-picker-view');
+            if (dateTimePickerView) {
+                dateTimePickerView.setMinValue(new Date(minDatetime));
+            }
         },
 
         syncRecurrenceEnd: function(eventEndValue) {

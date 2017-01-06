@@ -5,6 +5,7 @@ define(function(require) {
     var _ = require('underscore');
     var $ = require('jquery');
     var moment = require('moment');
+    var Backbone = require('backbone');
     var __ = require('orotranslation/js/translator');
     var tools = require('oroui/js/tools');
     var messenger = require('oroui/js/messenger');
@@ -21,7 +22,8 @@ define(function(require) {
     var dateTimeFormatter = require('orolocale/js/formatter/datetime');
     var localeSettings = require('orolocale/js/locale-settings');
     var PluginManager = require('oroui/js/app/plugins/plugin-manager');
-    var GuestsPlugin = require('orocalendar/js/app/plugins/calendar/guests-plugin');
+    var AttendeesPlugin = require('orocalendar/js/app/plugins/calendar/attendees-plugin');
+    var EventRecurrencePlugin = require('orocalendar/js/app/plugins/calendar/event-recurrence-plugin');
     var persistentStorage = require('oroui/js/persistent-storage');
     require('fullcalendar');
 
@@ -158,11 +160,28 @@ define(function(require) {
             this.listenTo(this.collection, 'add', this.onEventAdded);
             this.listenTo(this.collection, 'change', this.onEventChanged);
             this.listenTo(this.collection, 'destroy', this.onEventDeleted);
-            this.listenTo(this.collection, 'toRefresh', this.refreshView);
+
+            // to refresh calendar only once when it is invoked repeatedly
+            this.refreshView = _.throttle(_.bind(this.refreshView, this), 10, {trailing: false});
+
+            // create common event bus and subscribe to its events
+            this.commonEventBus = Object.create(_.extend({}, Backbone.Events));
+            this.listenTo(this.commonEventBus, 'toRefresh', this.refreshView);
+            this.listenTo(this, 'all', function(name) {
+                // translate all CalendarView events to commonEvenBus
+                this.commonEventBus.trigger.apply(this.commonEventBus, arguments);
+            });
+            this.listenTo(this.collection, 'all', function(name) {
+                // translate all EventCollection events to commonEvenBus
+                var args = ['events:' + name].concat(_.rest(arguments));
+                this.commonEventBus.trigger.apply(this.commonEventBus, args);
+            });
+
             this.colorManager = new ColorManager(this.options.colorManagerOptions);
 
             this.pluginManager = new PluginManager(this);
-            this.pluginManager.enable(GuestsPlugin);
+            this.pluginManager.enable(AttendeesPlugin);
+            this.pluginManager.enable(EventRecurrencePlugin);
         },
 
         onWindowResize: function() {
@@ -204,6 +223,7 @@ define(function(require) {
                 // create a view for event details
                 this.eventView = new EventView(_.extend({}, options, {
                     model: eventModel,
+                    commonEventBus: this.commonEventBus,
                     calendar: this.options.calendar,
                     connections: this.getConnectionCollection(),
                     viewTemplateSelector: this.options.eventsOptions.itemViewTemplateSelector,
@@ -295,11 +315,12 @@ define(function(require) {
 
             if (eventModel.hasChanged('id')) {
                 // if id value was deleted -- remove the event from calendar
-                if (eventModel.get('id') === null && eventModel.previous('id')) {
+                if (eventModel.previous('id') !== null) {
                     this.getCalendarElement().fullCalendar('removeEvents', eventModel.previous('id'));
+                }
 
                 // if new id value was assigned -- add the event to calendar
-                } else if (eventModel.previous('id') === null && eventModel.get('id')) {
+                if (eventModel.get('id') !== null) {
                     this.addEventToCalendar(eventModel);
                 }
                 return;
@@ -320,7 +341,9 @@ define(function(require) {
         },
 
         onEventDeleted: function(eventModel) {
-            this.getCalendarElement().fullCalendar('removeEvents', eventModel.id);
+            if (eventModel.has('id')) {
+                this.getCalendarElement().fullCalendar('removeEvents', eventModel.get('id'));
+            }
             this.trigger('event:deleted', eventModel);
         },
 
@@ -485,7 +508,8 @@ define(function(require) {
 
             // wait for promises execution before save
             $.when.apply($, promises)
-                .done(_.bind(this._saveFcEvent, this, eventModel, attrs));
+                .done(_.bind(this._saveFcEvent, this, eventModel, attrs))
+                .fail(_.bind(this.updateEventsWithoutReload, this));
         },
 
         _saveFcEvent: function(eventModel, attrs) {

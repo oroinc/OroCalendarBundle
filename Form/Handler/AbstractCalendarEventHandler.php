@@ -7,6 +7,7 @@ use Doctrine\ORM\EntityManager;
 
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\RequestStack;
 
 use Oro\Bundle\ActivityBundle\Manager\ActivityManager;
 use Oro\Bundle\CalendarBundle\Entity\CalendarEvent;
@@ -19,8 +20,8 @@ abstract class AbstractCalendarEventHandler
     /** @var FormInterface */
     protected $form;
 
-    /** @var Request */
-    protected $request;
+    /** @var RequestStack */
+    protected $requestStack;
 
     /** @var ManagerRegistry */
     protected $doctrine;
@@ -35,22 +36,22 @@ abstract class AbstractCalendarEventHandler
     protected $calendarEventManager;
 
     /**
-     * @param Request               $request
-     * @param ManagerRegistry       $doctrine
-     * @param SecurityFacade        $securityFacade
+     * @param RequestStack         $requestStack
+     * @param ManagerRegistry      $doctrine
+     * @param SecurityFacade       $securityFacade
      * @param ActivityManager      $activityManager
-     * @param CalendarEventManager  $calendarEventManager
-     * @param NotificationManager   $notificationManager
+     * @param CalendarEventManager $calendarEventManager
+     * @param NotificationManager  $notificationManager
      */
     public function __construct(
-        Request $request,
+        RequestStack $requestStack,
         ManagerRegistry $doctrine,
         SecurityFacade $securityFacade,
         ActivityManager $activityManager,
         CalendarEventManager $calendarEventManager,
         NotificationManager $notificationManager
     ) {
-        $this->request              = $request;
+        $this->requestStack         = $requestStack;
         $this->doctrine             = $doctrine;
         $this->securityFacade       = $securityFacade;
         $this->activityManager      = $activityManager;
@@ -95,9 +96,7 @@ abstract class AbstractCalendarEventHandler
         $this->getEntityManager()->persist($entity);
         $this->getEntityManager()->flush();
 
-        if ($this->allowSendNotifications()) {
-            $this->sendNotifications($entity, $originalEntity, $isNew);
-        }
+        $this->sendNotifications($entity, $originalEntity, $isNew);
     }
 
     /**
@@ -117,22 +116,20 @@ abstract class AbstractCalendarEventHandler
     protected function sendNotifications(CalendarEvent $entity, CalendarEvent $originalEntity, $isNew)
     {
         if ($isNew) {
-            $this->notificationManager->onCreate($entity);
+            $this->notificationManager->onCreate($entity, $this->getSendNotificationsStrategy());
         } else {
-            $this->notificationManager->onUpdate(
-                $entity,
-                $originalEntity,
-                true // @todo Fix hard-coded value in BAP-13079, BAP-13080
-            );
+            $this->notificationManager->onUpdate($entity, $originalEntity, $this->getSendNotificationsStrategy());
         }
     }
 
     /**
-     * Returns TRUE if notifications should be send.
+     * @see NotificationManager::ALL_NOTIFICATIONS_STRATEGY
+     * @see NotificationManager::NONE_NOTIFICATIONS_STRATEGY
+     * @see NotificationManager::ADDED_OR_DELETED_NOTIFICATIONS_STRATEGY
      *
-     * @return bool
+     * @return string
      */
-    abstract protected function allowSendNotifications();
+    abstract protected function getSendNotificationsStrategy();
 
     /**
      * @return EntityManager
@@ -140,5 +137,18 @@ abstract class AbstractCalendarEventHandler
     protected function getEntityManager()
     {
         return $this->doctrine->getManager();
+    }
+
+    /**
+     * @return Request
+     */
+    protected function getRequest()
+    {
+        $request = $this->requestStack->getCurrentRequest();
+        if (!$request) {
+            throw new \RuntimeException('Request was not found');
+        }
+
+        return $request;
     }
 }

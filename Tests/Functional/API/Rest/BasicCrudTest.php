@@ -67,7 +67,6 @@ class BasicCrudTest extends AbstractTestCase
         $this->assertResponseEquals(
             [
                 'id' => $response['id'],
-                'notifiable' => false,
                 'invitationStatus' => Attendee::STATUS_NONE,
                 'editableInvitationStatus' => false,
             ],
@@ -104,7 +103,6 @@ class BasicCrudTest extends AbstractTestCase
                 'editable' => true,
                 'editableInvitationStatus' => false,
                 'removable' => true,
-                'notifiable' => false,
                 'backgroundColor' => null,
                 'invitationStatus' => Attendee::STATUS_NONE,
                 'recurringEventId' => null,
@@ -154,7 +152,6 @@ CONTENT;
         $this->assertResponseEquals(
             [
                 'id' => $response['id'],
-                'notifiable' => false,
                 'invitationStatus' => Attendee::STATUS_NONE,
                 'editableInvitationStatus' => false,
             ],
@@ -191,7 +188,6 @@ CONTENT;
                 'editable' => true,
                 'editableInvitationStatus' => false,
                 'removable' => true,
-                'notifiable' => false,
                 'backgroundColor' => null,
                 'invitationStatus' => Attendee::STATUS_NONE,
                 'recurringEventId' => null,
@@ -252,7 +248,6 @@ CONTENT;
         $this->assertResponseEquals(
             [
                 'id' => $response['id'],
-                'notifiable' => false,
                 'invitationStatus' => Attendee::STATUS_NONE,
                 'editableInvitationStatus' => false,
             ],
@@ -287,7 +282,6 @@ CONTENT;
         $response = $this->getRestResponseContent(['statusCode' => 200, 'contentType' => 'application/json']);
         $this->assertResponseEquals(
             [
-                'notifiable' => false,
                 'invitationStatus' => Attendee::STATUS_NONE,
                 'editableInvitationStatus' => false,
             ],
@@ -372,7 +366,6 @@ CONTENT;
         $this->assertResponseEquals(
             [
                 'id' => $response['id'],
-                'notifiable' => true,
                 'invitationStatus' => Attendee::STATUS_NONE,
                 'editableInvitationStatus' => false,
             ],
@@ -408,7 +401,6 @@ CONTENT;
         $response = $this->getRestResponseContent(['statusCode' => 200, 'contentType' => 'application/json']);
         $this->assertResponseEquals(
             [
-                'notifiable' => true,
                 'invitationStatus' => Attendee::STATUS_NONE,
                 'editableInvitationStatus' => false,
             ],
