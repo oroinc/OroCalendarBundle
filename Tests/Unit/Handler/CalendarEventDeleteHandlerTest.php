@@ -10,6 +10,7 @@ use Oro\Bundle\CalendarBundle\Entity\SystemCalendar;
 use Oro\Bundle\CalendarBundle\Handler\CalendarEventDeleteHandler;
 use Oro\Bundle\CalendarBundle\Manager\CalendarEvent\NotificationManager;
 use Oro\Bundle\CalendarBundle\Provider\SystemCalendarConfig;
+use Oro\Bundle\CalendarBundle\Tests\Unit\Fixtures\Entity\Calendar;
 use Oro\Bundle\OrganizationBundle\Ownership\OwnerDeletionManager;
 use Oro\Bundle\SecurityBundle\SecurityFacade;
 use Oro\Bundle\SoapBundle\Entity\Manager\ApiEntityManager;
