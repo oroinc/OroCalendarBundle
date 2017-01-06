@@ -29,14 +29,15 @@ define(function(require) {
             var monthOfYear = Number(this.model.get('monthOfYear'));
             var daysInMonth = this._daysInMonth(monthOfYear);
             var $dayOfMonthField = this.$('[data-related-field="dayOfMonth"]');
-            if ('monthOfYear' in model.changed) {
+            if (model.hasChanged('monthOfYear') || model.hasChanged('startTime')) {
                 var dayValidationRules = $dayOfMonthField.data('validation');
                 dayValidationRules.Number.max = daysInMonth;
                 if ($dayOfMonthField.val()) {
                     $dayOfMonthField.trigger('blur');
                 }
             }
-            if (dayOfMonth === 29 && monthOfYear === 2) { // the 29 of february was selected
+            // the 29 of February was selected and it is a leap year
+            if (monthOfYear === 2 && dayOfMonth === 29 && dayOfMonth === daysInMonth) {
                 this.setFewerDaysWarning(dayOfMonth);
             } else {
                 this.setFewerDaysWarning(false);
