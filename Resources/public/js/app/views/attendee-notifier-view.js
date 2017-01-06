@@ -53,7 +53,7 @@ define([
             AttendeeNotifierView.__super__.dispose.call(this);
         },
 
-        hasAttendees: function () {
+        hasAttendees: function() {
             return this.$form.find('input[name*="[attendees]"]').val().indexOf('entityId') >= 0;
         },
 
