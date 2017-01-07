@@ -16,6 +16,8 @@ use Oro\Bundle\UserBundle\Entity\User;
  * - elegate sending of notification to email notification sender.
  *
  * @see \Oro\Bundle\CalendarBundle\Model\Email\EmailNotificationProcessor
+ *
+ * @SuppressWarnings(PHPMD.ExcessiveClassComplexity)
  */
 class NotificationManager
 {
@@ -251,9 +253,8 @@ class NotificationManager
             }
             return;
         } elseif ($originalCalendarEvent->isCancelled() && !$calendarEvent->isCancelled()) {
-            // The event was cancelled before and then was reactivated, the case is not possible in
-            // the UI but possible if someone uses the API.
-            // Invite notification should be send.
+            // The event was cancelled before and then was reactivated, the case is not possible in the UI
+            // but possible if someone uses the API. Invite notification should be send.
             $this->addInviteNotifications(
                 $calendarEvent,
                 $this->getCalendarOwnerUser($calendarEvent),
