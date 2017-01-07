@@ -1239,8 +1239,8 @@ class CalendarEvent extends ExtendCalendarEvent implements RemindableInterface, 
         }
 
         $this->childEvents = $this->cloneChildEvents($this->childEvents, $this);
-        $this->attendees = new ArrayCollection($this->attendees->toArray());
-        $this->recurringEventExceptions = new ArrayCollection($this->recurringEventExceptions->toArray());
+        $this->attendees = $this->cloneCollection($this->attendees);
+        $this->recurringEventExceptions = $this->cloneCollection($this->recurringEventExceptions);
 
         if ($this->recurrence) {
             $this->recurrence = clone $this->recurrence;
@@ -1266,6 +1266,24 @@ class CalendarEvent extends ExtendCalendarEvent implements RemindableInterface, 
             $result->set($key, $clonedItem);
             $clonedItem->parent = $parent;
             $item->childEventCloneInProgress = false;
+        }
+
+        return $result;
+    }
+
+    /**
+     * Clone collection, each element of the collection is cloned separately.
+     *
+     * @param Collection|CalendarEvent[] $collection
+     * @return Collection
+     */
+    protected function cloneCollection(Collection $collection)
+    {
+        $result = new ArrayCollection();
+
+        foreach ($collection as $key => $item) {
+            $clonedItem = clone $item;
+            $result->set($key, $clonedItem);
         }
 
         return $result;

@@ -2,8 +2,6 @@
 
 namespace Oro\Bundle\CalendarBundle\Manager\CalendarEvent;
 
-use Doctrine\Common\Collections\Collection;
-
 use Oro\Bundle\CalendarBundle\Entity\Attendee;
 use Oro\Bundle\CalendarBundle\Entity\CalendarEvent;
 use Oro\Bundle\CalendarBundle\Model\Email\EmailNotificationSender;
@@ -147,10 +145,13 @@ class NotificationManager
         User $ownerUser,
         array $attendees
     ) {
-        $this->emailNotificationSender->addCancelNotifications(
-            $calendarEvent,
-            $this->getAttendeesWithoutRelatedUser($ownerUser, $attendees)
-        );
+        $filteredAttendees = $this->getAttendeesWithoutRelatedUser($ownerUser, $attendees);
+        if ($filteredAttendees) {
+            $this->emailNotificationSender->addCancelNotifications(
+                $calendarEvent,
+                $filteredAttendees
+            );
+        }
     }
 
     /**
@@ -191,10 +192,13 @@ class NotificationManager
         User $ownerUser,
         array $attendees
     ) {
-        $this->emailNotificationSender->addInviteNotifications(
-            $calendarEvent,
-            $this->getAttendeesWithoutRelatedUser($ownerUser, $attendees)
-        );
+        $filteredAttendees = $this->getAttendeesWithoutRelatedUser($ownerUser, $attendees);
+        if ($filteredAttendees) {
+            $this->emailNotificationSender->addInviteNotifications(
+                $calendarEvent,
+                $filteredAttendees
+            );
+        }
     }
 
     /**
@@ -257,36 +261,34 @@ class NotificationManager
             );
             $this->sendAddedNotifications();
         } elseif (!$calendarEvent->isCancelled()) {
-            // Regular case for update of the event.
+            // If calendar event exceptions were cleared cancel notification should be sent.
+            if (count($calendarEvent->getRecurringEventExceptions()->toArray()) == 0 &&
+                count($originalCalendarEvent->getRecurringEventExceptions()->toArray()) != 0
+            ) {
+                $this->addCancelNotificationsForRecurringEventExceptions(
+                    $originalCalendarEvent,
+                    $this->getCalendarOwnerUser($calendarEvent)
+                );
+            }
 
+            // Regular case for update of the event.
             if ($strategy === static::ALL_NOTIFICATIONS_STRATEGY) {
                 // Add update notification for attendees which existed in the event originally and exist now.
-                $existedAttendees = $this->getExistedAttendees(
-                    $originalCalendarEvent->getAttendees(),
-                    $calendarEvent->getAttendees()
+                $existedAttendees = $this->getEqualAttendees(
+                    $originalCalendarEvent,
+                    $calendarEvent->getAttendees()->toArray()
                 );
                 $this->addUpdateNotifications(
                     $calendarEvent,
                     $this->getCalendarOwnerUser($calendarEvent),
                     $existedAttendees
                 );
-
-                //if calendar event exceptions were cleared,
-                // cancel notification should be sent to extra attendees in these exceptions
-                if (count($calendarEvent->getRecurringEventExceptions()->toArray()) == 0
-                    && count($originalCalendarEvent->getRecurringEventExceptions()->toArray()) != 0
-                ) {
-                    $this->addDeleteEventExceptionWithExtraAttendeesNotification(
-                        $originalCalendarEvent,
-                        $this->getCalendarOwnerUser($calendarEvent)
-                    );
-                }
             }
 
             // Add notification to new attendees
-            $addedAttendees = $this->getAddedAttendees(
-                $originalCalendarEvent->getAttendees(),
-                $calendarEvent->getAttendees()
+            $addedAttendees = $this->getNotEqualAttendees(
+                $originalCalendarEvent,
+                $calendarEvent->getAttendees()->toArray()
             );
 
             $this->addInviteNotifications(
@@ -296,9 +298,9 @@ class NotificationManager
             );
 
             // Add notification to attendees removed from the event
-            $removedAttendees = $this->getRemovedAttendees(
-                $originalCalendarEvent->getAttendees(),
-                $calendarEvent->getAttendees()
+            $removedAttendees = $this->getNotEqualAttendees(
+                $calendarEvent,
+                $originalCalendarEvent->getAttendees()->toArray()
             );
 
             $this->addUnInviteNotifications(
@@ -312,6 +314,74 @@ class NotificationManager
     }
 
     /**
+     * Adds notifications for attendees that are present in exception of recurrent event, but absent in recurring event.
+     *
+     * @param CalendarEvent $calendarEvent
+     * @param User $ownerUser
+     *
+     * @return NotificationManager
+     */
+    protected function addCancelNotificationsForRecurringEventExceptions(
+        CalendarEvent $calendarEvent,
+        User $ownerUser
+    ) {
+        foreach ($calendarEvent->getRecurringEventExceptions() as $exceptionCalendarEvent) {
+            if ($exceptionCalendarEvent->isCancelled()) {
+                continue;
+            }
+
+            $extraAttendees = $this->getNotEqualAttendees(
+                $calendarEvent,
+                $exceptionCalendarEvent->getAttendees()->toArray()
+            );
+
+            $this->addCancelNotifications(
+                $exceptionCalendarEvent,
+                $ownerUser,
+                $extraAttendees
+            );
+        }
+
+        return $this;
+    }
+
+    /**
+     * Returns $attendees presented in $calendarEvent.
+     *
+     * @param CalendarEvent $calendarEvent
+     * @param Attendee[] $attendees
+     * @return Attendee[]
+     */
+    protected function getEqualAttendees(CalendarEvent $calendarEvent, array $attendees)
+    {
+        $result = [];
+        foreach ($attendees as $attendee) {
+            if ($calendarEvent->getEqualAttendee($attendee)) {
+                $result[] = $attendee;
+            }
+        }
+        return $result;
+    }
+
+    /**
+     * Returns $attendees not presented in $calendarEvent.
+     *
+     * @param CalendarEvent $calendarEvent
+     * @param Attendee[] $attendees
+     * @return Attendee[]
+     */
+    protected function getNotEqualAttendees(CalendarEvent $calendarEvent, array $attendees)
+    {
+        $result = [];
+        foreach ($attendees as $attendee) {
+            if (!$calendarEvent->getEqualAttendee($attendee)) {
+                $result[] = $attendee;
+            }
+        }
+        return $result;
+    }
+
+    /**
      * Adds update notifications for attendees of calendar event except owner of the event.
      *
      * @param CalendarEvent $calendarEvent  Calendar event of the notification.
@@ -320,10 +390,13 @@ class NotificationManager
      */
     protected function addUpdateNotifications(CalendarEvent $calendarEvent, User $ownerUser, array $attendees)
     {
-        $this->emailNotificationSender->addUpdateNotifications(
-            $calendarEvent,
-            $this->getAttendeesWithoutRelatedUser($ownerUser, $attendees)
-        );
+        $filteredAttendees = $this->getAttendeesWithoutRelatedUser($ownerUser, $attendees);
+        if ($filteredAttendees) {
+            $this->emailNotificationSender->addUpdateNotifications(
+                $calendarEvent,
+                $filteredAttendees
+            );
+        }
     }
 
     /**
@@ -335,64 +408,13 @@ class NotificationManager
      */
     protected function addUnInviteNotifications(CalendarEvent $calendarEvent, User $ownerUser, array $attendees)
     {
-        $this->emailNotificationSender->addUnInviteNotifications(
-            $calendarEvent,
-            $this->getAttendeesWithoutRelatedUser($ownerUser, $attendees)
-        );
-    }
-
-    /**
-     * Returns array of attendees which were existed before in $originalAttendees and exist now in $actualAttendees.
-     *
-     * @param Collection $originalAttendees
-     * @param Collection $actualAttendees
-     * @return Attendee[]
-     */
-    protected function getExistedAttendees(Collection $originalAttendees, Collection $actualAttendees)
-    {
-        $result = [];
-        foreach ($actualAttendees as $actualAttendee) {
-            if ($originalAttendees->contains($actualAttendee)) {
-                $result[] = $actualAttendee;
-            }
+        $filteredAttendees = $this->getAttendeesWithoutRelatedUser($ownerUser, $attendees);
+        if ($filteredAttendees) {
+            $this->emailNotificationSender->addUnInviteNotifications(
+                $calendarEvent,
+                $filteredAttendees
+            );
         }
-        return $result;
-    }
-
-    /**
-     * Returns array of attendees which were not existed before in $originalAttendees and exist now in $actualAttendees.
-     *
-     * @param Collection $originalAttendees
-     * @param Collection $actualAttendees
-     * @return Attendee[]
-     */
-    protected function getAddedAttendees(Collection $originalAttendees, Collection $actualAttendees)
-    {
-        $result = [];
-        foreach ($actualAttendees as $actualAttendee) {
-            if (!$originalAttendees->contains($actualAttendee)) {
-                $result[] = $actualAttendee;
-            }
-        }
-        return $result;
-    }
-
-    /**
-     * Returns array of attendees which were not existed before in $originalAttendees and exist now in $actualAttendees.
-     *
-     * @param Collection $originalAttendees
-     * @param Collection $actualAttendees
-     * @return Attendee[]
-     */
-    protected function getRemovedAttendees(Collection $originalAttendees, Collection $actualAttendees)
-    {
-        $result = [];
-        foreach ($originalAttendees as $originalAttendee) {
-            if (!$actualAttendees->contains($originalAttendee)) {
-                $result[] = $originalAttendee;
-            }
-        }
-        return $result;
     }
 
     /**
@@ -457,39 +479,8 @@ class NotificationManager
                 $calendarEvent->getAttendees()->toArray()
             );
 
-            $this->addDeleteEventExceptionWithExtraAttendeesNotification($calendarEvent, $ownerUser);
+            $this->addCancelNotificationsForRecurringEventExceptions($calendarEvent, $ownerUser);
         }
         $this->sendAddedNotifications();
-    }
-
-    /**
-     * Adds notifications for attendees that are present in exception of recurrent event,
-     * but absent in recurring event
-     *
-     * @param CalendarEvent $calendarEvent
-     * @param User $ownerUser
-     *
-     * @return NotificationManager
-     */
-    protected function addDeleteEventExceptionWithExtraAttendeesNotification(
-        CalendarEvent $calendarEvent,
-        User $ownerUser
-    ) {
-        foreach ($calendarEvent->getRecurringEventExceptions() as $eventException) {
-            $eventExceptionAttendees = $eventException->getAttendees();
-            foreach ($eventExceptionAttendees as $eventExceptionAttendee) {
-                $attendeeEmail = $eventExceptionAttendee->getEmail();
-                $isCancelled = $eventException->isCancelled();
-                if ($attendeeEmail && !$isCancelled && !$calendarEvent->getAttendeeByEmail($attendeeEmail)) {
-                    $this->addCancelNotifications(
-                        $eventException,
-                        $ownerUser,
-                        [$eventExceptionAttendee]
-                    );
-                }
-            }
-        }
-
-        return $this;
     }
 }

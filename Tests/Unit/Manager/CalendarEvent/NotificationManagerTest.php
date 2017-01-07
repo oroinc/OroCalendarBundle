@@ -381,6 +381,95 @@ class NotificationManagerTest extends \PHPUnit_Framework_TestCase
         );
     }
 
+    public function testSendCancelNotificationOnUpdateForExtraAttendeesInClearedExceptions()
+    {
+        $ownerUser = new User();
+        $calendar = new Calendar();
+        $calendar->setOwner($ownerUser);
+        $attendee1 = (new Attendee(1))->setDisplayName('Existed Attendee 1');
+        $attendee2 = (new Attendee(2))->setDisplayName('Existed Attendee 2');
+        $extraAttendee1 = (new Attendee(3))->setDisplayName('Extra Attendee 1');
+        $extraAttendee2 = (new Attendee(4))->setDisplayName('Extra Attendee 2');
+        $extraAttendee3 = (new Attendee(5))->setDisplayName('Extra Attendee 3');
+        $extraAttendee4 = (new Attendee(6))->setDisplayName('Extra Attendee 4');
+
+        $calendarEvent = new CalendarEvent();
+        $calendarEvent
+            ->setCalendar($calendar)
+            ->setAttendees(
+                new ArrayCollection(
+                    [
+                        $attendee1,
+                        $attendee2,
+                    ]
+                )
+            );
+
+        $calendarEventException1 = new CalendarEvent();
+        $calendarEventException1
+            ->setCalendar($calendar)
+            ->setAttendees(
+                new ArrayCollection(
+                    [
+                        $attendee1,
+                        $attendee2,
+                        $extraAttendee1,
+                        $extraAttendee2
+                    ]
+                )
+            );
+
+        $calendarEventException2 = new CalendarEvent();
+        $calendarEventException2
+            ->setCalendar($calendar)
+            ->setAttendees(
+                new ArrayCollection(
+                    [
+                        $extraAttendee3
+                    ]
+                )
+            );
+
+        $calendarEventException3 = new CalendarEvent();
+        $calendarEventException3
+            ->setCalendar($calendar)
+            ->setCancelled(true)
+            ->setAttendees(
+                new ArrayCollection(
+                    [
+                        $extraAttendee4
+                    ]
+                )
+            );
+
+        $calendarEvent
+            ->addRecurringEventException($calendarEventException1)
+            ->addRecurringEventException($calendarEventException2);
+
+        $originalCalendarEvent = clone $calendarEvent;
+        $calendarEvent->getRecurringEventExceptions()->clear();
+
+        $this->emailNotificationSender->expects($this->exactly(2))
+            ->method('addCancelNotifications');
+
+        $this->emailNotificationSender->expects($this->at(0))
+            ->method('addCancelNotifications')
+            ->with($calendarEventException1, [$extraAttendee1, $extraAttendee2]);
+
+        $this->emailNotificationSender->expects($this->at(1))
+            ->method('addCancelNotifications')
+            ->with($calendarEventException2, [$extraAttendee3]);
+
+        $this->emailNotificationSender->expects($this->once())
+            ->method('sendAddedNotifications');
+
+        $this->notificationManager->onUpdate(
+            $calendarEvent,
+            $originalCalendarEvent,
+            NotificationManager::ADDED_OR_DELETED_NOTIFICATIONS_STRATEGY
+        );
+    }
+
     public function testSendNoNotificationOnUpdateWithNoneNotificationStrategy()
     {
         $ownerUser = new User();
@@ -746,6 +835,95 @@ class NotificationManagerTest extends \PHPUnit_Framework_TestCase
             ->method('sendAddedNotifications');
 
         $this->notificationManager->onDelete($parentCalendarEvent, NotificationManager::ALL_NOTIFICATIONS_STRATEGY);
+    }
+
+    public function testSendCancelNotificationOnDeleteOfRecurringCalendarEventWithExtraAttendeesInExceptions()
+    {
+        $ownerUser = new User();
+        $calendar = new Calendar();
+        $calendar->setOwner($ownerUser);
+        $attendee1 = (new Attendee(1))->setDisplayName('Existed Attendee 1');
+        $attendee2 = (new Attendee(2))->setDisplayName('Existed Attendee 2');
+        $extraAttendee1 = (new Attendee(3))->setDisplayName('Extra Attendee 1');
+        $extraAttendee2 = (new Attendee(4))->setDisplayName('Extra Attendee 2');
+        $extraAttendee3 = (new Attendee(5))->setDisplayName('Extra Attendee 3');
+        $extraAttendee4 = (new Attendee(6))->setDisplayName('Extra Attendee 4');
+
+        $calendarEvent = new CalendarEvent();
+        $calendarEvent
+            ->setCalendar($calendar)
+            ->setAttendees(
+                new ArrayCollection(
+                    [
+                        $attendee1,
+                        $attendee2,
+                    ]
+                )
+            );
+
+        $calendarEventException1 = new CalendarEvent();
+        $calendarEventException1
+            ->setCalendar($calendar)
+            ->setAttendees(
+                new ArrayCollection(
+                    [
+                        $attendee1,
+                        $attendee2,
+                        $extraAttendee1,
+                        $extraAttendee2
+                    ]
+                )
+            );
+
+        $calendarEventException2 = new CalendarEvent();
+        $calendarEventException2
+            ->setCalendar($calendar)
+            ->setAttendees(
+                new ArrayCollection(
+                    [
+                        $extraAttendee3
+                    ]
+                )
+            );
+
+        $calendarEventException3 = new CalendarEvent();
+        $calendarEventException3
+            ->setCalendar($calendar)
+            ->setCancelled(true)
+            ->setAttendees(
+                new ArrayCollection(
+                    [
+                        $extraAttendee4
+                    ]
+                )
+            );
+
+        $calendarEvent
+            ->addRecurringEventException($calendarEventException1)
+            ->addRecurringEventException($calendarEventException2);
+
+        $this->emailNotificationSender->expects($this->exactly(3))
+            ->method('addCancelNotifications');
+
+        $this->emailNotificationSender->expects($this->at(0))
+            ->method('addCancelNotifications')
+            ->with($calendarEvent, [$attendee1, $attendee2]);
+
+        $this->emailNotificationSender->expects($this->at(1))
+            ->method('addCancelNotifications')
+            ->with($calendarEventException1, [$extraAttendee1, $extraAttendee2]);
+
+        $this->emailNotificationSender->expects($this->at(2))
+            ->method('addCancelNotifications')
+            ->with($calendarEventException2, [$extraAttendee3]);
+
+        $this->emailNotificationSender->expects($this->once())
+            ->method('sendAddedNotifications');
+
+        $this->notificationManager->onDelete(
+            $calendarEvent,
+            NotificationManager::ADDED_OR_DELETED_NOTIFICATIONS_STRATEGY
+        );
     }
 
     public function testSendNoNotificationsOnDeleteOfParentCalendarEventWithNoneNotificationStrategy()
