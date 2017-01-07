@@ -16,8 +16,9 @@ define(function(require) {
             }
             data.monthsOptions = _.map(this.model.RECURRENCE_MONTHS, function(item, key) {
                 return {
-                    'value': key,
-                    'text': item
+                    value: key,
+                    text: item,
+                    selected: Number(key) === Number(data.monthOfYear)
                 };
             });
             return data;
@@ -28,14 +29,15 @@ define(function(require) {
             var monthOfYear = Number(this.model.get('monthOfYear'));
             var daysInMonth = this._daysInMonth(monthOfYear);
             var $dayOfMonthField = this.$('[data-related-field="dayOfMonth"]');
-            if ('monthOfYear' in model.changed) {
+            if (model.hasChanged('monthOfYear') || model.hasChanged('startTime')) {
                 var dayValidationRules = $dayOfMonthField.data('validation');
                 dayValidationRules.Number.max = daysInMonth;
                 if ($dayOfMonthField.val()) {
                     $dayOfMonthField.trigger('blur');
                 }
             }
-            if (dayOfMonth === 29 && monthOfYear === 2) { // the 29 of february was selected
+            // the 29 of February was selected and it is a leap year
+            if (monthOfYear === 2 && dayOfMonth === 29 && dayOfMonth === daysInMonth) {
                 this.setFewerDaysWarning(dayOfMonth);
             } else {
                 this.setFewerDaysWarning(false);
@@ -43,7 +45,7 @@ define(function(require) {
         },
 
         _daysInMonth: function(month) {
-            var fullYear = new Date().getFullYear();
+            var fullYear = new Date(this.model.get('startTime')).getFullYear();
             return new Date(fullYear, month, 0).getDate();
         },
 

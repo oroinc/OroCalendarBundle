@@ -17,7 +17,7 @@
     {% endif %}
     {% if resource_granted('DELETE', entity) %}
         {{ UI.deleteButton({
-            'dataUrl':      path('oro_calendar_event_delete', {'id': entity.id, 'notifyInvitedUsers': true}),
+            'dataUrl':      path('oro_calendar_event_delete', {'id': entity.id, 'notifyAttendees': 'all'}),
             'dataRedirect': path('oro_calendar_event_index'),
             'aCss':         'no-hash remove-button',
             'dataId':       entity.id,

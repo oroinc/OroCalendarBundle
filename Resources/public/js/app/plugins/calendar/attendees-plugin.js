@@ -1,25 +1,25 @@
 define(function(require) {
     'use strict';
 
-    var GuestsPlugin;
+    var AttendeesPlugin;
     var $ = require('jquery');
     var _ = require('underscore');
     var BasePlugin = require('oroui/js/app/plugins/base/plugin');
-    var GuestNotifierView = require('orocalendar/js/app/views/guest-notifier-view');
+    var AttendeeNotifierView = require('orocalendar/js/app/views/attendee-notifier-view');
 
-    GuestsPlugin = BasePlugin.extend({
+    AttendeesPlugin = BasePlugin.extend({
         enable: function() {
             this.listenTo(this.main, 'event:added', this.onEventAdded);
             this.listenTo(this.main, 'event:changed', this.onEventChanged);
             this.listenTo(this.main, 'event:deleted', this.onEventDeleted);
             this.listenTo(this.main, 'event:beforeSave', this.onEventBeforeSave);
-            GuestsPlugin.__super__.enable.call(this);
+            AttendeesPlugin.__super__.enable.call(this);
         },
 
         // no disable() function 'cause attached callbacks will be removed in parent disable method
 
         /**
-         * Verifies if event is a guest event
+         * Verifies if event is an attendee event
          *
          * @param eventModel
          * @returns {boolean}
@@ -28,22 +28,23 @@ define(function(require) {
             var result = false;
             var parentEventId = eventModel.get('parentEventId');
             var alias = eventModel.get('calendarAlias');
+            var self = this;
             if (parentEventId) {
                 result = Boolean(this.main.getConnectionCollection().find(function(c) {
                     return c.get('calendarAlias') === alias &&
-                        this.collection.get(c.get('calendarUid') + '_' + parentEventId);
+                        self.main.collection.get(c.get('calendarUid') + '_' + parentEventId);
                 }, this));
             }
             return result;
         },
 
         /**
-         * Verifies if event has a loaded guest events
+         * Verifies if event has a loaded attendees events
          *
          * @param parentEventModel
          * @returns {boolean}
          */
-        hasLoadedGuestEvents: function(parentEventModel) {
+        hasLoadedAttendeeEvents: function(parentEventModel) {
             var result = false;
             var attendees = parentEventModel.get('attendees');
             attendees = _.isNull(attendees) ? [] : attendees;
@@ -59,12 +60,12 @@ define(function(require) {
         },
 
         /**
-         * Returns linked guest events
+         * Returns linked attendees events
          *
          * @param parentEventModel
          * @returns {Array.<EventModel>}
          */
-        findGuestEventModels: function(parentEventModel) {
+        findAttendeeEventModels: function(parentEventModel) {
             return this.main.collection.where({
                 parentEventId: '' + parentEventModel.originalId
             });
@@ -77,8 +78,8 @@ define(function(require) {
          */
         onEventAdded: function(eventModel) {
             eventModel.set('editable', eventModel.get('editable') && !this.hasParentEvent(eventModel), {silent: true});
-            if (this.hasLoadedGuestEvents(eventModel)) {
-                this.main.updateEvents();
+            if (this.hasLoadedAttendeeEvents(eventModel)) {
+                this.main.refreshView();
             }
         },
 
@@ -88,22 +89,22 @@ define(function(require) {
          * @param eventModel
          */
         onEventChanged: function(eventModel) {
-            var guestEventModels;
+            var attendeeEventModels;
             var i;
             var updatedAttrs;
             eventModel.set('editable', eventModel.get('editable') && !this.hasParentEvent(eventModel), {silent: true});
-            if (this.hasLoadedGuestEvents(eventModel)) {
+            if (this.hasLoadedAttendeeEvents(eventModel)) {
                 if (eventModel.hasChanged('attendees')) {
-                    this.listenToOnce(eventModel, 'sync', _.bind(this.main.updateEvents, this.main));
+                    this.listenToOnce(eventModel, 'sync', _.bind(this.main.refreshView, this.main));
                     return;
                 }
                 // update linked events
-                guestEventModels = this.findGuestEventModels(eventModel);
+                attendeeEventModels = this.findAttendeeEventModels(eventModel);
                 updatedAttrs = _.pick(eventModel.changedAttributes(),
                     ['start', 'end', 'allDay', 'title', 'description']);
-                for (i = 0; i < guestEventModels.length; i++) {
+                for (i = 0; i < attendeeEventModels.length; i++) {
                     // fill with updated attributes in parent
-                    guestEventModels[i].set(updatedAttrs);
+                    attendeeEventModels[i].set(updatedAttrs);
                 }
             }
         },
@@ -114,15 +115,19 @@ define(function(require) {
          * @param eventModel
          */
         onEventDeleted: function(eventModel) {
-            var guestEventModels;
+            var attendeeEventModels;
             var i;
-            if (this.hasLoadedGuestEvents(eventModel)) {
+            if (this.hasLoadedAttendeeEvents(eventModel)) {
                 // remove guests
-                guestEventModels = this.findGuestEventModels(eventModel);
-                for (i = 0; i < guestEventModels.length; i++) {
-                    this.main.getCalendarElement().fullCalendar('removeEvents', guestEventModels[i].id);
-                    this.main.collection.remove(guestEventModels[i]);
-                    guestEventModels[i].dispose();
+                attendeeEventModels = _.filter(this.findAttendeeEventModels(eventModel), function(attendeeEventModel) {
+                    // in case there are multiple related guest models (sequence of recurring event)
+                    // delete only with same start date
+                    return attendeeEventModel.get('start') === eventModel.get('start');
+                });
+                for (i = 0; i < attendeeEventModels.length; i++) {
+                    this.main.getCalendarElement().fullCalendar('removeEvents', attendeeEventModels[i].id);
+                    this.main.collection.remove(attendeeEventModels[i]);
+                    attendeeEventModels[i].dispose();
                 }
             }
         },
@@ -135,7 +140,7 @@ define(function(require) {
          * @param {object} attrs to be set on event model
          */
         onEventBeforeSave: function(eventModel, promises, attrs) {
-            if (this.hasLoadedGuestEvents(eventModel)) {
+            if (this.hasLoadedAttendeeEvents(eventModel)) {
                 var cleanUp;
                 var deferredConfirmation = $.Deferred();
                 promises.push(deferredConfirmation);
@@ -146,16 +151,15 @@ define(function(require) {
                         delete this.modal;
                     }, this);
 
-                    this.modal = GuestNotifierView.createConfirmNotificationDialog();
-
+                    this.modal = AttendeeNotifierView.createConfirmNotificationDialog();
                     this.modal.on('ok', _.bind(function() {
-                        attrs.notifyInvitedUsers = true;
+                        attrs.notifyAttendees = 'all';
                         deferredConfirmation.resolve();
                         _.defer(cleanUp);
                     }, this));
 
                     this.modal.on('cancel', _.bind(function() {
-                        attrs.notifyInvitedUsers = false;
+                        attrs.notifyAttendees = 'added_or_deleted';
                         deferredConfirmation.resolve();
                         _.defer(cleanUp);
                     }, this));
@@ -164,12 +168,12 @@ define(function(require) {
                         deferredConfirmation.reject();
                         _.defer(cleanUp);
                     }, this));
-
-                    this.modal.open();
                 }
+
+                this.modal.open();
             }
         }
     });
 
-    return GuestsPlugin;
+    return AttendeesPlugin;
 });

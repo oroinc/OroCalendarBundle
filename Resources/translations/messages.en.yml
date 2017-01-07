@@ -100,40 +100,38 @@ oro:
         # Oro/Bundle/CalendarBundle/Entity/CalendarEvent
         #
         calendarevent:
-            entity_label:         Calendar event
-            entity_plural_label:  Calendar events
-            entity_description:   Represent calendar event
-            id.label:             Id
-            title.label:          Title
-            description.label:    Description
-            start.label:          Start
-            end.label:            End
-            calendar.label:       Calendar
-            all_day.label:        All-day event
-            child_events.label:   Child events
-            parent.label:         Parent
-            background_color.label:  Color
-            system_calendar.label:   System Calendar
-            invitation.label:        Guests
-            invitation_status.label: Invitation status
-            attendees.label: Guests
-            related_attendee.label: Related Attendee
+            entity_label:             Calendar event
+            entity_plural_label:      Calendar events
+            entity_description:       Represent calendar event
+            id.label:                 Id
+            title.label:              Title
+            description.label:        Description
+            start.label:              Start
+            end.label:                End
+            calendar.label:           Calendar
+            all_day.label:            All-day event
+            child_events.label:       Child events
+            parent.label:             Parent
+            background_color.label:   Color
+            system_calendar.label:    System Calendar
+            invitation_status.label:  Invitation status
+            attendees.label:          Guests
+            related_attendee.label:   Related Attendee
+            original_start.label:     Original Start
+            cancelled.label:          Is Cancelled
+            no_color:                 Use calendar color
+            updated_by:               added by {{ user }}, updated by {{ editor }}
+            added_by:                 added by {{ user }}
+            view_event:               View {{ entity }}
+            update_event:             Update {{ entity }}
+            delete_event:             Delete {{ entity }}
 
-            recurrence.label:      Recurrence
-            recurrence.exception.label: Part of Series
-            recurrence.alias.recurrent: Recurrent
-            recurrence.na: N/A
+            recurrence.label:                 Recurrence
+            recurrence.exception.label:       Part of Series
+            recurrence.alias.recurrent:       Recurrent
+            recurrence.na:                    N/A
             recurring_event_exceptions.label: Recurring Event Exceptions
-            recurring_event.label: Recurring Event
-            original_start.label: Original Start
-            cancelled.label: Is Cancelled
-
-            no_color:             Use calendar color
-            updated_by:           added by {{ user }}, updated by {{ editor }}
-            added_by:             added by {{ user }}
-            view_event:           View {{ entity }}
-            update_event:         Update {{ entity }}
-            delete_event:         Delete {{ entity }}
+            recurring_event.label:            Recurring Event
 
             statuses:
                 none.label:           Not responded
@@ -170,24 +168,22 @@ oro:
             background_color.label: Background
 
         attendee:
-            entity_label: Attendee
-            entity_plural_label: Guests
-            calendar_event.label: Calendar Event
-            display_name.label: Display Name
-            email.label: Email
-            id.label: Id
-            user.label: User
-            organization.label: Organization
-            owner.label: Owner
-            status.label: Status
-            type.label: Type
+            entity_label:           Attendee
+            entity_plural_label:    Attendees
+            calendar_event.label:   Calendar Event
+            display_name.label:     Display Name
+            email.label:            Email
+            id.label:               Id
+            user.label:             User
+            status.label:           Status
+            type.label:             Type
             type:
-                organizer.label: Organizer
-                optional.label: Optional
-                required.label: Required
+                organizer.label:    Organizer
+                optional.label:     Optional
+                required.label:     Required
 
         autocomplete:
-            attendees: Calendar event Guests
+            attendees:              Calendar event Guests
 
         #
         # Oro/Bundle/CalendarBundle/Entity/Recurrence

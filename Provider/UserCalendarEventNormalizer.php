@@ -209,10 +209,6 @@ class UserCalendarEventNormalizer extends AbstractCalendarEventNormalizer
             ($item['calendar'] === $this->getCurrentCalendarId())
             && $this->securityFacade->isGranted('oro_calendar_event_delete');
 
-        $item['notifiable'] =
-            empty($item['parentEventId'])
-            && !empty($item['attendees']);
-
         $item['editableInvitationStatus'] = $this->canChangeInvitationStatus($item);
     }
 

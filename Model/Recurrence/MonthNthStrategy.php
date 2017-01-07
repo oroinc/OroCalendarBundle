@@ -107,7 +107,10 @@ class MonthNthStrategy extends AbstractStrategy
      */
     protected function getNextOccurrence($interval, $daysOfWeek, $instance, \DateTime $date)
     {
-        $occurrenceDate = new \DateTime("+{$interval} month {$date->format('c')}");
+        $firstDayDate = clone $date;
+        //set date to the first day of the month
+        $firstDayDate->setDate($date->format('Y'), $date->format('m'), 1);
+        $occurrenceDate = new \DateTime("+{$interval} month {$firstDayDate->format('c')}");
 
         $instanceRelativeValue = $this->getInstanceRelativeValue($instance);
         $month = $occurrenceDate->format('M');

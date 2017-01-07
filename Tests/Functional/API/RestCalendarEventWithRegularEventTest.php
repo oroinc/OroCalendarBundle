@@ -72,7 +72,6 @@ class RestCalendarEventWithRegularEventTest extends AbstractCalendarEventTest
         );
 
         $result = $this->getJsonResponseContent($this->client->getResponse(), 200);
-        $this->assertFalse($result['notifiable']);
         $event = $this->getContainer()->get('doctrine')->getRepository('OroCalendarBundle:CalendarEvent')
             ->find($id);
         $this->assertEquals(self::$regularEventParameters['title'], $event->getTitle());

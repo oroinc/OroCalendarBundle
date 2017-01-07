@@ -72,6 +72,9 @@ Oro\Bundle\CalendarBundle\Entity\Recurrence:
         dayOfMonth:
             - Type:
                 type: integer
+            - Range:
+                min: 1
+                max: 31
         monthOfYear:
             - Type:
                 type: integer

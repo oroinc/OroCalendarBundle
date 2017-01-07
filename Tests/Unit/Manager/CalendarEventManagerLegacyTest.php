@@ -139,10 +139,10 @@ class CalendarEventManagerLegacyTest extends \PHPUnit_Framework_TestCase
         // assert default data with default status
         $this->calendarEventManager->onEventUpdate($parentEvent, clone $parentEvent, new Organization(), false);
 
-        $this->assertEquals(CalendarEvent::STATUS_NONE, $parentEvent->getInvitationStatus());
-        $this->assertEquals(CalendarEvent::STATUS_NONE, $firstEvent->getInvitationStatus());
-        $this->assertEquals(CalendarEvent::STATUS_NONE, $secondEvent->getInvitationStatus());
-        $this->assertEquals(CalendarEvent::STATUS_NONE, $eventWithoutRelatedAttendee->getInvitationStatus());
+        $this->assertEquals(Attendee::STATUS_NONE, $parentEvent->getInvitationStatus());
+        $this->assertEquals(Attendee::STATUS_NONE, $firstEvent->getInvitationStatus());
+        $this->assertEquals(Attendee::STATUS_NONE, $secondEvent->getInvitationStatus());
+        $this->assertEquals(Attendee::STATUS_NONE, $eventWithoutRelatedAttendee->getInvitationStatus());
         $this->assertEventDataEquals($parentEvent, $firstEvent);
         $this->assertEventDataEquals($parentEvent, $secondEvent);
         $this->assertEventDataEquals($parentEvent, $eventWithoutRelatedAttendee);
@@ -155,22 +155,22 @@ class CalendarEventManagerLegacyTest extends \PHPUnit_Framework_TestCase
             ->setAllDay(false);
 
         $parentEvent->findRelatedAttendee()->setStatus(
-            new TestEnumValue(CalendarEvent::STATUS_ACCEPTED, CalendarEvent::STATUS_ACCEPTED)
+            new TestEnumValue(Attendee::STATUS_ACCEPTED, Attendee::STATUS_ACCEPTED)
         );
         $firstEvent->findRelatedAttendee()->setStatus(
-            new TestEnumValue(CalendarEvent::STATUS_DECLINED, CalendarEvent::STATUS_DECLINED)
+            new TestEnumValue(Attendee::STATUS_DECLINED, Attendee::STATUS_DECLINED)
         );
         $secondEvent->findRelatedAttendee()->setStatus(
-            new TestEnumValue(CalendarEvent::STATUS_TENTATIVE, CalendarEvent::STATUS_TENTATIVE)
+            new TestEnumValue(Attendee::STATUS_TENTATIVE, Attendee::STATUS_TENTATIVE)
         );
 
         // assert modified data
         $this->calendarEventManager->onEventUpdate($parentEvent, clone $parentEvent, new Organization(), false);
 
-        $this->assertEquals(CalendarEvent::STATUS_ACCEPTED, $parentEvent->getInvitationStatus());
-        $this->assertEquals(CalendarEvent::STATUS_DECLINED, $firstEvent->getInvitationStatus());
-        $this->assertEquals(CalendarEvent::STATUS_TENTATIVE, $secondEvent->getInvitationStatus());
-        $this->assertEquals(CalendarEvent::STATUS_NONE, $eventWithoutRelatedAttendee->getInvitationStatus());
+        $this->assertEquals(Attendee::STATUS_ACCEPTED, $parentEvent->getInvitationStatus());
+        $this->assertEquals(Attendee::STATUS_DECLINED, $firstEvent->getInvitationStatus());
+        $this->assertEquals(Attendee::STATUS_TENTATIVE, $secondEvent->getInvitationStatus());
+        $this->assertEquals(Attendee::STATUS_NONE, $eventWithoutRelatedAttendee->getInvitationStatus());
         $this->assertEventDataEquals($parentEvent, $firstEvent);
         $this->assertEventDataEquals($parentEvent, $secondEvent);
         $this->assertEventDataEquals($parentEvent, $eventWithoutRelatedAttendee);

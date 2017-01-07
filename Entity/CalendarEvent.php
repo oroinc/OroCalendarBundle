@@ -77,11 +77,6 @@ class CalendarEvent extends ExtendCalendarEvent implements RemindableInterface, 
 {
     use DatesAwareTrait;
 
-    const STATUS_NONE      = 'none';
-    const STATUS_TENTATIVE = 'tentative';
-    const STATUS_ACCEPTED  = 'accepted';
-    const STATUS_DECLINED  = 'declined';
-
     /**
      * @ORM\Id
      * @ORM\Column(name="id", type="integer")
@@ -758,18 +753,18 @@ class CalendarEvent extends ExtendCalendarEvent implements RemindableInterface, 
 
     /**
      * Returns invitation status of the event based on related attendee. If there is no related attendee then returns
-     * "none" status (@see CalendarEvent::STATUS_NONE).
+     * "none" status (@see Attendee::STATUS_NONE).
      *
      * @see CalendarEvent::getRelatedAttendee()
      *
-     * @return string Status id (@see CalendarEvent::STATUS_*)
+     * @return string Status id (@see Attendee::STATUS_*)
      */
     public function getInvitationStatus()
     {
         $relatedAttendee = $this->getRelatedAttendee();
 
         if (!$relatedAttendee) {
-            return CalendarEvent::STATUS_NONE;
+            return Attendee::STATUS_NONE;
         }
 
         return $relatedAttendee->getStatusCode();
@@ -1222,9 +1217,12 @@ class CalendarEvent extends ExtendCalendarEvent implements RemindableInterface, 
     }
 
     /**
+     * @todo: After implementation of BAP-13212 this logic should be moved to separate service
+     * or another approach should be used to get the previous state of the event
+     *
      * The implementation should provides possibility to:
      * - Compare main relations of event with original state before update.
-     * - Get access to previous state of the event in emain notifications.
+     * - Get access to previous state of the event in email notifications.
      *
      * @see \Oro\Bundle\CalendarBundle\Form\Handler\CalendarEventHandler::process
      * @see \Oro\Bundle\CalendarBundle\Form\Handler\CalendarEventApiHandler::process
@@ -1233,9 +1231,6 @@ class CalendarEvent extends ExtendCalendarEvent implements RemindableInterface, 
      */
     public function __clone()
     {
-        if ($this->id) {
-            $this->id = null;
-        }
         $this->reminders = new ArrayCollection($this->reminders->toArray());
 
         // To avoid recursion do not clone parent for child event since it is already a clone

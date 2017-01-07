@@ -6,7 +6,7 @@ define([
 ], function(_, __, BaseView, Modal) {
     'use strict';
 
-    var GuestNotifierView = BaseView.extend({
+    var AttendeeNotifierView = BaseView.extend({
         /** @property {Array} */
         exclusions: [
             'input[name="input_action"]',
@@ -29,7 +29,7 @@ define([
             this.isModalShown = false;
 
             this.$form.parent().on('submit.' + this.cid, _.bind(function(e) {
-                if (!this.isModalShown && this.getFormState() !== this.formInitialState) {
+                if (!this.isModalShown && this.getFormState() !== this.formInitialState && this.hasAttendees()) {
                     this.getConfirmDialog().open();
                     this.isModalShown = true;
                     e.preventDefault();
@@ -50,19 +50,23 @@ define([
                     delete this.confirmModal;
                 }
             }
-            GuestNotifierView.__super__.dispose.call(this);
+            AttendeeNotifierView.__super__.dispose.call(this);
+        },
+
+        hasAttendees: function() {
+            return this.$form.find('input[name*="[attendees]"]').val().indexOf('entityId') >= 0;
         },
 
         getConfirmDialog: function() {
             if (!this.confirmModal) {
-                this.confirmModal = GuestNotifierView.createConfirmNotificationDialog();
+                this.confirmModal = AttendeeNotifierView.createConfirmNotificationDialog();
                 this.listenTo(this.confirmModal, 'ok', _.bind(function() {
-                    this.$form.find('input[name*="[notifyInvitedUsers]"]').val(true);
+                    this.$form.find('input[name*="[notifyAttendees]"]').val('all');
                     this.$form.submit();
                     this.isModalShown = false;
                 }, this));
                 this.listenTo(this.confirmModal, 'cancel', _.bind(function() {
-                    this.$form.find('input[name*="[notifyInvitedUsers]"]').val('');
+                    this.$form.find('input[name*="[notifyAttendees]"]').val('added_or_deleted');
                     this.$form.submit();
                     this.isModalShown = false;
                 }, this));
@@ -74,17 +78,18 @@ define([
         },
 
         getFormState: function() {
-            this.disableExclusions(true);
+            var disableStates = {};
+            _.each(this.exclusions, function(selector) {
+                var $field = this.$form.find(selector);
+                disableStates[selector] = Boolean($field.attr('disabled'));
+                $field.attr('disabled', true);
+            }, this);
             var result = this.$form.serialize();
-            this.disableExclusions(false);
+            _.each(this.exclusions, function(selector) {
+                this.$form.find(selector).attr('disabled', disableStates[selector]);
+            }, this);
 
             return result;
-        },
-
-        disableExclusions: function(state) {
-            _.each(this.exclusions, function(selector) {
-                this.$form.find(selector).attr('disabled', state);
-            }, this);
         }
     }, {
         createConfirmNotificationDialog: function() {
@@ -100,5 +105,5 @@ define([
         }
     });
 
-    return GuestNotifierView;
+    return AttendeeNotifierView;
 });

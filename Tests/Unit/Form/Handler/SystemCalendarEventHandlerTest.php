@@ -2,17 +2,17 @@
 
 namespace Oro\Bundle\CalendarBundle\Tests\Unit\Form\Handler;
 
+use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\RequestStack;
+
 use Oro\Bundle\ActivityBundle\Manager\ActivityManager;
 use Oro\Bundle\CalendarBundle\Manager\CalendarEvent\NotificationManager;
 use Oro\Bundle\SecurityBundle\SecurityFacade;
-use Symfony\Component\HttpFoundation\Request;
-
 use Oro\Bundle\CalendarBundle\Entity\CalendarEvent;
 use Oro\Bundle\CalendarBundle\Form\Handler\SystemCalendarEventHandler;
 use Oro\Bundle\CalendarBundle\Manager\CalendarEventManager;
 use Oro\Bundle\CalendarBundle\Tests\Unit\ReflectionUtil;
 use Oro\Bundle\UserBundle\Entity\User;
-
 use Oro\Bundle\OrganizationBundle\Entity\Organization;
 
 class SystemCalendarEventHandlerTest extends \PHPUnit_Framework_TestCase
@@ -22,6 +22,9 @@ class SystemCalendarEventHandlerTest extends \PHPUnit_Framework_TestCase
 
     /** @var Request */
     protected $request;
+
+    /** @var RequestStack */
+    protected $requestStack;
 
     /** @var \PHPUnit_Framework_MockObject_MockObject */
     protected $objectManager;
@@ -51,6 +54,8 @@ class SystemCalendarEventHandlerTest extends \PHPUnit_Framework_TestCase
     {
         $this->form = $this->createMock('Symfony\Component\Form\Form');
         $this->request = new Request();
+        $this->requestStack = new RequestStack();
+        $this->requestStack->push($this->request);
 
         $this->objectManager = $this->createMock('Doctrine\Common\Persistence\ObjectManager');
 
@@ -84,7 +89,7 @@ class SystemCalendarEventHandlerTest extends \PHPUnit_Framework_TestCase
 
         $this->entity  = new CalendarEvent();
         $this->handler = new SystemCalendarEventHandler(
-            $this->request,
+            $this->requestStack,
             $doctrine,
             $this->securityFacade,
             $this->activityManager,

@@ -11,6 +11,10 @@ UPGRADE FROM 1.10 to 2.0
 
 #Other changes
 - Removed dependency from `Oro\Bundle\SecurityBundle\SecurityFacade` in `Oro\Bundle\CalendarBundle\Model\Email\EmailSendProcessor`.
+- Removed constant `Oro\Bundle\CalendarBundle\Entity\CalendarEvent::STATUS_NONE`. Use `Oro\Bundle\CalendarBundle\Entity\Attendee::STATUS_NONE`.
+- Removed constant `Oro\Bundle\CalendarBundle\Entity\CalendarEvent::STATUS_TENTATIVE`. Use `Oro\Bundle\CalendarBundle\Entity\Attendee::STATUS_TENTATIVE`.
+- Removed constant `Oro\Bundle\CalendarBundle\Entity\CalendarEvent::STATUS_ACCEPTED`. Use `Oro\Bundle\CalendarBundle\Entity\Attendee::STATUS_ACCEPTED`.
+- Removed constant `Oro\Bundle\CalendarBundle\Entity\CalendarEvent::STATUS_DECLINED`. Use `Oro\Bundle\CalendarBundle\Entity\Attendee::STATUS_DECLINED`.
 - A new property `editableInvitationStatus` was added to the API of calendar events. This property is read-only and means that current API user is able to change invitation status of the event.
 - A new property `updateExceptions` was added to the API of calendar events. By default is FALSE. Passing TRUE value will trigger synchronization of exceptions of recurring calendar events. 
 - Deprecated property `invitedUsers` was removed from the API.
@@ -42,7 +46,7 @@ UPGRADE FROM 1.10 to 2.0
 - Updated view template `OroCalendarBundle:CalendarEvent:update.html.twig`.
 - Updated view template `OroCalendarBundle:SystemCalendarEvent:update.html.twig`.
 - Updated view template My Calendar widget `OroCalendarBundle:::templates.html.twig`.
-- Updated macroses in `OroCalendarBundle::invitations.html.twig`: `calendar_event_invitation_status`, `calendar_event_invitation_action` (removed), `calendar_event_invitation_going_status` (added).
+- Updated macroses in `OroCalendarBundle::invitations.html.twig`: `calendar_event_invitation_status`, `calendar_event_invitation_action` (removed), `calendar_event_invitation_going_status` (added), `notify_attendees_component` (added), `notifyGuestsComponent` (removed).
 - Removed template `OroCalendarBundle:CalendarEvent:widget\invitationButtons.html.twig`. A new widget to change invitation status added in `OroCalendarBundle:CalendarEvent:widget\invitationControl.html.twig` and JS module `orocalendar/js/app/views/change-status-view`.
 - Removed method `Oro\Bundle\CalendarBundle\Manager\AttendeeRelationManager::createAttendee`, added new methods instead: `Oro\Bundle\CalendarBundle\Manager\AttendeeRelationManager::setRelatedEntity`, `Oro\Bundle\CalendarBundle\Manager\AttendeeManager::createAttendee`.
 - Renamed method `Oro\Bundle\CalendarBundle\Manager\AttendeeRelationManager::getRelatedDisplayName` to `Oro\Bundle\CalendarBundle\Manager\AttendeeRelationManager::getDisplayName`.
@@ -50,6 +54,14 @@ UPGRADE FROM 1.10 to 2.0
 - Updated email templates for calendar events: `calendar_invitation_invite`, `calendar_invitation_update`, `calendar_invitation_delete_parent_event`, `calendar_invitation_uninvite`, `calendar_invitation_accepted`, `calendar_invitation_tentative`, `calendar_invitation_declined`, `calendar_invitation_delete_child_event`.
 - Changed signature of method `Oro\Bundle\CalendarBundle\Model\Email\EmailNotification::setEmails`, added `array` type hint.
 - Changed signature of method `Oro\Bundle\CalendarBundle\Controller\Api\Rest\CalendarEventController::cgetAction`, added argument for request.
+- Removed controller `Oro\Bundle\CalendarBundle\Controller\Api\Rest\CalendarEventGuestController` and routes starting from `oro_api_calendarevents_guest`. Removed REST API methods `/api/rest/{version}/calendarevent_guests.`.
+- Removed class `Oro\Bundle\CalendarBundle\Manager\CalendarEventGuestApiEntityManager` and service `oro_calendar.calendar_event_guest.manager.api`.
 - Removed parameters from DIC: `oro_calendar.oro_calendar_event_attendees_select.form.type.class`, `oro_calendar.oro_calendar_event_attendees_api.form.type.class`, `oro_calendar.system_calendar_event.form.handler.class`, `oro_calendar.attendees_to_view_transformer.class`, `oro_calendar.user_ids_to_users.tranformer.class`, `oro_calendar.calendar_event.form.handler.api.class`.
 - Removed deprecated factory properties in definitions of services: `oro_calendar.calendar_event.form`, `oro_calendar.calendar_event.form.template`, `oro_calendar.calendar_event.form.api`, `oro_calendar.calendar_property.form.api`, `oro_calendar.calendar_property.form.soap.api`, `oro_calendar.system_calendar.form`.
 - Removed services: `oro_calendar.user_ids_to_users.tranformer`, `oro_calendar.attendees_to_view_transformer`, `oro_calendar.oro_calendar_event_attendees_api.form.type`.
+- Property `notifyInvitedUsers` in calendar events API was removed. Use `notifyAttendees` instead with one of the values: `all`, `none`, `added_or_deleted`.
+- Property `notifiable` in calendar events API responses was removed.
+- renamed JS module "orocalendar/js/app/views/guest-notifier-view" to "orocalendar/js/app/views/attendee-notifier-view"
+- removed JS module "orocalendar/js/app/models/calendar-event/guest-collection" since it was used only in OroHangoutsBundle but now it is not
+- renamed JS module "orocalendar/js/app/plugins/calendar/guests-plugin" to "orocalendar/js/app/plugins/calendar/attendees-plugin"
+- replaced all occurrences of word "guest" with "attendee" in the JS and LESS code for consistency with the code on the backend.

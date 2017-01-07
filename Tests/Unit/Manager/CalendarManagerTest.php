@@ -222,7 +222,6 @@ class CalendarManagerTest extends \PHPUnit_Framework_TestCase
                         [
                             'id'    => 1,
                             'title' => 'event1',
-                            'notifiable' => true
                         ],
                         [
                             'id'        => 2,
@@ -247,7 +246,6 @@ class CalendarManagerTest extends \PHPUnit_Framework_TestCase
                             'title'      => 'event4',
                             'editable'   => false,
                             'removable'  => false,
-                            'notifiable' => false
                         ],
                     ]
                 )
@@ -262,7 +260,6 @@ class CalendarManagerTest extends \PHPUnit_Framework_TestCase
                     'calendarAlias' => 'provider1',
                     'editable'      => true,
                     'removable'     => true,
-                    'notifiable'    => true
                 ],
                 [
                     'id'            => 2,
@@ -270,7 +267,6 @@ class CalendarManagerTest extends \PHPUnit_Framework_TestCase
                     'calendarAlias' => 'provider1',
                     'editable'      => true,
                     'removable'     => false,
-                    'notifiable'    => false
                 ],
                 [
                     'id'            => 1,
@@ -278,7 +274,6 @@ class CalendarManagerTest extends \PHPUnit_Framework_TestCase
                     'calendarAlias' => 'provider2',
                     'editable'      => true,
                     'removable'     => true,
-                    'notifiable'    => false
                 ],
                 [
                     'id'            => 3,
@@ -286,7 +281,6 @@ class CalendarManagerTest extends \PHPUnit_Framework_TestCase
                     'calendarAlias' => 'provider2',
                     'editable'      => false,
                     'removable'     => false,
-                    'notifiable'    => false
                 ],
             ],
             $result

@@ -45,7 +45,7 @@ class CalendarEventApiTypeSubscriber implements EventSubscriberInterface
 
         $this->fixBooleanFields(
             $data,
-            ['allDay', 'isCancelled', 'use_hangout', 'notifyInvitedUsers']
+            ['allDay', 'isCancelled', 'use_hangout']
         );
 
         if (isset($data['attendees']) && ($data['attendees'] === '')) {

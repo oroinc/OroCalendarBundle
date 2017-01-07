@@ -3,8 +3,8 @@
     <option value="<%- option.value %>"<% if (option.selected) { %> selected<% } %>><%= option.label %></option>
     <% }) %>
 </select>
-<input name="<%- inputNamePrefixes %>[interval]" value="<%- interval %>" class="no-uniform"/>
-<select name="<%- inputNamePrefixes %>[instance]">
+<input name="<%- inputNamePrefixes %>[interval]" value="<%- interval %>"/>
+<select name="<%- inputNamePrefixes %>[instance]" class="no-uniform">
     <option></option>
     <% _.each(instanceOptions, function(option) { %>
     <option value="<%- option.value %>"<% if (option.selected) { %> selected<% } %>><%- option.label %></option>

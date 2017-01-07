@@ -49,7 +49,7 @@ class CalendarEventRepositoryTest extends OrmTestCase
         $prefix = CalendarEventRepository::RECURRENCE_FIELD_PREFIX;
         $this->assertEquals(
             $this->getBaseSelectString() . ','
-            . ' (CASE WHEN (status.id IS NULL) THEN \'none\' ELSE status.id END) as invitationStatus,'
+            . ' COALESCE(status.id, \'none\') as invitationStatus,'
             . ' IDENTITY(e.parent) AS parentEventId,'
             . ' c.id as calendar,'
             . ' IDENTITY(relatedAttendee.user) AS relatedAttendeeUserId,'
@@ -93,7 +93,7 @@ class CalendarEventRepositoryTest extends OrmTestCase
         $prefix = CalendarEventRepository::RECURRENCE_FIELD_PREFIX;
         $this->assertEquals(
             $this->getBaseSelectString() . ','
-            . ' (CASE WHEN (status.id IS NULL) THEN \'none\' ELSE status.id END) as invitationStatus,'
+            . ' COALESCE(status.id, \'none\') as invitationStatus,'
             . ' IDENTITY(e.parent) AS parentEventId,'
             . ' c.id as calendar,'
             . ' IDENTITY(relatedAttendee.user) AS relatedAttendeeUserId,'
@@ -141,7 +141,7 @@ class CalendarEventRepositoryTest extends OrmTestCase
         $prefix = CalendarEventRepository::RECURRENCE_FIELD_PREFIX;
         $this->assertEquals(
             $this->getBaseSelectString() . ','
-            . ' (CASE WHEN (status.id IS NULL) THEN \'none\' ELSE status.id END) as invitationStatus,'
+            . ' COALESCE(status.id, \'none\') as invitationStatus,'
             . ' IDENTITY(e.parent) AS parentEventId,'
             . ' c.id as calendar,'
             . ' IDENTITY(relatedAttendee.user) AS relatedAttendeeUserId,'
@@ -191,7 +191,7 @@ class CalendarEventRepositoryTest extends OrmTestCase
         $this->assertEquals(
             $this->getBaseSelectString() . ','
             . ' e.status,'
-            . ' (CASE WHEN (status.id IS NULL) THEN \'none\' ELSE status.id END) as invitationStatus,'
+            . ' COALESCE(status.id, \'none\') as invitationStatus,'
             . ' IDENTITY(e.parent) AS parentEventId,'
             . ' c.id as calendar,'
             . ' IDENTITY(relatedAttendee.user) AS relatedAttendeeUserId,'

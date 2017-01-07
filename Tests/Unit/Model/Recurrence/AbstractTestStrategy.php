@@ -41,29 +41,31 @@ abstract class AbstractTestStrategy extends \PHPUnit_Framework_TestCase
         );
         $recurrence = new Entity\Recurrence();
         $recurrence->setRecurrenceType($this->getType());
-        if (array_key_exists('startTime', $params)) {
+        if (!empty($params['startTime'])) {
             $recurrence->setStartTime(new \DateTime($params['startTime'], $timeZone));
         }
-        if (array_key_exists('endTime', $params)) {
+        if (!empty($params['endTime'])) {
             $recurrence->setEndTime(new \DateTime($params['endTime'], $timeZone))
                 ->setCalculatedEndTime(new \DateTime($params['endTime'], $timeZone));
+        } else {
+            $recurrence->setCalculatedEndTime($this->strategy->getCalculatedEndTime($recurrence));
         }
-        if (array_key_exists('interval', $params)) {
+        if (!empty($params['interval'])) {
             $recurrence->setInterval($params['interval']);
         }
-        if (array_key_exists('instance', $params)) {
+        if (!empty($params['instance'])) {
             $recurrence->setInstance($params['instance']);
         }
-        if (array_key_exists('occurrences', $params)) {
+        if (!empty($params['occurrences'])) {
             $recurrence->setOccurrences($params['occurrences']);
         }
-        if (array_key_exists('daysOfWeek', $params)) {
+        if (!empty($params['daysOfWeek'])) {
             $recurrence->setDayOfWeek($params['daysOfWeek']);
         }
-        if (array_key_exists('dayOfMonth', $params)) {
+        if (!empty($params['dayOfMonth'])) {
             $recurrence->setDayOfMonth($params['dayOfMonth']);
         }
-        if (array_key_exists('monthOfYear', $params)) {
+        if (!empty($params['monthOfYear'])) {
             $recurrence->setMonthOfYear($params['monthOfYear']);
         }
         $result = $this->strategy->getOccurrences(

@@ -16,14 +16,16 @@ parameters:
 services:
     oro_calendar.calendar_event.form.type:
         class: '%oro_calendar.calendar_event.form.type.class%'
+        arguments:
+            - '@oro_calendar.calendar_event.notification_manager'
         tags:
             - { name: form.type, alias: oro_calendar_event }
 
     oro_calendar.calendar_event.form.type.api:
         class: '%oro_calendar.calendar_event.form.type.api.class%'
-        scope: 'request'
         arguments:
             - '@oro_calendar.calendar_event_manager'
+            - '@oro_calendar.calendar_event.notification_manager'
         tags:
             - { name: form.type, alias: oro_calendar_event_api }
 
@@ -52,10 +54,9 @@ services:
 
     oro_calendar.calendar_event.form.handler.abstract:
         class: 'Oro\Bundle\CalendarBundle\Form\Handler\AbstractCalendarEventHandler'
-        scope: 'request'
         abstract: true
         arguments:
-            - '@request'
+            - '@request_stack'
             - '@doctrine'
             - '@oro_security.security_facade'
             - '@oro_activity.manager'
@@ -65,7 +66,6 @@ services:
     oro_calendar.calendar_event.form.handler:
         class: 'Oro\Bundle\CalendarBundle\Form\Handler\CalendarEventHandler'
         parent: 'oro_calendar.calendar_event.form.handler.abstract'
-        scope: 'request'
         calls:
             - ['setForm', ['@oro_calendar.calendar_event.form']]
             - ['setEntityRoutingHelper', ['@oro_entity.routing_helper']]
@@ -73,15 +73,12 @@ services:
     oro_calendar.system_calendar_event.form.handler:
         class: 'Oro\Bundle\CalendarBundle\Form\Handler\SystemCalendarEventHandler'
         parent: 'oro_calendar.calendar_event.form.handler.abstract'
-        scope: 'request'
         calls:
             - ['setForm', ['@oro_calendar.calendar_event.form']]
-
 
     oro_calendar.calendar_event.form.handler.api:
         class: 'Oro\Bundle\CalendarBundle\Form\Handler\CalendarEventApiHandler'
         parent: 'oro_calendar.calendar_event.form.handler.abstract'
-        scope: 'request'
         calls:
             - ['setForm', ['@oro_calendar.calendar_event.form.api']]
 

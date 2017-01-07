@@ -83,6 +83,7 @@ class CalendarEventDeleteHandler extends DeleteHandler
      */
     protected function checkPermissions($entity, ObjectManager $em)
     {
+        /** @var CalendarEvent $entity */
         /** @var SystemCalendar|null $calendar */
         $calendar = $entity->getSystemCalendar();
         if ($calendar) {
@@ -104,6 +105,11 @@ class CalendarEventDeleteHandler extends DeleteHandler
                 }
             }
         } else {
+            // for regular calendar event, check access by it's calendar
+            // todo: Temporary solution. Should be deleted in scope of BAP-13256
+            if (!$this->securityFacade->isGranted('VIEW', $entity->getCalendar())) {
+                throw new ForbiddenException('Access denied.');
+            }
             parent::checkPermissions($entity, $em);
         }
     }
@@ -160,24 +166,25 @@ class CalendarEventDeleteHandler extends DeleteHandler
         }
 
         $em->flush();
-        
-        if ($this->shouldSendNotification()) {
-            if ($cancelled) {
-                $this->notificationManager->onUpdate($entity, $clonedEntity, true);
-            } else {
-                $this->notificationManager->onDelete($entity);
-            }
+
+        if ($cancelled) {
+            $this->notificationManager->onUpdate($entity, $clonedEntity, $this->getNotificationStrategy());
+        } else {
+            $this->notificationManager->onDelete($entity, $this->getNotificationStrategy());
         }
     }
     
     /**
-     * @return bool
+     * @return string
      */
-    protected function shouldSendNotification()
+    protected function getNotificationStrategy()
     {
         $request = $this->requestStack->getCurrentRequest();
+        if (!$request) {
+            return NotificationManager::ALL_NOTIFICATIONS_STRATEGY;
+        }
 
-        return !$request || (bool) $request->query->get('notifyInvitedUsers', false);
+        return $request->query->get('notifyAttendees', NotificationManager::NONE_NOTIFICATIONS_STRATEGY);
     }
 
     /**

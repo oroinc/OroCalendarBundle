@@ -3,13 +3,16 @@
 namespace Oro\Bundle\CalendarBundle\Tests\Unit\Form\Type;
 
 use Symfony\Component\Form\AbstractType;
+use Symfony\Component\Form\Extension\Validator\ValidatorExtension;
 use Symfony\Component\Form\PreloadedExtension;
 use Symfony\Component\Form\Test\TypeTestCase;
+use Symfony\Component\Validator\Validation;
 
 use Doctrine\Common\Collections\ArrayCollection;
 
 use Genemu\Bundle\FormBundle\Form\JQuery\Type\Select2Type;
 
+use Oro\Bundle\CalendarBundle\Manager\CalendarEvent\NotificationManager;
 use Oro\Bundle\CalendarBundle\Entity\Calendar;
 use Oro\Bundle\CalendarBundle\Entity\CalendarEvent;
 use Oro\Bundle\CalendarBundle\Form\Type\CalendarEventAttendeesApiType;
@@ -39,7 +42,7 @@ class CalendarEventApiTypeTest extends TypeTestCase
     protected $calendarEventManager;
 
     /** @var \PHPUnit_Framework_MockObject_MockObject */
-    protected $securityFacade;
+    protected $notificationManager;
 
     /** @var CalendarEventApiType */
     protected $calendarEventApiType;
@@ -53,9 +56,6 @@ class CalendarEventApiTypeTest extends TypeTestCase
             $this->getMockBuilder('Oro\Bundle\CalendarBundle\Manager\CalendarEventManager')
                 ->disableOriginalConstructor()
                 ->getMock();
-        $this->securityFacade       = $this->getMockBuilder('Oro\Bundle\SecurityBundle\SecurityFacade')
-            ->disableOriginalConstructor()
-            ->getMock();
 
         $userMeta = $this->getMockBuilder('Doctrine\ORM\Mapping\ClassMetadata')
             ->disableOriginalConstructor()
@@ -121,14 +121,13 @@ class CalendarEventApiTypeTest extends TypeTestCase
             ->method('getManagerForClass')
             ->willReturn($emForEvent);
 
-        $attendeeRelationManager = $this->getMockBuilder('Oro\Bundle\CalendarBundle\Manager\AttendeeRelationManager')
+        $this->notificationManager = $this->getMockBuilder(NotificationManager::class)
             ->disableOriginalConstructor()
             ->getMock();
 
         $this->calendarEventApiType = new CalendarEventApiType(
             $this->calendarEventManager,
-            $attendeeRelationManager,
-            $this->securityFacade
+            $this->notificationManager
         );
 
         parent::setUp();
@@ -144,30 +143,8 @@ class CalendarEventApiTypeTest extends TypeTestCase
                 $this->loadTypes(),
                 []
             ),
+            new ValidatorExtension(Validation::createValidator())
         ];
-    }
-
-    /**
-     * @return \PHPUnit_Framework_MockObject_MockObject
-     */
-    protected function getRequest($hasAttendees = true)
-    {
-        $request = $this->getMockBuilder('Symfony\Component\HttpFoundation\Request')
-            ->disableOriginalConstructor()
-            ->getMock();
-
-        $parameterBag = $this->getMockBuilder('Symfony\Component\HttpFoundation\ParameterBag')
-            ->disableOriginalConstructor()
-            ->getMock();
-
-        $parameterBag->expects($this->once())
-            ->method('has')
-            ->with('attendees')
-            ->willReturn($hasAttendees);
-
-        $request->request = $parameterBag;
-
-        return $request;
     }
 
     public function testSubmitValidData()
@@ -183,6 +160,11 @@ class CalendarEventApiTypeTest extends TypeTestCase
             'reminders'       => new ArrayCollection(),
             'attendees'       => new ArrayCollection(),
         ];
+
+        $this->notificationManager
+            ->expects($this->any())
+            ->method('getSupportedStrategies')
+            ->willReturn([]);
 
         $form = $this->factory->create(
             $this->calendarEventApiType,
@@ -234,6 +216,11 @@ class CalendarEventApiTypeTest extends TypeTestCase
             'backgroundColor' => '#FF0000',
             'reminders'       => new ArrayCollection(),
         ];
+
+        $this->notificationManager
+            ->expects($this->any())
+            ->method('getSupportedStrategies')
+            ->willReturn([]);
 
         $form = $this->factory->create(
             $this->calendarEventApiType,
