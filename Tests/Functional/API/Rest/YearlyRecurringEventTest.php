@@ -58,10 +58,10 @@ class YearlyRecurringEventTest extends AbstractTestCase
         ];
         $this->restRequest(
             [
-                'method'    => 'POST',
-                'url'       => $this->getUrl('oro_api_post_calendarevent'),
-                'server'    => $this->generateWsseAuthHeader('foo_user_1', 'foo_user_1_api_key'),
-                'content'   => json_encode($eventData)
+                'method'  => 'POST',
+                'url'     => $this->getUrl('oro_api_post_calendarevent'),
+                'server'  => $this->generateWsseAuthHeader('foo_user_1', 'foo_user_1_api_key'),
+                'content' => json_encode($eventData)
             ]
         );
 
@@ -73,7 +73,7 @@ class YearlyRecurringEventTest extends AbstractTestCase
         $this->restRequest(
             [
                 'method' => 'GET',
-                'url' => $this->getUrl(
+                'url'    => $this->getUrl(
                     'oro_api_get_calendarevents',
                     [
                         'calendar'    => $this->getReference('oro_calendar:calendar:foo_user_1')->getId(),
@@ -89,34 +89,34 @@ class YearlyRecurringEventTest extends AbstractTestCase
         $response = $this->getRestResponseContent(['statusCode' => 200, 'contentType' => 'application/json']);
         $expectedResponse = [
             [
-                'id'            => $recurringEvent->getId(),
-                'title'         => 'Test Yearly Recurring Event',
-                'description'   => 'Test Yearly Recurring Event Description',
-                'allDay'        => false,
-                'calendar'      => $this->getReference('oro_calendar:calendar:foo_user_1')->getId(),
-                'start'         => '2015-02-28T09:00:00+00:00',
-                'end'           => '2015-02-28T09:30:00+00:00',
-                'attendees'     => [],
+                'id'          => $recurringEvent->getId(),
+                'title'       => 'Test Yearly Recurring Event',
+                'description' => 'Test Yearly Recurring Event Description',
+                'allDay'      => false,
+                'calendar'    => $this->getReference('oro_calendar:calendar:foo_user_1')->getId(),
+                'start'       => '2015-02-28T09:00:00+00:00',
+                'end'         => '2015-02-28T09:30:00+00:00',
+                'attendees'   => [],
             ],
             [
-                'id'            => $recurringEvent->getId(),
-                'title'         => 'Test Yearly Recurring Event',
-                'description'   => 'Test Yearly Recurring Event Description',
-                'allDay'        => false,
-                'calendar'      => $this->getReference('oro_calendar:calendar:foo_user_1')->getId(),
-                'start'         => '2016-02-29T09:00:00+00:00', // leap year
-                'end'           => '2016-02-29T09:30:00+00:00',
-                'attendees'     => [],
+                'id'          => $recurringEvent->getId(),
+                'title'       => 'Test Yearly Recurring Event',
+                'description' => 'Test Yearly Recurring Event Description',
+                'allDay'      => false,
+                'calendar'    => $this->getReference('oro_calendar:calendar:foo_user_1')->getId(),
+                'start'       => '2016-02-29T09:00:00+00:00', // leap year
+                'end'         => '2016-02-29T09:30:00+00:00',
+                'attendees'   => [],
             ],
             [
-                'id'            => $recurringEvent->getId(),
-                'title'         => 'Test Yearly Recurring Event',
-                'description'   => 'Test Yearly Recurring Event Description',
-                'allDay'        => false,
-                'calendar'      => $this->getReference('oro_calendar:calendar:foo_user_1')->getId(),
-                'start'         => '2017-02-28T09:00:00+00:00',
-                'end'           => '2017-02-28T09:30:00+00:00',
-                'attendees'     => [],
+                'id'          => $recurringEvent->getId(),
+                'title'       => 'Test Yearly Recurring Event',
+                'description' => 'Test Yearly Recurring Event Description',
+                'allDay'      => false,
+                'calendar'    => $this->getReference('oro_calendar:calendar:foo_user_1')->getId(),
+                'start'       => '2017-02-28T09:00:00+00:00',
+                'end'         => '2017-02-28T09:30:00+00:00',
+                'attendees'   => [],
             ],
         ];
         $this->assertResponseEquals($expectedResponse, $response, false);

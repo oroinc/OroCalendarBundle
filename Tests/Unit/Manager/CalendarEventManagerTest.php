@@ -18,7 +18,7 @@ class CalendarEventManagerTest extends \PHPUnit_Framework_TestCase
     protected $updateManager;
 
     /** @var \PHPUnit_Framework_MockObject_MockObject */
-    protected $doctrineHelper;
+    protected $doctrine;
 
     /** @var \PHPUnit_Framework_MockObject_MockObject */
     protected $securityFacade;
@@ -34,14 +34,12 @@ class CalendarEventManagerTest extends \PHPUnit_Framework_TestCase
 
     protected function setUp()
     {
-        $this->updateManager     = $this->getMockBuilder(
+        $this->updateManager      = $this->getMockBuilder(
             'Oro\Bundle\CalendarBundle\Manager\CalendarEvent\UpdateManager'
         )
             ->disableOriginalConstructor()
             ->getMock();
-        $this->doctrineHelper     = $this->getMockBuilder('Oro\Bundle\EntityBundle\ORM\DoctrineHelper')
-            ->disableOriginalConstructor()
-            ->getMock();
+        $this->doctrine           = $this->createMock('Doctrine\Common\Persistence\ManagerRegistry');
         $this->securityFacade     = $this->getMockBuilder('Oro\Bundle\SecurityBundle\SecurityFacade')
             ->disableOriginalConstructor()
             ->getMock();
@@ -55,7 +53,7 @@ class CalendarEventManagerTest extends \PHPUnit_Framework_TestCase
 
         $this->manager = new CalendarEventManager(
             $this->updateManager,
-            $this->doctrineHelper,
+            $this->doctrine,
             $this->securityFacade,
             $this->entityNameResolver,
             $this->calendarConfig
@@ -76,8 +74,8 @@ class CalendarEventManagerTest extends \PHPUnit_Framework_TestCase
         $repo = $this->getMockBuilder('Oro\Bundle\CalendarBundle\Entity\Repository\SystemCalendarRepository')
             ->disableOriginalConstructor()
             ->getMock();
-        $this->doctrineHelper->expects($this->once())
-            ->method('getEntityRepository')
+        $this->doctrine->expects($this->once())
+            ->method('getRepository')
             ->with('OroCalendarBundle:SystemCalendar')
             ->will($this->returnValue($repo));
         $qb = $this->getMockBuilder('Doctrine\ORM\QueryBuilder')
@@ -129,8 +127,8 @@ class CalendarEventManagerTest extends \PHPUnit_Framework_TestCase
         $repo = $this->getMockBuilder('Oro\Bundle\CalendarBundle\Entity\Repository\CalendarRepository')
             ->disableOriginalConstructor()
             ->getMock();
-        $this->doctrineHelper->expects($this->once())
-            ->method('getEntityRepository')
+        $this->doctrine->expects($this->once())
+            ->method('getRepository')
             ->with('OroCalendarBundle:Calendar')
             ->will($this->returnValue($repo));
         $qb = $this->getMockBuilder('Doctrine\ORM\QueryBuilder')
@@ -192,8 +190,8 @@ class CalendarEventManagerTest extends \PHPUnit_Framework_TestCase
         $repo = $this->getMockBuilder('Oro\Bundle\CalendarBundle\Entity\Repository\CalendarRepository')
             ->disableOriginalConstructor()
             ->getMock();
-        $this->doctrineHelper->expects($this->once())
-            ->method('getEntityRepository')
+        $this->doctrine->expects($this->once())
+            ->method('getRepository')
             ->with('OroCalendarBundle:Calendar')
             ->will($this->returnValue($repo));
         $repo->expects($this->once())
@@ -215,8 +213,8 @@ class CalendarEventManagerTest extends \PHPUnit_Framework_TestCase
         $event = new CalendarEvent();
         $event->setCalendar($calendar);
 
-        $this->doctrineHelper->expects($this->never())
-            ->method('getEntityRepository');
+        $this->doctrine->expects($this->never())
+            ->method('getRepository');
 
         $this->manager->setCalendar($event, Calendar::CALENDAR_ALIAS, $calendarId);
 
@@ -238,8 +236,8 @@ class CalendarEventManagerTest extends \PHPUnit_Framework_TestCase
         $repo = $this->getMockBuilder('Oro\Bundle\CalendarBundle\Entity\Repository\SystemCalendarRepository')
             ->disableOriginalConstructor()
             ->getMock();
-        $this->doctrineHelper->expects($this->once())
-            ->method('getEntityRepository')
+        $this->doctrine->expects($this->once())
+            ->method('getRepository')
             ->with('OroCalendarBundle:SystemCalendar')
             ->will($this->returnValue($repo));
         $repo->expects($this->once())
@@ -267,8 +265,8 @@ class CalendarEventManagerTest extends \PHPUnit_Framework_TestCase
         $repo = $this->getMockBuilder('Oro\Bundle\CalendarBundle\Entity\Repository\SystemCalendarRepository')
             ->disableOriginalConstructor()
             ->getMock();
-        $this->doctrineHelper->expects($this->once())
-            ->method('getEntityRepository')
+        $this->doctrine->expects($this->once())
+            ->method('getRepository')
             ->with('OroCalendarBundle:SystemCalendar')
             ->will($this->returnValue($repo));
         $repo->expects($this->once())
@@ -306,8 +304,8 @@ class CalendarEventManagerTest extends \PHPUnit_Framework_TestCase
             ->with(Attendee::STATUS_ACCEPTED)
             ->will($this->returnValue($status));
 
-        $this->doctrineHelper->expects($this->any())
-            ->method('getEntityRepository')
+        $this->doctrine->expects($this->any())
+            ->method('getRepository')
             ->with('Extend\Entity\EV_Ce_Attendee_Status')
             ->will($this->returnValue($statusRepository));
 
@@ -349,8 +347,8 @@ class CalendarEventManagerTest extends \PHPUnit_Framework_TestCase
             ->with(Attendee::STATUS_ACCEPTED)
             ->will($this->returnValue(null));
 
-        $this->doctrineHelper->expects($this->any())
-            ->method('getEntityRepository')
+        $this->doctrine->expects($this->any())
+            ->method('getRepository')
             ->with('Extend\Entity\EV_Ce_Attendee_Status')
             ->will($this->returnValue($statusRepository));
 
@@ -379,8 +377,8 @@ class CalendarEventManagerTest extends \PHPUnit_Framework_TestCase
             ->with(Attendee::STATUS_ACCEPTED)
             ->will($this->returnValue($status));
 
-        $this->doctrineHelper->expects($this->any())
-            ->method('getEntityRepository')
+        $this->doctrine->expects($this->any())
+            ->method('getRepository')
             ->with('Extend\Entity\EV_Ce_Attendee_Status')
             ->will($this->returnValue($statusRepository));
 

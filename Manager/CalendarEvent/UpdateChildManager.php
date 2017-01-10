@@ -2,10 +2,11 @@
 
 namespace Oro\Bundle\CalendarBundle\Manager\CalendarEvent;
 
+use Doctrine\Common\Persistence\ManagerRegistry;
+
 use Oro\Bundle\CalendarBundle\Entity\Calendar;
 use Oro\Bundle\CalendarBundle\Entity\CalendarEvent;
 use Oro\Bundle\CalendarBundle\Entity\Repository\CalendarRepository;
-use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
 use Oro\Bundle\OrganizationBundle\Entity\Organization;
 
 /**
@@ -20,16 +21,16 @@ use Oro\Bundle\OrganizationBundle\Entity\Organization;
 class UpdateChildManager
 {
     /**
-     * @var DoctrineHelper
+     * @var ManagerRegistry
      */
-    protected $doctrineHelper;
+    protected $doctrine;
 
     /**
-     * @param DoctrineHelper $doctrineHelper
+     * @param ManagerRegistry $doctrine
      */
-    public function __construct(DoctrineHelper $doctrineHelper)
+    public function __construct(ManagerRegistry $doctrine)
     {
-        $this->doctrineHelper = $doctrineHelper;
+        $this->doctrine = $doctrine;
     }
 
     /**
@@ -37,7 +38,7 @@ class UpdateChildManager
      *
      * @param CalendarEvent $calendarEvent Actual calendar event.
      * @param CalendarEvent $originalEvent Actual calendar event.
-     * @param Organization  $organization Current organization
+     * @param Organization  $organization Current organization.
      */
     public function onEventUpdate(
         CalendarEvent $calendarEvent,
@@ -48,14 +49,20 @@ class UpdateChildManager
         $calendarUserIds = $this->getAttendeeUserIds($originalEvent);
 
         $newAttendeeUserIds = array_diff($attendeeUserIds, $calendarUserIds);
-        if ($newAttendeeUserIds) {
-            $this->createCalendarEventsCopiesForNewAttendees(
-                $calendarEvent,
-                $originalEvent,
-                $organization,
-                $newAttendeeUserIds
-            );
-        }
+        $this->createCalendarEventsCopiesForNewAttendees(
+            $calendarEvent,
+            $originalEvent,
+            $organization,
+            $newAttendeeUserIds
+        );
+
+        $removedAttendeeUserIds = array_diff($calendarUserIds, $attendeeUserIds);
+        $this->removeOrCancelAttendeesCalendarEvents(
+            $calendarEvent,
+            $organization,
+            $removedAttendeeUserIds
+        );
+
 
         $isExceptionalCalendarEvent = !is_null($calendarEvent->getRecurringEvent());
         if ($isExceptionalCalendarEvent) {
@@ -165,6 +172,36 @@ class UpdateChildManager
     }
 
     /**
+     * Removes calendar events of related to attendees which were removed from the event.
+     *
+     * For recurring calendar event exceptions instead of remove mark attendee event as cancelled.
+     *
+     * @param CalendarEvent $calendarEvent
+     * @param Organization $organization
+     * @param array $removedAttendeeUserIds
+     */
+    protected function removeOrCancelAttendeesCalendarEvents(
+        CalendarEvent $calendarEvent,
+        Organization $organization,
+        $removedAttendeeUserIds
+    ) {
+        $removedAttendeesCalendars = $this->getUsersDefaultCalendars($removedAttendeeUserIds, $organization);
+        foreach ($removedAttendeesCalendars as $removedAttendeeCalendar) {
+            $childEvent = $calendarEvent->getChildEventByCalendar($removedAttendeeCalendar);
+            if ($childEvent) {
+                if ($childEvent->getRecurringEvent()) {
+                    // If child event is an exception of recurring event then it should be cancelled
+                    // to hide the event in user's calendar
+                    $childEvent->setCancelled(true);
+                } else {
+                    // otherwise it should be removed
+                    $calendarEvent->removeChildEvent($childEvent);
+                }
+            }
+        }
+    }
+
+    /**
      * @param CalendarEvent $calendarEvent
      * @param Organization  $organization
      * @param array         $removedAttendeeUserIds
@@ -212,7 +249,7 @@ class UpdateChildManager
     protected function getUsersDefaultCalendars(array $userIds, Organization $organization)
     {
         /** @var CalendarRepository $calendarRepository */
-        $calendarRepository = $this->doctrineHelper->getEntityRepository('OroCalendarBundle:Calendar');
+        $calendarRepository = $this->doctrine->getRepository('OroCalendarBundle:Calendar');
 
         /** @var Calendar $calendar */
         return $calendarRepository->findDefaultCalendars($userIds, $organization->getId());

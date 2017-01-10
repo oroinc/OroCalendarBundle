@@ -2,6 +2,7 @@
 
 namespace Oro\Bundle\CalendarBundle\Manager\CalendarEvent;
 
+use Oro\Bundle\CalendarBundle\Entity\Attendee;
 use Oro\Bundle\CalendarBundle\Entity\CalendarEvent;
 use Oro\Bundle\CalendarBundle\Manager\AttendeeManager;
 use Oro\Component\PropertyAccess\PropertyAccessor;
@@ -272,8 +273,8 @@ class UpdateExceptionManager
                     // Update status of the attendee in the exception
                     $attendee->setStatus($equalAttendee->getStatus());
                 } else {
-                    // Remove attendee from the exception since it was removed in the actual event
-                    $exceptionEvent->removeAttendee($attendee);
+                    // Remove attendee and its' child event from the exception since it was removed in the actual event
+                    $this->removeAttendeeAndChildEvent($exceptionEvent, $attendee);
                 }
             }
 
@@ -292,6 +293,27 @@ class UpdateExceptionManager
             $exceptionEvent->setRelatedAttendee($exceptionEvent->findRelatedAttendee());
         }
     }
+
+    /**
+     * Removes from calendar event the attendee and its' child event.
+     *
+     * @param CalendarEvent $calendarEvent
+     * @param Attendee $attendee
+     */
+    protected function removeAttendeeAndChildEvent(
+        CalendarEvent $calendarEvent,
+        Attendee $attendee
+    ) {
+        // Remove attendee from the exception since it was removed in the actual event
+        $calendarEvent->removeAttendee($attendee);
+
+        // Remove child event related to attendee of the exception as well
+        $childEvent = $calendarEvent->getChildEventByAttendee($attendee);
+        if ($childEvent) {
+            $calendarEvent->removeChildEvent($childEvent);
+        }
+    }
+
 
     /**
      * Compares attendees of 2 events.

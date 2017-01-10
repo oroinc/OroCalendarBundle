@@ -47,8 +47,8 @@ class CalendarEventManagerLegacyTest extends \PHPUnit_Framework_TestCase
                 );
             }));
 
-        $registry = $this->createMock('Doctrine\Common\Persistence\ManagerRegistry');
-        $registry->expects($this->any())
+        $doctrine = $this->createMock('Doctrine\Common\Persistence\ManagerRegistry');
+        $doctrine->expects($this->any())
             ->method('getRepository')
             ->will($this->returnValueMap([
                 ['Extend\Entity\EV_Ce_Attendee_Status', null, $repository],
@@ -60,18 +60,6 @@ class CalendarEventManagerLegacyTest extends \PHPUnit_Framework_TestCase
             ->getMockBuilder('Oro\Bundle\CalendarBundle\Manager\AttendeeRelationManager')
             ->disableOriginalConstructor()
             ->getMock();
-
-        $doctrineHelper = $this->getMockBuilder('Oro\Bundle\EntityBundle\ORM\DoctrineHelper')
-            ->disableOriginalConstructor()
-            ->getMock();
-
-        $doctrineHelper->expects($this->any())
-            ->method('getEntityRepository')
-            ->will($this->returnValueMap([
-                ['Extend\Entity\EV_Ce_Attendee_Status', $repository],
-                ['Extend\Entity\EV_Ce_Attendee_Type', $repository],
-                ['OroCalendarBundle:Calendar', $repository],
-            ]));
 
 
         $securityFacade = $this->getMockBuilder('Oro\Bundle\SecurityBundle\SecurityFacade')
@@ -92,14 +80,14 @@ class CalendarEventManagerLegacyTest extends \PHPUnit_Framework_TestCase
             ->getMock();
 
         $updateManager = new UpdateManager(
-            new UpdateAttendeeManager($attendeeRelationManager, $doctrineHelper),
-            new UpdateChildManager($doctrineHelper),
+            new UpdateAttendeeManager($attendeeRelationManager, $doctrine),
+            new UpdateChildManager($doctrine),
             new UpdateExceptionManager($attendeeManager)
         );
 
         $this->calendarEventManager = new CalendarEventManager(
             $updateManager,
-            $doctrineHelper,
+            $doctrine,
             $securityFacade,
             $entityNameResolver,
             $calendarConfig

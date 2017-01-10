@@ -20,10 +20,10 @@ class CalendarRepository extends EntityRepository
     public function findDefaultCalendar($userId, $organizationId)
     {
         return $this->findOneBy(
-            array(
+            [
                 'owner'        => $userId,
                 'organization' => $organizationId
-            )
+            ]
         );
     }
 
@@ -37,6 +37,10 @@ class CalendarRepository extends EntityRepository
      */
     public function findDefaultCalendars(array $userIds, $organizationId)
     {
+        if (!$userIds) {
+            return [];
+        }
+
         $queryBuilder = $this->createQueryBuilder('c');
 
         return $queryBuilder

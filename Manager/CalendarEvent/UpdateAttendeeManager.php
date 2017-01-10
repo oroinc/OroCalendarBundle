@@ -3,11 +3,11 @@
 namespace Oro\Bundle\CalendarBundle\Manager\CalendarEvent;
 
 use Doctrine\Common\Collections\Collection;
+use Doctrine\Common\Persistence\ManagerRegistry;
 
 use Oro\Bundle\CalendarBundle\Entity\Attendee;
 use Oro\Bundle\CalendarBundle\Entity\CalendarEvent;
 use Oro\Bundle\CalendarBundle\Manager\AttendeeRelationManager;
-use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
 use Oro\Bundle\EntityExtendBundle\Entity\AbstractEnumValue;
 use Oro\Bundle\EntityExtendBundle\Tools\ExtendHelper;
 use Oro\Bundle\OrganizationBundle\Entity\Organization;
@@ -27,18 +27,18 @@ class UpdateAttendeeManager
     protected $attendeeRelationManager;
 
     /**
-     * @var DoctrineHelper
+     * @var ManagerRegistry
      */
-    protected $doctrineHelper;
+    protected $doctrine;
 
     /**
      * @param AttendeeRelationManager $attendeeRelationManager
-     * @param DoctrineHelper $doctrineHelper
+     * @param ManagerRegistry $doctrine
      */
-    public function __construct(AttendeeRelationManager $attendeeRelationManager, DoctrineHelper $doctrineHelper)
+    public function __construct(AttendeeRelationManager $attendeeRelationManager, ManagerRegistry $doctrine)
     {
         $this->attendeeRelationManager = $attendeeRelationManager;
-        $this->doctrineHelper = $doctrineHelper;
+        $this->doctrine = $doctrine;
     }
 
     /**
@@ -70,8 +70,8 @@ class UpdateAttendeeManager
                 continue;
             }
 
-            $statusEnum = $this->doctrineHelper
-                ->getEntityRepository(ExtendHelper::buildEnumValueClassName(Attendee::STATUS_ENUM_CODE))
+            $statusEnum = $this->doctrine
+                ->getRepository(ExtendHelper::buildEnumValueClassName(Attendee::STATUS_ENUM_CODE))
                 ->find(Attendee::STATUS_NONE);
 
             $attendee->setStatus($statusEnum);
@@ -132,8 +132,8 @@ class UpdateAttendeeManager
     protected function getAttendeeType($id)
     {
         /** @var AbstractEnumValue $attendeeType */
-        $attendeeType = $this->doctrineHelper
-            ->getEntityRepository(ExtendHelper::buildEnumValueClassName(Attendee::TYPE_ENUM_CODE))
+        $attendeeType = $this->doctrine
+            ->getRepository(ExtendHelper::buildEnumValueClassName(Attendee::TYPE_ENUM_CODE))
             ->find($id);
 
         return $attendeeType;

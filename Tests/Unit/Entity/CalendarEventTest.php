@@ -381,56 +381,6 @@ class CalendarEventTest extends \PHPUnit_Framework_TestCase
         $this->assertCount(1, $calendarEvent->getAttendees());
     }
 
-    public function testRemoveAttendeeRemovesChildEvent()
-    {
-        $user1 = new User(1);
-        $attendee1 = new Attendee(1);
-        $attendee1->setUser($user1);
-        $calendar1 = new Calendar();
-        $calendar1->setOwner($user1);
-
-        $user2 = new User(2);
-        $attendee2 = new Attendee(2);
-        $attendee2->setUser($user2);
-        $calendar2 = new Calendar();
-        $calendar2->setOwner($user2);
-
-        $user3 = new User(3);
-        $attendee3 = new Attendee(3);
-        $attendee3->setUser($user3);
-        $calendar3 = new Calendar();
-        $calendar3->setOwner($user3);
-
-        $event1 = new CalendarEvent();
-        $event1->setCalendar($calendar1)
-            ->addAttendee($attendee1)
-            ->addAttendee($attendee2)
-            ->addAttendee($attendee3);
-
-        $event2 = new CalendarEvent();
-        $event2->setCalendar($calendar2);
-        $event1->addChildEvent($event2);
-
-        $event3 = new CalendarEvent();
-        $event3->setCalendar($calendar3);
-        $event1->addChildEvent($event3);
-
-        $event1->removeAttendee($attendee2);
-
-        $this->assertEquals(
-            [
-                $attendee1,
-                $attendee3
-            ],
-            array_values($event1->getAttendees()->toArray())
-        );
-
-        $this->assertEquals(
-            [$event3],
-            array_values($event1->getChildEvents()->toArray())
-        );
-    }
-
     /**
      * @expectedException \LogicException
      * @expectedExceptionMessage Update of child Calendar Event (id=2) is restricted. Use parent Calendar Event instead.

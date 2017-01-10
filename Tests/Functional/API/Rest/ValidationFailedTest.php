@@ -38,24 +38,24 @@ class ValidationErrorTest extends AbstractValidationErrorTestCase
     {
         // Step 1. Create regular calendar event using minimal required data in the request.
         $eventData = [
-            'title' => 'Recurring event',
-            'start' => '2016-10-14T22:00:00+00:00',
-            'end' => '2016-10-14T23:00:00+00:00',
+            'title'      => 'Recurring event',
+            'start'      => '2016-10-14T22:00:00+00:00',
+            'end'        => '2016-10-14T23:00:00+00:00',
             'recurrence' => $recurrence,
         ];
 
         $this->restRequest(
             [
-                'method' => 'POST',
-                'url' => $this->getUrl('oro_api_post_calendarevent'),
-                'server' => $this->generateWsseAuthHeader('foo_user_1', 'foo_user_1_api_key'),
+                'method'  => 'POST',
+                'url'     => $this->getUrl('oro_api_post_calendarevent'),
+                'server'  => $this->generateWsseAuthHeader('foo_user_1', 'foo_user_1_api_key'),
                 'content' => json_encode($eventData)
             ]
         );
 
         $response = $this->getRestResponseContent(
             [
-                'statusCode' => 400,
+                'statusCode'  => 400,
                 'contentType' => 'application/json'
             ]
         );
@@ -81,44 +81,44 @@ class ValidationErrorTest extends AbstractValidationErrorTestCase
         }
 
         return [
-            'code' => 400,
+            'code'    => 400,
             'message' => 'Validation Failed',
-            'errors' => [
+            'errors'  => [
                 'children' => [
-                    'allDay' => [],
-                    'attendees' => [],
-                    'backgroundColor' => [],
-                    'calendar' => [],
-                    'calendarAlias' => [],
-                    'createdAt' => [],
-                    'contexts' => [],
-                    'description' => [],
-                    'end' => [],
-                    'id' => [],
-                    'isCancelled' => [],
-                    'notifyAttendees' => [],
-                    'originalStart' => [],
-                    'recurrence' => [
+                    'allDay'           => [],
+                    'attendees'        => [],
+                    'backgroundColor'  => [],
+                    'calendar'         => [],
+                    'calendarAlias'    => [],
+                    'createdAt'        => [],
+                    'contexts'         => [],
+                    'description'      => [],
+                    'end'              => [],
+                    'id'               => [],
+                    'isCancelled'      => [],
+                    'notifyAttendees'  => [],
+                    'originalStart'    => [],
+                    'recurrence'       => [
                         'children' => array_replace(
                             [
-                                'dayOfMonth' => [],
-                                'dayOfWeek' => [],
-                                'endTime' => [],
-                                'instance' => [],
-                                'interval' => [],
-                                'monthOfYear' => [],
-                                'occurrences' => [],
+                                'dayOfMonth'     => [],
+                                'dayOfWeek'      => [],
+                                'endTime'        => [],
+                                'instance'       => [],
+                                'interval'       => [],
+                                'monthOfYear'    => [],
+                                'occurrences'    => [],
                                 'recurrenceType' => [],
-                                'startTime' => [],
-                                'timeZone' => [],
+                                'startTime'      => [],
+                                'timeZone'       => [],
                             ],
                             $recurrenceErrors
                         ),
                     ],
                     'recurringEventId' => [],
-                    'reminders' => [],
-                    'start' => [],
-                    'title' => [],
+                    'reminders'        => [],
+                    'start'            => [],
+                    'title'            => [],
                     'updateExceptions' => [],
                 ],
             ],
@@ -128,25 +128,25 @@ class ValidationErrorTest extends AbstractValidationErrorTestCase
     public function testNotifyAttendeesValidationRejectRequestIfNotificationStrategyIsUnknown()
     {
         $eventData = [
-            'title' => 'Recurring event',
-            'start' => '2016-10-14T22:00:00+00:00',
-            'end' => '2016-10-14T23:00:00+00:00',
-            'recurrence' => [],
+            'title'           => 'Recurring event',
+            'start'           => '2016-10-14T22:00:00+00:00',
+            'end'             => '2016-10-14T23:00:00+00:00',
+            'recurrence'      => [],
             'notifyAttendees' => 'unknown_notification_strategy'
         ];
 
         $this->restRequest(
             [
-                'method' => 'POST',
-                'url' => $this->getUrl('oro_api_post_calendarevent'),
-                'server' => $this->generateWsseAuthHeader('foo_user_1', 'foo_user_1_api_key'),
+                'method'  => 'POST',
+                'url'     => $this->getUrl('oro_api_post_calendarevent'),
+                'server'  => $this->generateWsseAuthHeader('foo_user_1', 'foo_user_1_api_key'),
                 'content' => json_encode($eventData)
             ]
         );
 
         $response = $this->getRestResponseContent(
             [
-                'statusCode' => 400,
+                'statusCode'  => 400,
                 'contentType' => 'application/json'
             ]
         );
@@ -157,43 +157,43 @@ class ValidationErrorTest extends AbstractValidationErrorTestCase
 
         $this->assertResponseEquals(
             [
-                'code' => 400,
+                'code'    => 400,
                 'message' => 'Validation Failed',
-                'errors' => [
+                'errors'  => [
                     'children' => [
-                        'allDay' => [],
-                        'attendees' => [],
-                        'backgroundColor' => [],
-                        'calendar' => [],
-                        'calendarAlias' => [],
-                        'createdAt' => [],
-                        'contexts' => [],
-                        'description' => [],
-                        'end' => [],
-                        'id' => [],
-                        'isCancelled' => [],
-                        'notifyAttendees' => [
+                        'allDay'           => [],
+                        'attendees'        => [],
+                        'backgroundColor'  => [],
+                        'calendar'         => [],
+                        'calendarAlias'    => [],
+                        'createdAt'        => [],
+                        'contexts'         => [],
+                        'description'      => [],
+                        'end'              => [],
+                        'id'               => [],
+                        'isCancelled'      => [],
+                        'notifyAttendees'  => [
                             'errors' => ['The value you selected is not a valid choice.']
                         ],
-                        'originalStart' => [],
-                        'recurrence' => [
+                        'originalStart'    => [],
+                        'recurrence'       => [
                             'children' => [
-                                'dayOfMonth' => [],
-                                'dayOfWeek' => [],
-                                'endTime' => [],
-                                'instance' => [],
-                                'interval' => [],
-                                'monthOfYear' => [],
-                                'occurrences' => [],
+                                'dayOfMonth'     => [],
+                                'dayOfWeek'      => [],
+                                'endTime'        => [],
+                                'instance'       => [],
+                                'interval'       => [],
+                                'monthOfYear'    => [],
+                                'occurrences'    => [],
                                 'recurrenceType' => [],
-                                'startTime' => [],
-                                'timeZone' => [],
+                                'startTime'      => [],
+                                'timeZone'       => [],
                             ],
                         ],
                         'recurringEventId' => [],
-                        'reminders' => [],
-                        'start' => [],
-                        'title' => [],
+                        'reminders'        => [],
+                        'start'            => [],
+                        'title'            => [],
                         'updateExceptions' => [],
                     ],
                 ],

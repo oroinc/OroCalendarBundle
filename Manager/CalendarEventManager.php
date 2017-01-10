@@ -2,6 +2,8 @@
 
 namespace Oro\Bundle\CalendarBundle\Manager;
 
+use Doctrine\Common\Persistence\ManagerRegistry;
+
 use Oro\Bundle\CalendarBundle\Entity\Attendee;
 use Oro\Bundle\CalendarBundle\Entity\Calendar;
 use Oro\Bundle\CalendarBundle\Entity\CalendarEvent;
@@ -11,7 +13,6 @@ use Oro\Bundle\CalendarBundle\Entity\Repository\SystemCalendarRepository;
 use Oro\Bundle\CalendarBundle\Exception\ChangeInvitationStatusException;
 use Oro\Bundle\CalendarBundle\Provider\SystemCalendarConfig;
 use Oro\Bundle\CalendarBundle\Manager\CalendarEvent\UpdateManager;
-use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
 use Oro\Bundle\EntityBundle\Provider\EntityNameResolver;
 use Oro\Bundle\EntityExtendBundle\Tools\ExtendHelper;
 use Oro\Bundle\OrganizationBundle\Entity\Organization;
@@ -24,8 +25,8 @@ class CalendarEventManager
     /** @var UpdateManager */
     protected $updateManager;
 
-    /** @var DoctrineHelper */
-    protected $doctrineHelper;
+    /** @var ManagerRegistry */
+    protected $doctrine;
 
     /** @var SecurityFacade */
     protected $securityFacade;
@@ -38,20 +39,20 @@ class CalendarEventManager
 
     /**
      * @param UpdateManager        $updateManager
-     * @param DoctrineHelper       $doctrineHelper
+     * @param ManagerRegistry      $doctrine
      * @param SecurityFacade       $securityFacade
      * @param EntityNameResolver   $entityNameResolver
      * @param SystemCalendarConfig $calendarConfig
      */
     public function __construct(
         UpdateManager $updateManager,
-        DoctrineHelper $doctrineHelper,
+        ManagerRegistry $doctrine,
         SecurityFacade $securityFacade,
         EntityNameResolver $entityNameResolver,
         SystemCalendarConfig $calendarConfig
     ) {
         $this->updateManager      = $updateManager;
-        $this->doctrineHelper     = $doctrineHelper;
+        $this->doctrine           = $doctrine;
         $this->securityFacade     = $securityFacade;
         $this->entityNameResolver = $entityNameResolver;
         $this->calendarConfig     = $calendarConfig;
@@ -65,7 +66,7 @@ class CalendarEventManager
     public function getSystemCalendars()
     {
         /** @var SystemCalendarRepository $repo */
-        $repo      = $this->doctrineHelper->getEntityRepository('OroCalendarBundle:SystemCalendar');
+        $repo      = $this->doctrine->getRepository('OroCalendarBundle:SystemCalendar');
         $calendars = $repo->getCalendarsQueryBuilder($this->securityFacade->getOrganizationId())
             ->select('sc.id, sc.name, sc.public')
             ->getQuery()
@@ -120,8 +121,8 @@ class CalendarEventManager
             throw ChangeInvitationStatusException::changeInvitationStatusFailedWhenRelatedAttendeeNotExist();
         }
 
-        $statusEnum = $this->doctrineHelper
-            ->getEntityRepository(ExtendHelper::buildEnumValueClassName(Attendee::STATUS_ENUM_CODE))
+        $statusEnum = $this->doctrine
+            ->getRepository(ExtendHelper::buildEnumValueClassName(Attendee::STATUS_ENUM_CODE))
             ->find($newStatus);
 
         if (!$statusEnum) {
@@ -149,7 +150,7 @@ class CalendarEventManager
     public function getUserCalendars()
     {
         /** @var CalendarRepository $repo */
-        $repo      = $this->doctrineHelper->getEntityRepository('OroCalendarBundle:Calendar');
+        $repo      = $this->doctrine->getRepository('OroCalendarBundle:Calendar');
         $calendars = $repo->getUserCalendarsQueryBuilder(
             $this->securityFacade->getOrganizationId(),
             $this->securityFacade->getLoggedUserId()
@@ -238,7 +239,7 @@ class CalendarEventManager
      */
     protected function findCalendar($calendarId)
     {
-        return $this->doctrineHelper->getEntityRepository('OroCalendarBundle:Calendar')
+        return $this->doctrine->getRepository('OroCalendarBundle:Calendar')
             ->find($calendarId);
     }
 
@@ -249,7 +250,7 @@ class CalendarEventManager
      */
     protected function findSystemCalendar($calendarId)
     {
-        return $this->doctrineHelper->getEntityRepository('OroCalendarBundle:SystemCalendar')
+        return $this->doctrine->getRepository('OroCalendarBundle:SystemCalendar')
             ->find($calendarId);
     }
 

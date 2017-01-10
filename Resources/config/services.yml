@@ -150,7 +150,7 @@ services:
         class: %oro_calendar.calendar_event_manager.class%
         arguments:
             - '@oro_calendar.calendar_event.update_manager'
-            - '@oro_entity.doctrine_helper'
+            - '@doctrine'
             - '@oro_security.security_facade'
             - '@oro_entity.entity_name_resolver'
             - '@oro_calendar.system_calendar_config'
@@ -168,13 +168,13 @@ services:
         public: false
         arguments:
             - '@oro_calendar.attendee_relation_manager'
-            - '@oro_entity.doctrine_helper'
+            - '@doctrine'
 
     oro_calendar.calendar_event.update_child_manager:
         class: 'Oro\Bundle\CalendarBundle\Manager\CalendarEvent\UpdateChildManager'
         public: false
         arguments:
-            - '@oro_entity.doctrine_helper'
+            - '@doctrine'
 
     oro_calendar.calendar_event.update_exception_manager:
         class: 'Oro\Bundle\CalendarBundle\Manager\CalendarEvent\UpdateExceptionManager'

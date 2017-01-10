@@ -42,23 +42,23 @@ class BasicCrudTest extends AbstractTestCase
         // Step 1. Create regular calendar event using minimal required data in the request.
         $this->restRequest(
             [
-                'method' => 'POST',
-                'url' => $this->getUrl('oro_api_post_calendarevent'),
-                'server' => $this->generateWsseAuthHeader('foo_user_1', 'foo_user_1_api_key'),
+                'method'  => 'POST',
+                'url'     => $this->getUrl('oro_api_post_calendarevent'),
+                'server'  => $this->generateWsseAuthHeader('foo_user_1', 'foo_user_1_api_key'),
                 'content' => json_encode(
                     [
-                        'title' => 'Regular event',
-                        'start' => '2016-10-14T22:00:00+00:00',
-                        'end' => '2016-10-14T23:00:00+00:00',
+                        'title'    => 'Regular event',
+                        'start'    => '2016-10-14T22:00:00+00:00',
+                        'end'      => '2016-10-14T23:00:00+00:00',
                         'calendar' => $this->getReference('oro_calendar:calendar:foo_user_1')->getId(),
-                        'allDay' => false
+                        'allDay'   => false
                     ]
                 )
             ]
         );
         $response = $this->getRestResponseContent(
             [
-                'statusCode' => 201,
+                'statusCode'  => 201,
                 'contentType' => 'application/json'
             ]
         );
@@ -66,8 +66,8 @@ class BasicCrudTest extends AbstractTestCase
         $newEvent = $this->getEntity(CalendarEvent::class, $response['id']);
         $this->assertResponseEquals(
             [
-                'id' => $response['id'],
-                'invitationStatus' => Attendee::STATUS_NONE,
+                'id'                       => $response['id'],
+                'invitationStatus'         => Attendee::STATUS_NONE,
                 'editableInvitationStatus' => false,
             ],
             $response
@@ -77,39 +77,39 @@ class BasicCrudTest extends AbstractTestCase
         $this->restRequest(
             [
                 'method' => 'GET',
-                'url' => $this->getUrl('oro_api_get_calendarevent', ['id' => $newEvent->getId()]),
+                'url'    => $this->getUrl('oro_api_get_calendarevent', ['id' => $newEvent->getId()]),
                 'server' => $this->generateWsseAuthHeader('foo_user_1', 'foo_user_1_api_key')
             ]
         );
 
         $response = $this->getRestResponseContent(
             [
-                'statusCode' => 200,
+                'statusCode'  => 200,
                 'contentType' => 'application/json'
             ]
         );
 
         $this->assertResponseEquals(
             [
-                'id' => $newEvent->getId(),
-                'calendar' => $this->getReference('oro_calendar:calendar:foo_user_1')->getId(),
-                'parentEventId' => null,
-                'title' => "Regular event",
-                'description' => null,
-                'start' => "2016-10-14T22:00:00+00:00",
-                'end' => "2016-10-14T23:00:00+00:00",
-                'allDay' => false,
-                'attendees' => [],
-                'editable' => true,
+                'id'                       => $newEvent->getId(),
+                'calendar'                 => $this->getReference('oro_calendar:calendar:foo_user_1')->getId(),
+                'parentEventId'            => null,
+                'title'                    => "Regular event",
+                'description'              => null,
+                'start'                    => "2016-10-14T22:00:00+00:00",
+                'end'                      => "2016-10-14T23:00:00+00:00",
+                'allDay'                   => false,
+                'attendees'                => [],
+                'editable'                 => true,
                 'editableInvitationStatus' => false,
-                'removable' => true,
-                'backgroundColor' => null,
-                'invitationStatus' => Attendee::STATUS_NONE,
-                'recurringEventId' => null,
-                'originalStart' => null,
-                'isCancelled' => false,
-                'createdAt' => $newEvent->getCreatedAt()->format(DATE_RFC3339),
-                'updatedAt' => $newEvent->getUpdatedAt()->format(DATE_RFC3339),
+                'removable'                => true,
+                'backgroundColor'          => null,
+                'invitationStatus'         => Attendee::STATUS_NONE,
+                'recurringEventId'         => null,
+                'originalStart'            => null,
+                'isCancelled'              => false,
+                'createdAt'                => $newEvent->getCreatedAt()->format(DATE_RFC3339),
+                'updatedAt'                => $newEvent->getUpdatedAt()->format(DATE_RFC3339),
             ],
             $response
         );
@@ -135,15 +135,15 @@ CONTENT;
         // Step 1. Create regular calendar event using minimal required data in the request.
         $this->restRequest(
             [
-                'method' => 'POST',
-                'url' => $this->getUrl('oro_api_post_calendarevent'),
-                'server' => $this->generateWsseAuthHeader('foo_user_1', 'foo_user_1_api_key'),
+                'method'     => 'POST',
+                'url'        => $this->getUrl('oro_api_post_calendarevent'),
+                'server'     => $this->generateWsseAuthHeader('foo_user_1', 'foo_user_1_api_key'),
                 'parameters' => $parameters,
             ]
         );
         $response = $this->getRestResponseContent(
             [
-                'statusCode' => 201,
+                'statusCode'  => 201,
                 'contentType' => 'application/json'
             ]
         );
@@ -151,8 +151,8 @@ CONTENT;
         $newEvent = $this->getEntity(CalendarEvent::class, $response['id']);
         $this->assertResponseEquals(
             [
-                'id' => $response['id'],
-                'invitationStatus' => Attendee::STATUS_NONE,
+                'id'                       => $response['id'],
+                'invitationStatus'         => Attendee::STATUS_NONE,
                 'editableInvitationStatus' => false,
             ],
             $response
@@ -162,39 +162,39 @@ CONTENT;
         $this->restRequest(
             [
                 'method' => 'GET',
-                'url' => $this->getUrl('oro_api_get_calendarevent', ['id' => $newEvent->getId()]),
+                'url'    => $this->getUrl('oro_api_get_calendarevent', ['id' => $newEvent->getId()]),
                 'server' => $this->generateWsseAuthHeader('foo_user_1', 'foo_user_1_api_key')
             ]
         );
 
         $response = $this->getRestResponseContent(
             [
-                'statusCode' => 200,
+                'statusCode'  => 200,
                 'contentType' => 'application/json'
             ]
         );
 
         $this->assertResponseEquals(
             [
-                'id' => $newEvent->getId(),
-                'calendar' => $this->getReference('oro_calendar:calendar:foo_user_1')->getId(),
-                'parentEventId' => null,
-                'title' => "Regular event",
-                'description' => null,
-                'start' => "2016-10-14T22:00:00+00:00",
-                'end' => "2016-10-14T23:00:00+00:00",
-                'allDay' => false,
-                'attendees' => [],
-                'editable' => true,
+                'id'                       => $newEvent->getId(),
+                'calendar'                 => $this->getReference('oro_calendar:calendar:foo_user_1')->getId(),
+                'parentEventId'            => null,
+                'title'                    => "Regular event",
+                'description'              => null,
+                'start'                    => "2016-10-14T22:00:00+00:00",
+                'end'                      => "2016-10-14T23:00:00+00:00",
+                'allDay'                   => false,
+                'attendees'                => [],
+                'editable'                 => true,
                 'editableInvitationStatus' => false,
-                'removable' => true,
-                'backgroundColor' => null,
-                'invitationStatus' => Attendee::STATUS_NONE,
-                'recurringEventId' => null,
-                'originalStart' => null,
-                'isCancelled' => false,
-                'createdAt' => $newEvent->getCreatedAt()->format(DATE_RFC3339),
-                'updatedAt' => $newEvent->getUpdatedAt()->format(DATE_RFC3339),
+                'removable'                => true,
+                'backgroundColor'          => null,
+                'invitationStatus'         => Attendee::STATUS_NONE,
+                'recurringEventId'         => null,
+                'originalStart'            => null,
+                'isCancelled'              => false,
+                'createdAt'                => $newEvent->getCreatedAt()->format(DATE_RFC3339),
+                'updatedAt'                => $newEvent->getUpdatedAt()->format(DATE_RFC3339),
             ],
             $response
         );
@@ -216,17 +216,17 @@ CONTENT;
         // Step 1. Create recurring event and save value of "updatedAt" field.
         $this->restRequest(
             [
-                'method' => 'POST',
-                'url' => $this->getUrl('oro_api_post_calendarevent'),
-                'server' => $this->generateWsseAuthHeader('foo_user_1', 'foo_user_1_api_key'),
+                'method'  => 'POST',
+                'url'     => $this->getUrl('oro_api_post_calendarevent'),
+                'server'  => $this->generateWsseAuthHeader('foo_user_1', 'foo_user_1_api_key'),
                 'content' => json_encode(
                     [
-                        'title' => 'Recurring event',
-                        'start' => '2016-10-14T22:00:00+00:00',
-                        'end' => '2016-10-14T23:00:00+00:00',
-                        'calendar' => $this->getReference('oro_calendar:calendar:foo_user_1')->getId(),
-                        'allDay' => false,
-                        'recurrence'  => [
+                        'title'      => 'Recurring event',
+                        'start'      => '2016-10-14T22:00:00+00:00',
+                        'end'        => '2016-10-14T23:00:00+00:00',
+                        'calendar'   => $this->getReference('oro_calendar:calendar:foo_user_1')->getId(),
+                        'allDay'     => false,
+                        'recurrence' => [
                             'timeZone'       => 'UTC',
                             'recurrenceType' => Recurrence::TYPE_DAILY,
                             'interval'       => 1,
@@ -239,7 +239,7 @@ CONTENT;
         );
         $response = $this->getRestResponseContent(
             [
-                'statusCode' => 201,
+                'statusCode'  => 201,
                 'contentType' => 'application/json'
             ]
         );
@@ -247,8 +247,8 @@ CONTENT;
         $newEvent = $this->getEntity(CalendarEvent::class, $response['id']);
         $this->assertResponseEquals(
             [
-                'id' => $response['id'],
-                'invitationStatus' => Attendee::STATUS_NONE,
+                'id'                       => $response['id'],
+                'invitationStatus'         => Attendee::STATUS_NONE,
                 'editableInvitationStatus' => false,
             ],
             $response
@@ -263,9 +263,9 @@ CONTENT;
         // Step 3. Update event and change only attribute in recurrence data.
         $this->restRequest(
             [
-                'method' => 'PUT',
-                'url' => $this->getUrl('oro_api_put_calendarevent', ['id' => $newEvent->getId()]),
-                'server' => $this->generateWsseAuthHeader('foo_user_1', 'foo_user_1_api_key'),
+                'method'  => 'PUT',
+                'url'     => $this->getUrl('oro_api_put_calendarevent', ['id' => $newEvent->getId()]),
+                'server'  => $this->generateWsseAuthHeader('foo_user_1', 'foo_user_1_api_key'),
                 'content' => json_encode(
                     [
                         'recurrence' => [
@@ -282,7 +282,7 @@ CONTENT;
         $response = $this->getRestResponseContent(['statusCode' => 200, 'contentType' => 'application/json']);
         $this->assertResponseEquals(
             [
-                'invitationStatus' => Attendee::STATUS_NONE,
+                'invitationStatus'         => Attendee::STATUS_NONE,
                 'editableInvitationStatus' => false,
             ],
             $response
@@ -292,14 +292,14 @@ CONTENT;
         $this->restRequest(
             [
                 'method' => 'GET',
-                'url' => $this->getUrl('oro_api_get_calendarevent', ['id' => $newEvent->getId()]),
+                'url'    => $this->getUrl('oro_api_get_calendarevent', ['id' => $newEvent->getId()]),
                 'server' => $this->generateWsseAuthHeader('foo_user_1', 'foo_user_1_api_key')
             ]
         );
 
         $response = $this->getRestResponseContent(
             [
-                'statusCode' => 200,
+                'statusCode'  => 200,
                 'contentType' => 'application/json'
             ]
         );
@@ -327,28 +327,28 @@ CONTENT;
         // Step 1. Create regular event with 2 attendees and save value of "updatedAt" field.
         $this->restRequest(
             [
-                'method' => 'POST',
-                'url' => $this->getUrl('oro_api_post_calendarevent'),
-                'server' => $this->generateWsseAuthHeader('foo_user_1', 'foo_user_1_api_key'),
+                'method'  => 'POST',
+                'url'     => $this->getUrl('oro_api_post_calendarevent'),
+                'server'  => $this->generateWsseAuthHeader('foo_user_1', 'foo_user_1_api_key'),
                 'content' => json_encode(
                     [
-                        'title' => 'Regular event',
-                        'start' => '2016-10-14T22:00:00+00:00',
-                        'end' => '2016-10-14T23:00:00+00:00',
-                        'calendar' => $this->getReference('oro_calendar:calendar:foo_user_1')->getId(),
-                        'allDay' => false,
-                        'attendees'  => [
+                        'title'     => 'Regular event',
+                        'start'     => '2016-10-14T22:00:00+00:00',
+                        'end'       => '2016-10-14T23:00:00+00:00',
+                        'calendar'  => $this->getReference('oro_calendar:calendar:foo_user_1')->getId(),
+                        'allDay'    => false,
+                        'attendees' => [
                             [
                                 'displayName' => $this->getReference('oro_calendar:user:foo_user_2')->getFullName(),
-                                'email' => 'foo_user_2@example.com',
-                                'status' => Attendee::STATUS_ACCEPTED,
-                                'type' => Attendee::TYPE_REQUIRED,
+                                'email'       => 'foo_user_2@example.com',
+                                'status'      => Attendee::STATUS_ACCEPTED,
+                                'type'        => Attendee::TYPE_REQUIRED,
                             ],
                             [
                                 'displayName' => $this->getReference('oro_calendar:user:foo_user_3')->getFullName(),
-                                'email' => 'foo_user_3@example.com',
-                                'status' => Attendee::STATUS_ACCEPTED,
-                                'type' => Attendee::TYPE_REQUIRED,
+                                'email'       => 'foo_user_3@example.com',
+                                'status'      => Attendee::STATUS_ACCEPTED,
+                                'type'        => Attendee::TYPE_REQUIRED,
                             ],
                         ]
                     ]
@@ -357,7 +357,7 @@ CONTENT;
         );
         $response = $this->getRestResponseContent(
             [
-                'statusCode' => 201,
+                'statusCode'  => 201,
                 'contentType' => 'application/json'
             ]
         );
@@ -365,8 +365,8 @@ CONTENT;
         $newEvent = $this->getEntity(CalendarEvent::class, $response['id']);
         $this->assertResponseEquals(
             [
-                'id' => $response['id'],
-                'invitationStatus' => Attendee::STATUS_NONE,
+                'id'                       => $response['id'],
+                'invitationStatus'         => Attendee::STATUS_NONE,
                 'editableInvitationStatus' => false,
             ],
             $response
@@ -381,17 +381,17 @@ CONTENT;
         // Step 3. Update event and delete 1 attendee.
         $this->restRequest(
             [
-                'method' => 'PUT',
-                'url' => $this->getUrl('oro_api_put_calendarevent', ['id' => $newEvent->getId()]),
-                'server' => $this->generateWsseAuthHeader('foo_user_1', 'foo_user_1_api_key'),
+                'method'  => 'PUT',
+                'url'     => $this->getUrl('oro_api_put_calendarevent', ['id' => $newEvent->getId()]),
+                'server'  => $this->generateWsseAuthHeader('foo_user_1', 'foo_user_1_api_key'),
                 'content' => json_encode(
                     [
-                        'attendees'  => [
+                        'attendees' => [
                             [
                                 'displayName' => $this->getReference('oro_calendar:user:foo_user_2')->getFullName(),
-                                'email' => 'foo_user_2@example.com',
-                                'status' => Attendee::STATUS_ACCEPTED,
-                                'type' => Attendee::TYPE_REQUIRED,
+                                'email'       => 'foo_user_2@example.com',
+                                'status'      => Attendee::STATUS_ACCEPTED,
+                                'type'        => Attendee::TYPE_REQUIRED,
                             ],
                         ]
                     ]
@@ -401,7 +401,7 @@ CONTENT;
         $response = $this->getRestResponseContent(['statusCode' => 200, 'contentType' => 'application/json']);
         $this->assertResponseEquals(
             [
-                'invitationStatus' => Attendee::STATUS_NONE,
+                'invitationStatus'         => Attendee::STATUS_NONE,
                 'editableInvitationStatus' => false,
             ],
             $response
@@ -411,14 +411,14 @@ CONTENT;
         $this->restRequest(
             [
                 'method' => 'GET',
-                'url' => $this->getUrl('oro_api_get_calendarevent', ['id' => $newEvent->getId()]),
+                'url'    => $this->getUrl('oro_api_get_calendarevent', ['id' => $newEvent->getId()]),
                 'server' => $this->generateWsseAuthHeader('foo_user_1', 'foo_user_1_api_key')
             ]
         );
 
         $response = $this->getRestResponseContent(
             [
-                'statusCode' => 200,
+                'statusCode'  => 200,
                 'contentType' => 'application/json'
             ]
         );

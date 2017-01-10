@@ -1064,9 +1064,7 @@ class CalendarEvent extends ExtendCalendarEvent implements RemindableInterface, 
     }
 
     /**
-     * Remove attendee. Related child event will be also removed. This method should not be called using child event.
-     *
-     * @todo Move logic of this method to \Oro\Bundle\CalendarBundle\Manager\CalendarEventManager for consistency.
+     * Remove attendee. This method should not be called using child event.
      *
      * @param Attendee $attendee
      * @return CalendarEvent
@@ -1077,17 +1075,6 @@ class CalendarEvent extends ExtendCalendarEvent implements RemindableInterface, 
         $this->ensureCalendarEventIsNotChild();
 
         if ($this->getAttendees()->contains($attendee)) {
-            $childEvent = $this->getChildEventByAttendee($attendee);
-            if ($childEvent) {
-                if ($childEvent->getRecurringEvent()) {
-                    // If child event is an exception of recurring event then it should be cancelled
-                    // to hide the event in user's calendar
-                    $childEvent->setCancelled(true);
-                } else {
-                    // otherwise it should be removed
-                    $this->removeChildEvent($childEvent);
-                }
-            }
             $this->getAttendees()->removeElement($attendee);
         }
 
@@ -1099,11 +1086,11 @@ class CalendarEvent extends ExtendCalendarEvent implements RemindableInterface, 
      *
      * @return CalendarEvent|null
      */
-    protected function getChildEventByAttendee(Attendee $attendee)
+    public function getChildEventByAttendee(Attendee $attendee)
     {
         $result = $this->getChildEvents()->filter(
-            function (CalendarEvent $chileEvent) use ($attendee) {
-                $calendar = $chileEvent->getCalendar();
+            function (CalendarEvent $childEvent) use ($attendee) {
+                $calendar = $childEvent->getCalendar();
                 $ownerUser = $calendar ? $calendar->getOwner() : null;
                 return $ownerUser && $attendee->isUserEqual($ownerUser);
             }
