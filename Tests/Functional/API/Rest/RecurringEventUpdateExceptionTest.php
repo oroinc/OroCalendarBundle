@@ -59,8 +59,7 @@ class RecurringEventUpdateExceptionTest extends AbstractTestCase
     public function testExceptionIsUpdatedAfterUpdateOfRecurringEvent(
         array $changedEventData,
         array $exceptionChangedData
-    )
-    {
+    ) {
         // Step 1. Create recurring event with 2 attendees.
         // Recurring event with occurrences: 2016-04-01, 2016-04-02, 2016-04-03, 2016-04-04
         $eventData = [
