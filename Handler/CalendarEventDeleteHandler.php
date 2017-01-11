@@ -9,6 +9,7 @@ use Symfony\Component\HttpFoundation\RequestStack;
 
 use Oro\Bundle\CalendarBundle\Entity\CalendarEvent;
 use Oro\Bundle\CalendarBundle\Entity\SystemCalendar;
+use Oro\Bundle\CalendarBundle\Manager\CalendarEvent\DeleteManager;
 use Oro\Bundle\CalendarBundle\Manager\CalendarEvent\NotificationManager;
 use Oro\Bundle\CalendarBundle\Provider\SystemCalendarConfig;
 use Oro\Bundle\SecurityBundle\Exception\ForbiddenException;
@@ -29,6 +30,9 @@ class CalendarEventDeleteHandler extends DeleteHandler
 
     /** @var NotificationManager */
     protected $notificationManager;
+
+    /** @var DeleteManager */
+    protected $deleteManager;
 
     /**
      * @param RequestStack $requestStack
@@ -76,6 +80,14 @@ class CalendarEventDeleteHandler extends DeleteHandler
         $this->securityFacade = $securityFacade;
 
         return $this;
+    }
+
+    /**
+     * @param DeleteManager $deleteManager
+     */
+    public function setDeleteManager($deleteManager)
+    {
+        $this->deleteManager = $deleteManager;
     }
 
     /**
@@ -139,35 +151,12 @@ class CalendarEventDeleteHandler extends DeleteHandler
         $this->checkPermissions($entity, $em);
         // entity is cloned to have all attributes in delete notification email
         $clonedEntity = clone $entity;
-        $cancelled = false;
 
-        if ($this->shouldCancelInsteadDelete() && $entity->getRecurringEvent()) {
-            $event = $entity->getParent() ? : $entity;
-            $event->setCancelled(true);
-
-            $childEvents = $event->getChildEvents();
-            foreach ($childEvents as $childEvent) {
-                $childEvent->setCancelled(true);
-            }
-            $cancelled = true;
-        } else {
-            if ($entity->getRecurrence() && $entity->getRecurrence()->getId()) {
-                $em->remove($entity->getRecurrence());
-            }
-
-            if ($entity->getRecurringEvent()) {
-                $event = $entity->getParent() ? : $entity;
-                $childEvents = $event->getChildEvents();
-                foreach ($childEvents as $childEvent) {
-                    $this->deleteEntity($childEvent, $em);
-                }
-            }
-            $this->deleteEntity($entity, $em);
-        }
+        $this->deleteManager->deleteOrCancel($entity, $this->shouldCancelInsteadDelete());
 
         $em->flush();
 
-        if ($cancelled) {
+        if ($em->contains($entity) && $entity->isCancelled()) {
             $this->notificationManager->onUpdate($entity, $clonedEntity, $this->getNotificationStrategy());
         } else {
             $this->notificationManager->onDelete($entity, $this->getNotificationStrategy());

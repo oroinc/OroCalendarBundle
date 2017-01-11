@@ -3,18 +3,26 @@
 namespace Oro\Bundle\CalendarBundle\Tests\Unit\Manager;
 
 use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Persistence\ManagerRegistry;
+use Doctrine\ORM\EntityRepository;
 
 use Oro\Bundle\CalendarBundle\Entity\Calendar;
 use Oro\Bundle\CalendarBundle\Entity\CalendarEvent;
+use Oro\Bundle\CalendarBundle\Manager\AttendeeManager;
+use Oro\Bundle\CalendarBundle\Manager\AttendeeRelationManager;
+use Oro\Bundle\CalendarBundle\Manager\CalendarEvent\DeleteManager;
 use Oro\Bundle\CalendarBundle\Manager\CalendarEvent\UpdateAttendeeManager;
 use Oro\Bundle\CalendarBundle\Manager\CalendarEvent\UpdateChildManager;
 use Oro\Bundle\CalendarBundle\Manager\CalendarEvent\UpdateExceptionManager;
 use Oro\Bundle\CalendarBundle\Manager\CalendarEvent\UpdateManager;
 use Oro\Bundle\CalendarBundle\Manager\CalendarEventManager;
+use Oro\Bundle\CalendarBundle\Provider\SystemCalendarConfig;
 use Oro\Bundle\CalendarBundle\Tests\Unit\Fixtures\Entity\Attendee;
 use Oro\Bundle\CalendarBundle\Tests\Unit\Fixtures\Entity\User;
+use Oro\Bundle\EntityBundle\Provider\EntityNameResolver;
 use Oro\Bundle\FilterBundle\Tests\Unit\Filter\Fixtures\TestEnumValue;
 use Oro\Bundle\OrganizationBundle\Entity\Organization;
+use Oro\Bundle\SecurityBundle\SecurityFacade;
 
 /**
  * Old tests moved after remove of \Oro\Bundle\CalendarBundle\Tests\Unit\Form\EventListener\ChildEventsSubscriberTest.
@@ -26,7 +34,7 @@ class CalendarEventManagerLegacyTest extends \PHPUnit_Framework_TestCase
 
     public function setUp()
     {
-        $repository = $this->getMockBuilder('Doctrine\ORM\EntityRepository')
+        $repository = $this->getMockBuilder(EntityRepository::class)
             ->setMethods(['find', 'findDefaultCalendars'])
             ->disableOriginalConstructor()
             ->getMock();
@@ -47,7 +55,7 @@ class CalendarEventManagerLegacyTest extends \PHPUnit_Framework_TestCase
                 );
             }));
 
-        $doctrine = $this->createMock('Doctrine\Common\Persistence\ManagerRegistry');
+        $doctrine = $this->createMock(ManagerRegistry::class);
         $doctrine->expects($this->any())
             ->method('getRepository')
             ->will($this->returnValueMap([
@@ -57,32 +65,37 @@ class CalendarEventManagerLegacyTest extends \PHPUnit_Framework_TestCase
             ]));
 
         $attendeeRelationManager = $this
-            ->getMockBuilder('Oro\Bundle\CalendarBundle\Manager\AttendeeRelationManager')
+            ->getMockBuilder(AttendeeRelationManager::class)
             ->disableOriginalConstructor()
             ->getMock();
 
 
-        $securityFacade = $this->getMockBuilder('Oro\Bundle\SecurityBundle\SecurityFacade')
+        $securityFacade = $this->getMockBuilder(SecurityFacade::class)
             ->disableOriginalConstructor()
             ->getMock();
 
-        $entityNameResolver = $this->getMockBuilder('Oro\Bundle\EntityBundle\Provider\EntityNameResolver')
+        $entityNameResolver = $this->getMockBuilder(EntityNameResolver::class)
             ->disableOriginalConstructor()
             ->getMock();
 
-        $calendarConfig = $this->getMockBuilder('Oro\Bundle\CalendarBundle\Provider\SystemCalendarConfig')
+        $calendarConfig = $this->getMockBuilder(SystemCalendarConfig::class)
                 ->disableOriginalConstructor()
                 ->getMock();
 
         $attendeeManager = $this
-            ->getMockBuilder('Oro\Bundle\CalendarBundle\Manager\AttendeeManager')
+            ->getMockBuilder(AttendeeManager::class)
+            ->disableOriginalConstructor()
+            ->getMock();
+
+        $deleteManager = $this
+            ->getMockBuilder(DeleteManager::class)
             ->disableOriginalConstructor()
             ->getMock();
 
         $updateManager = new UpdateManager(
             new UpdateAttendeeManager($attendeeRelationManager, $doctrine),
             new UpdateChildManager($doctrine),
-            new UpdateExceptionManager($attendeeManager)
+            new UpdateExceptionManager($attendeeManager, $deleteManager)
         );
 
         $this->calendarEventManager = new CalendarEventManager(

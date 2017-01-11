@@ -252,7 +252,7 @@ class CalendarEvent extends ExtendCalendarEvent implements RemindableInterface, 
      * @ORM\OneToOne(
      *     targetEntity="Oro\Bundle\CalendarBundle\Entity\Recurrence",
      *     inversedBy="calendarEvent",
-     *     cascade={"persist"},
+     *     cascade={"ALL"},
      *     orphanRemoval=true
      * )
      * @ORM\JoinColumn(name="recurrence_id", nullable=true, referencedColumnName="id", onDelete="SET NULL")
@@ -273,7 +273,7 @@ class CalendarEvent extends ExtendCalendarEvent implements RemindableInterface, 
      *
      * @var ArrayCollection
      *
-     * @ORM\OneToMany(targetEntity="CalendarEvent", mappedBy="recurringEvent", orphanRemoval=true, cascade={"all"})
+     * @ORM\OneToMany(targetEntity="CalendarEvent", mappedBy="recurringEvent", cascade={"persist"})
      */
     protected $recurringEventExceptions;
 

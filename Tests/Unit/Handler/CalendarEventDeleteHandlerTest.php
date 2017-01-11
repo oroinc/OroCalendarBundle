@@ -2,12 +2,15 @@
 
 namespace Oro\Bundle\CalendarBundle\Tests\Unit\Handler;
 
+use Doctrine\Common\Persistence\ObjectManager;
+
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\RequestStack;
 
 use Oro\Bundle\CalendarBundle\Entity\CalendarEvent;
 use Oro\Bundle\CalendarBundle\Entity\SystemCalendar;
 use Oro\Bundle\CalendarBundle\Handler\CalendarEventDeleteHandler;
+use Oro\Bundle\CalendarBundle\Manager\CalendarEvent\DeleteManager;
 use Oro\Bundle\CalendarBundle\Manager\CalendarEvent\NotificationManager;
 use Oro\Bundle\CalendarBundle\Provider\SystemCalendarConfig;
 use Oro\Bundle\CalendarBundle\Tests\Unit\Fixtures\Entity\Calendar;
@@ -32,24 +35,27 @@ class CalendarEventDeleteHandlerTest extends \PHPUnit_Framework_TestCase
     /** @var RequestStack */
     protected $requestStack;
 
+    /** @var \PHPUnit_Framework_MockObject_MockObject */
+    protected $deleteManager;
+
     /** @var CalendarEventDeleteHandler */
     protected $handler;
 
     protected function setUp()
     {
-        $this->securityFacade     = $this->getMockBuilder(SecurityFacade::class)
+        $this->securityFacade = $this->getMockBuilder(SecurityFacade::class)
             ->disableOriginalConstructor()
             ->getMock();
-        $this->calendarConfig     = $this->getMockBuilder(SystemCalendarConfig::class)
+        $this->calendarConfig = $this->getMockBuilder(SystemCalendarConfig::class)
             ->disableOriginalConstructor()
             ->getMock();
-        $this->manager            = $this->getMockBuilder(ApiEntityManager::class)
+        $this->manager = $this->getMockBuilder(ApiEntityManager::class)
             ->disableOriginalConstructor()
             ->getMock();
         $this->notificationManager = $this->getMockBuilder(NotificationManager::class)
             ->disableOriginalConstructor()
             ->getMock();
-        $objectManager            = $this->createMock('Doctrine\Common\Persistence\ObjectManager');
+        $objectManager = $this->createMock(ObjectManager::class);
         $this->manager->expects($this->any())
             ->method('getObjectManager')
             ->will($this->returnValue($objectManager));
@@ -57,6 +63,9 @@ class CalendarEventDeleteHandlerTest extends \PHPUnit_Framework_TestCase
             ->disableOriginalConstructor()
             ->getMock();
         $this->requestStack = new RequestStack();
+        $this->deleteManager = $this->getMockBuilder(DeleteManager::class)
+            ->disableOriginalConstructor()
+            ->getMock();
 
         $this->handler = new CalendarEventDeleteHandler();
         $this->handler->setCalendarConfig($this->calendarConfig);
@@ -64,6 +73,7 @@ class CalendarEventDeleteHandlerTest extends \PHPUnit_Framework_TestCase
         $this->handler->setOwnerDeletionManager($ownerDeletionManager);
         $this->handler->setNotificationManager($this->notificationManager);
         $this->handler->setRequestStack($this->requestStack);
+        $this->handler->setDeleteManager($this->deleteManager);
     }
 
     public function testHandleDelete()
@@ -96,6 +106,8 @@ class CalendarEventDeleteHandlerTest extends \PHPUnit_Framework_TestCase
         $this->calendarConfig->expects($this->once())
             ->method('isPublicCalendarEnabled')
             ->will($this->returnValue(false));
+        $this->deleteManager->expects($this->never())
+            ->method($this->anything());
 
         $this->handler->handleDelete(1, $this->manager);
     }
@@ -121,6 +133,8 @@ class CalendarEventDeleteHandlerTest extends \PHPUnit_Framework_TestCase
             ->method('isGranted')
             ->with('oro_public_calendar_event_management')
             ->will($this->returnValue(false));
+        $this->deleteManager->expects($this->never())
+            ->method($this->anything());
 
         $this->handler->handleDelete(1, $this->manager);
     }
@@ -132,7 +146,7 @@ class CalendarEventDeleteHandlerTest extends \PHPUnit_Framework_TestCase
     public function testHandleDeleteWhenSystemCalendarDisabled()
     {
         $calendar = new SystemCalendar();
-        $event    = new CalendarEvent();
+        $event = new CalendarEvent();
         $event->setSystemCalendar($calendar);
 
         $this->manager->expects($this->once())
@@ -141,6 +155,8 @@ class CalendarEventDeleteHandlerTest extends \PHPUnit_Framework_TestCase
         $this->calendarConfig->expects($this->once())
             ->method('isSystemCalendarEnabled')
             ->will($this->returnValue(false));
+        $this->deleteManager->expects($this->never())
+            ->method($this->anything());
 
         $this->handler->handleDelete(1, $this->manager);
     }
@@ -152,7 +168,7 @@ class CalendarEventDeleteHandlerTest extends \PHPUnit_Framework_TestCase
     public function testHandleDeleteWhenSystemCalendarEventManagementNotGranted()
     {
         $calendar = new SystemCalendar();
-        $event    = new CalendarEvent();
+        $event = new CalendarEvent();
         $event->setSystemCalendar($calendar);
 
         $this->manager->expects($this->once())
@@ -165,6 +181,8 @@ class CalendarEventDeleteHandlerTest extends \PHPUnit_Framework_TestCase
             ->method('isGranted')
             ->with('oro_system_calendar_event_management')
             ->will($this->returnValue(false));
+        $this->deleteManager->expects($this->never())
+            ->method($this->anything());
 
         $this->handler->handleDelete(1, $this->manager);
     }
@@ -182,6 +200,10 @@ class CalendarEventDeleteHandlerTest extends \PHPUnit_Framework_TestCase
             ->method('isGranted')
             ->willReturn(true);
 
+        $this->deleteManager->expects($this->once())
+            ->method('deleteOrCancel')
+            ->with($event, false);
+
         $this->handler->processDelete($event, $this->manager->getObjectManager());
     }
 
@@ -198,6 +220,10 @@ class CalendarEventDeleteHandlerTest extends \PHPUnit_Framework_TestCase
             ->method('isGranted')
             ->willReturn(true);
 
+        $this->deleteManager->expects($this->once())
+            ->method('deleteOrCancel')
+            ->with($event, false);
+
         $this->handler->processDelete($event, $this->manager->getObjectManager());
     }
 
@@ -211,6 +237,10 @@ class CalendarEventDeleteHandlerTest extends \PHPUnit_Framework_TestCase
         $this->securityFacade->expects($this->once())
             ->method('isGranted')
             ->willReturn(true);
+
+        $this->deleteManager->expects($this->once())
+            ->method('deleteOrCancel')
+            ->with($event, false);
 
         $this->handler->processDelete($event, $this->manager->getObjectManager());
     }
@@ -227,6 +257,10 @@ class CalendarEventDeleteHandlerTest extends \PHPUnit_Framework_TestCase
         $this->securityFacade->expects($this->once())
             ->method('isGranted')
             ->willReturn(true);
+
+        $this->deleteManager->expects($this->once())
+            ->method('deleteOrCancel')
+            ->with($event, false);
 
         $this->handler->processDelete($event, $this->manager->getObjectManager());
     }
@@ -249,6 +283,9 @@ class CalendarEventDeleteHandlerTest extends \PHPUnit_Framework_TestCase
             ->method('isGranted')
             ->with('VIEW', $calendar)
             ->willReturn(false);
+
+        $this->deleteManager->expects($this->never())
+            ->method($this->anything());
 
         $this->handler->handleDelete(1, $this->manager);
     }

@@ -34,16 +34,23 @@ class UpdateExceptionManager
     protected $attendeeManager;
 
     /**
+     * @var DeleteManager
+     */
+    protected $deleteManager;
+
+    /**
      * @var PropertyAccessor
      */
     protected $propertyAccessor;
 
     /**
      * @param AttendeeManager $attendeeManager
+     * @param DeleteManager $deleteManager
      */
-    public function __construct(AttendeeManager $attendeeManager)
+    public function __construct(AttendeeManager $attendeeManager, DeleteManager $deleteManager)
     {
         $this->attendeeManager = $attendeeManager;
+        $this->deleteManager = $deleteManager;
     }
 
     /**
@@ -115,14 +122,7 @@ class UpdateExceptionManager
      */
     protected function clearExceptions(CalendarEvent $event)
     {
-        foreach ($event->getRecurringEventExceptions() as $exception) {
-            $exception->getChildEvents()->clear();
-        }
-        $event->getRecurringEventExceptions()->clear();
-
-        foreach ($event->getChildEvents() as $childEvent) {
-            $childEvent->getRecurringEventExceptions()->clear();
-        }
+        $this->deleteManager->deleteAndClearRecurringEventExceptions($event);
     }
 
     /**
@@ -256,7 +256,7 @@ class UpdateExceptionManager
         CalendarEvent $exceptionEvent
     ) {
         if ($exceptionEvent->getParent()) {
-            // Only child events should be updated
+            // Only parent events have attendees collection and should be updated
             return;
         }
 

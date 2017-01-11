@@ -176,6 +176,8 @@ class UpdateChildManager
      *
      * For recurring calendar event exceptions instead of remove mark attendee event as cancelled.
      *
+     * For recurring calendar event exceptions unlink reference with removed child calendar event.
+     *
      * @param CalendarEvent $calendarEvent
      * @param Organization $organization
      * @param array $removedAttendeeUserIds
@@ -194,8 +196,16 @@ class UpdateChildManager
                     // to hide the event in user's calendar
                     $childEvent->setCancelled(true);
                 } else {
-                    // otherwise it should be removed
+                    // Otherwise it should be removed
                     $calendarEvent->removeChildEvent($childEvent);
+                    // All references to this event from recurring event exceptions should be cleared
+                    // since $childEvent will be removed.
+                    foreach ($childEvent->getRecurringEventExceptions() as $recurringEventException) {
+                        // After removing the reference to $childEvent from the $recurringEventException
+                        // this event should become a regular child event representing event of extra attendee
+                        // which was not added in recurring event but added in exception.
+                        $recurringEventException->setRecurringEvent(null);
+                    }
                 }
             }
         }

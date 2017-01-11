@@ -4,6 +4,7 @@ namespace Oro\Bundle\CalendarBundle\Datagrid\MassAction;
 
 use Doctrine\ORM\EntityManager;
 
+use Oro\Bundle\CalendarBundle\Manager\CalendarEvent\DeleteManager;
 use Oro\Bundle\DataGridBundle\Extension\MassAction\DeleteMassActionHandler as ParentHandler;
 
 /**
@@ -14,32 +15,24 @@ use Oro\Bundle\DataGridBundle\Extension\MassAction\DeleteMassActionHandler as Pa
 class DeleteMassActionHandler extends ParentHandler
 {
     /**
-     * @inheritdoc
+     * @var DeleteManager
+     */
+    protected $deleteManager;
+
+    /**
+     * @param DeleteManager $deleteManager
+     */
+    public function setDeleteManager($deleteManager)
+    {
+        $this->deleteManager = $deleteManager;
+    }
+
+    /**
+     * {@inheritdoc}
      */
     protected function processDelete($entity, EntityManager $manager)
     {
-        if ($entity->getRecurringEvent()) {
-            $event = $entity->getParent() ? : $entity;
-            $event->setCancelled(true);
-
-            $childEvents = $event->getChildEvents();
-            foreach ($childEvents as $childEvent) {
-                $childEvent->setCancelled(true);
-            }
-        } else {
-            if ($entity->getRecurrence() && $entity->getRecurrence()->getId()) {
-                $manager->remove($entity->getRecurrence());
-            }
-
-            if ($entity->getRecurringEvent()) {
-                $event = $entity->getParent() ? : $entity;
-                $childEvents = $event->getChildEvents();
-                foreach ($childEvents as $childEvent) {
-                    $manager->remove($childEvent);
-                }
-            }
-            $manager->remove($entity);
-        }
+        $this->deleteManager->deleteOrCancel($entity, true);
 
         return $this;
     }

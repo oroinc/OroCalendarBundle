@@ -2,10 +2,12 @@
 
 namespace Oro\Bundle\CalendarBundle\Tests\Unit\Manager;
 
-use Oro\Bundle\CalendarBundle\Entity\CalendarEvent;
 use Oro\Bundle\CalendarBundle\Entity\Recurrence;
+use Oro\Bundle\CalendarBundle\Tests\Unit\Fixtures\Entity\CalendarEvent;
 use Oro\Bundle\CalendarBundle\Manager\AttendeeManager;
+use Oro\Bundle\CalendarBundle\Manager\CalendarEvent\DeleteManager;
 use Oro\Bundle\CalendarBundle\Manager\CalendarEvent\UpdateExceptionManager;
+
 use Oro\Component\PropertyAccess\PropertyAccessor;
 
 class UpdateExceptionManagerTest extends \PHPUnit_Framework_TestCase
@@ -16,18 +18,27 @@ class UpdateExceptionManagerTest extends \PHPUnit_Framework_TestCase
     protected $attendeeManager;
 
     /**
+     * @var \PHPUnit_Framework_MockObject_MockObject
+     */
+    protected $deleteManager;
+
+    /**
      * @var UpdateExceptionManager
      */
-    protected $manager;
+    protected $updateExceptionManager;
 
     protected function setUp()
     {
         $this->attendeeManager = $this
-            ->getMockBuilder('Oro\Bundle\CalendarBundle\Manager\AttendeeManager')
+            ->getMockBuilder(AttendeeManager::class)
             ->disableOriginalConstructor()
             ->getMock();
 
-        $this->manager = new UpdateExceptionManager($this->attendeeManager);
+        $this->deleteManager = $this->getMockBuilder(DeleteManager::class)
+            ->disableOriginalConstructor()
+            ->getMock();
+
+        $this->updateExceptionManager = new UpdateExceptionManager($this->attendeeManager, $this->deleteManager);
     }
 
     /**
@@ -35,22 +46,22 @@ class UpdateExceptionManagerTest extends \PHPUnit_Framework_TestCase
      */
     public function testClearingExceptionsOnUpdate($field, $value)
     {
-        $originalEntity = new CalendarEvent();
-        $originalRecurrence = new Recurrence();
-        $originalEntity->setRecurrence($originalRecurrence);
+        $actualEvent = new CalendarEvent(1);
+        $recurrence = new Recurrence();
+        $actualEvent->setRecurrence($recurrence);
 
-        $entity = new CalendarEvent();
+        $originalEvent = clone $actualEvent;
 
         $newRecurrence = new Recurrence();
         $propertyAccessor = new PropertyAccessor();
         $propertyAccessor->setValue($newRecurrence, $field, $value);
-        $entity->setRecurrence($newRecurrence);
+        $actualEvent->setRecurrence($newRecurrence);
 
-        $entity->addRecurringEventException(new CalendarEvent());
+        $this->deleteManager->expects($this->once())
+            ->method('deleteAndClearRecurringEventExceptions')
+            ->with($actualEvent);
 
-        $this->manager->onEventUpdate($entity, $originalEntity);
-
-        $this->assertCount(0, $entity->getRecurringEventExceptions());
+        $this->updateExceptionManager->onEventUpdate($actualEvent, $originalEvent);
     }
 
     /**
@@ -86,7 +97,7 @@ class UpdateExceptionManagerTest extends \PHPUnit_Framework_TestCase
         $entity->setTitle('New Title')
             ->addRecurringEventException($exception);
 
-        $this->manager->onEventUpdate($entity, $originalEntity);
+        $this->updateExceptionManager->onEventUpdate($entity, $originalEntity);
 
         $expectedCalendarEvent = clone $originalEntity;
         $expectedCalendarEvent->setDescription('Changed Description')

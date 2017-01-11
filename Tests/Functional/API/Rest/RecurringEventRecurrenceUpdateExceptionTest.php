@@ -14,11 +14,11 @@ use Oro\Bundle\CalendarBundle\Tests\Functional\DataFixtures\LoadUserData;
  *
  * Use cases covered:
  * - Update recurring event recurrence clears exceptions when "updateExceptions"=true.
- * - Update recurring event recurrence doesn't clear exceptions when "updateExceptions"=False.
+ * - Update recurring event recurrence doesn't clear exceptions when "updateExceptions"=false.
  * - Update recurring event without recurrence change doesn't change exceptions when "updateExceptions"=true.
  * - Update recurring event "start" and "end" clears exceptions when "updateExceptions"=true.
  * - Remove recurring event recurrence clears exceptions when "updateExceptions"=true.
- * - Remove recurring event recurrence doesn't clear exceptions when "updateExceptions"=False.
+ * - Remove recurring event recurrence doesn't clear exceptions when "updateExceptions"=false.
  * - Remove recurring event recurrence clears exceptions when "updateExceptions"=true and "notifyAttendees"=all
  *   and when recurring event has attendees but one of the exceptions doesn't have attendees.
  *
@@ -307,11 +307,11 @@ class RecurringEventRecurrenceUpdateExceptionTest extends AbstractTestCase
     }
 
     /**
-     * Update recurring event recurrence doesn't clear exceptions when "updateExceptions"=False.
+     * Update recurring event recurrence doesn't clear exceptions when "updateExceptions"=false.
      *
      * Step:
      * 1. Create new recurring event without attendees.
-     * 2, Create first exception with cancelled flag for the recurring event.
+     * 2. Create first exception with cancelled flag for the recurring event.
      * 3. Create another exception for the recurring event with different title, description and start time.
      * 4. Check the events exposed in the API without cancelled exception and with modified second exception.
      * 5. Update Recurrence for recurring event with updateExceptions flag === false.
@@ -1061,7 +1061,7 @@ class RecurringEventRecurrenceUpdateExceptionTest extends AbstractTestCase
      * 2. Create first exception with cancelled flag for the recurring event.
      * 3. Create another exception for the recurring event with different title, description and start time.
      * 4. Check the events exposed in the API without cancelled exception and with modified second exception.
-     * 5. Update recurring event remove recurrence, updateExceptions flag === true.
+     * 5. Update recurring event, remove recurrence, updateExceptions flag === true.
      * 6. Check exceptional event was removed and occurrences were removed.
      *
      * @SuppressWarnings(PHPMD.ExcessiveMethodLength)
@@ -1223,7 +1223,7 @@ class RecurringEventRecurrenceUpdateExceptionTest extends AbstractTestCase
         ];
         $this->assertResponseEquals($responseWithExceptions, $response, false);
 
-        // Step 5. Update recurring event remove recurrence, updateExceptions flag === true.
+        // Step 5. Update recurring event, remove recurrence, updateExceptions flag === true.
         $changedEventData = $eventData;
         $changedEventData['recurrence'] = null;
         $changedEventData['updateExceptions'] = true;
@@ -1297,7 +1297,7 @@ class RecurringEventRecurrenceUpdateExceptionTest extends AbstractTestCase
     }
 
     /**
-     * Remove recurring event recurrence doesn't clear exceptions when "updateExceptions"=False.
+     * Remove recurring event recurrence doesn't clear exceptions when "updateExceptions"=false.
      *
      * Step:
      * 1. Create new recurring event without attendees.
