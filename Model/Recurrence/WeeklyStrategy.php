@@ -61,8 +61,13 @@ class WeeklyStrategy extends AbstractStrategy
         //check if there were events before start of dates interval, so if yes we should calculate how many times
         if ($start > $startTime) {
             $dateInterval = $start->diff($startTime);
+
             //it calculates total occurrences were between $start and $startTime
             $fromStartInterval = floor(((int)$dateInterval->format('%a') + 1) / 7 / $interval) * count($weekDays);
+
+            //fullWeeks must be calculated before recalculating fromStartInterval for first week, because it can
+            //subtract the number of days equivalent to count of weekDays and one full week will be lost
+            $fullWeeks = ceil($fromStartInterval / count($weekDays)) * $interval;
             foreach ($weekDays as $day) {
                 $currentDay = new \DateTime($day, $this->getTimeZone());
                 if ($currentDay->format('w') < $recurrence->getStartTime()->format('w')) {
@@ -70,7 +75,6 @@ class WeeklyStrategy extends AbstractStrategy
                     $fromStartInterval = $fromStartInterval == 0 ? $fromStartInterval : $fromStartInterval - 1;
                 }
             }
-            $fullWeeks = ceil($fromStartInterval / count($weekDays)) * $interval;
         }
 
         $afterFullWeeksDate = new \DateTime("+{$fullWeeks} week {$startTime->format('c')}");
@@ -206,6 +210,11 @@ class WeeklyStrategy extends AbstractStrategy
             $fullWeeks += $recurrence->getInterval();
             $afterFullWeeksDate = new \DateTime("+{$fullWeeks} week {$startTime->format('c')}");
             $fromStartInterval += count($weekDays);
+        }
+
+        //if no occurrences were at the first week, should skip that week
+        if ($fromStartInterval == 0) {
+            $afterFullWeeksDate = new \DateTime("+1 week {$startTime->format('c')}");
         }
 
         foreach ($weekDays as $day) {
