@@ -78,18 +78,7 @@ define([
         },
 
         getFormState: function() {
-            var disableStates = {};
-            _.each(this.exclusions, function(selector) {
-                var $field = this.$form.find(selector);
-                disableStates[selector] = Boolean($field.attr('disabled'));
-                $field.attr('disabled', true);
-            }, this);
-            var result = this.$form.serialize();
-            _.each(this.exclusions, function(selector) {
-                this.$form.find(selector).attr('disabled', disableStates[selector]);
-            }, this);
-
-            return result;
+            return this.$form.find(':input:not(' + this.exclusions.join(', ') + ')').serialize();
         }
     }, {
         createConfirmNotificationDialog: function() {
