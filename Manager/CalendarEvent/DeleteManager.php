@@ -53,10 +53,21 @@ class DeleteManager
     {
         $calendarEvent->setCancelled(true);
 
-        $parentCalendarEvent = $calendarEvent->getParent() ? : $calendarEvent;
-        /** @var CalendarEvent $calendarEvent */
-        foreach ($parentCalendarEvent->getChildEvents() as $childCalendarEvent) {
-            $childCalendarEvent->setCancelled(true);
+        $parentCalendarEvent = $calendarEvent->getParent();
+
+        if ($parentCalendarEvent) {
+            // If this is a child event, cancel only this event and remove attendee from parent event.
+            $attendee = $calendarEvent->getRelatedAttendee();
+            if ($attendee) {
+                $calendarEvent->setRelatedAttendee(null);
+                $parentCalendarEvent->removeAttendee($attendee);
+            }
+        } else {
+            // If this is a parent event, cancel event for all attendees.
+            /** @var CalendarEvent $calendarEvent */
+            foreach ($calendarEvent->getChildEvents() as $childCalendarEvent) {
+                $childCalendarEvent->setCancelled(true);
+            }
         }
     }
 

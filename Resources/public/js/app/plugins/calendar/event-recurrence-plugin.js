@@ -120,13 +120,20 @@ define(function(require) {
             }
 
             var promise;
+
+            // Restrict remove occurrence of recurring event in child calendar.
+            // @todo This restriction should be removed in CRM-6758.
+            var restrictOnlyThisEventOperation = eventModel.get('parentEventId') !== null
+                && eventModel.get('recurringEventId') === null;
+
             var options = {
                 actionType: 'delete',
-                dialogTitle: __('Delete Event')
+                dialogTitle: __('Delete Event'),
+                restrictOnlyThisEventAction: restrictOnlyThisEventOperation
             };
             var onSelectCallback = function(value) {
                 var attrs;
-                if (value === 'exception') {
+                if (value === 'exception' && !restrictOnlyThisEventOperation) {
                     attrs = {
                         isException: true,
                         originalStart: eventModel.get('start'),
@@ -208,9 +215,13 @@ define(function(require) {
         _selectActionTarget: function(onSelectCallback, options) {
             var deferredTargetSelection = $.Deferred();
 
+            options = _.defaults(options, {restrictOnlyThisEventAction: false});
+
             var contentView = new ActionTargetSelectView({
                 autoRender: true,
-                actionType: options.actionType
+                actionType: options.actionType,
+                // @todo This option should be removed in CRM-6758.
+                restrictOnlyThisEventAction: options.restrictOnlyThisEventAction
             });
 
             var eventDialog = new DialogWidget({
@@ -223,6 +234,7 @@ define(function(require) {
                     modal: true,
                     resizable: false,
                     width: 375,
+                    // minHeight: 100,
                     autoResize: true,
                     close: function() {
                         deferredTargetSelection.reject();
