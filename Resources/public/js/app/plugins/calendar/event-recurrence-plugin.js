@@ -123,8 +123,8 @@ define(function(require) {
 
             // Restrict remove occurrence of recurring event in child calendar.
             // @todo This restriction should be removed in CRM-6758.
-            var restrictOnlyThisEventOperation = eventModel.get('parentEventId') !== null
-                && eventModel.get('recurringEventId') === null;
+            var restrictOnlyThisEventOperation = eventModel.get('parentEventId') !== null &&
+                eventModel.get('recurringEventId') === null;
 
             var options = {
                 actionType: 'delete',
