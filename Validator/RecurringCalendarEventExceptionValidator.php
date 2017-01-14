@@ -88,7 +88,7 @@ class RecurringCalendarEventExceptionValidator extends ConstraintValidator
         $recurringEvent = $value->getRecurringEvent();
         $rootContext = $this->context->getRoot();
 
-        if ($rootContext instanceof FormInterface && $recurringEvent) {
+        if ($rootContext instanceof FormInterface && $recurringEvent && $rootContext->has('calendar')) {
             $calendarId = null;
             if ($rootContext->get('calendar') && $rootContext->get('calendar')->getData()) {
                 $calendarId = $rootContext->get('calendar')->getData();
