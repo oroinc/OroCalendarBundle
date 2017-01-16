@@ -35,6 +35,8 @@ class CalendarEventType extends AbstractType
      */
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
+        $minYear = date_create('-10 year')->format('Y');
+        $maxYear = date_create('+80 year')->format('Y');
         $builder
             ->add(
                 'title',
@@ -59,6 +61,7 @@ class CalendarEventType extends AbstractType
                     'required' => true,
                     'label'    => 'oro.calendar.calendarevent.start.label',
                     'attr'     => ['class' => 'start'],
+                    'years'    => [$minYear, $maxYear],
                 ]
             )
             ->add(
@@ -68,6 +71,7 @@ class CalendarEventType extends AbstractType
                     'required' => true,
                     'label'    => 'oro.calendar.calendarevent.end.label',
                     'attr'     => ['class' => 'end'],
+                    'years'    => [$minYear, $maxYear],
                 ]
             )
             ->add(
