@@ -2,6 +2,7 @@ define(function(require) {
     'use strict';
 
     var ActionTargetSelectView;
+    var _ = require('underscore');
     var BaseView = require('oroui/js/app/views/base/view');
 
     ActionTargetSelectView = BaseView.extend({
