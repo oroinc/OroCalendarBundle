@@ -7,6 +7,7 @@ use Doctrine\Common\Persistence\ObjectManager;
 
 use Oro\Bundle\CalendarBundle\Entity\Recurrence;
 use Oro\Bundle\CalendarBundle\Manager\CalendarEvent\DeleteManager;
+use Oro\Bundle\CalendarBundle\Tests\Unit\Fixtures\Entity\Attendee;
 use Oro\Bundle\CalendarBundle\Tests\Unit\Fixtures\Entity\CalendarEvent;
 
 class DeleteManagerTest extends \PHPUnit_Framework_TestCase
@@ -32,19 +33,19 @@ class DeleteManagerTest extends \PHPUnit_Framework_TestCase
         $this->deleteManager = new DeleteManager($doctrine);
     }
 
-    public function testDeleteAndClearRecurringEventExceptions()
+    public function testDeleteRecurringEventAndClearAllExceptions()
     {
-        $event = new CalendarEvent(1);
-        $recurrence = new Recurrence();
-        $event->setRecurrence($recurrence);
-        $childEvent = new CalendarEvent(3);
-        $event->addChildEvent($childEvent);
+        $recurringEvent = new CalendarEvent(1);
+        $recurringEvent->setRecurrence(new Recurrence());
+
+        $childRecurringEvent = new CalendarEvent(3);
+        $recurringEvent->addChildEvent($childRecurringEvent);
 
         $exceptionEvent = new CalendarEvent(2);
-        $event->addRecurringEventException($exceptionEvent);
+        $recurringEvent->addRecurringEventException($exceptionEvent);
 
         $childExceptionEvent = new CalendarEvent(4);
-        $childEvent->addRecurringEventException($childExceptionEvent);
+        $childRecurringEvent->addRecurringEventException($childExceptionEvent);
 
         $this->objectManager->expects($this->exactly(2))
             ->method('remove');
@@ -57,9 +58,78 @@ class DeleteManagerTest extends \PHPUnit_Framework_TestCase
             ->method('remove')
             ->with($childExceptionEvent);
 
-        $this->deleteManager->deleteAndClearRecurringEventExceptions($event);
+        $this->deleteManager->deleteAndClearRecurringEventExceptions($recurringEvent);
 
-        $this->assertCount(0, $event->getRecurringEventExceptions());
-        $this->assertCount(0, $childEvent->getRecurringEventExceptions());
+        $this->assertCount(0, $recurringEvent->getRecurringEventExceptions());
+        $this->assertCount(0, $childRecurringEvent->getRecurringEventExceptions());
+    }
+
+    public function testDeleteAttendeeExceptionEventCancelsTheEventAndRemovesAttendeeFromParentEvent()
+    {
+        $recurringEvent = new CalendarEvent(1);
+        $childRecurringEvent = new CalendarEvent(2);
+        $exceptionEvent = new CalendarEvent(3);
+        $childExceptionEvent = new CalendarEvent(4);
+
+        $exceptionEventAttendee = new Attendee(1);
+        $childExceptionEventAttendee = new Attendee(2);
+
+        $recurringEvent->setRecurrence(new Recurrence());
+        $recurringEvent->addChildEvent($childRecurringEvent);
+        $recurringEvent->addRecurringEventException($exceptionEvent);
+
+        $exceptionEvent->addAttendee($exceptionEventAttendee);
+        $exceptionEvent->addAttendee($childExceptionEventAttendee);
+        $exceptionEvent->setRelatedAttendee($exceptionEventAttendee);
+        $exceptionEvent->addChildEvent($childExceptionEvent);
+
+        $childRecurringEvent->addRecurringEventException($childExceptionEvent);
+
+        $childExceptionEvent->setRelatedAttendee($childExceptionEventAttendee);
+
+        $this->objectManager->expects($this->never())
+            ->method('remove');
+
+        $this->deleteManager->deleteOrCancel($childExceptionEvent, true);
+
+        $this->assertTrue($childExceptionEvent->isCancelled());
+        $this->assertNull($childExceptionEvent->getRelatedAttendee());
+        $this->assertFalse($exceptionEvent->getAttendees()->contains($childExceptionEventAttendee));
+        $this->assertFalse($exceptionEvent->isCancelled());
+    }
+
+    public function testDeleteParentExceptionEventCancelsAllAttendeeEvents()
+    {
+        $recurringEvent = new CalendarEvent(1);
+        $childRecurringEvent = new CalendarEvent(2);
+        $exceptionEvent = new CalendarEvent(3);
+        $childExceptionEvent = new CalendarEvent(4);
+
+        $exceptionEventAttendee = new Attendee(1);
+        $childExceptionEventAttendee = new Attendee(2);
+
+        $recurringEvent->setRecurrence(new Recurrence());
+        $recurringEvent->addChildEvent($childRecurringEvent);
+        $recurringEvent->addRecurringEventException($exceptionEvent);
+
+        $exceptionEvent->addAttendee($exceptionEventAttendee);
+        $exceptionEvent->addAttendee($childExceptionEventAttendee);
+        $exceptionEvent->setRelatedAttendee($exceptionEventAttendee);
+        $exceptionEvent->addChildEvent($childExceptionEvent);
+
+        $childRecurringEvent->addRecurringEventException($childExceptionEvent);
+
+        $childExceptionEvent->setRelatedAttendee($childExceptionEventAttendee);
+
+        $this->objectManager->expects($this->never())
+            ->method('remove');
+
+        $this->deleteManager->deleteOrCancel($exceptionEvent, true);
+
+        $this->assertTrue($exceptionEvent->isCancelled());
+        $this->assertTrue($childExceptionEvent->isCancelled());
+        $this->assertNotNull($childExceptionEvent->getRelatedAttendee());
+        $this->assertTrue($exceptionEvent->getAttendees()->contains($exceptionEventAttendee));
+        $this->assertTrue($exceptionEvent->getAttendees()->contains($childExceptionEventAttendee));
     }
 }
