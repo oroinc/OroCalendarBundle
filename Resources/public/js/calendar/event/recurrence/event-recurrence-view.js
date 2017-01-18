@@ -210,8 +210,8 @@ define(function(require) {
             this.findElement('settings').toggle(isRecurrenceActive);
             this.updateWarning();
             this.renderOriginValues();
-            this.$el.trigger('content:changed');
             this.toggleEventReminders(!isRecurrenceActive);
+            this.$el.trigger('content:changed');
         },
 
         onRepeatsChange: function(e) {
