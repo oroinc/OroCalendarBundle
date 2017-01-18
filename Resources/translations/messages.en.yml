@@ -101,7 +101,7 @@ oro:
         #
         calendarevent:
             entity_label:             Calendar event
-            entity_plural_label:      Calendar events
+            entity_plural_label:      Calendar Events
             entity_description:       Represent calendar event
             id.label:                 Id
             title.label:              Title

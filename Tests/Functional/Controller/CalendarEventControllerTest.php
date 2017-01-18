@@ -23,7 +23,7 @@ class CalendarEventControllerTest extends WebTestCase
         $crawler = $this->client->request('GET', $this->getUrl('oro_calendar_event_index'));
         $result  = $this->client->getResponse();
         $this->assertHtmlResponseStatusCodeEquals($result, 200);
-        $this->assertEquals('Calendar events - Activities', $crawler->filter('#page-title')->html());
+        $this->assertEquals('Calendar Events - Activities', $crawler->filter('#page-title')->html());
     }
 
     /**
