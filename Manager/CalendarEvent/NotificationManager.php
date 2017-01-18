@@ -18,6 +18,7 @@ use Oro\Bundle\UserBundle\Entity\User;
  * @see \Oro\Bundle\CalendarBundle\Model\Email\EmailNotificationProcessor
  *
  * @SuppressWarnings(PHPMD.ExcessiveClassComplexity)
+ * @todo Refactor and reduce class complexity in scope of BAP-13338.
  */
 class NotificationManager
 {
@@ -221,97 +222,167 @@ class NotificationManager
         }
 
         if ($calendarEvent->getSystemCalendar()) {
-            // If the event calendar was "user" and then it was changed to "system"
-            // the attendees of the event in "user" calendar should receive cancel notification,
-            // because "system" calendar cannot have attendees.
-            if ($originalCalendarEvent->getCalendar()) {
-                $this->addCancelNotifications(
-                    $originalCalendarEvent,
-                    $this->getCalendarOwnerUser($originalCalendarEvent),
-                    $originalCalendarEvent->getAttendees()->toArray()
-                );
-                $this->sendAddedNotifications();
-            }
-            // No other notifications are supported for system calendar event.
+            $this->onUpdateSystemCalendarEvent($originalCalendarEvent);
         } elseif ($calendarEvent->isCancelled() && !$originalCalendarEvent->isCancelled()) {
-            // The recurring calendar event exception was cancelled.
-            if (!$calendarEvent->getRecurringEvent()) {
-                // Check the event for consistency, since this case is valid only for exceptions of recurring event.
-                throw new \InvalidArgumentException(
-                    'Inconsistent state of calendar event: Cancelled event should have relation to recurring event.'
-                );
-            }
-            if (!$originalCalendarEvent->isCancelled()) {
-                // Cancel notification should be send but only in case if the original event was not cancelled before
-                // to not send cancel notification more then 1 time.
-                $this->addCancelNotifications(
-                    $calendarEvent,
-                    $this->getCalendarOwnerUser($calendarEvent),
-                    $calendarEvent->getAttendees()->toArray()
-                );
-                $this->sendAddedNotifications();
-            }
-            return;
+            $this->onCancelRecurringCalendarEventException($calendarEvent, $originalCalendarEvent);
         } elseif ($originalCalendarEvent->isCancelled() && !$calendarEvent->isCancelled()) {
-            // The event was cancelled before and then was reactivated, the case is not possible in the UI
-            // but possible if someone uses the API. Invite notification should be send.
-            $this->addInviteNotifications(
-                $calendarEvent,
-                $this->getCalendarOwnerUser($calendarEvent),
-                $calendarEvent->getAttendees()->toArray()
-            );
-            $this->sendAddedNotifications();
+            $this->onUnCancelRecurringCalendarEventException($calendarEvent);
         } elseif (!$calendarEvent->isCancelled()) {
-            // If calendar event exceptions were cleared cancel notification should be sent.
-            if (count($calendarEvent->getRecurringEventExceptions()->toArray()) == 0 &&
-                count($originalCalendarEvent->getRecurringEventExceptions()->toArray()) != 0
-            ) {
-                $this->addCancelNotificationsForRecurringEventExceptions(
-                    $originalCalendarEvent,
-                    $this->getCalendarOwnerUser($calendarEvent)
-                );
-            }
+            $this->onUpdateCalendarEvent($calendarEvent, $originalCalendarEvent, $strategy);
+        }
+    }
 
-            // Regular case for update of the event.
-            if ($strategy === static::ALL_NOTIFICATIONS_STRATEGY) {
-                // Add update notification for attendees which existed in the event originally and exist now.
-                $existedAttendees = $this->getEqualAttendees(
-                    $originalCalendarEvent,
-                    $calendarEvent->getAttendees()->toArray()
-                );
-                $this->addUpdateNotifications(
-                    $calendarEvent,
-                    $this->getCalendarOwnerUser($calendarEvent),
-                    $existedAttendees
-                );
-            }
-
-            // Add notification to new attendees
-            $addedAttendees = $this->getNotEqualAttendees(
+    /**
+     * If the event calendar was "user" and then it was changed to "system"
+     * the attendees of the event in "user" calendar should receive cancel notification,
+     * because "system" calendar cannot have attendees.
+     *
+     * No other notifications are supported for system calendar event.
+     *
+     * @param CalendarEvent $originalCalendarEvent  Original calendar event.
+     */
+    protected function onUpdateSystemCalendarEvent(CalendarEvent $originalCalendarEvent)
+    {
+        if ($originalCalendarEvent->getCalendar()) {
+            $this->addCancelNotifications(
                 $originalCalendarEvent,
-                $calendarEvent->getAttendees()->toArray()
-            );
-
-            $this->addInviteNotifications(
-                $calendarEvent,
-                $this->getCalendarOwnerUser($calendarEvent),
-                $addedAttendees
-            );
-
-            // Add notification to attendees removed from the event
-            $removedAttendees = $this->getNotEqualAttendees(
-                $calendarEvent,
+                $this->getCalendarOwnerUser($originalCalendarEvent),
                 $originalCalendarEvent->getAttendees()->toArray()
             );
-
-            $this->addUnInviteNotifications(
-                $originalCalendarEvent,
-                $this->getCalendarOwnerUser($calendarEvent),
-                $removedAttendees
-            );
-
             $this->sendAddedNotifications();
         }
+    }
+
+    /**
+     * The recurring calendar event exception was cancelled.
+     *
+     * Cancel notification should be send but only in case if the original event was not cancelled before
+     * to not send cancel notification more then 1 time.
+     *
+     * @param CalendarEvent $calendarEvent          Actual calendar event.
+     * @param CalendarEvent $originalCalendarEvent  Original calendar event.
+     *
+     * @throws \InvalidArgumentException If $calendarEvent is not exception of recurring event.
+     */
+    protected function onCancelRecurringCalendarEventException(
+        CalendarEvent $calendarEvent,
+        CalendarEvent $originalCalendarEvent
+    ) {
+        if (!$calendarEvent->getRecurringEvent()) {
+            // Check the event for consistency, since this case is valid only for exceptions of recurring event.
+            throw new \InvalidArgumentException(
+                'Inconsistent state of calendar event: Cancelled event should have relation to recurring event.'
+            );
+        }
+
+        $attendees = [];
+        $calendarEventOwnerUser = null;
+        if ($originalCalendarEvent->getParent()) {
+            // If this event is not parent event, then only its' attendee should be notified about cancelled
+            // event, since other attendees were not removed
+            if ($originalCalendarEvent->getRelatedAttendee()) {
+                $attendees = [$originalCalendarEvent->getRelatedAttendee()];
+            }
+            $calendarEventOwnerUser = $this->getCalendarOwnerUser($originalCalendarEvent->getParent());
+        } else {
+            // If this event is a parent event, then all attendees should be notified about cancelled event
+            $attendees = $calendarEvent->getAttendees()->toArray();
+            $calendarEventOwnerUser = $this->getCalendarOwnerUser($calendarEvent);
+        }
+
+        $this->addCancelNotifications(
+            $calendarEvent,
+            $calendarEventOwnerUser,
+            $attendees
+        );
+
+        $this->sendAddedNotifications();
+    }
+
+    /**
+     * The event was cancelled before and then was reactivated, the case is not possible in the UI
+     * but possible if someone uses the API. Invite notification should be send.
+     *
+     * @param CalendarEvent $calendarEvent          Actual calendar event.
+     * @param CalendarEvent $originalCalendarEvent  Original calendar event.
+     *
+     * @throws \InvalidArgumentException If $calendarEvent is not exception of recurring event.
+     */
+    protected function onUnCancelRecurringCalendarEventException(CalendarEvent $calendarEvent)
+    {
+        $this->addInviteNotifications(
+            $calendarEvent,
+            $this->getCalendarOwnerUser($calendarEvent),
+            $calendarEvent->getAttendees()->toArray()
+        );
+        $this->sendAddedNotifications();
+    }
+
+    /**
+     * Covers other cases of calendar event update.
+     *
+     * @param CalendarEvent $calendarEvent          Actual calendar event.
+     * @param CalendarEvent $originalCalendarEvent  Original calendar event.
+     * @param string        $strategy               Could be one of next values: none, all, added_or_deleted.
+     *
+     * @see NotificationManager::ALL_NOTIFICATIONS_STRATEGY
+     * @see NotificationManager::NONE_NOTIFICATIONS_STRATEGY
+     * @see NotificationManager::ADDED_OR_DELETED_NOTIFICATIONS_STRATEGY
+     */
+    protected function onUpdateCalendarEvent(
+        CalendarEvent $calendarEvent,
+        CalendarEvent $originalCalendarEvent,
+        $strategy
+    ) {
+        // If calendar event exceptions were cleared cancel notification should be sent.
+        if (count($calendarEvent->getRecurringEventExceptions()->toArray()) == 0 &&
+            count($originalCalendarEvent->getRecurringEventExceptions()->toArray()) != 0
+        ) {
+            $this->addCancelNotificationsForRecurringEventExceptions(
+                $originalCalendarEvent,
+                $this->getCalendarOwnerUser($calendarEvent)
+            );
+        }
+
+        // Regular case for update of the event.
+        if ($strategy === static::ALL_NOTIFICATIONS_STRATEGY) {
+            // Add update notification for attendees which existed in the event originally and exist now.
+            $existedAttendees = $this->getEqualAttendees(
+                $originalCalendarEvent,
+                $calendarEvent->getAttendees()->toArray()
+            );
+            $this->addUpdateNotifications(
+                $calendarEvent,
+                $this->getCalendarOwnerUser($calendarEvent),
+                $existedAttendees
+            );
+        }
+
+        // Add notification to new attendees
+        $addedAttendees = $this->getNotEqualAttendees(
+            $originalCalendarEvent,
+            $calendarEvent->getAttendees()->toArray()
+        );
+
+        $this->addInviteNotifications(
+            $calendarEvent,
+            $this->getCalendarOwnerUser($calendarEvent),
+            $addedAttendees
+        );
+
+        // Add notification to attendees removed from the event
+        $removedAttendees = $this->getNotEqualAttendees(
+            $calendarEvent,
+            $originalCalendarEvent->getAttendees()->toArray()
+        );
+
+        $this->addUnInviteNotifications(
+            $originalCalendarEvent,
+            $this->getCalendarOwnerUser($calendarEvent),
+            $removedAttendees
+        );
+
+        $this->sendAddedNotifications();
     }
 
     /**
@@ -319,8 +390,6 @@ class NotificationManager
      *
      * @param CalendarEvent $calendarEvent
      * @param User $ownerUser
-     *
-     * @return NotificationManager
      */
     protected function addCancelNotificationsForRecurringEventExceptions(
         CalendarEvent $calendarEvent,
@@ -342,8 +411,6 @@ class NotificationManager
                 $extraAttendees
             );
         }
-
-        return $this;
     }
 
     /**

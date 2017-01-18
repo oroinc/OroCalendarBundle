@@ -223,6 +223,56 @@ class NotificationManagerTest extends \PHPUnit_Framework_TestCase
         );
     }
 
+    public function testSendCancelNotificationOnUpdateForCancelledExceptionInRecurringCalendarEventOfAttendee()
+    {
+        $recurringCalendarEvent = new CalendarEvent(1);
+        $attendeeRecurringCalendarEvent = new CalendarEvent(2);
+        $ownerUser = new User(1);
+        $attendeeUser = new User(2);
+        $calendar = new Calendar(1);
+        $calendar->setOwner($ownerUser);
+        $attendeeCalendar = new Calendar(2);
+        $attendeeCalendar->setOwner($attendeeUser);
+        $attendee = new Attendee(1);
+        $attendee->setUser($attendeeUser);
+        $ownerAttendee = new Attendee(2);
+        $ownerAttendee->setUser($ownerUser);
+
+        $ownerCalendarEventException = new CalendarEvent();
+        $ownerCalendarEventException
+            ->setCancelled(false)
+            ->setRecurringEvent($recurringCalendarEvent)
+            ->setCalendar($calendar)
+            ->addAttendee($ownerAttendee)
+            ->setRelatedAttendee($ownerAttendee);
+
+        $originalAttendeeCalendarEventException = new CalendarEvent();
+        $originalAttendeeCalendarEventException
+            ->setCancelled(false)
+            ->setParent($ownerCalendarEventException)
+            ->setRecurringEvent($attendeeRecurringCalendarEvent)
+            ->setRelatedAttendee($attendee)
+            ->setCalendar($attendeeCalendar);
+
+        $attendeeCalendarEventException = clone $originalAttendeeCalendarEventException;
+        $attendeeCalendarEventException
+            ->setCancelled(true)
+            ->setRelatedAttendee($attendee);
+
+        $this->emailNotificationSender->expects($this->once())
+            ->method('addCancelNotifications')
+            ->with($attendeeCalendarEventException, [$attendee]);
+
+        $this->emailNotificationSender->expects($this->once())
+            ->method('sendAddedNotifications');
+
+        $this->notificationManager->onUpdate(
+            $attendeeCalendarEventException,
+            $originalAttendeeCalendarEventException,
+            NotificationManager::ALL_NOTIFICATIONS_STRATEGY
+        );
+    }
+
     public function testSendNoNotificationOnUpdateForCancelledExceptionInRecurringCalendarEventIfItWasCancelledBefore()
     {
         $recurringCalendarEvent = new CalendarEvent();
