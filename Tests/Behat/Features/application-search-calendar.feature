@@ -15,7 +15,7 @@ Feature: Application search
       | Type            | N | isSelected |
       | All             | 3 | yes        |
       | Business Units  | 1 |            |
-      | Calendar events | 1 |            |
+      | Calendar Events | 1 |            |
       | Organizations   | 1 |            |
     And number of records should be 3
     And I should see following search results:
@@ -34,9 +34,9 @@ Feature: Application search
       | Type            | N | isSelected |
       | All             | 3 |            |
       | Business Units  | 1 |            |
-      | Calendar events | 1 | yes        |
+      | Calendar Events | 1 | yes        |
       | Organizations   | 1 |            |
-    When I filter result by "Calendar events" type
+    When I filter result by "Calendar Events" type
     Then number of records should be 1
     And I should see following search results:
       | Title        | Type     |
@@ -45,5 +45,5 @@ Feature: Application search
       | Type            | N | isSelected |
       | All             | 3 |            |
       | Business Units  | 1 |            |
-      | Calendar events | 1 | yes        |
+      | Calendar Events | 1 | yes        |
       | Organizations   | 1 |            |
