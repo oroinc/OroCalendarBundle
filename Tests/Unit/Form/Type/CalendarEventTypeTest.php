@@ -44,6 +44,8 @@ class CalendarEventTypeTest extends \PHPUnit_Framework_TestCase
      */
     public function testBuildForm()
     {
+        $minYear = date_create('-10 year')->format('Y');
+        $maxYear = date_create('+80 year')->format('Y');
         $builder = $this->getMockBuilder('Symfony\Component\Form\FormBuilder')
             ->disableOriginalConstructor()
             ->getMock();
@@ -73,6 +75,7 @@ class CalendarEventTypeTest extends \PHPUnit_Framework_TestCase
                     'required' => true,
                     'label'    => 'oro.calendar.calendarevent.start.label',
                     'attr'     => ['class' => 'start'],
+                    'years'    => [$minYear, $maxYear],
                 ]
             )
             ->will($this->returnSelf());
@@ -85,6 +88,7 @@ class CalendarEventTypeTest extends \PHPUnit_Framework_TestCase
                     'required' => true,
                     'label'    => 'oro.calendar.calendarevent.end.label',
                     'attr'     => ['class' => 'end'],
+                    'years'    => [$minYear, $maxYear],
                 ]
             )
             ->will($this->returnSelf());
