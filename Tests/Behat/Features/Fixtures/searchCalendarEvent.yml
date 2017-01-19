@@ -6,6 +6,7 @@ Oro\Bundle\OrganizationBundle\Entity\BusinessUnit:
 Oro\Bundle\CalendarBundle\Entity\CalendarEvent:
   calendarEvent:
     title: Common Event
+    calendar: 1
     start: <dateTimeThisYear('now')>
     end: <dateTimeThisYear('now')>
     allDay: false
