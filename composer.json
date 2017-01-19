@@ -17,11 +17,9 @@
         "bower-asset/fullcalendar": "2.2.3"
     },
     "autoload": {
-        "psr-0": { "Oro\\Bundle\\CalendarBundle": "" }
+        "psr-4": { "Oro\\Bundle\\CalendarBundle\\": "" },
+        "exclude-from-classmap": ["/Tests/"]
     },
-    "target-dir": "Oro/Bundle/CalendarBundle",
-    "minimum-stability": "dev",
-    "prefer-stable": true,
     "extra": {
         "branch-alias": {
             "dev-master": "1.x-dev"
