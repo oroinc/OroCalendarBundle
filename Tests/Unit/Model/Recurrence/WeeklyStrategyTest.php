@@ -382,6 +382,25 @@ class WeeklyStrategyTest extends AbstractTestStrategy
                     '2016-09-30',
                 ],
             ],
+            'start < startTime < end < endTime, startTime later then dayOfWeek days' => [
+                'params' => [
+                    'daysOfWeek' => [
+                        'monday',
+                        'tuesday'
+                    ],
+                    'interval' => 1,
+                    'occurrences' => 5,
+                    'start' => '2017-03-26',
+                    'end' => '2017-05-06',
+                    'startTime' => '2017-03-17',
+                    'endTime' => null,
+                ],
+                'expected' => [
+                    '2017-03-27',
+                    '2017-03-28',
+                    '2017-04-03',
+                ],
+            ],
         ];
     }
 
@@ -517,6 +536,16 @@ class WeeklyStrategyTest extends AbstractTestStrategy
                     'occurrences' => 111,
                 ],
                 'expected' => new \DateTime('2019-07-06', $this->getTimeZone())
+            ],
+            'without_endtime_occurrences_2' => [
+                'params' => [
+                    'interval' => 2,
+                    'dayOfWeek' => ['monday', 'tuesday'],
+                    'startTime' => '2017-03-17',
+                    'endTime' => null,
+                    'occurrences' => 2,
+                ],
+                'expected' => new \DateTime('2017-03-21', $this->getTimeZone())
             ]
         ];
     }
