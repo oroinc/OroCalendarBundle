@@ -483,23 +483,22 @@ define(function(require) {
                     realDuration = oldState.end ? oldState.end.diff(oldState.start) : 0;
                 }
             }
-            fcEvent.end = fcEvent.start.clone().add(realDuration);
+            fcEvent.end = fcEvent.start.clone().tz(this.options.timezone, true).add(realDuration).tz('UTC', true);
             this.saveFcEvent(fcEvent);
         },
 
         saveFcEvent: function(fcEvent) {
-            var promises = [];
             var eventModel;
             var attrs;
+            var promises = [];
+            var format = this.MOMENT_BACKEND_FORMAT;
             attrs = {
                 allDay: fcEvent.allDay,
-                start: fcEvent.start.clone().tz(this.options.timezone, true),
-                end: (fcEvent.end !== null) ? fcEvent.end.clone().tz(this.options.timezone, true) : null
+                start: fcEvent.start.clone().tz(this.options.timezone, true).utc().format(format)
             };
 
-            attrs.start = attrs.start.utc().format(this.MOMENT_BACKEND_FORMAT);
-            if (attrs.end) {
-                attrs.end = attrs.end.utc().format(this.MOMENT_BACKEND_FORMAT);
+            if (fcEvent.end !== null) {
+                attrs.end = fcEvent.end.clone().tz(this.options.timezone, true).utc().format(format);
             }
 
             eventModel = this.collection.get(fcEvent.id);
@@ -579,7 +578,6 @@ define(function(require) {
                 fcEvents = _.map(this.filterEvents(this.collection.models), function(eventModel) {
                     return this.createViewModel(eventModel);
                 }, this);
-
                 this._hideMask();
                 callback(fcEvents);
             }, this);
