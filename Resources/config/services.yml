@@ -431,9 +431,10 @@ services:
             - { name: oro_calendar.recurrence.strategy}
 
     oro_calendar.model.recurrence:
+        class: '%oro_calendar.model.recurrence.class%'
         arguments:
             - '@oro_calendar.recurrence.strategy'
-        class: '%oro_calendar.model.recurrence.class%'
+        lazy: true
 
     oro_calendar.validator.recurrence:
         class: '%oro_calendar.validator.recurrence.class%'
