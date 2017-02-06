@@ -260,6 +260,7 @@ define(function(require) {
             try {
                 var options = {
                     wait: true,
+                    errorHandlerMessage: false,
                     error: _.bind(this._handleResponseError, this)
                 };
                 if (deleteUrl) {

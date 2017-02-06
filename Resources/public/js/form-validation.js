@@ -2,11 +2,10 @@ define([
     'jquery',
     'underscore',
     'orotranslation/js/translator',
-    'oroui/js/tools'
-], function($, _, __, tools) {
+    'oroui/js/tools',
+    'oroui/js/error'
+], function($, _, __, tools, error) {
     'use strict';
-
-    var console = window.console;
 
     return {
         /**
@@ -31,9 +30,7 @@ define([
                 // exception object
                 if (tools.debug) {
                     errors.push(err.message);
-                    if (!_.isUndefined(console)) {
-                        console.error(_.isUndefined(err.stack) ? err : err.stack);
-                    }
+                    error.showErrorInConsole(err);
                 } else {
                     errors.push(__('Unexpected error was occurred'));
                 }

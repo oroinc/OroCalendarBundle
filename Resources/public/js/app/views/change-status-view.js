@@ -3,9 +3,8 @@ define([
     'underscore',
     'orotranslation/js/translator',
     'oroui/js/mediator',
-    'oroui/js/messenger',
     'oroui/js/app/views/base/view'
-], function($, _, __, mediator, messenger, BaseView) {
+], function($, _, __, mediator, BaseView) {
     'use strict';
 
     var ChangeStatusView = BaseView.extend({
@@ -33,9 +32,6 @@ define([
                     } else {
                         mediator.trigger(triggerEventName);
                     }
-                },
-                error: function(jqXHR) {
-                    messenger.showErrorMessage(__('Sorry, an unexpected error has occurred.'), jqXHR.responseJSON);
                 }
             });
         }
