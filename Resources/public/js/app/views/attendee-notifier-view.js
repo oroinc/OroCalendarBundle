@@ -24,12 +24,18 @@ define([
             this.$form = this.$el.closest('form');
             this.$form.on('select2-data-loaded', function() {
                 self.formInitialState = self.getFormState();
+                self.attendeeInitialValues = self.getAttendeeValues();
             });
             this.formInitialState = this.getFormState();
+            this.attendeeInitialValues = this.getAttendeeValues();
             this.isModalShown = false;
 
             this.$form.parent().on('submit.' + this.cid, _.bind(function(e) {
-                if (!this.isModalShown && this.getFormState() !== this.formInitialState && this.hasAttendees()) {
+                if (!this.isModalShown && this.getFormState() !== this.formInitialState && this.hasAttendees() &&
+                    _.intersection(this.attendeeInitialValues, this.getAttendeeValues()).length > 0
+                    // since we notify all added and deleted users anyway we need ask only about users that were
+                    // invited before and left in attendees for now
+                ) {
                     this.getConfirmDialog().open();
                     this.isModalShown = true;
                     e.preventDefault();
@@ -51,6 +57,11 @@ define([
                 }
             }
             AttendeeNotifierView.__super__.dispose.call(this);
+        },
+
+        getAttendeeValues: function() {
+            var value = this.$form.find('input[name*="[attendees]"]').val();
+            return value.length > 0 ? value.split(';') : [];
         },
 
         hasAttendees: function() {
