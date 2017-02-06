@@ -6,10 +6,6 @@ use Oro\Bundle\CalendarBundle\Entity\CalendarEvent;
 use Oro\Bundle\CalendarBundle\Model\Recurrence;
 use Oro\Bundle\CalendarBundle\Tests\Functional\API\AbstractUseCaseTestCase;
 
-/**
- * @dbIsolation
- * @dbReindex
- */
 class RecurringCalendarEventControllerTest extends AbstractUseCaseTestCase
 {
     const RECURRING_EVENT_TITLE = 'Test Creating/Updating Recurring Event';

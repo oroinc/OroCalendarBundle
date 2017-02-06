@@ -13,8 +13,6 @@ use Oro\Bundle\CalendarBundle\Entity\CalendarEvent;
  * Use cases covered:
  * - Create regular calendar event with attendee related to user.
  * - Create regular calendar event with attendee not related to any user.
- *
- * @dbIsolation
  */
 class BasicAttendeeTest extends AbstractTestCase
 {

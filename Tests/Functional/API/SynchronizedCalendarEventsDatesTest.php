@@ -4,9 +4,6 @@ namespace Oro\Bundle\CalendarBundle\Tests\Functional\API;
 
 use Oro\Bundle\CalendarBundle\Model\Recurrence;
 
-/**
- * @dbIsolation
- */
 class SynchronizedCalendarEventsDatesTest extends AbstractUseCaseTestCase
 {
     public function testSynchronizedCalendarEventsHasCorrectStartEndDates()

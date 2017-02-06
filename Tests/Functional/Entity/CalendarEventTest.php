@@ -11,16 +11,13 @@ use Oro\Bundle\CalendarBundle\Tests\Functional\DataFixtures\LoadUserData;
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 use Oro\Bundle\UserBundle\Entity\User;
 
-/**
- * @dbIsolation
- */
 class CalendarEventTest extends WebTestCase
 {
     public function setUp()
     {
         $this->initClient();
 
-        $this->loadFixtures([LoadUserData::class], true);
+        $this->loadFixtures([LoadUserData::class]);
     }
 
     public function testRelatedAttendeeShouldBeRemovedAfterChildEventIsRemoved()

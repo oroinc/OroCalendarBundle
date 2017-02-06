@@ -3,8 +3,6 @@
 namespace Oro\Bundle\CalendarBundle\Tests\Functional\API;
 
 /**
- * @dbIsolation
- *
  * @SuppressWarnings(PHPMD.TooManyPublicMethods)
  */
 class RestCalendarEventWithRegularEventTest extends AbstractCalendarEventTest

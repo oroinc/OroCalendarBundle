@@ -32,7 +32,7 @@ class RecurringEventRecurrenceUpdateExceptionTest extends AbstractTestCase
     {
         parent::setUp();
 
-        $this->loadFixtures([LoadUserData::class]);  // force load fixtures
+        $this->loadFixtures([LoadUserData::class]);
     }
 
     /**

@@ -9,14 +9,14 @@ use Oro\Bundle\CalendarBundle\Tests\Unit\Fixtures\Entity\Attendee;
 use Oro\Bundle\UserBundle\Entity\User;
 
 /**
- * @dbIsolation
+ * @dbIsolationPerTest
  */
 class RecurringEventNewAttendeeHasAllCancelledEventsTest extends AbstractUseCaseTestCase
 {
     protected function setUp()
     {
-        $this->initClient([], $this->generateWsseAuthHeader(), true);
-        $this->loadFixtures([LoadUserData::class], true);
+        $this->initClient([], $this->generateWsseAuthHeader());
+        $this->loadFixtures([LoadUserData::class]);
     }
 
     /**
