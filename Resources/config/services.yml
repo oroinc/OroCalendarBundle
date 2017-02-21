@@ -12,8 +12,6 @@ parameters:
     oro_calendar.calendar_event.manager.api.class:               Oro\Bundle\SoapBundle\Entity\Manager\ApiEntityManager
     oro_calendar.calendar_property.manager.api.class:            Oro\Bundle\CalendarBundle\Manager\CalendarPropertyApiEntityManager
     oro_calendar.system_calendar.manager.api.class:              Oro\Bundle\SoapBundle\Entity\Manager\ApiEntityManager
-    oro_calendar.twig.dateformat.class:                          Oro\Bundle\CalendarBundle\Twig\DateFormatExtension
-    oro_calendar.twig.recurrence.class:                          Oro\Bundle\CalendarBundle\Twig\RecurrenceExtension
     oro_calendar.provider.calendar_config.class:                 Oro\Bundle\CalendarBundle\Provider\CalendarDateTimeConfigProvider
     oro_calendar.provider.attendee_email_recipients.class:       Oro\Bundle\CalendarBundle\Provider\AttendeeEmailRecipientsProvider
     oro_calendar.owner_assignment_checker.calendar.class:        Oro\Bundle\CalendarBundle\Ownership\CalendarOwnerAssignmentChecker
@@ -104,18 +102,18 @@ services:
             - '@doctrine.orm.entity_manager'
 
     oro_calendar.twig.dateformat:
-        class: %oro_calendar.twig.dateformat.class%
+        class: Oro\Bundle\CalendarBundle\Twig\DateFormatExtension
+        public: false
         arguments:
-            - '@oro_locale.formatter.date_time'
-            - '@oro_config.global'
+            - '@service_container'
         tags:
             - { name: twig.extension }
 
     oro_calendar.twig.recurrence:
-        class: '%oro_calendar.twig.recurrence.class%'
+        class: Oro\Bundle\CalendarBundle\Twig\RecurrenceExtension
+        public: false
         arguments:
-            - '@translator'
-            - '@oro_calendar.model.recurrence'
+            - '@service_container'
         tags:
             - { name: twig.extension }
 

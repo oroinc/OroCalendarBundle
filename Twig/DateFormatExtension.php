@@ -2,28 +2,39 @@
 
 namespace Oro\Bundle\CalendarBundle\Twig;
 
+use Symfony\Component\DependencyInjection\ContainerInterface;
+
 use Oro\Bundle\LocaleBundle\Formatter\DateTimeFormatter;
 use Oro\Bundle\ConfigBundle\Config\ConfigManager;
 use Oro\Bundle\OrganizationBundle\Entity\OrganizationInterface;
 
 class DateFormatExtension extends \Twig_Extension
 {
-    /** @var DateTimeFormatter */
-    protected $formatter;
+    /** @var ContainerInterface */
+    protected $container;
 
     /**
-     * @var ConfigManager
+     * @param ContainerInterface $container
      */
-    protected $configManager;
-
-    /**
-     * @param DateTimeFormatter $formatter
-     * @param ConfigManager $configManager
-     */
-    public function __construct(DateTimeFormatter $formatter, ConfigManager $configManager)
+    public function __construct(ContainerInterface $container)
     {
-        $this->formatter = $formatter;
-        $this->configManager = $configManager;
+        $this->container = $container;
+    }
+
+    /**
+     * @return DateTimeFormatter
+     */
+    protected function getDateTimeFormatter()
+    {
+        return $this->container->get('oro_locale.formatter.date_time');
+    }
+
+    /**
+     * @return ConfigManager
+     */
+    protected function getConfigManager()
+    {
+        return $this->container->get('oro_config.global');
     }
 
     /**
@@ -32,13 +43,13 @@ class DateFormatExtension extends \Twig_Extension
     public function getFunctions()
     {
         return [
-            'calendar_date_range' => new \Twig_Function_Method(
-                $this,
-                'formatCalendarDateRange'
+            new \Twig_SimpleFunction(
+                'calendar_date_range',
+                [$this, 'formatCalendarDateRange']
             ),
-            'calendar_date_range_organization' => new \Twig_Function_Method(
-                $this,
-                'formatCalendarDateRangeOrganization'
+            new \Twig_SimpleFunction(
+                'calendar_date_range_organization',
+                [$this, 'formatCalendarDateRangeOrganization']
             )
         ];
     }
@@ -140,24 +151,25 @@ class DateFormatExtension extends \Twig_Extension
             return '';
         }
 
+        $formatter = $this->getDateTimeFormatter();
         // check if $endDate is not specified or $startDate equals to $endDate
         if (is_null($endDate) || $startDate == $endDate) {
             return $skipTime
-                ? $this->formatter->formatDate($startDate, $dateType, $locale, $timeZone)
-                : $this->formatter->format($startDate, $dateType, $timeType, $locale, $timeZone);
+                ? $formatter->formatDate($startDate, $dateType, $locale, $timeZone)
+                : $formatter->format($startDate, $dateType, $timeType, $locale, $timeZone);
         }
 
         // check if $startDate and $endDate are the same day
         if ($startDate->format('Ymd') == $endDate->format('Ymd')) {
             if ($skipTime) {
-                return $this->formatter->formatDate($startDate, $dateType, $locale, $timeZone);
+                return $formatter->formatDate($startDate, $dateType, $locale, $timeZone);
             }
 
             return sprintf(
                 '%s %s - %s',
-                $this->formatter->formatDate($startDate, $dateType, $locale, $timeZone),
-                $this->formatter->formatTime($startDate, $timeType, $locale, $timeZone),
-                $this->formatter->formatTime($endDate, $timeType, $locale, $timeZone)
+                $formatter->formatDate($startDate, $dateType, $locale, $timeZone),
+                $formatter->formatTime($startDate, $timeType, $locale, $timeZone),
+                $formatter->formatTime($endDate, $timeType, $locale, $timeZone)
             );
         }
 
@@ -165,15 +177,15 @@ class DateFormatExtension extends \Twig_Extension
         if ($skipTime) {
             return sprintf(
                 '%s - %s',
-                $this->formatter->formatDate($startDate, $dateType, $locale, $timeZone),
-                $this->formatter->formatDate($endDate, $dateType, $locale, $timeZone)
+                $formatter->formatDate($startDate, $dateType, $locale, $timeZone),
+                $formatter->formatDate($endDate, $dateType, $locale, $timeZone)
             );
         }
 
         return sprintf(
             '%s - %s',
-            $this->formatter->format($startDate, $dateType, $timeType, $locale, $timeZone),
-            $this->formatter->format($endDate, $dateType, $timeType, $locale, $timeZone)
+            $formatter->format($startDate, $dateType, $timeType, $locale, $timeZone),
+            $formatter->format($endDate, $dateType, $timeType, $locale, $timeZone)
         );
     }
 
@@ -184,8 +196,9 @@ class DateFormatExtension extends \Twig_Extension
      */
     protected function getOrganizationLocaleSettings(OrganizationInterface $organization)
     {
-        $locale = $this->configManager->get('oro_locale.locale');
-        $timeZone = $this->configManager->get('oro_locale.timezone');
+        $configManager = $this->getConfigManager();
+        $locale = $configManager->get('oro_locale.locale');
+        $timeZone = $configManager->get('oro_locale.timezone');
 
         return [$locale, $timeZone];
     }
