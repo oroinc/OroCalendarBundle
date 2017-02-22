@@ -240,7 +240,8 @@ class CreateCalendarEventAction extends AbstractAction
             return;
         }
 
-        foreach ($this->options[self::OPTION_KEY_GUESTS] as $guest) {
+        $guests =  $this->contextAccessor->getValue($context, $this->options[self::OPTION_KEY_GUESTS]);
+        foreach ($guests as $guest) {
             $user = $this->contextAccessor->getValue($context, $guest);
             $this->createChildEvent($calendarEvent, $user);
         }

@@ -7,6 +7,7 @@ use Oro\Bundle\EntityBundle\Tests\Unit\ORM\Stub\ItemStub;
 use Oro\Bundle\CalendarBundle\Workflow\Action\CreateCalendarEventAction;
 
 use Oro\Component\ConfigExpression\ContextAccessor;
+use Symfony\Component\PropertyAccess\PropertyPath;
 
 class CreateCalendarEventActionTest extends \PHPUnit_Framework_TestCase
 {
@@ -54,7 +55,7 @@ class CreateCalendarEventActionTest extends \PHPUnit_Framework_TestCase
      * @param int $expectedPersistCount
      * @dataProvider executeDataProvider
      */
-    public function testExecute(array $options, $expectedPersistCount, $exceptionMessage)
+    public function testExecute(array $options, $expectedPersistCount, $exceptionMessage, $data = [])
     {
         $em = $this->getMockBuilder('\Doctrine\Common\Persistence\ObjectManager')
             ->disableOriginalConstructor()
@@ -101,7 +102,7 @@ class CreateCalendarEventActionTest extends \PHPUnit_Framework_TestCase
         }
 
         $action = $this->getAction();
-        $context = new ItemStub([]);
+        $context = new ItemStub($data);
         $action->initialize($options);
         $action->execute($context);
     }
@@ -159,10 +160,13 @@ class CreateCalendarEventActionTest extends \PHPUnit_Framework_TestCase
                     CreateCalendarEventAction::OPTION_KEY_INITIATOR => $this->getUserMock(),
                     CreateCalendarEventAction::OPTION_KEY_START => new \DateTime(),
                     CreateCalendarEventAction::OPTION_KEY_END => new \DateTime(),
-                    CreateCalendarEventAction::OPTION_KEY_GUESTS => [$this->getUserMock()],
+                    CreateCalendarEventAction::OPTION_KEY_GUESTS => new PropertyPath('data[guests]'),
                 ],
                 'expectedPersistCount' => 1,
                 'exceptionMessage' => '',
+                'data' => [
+                    'guests' => [$this->getUserMock(), $this->getUserMock()],
+                ],
             ],
             'with attribute' => [
                 'options' => [
@@ -170,7 +174,7 @@ class CreateCalendarEventActionTest extends \PHPUnit_Framework_TestCase
                     CreateCalendarEventAction::OPTION_KEY_INITIATOR => $this->getUserMock(),
                     CreateCalendarEventAction::OPTION_KEY_START => new \DateTime(),
                     CreateCalendarEventAction::OPTION_KEY_END => new \DateTime(),
-                    CreateCalendarEventAction::OPTION_KEY_GUESTS => [$this->getUserMock()],
+                    CreateCalendarEventAction::OPTION_KEY_GUESTS => [$this->getUserMock(), $this->getUserMock()],
                     CreateCalendarEventAction::OPTION_KEY_ATTRIBUTE => 'attribute',
                 ],
                 'expectedPersistCount' => 1,
