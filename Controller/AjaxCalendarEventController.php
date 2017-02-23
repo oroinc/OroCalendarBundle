@@ -34,7 +34,7 @@ class AjaxCalendarEventController extends Controller
      *
      * @return JsonResponse
      */
-    public function changeStatus(CalendarEvent $entity, $status)
+    public function changeStatusAction(CalendarEvent $entity, $status)
     {
         try {
             $loggedUser = $this->get('oro_security.security_facade')->getLoggedUser();

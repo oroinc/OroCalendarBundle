@@ -15,3 +15,6 @@ UPGRADE FROM 2.0 to 2.1
     - the construction signature of was changed. Now the constructor has only `ContainerInterface $container` parameter
     - removed property `protected $translator`
     - removed property `protected $model`
+    
+#Other changes
+- Renamed method `Oro\Bundle\CalendarBundle\Controller\AjaxCalendarEventController::changeStatus` to `Oro\Bundle\CalendarBundle\Controller\AjaxCalendarEventController::changeStatusAction`.
