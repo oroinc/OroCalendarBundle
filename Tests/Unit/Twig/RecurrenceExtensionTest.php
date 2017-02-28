@@ -2,17 +2,23 @@
 
 namespace Oro\Bundle\CalendarBundle\Tests\Unit\Twig;
 
+use Symfony\Component\Translation\TranslatorInterface;
+
 use Oro\Bundle\CalendarBundle\Entity;
 use Oro\Bundle\CalendarBundle\Model\Recurrence;
+use Oro\Bundle\CalendarBundle\Model\Recurrence\StrategyInterface;
 use Oro\Bundle\CalendarBundle\Twig\RecurrenceExtension;
+use Oro\Component\Testing\Unit\TwigExtensionTestCaseTrait;
 
 class RecurrenceExtensionTest extends \PHPUnit_Framework_TestCase
 {
-    /** @var \PHPUnit_Framework_MockObject_MockObject|\Symfony\Component\Translation\TranslatorInterface */
-    protected $translator;
+    use TwigExtensionTestCaseTrait;
 
     /** @var RecurrenceExtension */
     protected $extension;
+
+    /** @var \PHPUnit_Framework_MockObject_MockObject */
+    protected $translator;
 
     /** @var \PHPUnit_Framework_MockObject_MockObject */
     protected $strategy;
@@ -22,13 +28,16 @@ class RecurrenceExtensionTest extends \PHPUnit_Framework_TestCase
 
     protected function setUp()
     {
-        $this->translator = $this->getMockBuilder('Symfony\Component\Translation\TranslatorInterface')
-            ->disableOriginalConstructor()
-            ->getMock();
-        $this->strategy = $this->getMockBuilder('Oro\Bundle\CalendarBundle\Model\Recurrence\StrategyInterface')
-            ->getMock();
+        $this->translator = $this->createMock(TranslatorInterface::class);
+        $this->strategy = $this->createMock(StrategyInterface::class);
         $this->recurrenceModel = new Recurrence($this->strategy);
-        $this->extension = new RecurrenceExtension($this->translator, $this->recurrenceModel);
+
+        $container = self::getContainerBuilder()
+            ->add('translator', $this->translator)
+            ->add('oro_calendar.model.recurrence', $this->recurrenceModel)
+            ->getContainer($this);
+
+        $this->extension = new RecurrenceExtension($container);
     }
 
     public function testGetName()
@@ -41,7 +50,11 @@ class RecurrenceExtensionTest extends \PHPUnit_Framework_TestCase
         $this->strategy->expects($this->once())
             ->method('getTextValue')
             ->willReturn('test_pattern');
-        $this->assertEquals('test_pattern', $this->extension->getRecurrenceTextValue(new Entity\Recurrence()));
+
+        $this->assertEquals(
+            'test_pattern',
+            self::callTwigFunction($this->extension, 'get_recurrence_text_value', [new Entity\Recurrence()])
+        );
     }
     
     public function testGetRecurrenceTextValueWithNA()
@@ -49,23 +62,10 @@ class RecurrenceExtensionTest extends \PHPUnit_Framework_TestCase
         $this->translator->expects($this->once())
             ->method('trans')
             ->willReturn('N/A');
-        $this->assertEquals('N/A', $this->extension->getRecurrenceTextValue(null));
-    }
 
-    public function testGetFunctions()
-    {
         $this->assertEquals(
-            [
-                'get_recurrence_text_value' => new \Twig_Function_Method(
-                    $this->extension,
-                    'getRecurrenceTextValue'
-                ),
-                'get_event_recurrence_pattern' => new \Twig_Function_Method(
-                    $this->extension,
-                    'getEventRecurrencePattern'
-                ),
-            ],
-            $this->extension->getFunctions()
+            'N/A',
+            self::callTwigFunction($this->extension, 'get_recurrence_text_value', [null])
         );
     }
 }

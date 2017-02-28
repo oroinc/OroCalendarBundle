@@ -3,46 +3,39 @@
 namespace Oro\Bundle\CalendarBundle\Tests\Unit\Twig;
 
 use Oro\Bundle\CalendarBundle\Twig\DateFormatExtension;
+use Oro\Bundle\ConfigBundle\Config\ConfigManager;
+use Oro\Bundle\LocaleBundle\Formatter\DateTimeFormatter;
 use Oro\Bundle\OrganizationBundle\Tests\Unit\Fixture\Entity\Organization;
+use Oro\Component\Testing\Unit\TwigExtensionTestCaseTrait;
 
 class DateFormatExtensionTest extends \PHPUnit_Framework_TestCase
 {
-    /** @var \PHPUnit_Framework_MockObject_MockObject */
-    protected $formatter;
+    use TwigExtensionTestCaseTrait;
 
     /** @var DateFormatExtension */
     protected $extension;
 
-    /**
-     * @var \PHPUnit_Framework_MockObject_MockObject
-     */
+    /** @var \PHPUnit_Framework_MockObject_MockObject */
+    protected $formatter;
+
+    /** @var \PHPUnit_Framework_MockObject_MockObject */
     protected $configManager;
-
-    /**
-     * @var \PHPUnit_Framework_MockObject_MockObject
-     */
-    protected $localeSettings;
-
-    /**
-     * @var \PHPUnit_Framework_MockObject_MockObject
-     */
-    protected $translator;
 
     protected function setUp()
     {
-        $this->configManager = $this->getMockBuilder('Oro\Bundle\ConfigBundle\Config\ConfigManager')
+        $this->configManager = $this->getMockBuilder(ConfigManager::class)
             ->disableOriginalConstructor()
             ->getMock();
-        $this->localeSettings = $this->getMockBuilder('Oro\Bundle\LocaleBundle\Model\LocaleSettings')
+        $this->formatter = $this->getMockBuilder(DateTimeFormatter::class)
             ->disableOriginalConstructor()
             ->getMock();
-        $this->translator = $this->getMockBuilder('Symfony\Bundle\FrameworkBundle\Translation\Translator')
-            ->disableOriginalConstructor()
-            ->getMock();
-        $this->formatter = $this->getMockBuilder('Oro\Bundle\LocaleBundle\Formatter\DateTimeFormatter')
-            ->disableOriginalConstructor()
-            ->getMock();
-        $this->extension = new DateFormatExtension($this->formatter, $this->configManager);
+
+        $container = self::getContainerBuilder()
+            ->add('oro_locale.formatter.date_time', $this->formatter)
+            ->add('oro_config.global', $this->configManager)
+            ->getContainer($this);
+
+        $this->extension = new DateFormatExtension($container);
     }
 
     /**
@@ -55,6 +48,9 @@ class DateFormatExtensionTest extends \PHPUnit_Framework_TestCase
      */
     public function testFormatCalendarDateRange($start, $end, $skipTime, $expected)
     {
+        $startDate = new \DateTime($start);
+        $endDate = $end === null ? null : new \DateTime($end);
+
         $this->formatter->expects($this->any())
             ->method('format')
             ->will($this->returnValue('DateTime'));
@@ -64,10 +60,11 @@ class DateFormatExtensionTest extends \PHPUnit_Framework_TestCase
         $this->formatter->expects($this->any())
             ->method('formatTime')
             ->will($this->returnValue('Time'));
-        $startDate = new \DateTime($start);
-        $endDate = $end === null ? null : new \DateTime($end);
-        $result = $this->extension->formatCalendarDateRange($startDate, $endDate, $skipTime);
-        $this->assertEquals($expected, $result);
+
+        $this->assertEquals(
+            $expected,
+            self::callTwigFunction($this->extension, 'calendar_date_range', [$startDate, $endDate, $skipTime])
+        );
     }
 
     public function formatCalendarDateRangeProvider()
@@ -104,6 +101,7 @@ class DateFormatExtensionTest extends \PHPUnit_Framework_TestCase
     ) {
         $startDate = new \DateTime($start);
         $endDate = $end === null ? null : new \DateTime($end);
+
         $this->configManager->expects($this->any())
             ->method('get')
             ->will(
@@ -114,26 +112,37 @@ class DateFormatExtensionTest extends \PHPUnit_Framework_TestCase
                     ]
                 )
             );
-        $this->extension->formatCalendarDateRangeOrganization(
-            $startDate,
-            $endDate,
-            false,
-            null,
-            null,
-            $locale,
-            $timeZone,
-            $organization
+
+        self::callTwigFunction(
+            $this->extension,
+            'calendar_date_range_organization',
+            [
+                $startDate,
+                $endDate,
+                false,
+                null,
+                null,
+                $locale,
+                $timeZone,
+                $organization
+            ]
         );
+
         $this->configManager->expects($this->never())
             ->method('get');
-        $this->extension->formatCalendarDateRangeOrganization(
-            $startDate,
-            $endDate,
-            false,
-            null,
-            null,
-            $locale,
-            $timeZone
+
+        self::callTwigFunction(
+            $this->extension,
+            'calendar_date_range_organization',
+            [
+                $startDate,
+                $endDate,
+                false,
+                null,
+                null,
+                $locale,
+                $timeZone
+            ]
         );
     }
 

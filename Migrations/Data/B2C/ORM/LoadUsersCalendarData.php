@@ -57,11 +57,13 @@ class LoadUsersCalendarData extends AbstractFixture implements OrderedFixtureInt
      */
     protected function getData()
     {
-        $absolutePath = realpath(__DIR__) . DIRECTORY_SEPARATOR . static::DATA_FOLDER . DIRECTORY_SEPARATOR;
+        $absolutePath = $this->container
+            ->get('kernel')
+            ->locateResource('@OroCalendarBundle/Migrations/Data/B2C/ORM/' . static::DATA_FOLDER);
 
         return [
-            'events'      => $this->loadDataFromCSV($absolutePath.'calendar/events.csv'),
-            'connections' => $this->loadDataFromCSV($absolutePath.'calendar/connections.csv')
+            'events'      => $this->loadDataFromCSV($absolutePath.'/calendar/events.csv'),
+            'connections' => $this->loadDataFromCSV($absolutePath.'/calendar/connections.csv')
         ];
     }
 

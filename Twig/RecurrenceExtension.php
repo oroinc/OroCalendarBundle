@@ -2,6 +2,7 @@
 
 namespace Oro\Bundle\CalendarBundle\Twig;
 
+use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\Translation\TranslatorInterface;
 
 use Oro\Bundle\CalendarBundle\Entity;
@@ -9,27 +10,34 @@ use Oro\Bundle\CalendarBundle\Model\Recurrence;
 
 class RecurrenceExtension extends \Twig_Extension
 {
-    /** @var TranslatorInterface */
-    protected $translator;
-
-    /** @var Recurrence */
-    protected $model;
+    /** @var ContainerInterface */
+    protected $container;
 
     /** @var array */
     protected $patternsCache = [];
 
     /**
-     * RecurrenceExtension constructor.
-     *
-     * @param TranslatorInterface $translator
-     * @param Recurrence $model
+     * @param ContainerInterface $container
      */
-    public function __construct(
-        TranslatorInterface $translator,
-        Recurrence $model
-    ) {
-        $this->translator = $translator;
-        $this->model = $model;
+    public function __construct(ContainerInterface $container)
+    {
+        $this->container = $container;
+    }
+
+    /**
+     * @return TranslatorInterface
+     */
+    protected function getTranslator()
+    {
+        return $this->container->get('translator');
+    }
+
+    /**
+     * @return Recurrence
+     */
+    protected function getRecurrenceModel()
+    {
+        return $this->container->get('oro_calendar.model.recurrence');
     }
 
     /**
@@ -38,14 +46,8 @@ class RecurrenceExtension extends \Twig_Extension
     public function getFunctions()
     {
         return [
-            'get_recurrence_text_value' => new \Twig_Function_Method(
-                $this,
-                'getRecurrenceTextValue'
-            ),
-            'get_event_recurrence_pattern' => new \Twig_Function_Method(
-                $this,
-                'getEventRecurrencePattern'
-            )
+            new \Twig_SimpleFunction('get_recurrence_text_value', [$this, 'getRecurrenceTextValue']),
+            new \Twig_SimpleFunction('get_event_recurrence_pattern', [$this, 'getEventRecurrencePattern'])
         ];
     }
 
@@ -60,9 +62,9 @@ class RecurrenceExtension extends \Twig_Extension
      */
     public function getRecurrenceTextValue(Entity\Recurrence $recurrence = null)
     {
-        $textValue = $this->translator->trans('oro.calendar.calendarevent.recurrence.na');
+        $textValue = $this->getTranslator()->trans('oro.calendar.calendarevent.recurrence.na');
         if ($recurrence) {
-            $textValue = $this->model->getTextValue($recurrence);
+            $textValue = $this->getRecurrenceModel()->getTextValue($recurrence);
         }
 
         return $textValue;
@@ -80,9 +82,9 @@ class RecurrenceExtension extends \Twig_Extension
         if (!isset($this->patternsCache[spl_object_hash($event)])) {
             $text = '';
             if ($event->getRecurrence()) {
-                $text = $this->model->getTextValue($event->getRecurrence());
+                $text = $this->getRecurrenceModel()->getTextValue($event->getRecurrence());
             } elseif ($event->getParent() && $event->getParent()->getRecurrence()) {
-                $text = $this->model->getTextValue($event->getParent()->getRecurrence());
+                $text = $this->getRecurrenceModel()->getTextValue($event->getParent()->getRecurrence());
             }
             $this->patternsCache[spl_object_hash($event)] = $text; //regular events and exceptions
         }
