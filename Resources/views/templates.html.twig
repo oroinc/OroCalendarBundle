@@ -177,10 +177,10 @@
             <form id="{{ form.vars.id }}" name="{{ form.vars.name }}" action="#">
                 <fieldset class="form form-horizontal">
                     <div class="span6">
-                        {{ leftColumn }}
+                        {{ leftColumn|oro_js_template_content|raw }}
                     </div>
                     <div class="span6">
-                        {{ rightColumn }}
+                        {{ rightColumn|oro_js_template_content|raw }}
                     </div>
                     <div class="widget-actions form-actions" style="display: none;">
                         <% if (id != null && removable) { %>
