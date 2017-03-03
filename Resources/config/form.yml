@@ -18,6 +18,8 @@ services:
         class: '%oro_calendar.calendar_event.form.type.class%'
         arguments:
             - '@oro_calendar.calendar_event.notification_manager'
+            - '@oro_security.security_facade'
+            - '@doctrine'
         tags:
             - { name: form.type, alias: oro_calendar_event }
 

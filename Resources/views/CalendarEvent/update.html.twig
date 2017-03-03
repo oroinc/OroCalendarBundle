@@ -51,22 +51,31 @@
         }
     } %}
 
+    {% set general_subblocks_data = [] %}
+
+    {% if not entityId %}
+        {% set general_subblocks_data = general_subblocks_data|merge([form_row(form.calendar)]) %}
+    {% endif %}
+
+    {% set general_subblocks_data = general_subblocks_data|merge([
+        form_row(form.title),
+        form_row(form.description),
+        form_row(form.backgroundColor),
+        form.calendarUid is defined ? form_row(form.calendarUid) : null,
+        form_row(form.attendees),
+        entity.recurrence is null ? form_row(form.reminders) : null,
+        form_row(form.notifyAttendees),
+        invitations.notify_attendees_component()
+    ]) %}
+
+    {# @todo Verify the condition in the code of the last element in data (notifyGuestsComponent) is correct #}
     {% set dataBlocks = [{
         'title': 'General Information'|trans,
         'class': 'active',
         'subblocks': [
             {
                 'title': '',
-                'data':  [
-                    form_row(form.title),
-                    form_row(form.description),
-                    form_row(form.backgroundColor),
-                    form.calendarUid is defined ? form_row(form.calendarUid) : null,
-                    form_row(form.attendees),
-                    entity.recurrence is null ? form_row(form.reminders) : null,
-                    form_row(form.notifyAttendees),
-                    invitations.notify_attendees_component()
-                ]
+                'data': general_subblocks_data
             },
             {
                 'title': '',

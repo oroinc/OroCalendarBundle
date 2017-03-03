@@ -2,6 +2,8 @@
 
 namespace Oro\Bundle\CalendarBundle\Form\Type;
 
+use Doctrine\Common\Persistence\ManagerRegistry;
+
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Form\FormInterface;
@@ -9,9 +11,12 @@ use Symfony\Component\Form\FormView;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Validator\Constraints\Choice;
 
+use Oro\Bundle\SecurityBundle\SecurityFacade;
 use Oro\Bundle\CalendarBundle\Manager\CalendarEvent\NotificationManager;
+use Oro\Bundle\CalendarBundle\Form\EventListener\CalendarSubscriber;
 use Oro\Bundle\CalendarBundle\Form\EventListener\CalendarEventRecurrenceSubscriber;
 use Oro\Bundle\CalendarBundle\Form\EventListener\CalendarUidSubscriber;
+use Oro\Bundle\CalendarBundle\Entity\Calendar;
 
 class CalendarEventType extends AbstractType
 {
@@ -21,11 +26,28 @@ class CalendarEventType extends AbstractType
     protected $notificationManager;
 
     /**
-     * @param NotificationManager $notificationManager
+     * @var SecurityFacade
      */
-    public function __construct(NotificationManager $notificationManager)
-    {
+    protected $securityFacade;
+
+    /**
+     * @var ManagerRegistry
+     */
+    protected $registry;
+
+    /**
+     * @param NotificationManager $notificationManager
+     * @param SecurityFacade $securityFacade
+     * @param ManagerRegistry $registry
+     */
+    public function __construct(
+        NotificationManager $notificationManager,
+        SecurityFacade $securityFacade,
+        ManagerRegistry $registry
+    ) {
         $this->notificationManager = $notificationManager;
+        $this->securityFacade = $securityFacade;
+        $this->registry = $registry;
     }
 
     /**
@@ -38,6 +60,28 @@ class CalendarEventType extends AbstractType
         $minYear = date_create('-10 year')->format('Y');
         $maxYear = date_create('+80 year')->format('Y');
         $builder
+            ->add(
+                'calendar',
+                'oro_user_select',
+                [
+                    'label'    => 'oro.calendar.owner.label',
+                    'required' => true,
+                    'autocomplete_alias' => 'user_calendars',
+                    'entity_class' => Calendar::class,
+                    'configs' => array(
+                        'entity_name'             => 'OroCalendarBundle:Calendar',
+                        'excludeCurrent'          => true,
+                        'component'               => 'acl-user-autocomplete',
+                        'permission'              => 'VIEW',
+                        'placeholder'             => 'oro.calendar.form.choose_user_to_add_calendar',
+                        'result_template_twig'    => 'OroCalendarBundle:Calendar:Autocomplete/result.html.twig',
+                        'selection_template_twig' => 'OroCalendarBundle:Calendar:Autocomplete/selection.html.twig',
+                    ),
+
+                    'grid_name' => 'users-calendar-select-grid-exclude-owner',
+                    'random_id' => false
+                ]
+            )
             ->add(
                 'title',
                 'text',
@@ -134,6 +178,7 @@ class CalendarEventType extends AbstractType
             );
 
         $builder->addEventSubscriber(new CalendarUidSubscriber());
+        $builder->addEventSubscriber(new CalendarSubscriber($this->securityFacade, $this->registry));
         $builder->addEventSubscriber(new CalendarEventRecurrenceSubscriber());
     }
 
