@@ -290,6 +290,10 @@ define(function(require) {
             var connectionModel = this.getConnectionCollection()
                 .findWhere({calendarUid: eventModel.get('calendarUid')});
 
+            if (!connectionModel) {
+                return;
+            }
+
             eventModel.set('editable', connectionModel.get('canEditEvent'), {silent: true});
             eventModel.set('removable', connectionModel.get('canDeleteEvent'), {silent: true});
 
