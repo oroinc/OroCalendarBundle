@@ -186,3 +186,9 @@ Feature: User
       | Description   | Yearly January Day one recurrence five ending |
       | All-day event | No                                                                   |
       | Recurrence    | Yearly every 1 year on the first day of Jan |
+
+  Scenario: Edit yearly April Day 1, 5 recurrence ending Event
+    When I press "Delete"
+    And I confirm deletion
+    Then I should see "Calendar event deleted" flash message
+    And I should not see "New year Event"
