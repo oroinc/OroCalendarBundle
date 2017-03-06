@@ -168,3 +168,21 @@ Feature: User
       | Description   | Yearly April Day one recurrence five ending                          |
       | All-day event | No                                                                   |
       | Recurrence    | Yearly every 1 year on the first day of Apr, end after 5 occurrences |
+
+  Scenario: Edit yearly April Day 1, 5 recurrence ending Event
+    When I press "Edit"
+    And I fill form with:
+      | Title       | New year Event  |
+      | Start       | today                                       |
+      | End         | 2025-01-01 12:00 AM                           |
+      | Description | Yearly January Day one recurrence five ending |
+    And set event repeating:
+      | Repeats          | Yearly                    |
+      | YearlyRecurrence | Repeat on:January First Day |
+      | EndsRecurrence   | Never                     |
+    And I save and close form
+    Then I should see "Calendar event saved" flash message
+    And I should see New year Event with:
+      | Description   | Yearly January Day one recurrence five ending |
+      | All-day event | No                                                                   |
+      | Recurrence    | Yearly every 1 year on the first day of Jan |
