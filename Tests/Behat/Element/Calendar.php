@@ -8,7 +8,13 @@ use Oro\Bundle\TestFrameworkBundle\Behat\Element\Element;
 class Calendar extends Element
 {
 
-    public function findCalendarItem($title)
+    /**
+     * Find event link on calendar grid
+     *
+     * @param string $title
+     * @return NodeElement
+     */
+    public function findEventLink($title)
     {
         $this->pressButton('today');
         $eventLocator = ".fc-title:contains($title)";
@@ -20,6 +26,12 @@ class Calendar extends Element
         return $itemLink;
     }
 
+    /**
+     * Fetch calendar event details from popup to array
+     *
+     * @param NodeElement $link
+     * @return array
+     */
     public function getCalendarItemInfo(NodeElement $link)
     {
         $link->click();

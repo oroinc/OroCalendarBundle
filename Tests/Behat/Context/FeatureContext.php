@@ -27,7 +27,7 @@ class FeatureContext extends OroFeatureContext implements OroPageObjectAware
     {
         /** @var Calendar $calendar */
         $calendar = $this->elementFactory->createElement('Calendar');
-        $item = $calendar->findCalendarItem($name);
+        $item = $calendar->findEventLink($name);
 
         $itemInfo = $calendar->getCalendarItemInfo($item);
 
@@ -42,6 +42,10 @@ class FeatureContext extends OroFeatureContext implements OroPageObjectAware
             $value = Form::normalizeValue($value, $name);
 
             self::assertEquals($value, $itemInfo[$name]);
+        }
+
+        if ($this->getPage()->hasButton('close')) {
+            $this->getPage()->pressButton('close');
         }
     }
 

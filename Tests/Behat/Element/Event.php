@@ -9,11 +9,22 @@ class Event extends Element
 {
     const REPEATS_DROP_DOWN = 'Repeats';
 
+    /**
+     * Set repeating type drop down
+     * Like: Daily/Weekly/Monthly/Yearly
+     *
+     * @param $type
+     */
     public function setRecurrenceType($type)
     {
         $this->fillField(self::REPEATS_DROP_DOWN, $type);
     }
 
+    /**
+     * Set recurrence parameters from TableNode
+     *
+     * @param TableNode $table
+     */
     public function fillRecurrence(TableNode $table)
     {
         $this->fillField('Repeat', true);
