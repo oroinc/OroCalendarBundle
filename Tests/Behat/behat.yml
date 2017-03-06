@@ -3,3 +3,26 @@ oro_behat_extension:
     Default Calendar View:
       class: Oro\Bundle\CalendarBundle\Tests\Behat\Page\DefaultCalendarView
       route: oro_calendar_view_default
+
+  elements:
+    Calendar:
+      class: Oro\Bundle\CalendarBundle\Tests\Behat\Element\Calendar
+      selector: '.calendar'
+    Event:
+      class: Oro\Bundle\CalendarBundle\Tests\Behat\Element\Event
+      selector: 'form[name="oro_calendar_event_form"]'
+    EndsRecurrence:
+      class: Oro\Bundle\CalendarBundle\Tests\Behat\Element\EventRecurrence\End
+      selector: 'div[data-name="recurrence-ends"]'
+    DailyRecurrence:
+      class: Oro\Bundle\CalendarBundle\Tests\Behat\Element\EventRecurrence\Daily
+      selector: 'div[data-name="recurrence-daily"]'
+    WeeklyRecurrence:
+      class: Oro\Bundle\CalendarBundle\Tests\Behat\Element\EventRecurrence\Weekly
+      selector: 'div[data-name="recurrence-weekly"]'
+    MonthlyRecurrence:
+      class: Oro\Bundle\CalendarBundle\Tests\Behat\Element\EventRecurrence\Monthly
+      selector: 'div[data-name="recurrence-monthly"]'
+    YearlyRecurrence:
+      class: Oro\Bundle\CalendarBundle\Tests\Behat\Element\EventRecurrence\Yearly
+      selector: 'div[data-name="recurrence-yearly"]'
