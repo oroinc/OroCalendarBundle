@@ -8,6 +8,9 @@ oro_behat_extension:
     Calendar:
       class: Oro\Bundle\CalendarBundle\Tests\Behat\Element\Calendar
       selector: '.calendar'
+    Calendar Event:
+      class: Oro\Bundle\CalendarBundle\Tests\Behat\Element\CalendarEvent
+      selector: '.fc-event'
     Event:
       class: Oro\Bundle\CalendarBundle\Tests\Behat\Element\Event
       selector: 'form[name="oro_calendar_event_form"]'

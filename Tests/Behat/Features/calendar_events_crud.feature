@@ -166,7 +166,7 @@ Feature: Create calendar events
       | Recurrence    | Yearly every 1 year on the first day of Apr, end after 5 occurrences |
 
   Scenario: Edit yearly April Day 1, 5 recurrence ending Event
-    When I press "Edit"
+    When I press "Edit Calendar event"
     And I fill form with:
       | Title       | New year Event                                |
       | Start       | <DateTime:today>                              |
@@ -183,8 +183,15 @@ Feature: Create calendar events
       | All-day event | No                                            |
       | Recurrence    | Yearly every 1 year on the first day of Jan   |
 
-  Scenario: Edit yearly April Day 1, 5 recurrence ending Event
-    When I press "Delete"
-    And I confirm deletion
+  Scenario: Delete calendar event
+    Given I press "Delete"
+    When I confirm deletion
     Then I should see "Calendar event deleted" flash message
     And I should not see "New year Event"
+
+  Scenario: Delete all events
+    Given I go to Activities/ Calendar Events
+    And I check all records in grid
+    When I click "Delete" link from mass action dropdown
+    And I confirm deletion
+    Then I should see success message with number of records were deleted

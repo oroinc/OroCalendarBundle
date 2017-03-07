@@ -4,7 +4,6 @@ namespace Oro\Bundle\CalendarBundle\Tests\Behat\Element\EventRecurrence;
 
 class End extends AbstractEventRecurrence
 {
-
     /**
      * {@inheritdoc}
      */
@@ -45,7 +44,7 @@ class End extends AbstractEventRecurrence
     private function setEndByDate($fieldLabel, $value)
     {
         $value = new \DateTime($value);
-        $dateContainer = $this->findValueGroup($fieldLabel, true)->find('css', '.fields-row');
+        $dateContainer = $this->findElementContains('Label', $fieldLabel)->getParent();
 
         $this->elementFactory->wrapElement(
             'DateTimePicker',

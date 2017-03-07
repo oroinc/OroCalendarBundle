@@ -27,9 +27,8 @@ class FeatureContext extends OroFeatureContext implements OroPageObjectAware
     {
         /** @var Calendar $calendar */
         $calendar = $this->elementFactory->createElement('Calendar');
-        $item = $calendar->findEventLink($name);
-
-        $itemInfo = $calendar->getCalendarItemInfo($item);
+        $calendarEvent = $calendar->getCalendarEvent($name);
+        $itemInfo = $calendarEvent->getCalendarItemInfo();
 
         foreach ($table->getRows() as list($name, $value)) {
             self::assertArrayHasKey($name, $itemInfo);
@@ -39,7 +38,7 @@ class FeatureContext extends OroFeatureContext implements OroPageObjectAware
                 $value->setTime(0, 0, 0);
             }
 
-            $value = Form::normalizeValue($value, $name);
+            $value = Form::normalizeValue($value);
 
             self::assertEquals($value, $itemInfo[$name]);
         }
