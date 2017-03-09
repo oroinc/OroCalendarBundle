@@ -48,9 +48,10 @@ class SystemCalendarGridListener
         $datagrid   = $event->getDatagrid();
         $datasource = $datagrid->getDatasource();
         if ($datasource instanceof OrmDatasource) {
-            $isPublicGranted = $this->calendarConfig->isPublicCalendarEnabled();
+            $isPublicGranted = $this->calendarConfig->isPublicCalendarEnabled()
+                && $this->securityFacade->isGranted('oro_public_calendar_management');
             $isSystemGranted = $this->calendarConfig->isSystemCalendarEnabled()
-                && $this->securityFacade->isGranted('oro_system_calendar_view');
+                && $this->securityFacade->isGranted('oro_system_calendar_management');
             if ($isPublicGranted && $isSystemGranted) {
                 $datasource->getQueryBuilder()
                     ->andWhere('(sc.public = :public OR sc.organization = :organizationId)')
@@ -80,26 +81,14 @@ class SystemCalendarGridListener
     public function getActionConfigurationClosure()
     {
         return function (ResultRecordInterface $record) {
-            if ($record->getValue('public')) {
-                if ($this->securityFacade->isGranted('oro_public_calendar_management')) {
-                    return [];
-                } else {
-                    return [
-                        'update' => false,
-                        'delete' => false,
-                    ];
-                }
+            $acl = $record->getValue('public') ? 'oro_public_calendar_management' : 'oro_system_calendar_management';
+            if ($this->securityFacade->isGranted($acl)) {
+                return [];
             }
-
-            $result = [];
-            if (!$this->securityFacade->isGranted('oro_system_calendar_update')) {
-                $result['update'] = false;
-            }
-            if (!$this->securityFacade->isGranted('oro_system_calendar_delete')) {
-                $result['delete'] = false;
-            }
-
-            return $result;
+            return [
+                'update' => false,
+                'delete' => false,
+            ];
         };
     }
 

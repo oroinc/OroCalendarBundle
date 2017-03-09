@@ -152,7 +152,7 @@ class PublicCalendarProviderTest extends \PHPUnit_Framework_TestCase
             ->will($this->returnValue(true));
         $this->securityFacade->expects($this->once())
             ->method('isGranted')
-            ->with('oro_public_calendar_event_management')
+            ->with('oro_public_calendar_management')
             ->will($this->returnValue(true));
 
         $repo  = $this->getMockBuilder('Oro\Bundle\CalendarBundle\Entity\Repository\SystemCalendarRepository')

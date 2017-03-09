@@ -78,30 +78,6 @@ class SystemCalendarProviderTest extends \PHPUnit_Framework_TestCase
         );
     }
 
-    public function testGetCalendarDefaultValuesDenied()
-    {
-        $organizationId = 1;
-        $userId         = 123;
-        $calendarId     = 10;
-        $calendarIds    = [10];
-
-        $this->calendarConfig->expects($this->once())
-            ->method('isSystemCalendarEnabled')
-            ->will($this->returnValue(true));
-        $this->securityFacade->expects($this->once())
-            ->method('isGranted')
-            ->with('oro_system_calendar_view')
-            ->will($this->returnValue(false));
-
-        $result = $this->provider->getCalendarDefaultValues($organizationId, $userId, $calendarId, $calendarIds);
-        $this->assertEquals(
-            [
-                10 => null
-            ],
-            $result
-        );
-    }
-
     public function testGetCalendarDefaultValuesCannotAddEvents()
     {
         $organizationId = 1;
@@ -126,16 +102,10 @@ class SystemCalendarProviderTest extends \PHPUnit_Framework_TestCase
         $this->calendarConfig->expects($this->once())
             ->method('isSystemCalendarEnabled')
             ->will($this->returnValue(true));
-        $this->securityFacade->expects($this->exactly(2))
+        $this->securityFacade->expects($this->once())
             ->method('isGranted')
-            ->will(
-                $this->returnValueMap(
-                    [
-                        ['oro_system_calendar_view', null, true],
-                        ['oro_system_calendar_event_management', null, false],
-                    ]
-                )
-            );
+            ->with('oro_system_calendar_management')
+            ->will($this->returnValue(false));
 
         $repo  = $this->getMockBuilder('Oro\Bundle\CalendarBundle\Entity\Repository\SystemCalendarRepository')
             ->disableOriginalConstructor()
@@ -203,16 +173,10 @@ class SystemCalendarProviderTest extends \PHPUnit_Framework_TestCase
         $this->calendarConfig->expects($this->once())
             ->method('isSystemCalendarEnabled')
             ->will($this->returnValue(true));
-        $this->securityFacade->expects($this->exactly(2))
+        $this->securityFacade->expects($this->once())
             ->method('isGranted')
-            ->will(
-                $this->returnValueMap(
-                    [
-                        ['oro_system_calendar_view', null, true],
-                        ['oro_system_calendar_event_management', null, true],
-                    ]
-                )
-            );
+            ->with('oro_system_calendar_management')
+            ->will($this->returnValue(true));
 
         $repo  = $this->getMockBuilder('Oro\Bundle\CalendarBundle\Entity\Repository\SystemCalendarRepository')
             ->disableOriginalConstructor()
@@ -289,7 +253,7 @@ class SystemCalendarProviderTest extends \PHPUnit_Framework_TestCase
             ->will($this->returnValue(true));
         $this->securityFacade->expects($this->once())
             ->method('isGranted')
-            ->with('oro_system_calendar_view')
+            ->with('oro_system_calendar_management')
             ->will($this->returnValue(false));
 
         $result = $this->provider->getCalendarEvents($organizationId, $userId, $calendarId, $start, $end, $connections);
@@ -311,7 +275,7 @@ class SystemCalendarProviderTest extends \PHPUnit_Framework_TestCase
             ->will($this->returnValue(true));
         $this->securityFacade->expects($this->once())
             ->method('isGranted')
-            ->with('oro_system_calendar_view')
+            ->with('oro_system_calendar_management')
             ->will($this->returnValue(true));
 
         $qb   = $this->getMockBuilder('Doctrine\ORM\QueryBuilder')

@@ -23,14 +23,11 @@ oro:
 
         action:
             public_calendar_management:
-                label: Manage system calendars
-                description: If set to None, the user can see system calendars, but cannot create/edit/delete them
-            public_calendar_event_management:
-                label: Manage system calendar events
-                description: If set to None, the user can see events of a system calendar, but cannot create/edit/delete them
-            system_calendar_event_management:
-                label: Manage organization calendar events
-                description: If set to None, the user can see organization calendars, but cannot create/edit/delete them
+                label: Manage system calendars (and their events)
+                description: If set to None, the user cannot view/create/edit/delete system calendars
+            system_calendar_management:
+                label: Manage organization calendars (and their events)
+                description: If set to None, the user cannot view/create/edit/delete organization calendars
 
         system_configuration:
             groups:

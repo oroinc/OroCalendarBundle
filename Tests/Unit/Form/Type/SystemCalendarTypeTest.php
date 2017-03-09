@@ -91,7 +91,7 @@ class SystemCalendarTypeTest extends TypeTestCase
                 $this->returnValueMap(
                     [
                         ['oro_public_calendar_management', null, true],
-                        ['oro_system_calendar_create', null, true],
+                        ['oro_system_calendar_management', null, true],
                     ]
                 )
             );

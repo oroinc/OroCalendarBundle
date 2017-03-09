@@ -43,13 +43,13 @@ class SystemCalendarController extends Controller
             'entity'      => $entity,
             'editable'    => $entity->isPublic()
                 ? $this->getSecurityFacade()->isGranted('oro_public_calendar_management')
-                : $this->getSecurityFacade()->isGranted('oro_system_calendar_update'),
+                : $this->getSecurityFacade()->isGranted('oro_system_calendar_management'),
             'removable'   => $entity->isPublic()
                 ? $this->getSecurityFacade()->isGranted('oro_public_calendar_management')
-                : $this->getSecurityFacade()->isGranted('oro_system_calendar_delete'),
+                : $this->getSecurityFacade()->isGranted('oro_system_calendar_management'),
             'canAddEvent' => $entity->isPublic()
-                ? $this->getSecurityFacade()->isGranted('oro_public_calendar_event_management')
-                : $this->getSecurityFacade()->isGranted('oro_system_calendar_event_management'),
+                ? $this->getSecurityFacade()->isGranted('oro_public_calendar_management')
+                : $this->getSecurityFacade()->isGranted('oro_system_calendar_management'),
             'showScope'   =>
                 $this->getCalendarConfig()->isPublicCalendarEnabled()
                 && $this->getCalendarConfig()->isSystemCalendarEnabled()
@@ -68,7 +68,7 @@ class SystemCalendarController extends Controller
 
         $securityFacade = $this->getSecurityFacade();
         $isGranted      = $securityFacade->isGranted('oro_public_calendar_management')
-            || $securityFacade->isGranted('oro_system_calendar_create');
+            || $securityFacade->isGranted('oro_system_calendar_management');
         if (!$isGranted) {
             throw new AccessDeniedException();
         }
@@ -89,7 +89,7 @@ class SystemCalendarController extends Controller
 
         $isGranted = $entity->isPublic()
             ? $this->getSecurityFacade()->isGranted('oro_public_calendar_management')
-            : $this->getSecurityFacade()->isGranted('oro_system_calendar_update');
+            : $this->getSecurityFacade()->isGranted('oro_system_calendar_management');
         if (!$isGranted) {
             throw new AccessDeniedException();
         }
@@ -108,7 +108,7 @@ class SystemCalendarController extends Controller
     {
         $this->checkPermissionByConfig($entity);
 
-        if (!$entity->isPublic() && !$this->getSecurityFacade()->isGranted('VIEW', $entity)) {
+        if (!$entity->isPublic() && !$this->getSecurityFacade()->isGranted('oro_system_calendar_management')) {
             // an user must have permissions to view system calendar
             throw new AccessDeniedException();
         }

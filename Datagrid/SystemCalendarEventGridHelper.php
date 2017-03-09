@@ -26,7 +26,7 @@ class SystemCalendarEventGridHelper
     public function getPublicActionConfigurationClosure()
     {
         return function (ResultRecordInterface $record) {
-            if ($this->securityFacade->isGranted('oro_public_calendar_event_management')) {
+            if ($this->securityFacade->isGranted('oro_public_calendar_management')) {
                 return [];
             } else {
                 return [
@@ -45,7 +45,7 @@ class SystemCalendarEventGridHelper
     public function getSystemActionConfigurationClosure()
     {
         return function (ResultRecordInterface $record) {
-            if ($this->securityFacade->isGranted('oro_system_calendar_event_management')) {
+            if ($this->securityFacade->isGranted('oro_system_calendar_management')) {
                 return [];
             } else {
                 return [

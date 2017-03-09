@@ -1,5 +1,15 @@
 UPGRADE FROM 2.0 to 2.1
-=======================
+========================
+
+#ACL changes
+- Removed 'security' annotation for the entity Oro\Bundle\CalendarBundle\Entity\SystemCalendar entity. So it is not ACL 
+protected anymore.
+- "Manage system calendar events" capability merged with "Manage system calendars" capability into one 
+"Manage system calendars (and their events)" capability which responsible for system calendar and system calendar events 
+ACL functionality.
+- Added "Manage system calendars (and their events)" capability. "Manage organization calendar events" capability 
+merged into "Manage system calendars (and their events)" and no more exists. Now "Manage system calendars (and their 
+events)" is responsible for organization calendar and organization calendar events ACL functionality.
 
 - Removed the following parameters from DIC:
     - `oro_calendar.twig.dateformat.class`

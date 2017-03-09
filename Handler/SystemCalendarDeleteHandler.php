@@ -47,7 +47,7 @@ class SystemCalendarDeleteHandler extends DeleteHandler
         } else {
             if (!$this->calendarConfig->isSystemCalendarEnabled()) {
                 throw new ForbiddenException('System calendars are disabled.');
-            } elseif (!$this->securityFacade->isGranted('DELETE', $entity)) {
+            } elseif (!$this->securityFacade->isGranted('oro_system_calendar_management')) {
                 throw new ForbiddenException('Access denied.');
             }
         }

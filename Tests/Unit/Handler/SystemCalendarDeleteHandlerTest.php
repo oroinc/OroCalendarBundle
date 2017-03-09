@@ -122,7 +122,7 @@ class SystemCalendarDeleteHandlerTest extends \PHPUnit_Framework_TestCase
             ->will($this->returnValue(true));
         $this->securityFacade->expects($this->once())
             ->method('isGranted')
-            ->with('DELETE', $this->identicalTo($calendar))
+            ->with('oro_system_calendar_management')
             ->will($this->returnValue(false));
 
         $this->handler->handleDelete(1, $this->manager);

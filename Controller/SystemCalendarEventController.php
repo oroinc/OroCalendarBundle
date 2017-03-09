@@ -37,8 +37,8 @@ class SystemCalendarEventController extends Controller
         }
 
         $isEventManagementGranted = $calendar->isPublic()
-            ? $securityFacade->isGranted('oro_public_calendar_event_management')
-            : $securityFacade->isGranted('oro_system_calendar_event_management');
+            ? $securityFacade->isGranted('oro_public_calendar_management')
+            : $securityFacade->isGranted('oro_system_calendar_management');
 
         return [
             'entity'    => $entity,
@@ -57,8 +57,8 @@ class SystemCalendarEventController extends Controller
 
         $securityFacade = $this->getSecurityFacade();
         $isGranted = $calendar->isPublic()
-            ? $securityFacade->isGranted('oro_public_calendar_event_management')
-            : $securityFacade->isGranted('oro_system_calendar_event_management');
+            ? $securityFacade->isGranted('oro_public_calendar_management')
+            : $securityFacade->isGranted('oro_system_calendar_management');
         if (!$isGranted) {
             throw new AccessDeniedException();
         }
@@ -99,8 +99,8 @@ class SystemCalendarEventController extends Controller
         }
 
         $isGranted = $calendar->isPublic()
-            ? $securityFacade->isGranted('oro_public_calendar_event_management')
-            : $securityFacade->isGranted('oro_system_calendar_event_management');
+            ? $securityFacade->isGranted('oro_public_calendar_management')
+            : $securityFacade->isGranted('oro_system_calendar_management');
         if (!$isGranted) {
             throw new AccessDeniedException();
         }

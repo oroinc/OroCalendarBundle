@@ -104,7 +104,7 @@ class CalendarEventDeleteHandler extends DeleteHandler
                     throw new ForbiddenException('Public calendars are disabled.');
                 }
 
-                if (!$this->securityFacade->isGranted('oro_public_calendar_event_management')) {
+                if (!$this->securityFacade->isGranted('oro_public_calendar_management')) {
                     throw new ForbiddenException('Access denied.');
                 }
             } else {
@@ -112,7 +112,7 @@ class CalendarEventDeleteHandler extends DeleteHandler
                     throw new ForbiddenException('System calendars are disabled.');
                 }
 
-                if (!$this->securityFacade->isGranted('oro_system_calendar_event_management')) {
+                if (!$this->securityFacade->isGranted('oro_system_calendar_management')) {
                     throw new ForbiddenException('Access denied.');
                 }
             }

@@ -30,7 +30,7 @@ class SystemCalendarEventGridHelperTest extends \PHPUnit_Framework_TestCase
 
         $this->securityFacade->expects($this->once())
             ->method('isGranted')
-            ->with('oro_public_calendar_event_management')
+            ->with('oro_public_calendar_management')
             ->will($this->returnValue($isGranted));
 
         $closure = $this->helper->getPublicActionConfigurationClosure();
@@ -61,7 +61,7 @@ class SystemCalendarEventGridHelperTest extends \PHPUnit_Framework_TestCase
 
         $this->securityFacade->expects($this->once())
             ->method('isGranted')
-            ->with('oro_system_calendar_event_management')
+            ->with('oro_system_calendar_management')
             ->will($this->returnValue($isGranted));
 
         $closure = $this->helper->getSystemActionConfigurationClosure();

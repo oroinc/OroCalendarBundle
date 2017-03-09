@@ -59,7 +59,7 @@ class PublicCalendarProvider extends AbstractRecurrenceAwareCalendarProvider
         /** @var SystemCalendar[] $calendars */
         $calendars = $qb->getQuery()->getResult();
 
-        $isEventManagementGranted = $this->securityFacade->isGranted('oro_public_calendar_event_management');
+        $isEventManagementGranted = $this->securityFacade->isGranted('oro_public_calendar_management');
         foreach ($calendars as $calendar) {
             $resultItem = [
                 'calendarName'    => $calendar->getName(),

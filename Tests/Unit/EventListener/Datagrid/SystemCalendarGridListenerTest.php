@@ -109,10 +109,16 @@ class SystemCalendarGridListenerTest extends \PHPUnit_Framework_TestCase
             ->method('isSystemCalendarEnabled')
             ->will($this->returnValue(true));
 
-        $this->securityFacade->expects($this->once())
+        $this->securityFacade->expects($this->exactly(2))
             ->method('isGranted')
-            ->with('oro_system_calendar_view')
-            ->will($this->returnValue(true));
+            ->will(
+                $this->returnValueMap(
+                    [
+                        ['oro_public_calendar_management', null, true],
+                        ['oro_system_calendar_management', null, true],
+                    ]
+                )
+            );
 
         $qb = $this->getMockBuilder('Doctrine\ORM\QueryBuilder')
             ->disableOriginalConstructor()
@@ -148,6 +154,15 @@ class SystemCalendarGridListenerTest extends \PHPUnit_Framework_TestCase
         $this->listener->onBuildAfter($event);
     }
 
+    public function onBuildAfterBothPublicAndSystemGrantedDataProvider()
+    {
+        return [
+            [true, false],
+            [false, true],
+            [true, true]
+        ];
+    }
+
     public function testOnBuildAfterBothPublicAndSystemEnabledButSystemNotGranted()
     {
         $this->calendarConfig->expects($this->once())
@@ -157,10 +172,13 @@ class SystemCalendarGridListenerTest extends \PHPUnit_Framework_TestCase
             ->method('isSystemCalendarEnabled')
             ->will($this->returnValue(true));
 
-        $this->securityFacade->expects($this->once())
+        $this->securityFacade->expects($this->exactly(2))
             ->method('isGranted')
-            ->with('oro_system_calendar_view')
-            ->will($this->returnValue(false));
+            ->withConsecutive(
+                ['oro_public_calendar_management'],
+                ['oro_system_calendar_management']
+            )
+            ->willReturnOnConsecutiveCalls(true, false);
 
         $qb = $this->getMockBuilder('Doctrine\ORM\QueryBuilder')
             ->disableOriginalConstructor()
@@ -202,10 +220,15 @@ class SystemCalendarGridListenerTest extends \PHPUnit_Framework_TestCase
             ->method('isSystemCalendarEnabled')
             ->will($this->returnValue(true));
 
-        $this->securityFacade->expects($this->once())
+        $this->securityFacade->expects($this->any())
             ->method('isGranted')
-            ->with('oro_system_calendar_view')
-            ->will($this->returnValue(true));
+            ->will($this->returnValueMap(
+                [
+                    ['oro_public_calendar_management', null, true],
+                    ['oro_system_calendar_management', null, true],
+                ]
+            ));
+
         $this->securityFacade->expects($this->once())
             ->method('getOrganizationId')
             ->will($this->returnValue($organizationId));
@@ -244,6 +267,12 @@ class SystemCalendarGridListenerTest extends \PHPUnit_Framework_TestCase
         $this->calendarConfig->expects($this->once())
             ->method('isPublicCalendarEnabled')
             ->will($this->returnValue(true));
+
+        $this->securityFacade->expects($this->any())
+            ->method('isGranted')
+            ->with('oro_public_calendar_management')
+            ->will($this->returnValue(true));
+
         $this->calendarConfig->expects($this->once())
             ->method('isSystemCalendarEnabled')
             ->will($this->returnValue(false));
@@ -349,20 +378,14 @@ class SystemCalendarGridListenerTest extends \PHPUnit_Framework_TestCase
     /**
      * @dataProvider getActionConfigurationClosureSystemProvider
      */
-    public function testGetActionConfigurationClosureSystem($isUpdateGranted, $isDeleteGranted, $expected)
+    public function testGetActionConfigurationClosureSystem($allowed, $expected)
     {
         $resultRecord = new ResultRecord(['public' => false]);
 
-        $this->securityFacade->expects($this->exactly(2))
+        $this->securityFacade->expects($this->once())
             ->method('isGranted')
-            ->will(
-                $this->returnValueMap(
-                    [
-                        ['oro_system_calendar_update', null, $isUpdateGranted],
-                        ['oro_system_calendar_delete', null, $isDeleteGranted],
-                    ]
-                )
-            );
+            ->with('oro_system_calendar_management')
+            ->will($this->returnValue($allowed));
 
         $closure = $this->listener->getActionConfigurationClosure();
         $this->assertEquals(
@@ -374,10 +397,8 @@ class SystemCalendarGridListenerTest extends \PHPUnit_Framework_TestCase
     public function getActionConfigurationClosureSystemProvider()
     {
         return [
-            [true, true, []],
-            [true, false, ['delete' => false]],
-            [false, true, ['update' => false]],
-            [false, false, ['update' => false, 'delete' => false]],
+            [true, []],
+            [false, ['update' => false, 'delete' => false]],
         ];
     }
 }

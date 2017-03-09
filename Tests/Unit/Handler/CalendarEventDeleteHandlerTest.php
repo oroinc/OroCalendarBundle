@@ -131,7 +131,7 @@ class CalendarEventDeleteHandlerTest extends \PHPUnit_Framework_TestCase
             ->will($this->returnValue(true));
         $this->securityFacade->expects($this->once())
             ->method('isGranted')
-            ->with('oro_public_calendar_event_management')
+            ->with('oro_public_calendar_management')
             ->will($this->returnValue(false));
         $this->deleteManager->expects($this->never())
             ->method($this->anything());
@@ -179,7 +179,7 @@ class CalendarEventDeleteHandlerTest extends \PHPUnit_Framework_TestCase
             ->will($this->returnValue(true));
         $this->securityFacade->expects($this->once())
             ->method('isGranted')
-            ->with('oro_system_calendar_event_management')
+            ->with('oro_system_calendar_management')
             ->will($this->returnValue(false));
         $this->deleteManager->expects($this->never())
             ->method($this->anything());

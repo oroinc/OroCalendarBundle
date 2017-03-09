@@ -61,7 +61,7 @@ class OroCalendarBundleInstaller implements
      */
     public function getMigrationVersion()
     {
-        return 'v1_17';
+        return 'v1_18';
     }
 
     /**

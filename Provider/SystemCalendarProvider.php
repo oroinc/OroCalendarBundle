@@ -48,9 +48,7 @@ class SystemCalendarProvider extends AbstractRecurrenceAwareCalendarProvider
      */
     public function getCalendarDefaultValues($organizationId, $userId, $calendarId, array $calendarIds)
     {
-        if (!$this->calendarConfig->isSystemCalendarEnabled()
-            || !$this->securityFacade->isGranted('oro_system_calendar_view')
-        ) {
+        if (!$this->calendarConfig->isSystemCalendarEnabled()) {
             return array_fill_keys($calendarIds, null);
         }
 
@@ -65,7 +63,7 @@ class SystemCalendarProvider extends AbstractRecurrenceAwareCalendarProvider
         /** @var SystemCalendar[] $calendars */
         $calendars = $qb->getQuery()->getResult();
 
-        $isEventManagementGranted = $this->securityFacade->isGranted('oro_system_calendar_event_management');
+        $isEventManagementGranted = $this->securityFacade->isGranted('oro_system_calendar_management');
         foreach ($calendars as $calendar) {
             $resultItem = [
                 'calendarName'    => $calendar->getName(),
@@ -97,7 +95,7 @@ class SystemCalendarProvider extends AbstractRecurrenceAwareCalendarProvider
         $extraFields = []
     ) {
         if (!$this->calendarConfig->isSystemCalendarEnabled()
-            || !$this->securityFacade->isGranted('oro_system_calendar_view')
+            || !$this->securityFacade->isGranted('oro_system_calendar_management')
         ) {
             return [];
         }

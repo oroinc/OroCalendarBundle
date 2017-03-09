@@ -96,9 +96,7 @@ class SystemCalendarType extends AbstractType
             $data = $event->getData();
             if ($data) {
                 $isPublicGranted = $this->securityFacade->isGranted('oro_public_calendar_management');
-                $isSystemGranted = $this->securityFacade->isGranted(
-                    $data->getId() ? 'oro_system_calendar_update' : 'oro_system_calendar_create'
-                );
+                $isSystemGranted = $this->securityFacade->isGranted('oro_system_calendar_management');
                 if (!$isPublicGranted || !$isSystemGranted) {
                     $options['read_only'] = true;
                     if (!$data->getId() && !$isSystemGranted) {
