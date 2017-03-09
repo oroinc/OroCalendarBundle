@@ -23,22 +23,31 @@ define([
             }
             this.removeErrors(container);
             var errors = [];
+            if (tools.debug) {
+                error.showErrorInConsole(err);
+            }
             if (_.isString(err)) {
                 // string
                 errors.push(err);
-            } if (!_.isUndefined(err.message)) {
+            }
+            if (!_.isUndefined(err.message)) {
                 // exception object
-                if (tools.debug) {
-                    errors.push(err.message);
-                    error.showErrorInConsole(err);
-                } else {
-                    errors.push(__('Unexpected error was occurred'));
+                errors.push(err.message);
+            } else {
+                errors.push(__('Unexpected error was occurred'));
+            }
+            if (!_.isUndefined(err.errors)) {
+                // JSON REST response
+                if (_.isArray(err.errors)) {
+                    _.each(err.errors, function(value) { errors.push(value); });
+                } else if (_.isObject(err.errors)) {
+                    var validator = (container.is('form') ? container : container.find('form')).data('validator');
+                    if (validator) {
+                        validator.showBackendErrors(err.errors);
+                    }
                 }
             }
-            if (!_.isUndefined(err.errors) && _.isArray(err.errors)) {
-                // JSON REST response
-                _.each(err.errors, function(value) { errors.push(value); });
-            }
+
             this.addErrors(container, errors);
 
             if (!_.isUndefined(err.children)) {

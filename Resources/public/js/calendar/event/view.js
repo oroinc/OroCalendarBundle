@@ -242,6 +242,7 @@ define(function(require) {
                 try {
                     this.model.save(null, {
                         wait: true,
+                        errorHandlerMessage: false,
                         error: _.bind(this._handleResponseError, this)
                     });
                 } catch (err) {
@@ -481,6 +482,9 @@ define(function(require) {
                 return fieldNameFilterRegex.test(item.name);
             });
             formData = formData.concat(this.eventDialog.form.find('input[name][type=checkbox]:not(:checked)')
+                .filter(function(i, item) {
+                    return fieldNameFilterRegex.test(item.name);
+                })
                 .map(function() {
                     return {name: this.name, value: false};
                 }).get());

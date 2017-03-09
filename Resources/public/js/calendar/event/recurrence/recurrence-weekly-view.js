@@ -16,7 +16,8 @@ define(function(require) {
                 el: this.$('[data-name="recurrence-week-day-picker"]'),
                 value: data.dayOfWeek,
                 selectAttrs: {
-                    'data-related-field': 'dayOfWeek'
+                    'data-related-field': 'dayOfWeek',
+                    'name': 'recurrence[dayOfWeek]'
                 }
             }));
             return this;
