@@ -47,39 +47,4 @@ class FeatureContext extends OroFeatureContext implements OroPageObjectAware
             $this->getPage()->pressButton('close');
         }
     }
-
-    /**
-     * Sets event recurrence parameters
-     *
-     * Example: And set event repeating:
-     *               | Repeats         | Daily                |
-     *               | DailyRecurrence | Repeat every:Weekday |
-     * Or:
-     *        | Repeats         | Daily                |
-     *        | DailyRecurrence | Repeat every:22 days |
-     * Or:
-     *       | Repeats         | Weekly                                  |
-     *       | WeeklyRecurrence| Repeat on:monday                        |
-     *
-     *       | WeeklyRecurrence| Repeat every:13 weeks, Repeat on:monday |
-     * Or:
-     *       | Repeats           | Monthly                |
-     *       | MonthlyRecurrence | Repeat on:Day 10       |
-     *
-     *       | MonthlyRecurrence | Repeat on:First Sunday |
-     * Or:
-     *       | Repeats          | Yearly                   |
-     *       | YearlyRecurrence | Repeat on:April Day 9    |
-     *
-     *       | YearlyRecurrence | Repeat on:May Second Day |
-     *
-     *
-     * @Then /^(?:|I )set event repeating:$/
-     */
-    public function setEventRepeating(TableNode $table)
-    {
-        /** @var Event $event */
-        $event = $this->elementFactory->createElement('Event');
-        $event->fillRecurrence($table);
-    }
 }
