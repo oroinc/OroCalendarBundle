@@ -21,30 +21,20 @@ class FeatureContext extends OroFeatureContext implements OroPageObjectAware
      *               | Description   | testfull desc          |
      *               | Start         | today                  |
      *
-     * @Then /^(?:|I )should see "(?P<name>.*)" in calendar with:$/
+     * @Then /^(?:|I )should see "(?P<eventTitle>.*)" in calendar with:$/
      */
-    public function iShouldSeeInCalendarWith($name, TableNode $table)
+    public function iShouldSeeInCalendarWith($eventTitle, TableNode $table)
     {
         /** @var Calendar $calendar */
         $calendar = $this->elementFactory->createElement('Calendar');
-        $calendarEvent = $calendar->getCalendarEvent($name);
+        $calendarEvent = $calendar->getCalendarEvent($eventTitle);
         $itemInfo = $calendarEvent->getCalendarItemInfo();
 
-        foreach ($table->getRows() as list($name, $value)) {
-            self::assertArrayHasKey($name, $itemInfo);
-
-            if ($itemInfo[$name] instanceof \DateTime) {
-                $value = new \DateTime($value);
-                $value->setTime(0, 0, 0);
-            }
-
+        foreach ($table->getRows() as list($label, $value)) {
             $value = Form::normalizeValue($value);
-
-            self::assertEquals($value, $itemInfo[$name]);
+            self::assertEquals($value, $itemInfo->get($label));
         }
 
-        if ($this->getPage()->hasButton('close')) {
-            $this->getPage()->pressButton('close');
-        }
+        $itemInfo->close();
     }
 }

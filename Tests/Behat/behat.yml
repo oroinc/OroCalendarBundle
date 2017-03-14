@@ -11,8 +11,11 @@ oro_behat_extension:
     Calendar Event:
       class: Oro\Bundle\CalendarBundle\Tests\Behat\Element\CalendarEvent
       selector: '.fc-event'
-    Event:
-      class: Oro\Bundle\CalendarBundle\Tests\Behat\Element\Event
+    Calendar Event Info:
+      class: Oro\Bundle\CalendarBundle\Tests\Behat\Element\CalendarEventInfo
+      selector: '.ui-dialog'
+    Event Form:
+      class: Oro\Bundle\CalendarBundle\Tests\Behat\Element\EventForm
       selector: 'form[name="oro_calendar_event_form"]'
     EndsRecurrence:
       class: Oro\Bundle\CalendarBundle\Tests\Behat\Element\EventRecurrence\End

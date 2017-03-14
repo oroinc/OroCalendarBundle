@@ -10,7 +10,7 @@ Feature: Create calendar events
     When I save and close form
     Then I should see validation errors:
       | Title | This value should not be blank. |
-    When I fill "Event" with:
+    When I fill "Event Form" with:
       | Title         | All day no repeat Event |
       | Start         | 2017-01-24 12:00 AM     |
       | End           | 2020-02-26 12:00 AM     |
@@ -33,7 +33,7 @@ Feature: Create calendar events
   Scenario: Create daily weekday never ending Event
     When I go to Activities/ Calendar Events
     And press "Create Calendar event"
-    Then I fill "Event" with:
+    Then I fill "Event Form" with:
       | Title           | Daily weekday never ending Event |
       | Start           | <DateTime:today>                 |
       | End             | <DateTime:next month>            |
@@ -51,7 +51,7 @@ Feature: Create calendar events
   Scenario: Create Daily every 3 days, after 5 occurrences ending Event
     When I go to Activities/ Calendar Events
     And press "Create Calendar event"
-    Then I fill "Event" with:
+    Then I fill "Event Form" with:
       | Title           | Three days five occ ending Event |
       | Start           | <DateTime:today>                 |
       | End             | <DateTime:next month>            |
@@ -70,7 +70,7 @@ Feature: Create calendar events
   Scenario: Create Daily every 5 days, by next month ending Event
     When I go to Activities/ Calendar Events
     And press "Create Calendar event"
-    Then I fill "Event" with:
+    Then I fill "Event Form" with:
       | Title           | Two days by month ending Event |
       | Start           | <DateTime:today>               |
       | End             | <DateTime:next week>           |
@@ -89,7 +89,7 @@ Feature: Create calendar events
   Scenario: Create weekly, every 2 weeks on Monday, 2 occ ending Event
     When I go to Activities/ Calendar Events
     And press "Create Calendar event"
-    Then I fill "Event" with:
+    Then I fill "Event Form" with:
       | Title            | Two weeks two occ ending Event         |
       | Start            | <DateTime:today>                       |
       | End              | <DateTime:next month>                  |
@@ -107,7 +107,7 @@ Feature: Create calendar events
   Scenario: Create weekly, every 3 weeks never ending Event
     When I go to Activities/ Calendar Events
     And press "Create Calendar event"
-    Then I fill "Event" with:
+    Then I fill "Event Form" with:
       | Title            | Three weeks never ending Event         |
       | Start            | <DateTime:today>                       |
       | End              | <DateTime:next month>                  |
@@ -125,7 +125,7 @@ Feature: Create calendar events
   Scenario: Create Monthly First Weekday next year ending Event
     When I go to Activities/ Calendar Events
     And press "Create Calendar event"
-    Then I fill "Event" with:
+    Then I fill "Event Form" with:
       | Title             | Monthly First Weekday by ny ending Event |
       | Start             | <DateTime:today>                         |
       | End               | <DateTime:next month>                    |
@@ -143,7 +143,7 @@ Feature: Create calendar events
   Scenario: Create yearly April Day 1, 5 recurrence ending Event
     When I go to Activities/ Calendar Events
     And press "Create Calendar event"
-    Then I fill "Event" with:
+    Then I fill "Event Form" with:
       | Title            | Yearly April Day one rcr five ending Event  |
       | Start            | <DateTime:today>                            |
       | End              | <DateTime:next year>                        |
