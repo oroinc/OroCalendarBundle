@@ -132,7 +132,6 @@ class CalendarPropertyApiTypeTest extends TypeTestCase
                 [
                     'data_class'           => 'Oro\Bundle\CalendarBundle\Entity\CalendarProperty',
                     'csrf_protection'      => false,
-                    'extra_fields_message' => 'This form should not contain extra fields: "{{ extra_fields }}"',
                 ]
             );
 
