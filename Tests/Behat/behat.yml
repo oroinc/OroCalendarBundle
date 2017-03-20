@@ -7,7 +7,7 @@ oro_behat_extension:
   elements:
     Calendar:
       class: Oro\Bundle\CalendarBundle\Tests\Behat\Element\Calendar
-      selector: '.calendar'
+      selector: "div[id^='calendar']"
     Calendar Event:
       class: Oro\Bundle\CalendarBundle\Tests\Behat\Element\CalendarEvent
       selector: '.fc-event'
