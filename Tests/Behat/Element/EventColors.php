@@ -6,7 +6,6 @@ use Behat\Mink\Element\NodeElement;
 
 trait EventColors
 {
-
     /**
      * Retrieve colors present on current form
      *
