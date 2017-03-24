@@ -28,7 +28,6 @@
         min-height: 38px;
         top: -74px;
         &:after {
-          left: 78px;
           margin-top: -2px;
         }
       }
@@ -36,6 +35,16 @@
   }
   &__item:last-child label {
     margin-bottom: 0;
+  }
+  &__item-datetime {
+    label {
+      vertical-align: top;
+    }
+  }
+  &__datetime-wrapper {
+    position: relative;
+    display: inline-block;
+    max-width: 252px;
   }
   &__number {
     width: 36px;

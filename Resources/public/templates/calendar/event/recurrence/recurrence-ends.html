@@ -21,17 +21,19 @@
                 <span class="recurrence-subview-control__text"><%- _.__('oro.calendar.event.recurrence.controls.occurrences') %></span>
             </label>
         </div>
-        <div class="recurrence-subview-control__item">
+        <div class="recurrence-subview-control__item recurrence-subview-control__item-datetime">
             <label data-role="control-section-switcher">
                 <input type="radio"<% if (endTime) {%> checked<% } %>>
                 <span class="recurrence-subview-control__text"><%- _.__('oro.calendar.event.recurrence.control-modes.by') %></span>
             </label>
-            <input class="recurrence-subview-control__datetime"
-                   type="hidden"
-                   name="recurrence-endTime-backend-field"
-                   data-related-field="endTime"
-                   data-type="datetime"
-                   value="<%=endTime %>">
+            <span class="recurrence-subview-control__datetime-wrapper">
+                <input class="recurrence-subview-control__datetime"
+                       type="hidden"
+                       name="recurrence-endTime-backend-field"
+                       data-related-field="endTime"
+                       data-type="datetime"
+                       value="<%=endTime %>">
+            </span>
         </div>
     </div>
 </div>
