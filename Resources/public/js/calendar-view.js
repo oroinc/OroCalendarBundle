@@ -166,7 +166,7 @@ define(function(require) {
 
             // create common event bus and subscribe to its events
             this.commonEventBus = Object.create(_.extend({}, Backbone.Events));
-            this.listenTo(this.commonEventBus, 'toRefresh', this.refreshView);
+            this.listenTo(this.commonEventBus, 'toRefresh', _.debounce(this.refreshView, 0));
             this.listenTo(this, 'all', function(name) {
                 // translate all CalendarView events to commonEvenBus
                 this.commonEventBus.trigger.apply(this.commonEventBus, arguments);

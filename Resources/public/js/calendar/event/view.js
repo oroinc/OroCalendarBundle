@@ -233,9 +233,9 @@ define(function(require) {
         },
 
         _saveEventFromData: function(formData) {
+            var previousData = this.model.toJSON();
             this.options.commonEventBus.trigger('eventForm:fetchData', this.model, formData, this.predefinedAttrs);
             this.model.set(formData);
-
             var errors;
             if (this.model.isValid()) {
                 this.showSavingMask();
@@ -243,6 +243,7 @@ define(function(require) {
                     this.model.save(null, {
                         wait: true,
                         errorHandlerMessage: false,
+                        success: _.bind(this._onSaveEventSuccess, this, previousData),
                         error: _.bind(this._handleResponseError, this)
                     });
                 } catch (err) {
@@ -253,6 +254,12 @@ define(function(require) {
                     return __(message);
                 });
                 this.showError({errors: errors});
+            }
+        },
+
+        _onSaveEventSuccess: function(previousData, model) {
+            if (previousData.recurrence || model.get('recurrence')) {
+                this.options.commonEventBus.trigger('toRefresh');
             }
         },
 
