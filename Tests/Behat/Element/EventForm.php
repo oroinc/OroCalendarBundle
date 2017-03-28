@@ -6,7 +6,7 @@ use Behat\Gherkin\Node\TableNode;
 use Oro\Bundle\FormBundle\Tests\Behat\Element\OroForm;
 use Oro\Bundle\TestFrameworkBundle\Behat\Element\Element;
 
-class EventForm extends OroForm
+class EventForm extends OroForm implements ColorsAwareInterface
 {
     use EventColors;
 

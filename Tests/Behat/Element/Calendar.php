@@ -4,7 +4,7 @@ namespace Oro\Bundle\CalendarBundle\Tests\Behat\Element;
 
 use Oro\Bundle\TestFrameworkBundle\Behat\Element\Element;
 
-class Calendar extends Element
+class Calendar extends Element implements ColorsAwareInterface
 {
     use EventColors {
         getAvailableColors as private getColors;

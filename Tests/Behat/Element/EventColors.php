@@ -27,7 +27,7 @@ trait EventColors
             }
         }
 
-        // last element are custom value block, so we remove it
+        // last element is custom value block, so we remove it
         array_pop($colors);
 
         return $colors;
