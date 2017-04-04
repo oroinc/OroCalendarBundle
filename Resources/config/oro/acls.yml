@@ -36,3 +36,10 @@ acls:
         group_name: ""
         description: oro.calendar.action.system_calendar_management.description
         category: "calendar"
+
+    oro_calendar_event_assign_management:
+        label: oro.calendar.action.calendar_event_assign.label
+        type: action
+        group_name: ""
+        description: oro.calendar.action.calendar_event_assign.description
+        category: "calendar"

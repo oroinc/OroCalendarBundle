@@ -154,9 +154,11 @@
         <% } %>
     {% endset %}
     {% set leftColumn %}
-        <% if (!id) { %>
-            {{ form_row(form.calendar) }}
-        <% } %>
+        {% if form.calendar is defined %}
+            <% if (!id) { %>
+                {{ form_row(form.calendar) }}
+            <% } %>
+        {% endif %}
         {{ form_row(form.title) }}
         {{ form_row(form.description) }}
         {{ form_row(form.backgroundColor) }}

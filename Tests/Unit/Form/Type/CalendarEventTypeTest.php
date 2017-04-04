@@ -13,6 +13,9 @@ class CalendarEventTypeTest extends \PHPUnit_Framework_TestCase
     /** @var \PHPUnit_Framework_MockObject_MockObject */
     protected $notificationManager;
 
+    /** @var \PHPUnit_Framework_MockObject_MockObject */
+    protected $securityFacade;
+
     /**
      * @var CalendarEventType
      */
@@ -37,53 +40,71 @@ class CalendarEventTypeTest extends \PHPUnit_Framework_TestCase
             ->disableOriginalConstructor()
             ->getMock();
 
-        $securityFacade = $this->getMockBuilder('Oro\Bundle\SecurityBundle\SecurityFacade')
+        $this->securityFacade = $this->getMockBuilder('Oro\Bundle\SecurityBundle\SecurityFacade')
             ->disableOriginalConstructor()
             ->getMock();
         $registry = $this->getMockBuilder('Doctrine\Common\Persistence\ManagerRegistry')
             ->disableOriginalConstructor()
             ->getMock();
 
-        $this->type = new CalendarEventType($this->notificationManager, $securityFacade, $registry);
+        $this->type = new CalendarEventType($this->notificationManager, $this->securityFacade, $registry);
+    }
+
+    public function formBuildProvider()
+    {
+        return [
+            'with assign calendar permissions' => [true],
+            'without assign calendar permissions' => [false]
+        ];
     }
 
     /**
+     * @dataProvider formBuildProvider
+     *
      * @SuppressWarnings(PHPMD.ExcessiveMethodLength)
      */
-    public function testBuildForm()
+    public function testBuildForm($permissions)
     {
         $minYear = date_create('-10 year')->format('Y');
         $maxYear = date_create('+80 year')->format('Y');
         $builder = $this->getMockBuilder('Symfony\Component\Form\FormBuilder')
             ->disableOriginalConstructor()
             ->getMock();
+        $this->securityFacade->expects($this->once())
+            ->method('isGranted')
+            ->with('oro_calendar_event_assign_management')
+            ->will($this->returnValue($permissions));
+        $counter = 0;
 
-        $builder->expects($this->at(0))
-            ->method('add')
-            ->with(
-                'calendar',
-                'oro_user_select',
-                [
-                    'label'    => 'oro.calendar.owner.label',
-                    'required' => true,
-                    'autocomplete_alias' => 'user_calendars',
-                    'entity_class' => Calendar::class,
-                    'configs' => array(
-                        'entity_name'             => 'OroCalendarBundle:Calendar',
-                        'excludeCurrent'          => true,
-                        'component'               => 'acl-user-autocomplete',
-                        'permission'              => 'VIEW',
-                        'placeholder'             => 'oro.calendar.form.choose_user_to_add_calendar',
-                        'result_template_twig'    => 'OroCalendarBundle:Calendar:Autocomplete/result.html.twig',
-                        'selection_template_twig' => 'OroCalendarBundle:Calendar:Autocomplete/selection.html.twig',
-                    ),
+        if ($permissions) {
+            $builder->expects($this->at(0))
+                ->method('add')
+                ->with(
+                    'calendar',
+                    'oro_user_select',
+                    [
+                        'label' => 'oro.calendar.owner.label',
+                        'required' => true,
+                        'autocomplete_alias' => 'user_calendars',
+                        'entity_class' => Calendar::class,
+                        'configs' => array(
+                            'entity_name' => 'OroCalendarBundle:Calendar',
+                            'excludeCurrent' => true,
+                            'component' => 'acl-user-autocomplete',
+                            'permission' => 'VIEW',
+                            'placeholder' => 'oro.calendar.form.choose_user_to_add_calendar',
+                            'result_template_twig' => 'OroCalendarBundle:Calendar:Autocomplete/result.html.twig',
+                            'selection_template_twig' => 'OroCalendarBundle:Calendar:Autocomplete/selection.html.twig',
+                        ),
 
-                    'grid_name' => 'users-calendar-select-grid-exclude-owner',
-                    'random_id' => false
-                ]
-            )
-            ->will($this->returnSelf());
-        $builder->expects($this->at(1))
+                        'grid_name' => 'users-calendar-select-grid-exclude-owner',
+                        'random_id' => false
+                    ]
+                )
+                ->will($this->returnSelf());
+            $counter = $counter + 2;
+        }
+        $builder->expects($this->at($counter))
             ->method('add')
             ->with(
                 'title',
@@ -91,7 +112,7 @@ class CalendarEventTypeTest extends \PHPUnit_Framework_TestCase
                 ['required' => true, 'label' => 'oro.calendar.calendarevent.title.label']
             )
             ->will($this->returnSelf());
-        $builder->expects($this->at(2))
+        $builder->expects($this->at($counter + 1))
             ->method('add')
             ->with(
                 'description',
@@ -99,7 +120,7 @@ class CalendarEventTypeTest extends \PHPUnit_Framework_TestCase
                 ['required' => false, 'label' => 'oro.calendar.calendarevent.description.label']
             )
             ->will($this->returnSelf());
-        $builder->expects($this->at(3))
+        $builder->expects($this->at($counter + 2))
             ->method('add')
             ->with(
                 'start',
@@ -112,7 +133,7 @@ class CalendarEventTypeTest extends \PHPUnit_Framework_TestCase
                 ]
             )
             ->will($this->returnSelf());
-        $builder->expects($this->at(4))
+        $builder->expects($this->at($counter + 3))
             ->method('add')
             ->with(
                 'end',
@@ -125,7 +146,7 @@ class CalendarEventTypeTest extends \PHPUnit_Framework_TestCase
                 ]
             )
             ->will($this->returnSelf());
-        $builder->expects($this->at(5))
+        $builder->expects($this->at($counter + 4))
             ->method('add')
             ->with(
                 'allDay',
@@ -133,7 +154,7 @@ class CalendarEventTypeTest extends \PHPUnit_Framework_TestCase
                 ['required' => false, 'label' => 'oro.calendar.calendarevent.all_day.label']
             )
             ->will($this->returnSelf());
-        $builder->expects($this->at(6))
+        $builder->expects($this->at($counter + 5))
             ->method('add')
             ->with(
                 'backgroundColor',
@@ -148,7 +169,7 @@ class CalendarEventTypeTest extends \PHPUnit_Framework_TestCase
                 ]
             )
             ->will($this->returnSelf());
-        $builder->expects($this->at(7))
+        $builder->expects($this->at($counter + 6))
             ->method('add')
             ->with(
                 'reminders',
@@ -156,7 +177,7 @@ class CalendarEventTypeTest extends \PHPUnit_Framework_TestCase
                 ['required' => false, 'label' => 'oro.reminder.entity_plural_label']
             )
             ->will($this->returnSelf());
-        $builder->expects($this->at(8))
+        $builder->expects($this->at($counter + 7))
             ->method('add')
             ->with(
                 'attendees',
@@ -169,7 +190,7 @@ class CalendarEventTypeTest extends \PHPUnit_Framework_TestCase
             )
             ->will($this->returnSelf());
 
-        $builder->expects($this->at(9))
+        $builder->expects($this->at($counter + 8))
             ->method('add')
             ->with(
                 'notifyAttendees',
@@ -181,7 +202,7 @@ class CalendarEventTypeTest extends \PHPUnit_Framework_TestCase
             )
             ->will($this->returnSelf());
 
-        $builder->expects($this->at(10))
+        $builder->expects($this->at($counter + 9))
             ->method('add')
             ->with(
                 'recurrence',
