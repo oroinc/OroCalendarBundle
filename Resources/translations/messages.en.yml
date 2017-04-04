@@ -28,6 +28,9 @@ oro:
             system_calendar_management:
                 label: Manage organization calendars (and their events)
                 description: If set to None, the user cannot view/create/edit/delete organization calendars
+            calendar_event_assign:
+                label: Assign calendar events
+                description: "Enables a user to assign Calendar Events to users' calendars"
 
         system_configuration:
             groups:

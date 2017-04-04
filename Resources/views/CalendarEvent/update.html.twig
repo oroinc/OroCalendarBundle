@@ -53,7 +53,7 @@
 
     {% set general_subblocks_data = [] %}
 
-    {% if not entityId %}
+    {% if not entityId and form.calendar is defined %}
         {% set general_subblocks_data = general_subblocks_data|merge([form_row(form.calendar)]) %}
     {% endif %}
 
