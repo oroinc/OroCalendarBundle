@@ -4,6 +4,7 @@ namespace Oro\Bundle\CalendarBundle\Tests\Unit\Form\EventListener;
 
 use Doctrine\Common\Persistence\ManagerRegistry;
 
+use Oro\Bundle\CalendarBundle\Entity\SystemCalendar;
 use Symfony\Component\Form\FormEvent;
 use Symfony\Component\Form\FormEvents;
 
@@ -157,5 +158,21 @@ class CalendarSubscriberTest extends \PHPUnit_Framework_TestCase
         $event = new FormEvent($form, $eventData);
         $this->calendarSubscriber->fillCalendar($event);
         $this->assertEquals($defaultCalendar, $event->getData()->getCalendar());
+    }
+
+    public function testDoNotFillCalendarIfSystemCalendar()
+    {
+        $event = $this->getMockBuilder(CalendarEvent::class)
+            ->disableOriginalConstructor()
+            ->getMock();
+        $event->expects($this->once())
+            ->method('getSystemCalendar')
+            ->willReturn(new SystemCalendar());
+        $event->expects($this->never())
+            ->method('setCalendar');
+        $form = $this->createMock('Symfony\Component\Form\FormInterface');
+
+        $event = new FormEvent($form, $event);
+        $this->calendarSubscriber->fillCalendar($event);
     }
 }
