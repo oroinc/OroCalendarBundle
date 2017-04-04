@@ -49,7 +49,7 @@ class CalendarSubscriber implements EventSubscriberInterface
     {
         /** @var CalendarEvent $data */
         $data = $event->getData();
-        if ($data && !$data->getId() && !$data->getCalendar()) {
+        if ($data && !$data->getId() && !$data->getCalendar() && !$data->getSystemCalendar()) {
             /** @var Calendar $defaultCalendar */
             $defaultCalendar = $this->registry
                 ->getRepository('OroCalendarBundle:Calendar')
