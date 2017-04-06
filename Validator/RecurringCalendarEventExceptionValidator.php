@@ -78,6 +78,10 @@ class RecurringCalendarEventExceptionValidator extends ConstraintValidator
     }
 
     /**
+     * This method restricts changing calendar type related to the recurring event exception.
+     * For example if the excption event was created in user's calendar it is restricted to change the calendar type
+     * to system or public.
+     *
      * @param CalendarEvent $value
      * @param RecurringCalendarEventExceptionConstraint $constraint
      */
@@ -94,7 +98,10 @@ class RecurringCalendarEventExceptionValidator extends ConstraintValidator
                 $calendarId = $rootContext->get('calendar')->getData();
             }
             $calendarAlias = Calendar::CALENDAR_ALIAS;
-            if ($rootContext->get('calendarAlias') && $rootContext->get('calendarAlias')->getData()) {
+            if ($rootContext->has('calendarAlias') &&
+                $rootContext->get('calendarAlias') &&
+                $rootContext->get('calendarAlias')->getData()
+            ) {
                 $calendarAlias = $rootContext->get('calendarAlias')->getData();
             }
             if ($calendarId) {
