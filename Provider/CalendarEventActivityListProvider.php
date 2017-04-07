@@ -165,7 +165,8 @@ class CalendarEventActivityListProvider implements
     public function isApplicable($entity)
     {
         if (is_object($entity)) {
-            $entity = $this->doctrineHelper->getEntityClass($entity);
+            return $this->doctrineHelper->getEntityClass($entity) == self::ACTIVITY_CLASS
+                && !$entity->getRecurringEvent();
         }
 
         return $entity == self::ACTIVITY_CLASS;
