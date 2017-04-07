@@ -95,7 +95,13 @@ class RecurringCalendarEventExceptionValidator extends ConstraintValidator
         if ($rootContext instanceof FormInterface && $recurringEvent && $rootContext->has('calendar')) {
             $calendarId = null;
             if ($rootContext->get('calendar') && $rootContext->get('calendar')->getData()) {
-                $calendarId = $rootContext->get('calendar')->getData();
+                $calendarData = $rootContext->get('calendar')->getData();
+                /**
+                 * 'calendar' could be an integer or CalendarEntity
+                 * @see \Oro\Bundle\CalendarBundle\Form\Type\CalendarEventType::defineCalendar
+                 * @see \Oro\Bundle\CalendarBundle\Form\Type\CalendarEventApiType::buildForm
+                 */
+                $calendarId = $calendarData instanceof Calendar ? $calendarData->getId() : $calendarData;
             }
             $calendarAlias = Calendar::CALENDAR_ALIAS;
             if ($rootContext->has('calendarAlias') &&
