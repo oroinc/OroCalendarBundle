@@ -14,6 +14,7 @@ class CalendarEvent extends Element
      */
     public function getCalendarItemInfo()
     {
+        $this->getDriver()->waitForAjax();
         $this->click();
 
         return $this->getPage()->getElement('Calendar Event Info');

@@ -33,4 +33,20 @@ class Calendar extends Element implements ColorsAwareInterface
 
         return $this->getColors();
     }
+
+    public function goToNextPage()
+    {
+        $nextButton = $this->find('css', '.fc-next-button');
+        self::assertNotNull($nextButton, "Calendar 'next' button not found on current page");
+
+        $nextButton->click();
+    }
+
+    public function go2Today()
+    {
+        $todayButton = $this->findButton('today');
+        self::assertNotNull($todayButton, "Calendar 'today' button not found on current page");
+
+        $todayButton->press();
+    }
 }

@@ -36,17 +36,19 @@ Feature: Create calendar events
     Then I fill "Event Form" with:
       | Title           | Daily weekday never ending Event |
       | Start           | <DateTime:today>                 |
-      | End             | <DateTime:next month>            |
+      | End             | <DateTime:today +2 month>        |
       | Description     | testfull desc                    |
       | Repeats         | Daily                            |
       | DailyRecurrence | Repeat every:Weekday             |
     And I save and close form
     Then I should see "Calendar event saved" flash message
     When I click My Calendar in user menu
+    And I go to next calendar page
     Then I should see "Daily weekday never ending Event" in calendar with:
       | Description   | testfull desc        |
       | All-day event | No                   |
       | Recurrence    | Daily, every weekday |
+    But go to today calendar page
 
   Scenario: Create Daily every 3 days, after 5 occurrences ending Event
     When I go to Activities/ Calendar Events
