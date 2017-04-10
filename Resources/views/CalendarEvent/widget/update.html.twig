@@ -38,7 +38,9 @@
                             {{ form_row(form.end) }}
                             {{ form_row(form.allDay) }}
                         </div>
-                        {{ form_row(form.recurrence) }}
+                        {% if form.recurrence is defined %}
+                            {{ form_row(form.recurrence) }}
+                        {% endif %}
                     {% endset %}
 
                     {% set leftColumn %}
