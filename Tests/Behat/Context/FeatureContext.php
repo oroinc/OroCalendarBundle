@@ -33,6 +33,7 @@ class FeatureContext extends OroFeatureContext implements OroPageObjectAware
     public function iShouldSeeInCalendarWith($eventTitle, TableNode $table)
     {
         $calendarEvent = $this->getCalendar()->getCalendarEvent($eventTitle);
+        $this->waitForAjax();
         $itemInfo = $calendarEvent->getCalendarItemInfo();
 
         foreach ($table->getRows() as list($label, $value)) {
