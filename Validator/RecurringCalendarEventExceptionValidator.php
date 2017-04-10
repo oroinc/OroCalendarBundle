@@ -78,6 +78,10 @@ class RecurringCalendarEventExceptionValidator extends ConstraintValidator
     }
 
     /**
+     * This method restricts changing calendar type related to the recurring event exception.
+     * For example if the exception event was created in user's calendar it is restricted to change the calendar type
+     * to system or public.
+     *
      * @param CalendarEvent $value
      * @param RecurringCalendarEventExceptionConstraint $constraint
      */
@@ -91,10 +95,19 @@ class RecurringCalendarEventExceptionValidator extends ConstraintValidator
         if ($rootContext instanceof FormInterface && $recurringEvent && $rootContext->has('calendar')) {
             $calendarId = null;
             if ($rootContext->get('calendar') && $rootContext->get('calendar')->getData()) {
-                $calendarId = $rootContext->get('calendar')->getData();
+                $calendarData = $rootContext->get('calendar')->getData();
+                /**
+                 * 'calendar' could be an integer or CalendarEntity
+                 * @see \Oro\Bundle\CalendarBundle\Form\Type\CalendarEventType::defineCalendar
+                 * @see \Oro\Bundle\CalendarBundle\Form\Type\CalendarEventApiType::buildForm
+                 */
+                $calendarId = $calendarData instanceof Calendar ? $calendarData->getId() : $calendarData;
             }
             $calendarAlias = Calendar::CALENDAR_ALIAS;
-            if ($rootContext->get('calendarAlias') && $rootContext->get('calendarAlias')->getData()) {
+            if ($rootContext->has('calendarAlias') &&
+                $rootContext->get('calendarAlias') &&
+                $rootContext->get('calendarAlias')->getData()
+            ) {
                 $calendarAlias = $rootContext->get('calendarAlias')->getData();
             }
             if ($calendarId) {
