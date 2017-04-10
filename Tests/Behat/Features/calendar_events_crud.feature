@@ -48,7 +48,6 @@ Feature: Create calendar events
       | Description   | testfull desc        |
       | All-day event | No                   |
       | Recurrence    | Daily, every weekday |
-    But go to today calendar page
 
   Scenario: Create Daily every 3 days, after 5 occurrences ending Event
     When I go to Activities/ Calendar Events
