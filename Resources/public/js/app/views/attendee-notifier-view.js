@@ -99,7 +99,6 @@ define([
                 cancelText: __('Don\'t notify'),
                 content: __('Notify guests message'),
                 className: 'modal modal-primary',
-                okButtonClass: 'btn-primary btn-large',
                 handleClose: true
             });
         }
