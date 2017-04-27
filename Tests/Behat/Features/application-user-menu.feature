@@ -1,3 +1,5 @@
+@ticket-CRM-6425
+@automatically-ticket-tagged
 Feature: User menu
   In order to have some quick links related to current user
   As a BAP user
