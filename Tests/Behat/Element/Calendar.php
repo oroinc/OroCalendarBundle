@@ -18,8 +18,6 @@ class Calendar extends Element implements ColorsAwareInterface
      */
     public function getCalendarEvent($title)
     {
-        $this->pressButton('today');
-
         $calendarEvent = $this->findElementContains('Calendar Event', $title);
         self::assertNotNull($calendarEvent, "Event $title not found in calendar grid");
 
@@ -36,10 +34,10 @@ class Calendar extends Element implements ColorsAwareInterface
 
     public function goToNextPage()
     {
-        $nextButton = $this->find('css', '.fc-next-button');
+        $nextButton = $this->find('css', 'button.fc-next-button');
         self::assertNotNull($nextButton, "Calendar 'next' button not found on current page");
 
-        $nextButton->click();
+        $nextButton->press();
     }
 
     public function go2Today()
