@@ -6,10 +6,8 @@ use Behat\Gherkin\Node\TableNode;
 use Oro\Bundle\FormBundle\Tests\Behat\Element\OroForm;
 use Oro\Bundle\TestFrameworkBundle\Behat\Element\Element;
 
-class EventForm extends OroForm implements ColorsAwareInterface
+class EventForm extends OroForm
 {
-    use EventColors;
-
     const REPEATS_DROP_DOWN = 'Repeats';
     const COLOR_FIELD_NAME = 'Color';
 

@@ -4,12 +4,8 @@ namespace Oro\Bundle\CalendarBundle\Tests\Behat\Element;
 
 use Oro\Bundle\TestFrameworkBundle\Behat\Element\Element;
 
-class Calendar extends Element implements ColorsAwareInterface
+class Calendar extends Element
 {
-    use EventColors {
-        getAvailableColors as private getColors;
-    }
-
     /**
      * Find event link on calendar grid
      *
@@ -22,14 +18,6 @@ class Calendar extends Element implements ColorsAwareInterface
         self::assertNotNull($calendarEvent, "Event $title not found in calendar grid");
 
         return $calendarEvent;
-    }
-
-    public function getAvailableColors()
-    {
-        $this->find('css', '.connection-item')->mouseOver();
-        $this->find('css', ".context-menu-button")->click();
-
-        return $this->getColors();
     }
 
     public function goToNextPage()
