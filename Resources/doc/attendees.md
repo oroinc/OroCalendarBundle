@@ -47,7 +47,7 @@ DELETE /api/rest/latest/calendarevents/1?notifyAttendees=all
 
 Class `Oro\Bundle\CalendarBundle\Manager\AttendeeManager` is responsible to maintain relation of entity with other entities like `OroUserBundle:User`.
 
-##API Example:
+## API Example:
 
 In API PUT/POST requests next fields are supported for Attendee: `email`, `status`,  `type`, `displayName`.
 In GET responses next fields are exposed additionally: `user_id`, `createdAt`, `updatedAt`.

@@ -6,11 +6,11 @@ Table of content
 - [Overview](#overview)
 - [Add own provider](#add-own-provider)
 
-##Overview
+## Overview
 
 The goal of calendar providers is to allow developers to add different types of calendars on user's calendar. The main class responsible to work with calendar providers is [Calendar Manager](../../Manager/CalendarManager.php). This class contains all providers and responsible to collect and merge data from them.
 
-##Add own provider
+## Add own provider
 
 To add a calendar provider you need to create a class implements [CalendarProviderInterface](../../Provider/CalendarProviderInterface.php), register it as a service and mark it with *oro_calendar.calendar_provider* tag. Each provider must have an alias that is unique identifier of a provider. The following example shows how calendar provider can be registered:
 

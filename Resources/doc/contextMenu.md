@@ -6,14 +6,14 @@ Table of content
 - [Overview](#overview)
 - [Extendability](#extendability)
 
-##Overview
+## Overview
 To manage calendars are displayed on "My Calendar" page a context menu can be used. The context menu is open by clicking
  three dots icon beside a calendar. For now there are the following actions there:
 - Show/Hide calendar
 - Remove calendar
 - Change calendar color
 
-##Extendability
+## Extendability
 Calendar Context Menu is based on [knplabs/knp-menu](https://github.com/KnpLabs/KnpMenuBundle). The menu can be extended
  with new action items from any bundle. To add a new action to the menu, the action configuration must be added to the
  navigation.yml, for example:

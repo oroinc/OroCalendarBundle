@@ -1,7 +1,7 @@
 UPGRADE FROM 2.0 to 2.1
 ========================
 
-####General
+#### General
 - Changed minimum required php version to 7.0
 - Updated dependency to [fxpio/composer-asset-plugin](https://github.com/fxpio/composer-asset-plugin) composer plugin to version 1.3.
 - Composer updated to version 1.4.
@@ -12,7 +12,7 @@ UPGRADE FROM 2.0 to 2.1
 ```
 
 
-#ACL changes
+# ACL changes
 - Removed 'security' annotation for the entity Oro\Bundle\CalendarBundle\Entity\SystemCalendar entity. So it is not ACL 
 protected anymore.
 - "Manage system calendar events" capability merged with "Manage system calendars" capability into one 
@@ -37,5 +37,5 @@ events)" is responsible for organization calendar and organization calendar even
     - removed property `protected $translator`
     - removed property `protected $model`
     
-#Other changes
+# Other changes
 - Renamed method `Oro\Bundle\CalendarBundle\Controller\AjaxCalendarEventController::changeStatus` to `Oro\Bundle\CalendarBundle\Controller\AjaxCalendarEventController::changeStatusAction`.

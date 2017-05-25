@@ -9,7 +9,7 @@ Table of content
 - [Recurrence Validation](#recurrence-validation)
 - [Key Classes](#key-classes)
 
-##Overview
+## Overview
 
 This functionality allows to manage recurring events. In common case recurring event is saved as a single instance of 
 event along with 'recurrence' field where recurring pattern is stored. Based on this pattern Calendar UI expands 
@@ -19,7 +19,7 @@ Currently recurring events can be managed only using API. UI exposes these event
 For instance only `title` and `description` fields of recurring event could be edited using UI. Also it's not possible 
 to create recurring event using UI at the moment.
 
-##Recurrence Pattern
+## Recurrence Pattern
 
 Each calendar event has `recurrence` field. This is a dictionary containing fields related to the event recurrence. Some fields are mandatory for all recurrence patterns, and some fields are required only for some patterns. The fields are described in the following table:
 
@@ -110,7 +110,7 @@ entity of OroCalendarBundle:Recurrence. When API request with date range will be
 expand each instance of recurring event into occurrences of this recurring event. Each occurrence event will have the 
 same data as original recurring event, but with dynamically calculated `start` and `end` dates.
 
-##Exceptions
+## Exceptions
 
 Each occurrence of a recurrent event can be modified so it differs from other occurrences. Such event has it's own step
 and called "exception" event. These exceptions are represented by separate event entities with additional fields. 
@@ -120,7 +120,7 @@ Here is the list of additional fields which are applicable only for exception ev
 - **originalStart** – the original start date and time of this occurrence. It may differ from the actual start date for the recurrence.
 - **isCancelled** – A boolean field indicating whether the occurrence was cancelled (removed from the user’s calendar).
 
-##Recurrence Validation
+## Recurrence Validation
 
 To make sure that Recurrence pattern has all needed data it can be validated with recurrence model:
 ```php
@@ -135,7 +135,7 @@ $model->validateRecurrence($recurrence);
 
 ```
 
-##Key Classes
+## Key Classes
 
 Here is a list of key classes:
 

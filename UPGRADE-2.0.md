@@ -1,7 +1,7 @@
 UPGRADE FROM 1.10 to 2.0
 ========================
 
-#SOAP API was removed
+# SOAP API was removed
 - removed all dependencies to the `besimple/soap-bundle` bundle. 
 - removed SOAP annotations from the entities. Updated entities:
     - Oro\Bundle\CalendarBundle\Entity\Calendar
@@ -9,7 +9,7 @@ UPGRADE FROM 1.10 to 2.0
 - removed classes:
     - Oro\Bundle\CalendarBundle\Controller\Api\Soap\CalendarConnectionController
 
-#Other changes
+# Other changes
 - Removed dependency from `Oro\Bundle\SecurityBundle\SecurityFacade` in `Oro\Bundle\CalendarBundle\Model\Email\EmailSendProcessor`.
 - Removed constant `Oro\Bundle\CalendarBundle\Entity\CalendarEvent::STATUS_NONE`. Use `Oro\Bundle\CalendarBundle\Entity\Attendee::STATUS_NONE`.
 - Removed constant `Oro\Bundle\CalendarBundle\Entity\CalendarEvent::STATUS_TENTATIVE`. Use `Oro\Bundle\CalendarBundle\Entity\Attendee::STATUS_TENTATIVE`.

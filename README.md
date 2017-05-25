@@ -11,11 +11,11 @@ Table of content
 - [Workflow Action](./Resources/doc/workflowAction.md)
 - [Recurring Events](./Resources/doc/recurringEvents.md)
 
-##Overview
+## Overview
 
 This bundle integrates the [jQuery FullCalendar](http://arshaw.com/fullcalendar/) plugin into the Oro Platform and provides other calendar related functionality, such as view calendars of other users, system calendars, synchronization with external calendars, etc.
 
-##UI
+## UI
 
 The user's calendar is available under an user menu at the top right corner of a screen.
 
