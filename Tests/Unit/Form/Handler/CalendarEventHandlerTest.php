@@ -8,13 +8,13 @@ use Symfony\Component\HttpFoundation\RequestStack;
 use Oro\Bundle\ActivityBundle\Manager\ActivityManager;
 use Oro\Bundle\CalendarBundle\Manager\CalendarEvent\NotificationManager;
 use Oro\Bundle\EntityBundle\Tools\EntityRoutingHelper;
-use Oro\Bundle\SecurityBundle\SecurityFacade;
 
 use Oro\Bundle\CalendarBundle\Form\Handler\CalendarEventHandler;
 use Oro\Bundle\CalendarBundle\Manager\CalendarEventManager;
 use Oro\Bundle\CalendarBundle\Tests\Unit\ReflectionUtil;
 use Oro\Bundle\CalendarBundle\Tests\Unit\Fixtures\Entity\CalendarEvent;
 use Oro\Bundle\OrganizationBundle\Entity\Organization;
+use Oro\Bundle\SecurityBundle\Authentication\TokenAccessorInterface;
 
 use Oro\Bundle\UserBundle\Entity\User;
 
@@ -39,7 +39,7 @@ class CalendarEventHandlerTest extends \PHPUnit_Framework_TestCase
     protected $entityRoutingHelper;
 
     /** @var \PHPUnit_Framework_MockObject_MockObject */
-    protected $securityFacade;
+    protected $tokenAccessor;
 
     /** @var \PHPUnit_Framework_MockObject_MockObject|CalendarEventManager */
     protected $calendarEventManager;
@@ -80,10 +80,8 @@ class CalendarEventHandlerTest extends \PHPUnit_Framework_TestCase
             ->getMock();
 
         $this->organization = new Organization();
-        $this->securityFacade      = $this->getMockBuilder(SecurityFacade::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-        $this->securityFacade->expects($this->any())
+        $this->tokenAccessor = $this->createMock(TokenAccessorInterface::class);
+        $this->tokenAccessor->expects($this->any())
             ->method('getOrganization')
             ->willReturn($this->organization);
 
@@ -101,7 +99,7 @@ class CalendarEventHandlerTest extends \PHPUnit_Framework_TestCase
         $this->handler = new CalendarEventHandler(
             $this->requestStack,
             $doctrine,
-            $this->securityFacade,
+            $this->tokenAccessor,
             $this->activityManager,
             $this->calendarEventManager,
             $this->notificationManager
@@ -285,8 +283,8 @@ class CalendarEventHandlerTest extends \PHPUnit_Framework_TestCase
             ->method('submit')
             ->with($this->identicalTo($this->request));
 
-        $this->securityFacade->expects($this->once())
-            ->method('getLoggedUser')
+        $this->tokenAccessor->expects($this->once())
+            ->method('getUserId')
             ->will($this->returnValue(null));
 
         $this->handler->process($this->entity);
@@ -338,8 +336,8 @@ class CalendarEventHandlerTest extends \PHPUnit_Framework_TestCase
             ->method('addActivityTarget')
             ->with($this->identicalTo($this->entity), $this->identicalTo($targetEntity));
 
-        $this->securityFacade->expects($this->once())
-            ->method('getLoggedUserId')
+        $this->tokenAccessor->expects($this->once())
+            ->method('getUserId')
             ->will($this->returnValue(100));
 
         $repository = $this->getMockBuilder('Doctrine\Common\Persistence\ObjectRepository')

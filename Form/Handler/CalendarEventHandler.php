@@ -102,17 +102,17 @@ class CalendarEventHandler extends AbstractCalendarEventHandler
         if ($entity->getCalendar() || $entity->getSystemCalendar()) {
             return;
         }
-        if (!$this->securityFacade->getLoggedUser() || !$this->securityFacade->getOrganization()) {
+
+        $userId = $this->tokenAccessor->getUserId();
+        $organizationId = $this->tokenAccessor->getOrganizationId();
+        if (null === $userId || null === $organizationId) {
             throw new \LogicException('Both logged in user and organization must be defined.');
         }
 
         /** @var Calendar $defaultCalendar */
         $defaultCalendar = $this->getEntityManager()
             ->getRepository('OroCalendarBundle:Calendar')
-            ->findDefaultCalendar(
-                $this->securityFacade->getLoggedUser()->getId(),
-                $this->securityFacade->getOrganization()->getId()
-            );
+            ->findDefaultCalendar($userId, $organizationId);
         $entity->setCalendar($defaultCalendar);
     }
 
@@ -139,7 +139,7 @@ class CalendarEventHandler extends AbstractCalendarEventHandler
 
             if ($action === 'assign'
                 && $targetEntity instanceof User
-                && $targetEntityId !== $this->securityFacade->getLoggedUserId()
+                && $targetEntityId !== $this->tokenAccessor->getUserId()
             ) {
                 /** @var Calendar $defaultCalendar */
                 $defaultCalendar = $this->getEntityManager()

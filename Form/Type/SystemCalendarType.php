@@ -7,26 +7,28 @@ use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Form\FormEvent;
 use Symfony\Component\Form\FormEvents;
 use Symfony\Component\OptionsResolver\OptionsResolver;
+use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
 
 use Oro\Bundle\CalendarBundle\Entity\SystemCalendar;
 use Oro\Bundle\CalendarBundle\Provider\SystemCalendarConfig;
-use Oro\Bundle\SecurityBundle\SecurityFacade;
 
 class SystemCalendarType extends AbstractType
 {
-    /** @var SecurityFacade */
-    protected $securityFacade;
+    /** @var AuthorizationCheckerInterface */
+    protected $authorizationChecker;
 
     /** @var SystemCalendarConfig */
     protected $calendarConfig;
 
     /**
-     * @param SecurityFacade       $securityFacade
-     * @param SystemCalendarConfig $calendarConfig
+     * @param AuthorizationCheckerInterface $authorizationChecker
+     * @param SystemCalendarConfig          $calendarConfig
      */
-    public function __construct(SecurityFacade $securityFacade, SystemCalendarConfig $calendarConfig)
-    {
-        $this->securityFacade = $securityFacade;
+    public function __construct(
+        AuthorizationCheckerInterface $authorizationChecker,
+        SystemCalendarConfig $calendarConfig
+    ) {
+        $this->authorizationChecker = $authorizationChecker;
         $this->calendarConfig = $calendarConfig;
     }
 
@@ -95,8 +97,8 @@ class SystemCalendarType extends AbstractType
             /** @var SystemCalendar|null $data */
             $data = $event->getData();
             if ($data) {
-                $isPublicGranted = $this->securityFacade->isGranted('oro_public_calendar_management');
-                $isSystemGranted = $this->securityFacade->isGranted('oro_system_calendar_management');
+                $isPublicGranted = $this->authorizationChecker->isGranted('oro_public_calendar_management');
+                $isSystemGranted = $this->authorizationChecker->isGranted('oro_system_calendar_management');
                 if (!$isPublicGranted || !$isSystemGranted) {
                     $options['read_only'] = true;
                     if (!$data->getId() && !$isSystemGranted) {

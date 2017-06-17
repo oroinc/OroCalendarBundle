@@ -2,29 +2,39 @@
 
 namespace Oro\Bundle\CalendarBundle\EventListener\Datagrid;
 
+use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
+
 use Oro\Bundle\DataGridBundle\Datagrid\Common\DatagridConfiguration;
 use Oro\Bundle\DataGridBundle\Datasource\Orm\OrmDatasource;
 use Oro\Bundle\DataGridBundle\Datasource\ResultRecordInterface;
 use Oro\Bundle\DataGridBundle\Event\BuildAfter;
 use Oro\Bundle\DataGridBundle\Event\BuildBefore;
-use Oro\Bundle\SecurityBundle\SecurityFacade;
 use Oro\Bundle\CalendarBundle\Provider\SystemCalendarConfig;
+use Oro\Bundle\SecurityBundle\Authentication\TokenAccessorInterface;
 
 class SystemCalendarGridListener
 {
-    /** @var SecurityFacade */
-    protected $securityFacade;
+    /** @var AuthorizationCheckerInterface */
+    protected $authorizationChecker;
+
+    /** @var TokenAccessorInterface */
+    protected $tokenAccessor;
 
     /** @var SystemCalendarConfig */
     protected $calendarConfig;
 
     /**
-     * @param SecurityFacade       $securityFacade
-     * @param SystemCalendarConfig $calendarConfig
+     * @param AuthorizationCheckerInterface $authorizationChecker
+     * @param TokenAccessorInterface        $tokenAccessor
+     * @param SystemCalendarConfig          $calendarConfig
      */
-    public function __construct(SecurityFacade $securityFacade, SystemCalendarConfig $calendarConfig)
-    {
-        $this->securityFacade = $securityFacade;
+    public function __construct(
+        AuthorizationCheckerInterface $authorizationChecker,
+        TokenAccessorInterface $tokenAccessor,
+        SystemCalendarConfig $calendarConfig
+    ) {
+        $this->authorizationChecker = $authorizationChecker;
+        $this->tokenAccessor = $tokenAccessor;
         $this->calendarConfig = $calendarConfig;
     }
 
@@ -49,14 +59,14 @@ class SystemCalendarGridListener
         $datasource = $datagrid->getDatasource();
         if ($datasource instanceof OrmDatasource) {
             $isPublicGranted = $this->calendarConfig->isPublicCalendarEnabled()
-                && $this->securityFacade->isGranted('oro_public_calendar_management');
+                && $this->authorizationChecker->isGranted('oro_public_calendar_management');
             $isSystemGranted = $this->calendarConfig->isSystemCalendarEnabled()
-                && $this->securityFacade->isGranted('oro_system_calendar_management');
+                && $this->authorizationChecker->isGranted('oro_system_calendar_management');
             if ($isPublicGranted && $isSystemGranted) {
                 $datasource->getQueryBuilder()
                     ->andWhere('(sc.public = :public OR sc.organization = :organizationId)')
                     ->setParameter('public', true)
-                    ->setParameter('organizationId', $this->securityFacade->getOrganizationId());
+                    ->setParameter('organizationId', $this->tokenAccessor->getOrganizationId());
             } elseif ($isPublicGranted) {
                 $datasource->getQueryBuilder()
                     ->andWhere('sc.public = :public')
@@ -64,7 +74,7 @@ class SystemCalendarGridListener
             } elseif ($isSystemGranted) {
                 $datasource->getQueryBuilder()
                     ->andWhere('sc.organization = :organizationId')
-                    ->setParameter('organizationId', $this->securityFacade->getOrganizationId());
+                    ->setParameter('organizationId', $this->tokenAccessor->getOrganizationId());
             } else {
                 // it is denied to view both public and system calendars
                 $datasource->getQueryBuilder()
@@ -82,7 +92,7 @@ class SystemCalendarGridListener
     {
         return function (ResultRecordInterface $record) {
             $acl = $record->getValue('public') ? 'oro_public_calendar_management' : 'oro_system_calendar_management';
-            if ($this->securityFacade->isGranted($acl)) {
+            if ($this->authorizationChecker->isGranted($acl)) {
                 return [];
             }
             return [

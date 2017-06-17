@@ -2,13 +2,15 @@
 
 namespace Oro\Bundle\CalendarBundle\Tests\Unit\Handler;
 
+use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
+
 use Oro\Bundle\CalendarBundle\Entity\SystemCalendar;
 use Oro\Bundle\CalendarBundle\Handler\SystemCalendarDeleteHandler;
 
 class SystemCalendarDeleteHandlerTest extends \PHPUnit_Framework_TestCase
 {
     /** @var \PHPUnit_Framework_MockObject_MockObject */
-    protected $securityFacade;
+    protected $authorizationChecker;
 
     /** @var \PHPUnit_Framework_MockObject_MockObject */
     protected $calendarConfig;
@@ -21,9 +23,7 @@ class SystemCalendarDeleteHandlerTest extends \PHPUnit_Framework_TestCase
 
     protected function setUp()
     {
-        $this->securityFacade = $this->getMockBuilder('Oro\Bundle\SecurityBundle\SecurityFacade')
-            ->disableOriginalConstructor()
-            ->getMock();
+        $this->authorizationChecker = $this->createMock(AuthorizationCheckerInterface::class);
         $this->calendarConfig = $this->getMockBuilder('Oro\Bundle\CalendarBundle\Provider\SystemCalendarConfig')
             ->disableOriginalConstructor()
             ->getMock();
@@ -42,7 +42,7 @@ class SystemCalendarDeleteHandlerTest extends \PHPUnit_Framework_TestCase
 
         $this->handler = new SystemCalendarDeleteHandler();
         $this->handler->setCalendarConfig($this->calendarConfig);
-        $this->handler->setSecurityFacade($this->securityFacade);
+        $this->handler->setAuthorizationChecker($this->authorizationChecker);
         $this->handler->setOwnerDeletionManager($ownerDeletionManager);
     }
 
@@ -80,7 +80,7 @@ class SystemCalendarDeleteHandlerTest extends \PHPUnit_Framework_TestCase
         $this->calendarConfig->expects($this->once())
             ->method('isPublicCalendarEnabled')
             ->will($this->returnValue(true));
-        $this->securityFacade->expects($this->once())
+        $this->authorizationChecker->expects($this->once())
             ->method('isGranted')
             ->with('oro_public_calendar_management')
             ->will($this->returnValue(false));
@@ -120,7 +120,7 @@ class SystemCalendarDeleteHandlerTest extends \PHPUnit_Framework_TestCase
         $this->calendarConfig->expects($this->once())
             ->method('isSystemCalendarEnabled')
             ->will($this->returnValue(true));
-        $this->securityFacade->expects($this->once())
+        $this->authorizationChecker->expects($this->once())
             ->method('isGranted')
             ->with('oro_system_calendar_management')
             ->will($this->returnValue(false));

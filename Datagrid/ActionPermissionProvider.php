@@ -4,20 +4,20 @@ namespace Oro\Bundle\CalendarBundle\Datagrid;
 
 use Oro\Bundle\DataGridBundle\Datasource\ResultRecordInterface;
 use Oro\Bundle\CalendarBundle\Entity\Attendee;
-use Oro\Bundle\SecurityBundle\SecurityFacade;
+use Oro\Bundle\SecurityBundle\Authentication\TokenAccessorInterface;
 use Oro\Bundle\UserBundle\Entity\User;
 
 class ActionPermissionProvider
 {
-    /** @var SecurityFacade */
-    protected $securityFacade;
+    /** @var TokenAccessorInterface */
+    protected $tokenAccessor;
 
     /**
-     * @param SecurityFacade $securityFacade
+     * @param TokenAccessorInterface $tokenAccessor
      */
-    public function __construct(SecurityFacade $securityFacade)
+    public function __construct(TokenAccessorInterface $tokenAccessor)
     {
-        $this->securityFacade = $securityFacade;
+        $this->tokenAccessor = $tokenAccessor;
     }
 
     /**
@@ -27,7 +27,7 @@ class ActionPermissionProvider
     public function getInvitationPermissions(ResultRecordInterface $record)
     {
         /** @var User $user */
-        $user                  = $this->securityFacade->getLoggedUser();
+        $user                  = $this->tokenAccessor->getUser();
         $invitationStatus      = $record->getValue('invitationStatus');
         $parentId              = $record->getValue('parentId');
         $ownerId               = $record->getValue('ownerId');

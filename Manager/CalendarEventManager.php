@@ -16,7 +16,7 @@ use Oro\Bundle\CalendarBundle\Manager\CalendarEvent\UpdateManager;
 use Oro\Bundle\EntityBundle\Provider\EntityNameResolver;
 use Oro\Bundle\EntityExtendBundle\Tools\ExtendHelper;
 use Oro\Bundle\OrganizationBundle\Entity\Organization;
-use Oro\Bundle\SecurityBundle\SecurityFacade;
+use Oro\Bundle\SecurityBundle\Authentication\TokenAccessorInterface;
 use Oro\Bundle\SecurityBundle\Exception\ForbiddenException;
 use Oro\Bundle\UserBundle\Entity\User;
 
@@ -28,8 +28,8 @@ class CalendarEventManager
     /** @var ManagerRegistry */
     protected $doctrine;
 
-    /** @var SecurityFacade */
-    protected $securityFacade;
+    /** @var TokenAccessorInterface */
+    protected $tokenAccessor;
 
     /** @var EntityNameResolver */
     protected $entityNameResolver;
@@ -38,24 +38,24 @@ class CalendarEventManager
     protected $calendarConfig;
 
     /**
-     * @param UpdateManager        $updateManager
-     * @param ManagerRegistry      $doctrine
-     * @param SecurityFacade       $securityFacade
-     * @param EntityNameResolver   $entityNameResolver
-     * @param SystemCalendarConfig $calendarConfig
+     * @param UpdateManager          $updateManager
+     * @param ManagerRegistry        $doctrine
+     * @param TokenAccessorInterface $tokenAccessor
+     * @param EntityNameResolver     $entityNameResolver
+     * @param SystemCalendarConfig   $calendarConfig
      */
     public function __construct(
         UpdateManager $updateManager,
         ManagerRegistry $doctrine,
-        SecurityFacade $securityFacade,
+        TokenAccessorInterface $tokenAccessor,
         EntityNameResolver $entityNameResolver,
         SystemCalendarConfig $calendarConfig
     ) {
-        $this->updateManager      = $updateManager;
-        $this->doctrine           = $doctrine;
-        $this->securityFacade     = $securityFacade;
+        $this->updateManager = $updateManager;
+        $this->doctrine = $doctrine;
+        $this->tokenAccessor = $tokenAccessor;
         $this->entityNameResolver = $entityNameResolver;
-        $this->calendarConfig     = $calendarConfig;
+        $this->calendarConfig = $calendarConfig;
     }
 
     /**
@@ -67,7 +67,7 @@ class CalendarEventManager
     {
         /** @var SystemCalendarRepository $repo */
         $repo      = $this->doctrine->getRepository('OroCalendarBundle:SystemCalendar');
-        $calendars = $repo->getCalendarsQueryBuilder($this->securityFacade->getOrganizationId())
+        $calendars = $repo->getCalendarsQueryBuilder($this->tokenAccessor->getOrganizationId())
             ->select('sc.id, sc.name, sc.public')
             ->getQuery()
             ->getArrayResult();
@@ -152,15 +152,15 @@ class CalendarEventManager
         /** @var CalendarRepository $repo */
         $repo      = $this->doctrine->getRepository('OroCalendarBundle:Calendar');
         $calendars = $repo->getUserCalendarsQueryBuilder(
-            $this->securityFacade->getOrganizationId(),
-            $this->securityFacade->getLoggedUserId()
+            $this->tokenAccessor->getOrganizationId(),
+            $this->tokenAccessor->getUserId()
         )
             ->select('c.id, c.name')
             ->getQuery()
             ->getArrayResult();
         foreach ($calendars as &$calendar) {
             if (empty($calendar['name'])) {
-                $calendar['name'] = $this->entityNameResolver->getName($this->securityFacade->getLoggedUser());
+                $calendar['name'] = $this->entityNameResolver->getName($this->tokenAccessor->getUser());
             }
         }
 

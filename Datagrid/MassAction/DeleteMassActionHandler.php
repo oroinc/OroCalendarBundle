@@ -7,11 +7,6 @@ use Doctrine\ORM\EntityManager;
 use Oro\Bundle\CalendarBundle\Manager\CalendarEvent\DeleteManager;
 use Oro\Bundle\DataGridBundle\Extension\MassAction\DeleteMassActionHandler as ParentHandler;
 
-/**
- * Class DeleteMassActionHandler
- *
- * @package Oro\Bundle\CalendarBundle\Datagrid\MassAction
- */
 class DeleteMassActionHandler extends ParentHandler
 {
     /**

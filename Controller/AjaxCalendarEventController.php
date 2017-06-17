@@ -2,6 +2,7 @@
 
 namespace Oro\Bundle\CalendarBundle\Controller;
 
+use Oro\Bundle\SecurityBundle\Authentication\TokenAccessorInterface;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
@@ -12,6 +13,7 @@ use Oro\Bundle\CalendarBundle\Entity\CalendarEvent;
 use Oro\Bundle\CalendarBundle\Exception\ChangeInvitationStatusException;
 use Oro\Bundle\CalendarBundle\Manager\AttendeeManager;
 use Oro\Bundle\CalendarBundle\Manager\CalendarEvent\NotificationManager;
+use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
 
 /**
  * @Route("/event/ajax")
@@ -37,7 +39,7 @@ class AjaxCalendarEventController extends Controller
     public function changeStatusAction(CalendarEvent $entity, $status)
     {
         try {
-            $loggedUser = $this->get('oro_security.security_facade')->getLoggedUser();
+            $loggedUser = $this->get('oro_security.token_accessor')->getUser();
             $manager = $this->get('oro_calendar.calendar_event_manager');
             $manager->changeInvitationStatus($entity, $status, $loggedUser);
         } catch (ChangeInvitationStatusException $exception) {

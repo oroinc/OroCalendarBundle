@@ -7,7 +7,7 @@
 {% oro_title_set({params : {"%entity.title%": entity.title|default('N/A') }}) %}
 
 {% block navButtons %}
-    {% if entity.parent is empty and resource_granted('EDIT', entity) %}
+    {% if entity.parent is empty and is_granted('EDIT', entity) %}
         {# Button for add context on the activity list item view page #}
         {{ AC.addContextButton(entity) }}
         {{ UI.editButton({
@@ -15,7 +15,7 @@
             'entity_label': 'oro.calendar.calendarevent.entity_label'|trans
         })  }}
     {% endif %}
-    {% if resource_granted('DELETE', entity) %}
+    {% if is_granted('DELETE', entity) %}
         {{ UI.deleteButton({
             'dataUrl':      path('oro_calendar_event_delete', {'id': entity.id, 'notifyAttendees': 'all'}),
             'dataRedirect': path('oro_calendar_event_index'),

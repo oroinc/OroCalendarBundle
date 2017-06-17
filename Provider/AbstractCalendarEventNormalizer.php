@@ -5,12 +5,13 @@ namespace Oro\Bundle\CalendarBundle\Provider;
 use Doctrine\ORM\Proxy\Proxy;
 use Doctrine\ORM\AbstractQuery;
 
+use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
+
 use Oro\Bundle\CalendarBundle\Entity\CalendarEvent;
 use Oro\Bundle\CalendarBundle\Entity\Repository\CalendarEventRepository;
 use Oro\Bundle\CalendarBundle\Manager\AttendeeManager;
 use Oro\Bundle\CalendarBundle\Manager\CalendarEventManager;
 use Oro\Bundle\ReminderBundle\Entity\Manager\ReminderManager;
-use Oro\Bundle\SecurityBundle\SecurityFacade;
 
 abstract class AbstractCalendarEventNormalizer
 {
@@ -30,9 +31,9 @@ abstract class AbstractCalendarEventNormalizer
     protected $reminderManager;
 
     /**
-     * @var SecurityFacade
+     * @var AuthorizationCheckerInterface
      */
-    protected $securityFacade;
+    protected $authorizationChecker;
 
     /**
      * @var array
@@ -50,21 +51,21 @@ abstract class AbstractCalendarEventNormalizer
     protected $currentAttendeeLists;
 
     /**
-     * @param CalendarEventManager $calendarEventManager
-     * @param AttendeeManager $attendeeManager
-     * @param ReminderManager $reminderManager
-     * @param SecurityFacade $securityFacade
+     * @param CalendarEventManager          $calendarEventManager
+     * @param AttendeeManager               $attendeeManager
+     * @param ReminderManager               $reminderManager
+     * @param AuthorizationCheckerInterface $authorizationChecker
      */
     public function __construct(
         CalendarEventManager $calendarEventManager,
         AttendeeManager $attendeeManager,
         ReminderManager $reminderManager,
-        SecurityFacade $securityFacade
+        AuthorizationCheckerInterface $authorizationChecker
     ) {
         $this->calendarEventManager = $calendarEventManager;
         $this->attendeeManager = $attendeeManager;
         $this->reminderManager = $reminderManager;
-        $this->securityFacade = $securityFacade;
+        $this->authorizationChecker = $authorizationChecker;
     }
 
     /**

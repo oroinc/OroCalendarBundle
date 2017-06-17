@@ -4,6 +4,7 @@ namespace Oro\Bundle\CalendarBundle\Tests\Unit\Form\Handler;
 
 use Doctrine\Common\Collections\ArrayCollection;
 
+use Oro\Bundle\SecurityBundle\Authentication\TokenAccessorInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\ParameterBag;
 use Symfony\Component\HttpFoundation\RequestStack;
@@ -16,7 +17,6 @@ use Oro\Bundle\CalendarBundle\Manager\CalendarEventManager;
 use Oro\Bundle\CalendarBundle\Manager\CalendarEvent\NotificationManager;
 use Oro\Bundle\CalendarBundle\Tests\Unit\ReflectionUtil;
 use Oro\Bundle\OrganizationBundle\Entity\Organization;
-use Oro\Bundle\SecurityBundle\SecurityFacade;
 use Oro\Bundle\UserBundle\Entity\User;
 
 /**
@@ -34,7 +34,7 @@ class CalendarEventApiHandlerTest extends \PHPUnit_Framework_TestCase
     protected $requestStack;
 
     /** @var \PHPUnit_Framework_MockObject_MockObject */
-    protected $securityFacade;
+    protected $tokenAccessor;
 
     /** @var \PHPUnit_Framework_MockObject_MockObject */
     protected $notificationManager;
@@ -91,10 +91,8 @@ class CalendarEventApiHandlerTest extends \PHPUnit_Framework_TestCase
             ->will($this->returnValue($objectManager));
 
         $this->organization = new Organization();
-        $securityFacade = $this->getMockBuilder(SecurityFacade::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-        $securityFacade->expects($this->any())
+        $tokenAccessor = $this->createMock(TokenAccessorInterface::class);
+        $tokenAccessor->expects($this->any())
             ->method('getOrganization')
             ->willReturn($this->organization);
 
@@ -121,7 +119,7 @@ class CalendarEventApiHandlerTest extends \PHPUnit_Framework_TestCase
         $this->handler = new CalendarEventApiHandler(
             $this->requestStack,
             $doctrine,
-            $securityFacade,
+            $tokenAccessor,
             $this->activityManager,
             $this->calendarEventManager,
             $this->notificationManager

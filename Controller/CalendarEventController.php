@@ -44,7 +44,7 @@ class CalendarEventController extends Controller
     {
         $this->checkPermissionByParentCalendar($entity, 'view');
 
-        $loggedUser = $this->get('oro_security.security_facade')->getLoggedUser();
+        $loggedUser = $this->get('oro_security.token_accessor')->getUser();
         $canChangeInvitationStatus = $this->get('oro_calendar.calendar_event_manager')
             ->canChangeInvitationStatus(
                 $entity,
@@ -70,7 +70,7 @@ class CalendarEventController extends Controller
     {
         $this->checkPermissionByParentCalendar($entity, 'view');
 
-        $loggedUser = $this->get('oro_security.security_facade')->getLoggedUser();
+        $loggedUser = $this->get('oro_security.token_accessor')->getUser();
         $canChangeInvitationStatus = $this->get('oro_calendar.calendar_event_manager')
             ->canChangeInvitationStatus(
                 $entity,
@@ -229,7 +229,7 @@ class CalendarEventController extends Controller
             throw $this->createNotFoundException('A system calendar event.');
         }
 
-        if (!$this->get('oro_security.security_facade')->isGranted('VIEW', $calendar)) {
+        if (!$this->isGranted('VIEW', $calendar)) {
             throw $this->createAccessDeniedException(
                 sprintf('You does not have no access to %s this calendar event', $action)
             );

@@ -6,6 +6,8 @@ use Oro\Bundle\CalendarBundle\Form\Type\CalendarEventType;
 use Oro\Bundle\CalendarBundle\Manager\CalendarEvent\NotificationManager;
 use Oro\Bundle\CalendarBundle\Entity\Calendar;
 use Oro\Bundle\EntityExtendBundle\Tests\Unit\Fixtures\TestEnumValue;
+use Oro\Bundle\SecurityBundle\Authentication\TokenAccessorInterface;
+use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
 use Symfony\Component\Validator\Constraints\Choice;
 
 class CalendarEventTypeTest extends \PHPUnit_Framework_TestCase
@@ -14,7 +16,10 @@ class CalendarEventTypeTest extends \PHPUnit_Framework_TestCase
     protected $notificationManager;
 
     /** @var \PHPUnit_Framework_MockObject_MockObject */
-    protected $securityFacade;
+    protected $authorizationChecker;
+
+    /** @var \PHPUnit_Framework_MockObject_MockObject */
+    protected $tokenAccessor;
 
     /**
      * @var CalendarEventType
@@ -40,14 +45,18 @@ class CalendarEventTypeTest extends \PHPUnit_Framework_TestCase
             ->disableOriginalConstructor()
             ->getMock();
 
-        $this->securityFacade = $this->getMockBuilder('Oro\Bundle\SecurityBundle\SecurityFacade')
-            ->disableOriginalConstructor()
-            ->getMock();
+        $this->authorizationChecker = $this->createMock(AuthorizationCheckerInterface::class);
+        $this->tokenAccessor = $this->createMock(TokenAccessorInterface::class);
         $registry = $this->getMockBuilder('Doctrine\Common\Persistence\ManagerRegistry')
             ->disableOriginalConstructor()
             ->getMock();
 
-        $this->type = new CalendarEventType($this->notificationManager, $this->securityFacade, $registry);
+        $this->type = new CalendarEventType(
+            $this->notificationManager,
+            $this->authorizationChecker,
+            $this->tokenAccessor,
+            $registry
+        );
     }
 
     public function formBuildProvider()
@@ -70,7 +79,7 @@ class CalendarEventTypeTest extends \PHPUnit_Framework_TestCase
         $builder = $this->getMockBuilder('Symfony\Component\Form\FormBuilder')
             ->disableOriginalConstructor()
             ->getMock();
-        $this->securityFacade->expects($this->once())
+        $this->authorizationChecker->expects($this->once())
             ->method('isGranted')
             ->with('oro_calendar_event_assign_management')
             ->will($this->returnValue($permissions));

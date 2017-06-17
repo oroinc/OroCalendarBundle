@@ -11,6 +11,7 @@ use Oro\Bundle\CalendarBundle\Tests\Unit\ReflectionUtil;
 use Oro\Bundle\EntityExtendBundle\Tests\Unit\Fixtures\TestEnumValue;
 use Oro\Bundle\OrganizationBundle\Entity\Organization;
 use Oro\Bundle\CalendarBundle\Tests\Unit\Fixtures\Entity\User;
+use Oro\Bundle\SecurityBundle\Authentication\TokenAccessorInterface;
 
 class CalendarEventManagerTest extends \PHPUnit_Framework_TestCase
 {
@@ -21,7 +22,7 @@ class CalendarEventManagerTest extends \PHPUnit_Framework_TestCase
     protected $doctrine;
 
     /** @var \PHPUnit_Framework_MockObject_MockObject */
-    protected $securityFacade;
+    protected $tokenAccessor;
 
     /** @var \PHPUnit_Framework_MockObject_MockObject */
     protected $entityNameResolver;
@@ -40,9 +41,7 @@ class CalendarEventManagerTest extends \PHPUnit_Framework_TestCase
             ->disableOriginalConstructor()
             ->getMock();
         $this->doctrine           = $this->createMock('Doctrine\Common\Persistence\ManagerRegistry');
-        $this->securityFacade     = $this->getMockBuilder('Oro\Bundle\SecurityBundle\SecurityFacade')
-            ->disableOriginalConstructor()
-            ->getMock();
+        $this->tokenAccessor = $this->createMock(TokenAccessorInterface::class);
         $this->entityNameResolver = $this->getMockBuilder('Oro\Bundle\EntityBundle\Provider\EntityNameResolver')
             ->disableOriginalConstructor()
             ->getMock();
@@ -54,7 +53,7 @@ class CalendarEventManagerTest extends \PHPUnit_Framework_TestCase
         $this->manager = new CalendarEventManager(
             $this->updateManager,
             $this->doctrine,
-            $this->securityFacade,
+            $this->tokenAccessor,
             $this->entityNameResolver,
             $this->calendarConfig
         );
@@ -67,7 +66,7 @@ class CalendarEventManagerTest extends \PHPUnit_Framework_TestCase
             ['id' => 123, 'name' => 'test', 'public' => true]
         ];
 
-        $this->securityFacade->expects($this->once())
+        $this->tokenAccessor->expects($this->once())
             ->method('getOrganizationId')
             ->will($this->returnValue($organizationId));
 
@@ -114,14 +113,14 @@ class CalendarEventManagerTest extends \PHPUnit_Framework_TestCase
             ['id' => 200, 'name' => 'name2'],
         ];
 
-        $this->securityFacade->expects($this->once())
+        $this->tokenAccessor->expects($this->once())
             ->method('getOrganizationId')
             ->will($this->returnValue($organizationId));
-        $this->securityFacade->expects($this->once())
-            ->method('getLoggedUserId')
+        $this->tokenAccessor->expects($this->once())
+            ->method('getUserId')
             ->will($this->returnValue($userId));
-        $this->securityFacade->expects($this->once())
-            ->method('getLoggedUser')
+        $this->tokenAccessor->expects($this->once())
+            ->method('getUser')
             ->will($this->returnValue($user));
 
         $repo = $this->getMockBuilder('Oro\Bundle\CalendarBundle\Entity\Repository\CalendarRepository')

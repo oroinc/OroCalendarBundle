@@ -18,7 +18,8 @@ services:
         class: '%oro_calendar.calendar_event.form.type.class%'
         arguments:
             - '@oro_calendar.calendar_event.notification_manager'
-            - '@oro_security.security_facade'
+            - '@security.authorization_checker'
+            - '@oro_security.token_accessor'
             - '@doctrine'
         tags:
             - { name: form.type, alias: oro_calendar_event }
@@ -60,7 +61,7 @@ services:
         arguments:
             - '@request_stack'
             - '@doctrine'
-            - '@oro_security.security_facade'
+            - '@oro_security.token_accessor'
             - '@oro_activity.manager'
             - '@oro_calendar.calendar_event_manager'
             - '@oro_calendar.calendar_event.notification_manager'
@@ -156,7 +157,7 @@ services:
     oro_calendar.system_calendar.form.type:
         class: '%oro_calendar.system_calendar.form.type.class%'
         arguments:
-            - '@oro_security.security_facade'
+            - '@security.authorization_checker'
             - '@oro_calendar.system_calendar_config'
         tags:
             - { name: form.type, alias: oro_system_calendar }

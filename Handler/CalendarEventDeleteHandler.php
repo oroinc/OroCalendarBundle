@@ -6,6 +6,7 @@ use Doctrine\Common\Persistence\ObjectManager;
 use Doctrine\ORM\EntityNotFoundException;
 
 use Symfony\Component\HttpFoundation\RequestStack;
+use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
 
 use Oro\Bundle\CalendarBundle\Entity\CalendarEvent;
 use Oro\Bundle\CalendarBundle\Entity\SystemCalendar;
@@ -13,7 +14,6 @@ use Oro\Bundle\CalendarBundle\Manager\CalendarEvent\DeleteManager;
 use Oro\Bundle\CalendarBundle\Manager\CalendarEvent\NotificationManager;
 use Oro\Bundle\CalendarBundle\Provider\SystemCalendarConfig;
 use Oro\Bundle\SecurityBundle\Exception\ForbiddenException;
-use Oro\Bundle\SecurityBundle\SecurityFacade;
 use Oro\Bundle\SoapBundle\Entity\Manager\ApiEntityManager;
 use Oro\Bundle\SoapBundle\Handler\DeleteHandler;
 
@@ -25,8 +25,8 @@ class CalendarEventDeleteHandler extends DeleteHandler
     /** @var SystemCalendarConfig */
     protected $calendarConfig;
 
-    /** @var SecurityFacade */
-    protected $securityFacade;
+    /** @var AuthorizationCheckerInterface */
+    protected $authorizationChecker;
 
     /** @var NotificationManager */
     protected $notificationManager;
@@ -71,13 +71,13 @@ class CalendarEventDeleteHandler extends DeleteHandler
     }
 
     /**
-     * @param SecurityFacade $securityFacade
+     * @param AuthorizationCheckerInterface $authorizationChecker
      *
      * @return CalendarEventDeleteHandler
      */
-    public function setSecurityFacade(SecurityFacade $securityFacade)
+    public function setAuthorizationChecker(AuthorizationCheckerInterface $authorizationChecker)
     {
-        $this->securityFacade = $securityFacade;
+        $this->authorizationChecker = $authorizationChecker;
 
         return $this;
     }
@@ -104,7 +104,7 @@ class CalendarEventDeleteHandler extends DeleteHandler
                     throw new ForbiddenException('Public calendars are disabled.');
                 }
 
-                if (!$this->securityFacade->isGranted('oro_public_calendar_management')) {
+                if (!$this->authorizationChecker->isGranted('oro_public_calendar_management')) {
                     throw new ForbiddenException('Access denied.');
                 }
             } else {
@@ -112,14 +112,14 @@ class CalendarEventDeleteHandler extends DeleteHandler
                     throw new ForbiddenException('System calendars are disabled.');
                 }
 
-                if (!$this->securityFacade->isGranted('oro_system_calendar_management')) {
+                if (!$this->authorizationChecker->isGranted('oro_system_calendar_management')) {
                     throw new ForbiddenException('Access denied.');
                 }
             }
         } else {
             // for regular calendar event, check access by it's calendar
             // todo: Temporary solution. Should be deleted in scope of BAP-13256
-            if (!$this->securityFacade->isGranted('VIEW', $entity->getCalendar())) {
+            if (!$this->authorizationChecker->isGranted('VIEW', $entity->getCalendar())) {
                 throw new ForbiddenException('Access denied.');
             }
             parent::checkPermissions($entity, $em);

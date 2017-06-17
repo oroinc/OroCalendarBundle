@@ -5,6 +5,7 @@ namespace Oro\Bundle\CalendarBundle\Tests\Unit\Form\Type;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\PreloadedExtension;
 use Symfony\Component\Form\Test\TypeTestCase;
+use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
 
 use Oro\Bundle\CalendarBundle\Entity\SystemCalendar;
 use Oro\Bundle\CalendarBundle\Form\Type\SystemCalendarType;
@@ -13,7 +14,7 @@ use Oro\Bundle\FormBundle\Form\Type\OroSimpleColorPickerType;
 class SystemCalendarTypeTest extends TypeTestCase
 {
     /** @var \PHPUnit_Framework_MockObject_MockObject */
-    protected $securityFacade;
+    protected $authorizationChecker;
 
     /** @var \PHPUnit_Framework_MockObject_MockObject */
     protected $calendarConfig;
@@ -26,9 +27,7 @@ class SystemCalendarTypeTest extends TypeTestCase
 
     protected function getExtensions()
     {
-        $this->securityFacade       = $this->getMockBuilder('Oro\Bundle\SecurityBundle\SecurityFacade')
-            ->disableOriginalConstructor()
-            ->getMock();
+        $this->authorizationChecker = $this->createMock(AuthorizationCheckerInterface::class);
         $this->calendarConfig =
             $this->getMockBuilder('Oro\Bundle\CalendarBundle\Provider\SystemCalendarConfig')
                 ->disableOriginalConstructor()
@@ -85,7 +84,7 @@ class SystemCalendarTypeTest extends TypeTestCase
         $this->calendarConfig->expects($this->any())
             ->method('isSystemCalendarEnabled')
             ->will($this->returnValue(true));
-        $this->securityFacade->expects($this->any())
+        $this->authorizationChecker->expects($this->any())
             ->method('isGranted')
             ->will(
                 $this->returnValueMap(
@@ -96,7 +95,7 @@ class SystemCalendarTypeTest extends TypeTestCase
                 )
             );
 
-        $type = new SystemCalendarType($this->securityFacade, $this->calendarConfig);
+        $type = new SystemCalendarType($this->authorizationChecker, $this->calendarConfig);
         $form = $this->factory->create($type);
         $form->submit($formData);
 
@@ -124,7 +123,7 @@ class SystemCalendarTypeTest extends TypeTestCase
             ->method('isSystemCalendarEnabled')
             ->will($this->returnValue(false));
 
-        $type = new SystemCalendarType($this->securityFacade, $this->calendarConfig);
+        $type = new SystemCalendarType($this->authorizationChecker, $this->calendarConfig);
         $form = $this->factory->create($type);
         $form->submit($formData);
 
@@ -152,7 +151,7 @@ class SystemCalendarTypeTest extends TypeTestCase
             ->method('isSystemCalendarEnabled')
             ->will($this->returnValue(true));
 
-        $type = new SystemCalendarType($this->securityFacade, $this->calendarConfig);
+        $type = new SystemCalendarType($this->authorizationChecker, $this->calendarConfig);
         $form = $this->factory->create($type);
         $form->submit($formData);
 
@@ -179,13 +178,13 @@ class SystemCalendarTypeTest extends TypeTestCase
                 )
             );
 
-        $type = new SystemCalendarType($this->securityFacade, $this->calendarConfig);
+        $type = new SystemCalendarType($this->authorizationChecker, $this->calendarConfig);
         $type->configureOptions($resolver);
     }
 
     public function testGetName()
     {
-        $type = new SystemCalendarType($this->securityFacade, $this->calendarConfig);
+        $type = new SystemCalendarType($this->authorizationChecker, $this->calendarConfig);
         $this->assertEquals('oro_system_calendar', $type->getName());
     }
 }

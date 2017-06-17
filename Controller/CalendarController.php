@@ -9,7 +9,6 @@ use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
 
 use Oro\Bundle\SecurityBundle\Annotation\Acl;
 use Oro\Bundle\SecurityBundle\Annotation\AclAncestor;
-use Oro\Bundle\SecurityBundle\SecurityFacade;
 
 use Oro\Bundle\CalendarBundle\Entity\Calendar;
 use Oro\Bundle\CalendarBundle\Entity\Repository\CalendarRepository;
@@ -33,7 +32,7 @@ class CalendarController extends Controller
         $user = $this->getUser();
 
         /** @var Organization $organization */
-        $organization = $this->get('oro_security.security_facade')->getOrganization();
+        $organization = $this->get('oro_security.token_accessor')->getOrganization();
 
         $em = $this->getDoctrine()->getManager();
         /** @var CalendarRepository $repo */
@@ -60,8 +59,6 @@ class CalendarController extends Controller
      */
     public function viewAction(Calendar $calendar)
     {
-        /** @var SecurityFacade $securityFacade */
-        $securityFacade = $this->get('oro_security.security_facade');
         /** @var CalendarDateTimeConfigProvider $calendarConfigProvider */
         $calendarConfigProvider = $this->get('oro_calendar.provider.calendar_config');
 
@@ -96,9 +93,9 @@ class CalendarController extends Controller
                 ->createView(),
             'entity' => $calendar,
             'calendar' => array(
-                'selectable' => $securityFacade->isGranted('oro_calendar_event_create'),
-                'editable' => $securityFacade->isGranted('oro_calendar_event_update'),
-                'removable' => $securityFacade->isGranted('oro_calendar_event_delete'),
+                'selectable' => $this->isGranted('oro_calendar_event_create'),
+                'editable' => $this->isGranted('oro_calendar_event_update'),
+                'removable' => $this->isGranted('oro_calendar_event_delete'),
                 'timezoneOffset' => $calendarConfigProvider->getTimezoneOffset()
             ),
             'startDate' => $dateRange['startDate'],

@@ -45,7 +45,7 @@ datagrids:
                         - { join: connection.targetCalendar, alias: targetCalendar }
                 where:
                     and:
-                        - targetCalendar.owner = @oro_security.security_facade->getLoggedUserId
+                        - targetCalendar.owner = @oro_security.token_accessor->getUserId
                         - event.cancelled = false
                 groupBy: >
                     event.id,
@@ -271,7 +271,7 @@ datagrids:
                         - { join: calendar.owner, alias: u }
                 where:
                     and:
-                        - u.id != @oro_security.security_facade->getLoggedUserId
+                        - u.id != @oro_security.token_accessor->getUserId
         columns:
             username:
                 label: oro.user.username.label
@@ -560,7 +560,7 @@ datagrids:
                         - { join: connection.targetCalendar, alias: targetCalendar }
                 where:
                     and:
-                        - targetCalendar.owner = @oro_security.security_facade->getLoggedUserId
+                        - targetCalendar.owner = @oro_security.token_accessor->getUserId
                 groupBy: event.id, calendar.name, owner.firstName, owner.lastName, parentId, ownerId
         columns:
             id:

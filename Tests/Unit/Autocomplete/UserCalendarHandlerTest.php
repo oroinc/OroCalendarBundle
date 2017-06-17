@@ -2,9 +2,12 @@
 
 namespace Oro\Bundle\CalendarBundle\Tests\Unit\Autocomplete;
 
+use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
+
 use Oro\Bundle\CalendarBundle\Autocomplete\UserCalendarHandler;
 use Oro\Bundle\CalendarBundle\Entity\Calendar;
 use Oro\Bundle\CalendarBundle\Tests\Unit\ReflectionUtil;
+use Oro\Bundle\SecurityBundle\Authentication\TokenAccessorInterface;
 use Oro\Bundle\UserBundle\Entity\User;
 
 class UserCalendarHandlerTest extends \PHPUnit_Framework_TestCase
@@ -16,7 +19,10 @@ class UserCalendarHandlerTest extends \PHPUnit_Framework_TestCase
     protected $attachmentManager;
 
     /** @var \PHPUnit_Framework_MockObject_MockObject */
-    protected $securityContextLink;
+    protected $authorizationChecker;
+
+    /** @var \PHPUnit_Framework_MockObject_MockObject */
+    protected $tokenAccessor;
 
     /** @var \PHPUnit_Framework_MockObject_MockObject */
     protected $treeProvider;
@@ -41,11 +47,8 @@ class UserCalendarHandlerTest extends \PHPUnit_Framework_TestCase
         $this->attachmentManager = $this->getMockBuilder('Oro\Bundle\AttachmentBundle\Manager\AttachmentManager')
             ->disableOriginalConstructor()
             ->getMock();
-        $this->securityContextLink = $this->getMockBuilder(
-            'Oro\Bundle\EntityConfigBundle\DependencyInjection\Utils\ServiceLink'
-        )
-            ->disableOriginalConstructor()
-            ->getMock();
+        $this->authorizationChecker = $this->createMock(AuthorizationCheckerInterface::class);
+        $this->tokenAccessor = $this->createMock(TokenAccessorInterface::class);
         $this->treeProvider = $this->getMockBuilder('Oro\Bundle\SecurityBundle\Owner\OwnerTreeProvider')
             ->disableOriginalConstructor()
             ->getMock();
@@ -59,7 +62,8 @@ class UserCalendarHandlerTest extends \PHPUnit_Framework_TestCase
             $this->em,
             $this->attachmentManager,
             'Oro\Bundle\CalendarBundle\Autocomplete\UserCalendarHandler',
-            $this->securityContextLink,
+            $this->authorizationChecker,
+            $this->tokenAccessor,
             $this->treeProvider,
             $this->aclHelper
         );

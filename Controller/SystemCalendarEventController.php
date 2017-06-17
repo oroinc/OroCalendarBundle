@@ -12,7 +12,6 @@ use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
 use Oro\Bundle\CalendarBundle\Entity\SystemCalendar;
 use Oro\Bundle\CalendarBundle\Entity\CalendarEvent;
 use Oro\Bundle\CalendarBundle\Provider\SystemCalendarConfig;
-use Oro\Bundle\SecurityBundle\SecurityFacade;
 
 class SystemCalendarEventController extends Controller
 {
@@ -30,15 +29,14 @@ class SystemCalendarEventController extends Controller
 
         $this->checkPermissionByConfig($calendar);
 
-        $securityFacade = $this->getSecurityFacade();
-        if (!$calendar->isPublic() && !$securityFacade->isGranted('VIEW', $calendar)) {
+        if (!$calendar->isPublic() && !$this->isGranted('VIEW', $calendar)) {
             // an user must have permissions to view system calendar
             throw new AccessDeniedException();
         }
 
         $isEventManagementGranted = $calendar->isPublic()
-            ? $securityFacade->isGranted('oro_public_calendar_management')
-            : $securityFacade->isGranted('oro_system_calendar_management');
+            ? $this->isGranted('oro_public_calendar_management')
+            : $this->isGranted('oro_system_calendar_management');
 
         return [
             'entity'    => $entity,
@@ -55,10 +53,9 @@ class SystemCalendarEventController extends Controller
     {
         $this->checkPermissionByConfig($calendar);
 
-        $securityFacade = $this->getSecurityFacade();
         $isGranted = $calendar->isPublic()
-            ? $securityFacade->isGranted('oro_public_calendar_management')
-            : $securityFacade->isGranted('oro_system_calendar_management');
+            ? $this->isGranted('oro_public_calendar_management')
+            : $this->isGranted('oro_system_calendar_management');
         if (!$isGranted) {
             throw new AccessDeniedException();
         }
@@ -92,15 +89,14 @@ class SystemCalendarEventController extends Controller
 
         $this->checkPermissionByConfig($calendar);
 
-        $securityFacade = $this->getSecurityFacade();
-        if (!$calendar->isPublic() && !$securityFacade->isGranted('VIEW', $calendar)) {
+        if (!$calendar->isPublic() && !$this->isGranted('VIEW', $calendar)) {
             // an user must have permissions to view system calendar
             throw new AccessDeniedException();
         }
 
         $isGranted = $calendar->isPublic()
-            ? $securityFacade->isGranted('oro_public_calendar_management')
-            : $securityFacade->isGranted('oro_system_calendar_management');
+            ? $this->isGranted('oro_public_calendar_management')
+            : $this->isGranted('oro_system_calendar_management');
         if (!$isGranted) {
             throw new AccessDeniedException();
         }
@@ -165,13 +161,5 @@ class SystemCalendarEventController extends Controller
     protected function getCalendarConfig()
     {
         return $this->get('oro_calendar.system_calendar_config');
-    }
-
-    /**
-     * @return SecurityFacade
-     */
-    protected function getSecurityFacade()
-    {
-        return $this->get('oro_security.security_facade');
     }
 }

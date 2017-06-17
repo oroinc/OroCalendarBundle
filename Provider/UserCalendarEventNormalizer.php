@@ -8,14 +8,24 @@ use Symfony\Component\PropertyAccess\Exception\NoSuchPropertyException;
 use Oro\Bundle\CalendarBundle\Entity\Attendee;
 use Oro\Bundle\CalendarBundle\Entity\CalendarEvent;
 use Oro\Bundle\CalendarBundle\Entity\Recurrence;
+use Oro\Bundle\SecurityBundle\Authentication\TokenAccessorInterface;
 use Oro\Component\PropertyAccess\PropertyAccessor;
 
 class UserCalendarEventNormalizer extends AbstractCalendarEventNormalizer
 {
-    /**
-     * @var PropertyAccessor
-     */
+    /** @var PropertyAccessor */
     protected $propertyAccessor;
+
+    /** @var TokenAccessorInterface */
+    protected $tokenAccessor;
+
+    /**
+     * @param TokenAccessorInterface $tokenAccessor
+     */
+    public function setTokenAccessor(TokenAccessorInterface $tokenAccessor)
+    {
+        $this->tokenAccessor = $tokenAccessor;
+    }
 
     /**
      * Converts calendar event object to an array to be exposed in the API
@@ -203,11 +213,11 @@ class UserCalendarEventNormalizer extends AbstractCalendarEventNormalizer
         $item['editable'] =
             ($item['calendar'] === $this->getCurrentCalendarId())
             && empty($item['parentEventId'])
-            && $this->securityFacade->isGranted('oro_calendar_event_update');
+            && $this->authorizationChecker->isGranted('oro_calendar_event_update');
 
         $item['removable'] =
             ($item['calendar'] === $this->getCurrentCalendarId())
-            && $this->securityFacade->isGranted('oro_calendar_event_delete');
+            && $this->authorizationChecker->isGranted('oro_calendar_event_delete');
 
         $item['editableInvitationStatus'] = $this->canChangeInvitationStatus($item);
     }
@@ -222,9 +232,7 @@ class UserCalendarEventNormalizer extends AbstractCalendarEventNormalizer
      */
     protected function canChangeInvitationStatus(array $item)
     {
-        $loggedUser = $this->securityFacade->getLoggedUser();
-
-        return $this->calendarEventManager->canChangeInvitationStatus($item, $loggedUser);
+        return $this->calendarEventManager->canChangeInvitationStatus($item, $this->tokenAccessor->getUser());
     }
 
     /**

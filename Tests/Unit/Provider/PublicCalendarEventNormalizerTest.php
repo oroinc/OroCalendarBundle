@@ -2,6 +2,8 @@
 
 namespace Oro\Bundle\CalendarBundle\Tests\Unit\Provider;
 
+use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
+
 use Oro\Bundle\CalendarBundle\Provider\PublicCalendarEventNormalizer;
 
 class PublicCalendarEventNormalizerTest extends \PHPUnit_Framework_TestCase
@@ -16,7 +18,7 @@ class PublicCalendarEventNormalizerTest extends \PHPUnit_Framework_TestCase
     protected $reminderManager;
 
     /** @var \PHPUnit_Framework_MockObject_MockObject */
-    protected $securityFacade;
+    protected $authorizationChecker;
 
     /** @var PublicCalendarEventNormalizer */
     protected $normalizer;
@@ -39,15 +41,13 @@ class PublicCalendarEventNormalizerTest extends \PHPUnit_Framework_TestCase
             ->disableOriginalConstructor()
             ->getMock();
 
-        $this->securityFacade  = $this->getMockBuilder('Oro\Bundle\SecurityBundle\SecurityFacade')
-            ->disableOriginalConstructor()
-            ->getMock();
+        $this->authorizationChecker = $this->createMock(AuthorizationCheckerInterface::class);
 
         $this->normalizer = new PublicCalendarEventNormalizer(
             $this->calendarEventManager,
             $this->attendeeManager,
             $this->reminderManager,
-            $this->securityFacade
+            $this->authorizationChecker
         );
     }
 
@@ -89,7 +89,7 @@ class PublicCalendarEventNormalizerTest extends \PHPUnit_Framework_TestCase
             ->method('getArrayResult')
             ->will($this->returnValue($events));
 
-        $this->securityFacade->expects($this->once())
+        $this->authorizationChecker->expects($this->once())
             ->method('isGranted')
             ->will($this->returnValue(true));
         $this->reminderManager->expects($this->once())

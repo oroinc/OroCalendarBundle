@@ -2,10 +2,13 @@
 
 namespace Oro\Bundle\CalendarBundle\Tests\Unit\EventListener\Datagrid;
 
+use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
+
 use Oro\Bundle\CalendarBundle\EventListener\Datagrid\SystemCalendarGridListener;
 use Oro\Bundle\DataGridBundle\Datasource\ResultRecord;
 use Oro\Bundle\DataGridBundle\Event\BuildAfter;
 use Oro\Bundle\DataGridBundle\Event\BuildBefore;
+use Oro\Bundle\SecurityBundle\Authentication\TokenAccessorInterface;
 
 /**
  * @SuppressWarnings(PHPMD.TooManyPublicMethods)
@@ -16,17 +19,19 @@ class SystemCalendarGridListenerTest extends \PHPUnit_Framework_TestCase
     protected $listener;
 
     /** @var \PHPUnit_Framework_MockObject_MockObject */
-    protected $securityFacade;
+    protected $authorizationChecker;
+
+    /** @var \PHPUnit_Framework_MockObject_MockObject */
+    protected $tokenAccessor;
 
     /** @var \PHPUnit_Framework_MockObject_MockObject */
     protected $calendarConfig;
 
     protected function setUp()
     {
-        $this->securityFacade = $this->getMockBuilder('Oro\Bundle\SecurityBundle\SecurityFacade')
-            ->disableOriginalConstructor()
-            ->getMock();
-        $this->securityFacade->expects($this->any())
+        $this->authorizationChecker = $this->createMock(AuthorizationCheckerInterface::class);
+        $this->tokenAccessor = $this->createMock(TokenAccessorInterface::class);
+        $this->tokenAccessor->expects($this->any())
             ->method('getOrganizationId')
             ->will($this->returnValue(1));
         $this->calendarConfig =
@@ -35,7 +40,8 @@ class SystemCalendarGridListenerTest extends \PHPUnit_Framework_TestCase
                 ->getMock();
 
         $this->listener = new SystemCalendarGridListener(
-            $this->securityFacade,
+            $this->authorizationChecker,
+            $this->tokenAccessor,
             $this->calendarConfig
         );
     }
@@ -109,7 +115,7 @@ class SystemCalendarGridListenerTest extends \PHPUnit_Framework_TestCase
             ->method('isSystemCalendarEnabled')
             ->will($this->returnValue(true));
 
-        $this->securityFacade->expects($this->exactly(2))
+        $this->authorizationChecker->expects($this->exactly(2))
             ->method('isGranted')
             ->will(
                 $this->returnValueMap(
@@ -172,7 +178,7 @@ class SystemCalendarGridListenerTest extends \PHPUnit_Framework_TestCase
             ->method('isSystemCalendarEnabled')
             ->will($this->returnValue(true));
 
-        $this->securityFacade->expects($this->exactly(2))
+        $this->authorizationChecker->expects($this->exactly(2))
             ->method('isGranted')
             ->withConsecutive(
                 ['oro_public_calendar_management'],
@@ -220,7 +226,7 @@ class SystemCalendarGridListenerTest extends \PHPUnit_Framework_TestCase
             ->method('isSystemCalendarEnabled')
             ->will($this->returnValue(true));
 
-        $this->securityFacade->expects($this->any())
+        $this->authorizationChecker->expects($this->any())
             ->method('isGranted')
             ->will($this->returnValueMap(
                 [
@@ -229,7 +235,7 @@ class SystemCalendarGridListenerTest extends \PHPUnit_Framework_TestCase
                 ]
             ));
 
-        $this->securityFacade->expects($this->once())
+        $this->tokenAccessor->expects($this->once())
             ->method('getOrganizationId')
             ->will($this->returnValue($organizationId));
 
@@ -268,7 +274,7 @@ class SystemCalendarGridListenerTest extends \PHPUnit_Framework_TestCase
             ->method('isPublicCalendarEnabled')
             ->will($this->returnValue(true));
 
-        $this->securityFacade->expects($this->any())
+        $this->authorizationChecker->expects($this->any())
             ->method('isGranted')
             ->with('oro_public_calendar_management')
             ->will($this->returnValue(true));
@@ -344,7 +350,7 @@ class SystemCalendarGridListenerTest extends \PHPUnit_Framework_TestCase
     {
         $resultRecord = new ResultRecord(['public' => true]);
 
-        $this->securityFacade->expects($this->once())
+        $this->authorizationChecker->expects($this->once())
             ->method('isGranted')
             ->with('oro_public_calendar_management')
             ->will($this->returnValue(true));
@@ -360,7 +366,7 @@ class SystemCalendarGridListenerTest extends \PHPUnit_Framework_TestCase
     {
         $resultRecord = new ResultRecord(['public' => true]);
 
-        $this->securityFacade->expects($this->once())
+        $this->authorizationChecker->expects($this->once())
             ->method('isGranted')
             ->with('oro_public_calendar_management')
             ->will($this->returnValue(false));
@@ -382,7 +388,7 @@ class SystemCalendarGridListenerTest extends \PHPUnit_Framework_TestCase
     {
         $resultRecord = new ResultRecord(['public' => false]);
 
-        $this->securityFacade->expects($this->once())
+        $this->authorizationChecker->expects($this->once())
             ->method('isGranted')
             ->with('oro_system_calendar_management')
             ->will($this->returnValue($allowed));

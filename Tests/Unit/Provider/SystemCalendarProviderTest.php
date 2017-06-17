@@ -2,7 +2,8 @@
 
 namespace Oro\Bundle\CalendarBundle\Tests\Unit\Provider;
 
-use Doctrine\ORM\Query\Expr;
+use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
+
 use Oro\Bundle\CalendarBundle\Entity\SystemCalendar;
 use Oro\Bundle\CalendarBundle\Provider\SystemCalendarProvider;
 use Oro\Bundle\CalendarBundle\Tests\Unit\ReflectionUtil;
@@ -20,7 +21,7 @@ class SystemCalendarProviderTest extends \PHPUnit_Framework_TestCase
     protected $calendarConfig;
 
     /** @var \PHPUnit_Framework_MockObject_MockObject */
-    protected $securityFacade;
+    protected $authorizationChecker;
 
     /** @var \PHPUnit_Framework_MockObject_MockObject */
     protected $recurrenceModel;
@@ -41,9 +42,7 @@ class SystemCalendarProviderTest extends \PHPUnit_Framework_TestCase
             $this->getMockBuilder('Oro\Bundle\CalendarBundle\Provider\SystemCalendarConfig')
                 ->disableOriginalConstructor()
                 ->getMock();
-        $this->securityFacade          = $this->getMockBuilder('Oro\Bundle\SecurityBundle\SecurityFacade')
-            ->disableOriginalConstructor()
-            ->getMock();
+        $this->authorizationChecker = $this->createMock(AuthorizationCheckerInterface::class);
         $this->recurrenceModel =
             $this->getMockBuilder('Oro\Bundle\CalendarBundle\Model\Recurrence')
                 ->disableOriginalConstructor()
@@ -54,7 +53,7 @@ class SystemCalendarProviderTest extends \PHPUnit_Framework_TestCase
             $this->recurrenceModel,
             $this->calendarEventNormalizer,
             $this->calendarConfig,
-            $this->securityFacade
+            $this->authorizationChecker
         );
     }
 
@@ -102,7 +101,7 @@ class SystemCalendarProviderTest extends \PHPUnit_Framework_TestCase
         $this->calendarConfig->expects($this->once())
             ->method('isSystemCalendarEnabled')
             ->will($this->returnValue(true));
-        $this->securityFacade->expects($this->once())
+        $this->authorizationChecker->expects($this->once())
             ->method('isGranted')
             ->with('oro_system_calendar_management')
             ->will($this->returnValue(false));
@@ -173,7 +172,7 @@ class SystemCalendarProviderTest extends \PHPUnit_Framework_TestCase
         $this->calendarConfig->expects($this->once())
             ->method('isSystemCalendarEnabled')
             ->will($this->returnValue(true));
-        $this->securityFacade->expects($this->once())
+        $this->authorizationChecker->expects($this->once())
             ->method('isGranted')
             ->with('oro_system_calendar_management')
             ->will($this->returnValue(true));
@@ -251,7 +250,7 @@ class SystemCalendarProviderTest extends \PHPUnit_Framework_TestCase
         $this->calendarConfig->expects($this->once())
             ->method('isSystemCalendarEnabled')
             ->will($this->returnValue(true));
-        $this->securityFacade->expects($this->once())
+        $this->authorizationChecker->expects($this->once())
             ->method('isGranted')
             ->with('oro_system_calendar_management')
             ->will($this->returnValue(false));
@@ -273,7 +272,7 @@ class SystemCalendarProviderTest extends \PHPUnit_Framework_TestCase
         $this->calendarConfig->expects($this->once())
             ->method('isSystemCalendarEnabled')
             ->will($this->returnValue(true));
-        $this->securityFacade->expects($this->once())
+        $this->authorizationChecker->expects($this->once())
             ->method('isGranted')
             ->with('oro_system_calendar_management')
             ->will($this->returnValue(true));

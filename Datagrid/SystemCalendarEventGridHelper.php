@@ -2,20 +2,21 @@
 
 namespace Oro\Bundle\CalendarBundle\Datagrid;
 
+use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
+
 use Oro\Bundle\DataGridBundle\Datasource\ResultRecordInterface;
-use Oro\Bundle\SecurityBundle\SecurityFacade;
 
 class SystemCalendarEventGridHelper
 {
-    /** @var SecurityFacade */
-    protected $securityFacade;
+    /** @var AuthorizationCheckerInterface */
+    protected $authorizationChecker;
 
     /**
-     * @param SecurityFacade $securityFacade
+     * @param AuthorizationCheckerInterface $authorizationChecker
      */
-    public function __construct(SecurityFacade $securityFacade)
+    public function __construct(AuthorizationCheckerInterface $authorizationChecker)
     {
-        $this->securityFacade = $securityFacade;
+        $this->authorizationChecker = $authorizationChecker;
     }
 
     /**
@@ -26,7 +27,7 @@ class SystemCalendarEventGridHelper
     public function getPublicActionConfigurationClosure()
     {
         return function (ResultRecordInterface $record) {
-            if ($this->securityFacade->isGranted('oro_public_calendar_management')) {
+            if ($this->authorizationChecker->isGranted('oro_public_calendar_management')) {
                 return [];
             } else {
                 return [
@@ -45,7 +46,7 @@ class SystemCalendarEventGridHelper
     public function getSystemActionConfigurationClosure()
     {
         return function (ResultRecordInterface $record) {
-            if ($this->securityFacade->isGranted('oro_system_calendar_management')) {
+            if ($this->authorizationChecker->isGranted('oro_system_calendar_management')) {
                 return [];
             } else {
                 return [

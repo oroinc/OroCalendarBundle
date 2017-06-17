@@ -42,7 +42,7 @@ class CalendarController extends FOSRestController
         $user = $this->getUser();
 
         /** @var Organization $organization */
-        $organization = $this->get('oro_security.security_facade')->getOrganization();
+        $organization = $this->get('oro_security.token_accessor')->getOrganization();
 
         $em = $this->getDoctrine()->getManager();
         /** @var CalendarRepository $repo */

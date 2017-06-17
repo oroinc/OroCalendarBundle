@@ -13,7 +13,7 @@ use Oro\Bundle\ActivityBundle\Manager\ActivityManager;
 use Oro\Bundle\CalendarBundle\Entity\CalendarEvent;
 use Oro\Bundle\CalendarBundle\Manager\CalendarEventManager;
 use Oro\Bundle\CalendarBundle\Manager\CalendarEvent\NotificationManager;
-use Oro\Bundle\SecurityBundle\SecurityFacade;
+use Oro\Bundle\SecurityBundle\Authentication\TokenAccessorInterface;
 
 abstract class AbstractCalendarEventHandler
 {
@@ -26,8 +26,8 @@ abstract class AbstractCalendarEventHandler
     /** @var ManagerRegistry */
     protected $doctrine;
 
-    /** @var SecurityFacade */
-    protected $securityFacade;
+    /** @var TokenAccessorInterface */
+    protected $tokenAccessor;
 
     /** @var NotificationManager */
     protected $notificationManager;
@@ -36,27 +36,27 @@ abstract class AbstractCalendarEventHandler
     protected $calendarEventManager;
 
     /**
-     * @param RequestStack         $requestStack
-     * @param ManagerRegistry      $doctrine
-     * @param SecurityFacade       $securityFacade
-     * @param ActivityManager      $activityManager
-     * @param CalendarEventManager $calendarEventManager
-     * @param NotificationManager  $notificationManager
+     * @param RequestStack           $requestStack
+     * @param ManagerRegistry        $doctrine
+     * @param TokenAccessorInterface $tokenAccessor
+     * @param ActivityManager        $activityManager
+     * @param CalendarEventManager   $calendarEventManager
+     * @param NotificationManager    $notificationManager
      */
     public function __construct(
         RequestStack $requestStack,
         ManagerRegistry $doctrine,
-        SecurityFacade $securityFacade,
+        TokenAccessorInterface $tokenAccessor,
         ActivityManager $activityManager,
         CalendarEventManager $calendarEventManager,
         NotificationManager $notificationManager
     ) {
-        $this->requestStack         = $requestStack;
-        $this->doctrine             = $doctrine;
-        $this->securityFacade       = $securityFacade;
-        $this->activityManager      = $activityManager;
+        $this->requestStack = $requestStack;
+        $this->doctrine = $doctrine;
+        $this->tokenAccessor = $tokenAccessor;
+        $this->activityManager = $activityManager;
         $this->calendarEventManager = $calendarEventManager;
-        $this->notificationManager  = $notificationManager;
+        $this->notificationManager = $notificationManager;
     }
 
     /**
@@ -88,7 +88,7 @@ abstract class AbstractCalendarEventHandler
         $this->calendarEventManager->onEventUpdate(
             $entity,
             $originalEntity,
-            $this->securityFacade->getOrganization(),
+            $this->tokenAccessor->getOrganization(),
             $this->allowUpdateExceptions()
         );
 

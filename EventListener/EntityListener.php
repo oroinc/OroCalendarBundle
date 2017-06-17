@@ -12,22 +12,19 @@ use Doctrine\ORM\Mapping\ClassMetadata;
 use Doctrine\ORM\PersistentCollection;
 use Doctrine\ORM\UnitOfWork;
 
-use Symfony\Component\Security\Core\SecurityContextInterface;
-
 use Oro\Bundle\CalendarBundle\Entity\Calendar;
 use Oro\Bundle\CalendarBundle\Entity\CalendarProperty;
 use Oro\Bundle\CalendarBundle\Entity\SystemCalendar;
 use Oro\Bundle\CalendarBundle\Entity\Recurrence as RecurrenceEntity;
 use Oro\Bundle\CalendarBundle\Model\Recurrence;
-use Oro\Bundle\EntityConfigBundle\DependencyInjection\Utils\ServiceLink;
 use Oro\Bundle\OrganizationBundle\Entity\Organization;
-use Oro\Bundle\SecurityBundle\Authentication\Token\OrganizationContextTokenInterface;
+use Oro\Bundle\SecurityBundle\Authentication\TokenAccessorInterface;
 use Oro\Bundle\UserBundle\Entity\User;
 
 class EntityListener
 {
-    /** @var ServiceLink */
-    protected $securityContextLink;
+    /** @var TokenAccessorInterface */
+    protected $tokenAccessor;
 
     /** @var ClassMetadata[] */
     protected $metadataLocalCache = [];
@@ -39,13 +36,13 @@ class EntityListener
     protected $recurrenceModel;
 
     /**
-     * @param ServiceLink $securityContextLink
-     * @param Recurrence  $recurrenceModel
+     * @param TokenAccessorInterface $tokenAccessor
+     * @param Recurrence             $recurrenceModel
      */
-    public function __construct(ServiceLink $securityContextLink, Recurrence $recurrenceModel)
+    public function __construct(TokenAccessorInterface $tokenAccessor, Recurrence $recurrenceModel)
     {
-        $this->securityContextLink = $securityContextLink;
-        $this->recurrenceModel     = $recurrenceModel;
+        $this->tokenAccessor = $tokenAccessor;
+        $this->recurrenceModel = $recurrenceModel;
     }
 
     /**
@@ -60,7 +57,7 @@ class EntityListener
                 $entity->setOrganization(null);
             } elseif (!$entity->getOrganization()) {
                 // make sure an organization is set for system calendar
-                $organization = $this->getOrganization();
+                $organization = $this->tokenAccessor->getOrganization();
                 if ($organization) {
                     $entity->setOrganization($organization);
                 }
@@ -131,20 +128,6 @@ class EntityListener
             $this->insertedCalendars = [];
             $em->flush();
         }
-    }
-
-    /**
-     * @return Organization|null
-     */
-    protected function getOrganization()
-    {
-        /** @var SecurityContextInterface $securityContext */
-        $securityContext = $this->securityContextLink->getService();
-        $token           = $securityContext->getToken();
-
-        return $token instanceof OrganizationContextTokenInterface
-            ? $token->getOrganizationContext()
-            : null;
     }
 
     /**

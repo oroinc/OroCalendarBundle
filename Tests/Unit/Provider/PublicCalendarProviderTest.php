@@ -5,6 +5,7 @@ namespace Oro\Bundle\CalendarBundle\Tests\Unit\Provider;
 use Oro\Bundle\CalendarBundle\Entity\SystemCalendar;
 use Oro\Bundle\CalendarBundle\Provider\PublicCalendarProvider;
 use Oro\Bundle\CalendarBundle\Tests\Unit\ReflectionUtil;
+use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
 
 class PublicCalendarProviderTest extends \PHPUnit_Framework_TestCase
 {
@@ -21,7 +22,7 @@ class PublicCalendarProviderTest extends \PHPUnit_Framework_TestCase
     protected $recurrenceModel;
 
     /** @var \PHPUnit_Framework_MockObject_MockObject */
-    protected $securityFacade;
+    protected $authorizationChecker;
 
     /** @var PublicCalendarProvider */
     protected $provider;
@@ -39,9 +40,7 @@ class PublicCalendarProviderTest extends \PHPUnit_Framework_TestCase
             $this->getMockBuilder('Oro\Bundle\CalendarBundle\Provider\SystemCalendarConfig')
                 ->disableOriginalConstructor()
                 ->getMock();
-        $this->securityFacade          = $this->getMockBuilder('Oro\Bundle\SecurityBundle\SecurityFacade')
-            ->disableOriginalConstructor()
-            ->getMock();
+        $this->authorizationChecker = $this->createMock(AuthorizationCheckerInterface::class);
         $this->recurrenceModel =
             $this->getMockBuilder('Oro\Bundle\CalendarBundle\Model\Recurrence')
                 ->disableOriginalConstructor()
@@ -52,7 +51,7 @@ class PublicCalendarProviderTest extends \PHPUnit_Framework_TestCase
             $this->recurrenceModel,
             $this->calendarEventNormalizer,
             $this->calendarConfig,
-            $this->securityFacade
+            $this->authorizationChecker
         );
     }
 
@@ -150,7 +149,7 @@ class PublicCalendarProviderTest extends \PHPUnit_Framework_TestCase
         $this->calendarConfig->expects($this->once())
             ->method('isPublicCalendarEnabled')
             ->will($this->returnValue(true));
-        $this->securityFacade->expects($this->once())
+        $this->authorizationChecker->expects($this->once())
             ->method('isGranted')
             ->with('oro_public_calendar_management')
             ->will($this->returnValue(true));

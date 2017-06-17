@@ -9,7 +9,7 @@ class SystemCalendarEventNormalizer extends AbstractCalendarEventNormalizer
      */
     protected function applyItemPermissionsData(array &$item)
     {
-        if (!$this->securityFacade->isGranted('oro_system_calendar_event_management')) {
+        if (!$this->authorizationChecker->isGranted('oro_system_calendar_event_management')) {
             $item['editable']  = false;
             $item['removable'] = false;
         }

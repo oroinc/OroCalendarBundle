@@ -3,7 +3,7 @@
 namespace Oro\Bundle\CalendarBundle\Tests\Unit\Datagrid;
 
 use Oro\Bundle\CalendarBundle\Datagrid\ActionPermissionProvider;
-use Oro\Bundle\SecurityBundle\SecurityFacade;
+use Oro\Bundle\SecurityBundle\Authentication\TokenAccessorInterface;
 use Oro\Bundle\UserBundle\Entity\User;
 
 class ActionPermissionProviderTest extends \PHPUnit_Framework_TestCase
@@ -11,8 +11,8 @@ class ActionPermissionProviderTest extends \PHPUnit_Framework_TestCase
     const ADMIN = 1;
     const USER  = 2;
 
-    /** @var SecurityFacade */
-    protected $securityFacade;
+    /** @var \PHPUnit_Framework_MockObject_MockObject */
+    protected $tokenAccessor;
 
     /**
      * @var ActionPermissionProvider
@@ -21,10 +21,9 @@ class ActionPermissionProviderTest extends \PHPUnit_Framework_TestCase
 
     protected function setUp()
     {
-        $this->securityFacade = $this->getMockBuilder('Oro\Bundle\SecurityBundle\SecurityFacade')
-            ->disableOriginalConstructor()
-            ->getMock();
-        $this->provider = new ActionPermissionProvider($this->securityFacade);
+        $this->tokenAccessor = $this->createMock(TokenAccessorInterface::class);
+
+        $this->provider = new ActionPermissionProvider($this->tokenAccessor);
     }
 
     /**
@@ -39,8 +38,8 @@ class ActionPermissionProviderTest extends \PHPUnit_Framework_TestCase
         $user   = new User();
         $user->setId(self::ADMIN);
 
-        $this->securityFacade->expects($this->any())
-            ->method('getLoggedUser')
+        $this->tokenAccessor->expects($this->any())
+            ->method('getUser')
             ->will($this->returnValue($user));
 
         $record->expects($this->at(0))

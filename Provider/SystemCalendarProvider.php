@@ -2,12 +2,13 @@
 
 namespace Oro\Bundle\CalendarBundle\Provider;
 
+use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
+
 use Oro\Bundle\CalendarBundle\Entity\SystemCalendar;
 use Oro\Bundle\CalendarBundle\Entity\Repository\CalendarEventRepository;
 use Oro\Bundle\CalendarBundle\Entity\Repository\SystemCalendarRepository;
 use Oro\Bundle\CalendarBundle\Model;
 use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
-use Oro\Bundle\SecurityBundle\SecurityFacade;
 
 /**
  * Represents organization calendars
@@ -20,27 +21,27 @@ class SystemCalendarProvider extends AbstractRecurrenceAwareCalendarProvider
     /** @var SystemCalendarConfig */
     protected $calendarConfig;
 
-    /** @var SecurityFacade */
-    protected $securityFacade;
+    /** @var AuthorizationCheckerInterface */
+    protected $authorizationChecker;
 
     /**
      * @param DoctrineHelper                  $doctrineHelper
      * @param Model\Recurrence                $recurrence
      * @param AbstractCalendarEventNormalizer $calendarEventNormalizer
      * @param SystemCalendarConfig            $calendarConfig
-     * @param SecurityFacade                  $securityFacade
+     * @param AuthorizationCheckerInterface   $authorizationChecker
      */
     public function __construct(
         DoctrineHelper $doctrineHelper,
         Model\Recurrence $recurrence,
         AbstractCalendarEventNormalizer $calendarEventNormalizer,
         SystemCalendarConfig $calendarConfig,
-        SecurityFacade $securityFacade
+        AuthorizationCheckerInterface $authorizationChecker
     ) {
         parent::__construct($doctrineHelper, $recurrence);
         $this->calendarEventNormalizer = $calendarEventNormalizer;
-        $this->calendarConfig          = $calendarConfig;
-        $this->securityFacade          = $securityFacade;
+        $this->calendarConfig = $calendarConfig;
+        $this->authorizationChecker = $authorizationChecker;
     }
 
     /**
@@ -63,7 +64,7 @@ class SystemCalendarProvider extends AbstractRecurrenceAwareCalendarProvider
         /** @var SystemCalendar[] $calendars */
         $calendars = $qb->getQuery()->getResult();
 
-        $isEventManagementGranted = $this->securityFacade->isGranted('oro_system_calendar_management');
+        $isEventManagementGranted = $this->authorizationChecker->isGranted('oro_system_calendar_management');
         foreach ($calendars as $calendar) {
             $resultItem = [
                 'calendarName'    => $calendar->getName(),
@@ -95,7 +96,7 @@ class SystemCalendarProvider extends AbstractRecurrenceAwareCalendarProvider
         $extraFields = []
     ) {
         if (!$this->calendarConfig->isSystemCalendarEnabled()
-            || !$this->securityFacade->isGranted('oro_system_calendar_management')
+            || !$this->authorizationChecker->isGranted('oro_system_calendar_management')
         ) {
             return [];
         }

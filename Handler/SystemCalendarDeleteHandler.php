@@ -4,8 +4,9 @@ namespace Oro\Bundle\CalendarBundle\Handler;
 
 use Doctrine\Common\Persistence\ObjectManager;
 
+use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
+
 use Oro\Bundle\SecurityBundle\Exception\ForbiddenException;
-use Oro\Bundle\SecurityBundle\SecurityFacade;
 use Oro\Bundle\SoapBundle\Handler\DeleteHandler;
 use Oro\Bundle\CalendarBundle\Provider\SystemCalendarConfig;
 
@@ -14,8 +15,8 @@ class SystemCalendarDeleteHandler extends DeleteHandler
     /** @var SystemCalendarConfig */
     protected $calendarConfig;
 
-    /** @var SecurityFacade */
-    protected $securityFacade;
+    /** @var AuthorizationCheckerInterface */
+    protected $authorizationChecker;
 
     /**
      * @param SystemCalendarConfig $calendarConfig
@@ -26,11 +27,11 @@ class SystemCalendarDeleteHandler extends DeleteHandler
     }
 
     /**
-     * @param SecurityFacade $securityFacade
+     * @param AuthorizationCheckerInterface $authorizationChecker
      */
-    public function setSecurityFacade(SecurityFacade $securityFacade)
+    public function setAuthorizationChecker(AuthorizationCheckerInterface $authorizationChecker)
     {
-        $this->securityFacade = $securityFacade;
+        $this->authorizationChecker = $authorizationChecker;
     }
 
     /**
@@ -41,13 +42,13 @@ class SystemCalendarDeleteHandler extends DeleteHandler
         if ($entity->isPublic()) {
             if (!$this->calendarConfig->isPublicCalendarEnabled()) {
                 throw new ForbiddenException('Public calendars are disabled.');
-            } elseif (!$this->securityFacade->isGranted('oro_public_calendar_management')) {
+            } elseif (!$this->authorizationChecker->isGranted('oro_public_calendar_management')) {
                 throw new ForbiddenException('Access denied.');
             }
         } else {
             if (!$this->calendarConfig->isSystemCalendarEnabled()) {
                 throw new ForbiddenException('System calendars are disabled.');
-            } elseif (!$this->securityFacade->isGranted('oro_system_calendar_management')) {
+            } elseif (!$this->authorizationChecker->isGranted('oro_system_calendar_management')) {
                 throw new ForbiddenException('Access denied.');
             }
         }

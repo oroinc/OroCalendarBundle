@@ -21,7 +21,7 @@
             <span class="list-group-item-text">
                 {% set avatar = attendee.user ? attendee.user.avatar %}
                 <img src="{{ avatar ? filtered_image_url(avatar, 'avatar_xsmall') : asset('bundles/oroui/img/avatar-xsmall.png') }}" />
-                {% if (resource_granted('oro_user_user_view') and attendee.user) %}
+                {% if (is_granted('oro_user_user_view') and attendee.user) %}
                     {{ UI.link({
                         'label' : attendee.user|oro_format_name|default('N/A'),
                         'path'  : path('oro_user_view', {'id': attendee.user.id })

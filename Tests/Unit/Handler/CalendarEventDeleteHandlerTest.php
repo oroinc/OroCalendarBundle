@@ -6,6 +6,7 @@ use Doctrine\Common\Persistence\ObjectManager;
 
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\RequestStack;
+use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
 
 use Oro\Bundle\CalendarBundle\Entity\CalendarEvent;
 use Oro\Bundle\CalendarBundle\Entity\SystemCalendar;
@@ -15,13 +16,12 @@ use Oro\Bundle\CalendarBundle\Manager\CalendarEvent\NotificationManager;
 use Oro\Bundle\CalendarBundle\Provider\SystemCalendarConfig;
 use Oro\Bundle\CalendarBundle\Tests\Unit\Fixtures\Entity\Calendar;
 use Oro\Bundle\OrganizationBundle\Ownership\OwnerDeletionManager;
-use Oro\Bundle\SecurityBundle\SecurityFacade;
 use Oro\Bundle\SoapBundle\Entity\Manager\ApiEntityManager;
 
 class CalendarEventDeleteHandlerTest extends \PHPUnit_Framework_TestCase
 {
     /** @var \PHPUnit_Framework_MockObject_MockObject */
-    protected $securityFacade;
+    protected $authorizationChecker;
 
     /** @var \PHPUnit_Framework_MockObject_MockObject */
     protected $calendarConfig;
@@ -43,9 +43,7 @@ class CalendarEventDeleteHandlerTest extends \PHPUnit_Framework_TestCase
 
     protected function setUp()
     {
-        $this->securityFacade = $this->getMockBuilder(SecurityFacade::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $this->authorizationChecker = $this->createMock(AuthorizationCheckerInterface::class);
         $this->calendarConfig = $this->getMockBuilder(SystemCalendarConfig::class)
             ->disableOriginalConstructor()
             ->getMock();
@@ -69,7 +67,7 @@ class CalendarEventDeleteHandlerTest extends \PHPUnit_Framework_TestCase
 
         $this->handler = new CalendarEventDeleteHandler();
         $this->handler->setCalendarConfig($this->calendarConfig);
-        $this->handler->setSecurityFacade($this->securityFacade);
+        $this->handler->setAuthorizationChecker($this->authorizationChecker);
         $this->handler->setOwnerDeletionManager($ownerDeletionManager);
         $this->handler->setNotificationManager($this->notificationManager);
         $this->handler->setRequestStack($this->requestStack);
@@ -82,7 +80,7 @@ class CalendarEventDeleteHandlerTest extends \PHPUnit_Framework_TestCase
             ->method('find')
             ->will($this->returnValue(new CalendarEvent()));
 
-        $this->securityFacade->expects($this->once())
+        $this->authorizationChecker->expects($this->once())
             ->method('isGranted')
             ->willReturn(true);
 
@@ -129,7 +127,7 @@ class CalendarEventDeleteHandlerTest extends \PHPUnit_Framework_TestCase
         $this->calendarConfig->expects($this->once())
             ->method('isPublicCalendarEnabled')
             ->will($this->returnValue(true));
-        $this->securityFacade->expects($this->once())
+        $this->authorizationChecker->expects($this->once())
             ->method('isGranted')
             ->with('oro_public_calendar_management')
             ->will($this->returnValue(false));
@@ -177,7 +175,7 @@ class CalendarEventDeleteHandlerTest extends \PHPUnit_Framework_TestCase
         $this->calendarConfig->expects($this->once())
             ->method('isSystemCalendarEnabled')
             ->will($this->returnValue(true));
-        $this->securityFacade->expects($this->once())
+        $this->authorizationChecker->expects($this->once())
             ->method('isGranted')
             ->with('oro_system_calendar_management')
             ->will($this->returnValue(false));
@@ -196,7 +194,7 @@ class CalendarEventDeleteHandlerTest extends \PHPUnit_Framework_TestCase
             ->method('onDelete')
             ->with($event, NotificationManager::ALL_NOTIFICATIONS_STRATEGY);
 
-        $this->securityFacade->expects($this->once())
+        $this->authorizationChecker->expects($this->once())
             ->method('isGranted')
             ->willReturn(true);
 
@@ -216,7 +214,7 @@ class CalendarEventDeleteHandlerTest extends \PHPUnit_Framework_TestCase
             ->method('onDelete')
             ->with($event, NotificationManager::NONE_NOTIFICATIONS_STRATEGY);
 
-        $this->securityFacade->expects($this->once())
+        $this->authorizationChecker->expects($this->once())
             ->method('isGranted')
             ->willReturn(true);
 
@@ -234,7 +232,7 @@ class CalendarEventDeleteHandlerTest extends \PHPUnit_Framework_TestCase
             ->method('onDelete')
             ->with($event, NotificationManager::ALL_NOTIFICATIONS_STRATEGY);
 
-        $this->securityFacade->expects($this->once())
+        $this->authorizationChecker->expects($this->once())
             ->method('isGranted')
             ->willReturn(true);
 
@@ -254,7 +252,7 @@ class CalendarEventDeleteHandlerTest extends \PHPUnit_Framework_TestCase
             ->method('onDelete')
             ->with($event, NotificationManager::NONE_NOTIFICATIONS_STRATEGY);
 
-        $this->securityFacade->expects($this->once())
+        $this->authorizationChecker->expects($this->once())
             ->method('isGranted')
             ->willReturn(true);
 
@@ -279,7 +277,7 @@ class CalendarEventDeleteHandlerTest extends \PHPUnit_Framework_TestCase
             ->method('find')
             ->will($this->returnValue($calendarEvent));
 
-        $this->securityFacade->expects($this->once())
+        $this->authorizationChecker->expects($this->once())
             ->method('isGranted')
             ->with('VIEW', $calendar)
             ->willReturn(false);

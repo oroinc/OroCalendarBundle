@@ -2,12 +2,15 @@
 
 namespace Oro\Bundle\CalendarBundle\Tests\Unit\Provider;
 
+use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
+
 use Oro\Bundle\CalendarBundle\Entity\Calendar;
 use Oro\Bundle\CalendarBundle\Provider\UserCalendarEventNormalizer;
 use Oro\Bundle\CalendarBundle\Tests\Unit\Fixtures\Entity\Attendee;
 use Oro\Bundle\CalendarBundle\Tests\Unit\Fixtures\Entity\CalendarEvent;
 use Oro\Bundle\CalendarBundle\Tests\Unit\Fixtures\Entity\User;
 use Oro\Bundle\EntityExtendBundle\Tests\Unit\Fixtures\TestEnumValue;
+use Oro\Bundle\SecurityBundle\Authentication\TokenAccessorInterface;
 
 class UserCalendarEventNormalizerTest extends \PHPUnit_Framework_TestCase
 {
@@ -21,7 +24,10 @@ class UserCalendarEventNormalizerTest extends \PHPUnit_Framework_TestCase
     protected $reminderManager;
 
     /** @var \PHPUnit_Framework_MockObject_MockObject */
-    protected $securityFacade;
+    protected $authorizationChecker;
+
+    /** @var \PHPUnit_Framework_MockObject_MockObject */
+    protected $tokenAccessor;
 
     /** @var UserCalendarEventNormalizer */
     protected $normalizer;
@@ -37,16 +43,16 @@ class UserCalendarEventNormalizerTest extends \PHPUnit_Framework_TestCase
         $this->reminderManager = $this->getMockBuilder('Oro\Bundle\ReminderBundle\Entity\Manager\ReminderManager')
             ->disableOriginalConstructor()
             ->getMock();
-        $this->securityFacade = $this->getMockBuilder('Oro\Bundle\SecurityBundle\SecurityFacade')
-            ->disableOriginalConstructor()
-            ->getMock();
+        $this->authorizationChecker = $this->createMock(AuthorizationCheckerInterface::class);
+        $this->tokenAccessor = $this->createMock(TokenAccessorInterface::class);
 
         $this->normalizer = new UserCalendarEventNormalizer(
             $this->calendarEventManager,
             $this->attendeeManager,
             $this->reminderManager,
-            $this->securityFacade
+            $this->authorizationChecker
         );
+        $this->normalizer->setTokenAccessor($this->tokenAccessor);
     }
 
     /**
@@ -69,7 +75,7 @@ class UserCalendarEventNormalizerTest extends \PHPUnit_Framework_TestCase
             ->will($this->returnValue($events));
 
         if (!empty($events)) {
-            $this->securityFacade->expects($this->exactly(2))
+            $this->authorizationChecker->expects($this->exactly(2))
                 ->method('isGranted')
                 ->will(
                     $this->returnValueMap(
@@ -84,8 +90,8 @@ class UserCalendarEventNormalizerTest extends \PHPUnit_Framework_TestCase
         if ($events) {
             $loggedUser = new User();
 
-            $this->securityFacade->expects($this->once())
-                ->method('getLoggedUser')
+            $this->tokenAccessor->expects($this->once())
+                ->method('getUser')
                 ->willReturn($loggedUser);
 
             $this->calendarEventManager->expects($this->once())
@@ -99,7 +105,7 @@ class UserCalendarEventNormalizerTest extends \PHPUnit_Framework_TestCase
                     return array_intersect_key($attendees, array_flip($calendarEventIds));
                 }));
         } else {
-            $this->securityFacade->expects($this->never())->method($this->anything());
+            $this->tokenAccessor->expects($this->never())->method($this->anything());
             $this->calendarEventManager->expects($this->never())->method($this->anything());
             $this->attendeeManager->expects($this->never())->method($this->anything());
         }
@@ -294,8 +300,8 @@ class UserCalendarEventNormalizerTest extends \PHPUnit_Framework_TestCase
     {
         $loggedUser = new User();
 
-        $this->securityFacade->expects($this->once())
-            ->method('getLoggedUser')
+        $this->tokenAccessor->expects($this->once())
+            ->method('getUser')
             ->willReturn($loggedUser);
 
         $this->calendarEventManager->expects($this->once())
@@ -303,7 +309,7 @@ class UserCalendarEventNormalizerTest extends \PHPUnit_Framework_TestCase
             ->with($this->isType('array'), $loggedUser)
             ->willReturn($editableInvitationStatus);
 
-        $this->securityFacade->expects($this->any())
+        $this->authorizationChecker->expects($this->any())
             ->method('isGranted')
             ->will(
                 $this->returnValueMap(

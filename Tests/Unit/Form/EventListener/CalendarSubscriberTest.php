@@ -4,36 +4,34 @@ namespace Oro\Bundle\CalendarBundle\Tests\Unit\Form\EventListener;
 
 use Doctrine\Common\Persistence\ManagerRegistry;
 
-use Oro\Bundle\CalendarBundle\Entity\SystemCalendar;
 use Symfony\Component\Form\FormEvent;
 use Symfony\Component\Form\FormEvents;
 
-use Oro\Bundle\SecurityBundle\SecurityFacade;
+use Oro\Bundle\CalendarBundle\Entity\SystemCalendar;
 use Oro\Bundle\CalendarBundle\Form\EventListener\CalendarSubscriber;
 use Oro\Bundle\CalendarBundle\Tests\Unit\Fixtures\Entity\Calendar;
 use Oro\Bundle\CalendarBundle\Tests\Unit\Fixtures\Entity\CalendarEvent;
+use Oro\Bundle\SecurityBundle\Authentication\TokenAccessorInterface;
 
 class CalendarSubscriberTest extends \PHPUnit_Framework_TestCase
 {
     /** @var CalendarSubscriber */
     protected $calendarSubscriber;
 
-    /** @var \PHPUnit_Framework_MockObject_MockObject|SecurityFacade */
-    protected $securityFacade;
+    /** @var \PHPUnit_Framework_MockObject_MockObject|TokenAccessorInterface */
+    protected $tokenAccessor;
 
     /** @var \PHPUnit_Framework_MockObject_MockObject|ManagerRegistry */
     protected $registry;
 
     public function setUp()
     {
-        $this->securityFacade = $this->getMockBuilder('Oro\Bundle\SecurityBundle\SecurityFacade')
-            ->disableOriginalConstructor()
-            ->getMock();
+        $this->tokenAccessor = $this->createMock(TokenAccessorInterface::class);
         $this->registry = $this->getMockBuilder('Doctrine\Common\Persistence\ManagerRegistry')
             ->disableOriginalConstructor()
             ->getMock();
 
-        $this->calendarSubscriber = new CalendarSubscriber($this->securityFacade, $this->registry);
+        $this->calendarSubscriber = new CalendarSubscriber($this->tokenAccessor, $this->registry);
     }
 
     public function testGetSubscribedEvents()
@@ -54,10 +52,10 @@ class CalendarSubscriberTest extends \PHPUnit_Framework_TestCase
         $defaultCalendar->setName('def');
         $newCalendar->setName('test');
         $formData = [];
-        $this->securityFacade->expects($this->any())
-            ->method('getLoggedUserId')
+        $this->tokenAccessor->expects($this->any())
+            ->method('getUserId')
             ->will($this->returnValue(1));
-        $this->securityFacade->expects($this->any())
+        $this->tokenAccessor->expects($this->any())
             ->method('getOrganizationId')
             ->will($this->returnValue(1));
 
@@ -93,10 +91,10 @@ class CalendarSubscriberTest extends \PHPUnit_Framework_TestCase
         $eventData->setId(2);
         $eventData->setCalendar($defaultCalendar);
         $formData = [];
-        $this->securityFacade->expects($this->any())
-            ->method('getLoggedUserId')
+        $this->tokenAccessor->expects($this->any())
+            ->method('getUserId')
             ->will($this->returnValue(1));
-        $this->securityFacade->expects($this->any())
+        $this->tokenAccessor->expects($this->any())
             ->method('getOrganizationId')
             ->will($this->returnValue(1));
 
@@ -131,10 +129,10 @@ class CalendarSubscriberTest extends \PHPUnit_Framework_TestCase
         $newCalendar->setName('test');
         $eventData->setCalendar($defaultCalendar);
         $formData = [];
-        $this->securityFacade->expects($this->any())
-            ->method('getLoggedUserId')
+        $this->tokenAccessor->expects($this->any())
+            ->method('getUserId')
             ->will($this->returnValue(1));
-        $this->securityFacade->expects($this->any())
+        $this->tokenAccessor->expects($this->any())
             ->method('getOrganizationId')
             ->will($this->returnValue(1));
 

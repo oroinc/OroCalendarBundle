@@ -9,24 +9,24 @@ use Symfony\Component\Form\FormEvent;
 use Symfony\Component\Form\FormEvents;
 
 use Oro\Bundle\CalendarBundle\Entity\Calendar;
-use Oro\Bundle\SecurityBundle\SecurityFacade;
 use Oro\Bundle\CalendarBundle\Entity\CalendarEvent;
+use Oro\Bundle\SecurityBundle\Authentication\TokenAccessorInterface;
 
 class CalendarSubscriber implements EventSubscriberInterface
 {
-    /** @var SecurityFacade */
-    protected $securityFacade;
+    /** @var TokenAccessorInterface */
+    protected $tokenAccessor;
 
     /** @var ManagerRegistry */
     protected $registry;
 
     /**
-     * @param SecurityFacade $securityFacade
-     * @param ManagerRegistry $registry
+     * @param TokenAccessorInterface $tokenAccessor
+     * @param ManagerRegistry        $registry
      */
-    public function __construct(SecurityFacade $securityFacade, ManagerRegistry $registry)
+    public function __construct(TokenAccessorInterface $tokenAccessor, ManagerRegistry $registry)
     {
-        $this->securityFacade = $securityFacade;
+        $this->tokenAccessor = $tokenAccessor;
         $this->registry = $registry;
     }
 
@@ -54,8 +54,8 @@ class CalendarSubscriber implements EventSubscriberInterface
             $defaultCalendar = $this->registry
                 ->getRepository('OroCalendarBundle:Calendar')
                 ->findDefaultCalendar(
-                    $this->securityFacade->getLoggedUserId(),
-                    $this->securityFacade->getOrganizationId()
+                    $this->tokenAccessor->getUserId(),
+                    $this->tokenAccessor->getOrganizationId()
                 );
             $data->setCalendar($defaultCalendar);
             $event->setData($data);

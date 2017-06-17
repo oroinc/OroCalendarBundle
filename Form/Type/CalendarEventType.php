@@ -9,44 +9,45 @@ use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\Form\FormView;
 use Symfony\Component\OptionsResolver\OptionsResolver;
+use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
 use Symfony\Component\Validator\Constraints\Choice;
 
-use Oro\Bundle\SecurityBundle\SecurityFacade;
 use Oro\Bundle\CalendarBundle\Manager\CalendarEvent\NotificationManager;
 use Oro\Bundle\CalendarBundle\Form\EventListener\CalendarSubscriber;
 use Oro\Bundle\CalendarBundle\Form\EventListener\CalendarEventRecurrenceSubscriber;
 use Oro\Bundle\CalendarBundle\Form\EventListener\CalendarUidSubscriber;
 use Oro\Bundle\CalendarBundle\Entity\Calendar;
+use Oro\Bundle\SecurityBundle\Authentication\TokenAccessorInterface;
 
 class CalendarEventType extends AbstractType
 {
-    /**
-     * @var NotificationManager
-     */
+    /** @var NotificationManager */
     protected $notificationManager;
 
-    /**
-     * @var SecurityFacade
-     */
-    protected $securityFacade;
+    /** @var AuthorizationCheckerInterface */
+    protected $authorizationChecker;
 
-    /**
-     * @var ManagerRegistry
-     */
+    /** @var TokenAccessorInterface */
+    protected $tokenAccessor;
+
+    /** @var ManagerRegistry */
     protected $registry;
 
     /**
-     * @param NotificationManager $notificationManager
-     * @param SecurityFacade $securityFacade
-     * @param ManagerRegistry $registry
+     * @param NotificationManager           $notificationManager
+     * @param AuthorizationCheckerInterface $authorizationChecker
+     * @param TokenAccessorInterface        $tokenAccessor
+     * @param ManagerRegistry               $registry
      */
     public function __construct(
         NotificationManager $notificationManager,
-        SecurityFacade $securityFacade,
+        AuthorizationCheckerInterface $authorizationChecker,
+        TokenAccessorInterface $tokenAccessor,
         ManagerRegistry $registry
     ) {
         $this->notificationManager = $notificationManager;
-        $this->securityFacade = $securityFacade;
+        $this->authorizationChecker = $authorizationChecker;
+        $this->tokenAccessor = $tokenAccessor;
         $this->registry = $registry;
     }
 
@@ -214,7 +215,7 @@ class CalendarEventType extends AbstractType
      */
     protected function defineCalendar(FormBuilderInterface $builder)
     {
-        if ($this->securityFacade->isGranted('oro_calendar_event_assign_management')) {
+        if ($this->authorizationChecker->isGranted('oro_calendar_event_assign_management')) {
             $builder
                 ->add(
                     'calendar',
@@ -238,7 +239,7 @@ class CalendarEventType extends AbstractType
                         'random_id' => false
                     ]
                 );
-            $builder->addEventSubscriber(new CalendarSubscriber($this->securityFacade, $this->registry));
+            $builder->addEventSubscriber(new CalendarSubscriber($this->tokenAccessor, $this->registry));
         }
     }
 }

@@ -22,7 +22,7 @@ use Oro\Bundle\CalendarBundle\Tests\Unit\Fixtures\Entity\User;
 use Oro\Bundle\EntityBundle\Provider\EntityNameResolver;
 use Oro\Bundle\FilterBundle\Tests\Unit\Filter\Fixtures\TestEnumValue;
 use Oro\Bundle\OrganizationBundle\Entity\Organization;
-use Oro\Bundle\SecurityBundle\SecurityFacade;
+use Oro\Bundle\SecurityBundle\Authentication\TokenAccessorInterface;
 
 /**
  * Old tests moved after remove of \Oro\Bundle\CalendarBundle\Tests\Unit\Form\EventListener\ChildEventsSubscriberTest.
@@ -70,9 +70,7 @@ class CalendarEventManagerLegacyTest extends \PHPUnit_Framework_TestCase
             ->getMock();
 
 
-        $securityFacade = $this->getMockBuilder(SecurityFacade::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $tokenAccessor = $this->createMock(TokenAccessorInterface::class);
 
         $entityNameResolver = $this->getMockBuilder(EntityNameResolver::class)
             ->disableOriginalConstructor()
@@ -101,7 +99,7 @@ class CalendarEventManagerLegacyTest extends \PHPUnit_Framework_TestCase
         $this->calendarEventManager = new CalendarEventManager(
             $updateManager,
             $doctrine,
-            $securityFacade,
+            $tokenAccessor,
             $entityNameResolver,
             $calendarConfig
         );

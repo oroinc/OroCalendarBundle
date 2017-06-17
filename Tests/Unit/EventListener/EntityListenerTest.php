@@ -15,7 +15,7 @@ use Oro\Bundle\CalendarBundle\Entity\SystemCalendar;
 use Oro\Bundle\CalendarBundle\EventListener\EntityListener;
 use Oro\Bundle\CalendarBundle\Tests\Unit\ReflectionUtil;
 use Oro\Bundle\OrganizationBundle\Entity\Organization;
-use Oro\Bundle\SecurityBundle\Authentication\Token\UsernamePasswordOrganizationToken;
+use Oro\Bundle\SecurityBundle\Authentication\TokenAccessorInterface;
 use Oro\Bundle\UserBundle\Entity\User;
 
 class EntityListenerTest extends \PHPUnit_Framework_TestCase
@@ -27,7 +27,7 @@ class EntityListenerTest extends \PHPUnit_Framework_TestCase
     protected $uow;
 
     /** @var \PHPUnit_Framework_MockObject_MockObject */
-    protected $securityContext;
+    protected $tokenAccessor;
 
     /** @var \PHPUnit_Framework_MockObject_MockObject */
     protected $recurrenceModel;
@@ -47,20 +47,12 @@ class EntityListenerTest extends \PHPUnit_Framework_TestCase
             ->method('getUnitOfWork')
             ->will($this->returnValue($this->uow));
 
-        $this->securityContext = $this->getMockBuilder('Symfony\Component\Security\Core\SecurityContext')
-            ->disableOriginalConstructor()
-            ->getMock();
-        $securityContextLink   =
-            $this->getMockBuilder('Oro\Bundle\EntityConfigBundle\DependencyInjection\Utils\ServiceLink')
-                ->disableOriginalConstructor()
-                ->getMock();
-        $securityContextLink->expects($this->any())->method('getService')
-            ->will($this->returnValue($this->securityContext));
+        $this->tokenAccessor = $this->createMock(TokenAccessorInterface::class);
         $this->recurrenceModel = $this->getMockBuilder('Oro\Bundle\CalendarBundle\Model\Recurrence')
             ->disableOriginalConstructor()
             ->getMock();
 
-        $this->listener = new EntityListener($securityContextLink, $this->recurrenceModel);
+        $this->listener = new EntityListener($this->tokenAccessor, $this->recurrenceModel);
     }
 
     /**
@@ -93,10 +85,9 @@ class EntityListenerTest extends \PHPUnit_Framework_TestCase
         $changeSet = [];
         $args      = new PreUpdateEventArgs($entity, $this->em, $changeSet);
 
-        $token = new UsernamePasswordOrganizationToken(new User(), 'admin', 'key', $organization);
-        $this->securityContext->expects($this->once())
-            ->method('getToken')
-            ->will($this->returnValue($token));
+        $this->tokenAccessor->expects($this->once())
+            ->method('getOrganization')
+            ->will($this->returnValue($organization));
 
         $this->listener->preUpdate($args);
         $this->assertSame($organization, $entity->getOrganization());
