@@ -23,6 +23,7 @@ Feature: Create calendar events
       | Email         | days          | 1               |
       | Flash message | minutes       | 30              |
     And I save and close form
+    And press "Notify"
     Then I should see "Calendar event saved" flash message
     When I click My Calendar in user menu
     Then I should see "All day no repeat Event" in calendar with:

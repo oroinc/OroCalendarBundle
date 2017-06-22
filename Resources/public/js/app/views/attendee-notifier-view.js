@@ -29,13 +29,13 @@ define([
             this.formInitialState = this.getFormState();
             this.attendeeInitialValues = this.getAttendeeValues();
             this.isModalShown = false;
-
+            this.notifyMessage = __('Notify about update message');
             this.$form.parent().on('submit.' + this.cid, _.bind(function(e) {
-                if (!this.isModalShown && this.getFormState() !== this.formInitialState && this.hasAttendees() &&
-                    _.intersection(this.attendeeInitialValues, this.getAttendeeValues()).length > 0
-                    // since we notify all added and deleted users anyway we need ask only about users that were
-                    // invited before and left in attendees for now
-                ) {
+                if (!this.isModalShown && this.getFormState() !== this.formInitialState && this.hasAttendees()) {
+                    if (!this.attendeeInitialValues.length) {
+                        this.notifyMessage = __('Notify guests message');
+                    }
+
                     this.getConfirmDialog().open();
                     this.isModalShown = true;
                     e.preventDefault();
@@ -70,7 +70,7 @@ define([
 
         getConfirmDialog: function() {
             if (!this.confirmModal) {
-                this.confirmModal = AttendeeNotifierView.createConfirmNotificationDialog();
+                this.confirmModal = AttendeeNotifierView.createConfirmNotificationDialog(this.notifyMessage);
                 this.listenTo(this.confirmModal, 'ok', _.bind(function() {
                     this.$form.find('input[name*="[notifyAttendees]"]').val('all');
                     this.$form.submit();
@@ -92,12 +92,13 @@ define([
             return this.$form.find(':input:not(' + this.exclusions.join(', ') + ')').serialize();
         }
     }, {
-        createConfirmNotificationDialog: function() {
+        createConfirmNotificationDialog: function(notifyMessage) {
+            notifyMessage = notifyMessage || __('Notify about update message');
             return new Modal({
                 title: __('Notify guests title'),
                 okText: __('Notify'),
                 cancelText: __('Don\'t notify'),
-                content: __('Notify guests message'),
+                content: notifyMessage,
                 className: 'modal modal-primary',
                 handleClose: true
             });
