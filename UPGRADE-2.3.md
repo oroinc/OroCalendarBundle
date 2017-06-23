@@ -29,6 +29,7 @@ All existing classes were updated to use new services instead of the `SecurityFa
 Other changes
 -------------
 
+- Updated Fullcalendar.js to 3.4.0 version
 - Class `Oro\Bundle\CalendarBundle\Controller\SystemCalendarController`
     - removed method `getSecurityFacade`
 - Class `Oro\Bundle\CalendarBundle\Controller\SystemCalendarEventController`

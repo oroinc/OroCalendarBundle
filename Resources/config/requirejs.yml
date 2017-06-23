@@ -1,9 +1,4 @@
 config:
-    map:
-        '*':
-            'fullcalendar': 'orocalendar/js/extend/fullcalendar'
-        'orocalendar/js/extend/fullcalendar':
-            'fullcalendar': 'fullcalendar'
     paths:
         'fullcalendar': 'bundles/bowerassets/fullcalendar/dist/fullcalendar.js'
         'orocalendar/js/calendar-view': 'bundles/orocalendar/js/calendar-view.js'

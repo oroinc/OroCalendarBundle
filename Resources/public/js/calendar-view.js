@@ -77,7 +77,8 @@ define(function(require) {
                 monthNamesShort: localeSettings.getCalendarMonthNames('abbreviated', true),
                 dayNames: localeSettings.getCalendarDayOfWeekNames('wide', true),
                 dayNamesShort: localeSettings.getCalendarDayOfWeekNames('abbreviated', true),
-                recoverView: true
+                recoverView: true,
+                eventOrder: ['title', 'calendarUid']
             },
             connectionsOptions: {
                 collection: null,
@@ -756,16 +757,17 @@ define(function(require) {
                     } else {
                         this._hideMask();
                     }
-                }, this)
+                }, this),
+                views: {}
             };
             keys = [
                 'defaultDate', 'defaultView', 'editable', 'selectable',
                 'header', 'allDayText', 'allDaySlot', 'buttonText',
-                'titleFormat', 'columnFormat', 'timeFormat', 'axisFormat',
-                'slotMinutes', 'snapMinutes', 'minTime', 'maxTime', 'scrollTime', 'slotEventOverlap',
-                'firstDay', 'firstHour', 'monthNames', 'monthNamesShort', 'dayNames', 'dayNamesShort',
-                'aspectRatio', 'defaultAllDayEventDuration', 'defaultTimedEventDuration',
-                'fixedWeekCount'
+                'titleFormat', 'columnFormat', 'timeFormat', 'slotLabelFormat',
+                'minTime', 'maxTime', 'scrollTime', 'slotEventOverlap',
+                'firstDay', 'monthNames', 'monthNamesShort', 'dayNames',
+                'dayNamesShort', 'aspectRatio', 'defaultAllDayEventDuration',
+                'defaultTimedEventDuration', 'fixedWeekCount', 'eventOrder'
             ];
             _.extend(options, _.pick(this.options.eventsOptions, keys));
             if (!_.isUndefined(options.defaultDate)) {
@@ -790,22 +792,22 @@ define(function(require) {
             // prepare FullCalendar specific date/time formats
             var isDateFormatStartedWithDay = dateFormat[0] === 'D';
             var weekFormat = isDateFormatStartedWithDay ? 'D MMMM YYYY' : 'MMMM D YYYY';
-
-            options.titleFormat = {
-                month: 'MMMM YYYY',
-                week: weekFormat,
-                day: 'dddd, ' + dateFormat
-            };
-            options.columnFormat = {
-                month: 'ddd',
-                week: 'ddd ' + dateFormat,
-                day: 'dddd ' + dateFormat
-            };
-            options.timeFormat = {
-                default: timeFormat,
-                agenda: timeFormat
-            };
-            options.axisFormat = timeFormat;
+            _.extend(options.views, {
+                month: {
+                    columnFormat: 'ddd',
+                    titleFormat: 'MMMM YYYY'
+                },
+                week: {
+                    columnFormat: 'ddd ' + dateFormat,
+                    titleFormat: weekFormat
+                },
+                day: {
+                    columnFormat: 'dddd ' + dateFormat,
+                    titleFormat: 'dddd, ' + dateFormat
+                }
+            });
+            options.timeFormat = timeFormat;
+            options.smallTimeFormat = timeFormat;
 
             self = this;
             options.eventAfterAllRender = function() {
