@@ -12,7 +12,7 @@ use Oro\Bundle\CalendarBundle\Tests\Functional\DataFixtures\LoadUserData;
  * Use cases covered:
  * - Create recurring calendar event with invalid fields of recurrence.
  */
-class ValidationErrorTest extends AbstractValidationErrorTestCase
+class ValidationFailedTest extends AbstractValidationErrorTestCase
 {
     protected function setUp()
     {

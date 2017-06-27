@@ -4,7 +4,6 @@ namespace Oro\Bundle\CalendarBundle\Tests\Behat\Element\EventRecurrence;
 
 class Yearly extends AbstractEventRecurrence
 {
-
     public function setValue($value)
     {
         parent::setValue($value);

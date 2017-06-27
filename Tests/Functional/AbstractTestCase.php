@@ -17,7 +17,7 @@ class AbstractTestCase extends WebTestCase
      *
      * @var array
      */
-    static protected $ignoredResponseFields = ['use_hangout'];
+    protected static $ignoredResponseFields = ['use_hangout'];
 
     protected function setUp()
     {
