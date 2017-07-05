@@ -1,6 +1,6 @@
 @ticket-CRM-6425
 @automatically-ticket-tagged
-@fixture-searchCalendarEvent.yml
+@fixture-OroCalendarBundle:searchCalendarEvent.yml
 Feature: Application search
   In order to decrease time for search some common entities
   As a user
