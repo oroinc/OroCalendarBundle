@@ -12,11 +12,11 @@ A records to which the calendar event record associated with.
 
 #### get_subresource
 
-Get full information about records to which the calendar event associated.
+Retrieve records to which the calendar event associated.
 
 #### get_relationship
 
-Get records to which the calendar event associated.
+Retrieve the IDs of records to which the calendar event associated.
 
 #### add_relationship
 
