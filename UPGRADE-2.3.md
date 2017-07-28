@@ -1,4 +1,4 @@
-UPGRADE FROM 1.2 to 1.3
+UPGRADE FROM 2.2 to 2.3
 =======================
 
 CalendarBundle
