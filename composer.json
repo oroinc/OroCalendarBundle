@@ -2,7 +2,7 @@
     "name": "oro/calendar-bundle",
     "type": "symfony-bundle",
     "description": "Oro Calendar Bundle",
-    "homepage": "https://github.com/orocrm/OroCalendarBundle.git",
+    "homepage": "https://github.com/oroinc/OroCalendarBundle.git",
     "keywords": ["Oro", "Calendar"],
     "license": "OSL-3.0",
     "authors": [
