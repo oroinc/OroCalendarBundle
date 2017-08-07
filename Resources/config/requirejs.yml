@@ -22,5 +22,7 @@ config:
         'orocalendar/js/app/plugins/calendar/attendees-plugin': 'bundles/orocalendar/js/app/plugins/calendar/attendees-plugin.js'
         'orocalendar/js/validator/dateearlierthan': 'bundles/orocalendar/js/validator/dateearlierthan.js'
         'oro/select2-attendees-component': 'bundles/orocalendar/js/app/components/select2-attendees-component.js'
+        'orocalendar/js/calendar/menu/change-calendar-color': 'bundles/orocalendar/js/calendar/menu/change-calendar-color.js'
+        'orocalendar/js/calendar/menu/toggle-calendar': 'bundles/orocalendar/js/calendar/menu/toggle-calendar.js'
     appmodules:
         - orocalendar/js/app/modules/calendar-module
