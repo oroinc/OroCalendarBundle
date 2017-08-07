@@ -1,3 +1,4 @@
+@regression
 @ticket-CRM-6425
 @automatically-ticket-tagged
 @fixture-OroCalendarBundle:searchCalendarEvent.yml
