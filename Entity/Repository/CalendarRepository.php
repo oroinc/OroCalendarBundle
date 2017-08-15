@@ -45,7 +45,8 @@ class CalendarRepository extends EntityRepository
 
         return $queryBuilder
             ->andWhere('c.organization = :organization')->setParameter('organization', $organizationId)
-            ->andWhere($queryBuilder->expr()->in('c.owner', $userIds))
+            ->andWhere($queryBuilder->expr()->in('c.owner', ':userIds'))
+            ->setParameter('userIds', $userIds)
             ->getQuery()
             ->getResult();
     }

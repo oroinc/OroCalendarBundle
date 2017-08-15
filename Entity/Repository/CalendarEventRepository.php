@@ -339,7 +339,8 @@ class CalendarEventRepository extends EntityRepository
         $queryResult = $qb
             ->select('event.id AS parent, children.id AS child')
             ->join('event.childEvents', 'children')
-            ->where($qb->expr()->in('children.id', $calendarEventIds))
+            ->where($qb->expr()->in('children.id', ':calendarEventIds'))
+            ->setParameter('calendarEventIds', $calendarEventIds)
             ->getQuery()
             ->getArrayResult();
 
