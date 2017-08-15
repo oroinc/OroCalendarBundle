@@ -53,7 +53,7 @@ class SystemCalendarRepositoryTest extends OrmTestCase
         $this->assertEquals(
             'SELECT sc'
             . ' FROM Oro\Bundle\CalendarBundle\Entity\SystemCalendar sc'
-            . ' WHERE sc.public = :public AND sc.id IN(1, 2)',
+            . ' WHERE sc.public = :public AND sc.id IN(:calendarIds)',
             $qb->getQuery()->getDQL()
         );
         $this->assertFalse($qb->getParameter('public')->getValue());
