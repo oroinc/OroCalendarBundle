@@ -99,7 +99,7 @@ class UserCalendarProviderTest extends \PHPUnit_Framework_TestCase
             ->will($this->returnValue(new Expr()));
         $qb->expects($this->once())
             ->method('where')
-            ->with(new Expr\Func('o.id IN', $calendarIds))
+            ->with(new Expr\Func('o.id IN', [':calendarIds']))
             ->will($this->returnSelf());
 
         $query = $this->getMockBuilder('Doctrine\ORM\AbstractQuery')
