@@ -22,7 +22,7 @@ class SystemCalendarRepository extends EntityRepository
             ->setParameter('public', false);
 
         if ($calendarIds) {
-            $qb->andWhere($qb->expr()->in('sc.id', $calendarIds));
+            $qb->andWhere($qb->expr()->in('sc.id', ':calendarIds'))->setParameter('calendarIds', $calendarIds);
         } else {
             $qb->andWhere('1 = 0');
         }
