@@ -48,7 +48,7 @@ class UserCalendarProvider extends AbstractRecurrenceAwareCalendarProvider
             ->createQueryBuilder('o')
             ->select('o, owner')
             ->innerJoin('o.owner', 'owner');
-        $qb->where($qb->expr()->in('o.id', $calendarIds));
+        $qb->where($qb->expr()->in('o.id', ':calendarIds'))->setParameter('calendarIds', $calendarIds);
 
         $result = [];
 
