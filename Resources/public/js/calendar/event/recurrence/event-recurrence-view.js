@@ -154,8 +154,6 @@ define(function(require) {
             this.switchRepeatView(repeatViewName);
 
             this._isCompletelyRendered = true;
-
-            this.initLayout();
         },
 
         getOriginValuesTemplateData: function() {
