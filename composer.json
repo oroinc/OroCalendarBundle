@@ -13,7 +13,7 @@
     ],
     "require": {
         "php": ">=7.0",
-        "oro/platform": "2.x-dev",
+        "oro/platform": "2.4.*",
         "bower-asset/fullcalendar": "3.4.0"
     },
     "autoload": {
@@ -34,7 +34,7 @@
     "prefer-stable": true,
     "extra": {
         "branch-alias": {
-            "dev-master": "2.x-dev"
+            "dev-master": "2.4.x-dev"
         }
     }
 }
