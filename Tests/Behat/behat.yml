@@ -32,3 +32,18 @@ oro_behat_extension:
     YearlyRecurrence:
       class: Oro\Bundle\CalendarBundle\Tests\Behat\Element\EventRecurrence\Yearly
       selector: 'div[data-name="recurrence-yearly"]'
+    Empty slot:
+      class: Oro\Bundle\TestFrameworkBundle\Behat\Element\Element
+      selector:
+        locator: '//tr[@data-time="10:30:00"]'
+        type: xpath
+    Select Expected Close Date:
+      class: Oro\Bundle\TestFrameworkBundle\Behat\Element\Element
+      selector:
+        locator: '//input[@placeholder="Choose a date"]'
+        type: xpath
+    Today:
+      class: Oro\Bundle\TestFrameworkBundle\Behat\Element\Element
+      selector:
+        locator: '//button[@class="ui-datepicker-current ui-state-default ui-priority-secondary ui-corner-all"]'
+        type: xpath
