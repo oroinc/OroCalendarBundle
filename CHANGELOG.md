@@ -19,11 +19,6 @@ All existing classes were updated to use new services instead of the `SecurityFa
 * service `oro_security.request_authorization_checker`
     - implements `Oro\Bundle\SecurityBundle\Authorization\RequestAuthorizationChecker`
     - the property name in classes that use this service is `requestAuthorizationChecker`
-
-### Deprecated
-* The class `Oro\Bundle\SecurityBundle\SecurityFacade`, services `oro_security.security_facade` and `oro_security.security_facade.link`, and TWIG function `resource_granted` were marked as deprecated. Use services `security.authorization_checker`, `security.token_storage`, `oro_security.token_accessor`, `oro_security.class_authorization_checker`, `oro_security.request_authorization_checker` and TWIG function `is_granted` instead. In controllers use `isGranted` method from `Symfony\Bundle\FrameworkBundle\Controller\Controller`.
-### Removed
-* The usage of deprecated service `security.context` (interface `Symfony\Component\Security\Core\SecurityContextInterface`) was removed.
 ## 2.1.0 (2017-03-30)
 [Show detailed list of changes](file-incompatibilities-2-1-0.md)
 ### Changed
