@@ -2,23 +2,8 @@
 [Show detailed list of changes](file-incompatibilities-2-3-0.md)
 
 ### Changed
-All existing classes were updated to use new services instead of the `SecurityFacade` and `SecurityContext`:
+All existing classes were updated to use new services `security.authorization_checker`, `security.token_storage`, `oro_security.token_accessor`, `oro_security.class_authorization_checker`, `oro_security.request_authorization_checker` instead of the `SecurityFacade` and `SecurityContext`.
 
-* service `security.authorization_checker`
-    - implements `Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface`
-    - the property name in classes that use this service is `authorizationChecker`
-* service `security.token_storage`
-    - implements `Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface`
-    - the property name in classes that use this service is `tokenStorage`
-* service `oro_security.token_accessor`
-    - implements `Oro\Bundle\SecurityBundle\Authentication\TokenAccessorInterface`
-    - the property name in classes that use this service is `tokenAccessor`
-* service `oro_security.class_authorization_checker`
-    - implements `Oro\Bundle\SecurityBundle\Authorization\ClassAuthorizationChecker`
-    - the property name in classes that use this service is `classAuthorizationChecker`
-* service `oro_security.request_authorization_checker`
-    - implements `Oro\Bundle\SecurityBundle\Authorization\RequestAuthorizationChecker`
-    - the property name in classes that use this service is `requestAuthorizationChecker`
 ## 2.1.0 (2017-03-30)
 [Show detailed list of changes](file-incompatibilities-2-1-0.md)
 ### Changed
@@ -30,7 +15,6 @@ merged into "Manage system calendars (and their events)" and no more exists. Now
 events)" is responsible for organization calendar and organization calendar events ACL functionality.
 ### Removed
 - Removed method `Oro\Bundle\CalendarBundle\Controller\AjaxCalendarEventController::changeStatus` and moved its logic to `Oro\Bundle\CalendarBundle\Controller\AjaxCalendarEventController::changeStatusAction`.
-### Removed
 - Removed 'security' annotation for the entity Oro\Bundle\CalendarBundle\Entity\SystemCalendar entity. So it is not ACL 
 protected anymore.
 - Removed the following parameters from DIC:
