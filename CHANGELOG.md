@@ -14,7 +14,7 @@ ACL functionality.
 merged into "Manage system calendars (and their events)" and no more exists. Now "Manage system calendars (and their 
 events)" is responsible for organization calendar and organization calendar events ACL functionality.
 ### Removed
-- Removed method `Oro\Bundle\CalendarBundle\Controller\AjaxCalendarEventController::changeStatus` and moved its logic to `Oro\Bundle\CalendarBundle\Controller\AjaxCalendarEventController::changeStatusAction`.
+- Removed method `AjaxCalendarEventController::changeStatus`<sup>[[?]](https://github.com/oroinc/OroCalendarBundle/tree/2.0.0/Controller/AjaxCalendarEventController.php#L37 "Oro\Bundle\CalendarBundle\Controller\AjaxCalendarEventController::changeStatus")</sup> and moved its logic to `AjaxCalendarEventController::changeStatusAction`<sup>[[?]](https://github.com/oroinc/OroCalendarBundle/tree/2.1.0/Controller/AjaxCalendarEventController.php#L37 "Oro\Bundle\CalendarBundle\Controller\AjaxCalendarEventController::changeStatusAction")</sup>.
 - Removed 'security' annotation for the entity Oro\Bundle\CalendarBundle\Entity\SystemCalendar entity. So it is not ACL 
 protected anymore.
 - Removed the following parameters from DIC:
