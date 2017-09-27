@@ -1,11 +1,11 @@
 ## 2.3.0 (2017-07-28)
-[Show detailed list of changes](file-incompatibilities-2-3-0.md)
+[Show detailed list of changes](incompatibilities-2-3-0.md)
 
 ### Changed
 All existing classes were updated to use new services `security.authorization_checker`, `security.token_storage`, `oro_security.token_accessor`, `oro_security.class_authorization_checker`, `oro_security.request_authorization_checker` instead of the `SecurityFacade` and `SecurityContext`.
 
 ## 2.1.0 (2017-03-30)
-[Show detailed list of changes](file-incompatibilities-2-1-0.md)
+[Show detailed list of changes](incompatibilities-2-1-0.md)
 ### Changed
 - "Manage system calendar events" capability merged with "Manage system calendars" capability into one 
 "Manage system calendars (and their events)" capability which responsible for system calendar and system calendar events 
