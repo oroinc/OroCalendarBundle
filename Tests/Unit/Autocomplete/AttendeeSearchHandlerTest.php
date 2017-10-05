@@ -87,7 +87,6 @@ class AttendeeSearchHandlerTest extends \PHPUnit_Framework_TestCase
             ->will($this->returnValue($this->entityRepository));
 
         $this->attendeeSearchHandler = new AttendeeSearchHandler(
-            new TokenStorage(),
             $translator,
             $this->indexer,
             $activityManager,

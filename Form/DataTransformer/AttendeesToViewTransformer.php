@@ -4,8 +4,6 @@ namespace Oro\Bundle\CalendarBundle\Form\DataTransformer;
 
 use Doctrine\ORM\EntityManager;
 
-use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
-
 use Oro\Bundle\ActivityBundle\Form\DataTransformer\ContextsToViewTransformer;
 use Oro\Bundle\CalendarBundle\Entity\Attendee;
 use Oro\Bundle\CalendarBundle\Manager\AttendeeManager;
@@ -17,15 +15,13 @@ class AttendeesToViewTransformer extends ContextsToViewTransformer
 
     /**
      * @param EntityManager $entityManager
-     * @param TokenStorageInterface $securityTokenStorage
      * @param AttendeeManager $attendeeManager
      */
     public function __construct(
         EntityManager $entityManager,
-        TokenStorageInterface $securityTokenStorage,
         AttendeeManager $attendeeManager
     ) {
-        parent::__construct($entityManager, $securityTokenStorage);
+        parent::__construct($entityManager);
 
         $this->attendeeManager = $attendeeManager;
     }

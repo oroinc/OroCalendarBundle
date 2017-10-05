@@ -98,7 +98,6 @@ services:
         class: '%oro_calendar.attendees_select.transformer.class%'
         arguments:
             - '@doctrine.orm.entity_manager'
-            - '@security.token_storage'
             - '@oro_calendar.attendee_manager'
 
     oro_calendar.attendees_api.form.type:
