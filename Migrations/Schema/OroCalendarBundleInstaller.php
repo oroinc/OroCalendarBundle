@@ -2,10 +2,12 @@
 
 namespace Oro\Bundle\CalendarBundle\Migrations\Schema;
 
+use Doctrine\DBAL\Platforms\AbstractPlatform;
 use Doctrine\DBAL\Schema\Schema;
 
 use Oro\Bundle\EntityBundle\EntityConfig\DatagridScope;
 use Oro\Bundle\CalendarBundle\Entity\Attendee;
+use Oro\Bundle\EntityBundle\ORM\DatabasePlatformInterface;
 use Oro\Bundle\EntityExtendBundle\EntityConfig\ExtendScope;
 use Oro\Bundle\EntityExtendBundle\Migration\Extension\ExtendExtension;
 use Oro\Bundle\EntityExtendBundle\Migration\Extension\ExtendExtensionAwareInterface;
@@ -13,6 +15,7 @@ use Oro\Bundle\CommentBundle\Migration\Extension\CommentExtension;
 use Oro\Bundle\CommentBundle\Migration\Extension\CommentExtensionAwareInterface;
 use Oro\Bundle\ActivityBundle\Migration\Extension\ActivityExtension;
 use Oro\Bundle\ActivityBundle\Migration\Extension\ActivityExtensionAwareInterface;
+use Oro\Bundle\MigrationBundle\Migration\Extension\DatabasePlatformAwareInterface;
 use Oro\Bundle\MigrationBundle\Migration\Installation;
 use Oro\Bundle\MigrationBundle\Migration\QueryBag;
 use Oro\Bundle\CalendarBundle\Migrations\Schema\v1_15\AddCommentAssociation;
@@ -21,8 +24,14 @@ class OroCalendarBundleInstaller implements
     Installation,
     ExtendExtensionAwareInterface,
     CommentExtensionAwareInterface,
-    ActivityExtensionAwareInterface
+    ActivityExtensionAwareInterface,
+    DatabasePlatformAwareInterface
 {
+    /**
+     * @var AbstractPlatform
+     */
+    protected $platform;
+
     /** @var ExtendExtension $extendExtension */
     protected $extendExtension;
 
@@ -31,6 +40,23 @@ class OroCalendarBundleInstaller implements
 
     /** @var ActivityExtension */
     protected $activityExtension;
+
+
+    /**
+     * {@inheritdoc}
+     */
+    public function setDatabasePlatform(AbstractPlatform $platform)
+    {
+        $this->platform = $platform;
+    }
+
+    /**
+     * @return bool
+     */
+    protected function isMysqlPlatform()
+    {
+        return $this->platform->getName() === DatabasePlatformInterface::DATABASE_MYSQL;
+    }
 
     /**
      * {@inheritdoc}
@@ -61,7 +87,7 @@ class OroCalendarBundleInstaller implements
      */
     public function getMigrationVersion()
     {
-        return 'v1_18';
+        return 'v1_19';
     }
 
     /**
@@ -73,7 +99,7 @@ class OroCalendarBundleInstaller implements
         $this->createOroCalendarTable($schema);
         $this->createOroSystemCalendarTable($schema);
         $this->createOroRecurrenceTable($schema);
-        $this->createOroCalendarEventTable($schema);
+        $this->createOroCalendarEventTable($schema, $queries);
         $this->createOroCalendarPropertyTable($schema);
         $this->createAttendeeEntity($schema);
 
@@ -220,11 +246,13 @@ class OroCalendarBundleInstaller implements
      * Create oro_calendar_event table
      *
      * @param Schema $schema
+     * @param QueryBag $queries
      */
-    protected function createOroCalendarEventTable(Schema $schema)
+    protected function createOroCalendarEventTable(Schema $schema, QueryBag $queries)
     {
         $table = $schema->createTable('oro_calendar_event');
         $table->addColumn('id', 'integer', ['autoincrement' => true]);
+        $table->addColumn('uid', 'text', ['notnull' => false]);
         $table->addColumn('calendar_id', 'integer', ['notnull' => false]);
         $table->addColumn('system_calendar_id', 'integer', ['notnull' => false]);
         $table->addColumn('title', 'string', ['length' => 255]);
@@ -244,7 +272,6 @@ class OroCalendarBundleInstaller implements
 
         $table->addIndex(['related_attendee_id']);
         $table->addIndex(['calendar_id', 'start_at', 'end_at'], 'oro_calendar_event_idx', []);
-        $table->addIndex(['calendar_id'], 'idx_2ddc40dda40a2c8', []);
         $table->addIndex(['system_calendar_id', 'start_at', 'end_at'], 'oro_sys_calendar_event_idx', []);
         $table->addIndex(['system_calendar_id'], 'IDX_2DDC40DD55F0F9D0', []);
         $table->addIndex(['updated_at'], 'oro_calendar_event_up_idx', []);
@@ -253,6 +280,15 @@ class OroCalendarBundleInstaller implements
         $table->addUniqueIndex(['recurrence_id'], 'UNIQ_2DDC40DD2C414CE8');
 
         $table->setPrimaryKey(['id']);
+        if ($this->isMysqlPlatform()) {
+            $queries->addPostQuery(
+                'ALTER TABLE `oro_calendar_event` ADD INDEX `oro_calendar_event_uid_idx` (calendar_id, uid(50))'
+            );
+        } else {
+            $queries->addPostQuery(
+                'CREATE INDEX oro_calendar_event_uid_idx ON oro_calendar_event(calendar_id, uid);'
+            );
+        }
     }
 
     /**
