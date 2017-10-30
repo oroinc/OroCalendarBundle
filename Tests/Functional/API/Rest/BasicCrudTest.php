@@ -90,6 +90,7 @@ class BasicCrudTest extends AbstractTestCase
         $this->assertResponseEquals(
             [
                 'id'                       => $newEvent->getId(),
+                'uid'                      => $newEvent->getUid(),
                 'calendar'                 => $this->getReference('oro_calendar:calendar:foo_user_1')->getId(),
                 'parentEventId'            => null,
                 'title'                    => "Regular event",
@@ -175,6 +176,7 @@ CONTENT;
         $this->assertResponseEquals(
             [
                 'id'                       => $newEvent->getId(),
+                'uid'                      => $newEvent->getUid(),
                 'calendar'                 => $this->getReference('oro_calendar:calendar:foo_user_1')->getId(),
                 'parentEventId'            => null,
                 'title'                    => "Regular event",

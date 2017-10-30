@@ -438,6 +438,7 @@ class CalendarEventRepositoryTest extends OrmTestCase
     {
         $baseFields = [
             'e.id',
+            'e.uid',
             'e.title',
             'e.description',
             'e.start',

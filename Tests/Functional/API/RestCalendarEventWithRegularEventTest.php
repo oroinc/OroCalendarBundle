@@ -176,6 +176,26 @@ class RestCalendarEventWithRegularEventTest extends AbstractCalendarEventTest
         $this->assertCount(2, $result);
     }
 
+    public function testGetListOfEventsByUidFilter()
+    {
+        $request = array(
+            'calendar' => self::DEFAULT_USER_CALENDAR_ID,
+            'page' => 1,
+            'limit' => 100,
+            'subordinate' => false,
+        );
+        $uid = 'b139fecc-41cf-478d-8f8e-b6122f491ace';
+        $this->client->request(
+            'GET',
+            $this->getUrl('oro_api_get_calendarevents', $request)
+            . '&uid=' . urlencode($uid)
+        );
+
+        $result = $this->getJsonResponseContent($this->client->getResponse(), 200);
+        $this->assertCount(1, $result);
+        $this->assertEquals($uid, reset($result)['uid']);
+    }
+
     public function testGetByCalendar()
     {
         $id = $this->getReference('eventInRangeWithCancelledException')->getId();

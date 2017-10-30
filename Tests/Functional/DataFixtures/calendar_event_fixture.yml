@@ -2,6 +2,7 @@
 # end: '+5 day'
 regularEventNotInRange:
     title: 'Regular event not in start:end range'
+    uid: 'b139fecc-41cf-478d-8f8e-b6122f491ace'
     start: '-7 day'
     end: '-7 day + 1 hour'
     allDay: false

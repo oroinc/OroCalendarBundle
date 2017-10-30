@@ -97,6 +97,7 @@ class CalendarEventRepository extends EntityRepository
     {
         return [
             'e.id',
+            'e.uid',
             'e.title',
             'e.description',
             'e.start',

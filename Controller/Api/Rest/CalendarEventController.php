@@ -99,6 +99,12 @@ class CalendarEventController extends RestController implements ClassResourceInt
      *     nullable=true,
      *     description="Filter events associated with recurring event. Recurring event will be returned as well."
      * )
+     * @QueryParam(
+     *      name="uid",
+     *      requirements=".+",
+     *      nullable=true,
+     *      description="iCalendar UID field (RFC5545). In most cases UUID format is used (RFC4122)."
+     * )
      * @ApiDoc(
      *      description="Get calendar events",
      *      resource=true
@@ -128,7 +134,7 @@ class CalendarEventController extends RestController implements ClassResourceInt
         } elseif ($request->get('page') && $request->get('limit')) {
             $dateParamFilter  = new HttpDateTimeParameterFilter();
             $filterParameters = ['createdAt' => $dateParamFilter, 'updatedAt' => $dateParamFilter];
-            $parameters = ['createdAt', 'updatedAt'];
+            $parameters = ['createdAt', 'updatedAt', 'uid'];
 
             $recurringEventId = $request->get('recurringEventId');
 
