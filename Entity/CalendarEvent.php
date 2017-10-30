@@ -14,6 +14,7 @@ use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\Config;
 use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\ConfigField;
 use Oro\Bundle\ReminderBundle\Entity\RemindableInterface;
 use Oro\Bundle\ReminderBundle\Model\ReminderData;
+use Oro\Bundle\SecurityBundle\Tools\UUIDGenerator;
 use Oro\Bundle\UserBundle\Entity\User;
 
 /**
@@ -377,6 +378,18 @@ class CalendarEvent extends ExtendCalendarEvent implements RemindableInterface, 
         $this->uid = $uid;
 
         return $this;
+    }
+
+    /**
+     * Pre persist event listener
+     *
+     * @ORM\PrePersist
+     */
+    public function prePersist()
+    {
+        if ($this->getUid() === null) {
+            $this->setUid(UUIDGenerator::v4());
+        }
     }
 
     /**

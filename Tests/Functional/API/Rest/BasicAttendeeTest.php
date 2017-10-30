@@ -65,6 +65,7 @@ class BasicAttendeeTest extends AbstractTestCase
         $this->assertResponseEquals(
             [
                 'id'                       => $response['id'],
+                'uid'                      => $response['uid'],
                 'invitationStatus'         => Attendee::STATUS_NONE,
                 'editableInvitationStatus' => false,
             ],
@@ -172,6 +173,7 @@ class BasicAttendeeTest extends AbstractTestCase
         $this->assertResponseEquals(
             [
                 'id'                       => $response['id'],
+                'uid'                      => $response['uid'],
                 'invitationStatus'         => Attendee::STATUS_NONE,
                 'editableInvitationStatus' => false,
             ],
@@ -279,6 +281,7 @@ class BasicAttendeeTest extends AbstractTestCase
         $this->assertResponseEquals(
             [
                 'id'                       => $response['id'],
+                'uid'                      => $response['uid'],
                 'invitationStatus'         => Attendee::STATUS_NONE,
                 'editableInvitationStatus' => false,
             ],
@@ -387,6 +390,7 @@ class BasicAttendeeTest extends AbstractTestCase
         $this->assertResponseEquals(
             [
                 'id'                       => $response['id'],
+                'uid'                      => $response['uid'],
                 'invitationStatus'         => Attendee::STATUS_NONE,
                 'editableInvitationStatus' => false,
             ],
@@ -427,6 +431,7 @@ class BasicAttendeeTest extends AbstractTestCase
         );
         $this->assertResponseEquals(
             [
+                'uid'                      => $response['uid'],
                 'invitationStatus'         => Attendee::STATUS_NONE,
                 'editableInvitationStatus' => false,
             ],
@@ -554,6 +559,7 @@ class BasicAttendeeTest extends AbstractTestCase
         $this->assertResponseEquals(
             [
                 'id'                       => $response['id'],
+                'uid'                      => $response['uid'],
                 'invitationStatus'         => Attendee::STATUS_NONE,
                 'editableInvitationStatus' => false,
             ],
@@ -581,6 +587,7 @@ class BasicAttendeeTest extends AbstractTestCase
         );
         $this->assertResponseEquals(
             [
+                'uid'                      => $response['uid'],
                 'invitationStatus'         => Attendee::STATUS_NONE,
                 'editableInvitationStatus' => false,
             ],

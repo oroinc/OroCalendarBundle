@@ -19,6 +19,7 @@ class RestCalendarEventWithRegularEventTest extends AbstractCalendarEventTest
 
         $this->assertNotEmpty($result);
         $this->assertTrue(isset($result['id']));
+        $this->assertNotEmpty($result['uid']);
         $event = $this->getContainer()->get('doctrine')->getRepository('OroCalendarBundle:CalendarEvent')
             ->find($result['id']);
         $this->assertNotNull($event);
