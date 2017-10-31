@@ -387,8 +387,18 @@ class CalendarEvent extends ExtendCalendarEvent implements RemindableInterface, 
      */
     public function prePersist()
     {
+        if ($this->getRecurringEvent() !== null
+            && $this->getRecurringEvent()->getUid() !== null
+        ) {
+            $this->setUid($this->getRecurringEvent()->getUid());
+        }
+
         if ($this->getUid() === null) {
             $this->setUid(UUIDGenerator::v4());
+        }
+
+        if ($this->getRecurringEvent() !== null && $this->getRecurringEvent()->getUid() === null) {
+            $this->getRecurringEvent()->setUid($this->getUid());
         }
     }
 

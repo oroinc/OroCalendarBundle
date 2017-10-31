@@ -161,6 +161,7 @@ class RecurringEventDeleteTest extends AbstractTestCase
             ]
         );
         $this->assertJsonResponseStatusCodeEquals($this->client->getResponse(), 201);
+        $this->assertEquals($recurringEvent->getUid(), json_decode($this->client->getResponse()->getContent())->uid);
 
         // Step 4. Create cancelled exception.
         $exceptionData = [
