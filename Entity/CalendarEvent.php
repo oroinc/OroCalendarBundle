@@ -381,28 +381,6 @@ class CalendarEvent extends ExtendCalendarEvent implements RemindableInterface, 
     }
 
     /**
-     * Pre persist event listener
-     *
-     * @ORM\PrePersist
-     */
-    public function prePersist()
-    {
-        if ($this->getRecurringEvent() !== null
-            && $this->getRecurringEvent()->getUid() !== null
-        ) {
-            $this->setUid($this->getRecurringEvent()->getUid());
-        }
-
-        if ($this->getUid() === null) {
-            $this->setUid(UUIDGenerator::v4());
-        }
-
-        if ($this->getRecurringEvent() !== null && $this->getRecurringEvent()->getUid() === null) {
-            $this->getRecurringEvent()->setUid($this->getUid());
-        }
-    }
-
-    /**
      * Gets UID of a calendar this event belongs to
      * The calendar UID is a string includes a calendar alias and id in the following format: {alias}_{id}
      *

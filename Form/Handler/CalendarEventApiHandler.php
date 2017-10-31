@@ -4,23 +4,9 @@ namespace Oro\Bundle\CalendarBundle\Form\Handler;
 
 use Oro\Bundle\CalendarBundle\Entity\CalendarEvent;
 use Oro\Bundle\CalendarBundle\Manager\CalendarEvent\NotificationManager;
-use Oro\Bundle\CalendarBundle\Util\CalendarEventUidSpreader;
 
 class CalendarEventApiHandler extends AbstractCalendarEventHandler
 {
-    /**
-     * @var CalendarEventUidSpreader
-     */
-    private $spreader;
-
-    /**
-     * @param CalendarEventUidSpreader $spreader
-     */
-    public function setCalendarEventUidSpreader(CalendarEventUidSpreader $spreader)
-    {
-        $this->spreader = $spreader;
-    }
-
     /**
      * Process form
      *
@@ -63,18 +49,6 @@ class CalendarEventApiHandler extends AbstractCalendarEventHandler
         }
 
         return false;
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    protected function onSuccess(CalendarEvent $entity, CalendarEvent $originalEntity)
-    {
-        if ($this->spreader !== null) {
-            $this->spreader->process($entity);
-        }
-
-        parent::onSuccess($entity, $originalEntity);
     }
 
     /**

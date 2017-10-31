@@ -15,9 +15,7 @@ use Oro\Bundle\CalendarBundle\Form\Handler\CalendarEventApiHandler;
 use Oro\Bundle\CalendarBundle\Manager\CalendarEventManager;
 use Oro\Bundle\CalendarBundle\Manager\CalendarEvent\NotificationManager;
 use Oro\Bundle\CalendarBundle\Tests\Unit\ReflectionUtil;
-use Oro\Bundle\CalendarBundle\Util\CalendarEventUidSpreader;
 use Oro\Bundle\OrganizationBundle\Entity\Organization;
-use Oro\Bundle\SecurityBundle\Authentication\TokenAccessorInterface;
 use Oro\Bundle\UserBundle\Entity\User;
 
 /**
@@ -190,35 +188,6 @@ class CalendarEventApiHandlerTest extends \PHPUnit_Framework_TestCase
             ->method('onUpdate')
             ->with($this->entity, clone $this->entity, NotificationManager::ALL_NOTIFICATIONS_STRATEGY);
 
-        $this->handler->process($this->entity);
-    }
-
-    public function testProcessPutWithSpreadingUid()
-    {
-        $this->request->setMethod('PUT');
-
-        ReflectionUtil::setId($this->entity, 123);
-
-        $this->setExpectedFormValues(['notifyAttendees' => NotificationManager::ALL_NOTIFICATIONS_STRATEGY]);
-
-        $this->calendarEventManager
-            ->expects($this->once())
-            ->method('onEventUpdate')
-            ->with($this->entity, clone $this->entity, $this->organization, false);
-
-        $this->notificationManager
-            ->expects($this->once())
-            ->method('onUpdate')
-            ->with($this->entity, clone $this->entity, NotificationManager::ALL_NOTIFICATIONS_STRATEGY);
-
-        /** @var CalendarEventUidSpreader|\PHPUnit_Framework_MockObject_MockObject $spreader */
-        $spreader = $this->getMockBuilder(CalendarEventUidSpreader::class)
-            ->getMock();
-        $spreader->expects($this->once())
-            ->method('process')
-            ->with($this->entity);
-
-        $this->handler->setCalendarEventUidSpreader($spreader);
         $this->handler->process($this->entity);
     }
 

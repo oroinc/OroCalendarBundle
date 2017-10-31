@@ -84,7 +84,6 @@ services:
         parent: 'oro_calendar.calendar_event.form.handler.abstract'
         calls:
             - ['setForm', ['@oro_calendar.calendar_event.form.api']]
-            - ['setCalendarEventUidSpreader', ['@oro_calendar.util.calendar_event_uid_spreader']]
 
     oro_calendar.attendees_select.form.type:
         class: '%oro_calendar.attendees_select.form.type.class%'
@@ -188,6 +187,3 @@ services:
             - '@oro_calendar.model.recurrence'
         tags:
             - { name: form.type, alias: oro_calendar_event_recurrence }
-
-    oro_calendar.util.calendar_event_uid_spreader:
-        class: Oro\Bundle\CalendarBundle\Util\CalendarEventUidSpreader
