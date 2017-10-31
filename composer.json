@@ -14,8 +14,7 @@
     "require": {
         "php": ">=7.0",
         "oro/platform": "2.x-dev",
-        "bower-asset/fullcalendar": "3.4.0",
-        "ramsey/uuid": "3.7.x"
+        "bower-asset/fullcalendar": "3.4.0"
     },
     "autoload": {
         "psr-4": { "Oro\\Bundle\\CalendarBundle\\": "" },
