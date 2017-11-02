@@ -39,6 +39,7 @@ use Oro\Bundle\CalendarBundle\Exception\NotUserCalendarEvent;
  */
 class CalendarEventController extends RestController implements ClassResourceInterface
 {
+    // @codingStandardsIgnoreStart
     /**
      * Get calendar events.
      *
@@ -97,16 +98,16 @@ class CalendarEventController extends RestController implements ClassResourceInt
      * @QueryParam(
      *     name="recurringEventId", requirements="\d+",
      *     nullable=true,
-     *     description="Filter events associated with recurring event. Recurring event will be returned as well."
+     *     description="Filter events associated with recurring event. Recurring event will be returned as well. Does't work with start/end filters."
      * )
      * @QueryParam(
      *      name="uid",
      *      requirements=".+",
      *      nullable=true,
-     *      description="iCalendar UID field (RFC5545). In most cases UUID format is used (RFC4122)."
+     *      description="iCalendar UID field (RFC5545). In most cases UUID format is used (RFC4122). Does't work with start/end filters."
      * )
      * @ApiDoc(
-     *      description="Get calendar events",
+     *      description="Get calendar events. To get data, use either page/limit or start/end filters.",
      *      resource=true
      * )
      * @AclAncestor("oro_calendar_event_view")
@@ -115,6 +116,7 @@ class CalendarEventController extends RestController implements ClassResourceInt
      *
      * @return Response
      */
+    // @codingStandardsIgnoreEnd
     public function cgetAction(Request $request)
     {
         $calendarId   = (int)$request->get('calendar');

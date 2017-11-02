@@ -3,8 +3,10 @@
 namespace Oro\Bundle\CalendarBundle\Tests\Unit\EventListener;
 
 use Doctrine\Common\Persistence\ObjectManager;
+use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\Event\LifecycleEventArgs;
 use Doctrine\ORM\Event\PreUpdateEventArgs;
+use Doctrine\ORM\UnitOfWork;
 
 use Oro\Bundle\CalendarBundle\Entity\CalendarEvent;
 use Oro\Bundle\CalendarBundle\EventListener\CalendarEventEntityListener;
@@ -73,6 +75,50 @@ class CalendarEventEntityListenerTest extends \PHPUnit_Framework_TestCase
         $this->assertSame(self::UID, $child3->getUid());
     }
 
+    public function testPreUpdateSetChildUidToParent()
+    {
+        $eventMock = $this->getPreUpdateEvent(true, null, '123');
+        $unitOfWork = $eventMock->getEntityManager()->getUnitOfWork();
+        $unitOfWork->expects($this->atLeastOnce())
+            ->method('scheduleExtraUpdate');
+
+        $child = new CalendarEvent();
+        $child->setUid(self::UID);
+
+        $parent = new CalendarEvent();
+        $parent->addChildEvent($child);
+
+        $this->listener->preUpdate($child, $eventMock);
+
+        $this->assertSame(self::UID, $parent->getUid());
+        $this->assertSame(self::UID, $child->getUid());
+    }
+
+    public function testPreUpdateSetChildUidToParentAndAllItsChildren()
+    {
+        $eventMock = $this->getPreUpdateEvent(true, null, '123');
+        $unitOfWork = $eventMock->getEntityManager()->getUnitOfWork();
+        $unitOfWork->expects($this->atLeastOnce())
+            ->method('scheduleExtraUpdate');
+
+        $child1 = new CalendarEvent();
+        $child1->setUid(self::UID);
+        $child2 = new CalendarEvent();
+        $child3 = new CalendarEvent();
+
+        $parent = new CalendarEvent();
+        $parent->addChildEvent($child1)
+            ->addChildEvent($child2)
+            ->addChildEvent($child3);
+
+        $this->listener->preUpdate($child1, $eventMock);
+
+        $this->assertSame(self::UID, $parent->getUid());
+        $this->assertSame(self::UID, $child1->getUid());
+        $this->assertSame(self::UID, $child2->getUid());
+        $this->assertSame(self::UID, $child3->getUid());
+    }
+
     public function testPreUpdateAllowsUpdateWhenUidIsNotChangedOrNullOrTheSame()
     {
         $this->listener->preUpdate(new CalendarEvent(), $this->getPreUpdateEvent(false));
@@ -104,6 +150,15 @@ class CalendarEventEntityListenerTest extends \PHPUnit_Framework_TestCase
     private function getPreUpdateEvent(bool $hasUidFieldChanged, $oldValue = null, $newValue = null): PreUpdateEventArgs
     {
         $mock = $this->createMock(PreUpdateEventArgs::class);
+
+        $em = $this->createMock(EntityManager::class);
+        $em->expects($this->any())
+            ->method('getUnitOfWork')
+            ->willReturn($this->createMock(UnitOfWork::class));
+
+        $mock->expects($this->any())
+            ->method('getEntityManager')
+            ->willReturn($em);
 
         $mock->expects($this->any())
             ->method('hasChangedField')

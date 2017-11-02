@@ -31,13 +31,8 @@ class CalendarEventEntityListener
             $calendarEvent->setUid(UUIDGenerator::v4());
         }
 
-        // if calendar event is an recurring event exception and its base recurring event does not have UID,
-        // set the exception event's UID to the main recurring one
-        if ($calendarEvent->getRecurringEvent() !== null && $calendarEvent->getRecurringEvent()->getUid() === null) {
-            $calendarEvent->getRecurringEvent()->setUid($calendarEvent->getUid());
-        }
-
-        $this->updateParentAfterGenerate($calendarEvent);
+        $this->updateRecurrentUid($calendarEvent);
+        $this->updateParentUid($calendarEvent);
     }
 
     /** @ORM\PreUpdate() */
@@ -54,14 +49,22 @@ class CalendarEventEntityListener
                 $event->getOldValue('uid')
             ));
         }
+
+        $this->updateRecurrentUid($calendarEvent, $event);
+        $this->updateParentUid($calendarEvent, $event);
     }
 
     /**
-     * @param CalendarEvent $calendarEvent
+     * @param CalendarEvent           $calendarEvent
+     * @param LifecycleEventArgs|null $event
      */
-    private function updateParentAfterGenerate(CalendarEvent $calendarEvent)
+    private function updateParentUid(CalendarEvent $calendarEvent, LifecycleEventArgs $event = null)
     {
         if ($calendarEvent->getParent() !== null && $calendarEvent->getParent()->getUid() === null) {
+            if ($event) {
+                $this->scheduleExtraUpdate($calendarEvent->getParent(), $calendarEvent->getUid(), $event);
+            }
+
             $calendarEvent->getParent()->setUid($calendarEvent->getUid());
 
             // if calendar event has a parent, assign it to $calendarEvent variable to properly iterate over children
@@ -69,7 +72,45 @@ class CalendarEventEntityListener
         }
 
         foreach ($calendarEvent->getChildEvents() as $childEvent) {
+            if ($event) {
+                $this->scheduleExtraUpdate($childEvent, $calendarEvent->getUid(), $event);
+            }
             $childEvent->setUid($calendarEvent->getUid());
         }
+    }
+
+    /**
+     * @param CalendarEvent           $calendarEvent
+     * @param LifecycleEventArgs|null $event
+     */
+    private function updateRecurrentUid(CalendarEvent $calendarEvent, LifecycleEventArgs $event = null)
+    {
+        // if calendar event is an recurring event exception and its base recurring event does not have UID,
+        // set the exception event's UID to the main recurring one
+        if ($calendarEvent->getRecurringEvent() !== null && $calendarEvent->getRecurringEvent()->getUid() === null) {
+            if ($event) {
+                $this->scheduleExtraUpdate($calendarEvent->getRecurringEvent(), $calendarEvent->getUid(), $event);
+            }
+            $calendarEvent->getRecurringEvent()->setUid($calendarEvent->getUid());
+        }
+    }
+
+    /**
+     * Schedule extra update is needed, because of we are using preUpdate event which is triggered after UoW
+     *  calculate all change sets
+     *
+     * @param CalendarEvent      $calendarEvent
+     * @param string             $newUid
+     * @param LifecycleEventArgs $doctrineEvent
+     */
+    private function scheduleExtraUpdate(
+        CalendarEvent $calendarEvent,
+        string $newUid,
+        LifecycleEventArgs $doctrineEvent
+    ) {
+        $doctrineEvent->getEntityManager()->getUnitOfWork()->scheduleExtraUpdate(
+            $calendarEvent,
+            ['uid' => [$calendarEvent->getUid(), $newUid]]
+        );
     }
 }
