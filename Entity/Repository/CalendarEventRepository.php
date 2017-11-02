@@ -66,10 +66,10 @@ class CalendarEventRepository extends EntityRepository
 
     /**
      * @param CalendarEvent $event
-     * @param int $calendarId
+     * @param Calendar|int $calendarId
      * @return CalendarEvent[]
      */
-    public function findDuplicatedEvent(CalendarEvent $event, int $calendarId)
+    public function findDuplicatedEvent(CalendarEvent $event, $calendarId)
     {
         $qb = $this->createQueryBuilder('ce');
         $qb
