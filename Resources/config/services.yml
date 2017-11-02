@@ -458,6 +458,20 @@ services:
         tags:
             - { name: validator.constraint_validator, alias: oro_calendar.recurring_calendar_event_exception_validator }
 
+    oro_calendar.validator.unique_uid:
+        class: Oro\Bundle\CalendarBundle\Validator\Constraints\UniqueUidValidator
+        arguments:
+            - '@doctrine'
+        tags:
+            - { name: validator.constraint_validator}
+
+    oro_calendar.validator.unchangeable_uid:
+        class: Oro\Bundle\CalendarBundle\Validator\Constraints\UnchangeableUidValidator
+        arguments:
+            - '@doctrine'
+        tags:
+            - { name: validator.constraint_validator}
+
     oro_calendar.datagrid.mass_action.handler.delete:
         class: Oro\Bundle\CalendarBundle\Datagrid\MassAction\DeleteMassActionHandler
         parent: oro_datagrid.extension.mass_action.handler.delete
