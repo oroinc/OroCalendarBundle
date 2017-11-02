@@ -150,6 +150,7 @@ class CalendarEventApiTypeTest extends TypeTestCase
     public function testSubmitValidData()
     {
         $formData = [
+            'uid'             => 'MOCK-UID-11111',
             'calendar'        => 1,
             'title'           => 'testTitle',
             'description'     => 'testDescription',
@@ -186,6 +187,7 @@ class CalendarEventApiTypeTest extends TypeTestCase
         /** @var CalendarEvent $result */
         $result = $form->getData();
         $this->assertInstanceOf('Oro\Bundle\CalendarBundle\Entity\CalendarEvent', $result);
+        $this->assertEquals('MOCK-UID-11111', $result->getUid());
         $this->assertEquals('testTitle', $result->getTitle());
         $this->assertEquals('testDescription', $result->getDescription());
         $this->assertDateTimeEquals(new \DateTime('2013-10-05T13:00:00Z'), $result->getStart());
@@ -242,6 +244,7 @@ class CalendarEventApiTypeTest extends TypeTestCase
         /** @var CalendarEvent $result */
         $result = $form->getData();
         $this->assertInstanceOf('Oro\Bundle\CalendarBundle\Entity\CalendarEvent', $result);
+        $this->assertNull($result->getUid());
         $this->assertEquals('testTitle', $result->getTitle());
         $this->assertEquals('testDescription', $result->getDescription());
         $this->assertDateTimeEquals(new \DateTime('2013-10-05T13:00:00Z'), $result->getStart());

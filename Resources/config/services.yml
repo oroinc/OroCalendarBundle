@@ -60,6 +60,12 @@ services:
             - { name: doctrine.event_listener, event: onFlush }
             - { name: doctrine.event_listener, event: postFlush }
 
+    oro_calendar.entity_listener.calendar_event:
+        class: Oro\Bundle\CalendarBundle\EventListener\CalendarEventEntityListener
+        tags:
+            - { name: doctrine.orm.entity_listener, entity_manager: default, entity: '%oro_calendar.calendar_event.entity.class%', event: prePersist}
+            - { name: doctrine.orm.entity_listener, entity_manager: default, entity: '%oro_calendar.calendar_event.entity.class%', event: preUpdate}
+
     oro_calendar.listener.calendar_event_attendees:
         class: Oro\Bundle\CalendarBundle\EventListener\CalendarEventAttendeesListener
         tags:
@@ -451,6 +457,20 @@ services:
             - '@oro_calendar.calendar_event_manager'
         tags:
             - { name: validator.constraint_validator, alias: oro_calendar.recurring_calendar_event_exception_validator }
+
+    oro_calendar.validator.unique_uid:
+        class: Oro\Bundle\CalendarBundle\Validator\Constraints\UniqueUidValidator
+        arguments:
+            - '@doctrine'
+        tags:
+            - { name: validator.constraint_validator}
+
+    oro_calendar.validator.unchangeable_uid:
+        class: Oro\Bundle\CalendarBundle\Validator\Constraints\UnchangeableUidValidator
+        arguments:
+            - '@doctrine'
+        tags:
+            - { name: validator.constraint_validator}
 
     oro_calendar.datagrid.mass_action.handler.delete:
         class: Oro\Bundle\CalendarBundle\Datagrid\MassAction\DeleteMassActionHandler

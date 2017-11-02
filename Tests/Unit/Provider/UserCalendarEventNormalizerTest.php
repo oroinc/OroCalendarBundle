@@ -140,6 +140,7 @@ class UserCalendarEventNormalizerTest extends \PHPUnit_Framework_TestCase
                     [
                         'calendar' => 123,
                         'id' => 1,
+                        'uid' => 'b139fecc-41cf-478d-8f8e-b6122f491ace',
                         'title' => 'test',
                         'description' => null,
                         'start' => $startDate,
@@ -159,6 +160,7 @@ class UserCalendarEventNormalizerTest extends \PHPUnit_Framework_TestCase
                     [
                         'calendar' => 123,
                         'id' => 1,
+                        'uid' => 'b139fecc-41cf-478d-8f8e-b6122f491ace',
                         'title' => 'test',
                         'description' => null,
                         'start' => $startDate->format('c'),
@@ -181,6 +183,7 @@ class UserCalendarEventNormalizerTest extends \PHPUnit_Framework_TestCase
                     [
                         'calendar' => 123,
                         'id' => 1,
+                        'uid' => 'b139fecc-41cf-478d-8f8e-b6122f491ace',
                         'title' => 'test',
                         'description' => null,
                         'start' => $startDate,
@@ -208,6 +211,7 @@ class UserCalendarEventNormalizerTest extends \PHPUnit_Framework_TestCase
                     [
                         'calendar' => 123,
                         'id' => 1,
+                        'uid' => 'b139fecc-41cf-478d-8f8e-b6122f491ace',
                         'title' => 'test',
                         'description' => null,
                         'start' => $startDate->format('c'),
@@ -236,6 +240,7 @@ class UserCalendarEventNormalizerTest extends \PHPUnit_Framework_TestCase
                     [
                         'calendar' => 123,
                         'id' => 1,
+                        'uid' => null,
                         'title' => 'test',
                         'description' => null,
                         'start' => $startDate,
@@ -263,6 +268,7 @@ class UserCalendarEventNormalizerTest extends \PHPUnit_Framework_TestCase
                     [
                         'calendar' => 123,
                         'id' => 1,
+                        'uid' => null,
                         'title' => 'test',
                         'description' => null,
                         'start' => $startDate->format('c'),
@@ -349,6 +355,7 @@ class UserCalendarEventNormalizerTest extends \PHPUnit_Framework_TestCase
                 'event' => [
                     'calendar' => 123,
                     'id' => 1,
+                    'uid' => 'b139fecc-41cf-478d-8f8e-b6122f491ace',
                     'title' => 'test',
                     'description' => null,
                     'start' => $startDate,
@@ -369,6 +376,7 @@ class UserCalendarEventNormalizerTest extends \PHPUnit_Framework_TestCase
                 'expected' => [
                     'calendar' => 123,
                     'id' => 1,
+                    'uid' => 'b139fecc-41cf-478d-8f8e-b6122f491ace',
                     'title' => 'test',
                     'description' => null,
                     'start' => $startDate->format('c'),
@@ -392,6 +400,7 @@ class UserCalendarEventNormalizerTest extends \PHPUnit_Framework_TestCase
                 'event' => [
                     'calendar' => 123,
                     'id' => 1,
+                    'uid' => null,
                     'title' => 'test',
                     'description' => null,
                     'start' => $startDate,
@@ -418,6 +427,7 @@ class UserCalendarEventNormalizerTest extends \PHPUnit_Framework_TestCase
                 'expected' => [
                     'calendar' => 123,
                     'id' => 1,
+                    'uid' => null,
                     'title' => 'test',
                     'description' => null,
                     'start' => $startDate->format('c'),
@@ -451,6 +461,7 @@ class UserCalendarEventNormalizerTest extends \PHPUnit_Framework_TestCase
                 'event' => [
                     'calendar' => 123,
                     'id' => 1,
+                    'uid' => 'b139fecc-41cf-478d-8f8e-b6122f491ace',
                     'title' => 'test',
                     'start' => $startDate,
                     'end' => $endDate,
@@ -466,6 +477,7 @@ class UserCalendarEventNormalizerTest extends \PHPUnit_Framework_TestCase
                 'expected' => [
                     'calendar' => 123,
                     'id' => 1,
+                    'uid' => 'b139fecc-41cf-478d-8f8e-b6122f491ace',
                     'title' => 'test',
                     'description' => null,
                     'start' => $startDate->format('c'),
@@ -491,6 +503,7 @@ class UserCalendarEventNormalizerTest extends \PHPUnit_Framework_TestCase
     /**
      * @SuppressWarnings(PHPMD.ExcessiveMethodLength)
      * @SuppressWarnings(PHPMD.NPathComplexity)
+     * @SuppressWarnings(PHPMD.CyclomaticComplexity)
      *
      * @param array $data
      *
@@ -504,6 +517,9 @@ class UserCalendarEventNormalizerTest extends \PHPUnit_Framework_TestCase
             $reflection = new \ReflectionProperty(get_class($event), 'id');
             $reflection->setAccessible(true);
             $reflection->setValue($event, $data['id']);
+        }
+        if (!empty($data['uid'])) {
+            $event->setUid($data['uid']);
         }
         if (!empty($data['title'])) {
             $event->setTitle($data['title']);

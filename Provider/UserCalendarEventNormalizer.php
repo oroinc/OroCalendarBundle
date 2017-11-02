@@ -62,6 +62,7 @@ class UserCalendarEventNormalizer extends AbstractCalendarEventNormalizer
     {
         $item = [
             'id'                    => $event->getId(),
+            'uid'                   => $event->getUid(),
             'title'                 => $event->getTitle(),
             'description'           => $event->getDescription(),
             'start'                 => $event->getStart(),

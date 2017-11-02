@@ -103,6 +103,7 @@ class ChangeCalendarEventInvitationStatusTest extends AbstractTestCase
         $this->assertResponseEquals(
             [
                 'id' => $response['id'],
+                'uid' => $response['uid'],
                 'invitationStatus' => Attendee::STATUS_NONE,
                 'editableInvitationStatus' => true
             ],
@@ -141,6 +142,7 @@ class ChangeCalendarEventInvitationStatusTest extends AbstractTestCase
             [
                 [
                     'id' => $newEvent->getId(),
+                    'uid' => $newEvent->getUid(),
                     'calendar' => $this->getReference('oro_calendar:calendar:foo_user_1')->getId(),
                     'calendarAlias' => 'user',
                     'parentEventId' => null,
@@ -188,6 +190,7 @@ class ChangeCalendarEventInvitationStatusTest extends AbstractTestCase
                 ],
                 [
                     'id' => $newChildEvent->getId(),
+                    'uid' => $newChildEvent->getUid(),
                     'calendar' => $this->getReference('oro_calendar:calendar:foo_user_2')->getId(),
                     'calendarAlias' => 'user',
                     'parentEventId' => $newEvent->getId(),
