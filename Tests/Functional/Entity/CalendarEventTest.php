@@ -68,6 +68,7 @@ class CalendarEventTest extends WebTestCase
         $event->setTitle('event title');
         $event->setStart(new \DateTime());
         $event->setEnd(new \DateTime());
+        $event->setAllDay(false);
 
         $entityManager = $this->getEntityManager();
         $entityManager->persist($event);
@@ -86,6 +87,7 @@ class CalendarEventTest extends WebTestCase
         $event->setStart(new \DateTime());
         $event->setEnd(new \DateTime());
         $event->setUid($uid);
+        $event->setAllDay(false);
 
         $entityManager = $this->getEntityManager();
         $entityManager->persist($event);
