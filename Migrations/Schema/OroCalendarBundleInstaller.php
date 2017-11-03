@@ -99,7 +99,8 @@ class OroCalendarBundleInstaller implements
         $this->createOroCalendarTable($schema);
         $this->createOroSystemCalendarTable($schema);
         $this->createOroRecurrenceTable($schema);
-        $this->createOroCalendarEventTable($schema, $queries);
+        $this->createOroCalendarEventTable($schema);
+        $this->createOroCalendarEventTableUidIndex($queries);
         $this->createOroCalendarPropertyTable($schema);
         $this->createAttendeeEntity($schema);
 
@@ -278,8 +279,17 @@ class OroCalendarBundleInstaller implements
         $table->addIndex(['original_start_at'], 'oro_calendar_event_osa_idx');
 
         $table->addUniqueIndex(['recurrence_id'], 'UNIQ_2DDC40DD2C414CE8');
-
         $table->setPrimaryKey(['id']);
+    }
+
+
+    /**
+     * Create uid index in oro_calendar_event
+     *
+     * @param QueryBag $queries
+     */
+    protected function createOroCalendarEventTableUidIndex(QueryBag $queries)
+    {
         if ($this->isMysqlPlatform()) {
             $queries->addPostQuery(
                 'ALTER TABLE `oro_calendar_event` ADD INDEX `oro_calendar_event_uid_idx` (calendar_id, uid(50))'
