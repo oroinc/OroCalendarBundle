@@ -10,7 +10,7 @@ use Oro\Bundle\MigrationBundle\Migration\Extension\DatabasePlatformAwareInterfac
 use Oro\Bundle\MigrationBundle\Migration\Migration;
 use Oro\Bundle\MigrationBundle\Migration\QueryBag;
 
-class OroCalendarBundle implements Migration, DatabasePlatformAwareInterface
+class CalendarEventUid implements Migration, DatabasePlatformAwareInterface
 {
     /**
      * @var AbstractPlatform
