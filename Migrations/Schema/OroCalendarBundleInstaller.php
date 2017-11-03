@@ -247,9 +247,8 @@ class OroCalendarBundleInstaller implements
      * Create oro_calendar_event table
      *
      * @param Schema $schema
-     * @param QueryBag $queries
      */
-    protected function createOroCalendarEventTable(Schema $schema, QueryBag $queries)
+    protected function createOroCalendarEventTable(Schema $schema)
     {
         $table = $schema->createTable('oro_calendar_event');
         $table->addColumn('id', 'integer', ['autoincrement' => true]);
