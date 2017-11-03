@@ -42,9 +42,6 @@ class CalendarEventUid implements Migration, DatabasePlatformAwareInterface
         if (!$table->hasColumn('uid')) {
             $table->addColumn('uid', 'text', ['notnull' => false]);
         }
-        if ($table->hasIndex('idx_2ddc40dda40a2c8')) {
-            $table->dropIndex('idx_2ddc40dda40a2c8');
-        }
         if (!$table->hasIndex('oro_calendar_event_uid_idx')) {
             if ($this->isMysqlPlatform()) {
                 $queries->addPostQuery(
