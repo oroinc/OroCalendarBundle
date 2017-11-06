@@ -8,6 +8,7 @@ use Doctrine\ORM\Query\Expr;
 use Doctrine\ORM\QueryBuilder;
 
 use Oro\Bundle\CalendarBundle\Entity\Attendee;
+use Oro\Bundle\CalendarBundle\Entity\CalendarEvent;
 
 class CalendarEventRepository extends EntityRepository
 {
@@ -64,11 +65,36 @@ class CalendarEventRepository extends EntityRepository
     }
 
     /**
+     * @param CalendarEvent $event
+     * @param Calendar|int $calendarId
+     * @return CalendarEvent[]
+     */
+    public function findDuplicatedEvent(CalendarEvent $event, $calendarId)
+    {
+        $qb = $this->createQueryBuilder('ce');
+        $qb
+            ->where('ce.uid = :uid')
+            ->andWhere('ce.calendar = :calendarId')
+            ->andWhere($qb->expr()->isNull('ce.recurringEvent'))
+            ->andWhere($qb->expr()->isNull('ce.parent'))
+            ->setParameter('uid', $event->getUid())
+            ->setParameter('calendarId', $calendarId);
+
+        if ($event->getId()) {
+            $qb
+                ->andWhere('ce.id != :id')
+                ->setParameter('id', $event->getId());
+        }
+
+        return $qb->getQuery()->execute();
+    }
+
+    /**
      * Returns a base query builder which can be used to get a list of calendar events
      *
      * @param array|Criteria $filters Additional filtering criteria, e.g. ['allDay' => true, ...]
      *                                or \Doctrine\Common\Collections\Criteria
-     * @param array $extraFields
+     * @param array          $extraFields
      *
      * @return QueryBuilder
      */
@@ -97,6 +123,7 @@ class CalendarEventRepository extends EntityRepository
     {
         return [
             'e.id',
+            'e.uid',
             'e.title',
             'e.description',
             'e.start',

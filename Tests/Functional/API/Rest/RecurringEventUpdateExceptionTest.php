@@ -167,6 +167,7 @@ class RecurringEventUpdateExceptionTest extends AbstractTestCase
         $response = $this->getRestResponseContent(['statusCode' => 200, 'contentType' => 'application/json']);
         $this->assertResponseEquals(
             [
+                'uid'                      => $response['uid'],
                 'invitationStatus'         => Attendee::STATUS_NONE,
                 'editableInvitationStatus' => false,
             ],
@@ -422,6 +423,7 @@ class RecurringEventUpdateExceptionTest extends AbstractTestCase
         $response = $this->getRestResponseContent(['statusCode' => 200, 'contentType' => 'application/json']);
         $this->assertResponseEquals(
             [
+                'uid'                      => $response['uid'],
                 'invitationStatus'         => Attendee::STATUS_ACCEPTED,
                 'editableInvitationStatus' => true,
             ],
@@ -603,6 +605,7 @@ class RecurringEventUpdateExceptionTest extends AbstractTestCase
         $response = $this->getRestResponseContent(['statusCode' => 200, 'contentType' => 'application/json']);
         $this->assertResponseEquals(
             [
+                'uid'                      => $response['uid'],
                 'invitationStatus'         => Attendee::STATUS_ACCEPTED,
                 'editableInvitationStatus' => true,
             ],
@@ -1084,6 +1087,7 @@ class RecurringEventUpdateExceptionTest extends AbstractTestCase
         $response = $this->getRestResponseContent(['statusCode' => 200, 'contentType' => 'application/json']);
         $this->assertResponseEquals(
             [
+                'uid'                      => $response['uid'],
                 'invitationStatus'         => Attendee::STATUS_NONE,
                 'editableInvitationStatus' => false,
             ],
@@ -1387,6 +1391,7 @@ class RecurringEventUpdateExceptionTest extends AbstractTestCase
         $response = $this->getRestResponseContent(['statusCode' => 200, 'contentType' => 'application/json']);
         $this->assertResponseEquals(
             [
+                'uid'                      => $response['uid'],
                 'invitationStatus'         => Attendee::STATUS_ACCEPTED,
                 'editableInvitationStatus' => true,
             ],
@@ -1726,6 +1731,7 @@ class RecurringEventUpdateExceptionTest extends AbstractTestCase
         $response = $this->getRestResponseContent(['statusCode' => 200, 'contentType' => 'application/json']);
         $this->assertResponseEquals(
             [
+                'uid'                      => $response['uid'],
                 'invitationStatus'         => Attendee::STATUS_ACCEPTED,
                 'editableInvitationStatus' => true,
             ],
@@ -1983,6 +1989,7 @@ class RecurringEventUpdateExceptionTest extends AbstractTestCase
         $response = $this->getRestResponseContent(['statusCode' => 200, 'contentType' => 'application/json']);
         $this->assertResponseEquals(
             [
+                'uid'                      => $response['uid'],
                 'invitationStatus'         => Attendee::STATUS_NONE,
                 'editableInvitationStatus' => false,
             ],
@@ -2015,6 +2022,7 @@ class RecurringEventUpdateExceptionTest extends AbstractTestCase
         $response = $this->getRestResponseContent(['statusCode' => 200, 'contentType' => 'application/json']);
         $this->assertResponseEquals(
             [
+                'uid'                      => $response['uid'],
                 'invitationStatus'         => Attendee::STATUS_ACCEPTED,
                 'editableInvitationStatus' => true,
             ],
@@ -2380,6 +2388,7 @@ class RecurringEventUpdateExceptionTest extends AbstractTestCase
         $response = $this->getRestResponseContent(['statusCode' => 200, 'contentType' => 'application/json']);
         $this->assertResponseEquals(
             [
+                'uid'                      => $response['uid'],
                 'invitationStatus'         => Attendee::STATUS_ACCEPTED,
                 'editableInvitationStatus' => true,
             ],
@@ -2662,6 +2671,7 @@ class RecurringEventUpdateExceptionTest extends AbstractTestCase
         $response = $this->getRestResponseContent(['statusCode' => 200, 'contentType' => 'application/json']);
         $this->assertResponseEquals(
             [
+                'uid'                      => $response['uid'],
                 'invitationStatus'         => Attendee::STATUS_NONE,
                 'editableInvitationStatus' => false,
             ],
@@ -2943,6 +2953,7 @@ class RecurringEventUpdateExceptionTest extends AbstractTestCase
         $response = $this->getRestResponseContent(['statusCode' => 200, 'contentType' => 'application/json']);
         $this->assertResponseEquals(
             [
+                'uid'                      => $response['uid'],
                 'invitationStatus'         => Attendee::STATUS_NONE,
                 'editableInvitationStatus' => false,
             ],
@@ -3199,6 +3210,7 @@ class RecurringEventUpdateExceptionTest extends AbstractTestCase
         $response = $this->getRestResponseContent(['statusCode' => 200, 'contentType' => 'application/json']);
         $this->assertResponseEquals(
             [
+                'uid'                      => $response['uid'],
                 'invitationStatus'         => Attendee::STATUS_ACCEPTED,
                 'editableInvitationStatus' => true,
             ],
@@ -3415,6 +3427,7 @@ class RecurringEventUpdateExceptionTest extends AbstractTestCase
         $response = $this->getRestResponseContent(['statusCode' => 200, 'contentType' => 'application/json']);
         $this->assertResponseEquals(
             [
+                'uid'                      => $response['uid'],
                 'invitationStatus'         => Attendee::STATUS_ACCEPTED,
                 'editableInvitationStatus' => true,
             ],
@@ -4013,6 +4026,7 @@ class RecurringEventUpdateExceptionTest extends AbstractTestCase
         $response = $this->getRestResponseContent(['statusCode' => 200, 'contentType' => 'application/json']);
         $this->assertResponseEquals(
             [
+                'uid'                      => $response['uid'],
                 'invitationStatus'         => Attendee::STATUS_NONE,
                 'editableInvitationStatus' => false,
             ],

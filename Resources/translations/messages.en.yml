@@ -104,6 +104,7 @@ oro:
             entity_plural_label:      Calendar Events
             entity_description:       Represent calendar event
             id.label:                 Id
+            uid.label:                Uid
             title.label:              Title
             description.label:        Description
             start.label:              Start
