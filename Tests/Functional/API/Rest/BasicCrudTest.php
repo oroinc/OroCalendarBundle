@@ -67,6 +67,7 @@ class BasicCrudTest extends AbstractTestCase
         $this->assertResponseEquals(
             [
                 'id'                       => $response['id'],
+                'uid'                      => $response['uid'],
                 'invitationStatus'         => Attendee::STATUS_NONE,
                 'editableInvitationStatus' => false,
             ],
@@ -92,6 +93,7 @@ class BasicCrudTest extends AbstractTestCase
         $this->assertResponseEquals(
             [
                 'id'                       => $newEvent->getId(),
+                'uid'                      => $newEvent->getUid(),
                 'calendar'                 => $this->getReference('oro_calendar:calendar:foo_user_1')->getId(),
                 'parentEventId'            => null,
                 'title'                    => "Regular event",
@@ -127,7 +129,7 @@ class BasicCrudTest extends AbstractTestCase
         $calendarId = $this->getReference('oro_calendar:calendar:foo_user_1')->getId();
         // @codingStandardsIgnoreStart
         $content = <<<CONTENT
-title=Regular%20event&description=&start=2016-10-14T22%3A00%3A00.000Z&end=2016-10-14T23%3A00%3A00.000Z&allDay=false&attendees=&recurrence=&calendar=$calendarId
+title=Regular%20event&uid=123123&description=&start=2016-10-14T22%3A00%3A00.000Z&end=2016-10-14T23%3A00%3A00.000Z&allDay=false&attendees=&recurrence=&calendar=$calendarId
 CONTENT;
         // @codingStandardsIgnoreEnd
         parse_str($content, $parameters);
@@ -152,6 +154,7 @@ CONTENT;
         $this->assertResponseEquals(
             [
                 'id'                       => $response['id'],
+                'uid'                      => '123123',
                 'invitationStatus'         => Attendee::STATUS_NONE,
                 'editableInvitationStatus' => false,
             ],
@@ -177,6 +180,7 @@ CONTENT;
         $this->assertResponseEquals(
             [
                 'id'                       => $newEvent->getId(),
+                'uid'                      => $newEvent->getUid(),
                 'calendar'                 => $this->getReference('oro_calendar:calendar:foo_user_1')->getId(),
                 'parentEventId'            => null,
                 'title'                    => "Regular event",
@@ -248,6 +252,7 @@ CONTENT;
         $this->assertResponseEquals(
             [
                 'id'                       => $response['id'],
+                'uid'                      => $response['uid'],
                 'invitationStatus'         => Attendee::STATUS_NONE,
                 'editableInvitationStatus' => false,
             ],
@@ -282,6 +287,7 @@ CONTENT;
         $response = $this->getRestResponseContent(['statusCode' => 200, 'contentType' => 'application/json']);
         $this->assertResponseEquals(
             [
+                'uid'                      => $response['uid'],
                 'invitationStatus'         => Attendee::STATUS_NONE,
                 'editableInvitationStatus' => false,
             ],
@@ -366,6 +372,7 @@ CONTENT;
         $this->assertResponseEquals(
             [
                 'id'                       => $response['id'],
+                'uid'                      => $response['uid'],
                 'invitationStatus'         => Attendee::STATUS_NONE,
                 'editableInvitationStatus' => false,
             ],
@@ -401,6 +408,7 @@ CONTENT;
         $response = $this->getRestResponseContent(['statusCode' => 200, 'contentType' => 'application/json']);
         $this->assertResponseEquals(
             [
+                'uid'                      => $response['uid'],
                 'invitationStatus'         => Attendee::STATUS_NONE,
                 'editableInvitationStatus' => false,
             ],

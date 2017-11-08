@@ -67,6 +67,7 @@ class BasicAttendeeTest extends AbstractTestCase
         $this->assertResponseEquals(
             [
                 'id'                       => $response['id'],
+                'uid'                      => $response['uid'],
                 'invitationStatus'         => Attendee::STATUS_NONE,
                 'editableInvitationStatus' => false,
             ],
@@ -92,6 +93,7 @@ class BasicAttendeeTest extends AbstractTestCase
         $this->assertResponseEquals(
             [
                 'id'                       => $newEvent->getId(),
+                'uid'                      => $newEvent->getUid(),
                 'calendar'                 => $this->getReference('oro_calendar:calendar:foo_user_1')->getId(),
                 'parentEventId'            => null,
                 'title'                    => "Regular event",
@@ -173,6 +175,7 @@ class BasicAttendeeTest extends AbstractTestCase
         $this->assertResponseEquals(
             [
                 'id'                       => $response['id'],
+                'uid'                      => $response['uid'],
                 'invitationStatus'         => Attendee::STATUS_NONE,
                 'editableInvitationStatus' => false,
             ],
@@ -198,6 +201,7 @@ class BasicAttendeeTest extends AbstractTestCase
         $this->assertResponseEquals(
             [
                 'id'                       => $newEvent->getId(),
+                'uid'                      => $newEvent->getUid(),
                 'calendar'                 => $this->getReference('oro_calendar:calendar:system_user_1')->getId(),
                 'parentEventId'            => null,
                 'title'                    => "Regular event",
@@ -279,6 +283,7 @@ class BasicAttendeeTest extends AbstractTestCase
         $this->assertResponseEquals(
             [
                 'id'                       => $response['id'],
+                'uid'                      => $response['uid'],
                 'invitationStatus'         => Attendee::STATUS_NONE,
                 'editableInvitationStatus' => false,
             ],
@@ -304,6 +309,7 @@ class BasicAttendeeTest extends AbstractTestCase
         $this->assertResponseEquals(
             [
                 'id'                       => $newEvent->getId(),
+                'uid'                      => $newEvent->getUid(),
                 'calendar'                 => $this->getReference('oro_calendar:calendar:foo_user_1')->getId(),
                 'parentEventId'            => null,
                 'title'                    => "Regular event",
@@ -386,6 +392,7 @@ class BasicAttendeeTest extends AbstractTestCase
         $this->assertResponseEquals(
             [
                 'id'                       => $response['id'],
+                'uid'                      => $response['uid'],
                 'invitationStatus'         => Attendee::STATUS_NONE,
                 'editableInvitationStatus' => false,
             ],
@@ -426,6 +433,7 @@ class BasicAttendeeTest extends AbstractTestCase
         );
         $this->assertResponseEquals(
             [
+                'uid'                      => $response['uid'],
                 'invitationStatus'         => Attendee::STATUS_NONE,
                 'editableInvitationStatus' => false,
             ],
@@ -453,6 +461,7 @@ class BasicAttendeeTest extends AbstractTestCase
         $this->assertResponseEquals(
             [
                 'id'                       => $newEvent->getId(),
+                'uid'                      => $newEvent->getUid(),
                 'calendar'                 => $this->getReference('oro_calendar:calendar:foo_user_1')->getId(),
                 'parentEventId'            => null,
                 'title'                    => "Regular event",
@@ -552,6 +561,7 @@ class BasicAttendeeTest extends AbstractTestCase
         $this->assertResponseEquals(
             [
                 'id'                       => $response['id'],
+                'uid'                      => $response['uid'],
                 'invitationStatus'         => Attendee::STATUS_NONE,
                 'editableInvitationStatus' => false,
             ],
@@ -579,6 +589,7 @@ class BasicAttendeeTest extends AbstractTestCase
         );
         $this->assertResponseEquals(
             [
+                'uid'                      => $response['uid'],
                 'invitationStatus'         => Attendee::STATUS_NONE,
                 'editableInvitationStatus' => false,
             ],
@@ -606,6 +617,7 @@ class BasicAttendeeTest extends AbstractTestCase
         $this->assertResponseEquals(
             [
                 'id'                       => $newEvent->getId(),
+                'uid'                      => $newEvent->getUid(),
                 'calendar'                 => $this->getReference('oro_calendar:calendar:foo_user_1')->getId(),
                 'parentEventId'            => null,
                 'title'                    => "Regular event",

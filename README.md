@@ -10,6 +10,7 @@ Table of content
 - [System Calendars](./Resources/doc/systemCalendars.md)
 - [Workflow Action](./Resources/doc/workflowAction.md)
 - [Recurring Events](./Resources/doc/recurringEvents.md)
+- [UID](./Resources/doc/uid.md)
 
 ##Overview
 

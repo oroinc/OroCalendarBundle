@@ -12,7 +12,7 @@ use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 use Oro\Bundle\UserBundle\Entity\User;
 
 /**
- * @dbIsolation
+ * @dbIsolationPerTest
  */
 class CalendarEventTest extends WebTestCase
 {
@@ -63,6 +63,42 @@ class CalendarEventTest extends WebTestCase
         $entityManager->clear();
 
         $this->assertEmpty($entityManager->find('OroCalendarBundle:Attendee', $childCalendar->getId()));
+    }
+
+    public function testUidIsGeneratedInCaseItIsNotProvided()
+    {
+        $event = new CalendarEvent();
+        $event->setTitle('event title');
+        $event->setStart(new \DateTime());
+        $event->setEnd(new \DateTime());
+        $event->setAllDay(false);
+
+        $entityManager = $this->getEntityManager();
+        $entityManager->persist($event);
+        $entityManager->flush();
+
+        $eventFromDb = $entityManager->find(CalendarEvent::class, $event->getId());
+
+        $this->assertNotNull($eventFromDb->getUid());
+    }
+
+    public function testUidIsNotOverwrittenInCaseItIsProvided()
+    {
+        $uid = 'b139fecc-41cf-478d-8f8e-b6122f491ace';
+        $event = new CalendarEvent();
+        $event->setTitle('event title');
+        $event->setStart(new \DateTime());
+        $event->setEnd(new \DateTime());
+        $event->setUid($uid);
+        $event->setAllDay(false);
+
+        $entityManager = $this->getEntityManager();
+        $entityManager->persist($event);
+        $entityManager->flush();
+
+        $eventFromDb = $entityManager->find(CalendarEvent::class, $event->getId());
+
+        $this->assertEquals($uid, $eventFromDb->getUid());
     }
 
     /**
