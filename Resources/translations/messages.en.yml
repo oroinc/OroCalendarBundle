@@ -101,27 +101,31 @@ oro:
         # Oro/Bundle/CalendarBundle/Entity/CalendarEvent
         #
         calendarevent:
-            entity_label:             Calendar event
-            entity_plural_label:      Calendar Events
-            entity_description:       Represent calendar event
-            id.label:                 Id
-            uid.label:                Uid
-            title.label:              Title
-            owner.label:              Owner
-            description.label:        Description
-            start.label:              Start
-            end.label:                End
-            calendar.label:           Calendar
-            all_day.label:            All-day event
-            child_events.label:       Child events
-            parent.label:             Parent
-            background_color.label:   Color
-            system_calendar.label:    System Calendar
-            invitation_status.label:  Invitation status
-            attendees.label:          Guests
-            related_attendee.label:   Related Attendee
-            original_start.label:     Original Start
-            cancelled.label:          Is Cancelled
+            entity_label:                 Calendar event
+            entity_plural_label:          Calendar Events
+            entity_description:           Represent calendar event
+            id.label:                     Id
+            uid.label:                    Uid
+            title.label:                  Title
+            owner.label:                  Owner
+            description.label:            Description
+            start.label:                  Start
+            end.label:                    End
+            calendar.label:               Calendar
+            all_day.label:                All-day event
+            child_events.label:           Child events
+            parent.label:                 Parent
+            background_color.label:       Color
+            system_calendar.label:        System Calendar
+            invitation_status.label:      Invitation status
+            attendees.label:              Guests
+            related_attendee.label:       Related Attendee
+            original_start.label:         Original Start
+            cancelled.label:              Is Cancelled
+            organizer.label:              Is Organizer
+            organizer_display_name.label: Organizer Display Name
+            organizer_email.label:        Organizer Email
+            organizer_user.label:         Organizer user
             no_color:                 Use calendar color
             updated_by:               added by {{ user }}, updated by {{ editor }}
             added_by:                 added by {{ user }}
