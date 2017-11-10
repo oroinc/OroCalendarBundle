@@ -90,6 +90,31 @@ class CalendarEventRepository extends EntityRepository
     }
 
     /**
+     * @param CalendarEvent $event
+     * @return CalendarEvent[]
+     */
+    public function findEventsWithMatchingUidAndOrganizer(CalendarEvent $event)
+    {
+        if ($event->getUid() === null || $event->getOrganizerEmail() === null) {
+            return [];
+        }
+
+        $qb = $this->createQueryBuilder('ce');
+        $qb->where('ce.uid = :uid')
+            ->andWhere('ce.organizer = :isOrganizer')
+            ->andWhere('ce.organizerEmail = :organizerEmail')
+            ->setParameters(
+                [
+                    'uid' => $event->getUid(),
+                    'isOrganizer' => false,
+                    'organizerEmail' => $event->getOrganizerEmail(),
+                ]
+            );
+
+        return $qb->getQuery()->execute();
+    }
+
+    /**
      * Returns a base query builder which can be used to get a list of calendar events
      *
      * @param array|Criteria $filters Additional filtering criteria, e.g. ['allDay' => true, ...]
