@@ -338,6 +338,35 @@ class CalendarEvent extends ExtendCalendarEvent implements RemindableInterface, 
     protected $childEventCloneInProgress = false;
 
     /**
+     * @var bool
+     *
+     * @ORM\Column(name="is_organizer", type="boolean", nullable=true)
+     */
+    protected $isOrganizer = true;
+
+    /**
+     * @var string
+     *
+     * @ORM\Column(name="organizer_email", type="string", length=255, nullable=true)
+     */
+    protected $organizerEmail;
+
+    /**
+     * @var string
+     *
+     * @ORM\Column(name="organizer_display_name", type="string", length=255, nullable=true)
+     */
+    protected $organizerDisplayName;
+
+    /**
+     * @var User
+     *
+     * @ORM\ManyToOne(targetEntity="Oro\Bundle\UserBundle\Entity\User")
+     * @ORM\JoinColumn(name="organizer_user_id", referencedColumnName="id", nullable=true, onDelete="SET NULL")
+     */
+    protected $organizerUser;
+
+    /**
      * CalendarEvent constructor.
      */
     public function __construct()
@@ -1353,5 +1382,85 @@ class CalendarEvent extends ExtendCalendarEvent implements RemindableInterface, 
         usort($attendees, function ($attendee1, $attendee2) {
             return strcmp($attendee1->getEmail(), $attendee2->getEmail());
         });
+    }
+
+    /**
+     * @return bool|null
+     */
+    public function isOrganizer()
+    {
+        return $this->isOrganizer;
+    }
+
+    /**
+     * @param bool $isOrganizer
+     *
+     * @return CalendarEvent
+     */
+    public function setIsOrganizer(bool $isOrganizer)
+    {
+        $this->isOrganizer = $isOrganizer;
+
+        return $this;
+    }
+
+    /**
+     * @return User|null
+     */
+    public function getOrganizerUser()
+    {
+        return $this->organizerUser;
+    }
+
+    /**
+     * @param User $organizerUser
+     *
+     * @return CalendarEvent
+     */
+    public function setOrganizerUser(User $organizerUser)
+    {
+        $this->organizerUser = $organizerUser;
+
+        return $this;
+    }
+
+    /**
+     * @return string|null
+     */
+    public function getOrganizerDisplayName()
+    {
+        return $this->organizerDisplayName;
+    }
+
+    /**
+     * @param string $organizerDisplayName
+     *
+     * @return CalendarEvent
+     */
+    public function setOrganizerDisplayName(string $organizerDisplayName)
+    {
+        $this->organizerDisplayName = $organizerDisplayName;
+
+        return $this;
+    }
+
+    /**
+     * @return string|null
+     */
+    public function getOrganizerEmail()
+    {
+        return $this->organizerEmail;
+    }
+
+    /**
+     * @param string $organizerEmail
+     *
+     * @return CalendarEvent
+     */
+    public function setOrganizerEmail(string $organizerEmail)
+    {
+        $this->organizerEmail = $organizerEmail;
+
+        return $this;
     }
 }
