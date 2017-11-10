@@ -15,6 +15,7 @@ use Oro\Bundle\UserBundle\Entity\User;
 class CalendarEventRepositoryTest extends WebTestCase
 {
     const DUPLICATED_UID = 'b139fecc-41cf-478d-8f8e-b6122f491ace';
+    const MATCHING_UID = '1acb93ce-c54a-11e7-abc4-cec278b6b50a';
 
     protected function setUp()
     {
@@ -50,6 +51,56 @@ class CalendarEventRepositoryTest extends WebTestCase
         $this->assertNotNull($calendarEvent);
 
         $events = $repository->findDuplicatedEvent($calendarEvent, $calendarEvent->getCalendar()->getId());
+        $this->assertCount(0, $events);
+    }
+
+    public function testFindEventsWithMatchingUidAndOrganizer()
+    {
+        $repository = $this->getRepository();
+
+        $calendarEvent = new CalendarEvent();
+        $calendarEvent->setUid(self::MATCHING_UID)
+            ->setOrganizerEmail('organizer@oro.com');
+
+        $events = $repository->findEventsWithMatchingUidAndOrganizer($calendarEvent);
+
+        $this->assertCount(1, $events);
+    }
+
+    public function testCantFindEventsWithMatchingUidAndOrganizer()
+    {
+        $repository = $this->getRepository();
+
+        $calendarEvent = new CalendarEvent();
+        $calendarEvent->setUid(self::MATCHING_UID)
+            ->setOrganizerEmail('not-organizer@oro.com');
+
+        $events = $repository->findEventsWithMatchingUidAndOrganizer($calendarEvent);
+
+        $this->assertCount(0, $events);
+    }
+
+    public function testCantFindMatchingEventsBecauseLackOfUid()
+    {
+        $repository = $this->getRepository();
+
+        $calendarEvent = new CalendarEvent();
+        $calendarEvent->setOrganizerEmail('organizer@oro.com');
+
+        $events = $repository->findEventsWithMatchingUidAndOrganizer($calendarEvent);
+
+        $this->assertCount(0, $events);
+    }
+
+    public function testCantFindMatchingEventsBecauseLackOfOrganizerEmail()
+    {
+        $repository = $this->getRepository();
+
+        $calendarEvent = new CalendarEvent();
+        $calendarEvent->setUid(self::MATCHING_UID);
+
+        $events = $repository->findEventsWithMatchingUidAndOrganizer($calendarEvent);
+
         $this->assertCount(0, $events);
     }
 
