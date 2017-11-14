@@ -2,8 +2,6 @@
 
 namespace Oro\Bundle\CalendarBundle\Manager\CalendarEvent;
 
-use Doctrine\Common\Collections\ArrayCollection;
-
 use Oro\Bundle\CalendarBundle\Entity\Attendee;
 use Oro\Bundle\CalendarBundle\Entity\CalendarEvent;
 use Oro\Bundle\CalendarBundle\Entity\Repository\CalendarEventRepository;
@@ -31,12 +29,6 @@ class MatchingEventsManager
     public function onEventUpdate(CalendarEvent $event)
     {
         if (!$this->eventIsNew($event)) {
-            return;
-        }
-
-        if (!$event->isOrganizer()) {
-            $event->setAttendees(new ArrayCollection());
-
             return;
         }
 
