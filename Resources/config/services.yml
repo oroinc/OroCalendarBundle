@@ -166,6 +166,7 @@ services:
             - '@oro_calendar.calendar_event.update_attendee_manager'
             - '@oro_calendar.calendar_event.update_child_manager'
             - '@oro_calendar.calendar_event.update_exception_manager'
+            - '@oro_calendar.calendar_event.matching_events_manager'
 
     oro_calendar.calendar_event.update_attendee_manager:
         class: 'Oro\Bundle\CalendarBundle\Manager\CalendarEvent\UpdateAttendeeManager'
@@ -198,6 +199,12 @@ services:
         public: true
         arguments:
             - '@oro_calendar.email.notification_sender'
+
+    oro_calendar.calendar_event.matching_events_manager:
+        class: Oro\Bundle\CalendarBundle\Manager\CalendarEvent\MatchingEventsManager
+        public: false
+        arguments:
+            - '@oro_entity.doctrine_helper'
 
     oro_calendar.calendar_manager:
         class: %oro_calendar.calendar_manager.class%

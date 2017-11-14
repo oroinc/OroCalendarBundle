@@ -3,6 +3,7 @@
 namespace Oro\Bundle\CalendarBundle\Tests\Unit\Manager;
 
 use Oro\Bundle\CalendarBundle\Entity\CalendarEvent;
+use Oro\Bundle\CalendarBundle\Manager\CalendarEvent\MatchingEventsManager;
 use Oro\Bundle\CalendarBundle\Manager\CalendarEvent\UpdateManager;
 use Oro\Bundle\OrganizationBundle\Entity\Organization;
 
@@ -22,6 +23,11 @@ class UpdateManagerTest extends \PHPUnit_Framework_TestCase
      * @var \PHPUnit_Framework_MockObject_MockObject
      */
     protected $updateExceptionManager;
+
+    /**
+     * @var MatchingEventsManager|\PHPUnit_Framework_MockObject_MockObject
+     */
+    protected $matchingEventsManager;
 
     /**
      * @var UpdateManager
@@ -48,10 +54,15 @@ class UpdateManagerTest extends \PHPUnit_Framework_TestCase
             ->disableOriginalConstructor()
             ->getMock();
 
+        $this->matchingEventsManager = $this->getMockBuilder(MatchingEventsManager::class)
+            ->disableOriginalConstructor()
+            ->getMock();
+
         $this->updateManager = new UpdateManager(
             $this->updateAttendeeManager,
             $this->updateChildManager,
-            $this->updateExceptionManager
+            $this->updateExceptionManager,
+            $this->matchingEventsManager
         );
     }
 
@@ -66,6 +77,10 @@ class UpdateManagerTest extends \PHPUnit_Framework_TestCase
         $organization = new Organization();
 
         $allowUpdateExceptions = true;
+
+        $this->matchingEventsManager->expects($this->once())
+            ->method('onEventUpdate')
+            ->with($entity);
 
         $this->updateAttendeeManager->expects($this->once())
             ->method('onEventUpdate')
