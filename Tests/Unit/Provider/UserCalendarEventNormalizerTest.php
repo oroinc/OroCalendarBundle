@@ -146,6 +146,10 @@ class UserCalendarEventNormalizerTest extends \PHPUnit_Framework_TestCase
                         'parentEventId' => null,
                         'invitationStatus' => Attendee::STATUS_NONE,
                         'relatedAttendeeUserId' => 1,
+                        'isOrganizer' => true,
+                        'organizerEmail' => 'ja@oroinc.com',
+                        'organizerDisplayName' => 'John Altovart',
+                        'organizerUserId' => null
                     ],
                 ],
                 'attendees' => [1 => []],
@@ -169,6 +173,10 @@ class UserCalendarEventNormalizerTest extends \PHPUnit_Framework_TestCase
                         'editable' => true,
                         'editableInvitationStatus' => false,
                         'removable' => true,
+                        'isOrganizer' => true,
+                        'organizerEmail' => 'ja@oroinc.com',
+                        'organizerDisplayName' => 'John Altovart',
+                        'organizerUserId' => null
                     ],
                 ]
             ],
@@ -189,6 +197,10 @@ class UserCalendarEventNormalizerTest extends \PHPUnit_Framework_TestCase
                         'parentEventId' => null,
                         'invitationStatus' => Attendee::STATUS_NONE,
                         'relatedAttendeeUserId' => 1,
+                        'isOrganizer' => true,
+                        'organizerEmail' => 'ja@oroinc.com',
+                        'organizerDisplayName' => 'John Altovart',
+                        'organizerUserId' => 1
                     ],
                 ],
                 'attendees' => [
@@ -226,6 +238,10 @@ class UserCalendarEventNormalizerTest extends \PHPUnit_Framework_TestCase
                                 'userId' => null
                             ],
                         ],
+                        'isOrganizer' => true,
+                        'organizerEmail' => 'ja@oroinc.com',
+                        'organizerDisplayName' => 'John Altovart',
+                        'organizerUserId' => 1
                     ],
                 ]
             ],
@@ -246,6 +262,10 @@ class UserCalendarEventNormalizerTest extends \PHPUnit_Framework_TestCase
                         'parentEventId' => null,
                         'invitationStatus' => Attendee::STATUS_NONE,
                         'relatedAttendeeUserId' => 1,
+                        'isOrganizer' => null,
+                        'organizerEmail' => null,
+                        'organizerDisplayName' => null,
+                        'organizerUserId' => null
                     ],
                 ],
                 'attendees' => [
@@ -283,6 +303,10 @@ class UserCalendarEventNormalizerTest extends \PHPUnit_Framework_TestCase
                                 'userId' => 1
                             ],
                         ],
+                        'isOrganizer' => null,
+                        'organizerEmail' => null,
+                        'organizerDisplayName' => null,
+                        'organizerUserId' => null
                     ],
                 ]
             ],
@@ -364,6 +388,10 @@ class UserCalendarEventNormalizerTest extends \PHPUnit_Framework_TestCase
                     'recurringEventId' => null,
                     'originalStart' => null,
                     'isCancelled' => false,
+                    'isOrganizer' => null,
+                    'organizerEmail' => null,
+                    'organizerDisplayName' => null,
+                    'organizerUserId' => null
                 ],
                 'calendarId' => null,
                 'editableInvitationStatus' => false,
@@ -388,6 +416,10 @@ class UserCalendarEventNormalizerTest extends \PHPUnit_Framework_TestCase
                     'recurringEventId' => null,
                     'originalStart' => null,
                     'isCancelled' => false,
+                    'isOrganizer' => true,
+                    'organizerEmail' => null,
+                    'organizerDisplayName' => null,
+                    'organizerUserId' => null
                 ]
             ],
             'own calendar' => [
@@ -449,6 +481,10 @@ class UserCalendarEventNormalizerTest extends \PHPUnit_Framework_TestCase
                     'recurringEventId' => null,
                     'originalStart' => null,
                     'isCancelled' => false,
+                    'isOrganizer' => true,
+                    'organizerEmail' => null,
+                    'organizerDisplayName' => null,
+                    'organizerUserId' => null
                 ]
             ],
             'another calendar' => [
@@ -465,6 +501,10 @@ class UserCalendarEventNormalizerTest extends \PHPUnit_Framework_TestCase
                     'updatedAt' => null,
                     'parentEventId' => null,
                     'invitationStatus' => Attendee::STATUS_NONE,
+                    'isOrganizer' => false,
+                    'organizerEmail' => 'ja@oroinc.com',
+                    'organizerDisplayName' => 'John Altovart',
+                    'organizerUserId' => 1
                 ],
                 'calendarId' => 456,
                 'editableInvitationStatus' => false,
@@ -489,6 +529,10 @@ class UserCalendarEventNormalizerTest extends \PHPUnit_Framework_TestCase
                     'recurringEventId' => null,
                     'originalStart' => null,
                     'isCancelled' => false,
+                    'isOrganizer' => false,
+                    'organizerEmail' => 'ja@oroinc.com',
+                    'organizerDisplayName' => 'John Altovart',
+                    'organizerUserId' => 1
                 ]
             ],
         ];
@@ -526,6 +570,18 @@ class UserCalendarEventNormalizerTest extends \PHPUnit_Framework_TestCase
         }
         if (isset($data['allDay'])) {
             $event->setAllDay($data['allDay']);
+        }
+        if (isset($data['isOrganizer'])) {
+            $event->setIsOrganizer($data['isOrganizer']);
+        }
+        if (isset($data['organizerUserId'])) {
+            $event->setOrganizerUser(new User($data['organizerUserId']));
+        }
+        if (isset($data['organizerEmail'])) {
+            $event->setOrganizerEmail($data['organizerEmail']);
+        }
+        if (isset($data['organizerDisplayName'])) {
+            $event->setOrganizerDisplayName($data['organizerDisplayName']);
         }
         if (!empty($data['calendar'])) {
             $calendar = new Calendar();

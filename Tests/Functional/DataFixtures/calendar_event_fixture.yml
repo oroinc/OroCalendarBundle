@@ -113,7 +113,7 @@ organizerEvent:
         start: '-3 day'
         end: '-3 day + 1 hour'
         allDay: false
-        organizer: true
+        isOrganizer: true
         organizerEmail: 'organizer@oro.com'
 
 nonOrganizerEvent:
@@ -122,5 +122,5 @@ nonOrganizerEvent:
         start: '-3 day'
         end: '-3 day + 1 hour'
         allDay: false
-        organizer: false
+        isOrganizer: false
         organizerEmail: 'organizer@oro.com'
