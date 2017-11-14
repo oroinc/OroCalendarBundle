@@ -8,13 +8,13 @@ use Doctrine\ORM\Mapping as ORM;
 
 use Oro\Bundle\CalendarBundle\Exception\NotUserCalendarEvent;
 use Oro\Bundle\CalendarBundle\Model\ExtendCalendarEvent;
+use Oro\Bundle\DataAuditBundle\Entity\AuditAdditionalFieldsInterface;
 use Oro\Bundle\EntityBundle\EntityProperty\DatesAwareInterface;
 use Oro\Bundle\EntityBundle\EntityProperty\DatesAwareTrait;
 use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\Config;
 use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\ConfigField;
 use Oro\Bundle\ReminderBundle\Entity\RemindableInterface;
 use Oro\Bundle\ReminderBundle\Model\ReminderData;
-use Oro\Bundle\SecurityBundle\Tools\UUIDGenerator;
 use Oro\Bundle\UserBundle\Entity\User;
 
 /**
@@ -74,8 +74,13 @@ use Oro\Bundle\UserBundle\Entity\User;
  * @SuppressWarnings(PHPMD.ExcessiveClassComplexity)
  * @SuppressWarnings(PHPMD.ExcessiveClassLength)
  * @SuppressWarnings(PHPMD.ExcessivePublicCount)
+ * @SuppressWarnings(PHPMD.TooManyPublicMethods)
+ * @SuppressWarnings(PHPMD.TooManyFields)
  */
-class CalendarEvent extends ExtendCalendarEvent implements RemindableInterface, DatesAwareInterface
+class CalendarEvent extends ExtendCalendarEvent implements
+    RemindableInterface,
+    DatesAwareInterface,
+    AuditAdditionalFieldsInterface
 {
     use DatesAwareTrait;
 
@@ -1266,6 +1271,16 @@ class CalendarEvent extends ExtendCalendarEvent implements RemindableInterface, 
     public function getRecurrence()
     {
         return $this->recurrence;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getAdditionalFields()
+    {
+        return [
+            'uid' => $this->getUid()
+        ];
     }
 
     /**
