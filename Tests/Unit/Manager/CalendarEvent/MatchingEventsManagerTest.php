@@ -64,19 +64,6 @@ class MatchingEventsManagerTest extends \PHPUnit_Framework_TestCase
         $this->manager->onEventUpdate($event);
     }
 
-    public function testRemoveAttendeesIfNotOrganizer()
-    {
-        $event = $this->getCalendarEvent(['isOrganizer' => false]);
-        $event->addAttendee(new Attendee());
-
-        $this->repository->expects($this->never())
-            ->method('findEventsWithMatchingUidAndOrganizer');
-
-        $this->manager->onEventUpdate($event);
-
-        $this->assertCount(0, $event->getAttendees());
-    }
-
     public function testMergeEvents()
     {
         $ownerB = $this->getEntity(User::class, ['email' => 'second@oroinc.com']);
