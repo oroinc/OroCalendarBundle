@@ -101,7 +101,7 @@ class CalendarEventRepository extends EntityRepository
 
         $qb = $this->createQueryBuilder('ce');
         $qb->where('ce.uid = :uid')
-            ->andWhere('ce.organizer = :isOrganizer')
+            ->andWhere('ce.isOrganizer = :isOrganizer')
             ->andWhere('ce.organizerEmail = :organizerEmail')
             ->setParameters(
                 [
@@ -159,7 +159,11 @@ class CalendarEventRepository extends EntityRepository
             'e.updatedAt',
             'e.originalStart',
             'IDENTITY(e.recurringEvent) AS recurringEventId',
-            'e.cancelled AS isCancelled'
+            'e.cancelled AS isCancelled',
+            'e.isOrganizer AS isOrganizer',
+            'e.organizerEmail',
+            'e.organizerDisplayName',
+            'IDENTITY(e.organizerUser) as organizerUserId'
         ];
     }
 
