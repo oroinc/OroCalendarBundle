@@ -110,6 +110,10 @@ class BasicCrudTest extends AbstractTestCase
                 'isCancelled'              => false,
                 'createdAt'                => $newEvent->getCreatedAt()->format(DATE_RFC3339),
                 'updatedAt'                => $newEvent->getUpdatedAt()->format(DATE_RFC3339),
+                'isOrganizer'              => $newEvent->isOrganizer(),
+                'organizerDisplayName'     => $newEvent->getOrganizerDisplayName(),
+                'organizerEmail'           => $newEvent->getOrganizerEmail(),
+                'organizerUserId'            => $newEvent->getOrganizerUser()
             ],
             $response
         );
@@ -197,6 +201,10 @@ CONTENT;
                 'isCancelled'              => false,
                 'createdAt'                => $newEvent->getCreatedAt()->format(DATE_RFC3339),
                 'updatedAt'                => $newEvent->getUpdatedAt()->format(DATE_RFC3339),
+                'isOrganizer'              => $newEvent->isOrganizer(),
+                'organizerDisplayName'     => $newEvent->getOrganizerDisplayName(),
+                'organizerEmail'           => $newEvent->getOrganizerEmail(),
+                'organizerUserId'            => $newEvent->getOrganizerUser()
             ],
             $response
         );
