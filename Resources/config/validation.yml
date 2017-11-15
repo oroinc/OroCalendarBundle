@@ -23,10 +23,14 @@ Oro\Bundle\CalendarBundle\Entity\CalendarEvent:
         reminders:
             - Valid: ~
         organizerEmail:
-            - Email: ~
+            - Oro\Bundle\FormBundle\Validator\Constraints\Unchangeable: ~
+        organizerDisplayName:
             - Length:
                 max: 255
-        organizerDisplayName:
+            - Oro\Bundle\FormBundle\Validator\Constraints\Unchangeable: ~
+        organizerUser:
+            - Oro\Bundle\FormBundle\Validator\Constraints\Unchangeable: ~
+            - Email: ~
             - Length:
                 max: 255
 

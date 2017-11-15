@@ -5,7 +5,6 @@ namespace Oro\Bundle\CalendarBundle\Manager\CalendarEvent;
 use Oro\Bundle\CalendarBundle\Entity\Attendee;
 use Oro\Bundle\CalendarBundle\Entity\CalendarEvent;
 use Oro\Bundle\CalendarBundle\Entity\Repository\CalendarEventRepository;
-use Oro\Bundle\CalendarBundle\Exception\NotUniqueAttendeeException;
 use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
 
 class MatchingEventsManager
