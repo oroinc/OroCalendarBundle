@@ -21,6 +21,13 @@ Oro\Bundle\CalendarBundle\Entity\CalendarEvent:
             - Valid: ~
         reminders:
             - Valid: ~
+        organizerEmail:
+            - Email: ~
+            - Length:
+                max: 255
+        organizerDisplayName:
+            - Length:
+                max: 255
 
 Oro\Bundle\CalendarBundle\Entity\CalendarProperty:
     properties:
