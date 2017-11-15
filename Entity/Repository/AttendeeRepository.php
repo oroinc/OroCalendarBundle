@@ -5,6 +5,7 @@ namespace Oro\Bundle\CalendarBundle\Entity\Repository;
 use Doctrine\ORM\EntityRepository;
 use Doctrine\ORM\QueryBuilder;
 
+use Oro\Bundle\CalendarBundle\Entity\CalendarEvent;
 use Oro\Bundle\OrganizationBundle\Entity\Organization;
 
 class AttendeeRepository extends EntityRepository
@@ -69,5 +70,21 @@ class AttendeeRepository extends EntityRepository
             ->leftJoin('attendee.type', 'attendee_type')
             ->where($qb->expr()->in('event.id', ':calendar_event'))
             ->setParameter('calendar_event', $calendarEventIds);
+    }
+
+    /**
+     * @param CalendarEvent $calendarEvent
+     * @return array
+     */
+    public function getAttendeesForCalendarEvent(CalendarEvent $calendarEvent)
+    {
+        $qb = $this->createQueryBuilder('attendee');
+
+        return $qb
+            ->select('attendee')
+            ->where('attendee.calendarEvent = :event')
+            ->setParameter('event', $calendarEvent)
+            ->getQuery()
+            ->getResult();
     }
 }
