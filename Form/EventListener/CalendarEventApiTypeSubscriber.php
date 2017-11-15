@@ -31,8 +31,8 @@ class CalendarEventApiTypeSubscriber implements EventSubscriberInterface
     public static function getSubscribedEvents()
     {
         return [
-            FormEvents::PRE_SUBMIT  => 'preSubmitData',
-            FormEvents::POST_SUBMIT  => 'postSubmitData',
+            FormEvents::PRE_SUBMIT  => ['preSubmitData', 10],
+            FormEvents::POST_SUBMIT  => ['postSubmitData', 10],
         ];
     }
 
