@@ -3,6 +3,7 @@ Oro\Bundle\CalendarBundle\Entity\CalendarEvent:
         - Oro\Bundle\CalendarBundle\Validator\Constraints\RecurringCalendarEventExceptionConstraint: ~
         - Oro\Bundle\CalendarBundle\Validator\Constraints\UniqueUid: ~
         - Oro\Bundle\CalendarBundle\Validator\Constraints\UnchangeableUid: ~
+        - Oro\Bundle\CalendarBundle\Validator\Constraints\EventAttendees: ~
     properties:
         title:
             - NotBlank:     ~
