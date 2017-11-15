@@ -347,7 +347,7 @@ class CalendarEvent extends ExtendCalendarEvent implements
      *
      * @ORM\Column(name="is_organizer", type="boolean", nullable=true)
      */
-    protected $isOrganizer = true;
+    protected $isOrganizer;
 
     /**
      * @var string
@@ -484,6 +484,14 @@ class CalendarEvent extends ExtendCalendarEvent implements
     public function getSystemCalendar()
     {
         return $this->systemCalendar;
+    }
+
+    /**
+     * @return bool
+     */
+    public function isSystemEvent(): bool
+    {
+        return $this->getSystemCalendar() !== null;
     }
 
     /**
@@ -1477,5 +1485,44 @@ class CalendarEvent extends ExtendCalendarEvent implements
         $this->organizerEmail = $organizerEmail;
 
         return $this;
+    }
+
+    /**
+     * This method should be used to calculate (by provided organizer email) "isOrganizer" property.
+     * This property is for technical reasons to easily access information "is calendar owner an organizer or not".
+     * Without this field, we would need to join additional tables to access that information.
+     */
+    public function calculateIsOrganizer()
+    {
+        if ($this->isSystemEvent()) {
+            return;
+        }
+
+        $owner = $this->getCalendar()->getOwner();
+        $organizerEmail = $this->getOrganizerEmail();
+
+        // no organizerEmail passed or organizerEmail is the same as calendar owner
+        if ($organizerEmail === null || $organizerEmail === $owner->getEmail()) {
+            $this->ownerIsOrganizer();
+        } else {
+            $this->setIsOrganizer(false);
+        }
+    }
+
+    private function ownerIsOrganizer()
+    {
+        if ($this->isSystemEvent()) {
+            return;
+        }
+
+        $owner = $this->getCalendar()->getOwner();
+
+        $this->setIsOrganizer(true);
+        $this->setOrganizerUser($owner);
+        $this->setOrganizerEmail($owner->getEmail());
+
+        if (!$this->getOrganizerDisplayName()) {
+            $this->setOrganizerDisplayName($owner->getFullName());
+        }
     }
 }
