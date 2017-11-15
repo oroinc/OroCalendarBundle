@@ -242,9 +242,11 @@ class UpdateChildManager
         $attendeeCalendarEvent = new CalendarEvent();
         $attendeeCalendarEvent->setCalendar($calendar);
         $attendeeCalendarEvent->setParent($calendarEvent);
+        $attendeeCalendarEvent->setIsOrganizer(false);
         $calendarEvent->addChildEvent($attendeeCalendarEvent);
         $attendeeCalendarEvent->setRelatedAttendee($attendeeCalendarEvent->findRelatedAttendee());
 
+        $this->copyOrganizerFields($calendarEvent, $attendeeCalendarEvent);
         $this->updateAttendeeCalendarEvent($calendarEvent, $attendeeCalendarEvent);
 
         return $attendeeCalendarEvent;
@@ -302,6 +304,34 @@ class UpdateChildManager
 
             $child->setRecurringEvent($childRecurringEvent)
                 ->setOriginalStart($parent->getOriginalStart());
+        }
+    }
+
+    /**
+     * @param CalendarEvent $calendarEvent
+     * @param CalendarEvent $attendeeCalendarEvent
+     */
+    private function copyOrganizerFields(CalendarEvent $calendarEvent, CalendarEvent $attendeeCalendarEvent)
+    {
+        $this->copyFieldIfNotNull($calendarEvent, 'getOrganizerEmail', $attendeeCalendarEvent, 'setOrganizerEmail');
+        $this->copyFieldIfNotNull(
+            $calendarEvent,
+            'getOrganizerDisplayName',
+            $attendeeCalendarEvent,
+            'setOrganizerDisplayName'
+        );
+        $this->copyFieldIfNotNull($calendarEvent, 'getOrganizerUser', $attendeeCalendarEvent, 'setOrganizerUser');
+    }
+
+    private function copyFieldIfNotNull(CalendarEvent $from, string $getter, CalendarEvent $to, string $setter)
+    {
+        if (!is_callable([$from, $getter]) || !is_callable([$to, $setter])) {
+            return;
+        }
+
+        $value = $from->$getter();
+        if ($from->$getter() !== null) {
+            $to->$setter($value);
         }
     }
 }

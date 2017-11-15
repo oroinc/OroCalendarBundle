@@ -85,7 +85,8 @@ define(function(require) {
                 'invitationStatus',
                 'recurrencePattern',
                 'durationEditable',
-                'startEditable'
+                'startEditable',
+                'isOrganizer'
             ];
 
             if (this.get('recurringEventId') !== null) {
