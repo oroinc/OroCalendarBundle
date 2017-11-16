@@ -5,10 +5,9 @@ namespace Oro\Bundle\CalendarBundle\Tests\Unit\Validator\Constraints;
 use Doctrine\Common\Persistence\ObjectManager;
 use Doctrine\Common\Persistence\ObjectRepository;
 
-use Oro\Bundle\CalendarBundle\Entity\Repository\CalendarEventRepository;
 use Symfony\Bridge\Doctrine\ManagerRegistry;
-use Symfony\Component\Form\Form;
 
+use Oro\Bundle\CalendarBundle\Entity\Repository\CalendarEventRepository;
 use Oro\Bundle\CalendarBundle\Entity\Calendar;
 use Oro\Bundle\CalendarBundle\Entity\CalendarEvent;
 use Oro\Bundle\CalendarBundle\Validator\Constraints\UniqueUid;
@@ -25,9 +24,6 @@ class UniqueUidValidatorTest extends AbstractConstraintValidatorTest
 
     /** @var ObjectManager|\PHPUnit_Framework_MockObject_MockObject */
     private $manager;
-
-    /** @var Form|\PHPUnit_Framework_MockObject_MockObject */
-    private $calendar;
 
     protected function setUp()
     {
@@ -124,22 +120,7 @@ class UniqueUidValidatorTest extends AbstractConstraintValidatorTest
     {
         return new UniqueUidValidator($this->registry);
     }
-
-    /**
-     * {@inheritdoc}
-     */
-    protected function createContext()
-    {
-        $this->calendar = $this->createMock(Form::class);
-
-        $this->root = $this->createMock(Form::class);
-        $this->root->expects($this->any())
-            ->method('get')
-            ->willReturn($this->calendar);
-
-        return parent::createContext();
-    }
-
+    
     private function mockDoctrine()
     {
         $this->manager = $this->createMock(ObjectManager::class);
