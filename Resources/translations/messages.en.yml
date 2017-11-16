@@ -121,7 +121,7 @@ oro:
             attendees.label:              Guests
             related_attendee.label:       Related Attendee
             original_start.label:         Original Start
-            is_cancelled.label:           Is Cancelled
+            cancelled.label:              Is Cancelled
             is_organizer.label:           Is Organizer
             organizer_display_name.label: Organizer Display Name
             organizer_email.label:        Organizer Email
