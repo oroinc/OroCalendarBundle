@@ -450,7 +450,7 @@ class CalendarEventRepositoryTest extends OrmTestCase
             'e.originalStart',
             'IDENTITY(e.recurringEvent) AS recurringEventId',
             'e.cancelled AS isCancelled',
-            'e.organizer AS isOrganizer',
+            'e.isOrganizer AS isOrganizer',
             'e.organizerEmail',
             'e.organizerDisplayName',
             'IDENTITY(e.organizerUser) as organizerUserId'
