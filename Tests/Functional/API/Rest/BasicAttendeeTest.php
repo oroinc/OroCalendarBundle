@@ -71,7 +71,6 @@ class BasicAttendeeTest extends AbstractTestCase
             ],
             $response
         );
-
         // Step 2. Get created event and verify all properties in the response.
         $this->restRequest(
             [
