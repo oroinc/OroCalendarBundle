@@ -2,16 +2,15 @@
 
 namespace Oro\Bundle\CalendarBundle\Validator\Constraints;
 
+use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Persistence\ObjectRepository;
 
 use Symfony\Bridge\Doctrine\ManagerRegistry;
-use Symfony\Component\Form\FormInterface;
 use Symfony\Component\Validator\Constraint;
 use Symfony\Component\Validator\ConstraintValidator;
 
 use Oro\Bundle\CalendarBundle\Entity\CalendarEvent;
 use Oro\Bundle\CalendarBundle\Entity\Repository\CalendarEventRepository;
-use Oro\Bundle\CalendarBundle\Entity\Calendar;
 
 /**
  * This validator checks if UID in CalendarEvent is unique across one calendar.
@@ -35,22 +34,6 @@ class UniqueUidValidator extends ConstraintValidator
     }
 
     /**
-     * @param FormInterface $form
-     * @param CalendarEvent $calendarEvent
-     *
-     * @return null|int|Calendar
-     */
-    private function getCalendarId($form, $calendarEvent)
-    {
-        $calendarId = $form->has('calendar') ? $form->get('calendar')->getData(): null;
-        if ($calendarId === null) {
-            $calendarId = $calendarEvent->getCalendar() ? $calendarEvent->getCalendar()->getId() : null;
-        }
-
-        return $calendarId;
-    }
-
-    /**
      * {@inheritdoc}
      * @param CalendarEvent $calendarEvent
      */
@@ -68,8 +51,7 @@ class UniqueUidValidator extends ConstraintValidator
             return;
         }
 
-        // calendar field is not mapped, so we need to take value from request. See CalendarEventApiTypeSubscriber
-        $calendarId = $this->getCalendarId($this->context->getRoot(), $calendarEvent);
+        $calendarId = $calendarEvent->getCalendar() ? $calendarEvent->getCalendar()->getId() : null;
 
         // if calendar is not specified it can be a system calendar's event
         if ($calendarId === null) {
@@ -88,7 +70,7 @@ class UniqueUidValidator extends ConstraintValidator
     /**
      * @return ObjectRepository|CalendarEventRepository
      */
-    private function getRepository()
+    private function getRepository(): ObjectRepository
     {
         return $this->managerRegistry
             ->getManagerForClass(CalendarEvent::class)

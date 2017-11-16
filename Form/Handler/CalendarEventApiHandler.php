@@ -24,8 +24,6 @@ class CalendarEventApiHandler extends AbstractCalendarEventHandler
             $originalEntity = clone $entity;
 
             $this->form->submit($request->request->all());
-            //$entity->setIsOrganizer(true);
-            //$entity->setOrganizerEmail('admin@example.com');
 
             if ($this->form->isValid()) {
                 // TODO: should be refactored after finishing BAP-8722
