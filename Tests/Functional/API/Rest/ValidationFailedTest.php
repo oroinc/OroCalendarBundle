@@ -40,6 +40,7 @@ class ValidationFailedTest extends AbstractValidationErrorTestCase
             'start'      => '2016-10-14T22:00:00+00:00',
             'end'        => '2016-10-14T23:00:00+00:00',
             'recurrence' => $recurrence,
+            'calendar'   => 1
         ];
 
         $this->restRequest(
@@ -114,11 +115,13 @@ class ValidationFailedTest extends AbstractValidationErrorTestCase
                             $recurrenceErrors
                         ),
                     ],
-                    'recurringEventId' => [],
-                    'reminders'        => [],
-                    'start'            => [],
-                    'title'            => [],
-                    'updateExceptions' => [],
+                    'recurringEventId'      => [],
+                    'reminders'             => [],
+                    'start'                 => [],
+                    'title'                 => [],
+                    'updateExceptions'      => [],
+                    'organizerDisplayName'  => [],
+                    'organizerEmail'        => []
                 ],
             ],
         ];
@@ -131,7 +134,8 @@ class ValidationFailedTest extends AbstractValidationErrorTestCase
             'start'           => '2016-10-14T22:00:00+00:00',
             'end'             => '2016-10-14T23:00:00+00:00',
             'recurrence'      => [],
-            'notifyAttendees' => 'unknown_notification_strategy'
+            'notifyAttendees' => 'unknown_notification_strategy',
+            'calendar'        => 1
         ];
 
         $this->restRequest(
@@ -190,11 +194,13 @@ class ValidationFailedTest extends AbstractValidationErrorTestCase
                                 'timeZone'       => [],
                             ],
                         ],
-                        'recurringEventId' => [],
-                        'reminders'        => [],
-                        'start'            => [],
-                        'title'            => [],
-                        'updateExceptions' => [],
+                        'recurringEventId'      => [],
+                        'reminders'             => [],
+                        'start'                 => [],
+                        'title'                 => [],
+                        'updateExceptions'      => [],
+                        'organizerDisplayName'  => [],
+                        'organizerEmail'        => []
                     ],
                 ],
             ],
