@@ -39,6 +39,7 @@ class ChangeCalendarEventInvitationStatusTest extends AbstractTestCase
      * It is expected the invitation status of main event and the child event can be updated.
      *
      * @SuppressWarnings(PHPMD.ExcessiveMethodLength)
+     * @SuppressWarnings(PHPMD.NPathComplexity)
      */
     public function testCalendarEventInvitationStatusIsUpdatedForMainEventAndChildEvent()
     {

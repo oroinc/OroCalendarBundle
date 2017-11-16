@@ -122,12 +122,10 @@ class BasicAttendeeTest extends AbstractTestCase
                 'isCancelled'              => false,
                 'createdAt'                => $newEvent->getCreatedAt()->format(DATE_RFC3339),
                 'updatedAt'                => $newEvent->getUpdatedAt()->format(DATE_RFC3339),
-                //TODO alter those fields after handling them in POST
                 'isOrganizer'              => $newEvent->isOrganizer(),
                 'organizerDisplayName'     => $newEvent->getOrganizerDisplayName(),
                 'organizerEmail'           => $newEvent->getOrganizerEmail(),
-                'organizerUserId'          =>
-                    $newEvent->getOrganizerUser() ? $newEvent->getOrganizerUser()->getId() : null
+                'organizerUserId' => $newEvent->getOrganizerUser() ? $newEvent->getOrganizerUser()->getId() : null
             ],
             $response
         );
@@ -236,12 +234,10 @@ class BasicAttendeeTest extends AbstractTestCase
                 'isCancelled'              => false,
                 'createdAt'                => $newEvent->getCreatedAt()->format(DATE_RFC3339),
                 'updatedAt'                => $newEvent->getUpdatedAt()->format(DATE_RFC3339),
-                //TODO alter those fields after handling them in POST
                 'isOrganizer'              => $newEvent->isOrganizer(),
                 'organizerDisplayName'     => $newEvent->getOrganizerDisplayName(),
                 'organizerEmail'           => $newEvent->getOrganizerEmail(),
-                'organizerUserId'          =>
-                    $newEvent->getOrganizerUser() ? $newEvent->getOrganizerUser()->getId() : null
+                'organizerUserId'  => $newEvent->getOrganizerUser() ? $newEvent->getOrganizerUser()->getId() : null
             ],
             $response
         );
@@ -350,12 +346,10 @@ class BasicAttendeeTest extends AbstractTestCase
                 'isCancelled'              => false,
                 'createdAt'                => $newEvent->getCreatedAt()->format(DATE_RFC3339),
                 'updatedAt'                => $newEvent->getUpdatedAt()->format(DATE_RFC3339),
-                //TODO alter those fields after handling them in POST
                 'isOrganizer'              => $newEvent->isOrganizer(),
                 'organizerDisplayName'     => $newEvent->getOrganizerDisplayName(),
                 'organizerEmail'           => $newEvent->getOrganizerEmail(),
-                'organizerUserId'          =>
-                    $newEvent->getOrganizerUser() ? $newEvent->getOrganizerUser()->getId() : null
+                'organizerUserId' => $newEvent->getOrganizerUser() ? $newEvent->getOrganizerUser()->getId() : null
             ],
             $response
         );
@@ -519,12 +513,10 @@ class BasicAttendeeTest extends AbstractTestCase
                 'isCancelled'              => false,
                 'createdAt'                => $newEvent->getCreatedAt()->format(DATE_RFC3339),
                 'updatedAt'                => $newEvent->getUpdatedAt()->format(DATE_RFC3339),
-                //TODO alter those fields after handling them in POST
                 'isOrganizer'              => $newEvent->isOrganizer(),
                 'organizerDisplayName'     => $newEvent->getOrganizerDisplayName(),
                 'organizerEmail'           => $newEvent->getOrganizerEmail(),
-                'organizerUserId'          =>
-                    $newEvent->getOrganizerUser() ? $newEvent->getOrganizerUser()->getId() : null
+                'organizerUserId' => $newEvent->getOrganizerUser() ? $newEvent->getOrganizerUser()->getId() : null
             ],
             $response
         );
