@@ -51,10 +51,7 @@ class UniqueUidValidator extends ConstraintValidator
             return;
         }
 
-        // calendar field is not mapped, so we need to take value from request. See CalendarEventApiTypeSubscriber
-        $form = $this->context->getRoot();
-        $calendarId = $form->get('calendar')->getData()
-            ?? ($calendarEvent->getCalendar() ? $calendarEvent->getCalendar()->getId() : null);
+        $calendarId = $calendarEvent->getCalendar() ? $calendarEvent->getCalendar()->getId() : null;
 
         // if calendar is not specified it can be a system calendar's event
         if ($calendarId === null) {

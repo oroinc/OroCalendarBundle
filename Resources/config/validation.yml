@@ -26,13 +26,13 @@ Oro\Bundle\CalendarBundle\Entity\CalendarEvent:
             - Email: ~
             - Length:
                 max: 255
-            - Oro\Bundle\FormBundle\Validator\Constraints\Unchangeable: ~
+            - Oro\Bundle\FormBundle\Validator\Constraints\UnchangeableField: ~
         organizerDisplayName:
             - Length:
                 max: 255
-            - Oro\Bundle\FormBundle\Validator\Constraints\Unchangeable: ~
+            - Oro\Bundle\FormBundle\Validator\Constraints\UnchangeableField: ~
         organizerUser:
-            - Oro\Bundle\FormBundle\Validator\Constraints\Unchangeable: ~
+            - Oro\Bundle\FormBundle\Validator\Constraints\UnchangeableField: ~
 
 Oro\Bundle\CalendarBundle\Entity\CalendarProperty:
     properties:
