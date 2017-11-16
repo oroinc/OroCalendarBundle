@@ -472,13 +472,6 @@ services:
         tags:
             - { name: validator.constraint_validator}
 
-    oro_calendar.validator.unchangeable_uid:
-        class: Oro\Bundle\CalendarBundle\Validator\Constraints\UnchangeableUidValidator
-        arguments:
-            - '@doctrine'
-        tags:
-            - { name: validator.constraint_validator}
-
     oro_calendar.validator.event_attendees:
         class: Oro\Bundle\CalendarBundle\Validator\Constraints\EventAttendeesValidator
         arguments:
