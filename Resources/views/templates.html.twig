@@ -34,6 +34,7 @@
                 {{ UI.renderHtmlProperty('oro.calendar.calendarevent.description.label'|trans, '<%= formatter.html(description) %>') }}
                 {{ UI.renderHtmlProperty('oro.calendar.calendarevent.start.label'|trans, '<%= formatter.dateTime(start) %>') }}
                 {{ UI.renderHtmlProperty('oro.calendar.calendarevent.end.label'|trans, '<%= formatter.dateTime(end) %>') }}
+                {{ UI.renderHtmlProperty('oro.calendar.calendarevent.all_day.label'|trans, '<%= formatter.bool(allDay) %>') }}
                 {{ UI.renderHtmlProperty('oro.calendar.calendarevent.organizer.label'|trans, '<%= organizerHTML %>') }}
                 <% if (recurrence) { %>
                     {{ UI.renderHtmlProperty('oro.calendar.calendarevent.recurrence.label'|trans, '<%= formatter.string(recurrencePattern) %>') }}
