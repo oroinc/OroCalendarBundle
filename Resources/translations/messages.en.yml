@@ -120,11 +120,13 @@ oro:
             attendees.label:              Guests
             related_attendee.label:       Related Attendee
             original_start.label:         Original Start
-            cancelled.label:              Is Cancelled
-            organizer.label:              Is Organizer
+            is_cancelled.label:           Is Cancelled
+            is_organizer.label:           Is Organizer
             organizer_display_name.label: Organizer Display Name
             organizer_email.label:        Organizer Email
-            organizer_user.label:         Organizer user
+            organizer_user.label:         Organizer User
+            organizer.label:              Organizer
+            na.label:                     N/A
             no_color:                 Use calendar color
             updated_by:               added by {{ user }}, updated by {{ editor }}
             added_by:                 added by {{ user }}
