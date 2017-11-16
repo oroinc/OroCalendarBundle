@@ -53,7 +53,7 @@ class EventAttendeesValidator extends ConstraintValidator
         $eventAttendees = $calendarEvent->getAttendees()->getValues();
         usort($eventAttendees, [$this, "sortAttendees"]);
 
-        if ($calendarEvent->isOrganizer() || $attendeesFromDb === $eventAttendees) {
+        if ($calendarEvent->isOrganizer() !== false || $attendeesFromDb === $eventAttendees) {
             return;
         }
 
