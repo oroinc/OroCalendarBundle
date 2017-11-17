@@ -103,6 +103,7 @@ class CalendarEventRepository extends EntityRepository
         $qb->where('ce.uid = :uid')
             ->andWhere('ce.isOrganizer = :isOrganizer')
             ->andWhere('ce.organizerEmail = :organizerEmail')
+            ->andWhere($qb->expr()->isNull('ce.parent'))
             ->setParameters(
                 [
                     'uid' => $event->getUid(),
