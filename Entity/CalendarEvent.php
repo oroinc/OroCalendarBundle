@@ -489,7 +489,7 @@ class CalendarEvent extends ExtendCalendarEvent implements
     /**
      * @return bool
      */
-    public function isSystemEvent(): bool
+    public function isSystemEvent()
     {
         return $this->getSystemCalendar() !== null;
     }
@@ -1420,7 +1420,7 @@ class CalendarEvent extends ExtendCalendarEvent implements
      *
      * @return CalendarEvent
      */
-    public function setIsOrganizer(bool $isOrganizer)
+    public function setIsOrganizer($isOrganizer)
     {
         $this->isOrganizer = $isOrganizer;
 
@@ -1460,7 +1460,7 @@ class CalendarEvent extends ExtendCalendarEvent implements
      *
      * @return CalendarEvent
      */
-    public function setOrganizerDisplayName(string $organizerDisplayName)
+    public function setOrganizerDisplayName($organizerDisplayName)
     {
         $this->organizerDisplayName = $organizerDisplayName;
 
@@ -1480,7 +1480,7 @@ class CalendarEvent extends ExtendCalendarEvent implements
      *
      * @return CalendarEvent
      */
-    public function setOrganizerEmail(string $organizerEmail)
+    public function setOrganizerEmail($organizerEmail)
     {
         $this->organizerEmail = $organizerEmail;
 

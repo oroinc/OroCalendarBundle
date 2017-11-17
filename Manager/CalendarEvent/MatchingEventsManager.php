@@ -54,7 +54,7 @@ class MatchingEventsManager
      * @param CalendarEvent $event
      * @return bool
      */
-    private function eventIsNew(CalendarEvent $event): bool
+    private function eventIsNew(CalendarEvent $event)
     {
         return $event->getId() === null;
     }

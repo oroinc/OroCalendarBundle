@@ -174,7 +174,7 @@ class MatchingEventsManagerTest extends \PHPUnit_Framework_TestCase
      * @param array $params
      * @return CalendarEvent
      */
-    private function getCalendarEvent(array $params): CalendarEvent
+    private function getCalendarEvent(array $params)
     {
         return $this->getEntity(CalendarEvent::class, $params);
     }

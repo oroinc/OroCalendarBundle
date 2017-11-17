@@ -65,7 +65,7 @@ class EventAttendeesValidator extends ConstraintValidator
     /**
      * @return ObjectRepository|AttendeeRepository
      */
-    private function getRepository(): ObjectRepository
+    private function getRepository()
     {
         return $this->managerRegistry
             ->getManagerForClass(Attendee::class)
