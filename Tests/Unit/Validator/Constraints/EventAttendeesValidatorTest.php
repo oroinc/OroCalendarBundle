@@ -145,8 +145,10 @@ class EventAttendeesValidatorTest extends AbstractConstraintValidatorTest
         $reflectionProperty = $reflectionClass->getProperty('id');
         $reflectionProperty->setAccessible(true);
         $reflectionProperty->setValue($calendarEvent, $id);
+
         return $calendarEvent;
     }
+
     /**
      * @param int $id
      * @param string $email
@@ -161,6 +163,7 @@ class EventAttendeesValidatorTest extends AbstractConstraintValidatorTest
         $reflectionProperty->setAccessible(true);
         $reflectionProperty->setValue($attendee, $id);
         $attendee->setEmail($email);
+
         return $attendee;
     }
 }
