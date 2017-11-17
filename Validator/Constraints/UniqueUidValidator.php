@@ -70,7 +70,7 @@ class UniqueUidValidator extends ConstraintValidator
     /**
      * @return ObjectRepository|CalendarEventRepository
      */
-    private function getRepository(): ObjectRepository
+    private function getRepository()
     {
         return $this->managerRegistry
             ->getManagerForClass(CalendarEvent::class)

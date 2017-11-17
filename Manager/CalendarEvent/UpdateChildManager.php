@@ -329,7 +329,7 @@ class UpdateChildManager
      * @param CalendarEvent $to
      * @param string $setter
      */
-    private function copyFieldIfNotNull(CalendarEvent $from, string $getter, CalendarEvent $to, string $setter)
+    private function copyFieldIfNotNull(CalendarEvent $from, $getter, CalendarEvent $to, $setter)
     {
         if (!is_callable([$from, $getter]) || !is_callable([$to, $setter])) {
             return;

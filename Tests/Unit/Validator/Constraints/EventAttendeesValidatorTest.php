@@ -138,7 +138,7 @@ class EventAttendeesValidatorTest extends AbstractConstraintValidatorTest
      * @param int $id
      * @return CalendarEvent
      */
-    private function getCalendarEventEntity(int $id): CalendarEvent
+    private function getCalendarEventEntity($id)
     {
         $calendarEvent = new CalendarEvent();
         $reflectionClass = new \ReflectionClass(CalendarEvent::class);
@@ -155,7 +155,7 @@ class EventAttendeesValidatorTest extends AbstractConstraintValidatorTest
      *
      * @return Attendee
      */
-    private function getCalendarEventAttendeeEntity(int $id, string $email): Attendee
+    private function getCalendarEventAttendeeEntity($id, $email)
     {
         $attendee = new Attendee();
         $reflectionClass = new \ReflectionClass(Attendee::class);

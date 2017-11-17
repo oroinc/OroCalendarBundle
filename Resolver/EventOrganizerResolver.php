@@ -54,7 +54,7 @@ class EventOrganizerResolver
      * @param string $organizerEmail
      * @return User|null
      */
-    private function findUser(string $organizerEmail)
+    private function findUser($organizerEmail)
     {
         return $this->registry->getManagerForClass(User::class)->getRepository(User::class)->findOneBy([
             'email' => $organizerEmail

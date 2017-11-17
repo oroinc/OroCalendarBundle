@@ -860,7 +860,7 @@ class CalendarEventTest extends \PHPUnit_Framework_TestCase
     /**
      * @return CalendarEvent
      */
-    public static function getCalendarEventWithOwner(): CalendarEvent
+    public static function getCalendarEventWithOwner()
     {
         $calendarEvent = new CalendarEvent();
         $calendar = new Calendar();
