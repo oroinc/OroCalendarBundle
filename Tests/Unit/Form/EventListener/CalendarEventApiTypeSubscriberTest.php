@@ -39,8 +39,8 @@ class CalendarEventApiTypeSubscriberTest extends \PHPUnit_Framework_TestCase
     {
         $this->assertEquals(
             [
-                FormEvents::PRE_SUBMIT  => 'preSubmitData',
-                FormEvents::POST_SUBMIT  => 'postSubmitData',
+                FormEvents::PRE_SUBMIT  => ['preSubmitData', 10],
+                FormEvents::POST_SUBMIT  => ['postSubmitData', 10],
             ],
             CalendarEventApiTypeSubscriber::getSubscribedEvents()
         );

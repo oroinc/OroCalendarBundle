@@ -422,7 +422,7 @@ class UserCalendarEventNormalizerTest extends \PHPUnit_Framework_TestCase
                     'recurringEventId' => null,
                     'originalStart' => null,
                     'isCancelled' => false,
-                    'isOrganizer' => true,
+                    'isOrganizer' => null,
                     'organizerEmail' => null,
                     'organizerDisplayName' => null,
                     'organizerUserId' => null
@@ -487,7 +487,7 @@ class UserCalendarEventNormalizerTest extends \PHPUnit_Framework_TestCase
                     'recurringEventId' => null,
                     'originalStart' => null,
                     'isCancelled' => false,
-                    'isOrganizer' => true,
+                    'isOrganizer' => null,
                     'organizerEmail' => null,
                     'organizerDisplayName' => null,
                     'organizerUserId' => null

@@ -50,7 +50,7 @@ class UpdateAttendeeManager
      */
     public function onEventUpdate(CalendarEvent $calendarEvent, Organization $organization)
     {
-        if (!$calendarEvent->isOrganizer() && $calendarEvent->getParent() === null) {
+        if ($calendarEvent->isOrganizer() === false && $calendarEvent->getParent() === null) {
             $calendarEvent->setAttendees(new ArrayCollection());
 
             return;
