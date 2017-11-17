@@ -1,0 +1,9 @@
+<div class="calendar-event-organizer">
+    <% if (!_.isNull(organizerUserId) && !_.isNull(organizerDisplayName)) { %>
+        <a href="<%= routing.generate('oro_user_view', {id: organizerUserId}) %>"><%= organizerDisplayName %></a>
+    <% } else if(!_.isNull(organizerEmail) && !_.isNull(organizerDisplayName)) { %>
+        <%= organizerDisplayName + ' (' + organizerEmail + ')' %>
+    <% } else { %>
+        <%= _.__('oro.calendar.event.na') %>
+    <% } %>
+</div>
