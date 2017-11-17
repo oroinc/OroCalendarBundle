@@ -9,7 +9,7 @@ use Symfony\Component\Validator\Constraint;
 use Symfony\Component\Validator\ConstraintValidator;
 
 use Oro\Bundle\CalendarBundle\Entity\CalendarEvent;
-use Oro\Bundle\CalendarBundle\Entity\Attendee;
+use Oro\Bundle\CalendarBundle\Entity\Attendee as EventAttendee;
 use Oro\Bundle\CalendarBundle\Entity\Repository\AttendeeRepository;
 
 class EventAttendeesValidator extends ConstraintValidator
@@ -32,7 +32,7 @@ class EventAttendeesValidator extends ConstraintValidator
      * @param Attendee $attendee2
      * @return int
      */
-    private function sortAttendees(Attendee $attendee1, Attendee $attendee2)
+    private function sortAttendees(EventAttendee $attendee1, EventAttendee $attendee2)
     {
         return strcmp($attendee1->getEmail(), $attendee2->getEmail());
     }
@@ -68,7 +68,7 @@ class EventAttendeesValidator extends ConstraintValidator
     private function getRepository()
     {
         return $this->managerRegistry
-            ->getManagerForClass(Attendee::class)
-            ->getRepository(Attendee::class);
+            ->getManagerForClass(EventAttendee::class)
+            ->getRepository(EventAttendee::class);
     }
 }
