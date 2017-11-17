@@ -45,6 +45,7 @@ class ValidationFailedTest extends AbstractValidationErrorTestCase
             'start' => '2016-10-14T22:00:00+00:00',
             'end' => '2016-10-14T23:00:00+00:00',
             'recurrence' => $recurrence,
+            'calendar'  => 1
         ];
 
         // Request is made directly without using crawler to be able to pass invalid values to the form.
