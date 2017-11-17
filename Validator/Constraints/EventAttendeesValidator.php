@@ -28,6 +28,16 @@ class EventAttendeesValidator extends ConstraintValidator
     }
 
     /**
+     * @param Attendee $attendee1
+     * @param Attendee $attendee2
+     * @return int
+     */
+    private function sortAttendees(Attendee $attendee1, Attendee $attendee2)
+    {
+        return strcmp($attendee1->getEmail(), $attendee2->getEmail());
+    }
+
+    /**
      * {@inheritdoc}
      * @param CalendarEvent $calendarEvent
      */
@@ -39,8 +49,11 @@ class EventAttendeesValidator extends ConstraintValidator
         // fetch directly from db, not from Doctrine's proxy or already persisted entity
         /** @var CalendarEvent $eventFromDb */
         $attendeesFromDb = $this->getRepository()->getAttendeesForCalendarEvent($calendarEvent);
+        usort($attendeesFromDb, [$this, "sortAttendees"]);
+        $eventAttendees = $calendarEvent->getAttendees()->getValues();
+        usort($eventAttendees, [$this, "sortAttendees"]);
 
-        if ($calendarEvent->isOrganizer() || $attendeesFromDb === $calendarEvent->getAttendees()->getValues()) {
+        if ($calendarEvent->isOrganizer() !== false || $attendeesFromDb === $eventAttendees) {
             return;
         }
 

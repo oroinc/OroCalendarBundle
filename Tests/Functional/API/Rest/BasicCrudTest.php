@@ -115,7 +115,7 @@ class BasicCrudTest extends AbstractTestCase
                 'isOrganizer'              => $newEvent->isOrganizer(),
                 'organizerDisplayName'     => $newEvent->getOrganizerDisplayName(),
                 'organizerEmail'           => $newEvent->getOrganizerEmail(),
-                'organizerUserId'            => $newEvent->getOrganizerUser()
+                'organizerUserId'      => $newEvent->getOrganizerUser() ? $newEvent->getOrganizerUser()->getId() : null
             ],
             $response
         );
@@ -206,7 +206,7 @@ CONTENT;
                 'isOrganizer'              => $newEvent->isOrganizer(),
                 'organizerDisplayName'     => $newEvent->getOrganizerDisplayName(),
                 'organizerEmail'           => $newEvent->getOrganizerEmail(),
-                'organizerUserId'            => $newEvent->getOrganizerUser()
+                'organizerUserId'      => $newEvent->getOrganizerUser() ? $newEvent->getOrganizerUser()->getId() : null
             ],
             $response
         );
