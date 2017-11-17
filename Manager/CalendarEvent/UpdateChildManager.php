@@ -323,6 +323,12 @@ class UpdateChildManager
         $this->copyFieldIfNotNull($calendarEvent, 'getOrganizerUser', $attendeeCalendarEvent, 'setOrganizerUser');
     }
 
+    /**
+     * @param CalendarEvent $from
+     * @param string $getter
+     * @param CalendarEvent $to
+     * @param string $setter
+     */
     private function copyFieldIfNotNull(CalendarEvent $from, string $getter, CalendarEvent $to, string $setter)
     {
         if (!is_callable([$from, $getter]) || !is_callable([$to, $setter])) {

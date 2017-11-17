@@ -87,6 +87,7 @@ define(function(require) {
                 'durationEditable',
                 'startEditable',
                 'isOrganizer',
+                'organizerUserId',
                 'organizerUserId'
             ];
 
