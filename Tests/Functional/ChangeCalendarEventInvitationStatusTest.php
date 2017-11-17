@@ -39,7 +39,6 @@ class ChangeCalendarEventInvitationStatusTest extends AbstractTestCase
      * It is expected the invitation status of main event and the child event can be updated.
      *
      * @SuppressWarnings(PHPMD.ExcessiveMethodLength)
-     * @SuppressWarnings(PHPMD.NPathComplexity)
      */
     public function testCalendarEventInvitationStatusIsUpdatedForMainEventAndChildEvent()
     {
@@ -191,8 +190,7 @@ class ChangeCalendarEventInvitationStatusTest extends AbstractTestCase
                     'isOrganizer' => true,
                     'organizerDisplayName' => 'Billy Wilf',
                     'organizerEmail' => 'foo_user_1@example.com',
-                    'organizerUserId' =>
-                        $newEvent->getOrganizerUser() ? (string)$newEvent->getOrganizerUser()->getId() : null
+                    'organizerUserId' => $this->getOrganizerId($newEvent)
                 ],
                 [
                     'id' => $newChildEvent->getId(),
@@ -244,8 +242,7 @@ class ChangeCalendarEventInvitationStatusTest extends AbstractTestCase
                     'isOrganizer' => false,
                     'organizerDisplayName' => 'Billy Wilf',
                     'organizerEmail' => 'foo_user_1@example.com',
-                    'organizerUserId' =>
-                        $newChildEvent->getOrganizerUser() ? (string)$newChildEvent->getOrganizerUser()->getId() : null
+                    'organizerUserId' => $this->getOrganizerId($newChildEvent)
                 ],
             ],
             $response
@@ -354,8 +351,7 @@ class ChangeCalendarEventInvitationStatusTest extends AbstractTestCase
                     'isOrganizer' => true,
                     'organizerDisplayName' => 'Billy Wilf',
                     'organizerEmail' => 'foo_user_1@example.com',
-                    'organizerUserId' =>
-                        $newChildEvent->getOrganizerUser() ? (string)$newChildEvent->getOrganizerUser()->getId() : null
+                    'organizerUserId' => $this->getOrganizerId($newEvent)
                 ],
                 [
                     'id' => $newChildEvent->getId(),
@@ -405,8 +401,7 @@ class ChangeCalendarEventInvitationStatusTest extends AbstractTestCase
                     'isOrganizer' => false,
                     'organizerDisplayName' => 'Billy Wilf',
                     'organizerEmail' => 'foo_user_1@example.com',
-                    'organizerUserId' =>
-                        $newChildEvent->getOrganizerUser() ? (string)$newChildEvent->getOrganizerUser()->getId() : null
+                    'organizerUserId' => $this->getOrganizerId($newChildEvent)
                 ],
             ],
             $response,
@@ -517,8 +512,7 @@ class ChangeCalendarEventInvitationStatusTest extends AbstractTestCase
                     'isOrganizer' => true,
                     'organizerDisplayName' => 'Billy Wilf',
                     'organizerEmail' => 'foo_user_1@example.com',
-                    'organizerUserId' =>
-                        $newChildEvent->getOrganizerUser() ? (string)$newChildEvent->getOrganizerUser()->getId() : null
+                    'organizerUserId' => $this->getOrganizerId($newEvent)
                 ],
                 [
                     'id' => $newChildEvent->getId(),
@@ -568,8 +562,7 @@ class ChangeCalendarEventInvitationStatusTest extends AbstractTestCase
                     'isOrganizer' => false,
                     'organizerDisplayName' => 'Billy Wilf',
                     'organizerEmail' => 'foo_user_1@example.com',
-                    'organizerUserId' =>
-                        $newChildEvent->getOrganizerUser() ? (string)$newChildEvent->getOrganizerUser()->getId() : null
+                    'organizerUserId' => $this->getOrganizerId($newChildEvent)
                 ],
             ],
             $response,
@@ -679,8 +672,7 @@ class ChangeCalendarEventInvitationStatusTest extends AbstractTestCase
                     'isOrganizer' => true,
                     'organizerDisplayName' => 'Billy Wilf',
                     'organizerEmail' => 'foo_user_1@example.com',
-                    'organizerUserId' =>
-                        $newChildEvent->getOrganizerUser() ? (string)$newChildEvent->getOrganizerUser()->getId() : null
+                    'organizerUserId' => $this->getOrganizerId($newEvent)
                 ],
                 [
                     'id' => $newChildEvent->getId(),
@@ -730,8 +722,7 @@ class ChangeCalendarEventInvitationStatusTest extends AbstractTestCase
                     'isOrganizer' => false,
                     'organizerDisplayName' => 'Billy Wilf',
                     'organizerEmail' => 'foo_user_1@example.com',
-                    'organizerUserId' =>
-                        $newChildEvent->getOrganizerUser() ? (string)$newChildEvent->getOrganizerUser()->getId() : null
+                    'organizerUserId' => $this->getOrganizerId($newChildEvent)
                 ],
             ],
             $response,
@@ -849,8 +840,7 @@ class ChangeCalendarEventInvitationStatusTest extends AbstractTestCase
                     'isOrganizer' => true,
                     'organizerDisplayName' => 'Billy Wilf',
                     'organizerEmail' => 'foo_user_1@example.com',
-                    'organizerUserId' =>
-                        $newChildEvent->getOrganizerUser() ? (string)$newChildEvent->getOrganizerUser()->getId() : null
+                    'organizerUserId' => $this->getOrganizerId($newEvent)
                 ],
                 [
                     'id' => $newChildEvent->getId(),
@@ -900,12 +890,20 @@ class ChangeCalendarEventInvitationStatusTest extends AbstractTestCase
                     'isOrganizer' => false,
                     'organizerDisplayName' => 'Billy Wilf',
                     'organizerEmail' => 'foo_user_1@example.com',
-                    'organizerUserId' =>
-                        $newChildEvent->getOrganizerUser() ? (string)$newChildEvent->getOrganizerUser()->getId() : null
+                    'organizerUserId' => $this->getOrganizerId($newChildEvent)
                 ],
             ],
             $response,
             false
         );
+    }
+
+    /**
+     * @param CalendarEvent $newChildEvent
+     * @return null|string
+     */
+    private function getOrganizerId(CalendarEvent $newChildEvent)
+    {
+        return $newChildEvent->getOrganizerUser() ? (string)$newChildEvent->getOrganizerUser()->getId() : null;
     }
 }
