@@ -1,0 +1,48 @@
+Oro\Bundle\UserBundle\Entity\User:
+  charlie:
+    firstName: Charlie
+    lastName: Sheen
+    username: charlie
+    organization: '@organization'
+    organizations: ['@organization']
+    roles: ['@userRole']
+    owner: '@business_unit'
+    businessUnits: ['@business_unit']
+    email: charlie@example.com
+    password: 3X+qGs+/6Ic/iL+5/t6C5C3C0hYEbhYLtZ/nwJDn5QUYArHkBy90HT220LVErWvKyVH7XoId15dv/uF2+pExiQ==
+    salt: eexx2a8mtsg8o4c8k4w08wo04ccsw8
+
+Oro\Bundle\OrganizationBundle\Entity\BusinessUnit:
+  businessUnit:
+    name: Common Business Unit
+    organization: '@organization'
+
+Oro\Bundle\CalendarBundle\Entity\CalendarEvent:
+  calendarEvent_1:
+    title: Call to client
+    calendar: 1
+    start: <dateTimeBetween('-1 hour', 'now')>
+    end: <dateTimeBetween('now', '+1 hour')>
+    allDay: false
+    organizerUser: @charlie
+    organizerDisplayName: Charlie Sheen
+    organizerEmail: charlie@example.com
+  calendarEvent_2:
+    title: Meeting
+    calendar: 1
+    start: <dateTimeBetween('-3 hour', '-2 hour')>
+    end: <dateTimeBetween('-2 hour', '-1 hour')>
+    allDay: false
+    organizerDisplayName: Charlie Sheen
+    organizerEmail: charlie@example.com
+  calendarEvent_3:
+    title: Business trip
+    calendar: 1
+    start: <dateTimeBetween('+1 hour', '+2 hour')>
+    end: <dateTimeBetween('+2 hour', '+3 hour')>
+    allDay: false
+
+Oro\Bundle\OrganizationBundle\Entity\Organization:
+  commonOrganization:
+    name: Common Organization
+    enabled: true
