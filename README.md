@@ -11,6 +11,7 @@ Table of content
 - [Workflow Action](./Resources/doc/workflowAction.md)
 - [Recurring Events](./Resources/doc/recurringEvents.md)
 - [UID](./Resources/doc/uid.md)
+- [Event Organizers](./Resources/doc/eventOrganizers.md)
 
 ##Overview
 
