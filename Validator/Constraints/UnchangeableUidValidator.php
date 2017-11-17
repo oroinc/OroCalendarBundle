@@ -12,6 +12,9 @@ use Symfony\Component\Validator\ConstraintValidator;
 use Oro\Bundle\CalendarBundle\Entity\CalendarEvent;
 use Oro\Bundle\CalendarBundle\Entity\Repository\CalendarEventRepository;
 
+/**
+ * @deprecated This validator is deprecated and will be removed in the future. Use UnchangeableFieldValidator instead
+ */
 class UnchangeableUidValidator extends ConstraintValidator
 {
     /**
