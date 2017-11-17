@@ -111,9 +111,9 @@ class CalendarEventManagerLegacyTest extends \PHPUnit_Framework_TestCase
         $updateManager = new UpdateManager(
             new UpdateAttendeeManager($attendeeRelationManager, $doctrine),
             new UpdateChildManager($doctrine),
-            new UpdateExceptionManager($attendeeManager, $deleteManager),
-            new MatchingEventsManager($doctrineHelper)
+            new UpdateExceptionManager($attendeeManager, $deleteManager)
         );
+        $updateManager->setUpdateMatchingEventsManager(new MatchingEventsManager($doctrineHelper));
 
         $this->calendarEventManager = new CalendarEventManager(
             $updateManager,
