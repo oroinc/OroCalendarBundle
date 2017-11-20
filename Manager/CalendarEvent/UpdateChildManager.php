@@ -45,6 +45,10 @@ class UpdateChildManager
         CalendarEvent $originalEvent,
         Organization $organization
     ) {
+        if ($calendarEvent->isOrganizer() === false && $calendarEvent->getParent() === null) {
+            return;
+        }
+
         $attendeeUserIds = $this->getAttendeeUserIds($calendarEvent);
         $calendarUserIds = $this->getAttendeeUserIds($originalEvent);
 

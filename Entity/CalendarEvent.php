@@ -1494,7 +1494,7 @@ class CalendarEvent extends ExtendCalendarEvent implements
      */
     public function calculateIsOrganizer()
     {
-        if ($this->isSystemEvent()) {
+        if ($this->isSystemEvent() || $this->getCalendar() === null) {
             return;
         }
 
