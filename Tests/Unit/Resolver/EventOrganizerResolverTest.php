@@ -41,6 +41,15 @@ class EventOrganizerResolverTest extends \PHPUnit_Framework_TestCase
         $this->assertNull($calendarEvent->getOrganizerDisplayName());
     }
 
+    public function testResolverDoesNotWorkIfOrganizerEmailIsNull()
+    {
+        $calendarEvent = new CalendarEvent();
+
+        $this->resolver->updateOrganizerInfo($calendarEvent);
+        $this->assertNull($calendarEvent->isOrganizer());
+        $this->assertNull($calendarEvent->getOrganizerDisplayName());
+    }
+
     /**
      * @dataProvider organizerFetchedUserDisplayNameDataProvider
      * @param string|null $displayName
