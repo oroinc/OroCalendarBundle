@@ -245,7 +245,7 @@ class UserCalendarEventNormalizerTest extends \PHPUnit_Framework_TestCase
                     ],
                 ]
             ],
-            'event with invitees and editable invitation status' => [
+            'event with invitees and editable invitation status and organizer not specified (BC)' => [
                 'events' => [
                     [
                         'calendar' => 123,
@@ -307,6 +307,71 @@ class UserCalendarEventNormalizerTest extends \PHPUnit_Framework_TestCase
                         'organizerEmail' => null,
                         'organizerDisplayName' => null,
                         'organizerUserId' => null
+                    ],
+                ]
+            ],
+            'event with invitees and editable invitation status and is organizer' => [
+                'events' => [
+                    [
+                        'calendar' => 123,
+                        'id' => 1,
+                        'uid' => null,
+                        'title' => 'test',
+                        'description' => null,
+                        'start' => $startDate,
+                        'end' => $endDate,
+                        'allDay' => false,
+                        'backgroundColor' => null,
+                        'createdAt' => null,
+                        'updatedAt' => null,
+                        'parentEventId' => null,
+                        'invitationStatus' => Attendee::STATUS_NONE,
+                        'relatedAttendeeUserId' => 1,
+                        'isOrganizer' => true,
+                        'organizerEmail' => 'org@org.org',
+                        'organizerDisplayName' => 'organizer',
+                        'organizerUserId' => 1
+                    ],
+                ],
+                'attendees' => [
+                    1 => [
+                        [
+                            'displayName' => 'user',
+                            'email' => 'user@example.com',
+                            'userId' => 1
+                        ],
+                    ],
+                ],
+                'editableInvitationStatus' => true,
+                'expected' => [
+                    [
+                        'calendar' => 123,
+                        'id' => 1,
+                        'uid' => null,
+                        'title' => 'test',
+                        'description' => null,
+                        'start' => $startDate->format('c'),
+                        'end' => $endDate->format('c'),
+                        'allDay' => false,
+                        'backgroundColor' => null,
+                        'createdAt' => null,
+                        'updatedAt' => null,
+                        'parentEventId' => null,
+                        'invitationStatus' => Attendee::STATUS_NONE,
+                        'editable' => true,
+                        'editableInvitationStatus' => true,
+                        'removable' => true,
+                        'attendees' => [
+                            [
+                                'displayName' => 'user',
+                                'email' => 'user@example.com',
+                                'userId' => 1
+                            ],
+                        ],
+                        'isOrganizer' => true,
+                        'organizerEmail' => 'org@org.org',
+                        'organizerDisplayName' => 'organizer',
+                        'organizerUserId' => 1
                     ],
                 ]
             ],
@@ -447,6 +512,7 @@ class UserCalendarEventNormalizerTest extends \PHPUnit_Framework_TestCase
                     'recurringEventId' => null,
                     'originalStart' => null,
                     'isCancelled' => false,
+                    'isOrganizer' => true,
                 ],
                 'calendarId' => 123,
                 'editableInvitationStatus' => false,
@@ -481,7 +547,7 @@ class UserCalendarEventNormalizerTest extends \PHPUnit_Framework_TestCase
                     'recurringEventId' => null,
                     'originalStart' => null,
                     'isCancelled' => false,
-                    'isOrganizer' => null,
+                    'isOrganizer' => true,
                     'organizerEmail' => null,
                     'organizerDisplayName' => null,
                     'organizerUserId' => null
