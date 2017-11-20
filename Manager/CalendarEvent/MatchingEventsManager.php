@@ -12,7 +12,7 @@ class MatchingEventsManager
     /**
      * @var CalendarEventRepository
      */
-    protected $doctrineHelper;
+    private $doctrineHelper;
 
     /**
      * @param DoctrineHelper $doctrineHelper

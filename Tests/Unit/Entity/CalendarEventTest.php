@@ -846,6 +846,18 @@ class CalendarEventTest extends \PHPUnit_Framework_TestCase
         $this->assertNull($calendarEvent->getOrganizerDisplayName());
     }
 
+    public function testCalculateIsOrganizerDoesNotWorkIfCalendarIsNull()
+    {
+        $calendarEvent = new CalendarEvent();
+        $calendarEvent
+            ->setOrganizerEmail(static::OWNER_EMAIL);
+
+        $calendarEvent->calculateIsOrganizer();
+
+        $this->assertNull($calendarEvent->isOrganizer());
+        $this->assertNull($calendarEvent->getOrganizerDisplayName());
+    }
+
     /**
      * @return array
      */
