@@ -218,7 +218,8 @@ class UserCalendarEventNormalizer extends AbstractCalendarEventNormalizer
         $item['editable'] =
             ($item['calendar'] === $this->getCurrentCalendarId())
             && empty($item['parentEventId'])
-            && $this->authorizationChecker->isGranted('oro_calendar_event_update');
+            && $this->authorizationChecker->isGranted('oro_calendar_event_update')
+            && $item['isOrganizer'] !== false;
 
         $item['removable'] =
             ($item['calendar'] === $this->getCurrentCalendarId())
