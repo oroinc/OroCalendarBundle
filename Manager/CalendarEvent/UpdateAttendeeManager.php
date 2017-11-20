@@ -2,7 +2,6 @@
 
 namespace Oro\Bundle\CalendarBundle\Manager\CalendarEvent;
 
-use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\Common\Persistence\ManagerRegistry;
 
@@ -50,12 +49,6 @@ class UpdateAttendeeManager
      */
     public function onEventUpdate(CalendarEvent $calendarEvent, Organization $organization)
     {
-        if ($calendarEvent->isOrganizer() === false && $calendarEvent->getParent() === null) {
-            $calendarEvent->setAttendees(new ArrayCollection());
-
-            return;
-        }
-
         $this->attendeeRelationManager->bindAttendees($calendarEvent->getAttendees(), $organization);
 
         $calendarEvent->setRelatedAttendee($calendarEvent->findRelatedAttendee());
