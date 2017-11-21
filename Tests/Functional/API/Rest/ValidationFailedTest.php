@@ -2,7 +2,6 @@
 
 namespace Oro\Bundle\CalendarBundle\Tests\Functional\API\Rest;
 
-use Oro\Bundle\CalendarBundle\Model\Recurrence;
 use Oro\Bundle\CalendarBundle\Tests\Functional\AbstractValidationErrorTestCase;
 use Oro\Bundle\CalendarBundle\Tests\Functional\DataFixtures\LoadUserData;
 
@@ -42,6 +41,7 @@ class ValidationErrorTest extends AbstractValidationErrorTestCase
             'start'      => '2016-10-14T22:00:00+00:00',
             'end'        => '2016-10-14T23:00:00+00:00',
             'recurrence' => $recurrence,
+            'calendar'   => 1
         ];
 
         $this->restRequest(
@@ -116,11 +116,13 @@ class ValidationErrorTest extends AbstractValidationErrorTestCase
                             $recurrenceErrors
                         ),
                     ],
-                    'recurringEventId' => [],
-                    'reminders'        => [],
-                    'start'            => [],
-                    'title'            => [],
-                    'updateExceptions' => [],
+                    'recurringEventId'      => [],
+                    'reminders'             => [],
+                    'start'                 => [],
+                    'title'                 => [],
+                    'updateExceptions'      => [],
+                    'organizerDisplayName'  => [],
+                    'organizerEmail'        => []
                 ],
             ],
         ];
@@ -133,7 +135,8 @@ class ValidationErrorTest extends AbstractValidationErrorTestCase
             'start'           => '2016-10-14T22:00:00+00:00',
             'end'             => '2016-10-14T23:00:00+00:00',
             'recurrence'      => [],
-            'notifyAttendees' => 'unknown_notification_strategy'
+            'notifyAttendees' => 'unknown_notification_strategy',
+            'calendar'        => 1
         ];
 
         $this->restRequest(
@@ -192,11 +195,13 @@ class ValidationErrorTest extends AbstractValidationErrorTestCase
                                 'timeZone'       => [],
                             ],
                         ],
-                        'recurringEventId' => [],
-                        'reminders'        => [],
-                        'start'            => [],
-                        'title'            => [],
-                        'updateExceptions' => [],
+                        'recurringEventId'      => [],
+                        'reminders'             => [],
+                        'start'                 => [],
+                        'title'                 => [],
+                        'updateExceptions'      => [],
+                        'organizerDisplayName'  => [],
+                        'organizerEmail'        => []
                     ],
                 ],
             ],

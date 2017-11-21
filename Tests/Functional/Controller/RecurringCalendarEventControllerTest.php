@@ -86,6 +86,8 @@ class RecurringCalendarEventControllerTest extends AbstractUseCaseTestCase
             'end' => '2016-04-25T02:00:00+00:00',
             'allDay' => true,
             'backgroundColor' => '#FF0000',
+            'organizerDisplayName' => 'John Doe',
+            'organizerEmail' => 'admin@example.com',
             'recurrence' => [
                 'recurrenceType' => Recurrence::TYPE_DAILY,
                 'interval' => 5,
@@ -149,6 +151,8 @@ class RecurringCalendarEventControllerTest extends AbstractUseCaseTestCase
             'end' => '2016-05-30T02:00:00+00:00',
             'allDay' => true,
             'backgroundColor' => '#FF0000',
+            'organizerDisplayName' => 'John Doe',
+            'organizerEmail' => 'admin@example.com',
             'recurrence' => [
                 'recurrenceType' => Recurrence::TYPE_DAILY,
                 'interval' => 5,
@@ -226,6 +230,8 @@ class RecurringCalendarEventControllerTest extends AbstractUseCaseTestCase
             'end' => '2016-05-30T02:00:00+00:00',
             'allDay' => true,
             'backgroundColor' => '#FF0000',
+            'organizerDisplayName' => 'John Doe',
+            'organizerEmail' => 'admin@example.com',
         ];
 
         $this->client->followRedirects(true);

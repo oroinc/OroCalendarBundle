@@ -6,10 +6,8 @@ use Doctrine\Common\Annotations\AnnotationReader;
 use Doctrine\Common\Collections\Criteria;
 use Doctrine\ORM\Mapping\Driver\AnnotationDriver;
 
-use Oro\Bundle\CalendarBundle\Model\Recurrence;
 use Oro\Bundle\TestFrameworkBundle\Test\Doctrine\ORM\OrmTestCase;
 use Oro\Bundle\TestFrameworkBundle\Test\Doctrine\ORM\Mocks\EntityManagerMock;
-
 use Oro\Bundle\CalendarBundle\Entity\Repository\CalendarEventRepository;
 
 /**
@@ -449,7 +447,11 @@ class CalendarEventRepositoryTest extends OrmTestCase
             'e.updatedAt',
             'e.originalStart',
             'IDENTITY(e.recurringEvent) AS recurringEventId',
-            'e.cancelled AS isCancelled'
+            'e.cancelled AS isCancelled',
+            'e.isOrganizer AS isOrganizer',
+            'e.organizerEmail',
+            'e.organizerDisplayName',
+            'IDENTITY(e.organizerUser) as organizerUserId'
         ];
 
         return 'SELECT ' . implode(', ', $baseFields);

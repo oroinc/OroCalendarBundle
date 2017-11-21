@@ -14,6 +14,7 @@ define(function(require) {
     var DeleteConfirmation = require('oroui/js/delete-confirmation');
     var fieldFormatter = require('oroform/js/formatter/field');
     var ActivityContextComponent = require('oroactivity/js/app/components/activity-context-activity-component');
+    var orginizerTemplate = require('tpl!orocalendar/templates/calendar/event/organizer.html');
 
     CalendarEventView = BaseView.extend({
         /** @property {Object} */
@@ -397,6 +398,7 @@ define(function(require) {
                 invitationUrls[status] = routing.generate('oro_calendar_event_' + status, {id: this.model.originalId});
             }, this);
             var $element = $(this.viewTemplate(_.extend(this.model.toJSON(), {
+                organizerHTML: this._getOrganizerHTML(),
                 formatter: fieldFormatter,
                 connection: connection ? connection.toJSON() : null,
                 invitationUrls: invitationUrls,
@@ -668,6 +670,17 @@ define(function(require) {
             this.options.commonEventBus.trigger('eventForm:setupData', this.model, formData, this.predefinedAttrs);
 
             return formData;
+        },
+
+        _getOrganizerHTML: function() {
+            var model = this.model;
+
+            return orginizerTemplate({
+                routing: routing,
+                organizerUserId: model.get('organizerUserId'),
+                organizerDisplayName: model.get('organizerDisplayName'),
+                organizerEmail: model.get('organizerEmail')
+            });
         }
     });
 

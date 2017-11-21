@@ -87,7 +87,7 @@ class OroCalendarBundleInstaller implements
      */
     public function getMigrationVersion()
     {
-        return 'v1_17_1';
+        return 'v1_17_2';
     }
 
     /**
@@ -269,6 +269,10 @@ class OroCalendarBundleInstaller implements
         $table->addColumn('recurrence_id', 'integer', ['notnull' => false]);
         $table->addColumn('original_start_at', 'datetime', ['notnull' => false]);
         $table->addColumn('is_cancelled', 'boolean', ['default' => false]);
+        $table->addColumn('is_organizer', 'boolean', ['notnull' => false]);
+        $table->addColumn('organizer_user_id', 'integer', ['notnull' => false]);
+        $table->addColumn('organizer_email', 'string', ['notnull' => false, 'length' => 255]);
+        $table->addColumn('organizer_display_name', 'string', ['notnull' => false, 'length' => 255]);
 
         $table->addIndex(['related_attendee_id']);
         $table->addIndex(['calendar_id', 'start_at', 'end_at'], 'oro_calendar_event_idx', []);
@@ -276,6 +280,7 @@ class OroCalendarBundleInstaller implements
         $table->addIndex(['system_calendar_id'], 'IDX_2DDC40DD55F0F9D0', []);
         $table->addIndex(['updated_at'], 'oro_calendar_event_up_idx', []);
         $table->addIndex(['original_start_at'], 'oro_calendar_event_osa_idx');
+        $table->addIndex(['organizer_user_id']);
 
         $table->addUniqueIndex(['recurrence_id'], 'UNIQ_2DDC40DD2C414CE8');
         $table->setPrimaryKey(['id']);
@@ -380,6 +385,12 @@ class OroCalendarBundleInstaller implements
             ['recurrence_id'],
             ['id'],
             ['onDelete' => 'SET NULL', 'onUpdate' => null]
+        );
+        $table->addForeignKeyConstraint(
+            $schema->getTable('oro_user'),
+            ['organizer_user_id'],
+            ['id'],
+            ['onUpdate' => null, 'onDelete' => 'SET NULL']
         );
     }
 

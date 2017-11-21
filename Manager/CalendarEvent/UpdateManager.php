@@ -24,9 +24,14 @@ class UpdateManager
     protected $updateChildManager;
 
     /**
+     * @var MatchingEventsManager
+     */
+    protected $matchingEventsManager;
+
+    /**
      * @param UpdateAttendeeManager $updateAttendeeManager
-     * @param UpdateChildManager $updateChildManager,
-     * @param UpdateExceptionManager $updateExceptionManager,
+     * @param UpdateChildManager $updateChildManager
+     * @param UpdateExceptionManager $updateExceptionManager
      */
     public function __construct(
         UpdateAttendeeManager $updateAttendeeManager,
@@ -36,6 +41,14 @@ class UpdateManager
         $this->updateAttendeeManager = $updateAttendeeManager;
         $this->updateChildManager = $updateChildManager;
         $this->updateExceptionManager = $updateExceptionManager;
+    }
+
+    /**
+     * @param MatchingEventsManager $matchingEventsManager
+     */
+    public function setUpdateMatchingEventsManager(MatchingEventsManager $matchingEventsManager)
+    {
+        $this->matchingEventsManager = $matchingEventsManager;
     }
 
     /**
@@ -54,6 +67,9 @@ class UpdateManager
         $allowUpdateExceptions
     ) {
         $this->updateAttendeeManager->onEventUpdate($actualEvent, $organization);
+        if ($this->matchingEventsManager) {
+            $this->matchingEventsManager->onEventUpdate($actualEvent);
+        }
         $this->updateChildManager->onEventUpdate($actualEvent, $originalEvent, $organization);
 
         if ($allowUpdateExceptions) {
