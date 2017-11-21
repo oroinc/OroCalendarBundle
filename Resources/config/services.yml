@@ -166,8 +166,7 @@ services:
             - '@oro_calendar.calendar_event.update_attendee_manager'
             - '@oro_calendar.calendar_event.update_child_manager'
             - '@oro_calendar.calendar_event.update_exception_manager'
-        calls:
-            - [setUpdateMatchingEventsManager, ['@oro_calendar.calendar_event.matching_events_manager']]
+            - '@oro_calendar.calendar_event.matching_events_manager'
 
     oro_calendar.calendar_event.update_attendee_manager:
         class: 'Oro\Bundle\CalendarBundle\Manager\CalendarEvent\UpdateAttendeeManager'

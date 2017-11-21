@@ -72,7 +72,7 @@ class CalendarEventManagerLegacyTest extends \PHPUnit_Framework_TestCase
                 ['Extend\Entity\EV_Ce_Attendee_Status', null, $repository],
                 ['Extend\Entity\EV_Ce_Attendee_Type', null, $repository],
                 ['OroCalendarBundle:Calendar', null, $repository],
-                [CalendarEvent::class, null, $calendarEventRepository]
+                [CalendarEvent::class, null, $calendarEventRepository],
             ]));
 
         $doctrineHelper = $this->createMock(DoctrineHelper::class);
@@ -93,8 +93,8 @@ class CalendarEventManagerLegacyTest extends \PHPUnit_Framework_TestCase
             ->getMock();
 
         $calendarConfig = $this->getMockBuilder(SystemCalendarConfig::class)
-                ->disableOriginalConstructor()
-                ->getMock();
+            ->disableOriginalConstructor()
+            ->getMock();
 
         $attendeeManager = $this
             ->getMockBuilder(AttendeeManager::class)
@@ -109,9 +109,9 @@ class CalendarEventManagerLegacyTest extends \PHPUnit_Framework_TestCase
         $updateManager = new UpdateManager(
             new UpdateAttendeeManager($attendeeRelationManager, $doctrine),
             new UpdateChildManager($doctrine),
-            new UpdateExceptionManager($attendeeManager, $deleteManager)
+            new UpdateExceptionManager($attendeeManager, $deleteManager),
+            new MatchingEventsManager($doctrineHelper)
         );
-        $updateManager->setUpdateMatchingEventsManager(new MatchingEventsManager($doctrineHelper));
 
         $this->calendarEventManager = new CalendarEventManager(
             $updateManager,
@@ -236,6 +236,7 @@ class CalendarEventManagerLegacyTest extends \PHPUnit_Framework_TestCase
 
         $originalEvent = clone $event;
         $originalEvent->setAttendees(new ArrayCollection());
+
         $this->calendarEventManager->onEventUpdate($event, $originalEvent, new Organization(), false);
 
         $this->assertCount(1, $event->getChildEvents());

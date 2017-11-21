@@ -61,9 +61,9 @@ class UpdateManagerTest extends \PHPUnit_Framework_TestCase
         $this->updateManager = new UpdateManager(
             $this->updateAttendeeManager,
             $this->updateChildManager,
-            $this->updateExceptionManager
+            $this->updateExceptionManager,
+            $this->matchingEventsManager
         );
-        $this->updateManager->setUpdateMatchingEventsManager($this->matchingEventsManager);
     }
 
     public function testOnEventUpdate()
