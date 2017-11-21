@@ -1,4 +1,4 @@
-@fixture-OroCalendarBundle:calendarEventFields.yml
+@fixture-calendarEventFields.yml
 
 Feature: Calendar Event Organizer field
   In order to have all information about calendar events
