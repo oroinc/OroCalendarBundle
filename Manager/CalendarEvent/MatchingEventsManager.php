@@ -2,6 +2,8 @@
 
 namespace Oro\Bundle\CalendarBundle\Manager\CalendarEvent;
 
+use Doctrine\Common\Collections\ArrayCollection;
+
 use Oro\Bundle\CalendarBundle\Entity\Attendee;
 use Oro\Bundle\CalendarBundle\Entity\CalendarEvent;
 use Oro\Bundle\CalendarBundle\Entity\Repository\CalendarEventRepository;
@@ -77,6 +79,18 @@ class MatchingEventsManager
         $event = $attendee->getCalendarEvent();
 
         $matchingEvent->setRelatedAttendee($attendee);
+        $attendeesToRemove = $matchingEvent->getAttendees();
+        $matchingEvent->setAttendees(new ArrayCollection());
+
+        if ($event->getOrganizerUser() !== null) {
+            $matchingEvent->setOrganizerUser($event->getOrganizerUser());
+        }
+        // Attendee entity is an owning side of relation, so we need to manually remove it
+        if (count($attendeesToRemove) > 0) {
+            foreach ($attendeesToRemove as $attendeeToRemove) {
+                $this->doctrineHelper->getEntityManagerForClass(CalendarEvent::class)->remove($attendeeToRemove);
+            }
+        }
         $event->addChildEvent($matchingEvent);
     }
 }
