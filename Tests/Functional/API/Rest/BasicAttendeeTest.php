@@ -24,6 +24,23 @@ class BasicAttendeeTest extends AbstractTestCase
     }
 
     /**
+     * @param $response
+     * @return array
+     */
+    private function getResponseArray($response)
+    {
+        return [
+            'id'                        => $response['id'],
+            'uid'                       => $response['uid'],
+            'invitationStatus'          => Attendee::STATUS_NONE,
+            'editableInvitationStatus'  => false,
+            'organizerDisplayName'      => 'Billy Wilf',
+            'organizerEmail'            => 'foo_user_1@example.com',
+            'organizerUserId'           => $response['organizerUserId']
+        ];
+    }
+
+    /**
      * Create regular calendar event with attendee related to user.
      *
      * Steps:
@@ -63,12 +80,7 @@ class BasicAttendeeTest extends AbstractTestCase
         /** @var CalendarEvent $newEvent */
         $newEvent = $this->getEntity(CalendarEvent::class, $response['id']);
         $this->assertResponseEquals(
-            [
-                'id'                       => $response['id'],
-                'uid'                      => $response['uid'],
-                'invitationStatus'         => Attendee::STATUS_NONE,
-                'editableInvitationStatus' => false,
-            ],
+            $this->getResponseArray($response),
             $response
         );
         // Step 2. Get created event and verify all properties in the response.
@@ -175,10 +187,13 @@ class BasicAttendeeTest extends AbstractTestCase
         $newEvent = $this->getEntity(CalendarEvent::class, $response['id']);
         $this->assertResponseEquals(
             [
-                'id'                       => $response['id'],
-                'uid'                      => $response['uid'],
-                'invitationStatus'         => Attendee::STATUS_NONE,
-                'editableInvitationStatus' => false,
+                'id'                        => $response['id'],
+                'uid'                       => $response['uid'],
+                'invitationStatus'          => Attendee::STATUS_NONE,
+                'editableInvitationStatus'  => false,
+                'organizerDisplayName'      => 'Elley Towards',
+                'organizerEmail'            => 'system_user_1@example.com',
+                'organizerUserId'           => $response['organizerUserId']
             ],
             $response
         );
@@ -286,12 +301,7 @@ class BasicAttendeeTest extends AbstractTestCase
         /** @var CalendarEvent $newEvent */
         $newEvent = $this->getEntity(CalendarEvent::class, $response['id']);
         $this->assertResponseEquals(
-            [
-                'id'                       => $response['id'],
-                'uid'                      => $response['uid'],
-                'invitationStatus'         => Attendee::STATUS_NONE,
-                'editableInvitationStatus' => false,
-            ],
+            $this->getResponseArray($response),
             $response
         );
 
@@ -399,12 +409,7 @@ class BasicAttendeeTest extends AbstractTestCase
         /** @var CalendarEvent $newEvent */
         $newEvent = $this->getEntity(CalendarEvent::class, $response['id']);
         $this->assertResponseEquals(
-            [
-                'id'                       => $response['id'],
-                'uid'                      => $response['uid'],
-                'invitationStatus'         => Attendee::STATUS_NONE,
-                'editableInvitationStatus' => false,
-            ],
+            $this->getResponseArray($response),
             $response
         );
 
@@ -442,9 +447,12 @@ class BasicAttendeeTest extends AbstractTestCase
         );
         $this->assertResponseEquals(
             [
-                'uid'                      => $response['uid'],
-                'invitationStatus'         => Attendee::STATUS_NONE,
-                'editableInvitationStatus' => false,
+                'uid'                       => $response['uid'],
+                'invitationStatus'          => Attendee::STATUS_NONE,
+                'editableInvitationStatus'  => false,
+                'organizerDisplayName'      => 'Billy Wilf',
+                'organizerEmail'            => 'foo_user_1@example.com',
+                'organizerUserId'           => $response['organizerUserId']
             ],
             $response
         );
@@ -572,12 +580,7 @@ class BasicAttendeeTest extends AbstractTestCase
         /** @var CalendarEvent $newEvent */
         $newEvent = $this->getEntity(CalendarEvent::class, $response['id']);
         $this->assertResponseEquals(
-            [
-                'id'                       => $response['id'],
-                'uid'                      => $response['uid'],
-                'invitationStatus'         => Attendee::STATUS_NONE,
-                'editableInvitationStatus' => false,
-            ],
+            $this->getResponseArray($response),
             $response
         );
 
@@ -602,9 +605,12 @@ class BasicAttendeeTest extends AbstractTestCase
         );
         $this->assertResponseEquals(
             [
-                'uid'                      => $response['uid'],
-                'invitationStatus'         => Attendee::STATUS_NONE,
-                'editableInvitationStatus' => false,
+                'uid'                       => $response['uid'],
+                'invitationStatus'          => Attendee::STATUS_NONE,
+                'editableInvitationStatus'  => false,
+                'organizerDisplayName'      => 'Billy Wilf',
+                'organizerEmail'            => 'foo_user_1@example.com',
+                'organizerUserId'           => $response['organizerUserId']
             ],
             $response
         );
