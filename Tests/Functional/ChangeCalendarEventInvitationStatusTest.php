@@ -511,7 +511,6 @@ class ChangeCalendarEventInvitationStatusTest extends AbstractTestCase
                     'isCancelled' => false,
                     'createdAt' => $newEvent->getCreatedAt()->format(DATE_RFC3339),
                     'updatedAt' => $newEvent->getUpdatedAt()->format(DATE_RFC3339),
-                    //TODO alter those fields after handling them in POST
                     'isOrganizer' => true,
                     'organizerDisplayName' => 'Billy Wilf',
                     'organizerEmail' => 'foo_user_1@example.com',
