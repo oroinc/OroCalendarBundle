@@ -36,6 +36,38 @@ class RecurringEventRecurrenceUpdateExceptionTest extends AbstractTestCase
     }
 
     /**
+     * @param $response
+     * @return array
+     */
+    private function getResponseArray($response)
+    {
+        return [
+            'uid'                       => $response['uid'],
+            'invitationStatus'          => Attendee::STATUS_NONE,
+            'editableInvitationStatus'  => false,
+            'organizerDisplayName'      => 'Billy Wilf',
+            'organizerEmail'            => 'foo_user_1@example.com',
+            'organizerUserId'           => $response['organizerUserId']
+        ];
+    }
+
+    /**
+     * @param $response
+     * @return array
+     */
+    private function getAcceptedResponseArray($response)
+    {
+        return [
+            'uid'                       => $response['uid'],
+            'invitationStatus'          => Attendee::STATUS_ACCEPTED,
+            'editableInvitationStatus'  => true,
+            'organizerDisplayName'      => 'Billy Wilf',
+            'organizerEmail'            => 'foo_user_1@example.com',
+            'organizerUserId'           => $response['organizerUserId']
+        ];
+    }
+
+    /**
      * Update recurring event recurrence clears exceptions when "updateExceptions"=true.
      *
      * Step:
@@ -232,11 +264,7 @@ class RecurringEventRecurrenceUpdateExceptionTest extends AbstractTestCase
             ]
         );
         $this->assertResponseEquals(
-            [
-                'uid'                      => $response['uid'],
-                'invitationStatus'         => Attendee::STATUS_NONE,
-                'editableInvitationStatus' => false,
-            ],
+            $this->getResponseArray($response),
             $response
         );
 
@@ -504,11 +532,7 @@ class RecurringEventRecurrenceUpdateExceptionTest extends AbstractTestCase
             ]
         );
         $this->assertResponseEquals(
-            [
-                'uid'                      => $response['uid'],
-                'invitationStatus'         => Attendee::STATUS_NONE,
-                'editableInvitationStatus' => false,
-            ],
+            $this->getResponseArray($response),
             $response
         );
 
@@ -738,11 +762,7 @@ class RecurringEventRecurrenceUpdateExceptionTest extends AbstractTestCase
             ]
         );
         $this->assertResponseEquals(
-            [
-                'uid'                      => $response['uid'],
-                'invitationStatus'         => Attendee::STATUS_NONE,
-                'editableInvitationStatus' => false,
-            ],
+            $this->getResponseArray($response),
             $response
         );
 
@@ -972,11 +992,7 @@ class RecurringEventRecurrenceUpdateExceptionTest extends AbstractTestCase
             ]
         );
         $this->assertResponseEquals(
-            [
-                'uid'                      => $response['uid'],
-                'invitationStatus'         => Attendee::STATUS_NONE,
-                'editableInvitationStatus' => false,
-            ],
+            $this->getResponseArray($response),
             $response
         );
 
@@ -1246,11 +1262,7 @@ class RecurringEventRecurrenceUpdateExceptionTest extends AbstractTestCase
             ]
         );
         $this->assertResponseEquals(
-            [
-                'uid'                      => $response['uid'],
-                'invitationStatus'         => Attendee::STATUS_NONE,
-                'editableInvitationStatus' => false,
-            ],
+            $this->getResponseArray($response),
             $response
         );
 
@@ -1490,11 +1502,7 @@ class RecurringEventRecurrenceUpdateExceptionTest extends AbstractTestCase
             ]
         );
         $this->assertResponseEquals(
-            [
-                'uid'                      => $response['uid'],
-                'invitationStatus'         => Attendee::STATUS_NONE,
-                'editableInvitationStatus' => false,
-            ],
+            $this->getResponseArray($response),
             $response
         );
 
@@ -1640,10 +1648,13 @@ class RecurringEventRecurrenceUpdateExceptionTest extends AbstractTestCase
 
         $this->assertResponseEquals(
             [
-                'invitationStatus'         => Attendee::STATUS_ACCEPTED,
-                'editableInvitationStatus' => true,
-                'id'                       => $response['id'],
-                'uid'                      => $response['uid'],
+                'id'                        => $response['id'],
+                'uid'                       => $response['uid'],
+                'invitationStatus'          => Attendee::STATUS_ACCEPTED,
+                'editableInvitationStatus'  => true,
+                'organizerDisplayName'      => 'Billy Wilf',
+                'organizerEmail'            => 'foo_user_1@example.com',
+                'organizerUserId'           => $response['organizerUserId']
             ],
             $response
         );
@@ -1783,11 +1794,7 @@ class RecurringEventRecurrenceUpdateExceptionTest extends AbstractTestCase
             ]
         );
         $this->assertResponseEquals(
-            [
-                'uid'                      => $response['uid'],
-                'invitationStatus'         => Attendee::STATUS_ACCEPTED,
-                'editableInvitationStatus' => true,
-            ],
+            $this->getAcceptedResponseArray($response),
             $response
         );
 
