@@ -27,7 +27,7 @@ class MatchingEventsManager
      */
     public function onEventUpdate(CalendarEvent $event)
     {
-        if (!$this->eventIsNew($event)) {
+        if (!$this->eventIsNew($event) || $event->isOrganizer() !== true) {
             return;
         }
 
