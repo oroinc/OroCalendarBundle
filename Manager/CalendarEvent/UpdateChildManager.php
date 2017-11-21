@@ -288,17 +288,14 @@ class UpdateChildManager
      *
      * @param CalendarEvent $parent
      * @param CalendarEvent $child
-     *
-     * @SuppressWarnings(PHPMD.NPathComplexity) It is just data copy from one object to another
      */
     protected function updateAttendeeCalendarEvent(CalendarEvent $parent, CalendarEvent $child)
     {
-        // copy basic data only in case child doesn't have it
-        $child->setTitle($child->getTitle() ?: $parent->getTitle())
-            ->setDescription($child->getDescription() ?: $parent->getDescription())
-            ->setStart($child->getStart() ?: $parent->getStart())
-            ->setEnd($child->getEnd() ?: $parent->getEnd())
-            ->setAllDay($child->getAllDay() ?: $parent->getAllDay());
+        $child->setTitle($parent->getTitle())
+            ->setDescription($parent->getDescription())
+            ->setStart($parent->getStart())
+            ->setEnd($parent->getEnd())
+            ->setAllDay($parent->getAllDay());
 
         if ($parent->isCancelled()) {
             $child->setCancelled(true);
