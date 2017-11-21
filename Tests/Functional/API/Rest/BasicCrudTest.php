@@ -446,4 +446,25 @@ CONTENT;
 
         $this->assertGreaterThanOrEqual(1, $diffInSeconds, 'Failed assertic "updatedAt" was updated.');
     }
+
+    public function testCheckIfCalendarIdIsValidated()
+    {
+        $this->restRequest(
+            [
+                'method' => 'POST',
+                'url' => $this->getUrl('oro_api_post_calendarevent'),
+                'server' => $this->generateWsseAuthHeader('foo_user_1', 'foo_user_1_api_key'),
+                'content' => json_encode(
+                    [
+                        'title' => 'Event withouth calendar set',
+                        'start' => '2016-10-14T22:00:00+00:00',
+                        'end' => '2016-10-14T23:00:00+00:00',
+                        'allDay' => false,
+                    ]
+                )
+            ]
+        );
+
+        $this->getRestResponseContent(['statusCode' => 201, 'contentType' => 'application/json']);
+    }
 }
