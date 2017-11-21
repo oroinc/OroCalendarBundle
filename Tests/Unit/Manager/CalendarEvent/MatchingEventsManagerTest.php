@@ -119,6 +119,54 @@ class MatchingEventsManagerTest extends \PHPUnit_Framework_TestCase
         $this->assertCount(2, $eventA->getAttendees());
     }
 
+    public function testDoNotMergeEvents()
+    {
+        $ownerB = $this->getEntity(User::class, ['email' => 'second@oroinc.com']);
+        $ownerC = $this->getEntity(User::class, ['email' => 'third@oroinc.com']);
+        $calendarB = $this->getEntity(Calendar::class, ['owner' => $ownerB]);
+        $calendarC = $this->getEntity(Calendar::class, ['owner' => $ownerC]);
+
+        $attendeeB = new Attendee();
+        $attendeeB->setEmail('second@oroinc.com');
+
+        $attendeeC = new Attendee();
+        $attendeeC->setEmail('third@oroinc.com');
+
+        $eventB = $this->getCalendarEvent(
+            [
+                'id' => 1,
+                'uid'   => self::UID,
+                'parent' => null,
+                'isOrganizer' => false,
+                'calendar' => $calendarB,
+            ]
+        );
+        $eventB->addAttendee($attendeeB)->addAttendee($attendeeC);
+
+        $eventC = $this->getCalendarEvent(
+            [
+                'uid'   => self::UID,
+                'parent' => null,
+                'isOrganizer' => false,
+                'calendar' => $calendarC,
+            ]
+        );
+        $eventC->addAttendee($attendeeB)->addAttendee($attendeeC);
+
+        $this->repository->expects($this->never())
+            ->method('findEventsWithMatchingUidAndOrganizer');
+
+        $this->manager->onEventUpdate($eventC);
+
+        $this->assertNull($eventB->getParent());
+        $this->assertNull($eventC->getParent());
+        $this->assertNull($eventB->getRelatedAttendee());
+        $this->assertNull($eventC->getRelatedAttendee());
+        $this->assertCount(2, $eventB->getAttendees());
+        $this->assertCount(2, $eventC->getAttendees());
+        $this->assertEquals($eventB->getAttendees(), $eventC->getAttendees());
+    }
+    
     public function testMergeOnlyEventsWithAssignedCalendar()
     {
         $ownerC = $this->getEntity(User::class, ['email' => 'third@oroinc.com']);
