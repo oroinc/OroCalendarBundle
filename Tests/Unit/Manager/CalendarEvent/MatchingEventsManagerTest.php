@@ -22,6 +22,9 @@ class MatchingEventsManagerTest extends \PHPUnit_Framework_TestCase
     const UID = '17f409b2-7393-42b1-9976-3394d9f5302e';
     const EMAIL = 'email@oroinc.com';
 
+    /** @var EntityManager|\PHPUnit_Framework_MockObject_MockObject */
+    private $entityManager;
+
     /** @var CalendarEventRepository|\PHPUnit_Framework_MockObject_MockObject */
     private $repository;
 
@@ -34,10 +37,10 @@ class MatchingEventsManagerTest extends \PHPUnit_Framework_TestCase
             ->disableOriginalConstructor()
             ->getMock();
 
-        $entityManager = $this->getMockBuilder(EntityManager::class)
+        $this->entityManager = $this->getMockBuilder(EntityManager::class)
             ->disableOriginalConstructor()
             ->getMock();
-        $entityManager->expects($this->any())
+        $this->entityManager->expects($this->any())
             ->method('getRepository')
             ->with(CalendarEvent::class)
             ->willReturn($this->repository);
@@ -49,7 +52,7 @@ class MatchingEventsManagerTest extends \PHPUnit_Framework_TestCase
         $doctrineHelper->expects($this->any())
             ->method('getEntityManagerForClass')
             ->with(CalendarEvent::class)
-            ->willReturn($entityManager);
+            ->willReturn($this->entityManager);
 
         $this->manager = new MatchingEventsManager($doctrineHelper);
     }
@@ -216,6 +219,85 @@ class MatchingEventsManagerTest extends \PHPUnit_Framework_TestCase
         $this->assertNull($eventB->getRelatedAttendee());
         $this->assertSame($eventA, $eventC->getRelatedAttendee()->getCalendarEvent());
         $this->assertCount(2, $eventA->getAttendees());
+    }
+
+    /**
+     * Case:
+     * User A - organizer (without account in ORO) "email": "owner@example.com"
+     * User B - registered user in oro "email": "second@oroinc.com",
+     * User C - registered user in oro "email": "third@oroinc.com"
+     *
+     * 1. User A create an event in Outlook and add as attendees User B and User C
+     * 2. User B sync an event into the ORO (no organizerUser set at this point)
+     * 3. User C sync an event with ORO (no organizerUser set at this point)
+     * 4. User A creates an account in ORO
+     * 5. User A sync events into the ORO (organizerUser set in all events)
+     */
+    public function testCopyOrganizerUserAttendeesAreRemovedFromChildEventsInCaseOfMerging()
+    {
+        $ownerB = $this->getEntity(User::class, ['email' => 'second@oroinc.com']);
+        $ownerC = $this->getEntity(User::class, ['email' => 'third@oroinc.com']);
+        $calendarB = $this->getEntity(Calendar::class, ['owner' => $ownerB]);
+        $calendarC = $this->getEntity(Calendar::class, ['owner' => $ownerC]);
+
+        $attendeeA1 = new Attendee();
+        $attendeeA1->setEmail('second@oroinc.com');
+        $attendeeA2 = new Attendee();
+        $attendeeA2->setEmail('third@oroinc.com');
+        $attendeeB1 = new Attendee();
+        $attendeeB1->setEmail('second@oroinc.com');
+        $attendeeB2 = new Attendee();
+        $attendeeB2->setEmail('third@oroinc.com');
+        $attendeeC1 = new Attendee();
+        $attendeeC1->setEmail('second@oroinc.com');
+        $attendeeC2 = new Attendee();
+        $attendeeC2->setEmail('third@oroinc.com');
+
+        $eventA = $this->getCalendarEvent([
+            'isOrganizer' => true,
+            'organizerEmail' => self::EMAIL,
+            'uid' => self::UID,
+            'organizerUser' => new User()
+        ]);
+        $eventA->addAttendee($attendeeA1)->addAttendee($attendeeA2);
+
+        $eventB = $this->getCalendarEvent(
+            [
+                'id' => 1,
+                'parent' => null,
+                'isOrganizer' => false,
+                'calendar' => $calendarB,
+            ]
+        );
+        $eventB->addAttendee($attendeeB1)->addAttendee($attendeeB2);
+
+        $eventC = $this->getCalendarEvent(
+            [
+                'id' => 2,
+                'parent' => null,
+                'isOrganizer' => false,
+                'calendar' => $calendarC,
+            ]
+        );
+        $eventC->addAttendee($attendeeC1)->addAttendee($attendeeC2);
+
+        $this->repository->expects($this->once())
+            ->method('findEventsWithMatchingUidAndOrganizer')
+            ->with($eventA)
+            ->willReturn([$eventB, $eventC]);
+
+        // need to check if remove has been called for both events 2 times (as we have 2 attendee in each)
+        $this->entityManager->expects($this->exactly(4))
+            ->method('remove');
+
+        $this->manager->onEventUpdate($eventA);
+
+        $this->assertCount(2, $eventA->getAttendees());
+        $this->assertInstanceOf(User::class, $eventA->getOrganizerUser());
+        $this->assertCount(2, $eventB->getAttendees());
+        $this->assertInstanceOf(User::class, $eventB->getOrganizerUser());
+        $this->assertCount(2, $eventC->getAttendees());
+        $this->assertInstanceOf(User::class, $eventC->getOrganizerUser());
     }
 
     /**
