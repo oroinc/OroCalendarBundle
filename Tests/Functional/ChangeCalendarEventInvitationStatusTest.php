@@ -104,10 +104,13 @@ class ChangeCalendarEventInvitationStatusTest extends AbstractTestCase
         );
         $this->assertResponseEquals(
             [
-                'id' => $response['id'],
-                'uid' => $response['uid'],
-                'invitationStatus' => Attendee::STATUS_NONE,
-                'editableInvitationStatus' => true
+                'id'                        => $response['id'],
+                'uid'                       => $response['uid'],
+                'invitationStatus'          => Attendee::STATUS_NONE,
+                'editableInvitationStatus'  => true,
+                'organizerDisplayName'      => 'Billy Wilf',
+                'organizerEmail'            => 'foo_user_1@example.com',
+                'organizerUserId'           => $response['organizerUserId']
             ],
             $response
         );
