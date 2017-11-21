@@ -29,6 +29,23 @@ class BasicCrudTest extends AbstractTestCase
     }
 
     /**
+     * @param $response
+     * @return array
+     */
+    private function getResponseArray($response)
+    {
+        return [
+            'id'                        => $response['id'],
+            'uid'                       => $response['uid'],
+            'invitationStatus'          => Attendee::STATUS_NONE,
+            'editableInvitationStatus'  => false,
+            'organizerDisplayName'      => 'Billy Wilf',
+            'organizerEmail'            => 'foo_user_1@example.com',
+            'organizerUserId'           => $response['organizerUserId']
+        ];
+    }
+
+    /**
      * Create regular calendar event with minimal required data.
      *
      * Steps:
@@ -63,12 +80,7 @@ class BasicCrudTest extends AbstractTestCase
         /** @var CalendarEvent $newEvent */
         $newEvent = $this->getEntity(CalendarEvent::class, $response['id']);
         $this->assertResponseEquals(
-            [
-                'id'                       => $response['id'],
-                'uid'                      => $response['uid'],
-                'invitationStatus'         => Attendee::STATUS_NONE,
-                'editableInvitationStatus' => false,
-            ],
+            $this->getResponseArray($response),
             $response
         );
 
@@ -155,12 +167,7 @@ CONTENT;
         /** @var CalendarEvent $newEvent */
         $newEvent = $this->getEntity(CalendarEvent::class, $response['id']);
         $this->assertResponseEquals(
-            [
-                'id'                       => $response['id'],
-                'uid'                      => '123123',
-                'invitationStatus'         => Attendee::STATUS_NONE,
-                'editableInvitationStatus' => false,
-            ],
+            $this->getResponseArray($response),
             $response
         );
 
@@ -258,12 +265,7 @@ CONTENT;
         /** @var CalendarEvent $newEvent */
         $newEvent = $this->getEntity(CalendarEvent::class, $response['id']);
         $this->assertResponseEquals(
-            [
-                'id'                       => $response['id'],
-                'uid'                      => $response['uid'],
-                'invitationStatus'         => Attendee::STATUS_NONE,
-                'editableInvitationStatus' => false,
-            ],
+            $this->getResponseArray($response),
             $response
         );
 
@@ -295,9 +297,12 @@ CONTENT;
         $response = $this->getRestResponseContent(['statusCode' => 200, 'contentType' => 'application/json']);
         $this->assertResponseEquals(
             [
-                'uid'                      => $response['uid'],
-                'invitationStatus'         => Attendee::STATUS_NONE,
-                'editableInvitationStatus' => false,
+                'uid'                       => $response['uid'],
+                'invitationStatus'          => Attendee::STATUS_NONE,
+                'editableInvitationStatus'  => false,
+                'organizerDisplayName'      => 'Billy Wilf',
+                'organizerEmail'            => 'foo_user_1@example.com',
+                'organizerUserId'           => $response['organizerUserId']
             ],
             $response
         );
@@ -378,12 +383,7 @@ CONTENT;
         /** @var CalendarEvent $newEvent */
         $newEvent = $this->getEntity(CalendarEvent::class, $response['id']);
         $this->assertResponseEquals(
-            [
-                'id'                       => $response['id'],
-                'uid'                      => $response['uid'],
-                'invitationStatus'         => Attendee::STATUS_NONE,
-                'editableInvitationStatus' => false,
-            ],
+            $this->getResponseArray($response),
             $response
         );
 
@@ -416,9 +416,12 @@ CONTENT;
         $response = $this->getRestResponseContent(['statusCode' => 200, 'contentType' => 'application/json']);
         $this->assertResponseEquals(
             [
-                'uid'                      => $response['uid'],
-                'invitationStatus'         => Attendee::STATUS_NONE,
-                'editableInvitationStatus' => false,
+                'uid'                       => $response['uid'],
+                'invitationStatus'          => Attendee::STATUS_NONE,
+                'editableInvitationStatus'  => false,
+                'organizerDisplayName'      => 'Billy Wilf',
+                'organizerEmail'            => 'foo_user_1@example.com',
+                'organizerUserId'           => $response['organizerUserId']
             ],
             $response
         );
