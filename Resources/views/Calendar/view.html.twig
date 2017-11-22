@@ -28,10 +28,12 @@
 {% endblock breadcrumb %}
 
 {% block pageHeader %}
-    {% if breadcrumbs is not defined %}
-        {% set breadcrumbs = {'entityTitle': 'oro.calendar.entity_label'|trans } %}
-    {% endif %}
-    {{ parent() }}
+    <div class="calendar-title-wrapper">
+        {% if breadcrumbs is not defined %}
+            {% set breadcrumbs = {'entityTitle': 'oro.calendar.entity_label'|trans } %}
+        {% endif %}
+        {{ parent() }}
+    </div>
 {% endblock pageHeader %}
 
 {% block stats %}{% endblock stats %}
