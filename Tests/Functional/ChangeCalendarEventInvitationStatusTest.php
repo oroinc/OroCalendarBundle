@@ -102,10 +102,13 @@ class ChangeCalendarEventInvitationStatusTest extends AbstractTestCase
         );
         $this->assertResponseEquals(
             [
-                'id' => $response['id'],
-                'uid' => $response['uid'],
-                'invitationStatus' => Attendee::STATUS_NONE,
-                'editableInvitationStatus' => true
+                'id'                        => $response['id'],
+                'uid'                       => $response['uid'],
+                'invitationStatus'          => Attendee::STATUS_NONE,
+                'editableInvitationStatus'  => true,
+                'organizerDisplayName'      => 'Billy Wilf',
+                'organizerEmail'            => 'foo_user_1@example.com',
+                'organizerUserId'           => $response['organizerUserId']
             ],
             $response
         );
@@ -187,6 +190,10 @@ class ChangeCalendarEventInvitationStatusTest extends AbstractTestCase
                     'isCancelled' => false,
                     'createdAt' => $newEvent->getCreatedAt()->format(DATE_RFC3339),
                     'updatedAt' => $newEvent->getUpdatedAt()->format(DATE_RFC3339),
+                    'isOrganizer' => true,
+                    'organizerDisplayName' => 'Billy Wilf',
+                    'organizerEmail' => 'foo_user_1@example.com',
+                    'organizerUserId' => $this->getOrganizerId($newEvent)
                 ],
                 [
                     'id' => $newChildEvent->getId(),
@@ -235,6 +242,10 @@ class ChangeCalendarEventInvitationStatusTest extends AbstractTestCase
                     'isCancelled' => false,
                     'createdAt' => $newChildEvent->getCreatedAt()->format(DATE_RFC3339),
                     'updatedAt' => $newChildEvent->getUpdatedAt()->format(DATE_RFC3339),
+                    'isOrganizer' => false,
+                    'organizerDisplayName' => 'Billy Wilf',
+                    'organizerEmail' => 'foo_user_1@example.com',
+                    'organizerUserId' => $this->getOrganizerId($newChildEvent)
                 ],
             ],
             $response
@@ -340,6 +351,10 @@ class ChangeCalendarEventInvitationStatusTest extends AbstractTestCase
                     'isCancelled' => false,
                     'createdAt' => $newEvent->getCreatedAt()->format(DATE_RFC3339),
                     'updatedAt' => $newEvent->getUpdatedAt()->format(DATE_RFC3339),
+                    'isOrganizer' => true,
+                    'organizerDisplayName' => 'Billy Wilf',
+                    'organizerEmail' => 'foo_user_1@example.com',
+                    'organizerUserId' => $this->getOrganizerId($newEvent)
                 ],
                 [
                     'id' => $newChildEvent->getId(),
@@ -386,6 +401,10 @@ class ChangeCalendarEventInvitationStatusTest extends AbstractTestCase
                     'isCancelled' => false,
                     'createdAt' => $newChildEvent->getCreatedAt()->format(DATE_RFC3339),
                     'updatedAt' => $newChildEvent->getUpdatedAt()->format(DATE_RFC3339),
+                    'isOrganizer' => false,
+                    'organizerDisplayName' => 'Billy Wilf',
+                    'organizerEmail' => 'foo_user_1@example.com',
+                    'organizerUserId' => $this->getOrganizerId($newChildEvent)
                 ],
             ],
             $response,
@@ -492,6 +511,10 @@ class ChangeCalendarEventInvitationStatusTest extends AbstractTestCase
                     'isCancelled' => false,
                     'createdAt' => $newEvent->getCreatedAt()->format(DATE_RFC3339),
                     'updatedAt' => $newEvent->getUpdatedAt()->format(DATE_RFC3339),
+                    'isOrganizer' => true,
+                    'organizerDisplayName' => 'Billy Wilf',
+                    'organizerEmail' => 'foo_user_1@example.com',
+                    'organizerUserId' => $this->getOrganizerId($newEvent)
                 ],
                 [
                     'id' => $newChildEvent->getId(),
@@ -538,6 +561,10 @@ class ChangeCalendarEventInvitationStatusTest extends AbstractTestCase
                     'isCancelled' => false,
                     'createdAt' => $newChildEvent->getCreatedAt()->format(DATE_RFC3339),
                     'updatedAt' => $newChildEvent->getUpdatedAt()->format(DATE_RFC3339),
+                    'isOrganizer' => false,
+                    'organizerDisplayName' => 'Billy Wilf',
+                    'organizerEmail' => 'foo_user_1@example.com',
+                    'organizerUserId' => $this->getOrganizerId($newChildEvent)
                 ],
             ],
             $response,
@@ -644,6 +671,10 @@ class ChangeCalendarEventInvitationStatusTest extends AbstractTestCase
                     'isCancelled' => false,
                     'createdAt' => $newEvent->getCreatedAt()->format(DATE_RFC3339),
                     'updatedAt' => $newEvent->getUpdatedAt()->format(DATE_RFC3339),
+                    'isOrganizer' => true,
+                    'organizerDisplayName' => 'Billy Wilf',
+                    'organizerEmail' => 'foo_user_1@example.com',
+                    'organizerUserId' => $this->getOrganizerId($newEvent)
                 ],
                 [
                     'id' => $newChildEvent->getId(),
@@ -690,6 +721,10 @@ class ChangeCalendarEventInvitationStatusTest extends AbstractTestCase
                     'isCancelled' => false,
                     'createdAt' => $newChildEvent->getCreatedAt()->format(DATE_RFC3339),
                     'updatedAt' => $newChildEvent->getUpdatedAt()->format(DATE_RFC3339),
+                    'isOrganizer' => false,
+                    'organizerDisplayName' => 'Billy Wilf',
+                    'organizerEmail' => 'foo_user_1@example.com',
+                    'organizerUserId' => $this->getOrganizerId($newChildEvent)
                 ],
             ],
             $response,
@@ -804,6 +839,10 @@ class ChangeCalendarEventInvitationStatusTest extends AbstractTestCase
                     'isCancelled' => false,
                     'createdAt' => $newEvent->getCreatedAt()->format(DATE_RFC3339),
                     'updatedAt' => $newEvent->getUpdatedAt()->format(DATE_RFC3339),
+                    'isOrganizer' => true,
+                    'organizerDisplayName' => 'Billy Wilf',
+                    'organizerEmail' => 'foo_user_1@example.com',
+                    'organizerUserId' => $this->getOrganizerId($newEvent)
                 ],
                 [
                     'id' => $newChildEvent->getId(),
@@ -850,10 +889,23 @@ class ChangeCalendarEventInvitationStatusTest extends AbstractTestCase
                     'isCancelled' => false,
                     'createdAt' => $newChildEvent->getCreatedAt()->format(DATE_RFC3339),
                     'updatedAt' => $newChildEvent->getUpdatedAt()->format(DATE_RFC3339),
+                    'isOrganizer' => false,
+                    'organizerDisplayName' => 'Billy Wilf',
+                    'organizerEmail' => 'foo_user_1@example.com',
+                    'organizerUserId' => $this->getOrganizerId($newChildEvent)
                 ],
             ],
             $response,
             false
         );
+    }
+
+    /**
+     * @param CalendarEvent $newChildEvent
+     * @return null|string
+     */
+    private function getOrganizerId(CalendarEvent $newChildEvent)
+    {
+        return $newChildEvent->getOrganizerUser() ? (string)$newChildEvent->getOrganizerUser()->getId() : null;
     }
 }

@@ -18,6 +18,7 @@ oro:
             calendar_updating: "Updating calendar, please wait ..."
             calendar_updated: "Calendar was updated"
         event:
+            na: 'N/A'
             recurrence:
                 repeat:
                     daily: Daily

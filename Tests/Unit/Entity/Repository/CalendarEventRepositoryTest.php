@@ -449,7 +449,11 @@ class CalendarEventRepositoryTest extends OrmTestCase
             'e.updatedAt',
             'e.originalStart',
             'IDENTITY(e.recurringEvent) AS recurringEventId',
-            'e.cancelled AS isCancelled'
+            'e.cancelled AS isCancelled',
+            'e.isOrganizer AS isOrganizer',
+            'e.organizerEmail',
+            'e.organizerDisplayName',
+            'IDENTITY(e.organizerUser) as organizerUserId'
         ];
 
         return 'SELECT ' . implode(', ', $baseFields);

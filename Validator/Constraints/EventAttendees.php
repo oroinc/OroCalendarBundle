@@ -7,9 +7,9 @@ use Symfony\Component\Validator\Constraint;
 /**
  * @Annotation
  */
-class UnchangeableUid extends Constraint
+class EventAttendees extends Constraint
 {
-    public $message = 'UID field cannot be changed once set';
+    public $message = 'Attendees list cannot be changed';
 
     /**
      * {@inheritdoc}

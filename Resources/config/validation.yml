@@ -2,8 +2,10 @@ Oro\Bundle\CalendarBundle\Entity\CalendarEvent:
     constraints:
         - Oro\Bundle\CalendarBundle\Validator\Constraints\RecurringCalendarEventExceptionConstraint: ~
         - Oro\Bundle\CalendarBundle\Validator\Constraints\UniqueUid: ~
-        - Oro\Bundle\CalendarBundle\Validator\Constraints\UnchangeableUid: ~
+        - Oro\Bundle\CalendarBundle\Validator\Constraints\EventAttendees: ~
     properties:
+        uid:
+            - Oro\Bundle\FormBundle\Validator\Constraints\UnchangeableField: ~
         title:
             - NotBlank:     ~
             - Length:
@@ -21,6 +23,17 @@ Oro\Bundle\CalendarBundle\Entity\CalendarEvent:
             - Valid: ~
         reminders:
             - Valid: ~
+        organizerEmail:
+            - Email: ~
+            - Length:
+                max: 255
+            - Oro\Bundle\FormBundle\Validator\Constraints\UnchangeableField: ~
+        organizerDisplayName:
+            - Length:
+                max: 255
+            - Oro\Bundle\FormBundle\Validator\Constraints\UnchangeableField: ~
+        organizerUser:
+            - Oro\Bundle\FormBundle\Validator\Constraints\UnchangeableField: ~
 
 Oro\Bundle\CalendarBundle\Entity\CalendarProperty:
     properties:

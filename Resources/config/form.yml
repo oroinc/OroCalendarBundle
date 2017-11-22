@@ -181,6 +181,20 @@ services:
         tags:
             - { name: form.type_extension, alias: oro_acl_label }
 
+    oro_calendar.extension.calendar_event:
+        class: Oro\Bundle\CalendarBundle\Form\Extension\CalendarEventTypeExtension
+        arguments:
+            - '@oro_calendar.resolver.event_organizer'
+        tags:
+            - { name: form.type_extension, alias: oro_calendar_event }
+
+    oro_calendar.extension.calendar_event_api:
+        class: Oro\Bundle\CalendarBundle\Form\Extension\CalendarEventApiTypeExtension
+        arguments:
+            - '@oro_calendar.resolver.event_organizer'
+        tags:
+            - { name: form.type_extension, alias: oro_calendar_event_api }
+
     oro_calendar.recurrence.form.type:
         class: '%oro_calendar.recurrence.form.type.class%'
         arguments:

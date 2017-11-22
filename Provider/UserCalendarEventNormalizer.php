@@ -78,6 +78,10 @@ class UserCalendarEventNormalizer extends AbstractCalendarEventNormalizer
             'originalStart'         => $event->getOriginalStart(),
             'isCancelled'           => $event->isCancelled(),
             'relatedAttendeeUserId' => $event->getRelatedAttendeeUserId(),
+            'isOrganizer'           => $event->isOrganizer(),
+            'organizerEmail'        => $event->getOrganizerEmail(),
+            'organizerDisplayName'  => $event->getOrganizerDisplayName(),
+            'organizerUserId'       => $event->getOrganizerUser() ? $event->getOrganizerUser()->getId() : null
         ];
 
         $this->applySerializedRecurrence($item, $event);
@@ -214,7 +218,8 @@ class UserCalendarEventNormalizer extends AbstractCalendarEventNormalizer
         $item['editable'] =
             ($item['calendar'] === $this->getCurrentCalendarId())
             && empty($item['parentEventId'])
-            && $this->authorizationChecker->isGranted('oro_calendar_event_update');
+            && $this->authorizationChecker->isGranted('oro_calendar_event_update')
+            && $item['isOrganizer'] !== false;
 
         $item['removable'] =
             ($item['calendar'] === $this->getCurrentCalendarId())

@@ -1,0 +1,18 @@
+{% macro renderOrganizer(user) %}
+    {% import 'OroUIBundle::macros.html.twig' as UI %}
+
+    <div class="calendar-event-organizer">
+        {% if(user.organizerUser is not null and user.organizerDisplayName is not null) %}
+            <img src="{{ user.organizerUser.avatar ? filtered_image_url(user.organizerUser.avatar, 'avatar_xsmall') : asset('bundles/oroui/img/avatar-xsmall.png') }}" />
+            {{ UI.link({
+                path: path('oro_user_view', { id: user.organizerUser.id}),
+                label: user.organizerDisplayName
+            }) }}
+        {% elseif (user.organizerEmail is not null and user.organizerDisplayName is not null) %}
+            <img src="{{ asset('bundles/oroui/img/avatar-xsmall.png') }}" />
+            {{ user.organizerDisplayName ~ ' (' ~ user.organizerEmail ~')' }}
+        {% else %}
+            {{  'oro.calendar.calendarevent.na.label'|trans }}
+        {% endif %}
+    </div>
+{% endmacro %}
