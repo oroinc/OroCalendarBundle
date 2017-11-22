@@ -106,3 +106,21 @@ recurringEventInRangeWithTimezone:
         startTime: '2016-01-21T04:00:00'
         occurrences: null
         timeZone: 'America/Los_Angeles'
+
+organizerEvent:
+    title: 'Organizer event'
+    uid: '1acb93ce-c54a-11e7-abc4-cec278b6b50a'
+    start: '-3 day'
+    end: '-3 day + 1 hour'
+    allDay: false
+    isOrganizer: true
+    organizerEmail: 'organizer@oro.com'
+
+nonOrganizerEvent:
+    title: 'Non organizer event'
+    uid: '1acb93ce-c54a-11e7-abc4-cec278b6b50a'
+    start: '-3 day'
+    end: '-3 day + 1 hour'
+    allDay: false
+    isOrganizer: false
+    organizerEmail: 'organizer@oro.com'

@@ -18,9 +18,22 @@ use Oro\Bundle\ReminderBundle\Model\ReminderData;
 
 /**
  * @SuppressWarnings(PHPMD.TooManyPublicMethods)
+ * @SuppressWarnings(PHPMD.ExcessiveClassComplexity)
+ * @SuppressWarnings(PHPMD.ExcessivePublicCount)
+ * @SuppressWarnings(PHPMD.TooManyMethods)
  */
 class CalendarEventTest extends \PHPUnit_Framework_TestCase
 {
+    const OWNER_EMAIL = 'owner@example.com';
+    const OWNER_FIRST_NAME = 'Owner';
+    const OWNER_LAST_NAME = 'Name';
+    const OWNER_DISPLAY_NAME = 'Owner Name';
+
+    const PROVIDED_EMAIL = 'provided@example.com';
+    const PROVIDED_FIRST_NAME = 'Provided';
+    const PROVIDED_LAST_NAME = 'Name';
+    const PROVIDED_DISPLAY_NAME = 'Provided Name';
+
     public function testIdGetter()
     {
         $obj = new CalendarEvent();
@@ -770,5 +783,108 @@ class CalendarEventTest extends \PHPUnit_Framework_TestCase
             ->method($this->anything());
 
         $this->assertNull($event->getAttendeeByCalendar($calendar));
+    }
+
+    /**
+     * @dataProvider organizerOwnerDisplayNameDataProvider
+     * @param string|null $displayName
+     * @param string      $expectedDisplayName
+     */
+    public function testOrganizerIsFetchedFromOwnerInCaseOrganizerEmailIsNotProvided($displayName, $expectedDisplayName)
+    {
+        $calendarEvent = $this->getCalendarEventWithOwner();
+        if ($displayName) {
+            $calendarEvent->setOrganizerDisplayName($displayName);
+        }
+
+        $calendarEvent->calculateIsOrganizer();
+
+        $this->assertTrue($calendarEvent->isOrganizer());
+        $this->assertNotNull($calendarEvent->getOrganizerUser());
+        $expectedEmail = $calendarEvent->getCalendar()->getOwner()->getEmail();
+        $this->assertEquals($expectedEmail, $calendarEvent->getOrganizerUser()->getEmail());
+        $this->assertEquals($expectedEmail, $calendarEvent->getOrganizerEmail());
+        $this->assertEquals($expectedDisplayName, $calendarEvent->getOrganizerDisplayName());
+    }
+
+    /**
+     * @dataProvider organizerOwnerDisplayNameDataProvider
+     * @param string|null $displayName
+     * @param string      $expectedDisplayName
+     */
+    public function testOrganizerIsSameAsOwnerInCaseProvidedEmailIsTheSameAsOwnerEmail(
+        $displayName,
+        $expectedDisplayName
+    ) {
+        $calendarEvent = $this->getCalendarEventWithOwner();
+        $calendarEvent->setOrganizerEmail(static::OWNER_EMAIL);
+        if ($displayName) {
+            $calendarEvent->setOrganizerDisplayName($displayName);
+        }
+
+        $calendarEvent->calculateIsOrganizer();
+
+        $this->assertTrue($calendarEvent->isOrganizer());
+        $this->assertNotNull($calendarEvent->getOrganizerUser());
+        $owner = $calendarEvent->getCalendar()->getOwner();
+        $this->assertSame($owner, $calendarEvent->getOrganizerUser());
+        $this->assertEquals($owner->getEmail(), $calendarEvent->getOrganizerEmail());
+        $this->assertEquals($expectedDisplayName, $calendarEvent->getOrganizerDisplayName());
+    }
+
+    public function testCalculateIsOrganizerDoesNotWorkForSystemCalendarEvents()
+    {
+        $calendar = new SystemCalendar();
+        $calendarEvent = new CalendarEvent();
+        $calendarEvent
+            ->setSystemCalendar($calendar)
+            ->setOrganizerEmail(static::OWNER_EMAIL);
+
+        $calendarEvent->calculateIsOrganizer();
+
+        $this->assertNull($calendarEvent->isOrganizer());
+        $this->assertNull($calendarEvent->getOrganizerDisplayName());
+    }
+
+    public function testCalculateIsOrganizerDoesNotWorkIfCalendarIsNull()
+    {
+        $calendarEvent = new CalendarEvent();
+        $calendarEvent
+            ->setOrganizerEmail(static::OWNER_EMAIL);
+
+        $calendarEvent->calculateIsOrganizer();
+
+        $this->assertNull($calendarEvent->isOrganizer());
+        $this->assertNull($calendarEvent->getOrganizerDisplayName());
+    }
+
+    /**
+     * @return array
+     */
+    public function organizerOwnerDisplayNameDataProvider()
+    {
+        return [
+            [null, static::OWNER_DISPLAY_NAME],
+            ['custom name', 'custom name']
+        ];
+    }
+
+    /**
+     * @return CalendarEvent
+     */
+    public static function getCalendarEventWithOwner(): CalendarEvent
+    {
+        $calendarEvent = new CalendarEvent();
+        $calendar = new Calendar();
+        $calendarOwner = new User();
+        $calendarOwner
+            ->setEmail(static::OWNER_EMAIL)
+            ->setFirstName(static::OWNER_FIRST_NAME)
+            ->setLastName(static::OWNER_LAST_NAME);
+
+        $calendar->setOwner($calendarOwner);
+        $calendarEvent->setCalendar($calendar);
+
+        return $calendarEvent;
     }
 }

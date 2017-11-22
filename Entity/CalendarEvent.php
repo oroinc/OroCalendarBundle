@@ -343,6 +343,35 @@ class CalendarEvent extends ExtendCalendarEvent implements
     protected $childEventCloneInProgress = false;
 
     /**
+     * @var bool
+     *
+     * @ORM\Column(name="is_organizer", type="boolean", nullable=true)
+     */
+    protected $isOrganizer;
+
+    /**
+     * @var string
+     *
+     * @ORM\Column(name="organizer_email", type="string", length=255, nullable=true)
+     */
+    protected $organizerEmail;
+
+    /**
+     * @var string
+     *
+     * @ORM\Column(name="organizer_display_name", type="string", length=255, nullable=true)
+     */
+    protected $organizerDisplayName;
+
+    /**
+     * @var User
+     *
+     * @ORM\ManyToOne(targetEntity="Oro\Bundle\UserBundle\Entity\User")
+     * @ORM\JoinColumn(name="organizer_user_id", referencedColumnName="id", nullable=true, onDelete="SET NULL")
+     */
+    protected $organizerUser;
+
+    /**
      * CalendarEvent constructor.
      */
     public function __construct()
@@ -455,6 +484,14 @@ class CalendarEvent extends ExtendCalendarEvent implements
     public function getSystemCalendar()
     {
         return $this->systemCalendar;
+    }
+
+    /**
+     * @return bool
+     */
+    public function isSystemEvent(): bool
+    {
+        return $this->getSystemCalendar() !== null;
     }
 
     /**
@@ -1368,5 +1405,124 @@ class CalendarEvent extends ExtendCalendarEvent implements
         usort($attendees, function ($attendee1, $attendee2) {
             return strcmp($attendee1->getEmail(), $attendee2->getEmail());
         });
+    }
+
+    /**
+     * @return bool|null
+     */
+    public function isOrganizer()
+    {
+        return $this->isOrganizer;
+    }
+
+    /**
+     * @param bool $isOrganizer
+     *
+     * @return CalendarEvent
+     */
+    public function setIsOrganizer(bool $isOrganizer)
+    {
+        $this->isOrganizer = $isOrganizer;
+
+        return $this;
+    }
+
+    /**
+     * @return User|null
+     */
+    public function getOrganizerUser()
+    {
+        return $this->organizerUser;
+    }
+
+    /**
+     * @param User $organizerUser
+     *
+     * @return CalendarEvent
+     */
+    public function setOrganizerUser(User $organizerUser)
+    {
+        $this->organizerUser = $organizerUser;
+
+        return $this;
+    }
+
+    /**
+     * @return string|null
+     */
+    public function getOrganizerDisplayName()
+    {
+        return $this->organizerDisplayName;
+    }
+
+    /**
+     * @param string $organizerDisplayName
+     *
+     * @return CalendarEvent
+     */
+    public function setOrganizerDisplayName(string $organizerDisplayName)
+    {
+        $this->organizerDisplayName = $organizerDisplayName;
+
+        return $this;
+    }
+
+    /**
+     * @return string|null
+     */
+    public function getOrganizerEmail()
+    {
+        return $this->organizerEmail;
+    }
+
+    /**
+     * @param string $organizerEmail
+     *
+     * @return CalendarEvent
+     */
+    public function setOrganizerEmail(string $organizerEmail)
+    {
+        $this->organizerEmail = $organizerEmail;
+
+        return $this;
+    }
+
+    /**
+     * This method should be used to calculate (by provided organizer email) "isOrganizer" property.
+     * This property is for technical reasons to easily access information "is calendar owner an organizer or not".
+     * Without this field, we would need to join additional tables to access that information.
+     */
+    public function calculateIsOrganizer()
+    {
+        if ($this->isSystemEvent() || $this->getCalendar() === null) {
+            return;
+        }
+
+        $owner = $this->getCalendar()->getOwner();
+        $organizerEmail = $this->getOrganizerEmail();
+
+        // no organizerEmail passed or organizerEmail is the same as calendar owner
+        if ($organizerEmail === null || $organizerEmail === $owner->getEmail()) {
+            $this->ownerIsOrganizer();
+        } else {
+            $this->setIsOrganizer(false);
+        }
+    }
+
+    private function ownerIsOrganizer()
+    {
+        if ($this->isSystemEvent()) {
+            return;
+        }
+
+        $owner = $this->getCalendar()->getOwner();
+
+        $this->setIsOrganizer(true);
+        $this->setOrganizerUser($owner);
+        $this->setOrganizerEmail($owner->getEmail());
+
+        if (!$this->getOrganizerDisplayName()) {
+            $this->setOrganizerDisplayName($owner->getFullName());
+        }
     }
 }

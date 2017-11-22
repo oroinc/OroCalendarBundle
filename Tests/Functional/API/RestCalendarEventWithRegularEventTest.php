@@ -108,7 +108,7 @@ class RestCalendarEventWithRegularEventTest extends AbstractCalendarEventTest
         $this->client->request('GET', $this->getUrl('oro_api_get_calendarevents', $request));
 
         $result = $this->getJsonResponseContent($this->client->getResponse(), 200);
-        $this->assertCount(16, $result);
+        $this->assertCount(18, $result);
     }
 
     public function testCgetByDateRangeFilterWithSummerWinterTimeChecking()

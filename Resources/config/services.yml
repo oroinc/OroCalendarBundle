@@ -166,6 +166,7 @@ services:
             - '@oro_calendar.calendar_event.update_attendee_manager'
             - '@oro_calendar.calendar_event.update_child_manager'
             - '@oro_calendar.calendar_event.update_exception_manager'
+            - '@oro_calendar.calendar_event.matching_events_manager'
 
     oro_calendar.calendar_event.update_attendee_manager:
         class: 'Oro\Bundle\CalendarBundle\Manager\CalendarEvent\UpdateAttendeeManager'
@@ -198,6 +199,12 @@ services:
         public: true
         arguments:
             - '@oro_calendar.email.notification_sender'
+
+    oro_calendar.calendar_event.matching_events_manager:
+        class: Oro\Bundle\CalendarBundle\Manager\CalendarEvent\MatchingEventsManager
+        public: false
+        arguments:
+            - '@oro_entity.doctrine_helper'
 
     oro_calendar.calendar_manager:
         class: %oro_calendar.calendar_manager.class%
@@ -465,12 +472,12 @@ services:
         tags:
             - { name: validator.constraint_validator}
 
-    oro_calendar.validator.unchangeable_uid:
-        class: Oro\Bundle\CalendarBundle\Validator\Constraints\UnchangeableUidValidator
+    oro_calendar.validator.event_attendees:
+        class: Oro\Bundle\CalendarBundle\Validator\Constraints\EventAttendeesValidator
         arguments:
             - '@doctrine'
         tags:
-            - { name: validator.constraint_validator}
+            - { name: validator.constraint_validator }
 
     oro_calendar.datagrid.mass_action.handler.delete:
         class: Oro\Bundle\CalendarBundle\Datagrid\MassAction\DeleteMassActionHandler
@@ -485,3 +492,8 @@ services:
             - '@translator'
         tags:
             - { name: oro_entity.name_provider, priority: 100}
+
+    oro_calendar.resolver.event_organizer:
+        class: Oro\Bundle\CalendarBundle\Resolver\EventOrganizerResolver
+        arguments:
+            - '@doctrine'

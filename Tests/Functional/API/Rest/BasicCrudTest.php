@@ -29,6 +29,23 @@ class BasicCrudTest extends AbstractTestCase
     }
 
     /**
+     * @param $response
+     * @return array
+     */
+    private function getResponseArray($response)
+    {
+        return [
+            'id'                        => $response['id'],
+            'uid'                       => $response['uid'],
+            'invitationStatus'          => Attendee::STATUS_NONE,
+            'editableInvitationStatus'  => false,
+            'organizerDisplayName'      => 'Billy Wilf',
+            'organizerEmail'            => 'foo_user_1@example.com',
+            'organizerUserId'           => $response['organizerUserId']
+        ];
+    }
+
+    /**
      * Create regular calendar event with minimal required data.
      *
      * Steps:
@@ -63,12 +80,7 @@ class BasicCrudTest extends AbstractTestCase
         /** @var CalendarEvent $newEvent */
         $newEvent = $this->getEntity(CalendarEvent::class, $response['id']);
         $this->assertResponseEquals(
-            [
-                'id'                       => $response['id'],
-                'uid'                      => $response['uid'],
-                'invitationStatus'         => Attendee::STATUS_NONE,
-                'editableInvitationStatus' => false,
-            ],
+            $this->getResponseArray($response),
             $response
         );
 
@@ -110,6 +122,11 @@ class BasicCrudTest extends AbstractTestCase
                 'isCancelled'              => false,
                 'createdAt'                => $newEvent->getCreatedAt()->format(DATE_RFC3339),
                 'updatedAt'                => $newEvent->getUpdatedAt()->format(DATE_RFC3339),
+                'isOrganizer'              => $newEvent->isOrganizer(),
+                'organizerDisplayName'     => $newEvent->getOrganizerDisplayName(),
+                'organizerEmail'           => $newEvent->getOrganizerEmail(),
+                'organizerUserId'          => $newEvent->getOrganizerUser() ?
+                    $newEvent->getOrganizerUser()->getId() : null
             ],
             $response
         );
@@ -150,12 +167,7 @@ CONTENT;
         /** @var CalendarEvent $newEvent */
         $newEvent = $this->getEntity(CalendarEvent::class, $response['id']);
         $this->assertResponseEquals(
-            [
-                'id'                       => $response['id'],
-                'uid'                      => '123123',
-                'invitationStatus'         => Attendee::STATUS_NONE,
-                'editableInvitationStatus' => false,
-            ],
+            $this->getResponseArray($response),
             $response
         );
 
@@ -197,6 +209,11 @@ CONTENT;
                 'isCancelled'              => false,
                 'createdAt'                => $newEvent->getCreatedAt()->format(DATE_RFC3339),
                 'updatedAt'                => $newEvent->getUpdatedAt()->format(DATE_RFC3339),
+                'isOrganizer'              => $newEvent->isOrganizer(),
+                'organizerDisplayName'     => $newEvent->getOrganizerDisplayName(),
+                'organizerEmail'           => $newEvent->getOrganizerEmail(),
+                'organizerUserId'          => $newEvent->getOrganizerUser() ?
+                    $newEvent->getOrganizerUser()->getId() : null
             ],
             $response
         );
@@ -248,12 +265,7 @@ CONTENT;
         /** @var CalendarEvent $newEvent */
         $newEvent = $this->getEntity(CalendarEvent::class, $response['id']);
         $this->assertResponseEquals(
-            [
-                'id'                       => $response['id'],
-                'uid'                      => $response['uid'],
-                'invitationStatus'         => Attendee::STATUS_NONE,
-                'editableInvitationStatus' => false,
-            ],
+            $this->getResponseArray($response),
             $response
         );
 
@@ -285,9 +297,12 @@ CONTENT;
         $response = $this->getRestResponseContent(['statusCode' => 200, 'contentType' => 'application/json']);
         $this->assertResponseEquals(
             [
-                'uid'                      => $response['uid'],
-                'invitationStatus'         => Attendee::STATUS_NONE,
-                'editableInvitationStatus' => false,
+                'uid'                       => $response['uid'],
+                'invitationStatus'          => Attendee::STATUS_NONE,
+                'editableInvitationStatus'  => false,
+                'organizerDisplayName'      => 'Billy Wilf',
+                'organizerEmail'            => 'foo_user_1@example.com',
+                'organizerUserId'           => $response['organizerUserId']
             ],
             $response
         );
@@ -368,12 +383,7 @@ CONTENT;
         /** @var CalendarEvent $newEvent */
         $newEvent = $this->getEntity(CalendarEvent::class, $response['id']);
         $this->assertResponseEquals(
-            [
-                'id'                       => $response['id'],
-                'uid'                      => $response['uid'],
-                'invitationStatus'         => Attendee::STATUS_NONE,
-                'editableInvitationStatus' => false,
-            ],
+            $this->getResponseArray($response),
             $response
         );
 
@@ -406,9 +416,12 @@ CONTENT;
         $response = $this->getRestResponseContent(['statusCode' => 200, 'contentType' => 'application/json']);
         $this->assertResponseEquals(
             [
-                'uid'                      => $response['uid'],
-                'invitationStatus'         => Attendee::STATUS_NONE,
-                'editableInvitationStatus' => false,
+                'uid'                       => $response['uid'],
+                'invitationStatus'          => Attendee::STATUS_NONE,
+                'editableInvitationStatus'  => false,
+                'organizerDisplayName'      => 'Billy Wilf',
+                'organizerEmail'            => 'foo_user_1@example.com',
+                'organizerUserId'           => $response['organizerUserId']
             ],
             $response
         );
@@ -434,5 +447,26 @@ CONTENT;
         $diffInSeconds = $newUpdatedAt->getTimestamp() - $originalUpdatedAt->getTimestamp();
 
         $this->assertGreaterThanOrEqual(1, $diffInSeconds, 'Failed assertic "updatedAt" was updated.');
+    }
+
+    public function testCheckIfCalendarIdIsValidated()
+    {
+        $this->restRequest(
+            [
+                'method' => 'POST',
+                'url' => $this->getUrl('oro_api_post_calendarevent'),
+                'server' => $this->generateWsseAuthHeader('foo_user_1', 'foo_user_1_api_key'),
+                'content' => json_encode(
+                    [
+                        'title' => 'Event withouth calendar set',
+                        'start' => '2016-10-14T22:00:00+00:00',
+                        'end' => '2016-10-14T23:00:00+00:00',
+                        'allDay' => false,
+                    ]
+                )
+            ]
+        );
+
+        $this->getRestResponseContent(['statusCode' => 201, 'contentType' => 'application/json']);
     }
 }
