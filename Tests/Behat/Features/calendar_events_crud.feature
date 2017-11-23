@@ -1,3 +1,4 @@
+@regression
 Feature: Create calendar events
   In order to have my company events organized
   As Admin user
