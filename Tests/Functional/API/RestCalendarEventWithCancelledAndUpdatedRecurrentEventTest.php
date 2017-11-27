@@ -6,7 +6,7 @@ use Oro\Bundle\CalendarBundle\Model\Recurrence;
 use Oro\Bundle\CalendarBundle\Tests\Unit\Fixtures\Entity\Attendee;
 
 /**
- * @dbIsolation
+ * @dbIsolationPerTest
  */
 class RestCalendarEventWithCancelledAndUpdatedRecurrentEventTest extends AbstractUseCaseTestCase
 {

@@ -3,7 +3,7 @@
 namespace Oro\Bundle\CalendarBundle\Tests\Functional\API;
 
 /**
- * @dbIsolation
+ * @dbIsolationPerTest
  */
 class CalendarEventWithEmptyAttendeesSavedTest extends AbstractUseCaseTestCase
 {
