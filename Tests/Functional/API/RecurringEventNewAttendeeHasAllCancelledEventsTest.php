@@ -4,21 +4,14 @@ namespace Oro\Bundle\CalendarBundle\Tests\Functional\API;
 
 use Oro\Bundle\CalendarBundle\Entity\CalendarEvent;
 use Oro\Bundle\CalendarBundle\Model\Recurrence;
-use Oro\Bundle\CalendarBundle\Tests\Functional\DataFixtures\LoadUserData;
 use Oro\Bundle\CalendarBundle\Tests\Unit\Fixtures\Entity\Attendee;
 use Oro\Bundle\UserBundle\Entity\User;
 
 /**
- * @dbIsolation
+ * @dbIsolationPerTest
  */
 class RecurringEventNewAttendeeHasAllCancelledEventsTest extends AbstractUseCaseTestCase
 {
-    protected function setUp()
-    {
-        $this->initClient([], $this->generateWsseAuthHeader(), true);
-        $this->loadFixtures([LoadUserData::class], true);
-    }
-
     /**
      * @SuppressWarnings(PHPMD.ExcessiveMethodLength)
      */

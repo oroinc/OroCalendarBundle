@@ -7,14 +7,14 @@ use Oro\Bundle\CalendarBundle\Model\Recurrence;
 use Oro\Bundle\CalendarBundle\Tests\Functional\DataFixtures\LoadUserData;
 
 /**
- * @dbIsolation
+ * @dbIsolationPerTest
  */
 class RecurringEventWithAttendeesAndExceptionTest extends AbstractUseCaseTestCase
 {
     protected function setUp()
     {
-        $this->initClient([], $this->generateWsseAuthHeader(), true);
-        $this->loadFixtures([LoadUserData::class], true);
+        $this->initClient([], $this->generateWsseAuthHeader());
+        $this->loadFixtures([LoadUserData::class]);
     }
 
     /**
