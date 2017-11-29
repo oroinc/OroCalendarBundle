@@ -21,8 +21,8 @@ Oro\Bundle\CalendarBundle\Entity\CalendarEvent:
   calendarEvent_1:
     title: Call to client
     calendar: 1
-    start: <dateTimeBetween('-1 hour', 'now')>
-    end: <dateTimeBetween('now', '+1 hour')>
+    start: <dateTimeBetween('today 13:00', 'today 13:05')>
+    end: <dateTimeBetween('today 13:55', 'today 13:59')>
     allDay: false
     organizerUser: @charlie
     organizerDisplayName: Charlie Sheen
@@ -30,16 +30,16 @@ Oro\Bundle\CalendarBundle\Entity\CalendarEvent:
   calendarEvent_2:
     title: Meeting
     calendar: 1
-    start: <dateTimeBetween('-3 hour', '-2 hour')>
-    end: <dateTimeBetween('-2 hour', '-1 hour')>
+    start: <dateTimeBetween('today 14:00', 'today 14:05')>
+    end: <dateTimeBetween('today 14:55', 'today 14:59')>
     allDay: false
     organizerDisplayName: Charlie Sheen
     organizerEmail: charlie@example.com
   calendarEvent_3:
     title: Business trip
     calendar: 1
-    start: <dateTimeBetween('+1 hour', '+2 hour')>
-    end: <dateTimeBetween('+2 hour', '+3 hour')>
+    start: <dateTimeBetween('today 15:00', 'today 15:05')>
+    end: <dateTimeBetween('today 15:55', 'today 15:59')>
     allDay: false
 
 Oro\Bundle\OrganizationBundle\Entity\Organization:
