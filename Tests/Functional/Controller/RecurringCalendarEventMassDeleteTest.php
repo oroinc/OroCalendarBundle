@@ -184,6 +184,7 @@ class RecurringCalendarEventMassDeleteTest extends AbstractTestCase
         $regularEvent = $this->getEntity(CalendarEvent::class, $response['id']);
 
         // Step 4. Execute delete mass action for regular event and exception event.
+        $this->client->disableReboot();
         $url = $this->getUrl(
             'oro_datagrid_mass_action',
             [
@@ -191,6 +192,7 @@ class RecurringCalendarEventMassDeleteTest extends AbstractTestCase
                 'actionName' => 'delete',
                 'inset'      => 1,
                 'values'     => implode(',', [$regularEvent->getId(), $exceptionEvent->getId()]),
+                'token'      => $this->getCsrfToken('delete')->getValue(),
             ]
         );
         $this->client->request('DELETE', $url, [], [], $this->generateBasicAuthHeader('foo_user_1', 'password'));
@@ -459,6 +461,7 @@ class RecurringCalendarEventMassDeleteTest extends AbstractTestCase
         $this->assertJsonResponseStatusCodeEquals($this->client->getResponse(), 201);
 
         // Step 4. Execute delete mass action for recurring event.
+        $this->client->disableReboot();
         $url = $this->getUrl(
             'oro_datagrid_mass_action',
             [
@@ -466,6 +469,7 @@ class RecurringCalendarEventMassDeleteTest extends AbstractTestCase
                 'actionName' => 'delete',
                 'inset'      => 1,
                 'values'     => implode(',', [$recurringEvent->getId()]),
+                'token'      => $this->getCsrfToken('delete')->getValue(),
             ]
         );
         $this->client->request('DELETE', $url, [], [], $this->generateBasicAuthHeader('foo_user_1', 'password'));
