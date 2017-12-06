@@ -2,11 +2,8 @@
 
 namespace Oro\Bundle\CalendarBundle\Migrations\Schema\v1_19;
 
-use Doctrine\DBAL\Platforms\AbstractPlatform;
 use Doctrine\DBAL\Schema\Schema;
 
-use Oro\Bundle\EntityBundle\ORM\DatabasePlatformInterface;
-use Oro\Bundle\MigrationBundle\Migration\Extension\DatabasePlatformAwareInterface;
 use Oro\Bundle\MigrationBundle\Migration\Migration;
 use Oro\Bundle\MigrationBundle\Migration\QueryBag;
 
@@ -35,9 +32,6 @@ class CalendarEventOrganizer implements Migration
         }
         if (!$table->hasColumn('organizer_display_name')) {
             $table->addColumn('organizer_display_name', 'string', ['notnull' => false, 'length' => 255]);
-        }
-        if (!$table->hasIndex('organizer_user_id')) {
-            $table->addIndex(['organizer_user_id']);
         }
     }
 }
