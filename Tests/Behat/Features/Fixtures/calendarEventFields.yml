@@ -24,7 +24,7 @@ Oro\Bundle\CalendarBundle\Entity\CalendarEvent:
     start: <dateTimeBetween('today 13:00', 'today 13:05')>
     end: <dateTimeBetween('today 13:55', 'today 13:59')>
     allDay: false
-    organizerUser: @charlie
+    organizerUser: '@charlie'
     organizerDisplayName: Charlie Sheen
     organizerEmail: charlie@example.com
   calendarEvent_2:
