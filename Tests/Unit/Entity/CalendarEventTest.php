@@ -6,6 +6,7 @@ use Doctrine\Common\Collections\ArrayCollection;
 
 use Symfony\Component\PropertyAccess\PropertyAccess;
 
+use Oro\Component\Testing\Unit\EntityTrait;
 use Oro\Bundle\CalendarBundle\Entity\Recurrence;
 use Oro\Bundle\CalendarBundle\Entity\SystemCalendar;
 use Oro\Bundle\CalendarBundle\Tests\Unit\Fixtures\Entity\Attendee;
@@ -24,6 +25,8 @@ use Oro\Bundle\ReminderBundle\Model\ReminderData;
  */
 class CalendarEventTest extends \PHPUnit_Framework_TestCase
 {
+    use EntityTrait;
+
     const OWNER_EMAIL = 'owner@example.com';
     const OWNER_FIRST_NAME = 'Owner';
     const OWNER_LAST_NAME = 'Name';
@@ -856,6 +859,34 @@ class CalendarEventTest extends \PHPUnit_Framework_TestCase
 
         $this->assertNull($calendarEvent->isOrganizer());
         $this->assertNull($calendarEvent->getOrganizerDisplayName());
+    }
+
+    /**
+     * @dataProvider additionalFieldsProvider
+     * @param array $eventFields
+     * @param array $expectedFields
+     */
+    public function testAdditionalFields(array $eventFields, array $expectedFields)
+    {
+        /** @var CalendarEvent $calendarEvent */
+        $calendarEvent = $this->getEntity(CalendarEvent::class, $eventFields);
+
+        $this->assertSame($expectedFields, $calendarEvent->getAdditionalFields());
+    }
+
+    /**
+     * @return array
+     */
+    public function additionalFieldsProvider()
+    {
+        return [
+            [['id' => 1, 'uid' => 'UUID-1'], ['uid' => 'UUID-1', 'calendar_id' => null]],
+            [
+                ['id' => 2, 'uid' => 'UUID-1', 'calendar' => new Calendar(1)],
+                ['uid' => 'UUID-1', 'calendar_id' => 1]
+            ],
+            [['id' => 3, 'calendar' => new Calendar(2)], ['uid' => null, 'calendar_id' => 2]],
+        ];
     }
 
     /**
