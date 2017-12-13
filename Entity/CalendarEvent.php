@@ -1287,7 +1287,8 @@ class CalendarEvent extends ExtendCalendarEvent implements
     public function getAdditionalFields()
     {
         return [
-            'uid' => $this->getUid()
+            'uid' => $this->getUid(),
+            'calendar_id' => $this->getCalendar() ? $this->getCalendar()->getId() : null,
         ];
     }
 
