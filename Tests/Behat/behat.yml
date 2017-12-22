@@ -47,3 +47,6 @@ oro_behat_extension:
       selector:
         locator: '//button[@class="ui-datepicker-current ui-state-default ui-priority-secondary ui-corner-all"]'
         type: xpath
+    My Calendar Choose Color Menu:
+      class: Oro\Bundle\CalendarBundle\Tests\Behat\Element\MyCalendarChooseColorMenu
+      selector: 'li[data-calendar-alias="user"] a.context-menu-button'
