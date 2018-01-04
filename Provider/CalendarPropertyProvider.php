@@ -11,6 +11,7 @@ use Oro\Bundle\EntityConfigBundle\Config\Id\FieldConfigId;
 use Oro\Bundle\EntityExtendBundle\Extend\FieldTypeHelper;
 use Oro\Bundle\EntityExtendBundle\Extend\RelationType;
 use Oro\Bundle\EntityExtendBundle\Tools\ExtendHelper;
+use Oro\Component\DoctrineUtils\ORM\QueryBuilderUtil;
 
 class CalendarPropertyProvider
 {
@@ -64,6 +65,7 @@ class CalendarPropertyProvider
         $metadata    = $this->getMetadata();
         $fields      = $this->getFields();
         foreach ($fields as $fieldName => $fieldType) {
+            QueryBuilderUtil::checkIdentifier($fieldName);
             $underlyingFieldType = $this->fieldTypeHelper->getUnderlyingType($fieldType);
             if ($this->fieldTypeHelper->isRelation($underlyingFieldType)) {
                 $selectItems[] = sprintf('IDENTITY(o.%1$s) AS %1$s', $fieldName);
