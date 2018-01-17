@@ -52,10 +52,10 @@ define([
                 this.endAtTimeElement.hide(animationDuration, resetTimeDelegate);
             } else {
                 if (this.oldStartAtValue) {
-                    this.startAtTimeElement.timepicker('setTime', this.oldStartAtValue);
+                    this.startAtTimeElement.timepicker('setTime', this.oldStartAtValue).trigger('change');
                 }
                 if (this.oldEndAtValue) {
-                    this.endAtTimeElement.timepicker('setTime', this.oldEndAtValue);
+                    this.endAtTimeElement.timepicker('setTime', this.oldEndAtValue).trigger('change');
                 }
 
                 this.startAtTimeElement.show(animationDuration);
