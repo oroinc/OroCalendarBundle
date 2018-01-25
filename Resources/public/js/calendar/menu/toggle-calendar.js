@@ -1,5 +1,5 @@
 define(['oroui/js/app/views/base/view'
-    ], function(BaseView) {
+], function(BaseView) {
     'use strict';
 
     /**
