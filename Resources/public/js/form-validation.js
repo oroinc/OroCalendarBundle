@@ -39,7 +39,9 @@ define([
             if (!_.isUndefined(err.errors)) {
                 // JSON REST response
                 if (_.isArray(err.errors)) {
-                    _.each(err.errors, function(value) { errors.push(value); });
+                    _.each(err.errors, function(value) {
+                        errors.push(value);
+                    });
                 } else if (_.isObject(err.errors)) {
                     var validator = (container.is('form') ? container : container.find('form')).data('validator');
                     if (validator) {

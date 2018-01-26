@@ -18,19 +18,19 @@ define([
     return Backbone.View.extend({
         /** @property {Object} */
         attrs: {
-            calendarUid:     'data-calendar-uid',
-            calendarAlias:   'data-calendar-alias',
-            color:           'data-color',
+            calendarUid: 'data-calendar-uid',
+            calendarAlias: 'data-calendar-alias',
+            color: 'data-color',
             backgroundColor: 'data-bg-color',
-            visible:         'data-visible'
+            visible: 'data-visible'
         },
 
         /** @property {Object} */
         selectors: {
-            container:     '.calendars',
+            container: '.calendars',
             itemContainer: '.connection-container',
-            item:          '.connection-item',
-            lastItem:      '.connection-item:last',
+            item: '.connection-item',
+            lastItem: '.connection-item:last',
             findItemByCalendar: function(calendarUid) {
                 return '.connection-item[data-calendar-uid="' + calendarUid + '"]';
             },
@@ -203,14 +203,14 @@ define([
             var $container = $button.closest(this.selectors.item);
             var $contextMenu = $(this.contextMenuTemplate(model.toJSON()));
             var closeContextMenu = _.bind(function() {
-                    $('.context-menu-button').css('display', '');
-                    $contextMenu.remove();
-                    $(document).off('.' + this.cid);
-                    delete this._closeContextMenu;
-                }, this);
+                $('.context-menu-button').css('display', '');
+                $contextMenu.remove();
+                $(document).off('.' + this.cid);
+                delete this._closeContextMenu;
+            }, this);
             var modules = _.uniq($contextMenu.find('li[data-module]').map(function() {
-                    return $(this).data('module');
-                }).get());
+                return $(this).data('module');
+            }).get());
             var buttonHtml = $button.html();
             var showLoadingTimeout;
 
@@ -229,13 +229,13 @@ define([
                     _.each(modules, _.bind(function(ModuleConstructor, moduleName) {
                         $contextMenu.find('li[data-module="' + moduleName + '"]').each(_.bind(function(index, el) {
                             var action = new ModuleConstructor({
-                                    el: el,
-                                    model: model,
-                                    collection: this.options.collection,
-                                    connectionsView: this.options.connectionsView,
-                                    colorManager: this.options.colorManager,
-                                    closeContextMenu: closeContextMenu
-                                });
+                                el: el,
+                                model: model,
+                                collection: this.options.collection,
+                                connectionsView: this.options.connectionsView,
+                                colorManager: this.options.colorManager,
+                                closeContextMenu: closeContextMenu
+                            });
                             action.$el.one('click', '.action', _.bind(function(e) {
                                 if (this._initActionSyncObject()) {
                                     closeContextMenu();

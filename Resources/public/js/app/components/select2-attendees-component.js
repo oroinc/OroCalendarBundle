@@ -27,7 +27,7 @@ define(function(require) {
                     var displayName = term.replace(emailPattern, '')
                         .replace(disallowSymbolsPattern, '')
                         .trim();
-                    var text = ''; //it is used as text for autocomplete item
+                    var text = ''; // it is used as text for autocomplete item
                     if (displayName) {
                         text = displayName + (email ? ' <' + email + '>' : '');
                     } else {
@@ -77,7 +77,7 @@ define(function(require) {
                             {id: element.val()}
                         ),
                         type: 'GET',
-                        success:  $.proxy(function(data) {
+                        success: $.proxy(function(data) {
                             config.selected = data.excluded;
                             callback(data.result);
                             element.trigger('select2-data-loaded');

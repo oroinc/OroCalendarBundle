@@ -32,13 +32,13 @@ define(function(require) {
                 localeSettings.getSortedDayOfWeekNames('mnemonic'),
                 localeSettings.getSortedDayOfWeekNames('wide')
             );
-            data.dayOfWeekOptions =  _.map(dayOfWeek, function(text, key) {
+            data.dayOfWeekOptions = _.map(dayOfWeek, function(text, key) {
                 return {
                     value: key,
                     text: text
                 };
             });
-            data.groupWeekDayOptions =  [
+            data.groupWeekDayOptions = [
                 {
                     value: 'day',
                     text: 'day',
