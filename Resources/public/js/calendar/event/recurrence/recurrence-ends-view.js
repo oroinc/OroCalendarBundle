@@ -26,14 +26,14 @@ define(function(require) {
             this.subview('date-time-picker-view', new DateTimePickerView({
                 el: this.$('[data-related-field="endTime"]'),
                 dateInputAttrs: {
-                    placeholder: __('oro.form.choose_date'),
-                    autocomplete: 'off',
+                    'placeholder': __('oro.form.choose_date'),
+                    'autocomplete': 'off',
                     'class': 'datepicker-input',
                     'data-validation': JSON.stringify({Date: {}})
                 },
                 timeInputAttrs: {
-                    placeholder: __('oro.form.choose_time'),
-                    autocomplete: 'off',
+                    'placeholder': __('oro.form.choose_time'),
+                    'autocomplete': 'off',
                     'class': 'input-small timepicker-input',
                     'data-validation': JSON.stringify({Time: {}})
                 },

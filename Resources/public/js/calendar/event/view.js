@@ -228,7 +228,7 @@ define(function(require) {
         },
 
         onEventFormSubmit: function() {
-            //calendarUid value should be processed by form and value should be sent to backend
+            // calendarUid value should be processed by form and value should be sent to backend
             this.eventDialog.$('form ' + this.selectors.calendarUid).removeAttr('disabled');
             this._saveEventFromData(this.getEventFormData());
         },

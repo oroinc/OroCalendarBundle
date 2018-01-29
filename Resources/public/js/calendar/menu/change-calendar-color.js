@@ -47,8 +47,8 @@ define([
 
         initializeColorPicker: function() {
             var colors = _.map(this.colorManager.colors, function(value) {
-                    return {'id': value, 'text': value};
-                });
+                return {id: value, text: value};
+            });
 
             this.$colorPicker.simplecolorpicker({theme: 'fontawesome', data: colors});
             if (!this.customColor) {

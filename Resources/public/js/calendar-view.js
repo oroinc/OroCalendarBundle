@@ -40,8 +40,8 @@ define(function(require) {
 
         /** @property {Object} */
         selectors: {
-            calendar:           '.calendar',
-            loadingMask:        '.loading-mask',
+            calendar: '.calendar',
+            loadingMask: '.loading-mask',
             loadingMaskContent: '.loading-content'
         },
 
@@ -144,7 +144,7 @@ define(function(require) {
                 var defaultDate = persistentStorage.getItem(dateKey);
 
                 if (defaultView) {
-                    this.options.eventsOptions.defaultView =  defaultView;
+                    this.options.eventsOptions.defaultView = defaultView;
                 }
 
                 if (defaultDate && !isNaN(defaultDate)) {
@@ -948,7 +948,7 @@ define(function(require) {
             }
 
             curSeconds = (now.hours() * 3600) + (now.minutes() * 60) + now.seconds();
-            percentOfDay = curSeconds / 86400; //24 * 60 * 60 = 86400, # of seconds in a day
+            percentOfDay = curSeconds / 86400; // 24 * 60 * 60 = 86400, # of seconds in a day
             timelineTop = Math.floor(timeGrid.height() * percentOfDay);
             timelineElement.css('top', timelineTop + 'px');
 

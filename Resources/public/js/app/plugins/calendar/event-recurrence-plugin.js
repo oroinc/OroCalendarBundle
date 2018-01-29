@@ -48,10 +48,10 @@ define(function(require) {
                 onSelectCallback = _.bind(function(value) {
                     if (value === 'exception') {
                         _.extend(attrs, {
-                            'id': null,
-                            'recurringEventId': eventModel.originalId,
-                            'originalStart': eventModel.get('start'),
-                            'recurrence': null
+                            id: null,
+                            recurringEventId: eventModel.originalId,
+                            originalStart: eventModel.get('start'),
+                            recurrence: null
                         });
                         eventModel.originalId = null;
                     } else {
@@ -179,11 +179,11 @@ define(function(require) {
         onEventFormFetchData: function(eventModel, formData, predefinedAttrs) {
             if (predefinedAttrs.isException) {
                 _.extend(formData, {
-                    'id': null,
-                    'recurringEventId': eventModel.originalId,
-                    'originalStart': predefinedAttrs.originalStart,
-                    'recurrence': null,
-                    'isCancelled': _.result(predefinedAttrs, 'isCancelled') || null
+                    id: null,
+                    recurringEventId: eventModel.originalId,
+                    originalStart: predefinedAttrs.originalStart,
+                    recurrence: null,
+                    isCancelled: _.result(predefinedAttrs, 'isCancelled') || null
                 });
                 eventModel.originalId = null;
             }

@@ -100,20 +100,20 @@ define([
             }
             unusedColors = _.difference(this.colors, _.pluck(this.calendarColors, 'backgroundColor'));
             if (unusedColors.length > 0) {
-                //find unused color to end of color list
+                // find unused color to end of color list
                 for (j = i + 1; j < this.colors.length; j++) {
                     if (_.indexOf(unusedColors, this.colors[j]) !== -1) {
                         return this.colors[j];
                     }
                 }
-                //find unused color from start of color list to current color
+                // find unused color from start of color list to current color
                 for (j = 0; j < i + 1; j++) {
                     if (_.indexOf(unusedColors, this.colors[j]) !== -1) {
                         return this.colors[j];
                     }
                 }
             }
-            //get next color from list because all colors was used
+            // get next color from list because all colors was used
             return this.colors[i + 1 % this.colors.length];
         }
     };
