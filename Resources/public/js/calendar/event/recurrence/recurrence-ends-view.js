@@ -34,7 +34,7 @@ define(function(require) {
                 timeInputAttrs: {
                     'placeholder': __('oro.form.choose_time'),
                     'autocomplete': 'off',
-                    'class': 'input-small timepicker-input',
+                    'class': 'timepicker-input',
                     'data-validation': JSON.stringify({Time: {}})
                 },
                 datePickerOptions: {
