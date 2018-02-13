@@ -1,23 +1,38 @@
 <div class="control-group control-group-checkbox">
-    <div class="control-label wrap"><label for="recurrence-repeat-<%= cid %>"
-        ><%- _.__('oro.calendar.event.recurrence.control-label.repeat') %></label></div>
-    <div class="controls"><input type="checkbox" id="recurrence-repeat-<%= cid %>"
-                                 data-name="recurrence-repeat"<% if (recurrenceType) { %> checked<% } %>></div>
+    <div class="control-label wrap">
+        <label for="recurrence-repeat-<%= cid %>">
+            <%- _.__('oro.calendar.event.recurrence.control-label.repeat') %>
+        </label>
+    </div>
+    <div class="controls">
+        <input type="checkbox"
+               id="recurrence-repeat-<%= cid %>"
+               data-name="recurrence-repeat"
+               <% if (recurrenceType) { %> checked<% } %>>
+    </div>
 </div>
 <div data-name="recurrence-settings"<% if (!recurrenceType) { %> style="display: none"<% } %>>
     <% if (!_.isEmpty(errors)) { %>
     <div class="control-group alert alert-error">
         <ul class="controls">
         <% _.each(errors, function(item) {
-            _.each(item.messages, function(message) { %><li><%- item.label %>:&nbsp;<%= message %></li><% })
+            _.each(item.messages, function(message) { %>
+                <li><%- item.label %>:&nbsp;<%= message %></li>
+            <% })
         }) %>
         </ul>
     </div>
     <% } %>
     <div class="control-group control-group-choice">
-        <div class="control-label wrap"><label for="recurrence-repeats-<%= cid %>"
-            ><%- _.__('oro.calendar.event.recurrence.control-label.repeats') %></label></div>
-        <div class="controls"><select id="recurrence-repeats-<%= cid %>" data-name="recurrence-repeats" class="recurrence-repeats__select">
+        <div class="control-label wrap">
+            <label for="recurrence-repeats-<%= cid %>">
+            <%- _.__('oro.calendar.event.recurrence.control-label.repeats') %>
+            </label>
+        </div>
+        <div class="controls">
+            <select id="recurrence-repeats-<%= cid %>"
+                    data-name="recurrence-repeats"
+                    class="recurrence-repeats__select">
             <% _.each(repeatsOptions, function(option) { %>
             <option value="<%- option.value %>"<% if (option.selected) { %> selected<% } %>><%- option.label %></option>
             <% }) %>
