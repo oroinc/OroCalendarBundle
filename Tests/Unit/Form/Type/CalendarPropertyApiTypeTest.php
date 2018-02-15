@@ -19,6 +19,9 @@ class CalendarPropertyApiTypeTest extends TypeTestCase
      */
     protected $registry;
 
+    /**
+     * @return array
+     */
     protected function getExtensions()
     {
         $this->registry = $this->getMockBuilder('Doctrine\Common\Persistence\ManagerRegistry')
@@ -121,7 +124,7 @@ class CalendarPropertyApiTypeTest extends TypeTestCase
         }
     }
 
-    public function testSetDefaultOptions()
+    public function testConfigureOptions()
     {
         $resolver = $this->getMockBuilder('Symfony\Component\OptionsResolver\OptionsResolver')
             ->disableOriginalConstructor()
