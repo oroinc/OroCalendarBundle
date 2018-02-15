@@ -10,7 +10,7 @@ use Symfony\Component\Validator\Validation;
 
 use Doctrine\Common\Collections\ArrayCollection;
 
-use Genemu\Bundle\FormBundle\Form\JQuery\Type\Select2Type;
+use Oro\Bundle\FormBundle\Form\Type\Select2Type;
 
 use Oro\Bundle\CalendarBundle\Manager\CalendarEvent\NotificationManager;
 use Oro\Bundle\CalendarBundle\Entity\Calendar;
@@ -320,7 +320,10 @@ class CalendarEventApiTypeTest extends TypeTestCase
             new UnitType(),
             new UserMultiSelectType($this->entityManager),
             new OroJquerySelect2HiddenType($this->entityManager, $searchRegistry, $configProvider),
-            new Select2Type('hidden'),
+            new Select2Type(
+                'Symfony\Component\Form\Extension\Core\Type\HiddenType',
+                'oro_select2_hidden'
+            ),
             new CalendarEventAttendeesApiType(),
             new RecurrenceFormType($recurrenceModel),
             new EntityIdentifierType($this->registry),
