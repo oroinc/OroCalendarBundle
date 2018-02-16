@@ -2,10 +2,13 @@
 
 namespace Oro\Bundle\CalendarBundle\Tests\Unit\Form\Handler;
 
+use Doctrine\Common\Persistence\ObjectManager;
+use Symfony\Component\Form\Form;
 use Symfony\Component\HttpFoundation\Request;
 
 use Oro\Bundle\CalendarBundle\Entity\CalendarProperty;
 use Oro\Bundle\CalendarBundle\Form\Handler\CalendarPropertyApiHandler;
+use Symfony\Component\HttpFoundation\RequestStack;
 
 class CalendarPropertyApiHandlerTest extends \PHPUnit_Framework_TestCase
 {
@@ -16,15 +19,14 @@ class CalendarPropertyApiHandlerTest extends \PHPUnit_Framework_TestCase
      */
     public function testProcess($method)
     {
-        $form    = $this->getMockBuilder('Symfony\Component\Form\Form')
-            ->disableOriginalConstructor()
-            ->getMock();
-        $request = new Request();
-        $om      = $this->getMockBuilder('Doctrine\Common\Persistence\ObjectManager')
-            ->disableOriginalConstructor()
-            ->getMock();
+        $form = $this->createMock(Form::class);
+        $om = $this->createMock(ObjectManager::class);
 
+        $request = new Request();
         $request->setMethod($method);
+
+        $requestStack = new RequestStack();
+        $requestStack->push($request);
 
         $obj = new CalendarProperty();
 
@@ -43,7 +45,7 @@ class CalendarPropertyApiHandlerTest extends \PHPUnit_Framework_TestCase
         $om->expects($this->once())
             ->method('flush');
 
-        $handler = new CalendarPropertyApiHandler($form, $request, $om);
+        $handler = new CalendarPropertyApiHandler($form, $requestStack, $om);
         $handler->process($obj);
     }
 

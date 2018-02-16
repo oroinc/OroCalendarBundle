@@ -126,18 +126,16 @@ services:
 
     oro_calendar.calendar_property.form.handler.api:
         class: '%oro_calendar.calendar_property.form.handler.api.class%'
-        scope: 'request'
         arguments:
             - '@oro_calendar.calendar_property.form.api'
-            - '@request'
+            - '@request_stack'
             - '@doctrine.orm.entity_manager'
 
     oro_calendar.calendar_property.form.handler.soap.api:
         class: '%oro_calendar.calendar_property.form.handler.api.class%'
-        scope: 'request'
         arguments:
             - '@oro_calendar.calendar_property.form.soap.api'
-            - '@request'
+            - '@request_stack'
             - '@doctrine.orm.entity_manager'
 
     oro_calendar.calendar_choice.form.type:
@@ -170,10 +168,9 @@ services:
 
     oro_calendar.system_calendar.form.handler:
         class: '%oro_calendar.system_calendar.form.handler.class%'
-        scope: request
         arguments:
             - '@oro_calendar.system_calendar.form'
-            - '@request'
+            - '@request_stack'
             - '@doctrine.orm.entity_manager'
 
     oro_calendar.extension.acl_label:

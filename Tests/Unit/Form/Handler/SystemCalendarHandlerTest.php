@@ -2,10 +2,12 @@
 
 namespace Oro\Bundle\CalendarBundle\Tests\Unit\Form\Handler;
 
-use Symfony\Component\HttpFoundation\Request;
-
+use Doctrine\Common\Persistence\ObjectManager;
 use Oro\Bundle\CalendarBundle\Entity\SystemCalendar;
 use Oro\Bundle\CalendarBundle\Form\Handler\SystemCalendarHandler;
+use Symfony\Component\Form\Form;
+use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\RequestStack;
 
 class SystemCalendarHandlerTest extends \PHPUnit_Framework_TestCase
 {
@@ -26,24 +28,24 @@ class SystemCalendarHandlerTest extends \PHPUnit_Framework_TestCase
 
     protected function setUp()
     {
-        $this->form                = $this->getMockBuilder('Symfony\Component\Form\Form')
-            ->disableOriginalConstructor()
-            ->getMock();
-        $this->request             = new Request();
-        $this->om                  = $this->getMockBuilder('Doctrine\Common\Persistence\ObjectManager')
-            ->disableOriginalConstructor()
-            ->getMock();
+        $this->form = $this->createMock(Form::class);
+        $this->request = new Request();
+        $requestStack = new RequestStack();
+        $requestStack->push($this->request);
+        $this->om = $this->createMock(ObjectManager::class);
 
         $this->entity  = new SystemCalendar();
         $this->handler = new SystemCalendarHandler(
             $this->form,
-            $this->request,
+            $requestStack,
             $this->om
         );
     }
 
     /**
      * @dataProvider supportedMethods
+     *
+     * @param string $method
      */
     public function testProcessInvalidData($method)
     {
@@ -70,6 +72,8 @@ class SystemCalendarHandlerTest extends \PHPUnit_Framework_TestCase
 
     /**
      * @dataProvider supportedMethods
+     *
+     * @param string $method
      */
     public function testProcessValidData($method)
     {
@@ -94,6 +98,9 @@ class SystemCalendarHandlerTest extends \PHPUnit_Framework_TestCase
         );
     }
 
+    /**
+     * @return array
+     */
     public function supportedMethods()
     {
         return [

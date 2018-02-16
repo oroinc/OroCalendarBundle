@@ -3,35 +3,33 @@
 namespace Oro\Bundle\CalendarBundle\Form\Handler;
 
 use Doctrine\Common\Persistence\ObjectManager;
-
-use Symfony\Component\Form\FormInterface;
-use Symfony\Component\HttpFoundation\Request;
-
 use Oro\Bundle\CalendarBundle\Entity\SystemCalendar;
+use Symfony\Component\Form\FormInterface;
+use Symfony\Component\HttpFoundation\RequestStack;
 
 class SystemCalendarHandler
 {
     /** @var FormInterface */
     protected $form;
 
-    /** @var Request */
-    protected $request;
+    /** @var RequestStack */
+    protected $requestStack;
 
     /** @var ObjectManager */
     protected $manager;
 
     /**
      * @param FormInterface $form
-     * @param Request       $request
+     * @param RequestStack  $requestStack
      * @param ObjectManager $manager
      */
     public function __construct(
         FormInterface $form,
-        Request $request,
+        RequestStack $requestStack,
         ObjectManager $manager
     ) {
-        $this->form    = $form;
-        $this->request = $request;
+        $this->form = $form;
+        $this->requestStack = $requestStack;
         $this->manager = $manager;
     }
 
@@ -56,8 +54,9 @@ class SystemCalendarHandler
     {
         $this->form->setData($entity);
 
-        if (in_array($this->request->getMethod(), array('POST', 'PUT'))) {
-            $this->form->submit($this->request);
+        $request = $this->requestStack->getCurrentRequest();
+        if (in_array($request->getMethod(), ['POST', 'PUT'], true)) {
+            $this->form->submit($request);
 
             if ($this->form->isValid()) {
                 $this->onSuccess($entity);
