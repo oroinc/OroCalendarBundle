@@ -164,7 +164,7 @@ class SystemCalendarTypeTest extends TypeTestCase
         $this->assertFalse($result->isPublic());
     }
 
-    public function testSetDefaultOptions()
+    public function testConfigureOptions()
     {
         $resolver = $this->getMockBuilder('Symfony\Component\OptionsResolver\OptionsResolver')
             ->disableOriginalConstructor()

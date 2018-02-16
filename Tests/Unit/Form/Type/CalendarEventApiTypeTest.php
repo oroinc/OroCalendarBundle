@@ -262,7 +262,7 @@ class CalendarEventApiTypeTest extends TypeTestCase
         $this->assertFalse($form->has('invitedUsers'));
     }
 
-    public function testSetDefaultOptions()
+    public function testConfigureOptions()
     {
         $resolver = $this->getMockBuilder('Symfony\Component\OptionsResolver\OptionsResolver')
             ->disableOriginalConstructor()

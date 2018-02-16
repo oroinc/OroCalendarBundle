@@ -163,7 +163,7 @@ class RecurrenceFormTypeTest extends \PHPUnit_Framework_TestCase
                 'data_class' => 'Oro\Bundle\CalendarBundle\Entity\Recurrence',
             ]);
 
-        $this->type->setDefaultOptions($resolver);
+        $this->type->configureOptions($resolver);
     }
 
     public function testGetName()
