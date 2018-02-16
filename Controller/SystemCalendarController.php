@@ -25,6 +25,12 @@ class SystemCalendarController extends Controller
             throw $this->createNotFoundException('Both Public and System calendars are disabled.');
         }
 
+        if (!$this->isGranted('oro_public_calendar_management')
+            && !$this->isGranted('oro_system_calendar_management')
+        ) {
+            throw new AccessDeniedException();
+        }
+
         return [
             'entity_class' => $this->container->getParameter('oro_calendar.system_calendar.entity.class')
         ];
