@@ -349,6 +349,9 @@ services:
             - '@oro_calendar.system_calendar_config'
         tags:
             - { name: kernel.event_listener, event: oro_menu.configure.application_menu, method: onNavigationConfigure }
+        calls:
+            - [setAuthorizationChecker, ['@security.authorization_checker']]
+            - [setTokenAccessor, ['@oro_security.token_accessor']]
 
     oro_calendar.system_calendar.handler.delete:
         class: %oro_calendar.system_calendar.handler.delete.class%
