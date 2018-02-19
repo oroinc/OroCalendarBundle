@@ -16,10 +16,16 @@ define([
             'select[name*="[calendarUid]"]'
         ],
 
+        /** @property {Object} */
+        options: {
+            separator: '-|-'
+        },
+
         /**
          * @constructor
          */
-        initialize: function() {
+        initialize: function(options) {
+            this.options = _.defaults(_.pick(options || {}, _.keys(this.options)), this.options);
             var self = this;
             this.$form = this.$el.closest('form');
             this.$form.on('select2-data-loaded', function() {
@@ -61,7 +67,7 @@ define([
 
         getAttendeeValues: function() {
             var value = this.$form.find('input[name*="[attendees]"]').val();
-            return value.length > 0 ? value.split(';') : [];
+            return value.length > 0 ? value.split(this.options.separator) : [];
         },
 
         hasAttendees: function() {
