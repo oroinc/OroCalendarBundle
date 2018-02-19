@@ -2,6 +2,7 @@
 
 namespace Oro\Bundle\CalendarBundle\Tests\Functional\Controller;
 
+use Oro\Bundle\ActivityBundle\Form\DataTransformer\ContextsToViewTransformer;
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 use Oro\Bundle\UserBundle\Entity\User;
 
@@ -37,7 +38,7 @@ class CalendarEventControllerTest extends WebTestCase
         $form['oro_calendar_event_form[start]']       = '2016-05-23T14:46:02Z';
         $form['oro_calendar_event_form[end]']         = '2016-05-23T15:46:02Z';
         $form['oro_calendar_event_form[attendees]']   = implode(
-            ';',
+            ContextsToViewTransformer::SEPARATOR,
             [
                 json_encode([
                     'entityClass' => get_class($user),
@@ -117,7 +118,7 @@ class CalendarEventControllerTest extends WebTestCase
         $form['oro_calendar_event_form[start]']       = '2016-05-23T14:46:02Z';
         $form['oro_calendar_event_form[end]']         = '2016-05-23T15:46:02Z';
         $form['oro_calendar_event_form[attendees]']   = implode(
-            ';',
+            ContextsToViewTransformer::SEPARATOR,
             [
                 json_encode([
                     'entityClass' => 'Oro\Bundle\CalendarBundle\Entity\Attendee',

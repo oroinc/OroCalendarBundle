@@ -53,7 +53,7 @@ class AttendeesToViewTransformer extends ContextsToViewTransformer
             $attendees[] = $attendee;
         }
 
-        $targets = explode(';', $value);
+        $targets = explode($this->separator, $value);
         foreach ($targets as $target) {
             $target = json_decode($target, true);
 
