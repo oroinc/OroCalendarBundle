@@ -13,6 +13,7 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 use Oro\Bundle\CalendarBundle\Entity\Attendee;
 use Oro\Bundle\CalendarBundle\Manager\AttendeeRelationManager;
 use Oro\Bundle\CalendarBundle\Manager\AttendeeManager;
+use Oro\Bundle\ActivityBundle\Form\DataTransformer\ContextsToViewTransformer;
 
 class CalendarEventAttendeesSelectType extends AbstractType
 {
@@ -52,6 +53,9 @@ class CalendarEventAttendeesSelectType extends AbstractType
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         $builder->resetViewTransformers();
+        if ($this->attendeesToViewTransformer instanceof ContextsToViewTransformer) {
+            $this->attendeesToViewTransformer->setSeparator($options['configs']['separator']);
+        }
         $builder->addViewTransformer($this->attendeesToViewTransformer);
     }
 
@@ -60,7 +64,7 @@ class CalendarEventAttendeesSelectType extends AbstractType
      */
     public function buildView(FormView $view, FormInterface $form, array $options)
     {
-        $view->vars['attr']['data-selected-data'] = $this->getSelectedData($form);
+        $view->vars['attr']['data-selected-data'] = $this->getSelectedData($form, $options['configs']['separator']);
         if ($form->getData()) {
             $view->vars['configs']['selected'] = $this->attendeeManager->createAttendeeExclusions($form->getData());
         }
@@ -68,10 +72,10 @@ class CalendarEventAttendeesSelectType extends AbstractType
 
     /**
      * @param FormInterface $form
-     *
+     * @param string $separator
      * @return string
      */
-    protected function getSelectedData(FormInterface $form)
+    protected function getSelectedData(FormInterface $form, $separator)
     {
         $value = '';
         $attendees = $form->getData();
@@ -104,7 +108,7 @@ class CalendarEventAttendeesSelectType extends AbstractType
                 );
             }
 
-            $value = implode(';', $result);
+            $value = implode($separator, $result);
         }
 
         return $value;
@@ -123,7 +127,7 @@ class CalendarEventAttendeesSelectType extends AbstractType
                     'placeholder'        => 'oro.user.form.choose_user',
                     'allowClear'         => true,
                     'multiple'           => true,
-                    'separator'          => ';',
+                    'separator'          => ContextsToViewTransformer::SEPARATOR,
                     'forceSelectedData'  => true,
                     'minimumInputLength' => 0,
                     'route_name'         => 'oro_calendarevent_autocomplete_attendees',
