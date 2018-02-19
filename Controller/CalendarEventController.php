@@ -3,6 +3,7 @@
 namespace Oro\Bundle\CalendarBundle\Controller;
 
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
+use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
@@ -65,8 +66,12 @@ class CalendarEventController extends Controller
      * )
      * @Template
      * @AclAncestor("oro_calendar_event_view")
+     * @param Request $request
+     * @param CalendarEvent $entity
+     * @param integer|bool $renderContexts
+     * @return array
      */
-    public function infoAction(CalendarEvent $entity, $renderContexts)
+    public function infoAction(Request $request, CalendarEvent $entity, $renderContexts)
     {
         $this->checkPermissionByParentCalendar($entity, 'view');
 
@@ -78,7 +83,7 @@ class CalendarEventController extends Controller
             );
         return [
             'entity'         => $entity,
-            'target'         => $this->getTargetEntity(),
+            'target'         => $this->getTargetEntity($request),
             'renderContexts' => (bool) $renderContexts,
             'canChangeInvitationStatus' => $canChangeInvitationStatus
         ];
@@ -109,8 +114,10 @@ class CalendarEventController extends Controller
      *      permission="CREATE",
      *      group_name=""
      * )
+     * @param Request $request
+     * @return array|RedirectResponse
      */
-    public function createAction()
+    public function createAction(Request $request)
     {
         $entity = new CalendarEvent();
 
@@ -121,9 +128,9 @@ class CalendarEventController extends Controller
         $entity->setEnd($endTime);
 
         $formAction = $this->get('oro_entity.routing_helper')
-            ->generateUrlByRequest('oro_calendar_event_create', $this->getRequest());
+            ->generateUrlByRequest('oro_calendar_event_create', $request);
 
-        return $this->update($entity, $formAction);
+        return $this->update($request, $entity, $formAction);
     }
 
     /**
@@ -136,14 +143,17 @@ class CalendarEventController extends Controller
      *      permission="EDIT",
      *      group_name=""
      * )
+     * @param Request $request
+     * @param CalendarEvent $entity
+     * @return array|RedirectResponse
      */
-    public function updateAction(CalendarEvent $entity)
+    public function updateAction(Request $request, CalendarEvent $entity)
     {
         $this->checkPermissionByParentCalendar($entity, 'edit');
 
         $formAction = $this->get('router')->generate('oro_calendar_event_update', ['id' => $entity->getId()]);
 
-        return $this->update($entity, $formAction);
+        return $this->update($request, $entity, $formAction);
     }
 
     /**
@@ -169,17 +179,18 @@ class CalendarEventController extends Controller
     }
 
     /**
+     * @param Request $request
      * @param CalendarEvent $entity
      * @param string        $formAction
      *
      * @return array
      */
-    protected function update(CalendarEvent $entity, $formAction)
+    protected function update(Request $request, CalendarEvent $entity, $formAction)
     {
         $saved = false;
 
         if ($this->get('oro_calendar.calendar_event.form.handler')->process($entity)) {
-            if (!$this->getRequest()->get('_widgetContainer')) {
+            if (!$request->get('_widgetContainer')) {
                 $this->get('session')->getFlashBag()->add(
                     'success',
                     $this->get('translator')->trans('oro.calendar.controller.event.saved.message')
@@ -201,13 +212,14 @@ class CalendarEventController extends Controller
     /**
      * Get target entity
      *
+     * @param Request $request
      * @return object|null
      */
-    protected function getTargetEntity()
+    protected function getTargetEntity(Request $request)
     {
         $entityRoutingHelper = $this->get('oro_entity.routing_helper');
-        $targetEntityClass   = $entityRoutingHelper->getEntityClassName($this->getRequest(), 'targetActivityClass');
-        $targetEntityId      = $entityRoutingHelper->getEntityId($this->getRequest(), 'targetActivityId');
+        $targetEntityClass   = $entityRoutingHelper->getEntityClassName($request, 'targetActivityClass');
+        $targetEntityId      = $entityRoutingHelper->getEntityId($request, 'targetActivityId');
         if (!$targetEntityClass || !$targetEntityId) {
             return null;
         }

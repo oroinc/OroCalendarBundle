@@ -3,6 +3,8 @@
 namespace Oro\Bundle\CalendarBundle\Controller;
 
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
+use Symfony\Component\HttpFoundation\RedirectResponse;
+use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Security\Core\Exception\AccessDeniedException;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
@@ -48,8 +50,11 @@ class SystemCalendarEventController extends Controller
     /**
      * @Route("/{id}/event/create", name="oro_system_calendar_event_create", requirements={"id"="\d+"})
      * @Template("OroCalendarBundle:SystemCalendarEvent:update.html.twig")
+     * @param Request $request
+     * @param SystemCalendar $calendar
+     * @return array|RedirectResponse
      */
-    public function createAction(SystemCalendar $calendar)
+    public function createAction(Request $request, SystemCalendar $calendar)
     {
         $this->checkPermissionByConfig($calendar);
 
@@ -70,6 +75,7 @@ class SystemCalendarEventController extends Controller
         $entity->setSystemCalendar($calendar);
 
         return $this->update(
+            $request,
             $entity,
             $this->get('router')->generate('oro_system_calendar_event_create', ['id' => $calendar->getId()])
         );
@@ -78,8 +84,11 @@ class SystemCalendarEventController extends Controller
     /**
      * @Route("/event/update/{id}", name="oro_system_calendar_event_update", requirements={"id"="\d+"})
      * @Template
+     * @param Request $request
+     * @param CalendarEvent $entity
+     * @return array|RedirectResponse
      */
-    public function updateAction(CalendarEvent $entity)
+    public function updateAction(Request $request, CalendarEvent $entity)
     {
         $calendar = $entity->getSystemCalendar();
         if (!$calendar) {
@@ -102,23 +111,25 @@ class SystemCalendarEventController extends Controller
         }
 
         return $this->update(
+            $request,
             $entity,
             $this->get('router')->generate('oro_system_calendar_event_update', ['id' => $entity->getId()])
         );
     }
 
     /**
+     * @param Request $request
      * @param CalendarEvent $entity
-     * @param string        $formAction
+     * @param string $formAction
      *
      * @return array
      */
-    protected function update(CalendarEvent $entity, $formAction)
+    protected function update(Request $request, CalendarEvent $entity, $formAction)
     {
         $saved = false;
 
         if ($this->get('oro_calendar.system_calendar_event.form.handler')->process($entity)) {
-            if (!$this->getRequest()->get('_widgetContainer')) {
+            if (!$request->get('_widgetContainer')) {
                 $this->get('session')->getFlashBag()->add(
                     'success',
                     $this->get('translator')->trans('oro.calendar.controller.event.saved.message')
