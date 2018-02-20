@@ -13,6 +13,7 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 use Oro\Bundle\CalendarBundle\Entity\Attendee;
 use Oro\Bundle\CalendarBundle\Manager\AttendeeRelationManager;
 use Oro\Bundle\CalendarBundle\Manager\AttendeeManager;
+use Oro\Bundle\ActivityBundle\Form\DataTransformer\ContextsToViewTransformer;
 
 class CalendarEventAttendeesSelectType extends AbstractType
 {
@@ -52,6 +53,9 @@ class CalendarEventAttendeesSelectType extends AbstractType
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         $builder->resetViewTransformers();
+        if ($this->attendeesToViewTransformer instanceof ContextsToViewTransformer) {
+            $this->attendeesToViewTransformer->setSeparator($options['configs']['separator']);
+        }
         $builder->addViewTransformer($this->attendeesToViewTransformer);
     }
 
@@ -68,7 +72,6 @@ class CalendarEventAttendeesSelectType extends AbstractType
 
     /**
      * @param FormInterface $form
-     *
      * @return string
      */
     protected function getSelectedData(FormInterface $form)
@@ -104,7 +107,7 @@ class CalendarEventAttendeesSelectType extends AbstractType
                 );
             }
 
-            $value = implode(';', $result);
+            $value = implode(ContextsToViewTransformer::SEPARATOR, $result);
         }
 
         return $value;
@@ -123,7 +126,7 @@ class CalendarEventAttendeesSelectType extends AbstractType
                     'placeholder'        => 'oro.user.form.choose_user',
                     'allowClear'         => true,
                     'multiple'           => true,
-                    'separator'          => ';',
+                    'separator'          => ContextsToViewTransformer::SEPARATOR,
                     'forceSelectedData'  => true,
                     'minimumInputLength' => 0,
                     'route_name'         => 'oro_calendarevent_autocomplete_attendees',

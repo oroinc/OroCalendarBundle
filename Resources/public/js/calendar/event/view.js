@@ -25,7 +25,8 @@ define(function(require) {
             colorManager: null,
             widgetRoute: null,
             widgetOptions: null,
-            invitationStatuses: []
+            invitationStatuses: [],
+            separator: '-|-'
         },
 
         /** @property {Object} */
@@ -228,7 +229,7 @@ define(function(require) {
         },
 
         onEventFormSubmit: function() {
-            //calendarUid value should be processed by form and value should be sent to backend
+            // calendarUid value should be processed by form and value should be sent to backend
             this.eventDialog.$('form ' + this.selectors.calendarUid).removeAttr('disabled');
             this._saveEventFromData(this.getEventFormData());
         },
@@ -455,7 +456,7 @@ define(function(require) {
                         activity: 'calendarevents', id: this.model.originalId
                     }),
                     type: 'GET',
-                    success: function(targets) {
+                    success: _.bind(function(targets) {
                         var targetsStrArray = [];
                         targets.forEach(function(target) {
                             var targetData = {
@@ -464,9 +465,9 @@ define(function(require) {
                             };
                             targetsStrArray.push(JSON.stringify(targetData));
                         });
-                        contexts.val(targetsStrArray.join(';'));
+                        contexts.val(targetsStrArray.join(this.options.separator));
                         contexts.trigger('change');
-                    }
+                    }, this)
                 });
             }
 
