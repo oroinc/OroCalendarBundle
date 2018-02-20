@@ -64,7 +64,7 @@ class CalendarEventAttendeesSelectType extends AbstractType
      */
     public function buildView(FormView $view, FormInterface $form, array $options)
     {
-        $view->vars['attr']['data-selected-data'] = $this->getSelectedData($form, $options['configs']['separator']);
+        $view->vars['attr']['data-selected-data'] = $this->getSelectedData($form);
         if ($form->getData()) {
             $view->vars['configs']['selected'] = $this->attendeeManager->createAttendeeExclusions($form->getData());
         }
@@ -72,10 +72,9 @@ class CalendarEventAttendeesSelectType extends AbstractType
 
     /**
      * @param FormInterface $form
-     * @param string $separator
      * @return string
      */
-    protected function getSelectedData(FormInterface $form, $separator)
+    protected function getSelectedData(FormInterface $form)
     {
         $value = '';
         $attendees = $form->getData();
@@ -108,7 +107,7 @@ class CalendarEventAttendeesSelectType extends AbstractType
                 );
             }
 
-            $value = implode($separator, $result);
+            $value = implode(ContextsToViewTransformer::SEPARATOR, $result);
         }
 
         return $value;
