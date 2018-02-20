@@ -2,11 +2,10 @@
 
 namespace Oro\Bundle\CalendarBundle\Form\EventListener;
 
+use Oro\Bundle\CalendarBundle\Entity\CalendarEvent;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\Form\FormEvent;
 use Symfony\Component\Form\FormEvents;
-
-use Oro\Bundle\CalendarBundle\Entity\CalendarEvent;
 
 class CalendarUidSubscriber implements EventSubscriberInterface
 {

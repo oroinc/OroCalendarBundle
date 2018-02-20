@@ -2,13 +2,12 @@
 
 namespace Oro\Bundle\CalendarBundle\Tests\Unit\Validator\Constraints;
 
-use Symfony\Component\Validator\Context\ExecutionContextInterface;
-
-use Oro\Bundle\CalendarBundle\Entity\SystemCalendar;
 use Oro\Bundle\CalendarBundle\Entity\Attendee as AttendeeEntity;
+use Oro\Bundle\CalendarBundle\Entity\SystemCalendar;
 use Oro\Bundle\CalendarBundle\Tests\Unit\Fixtures\Entity\CalendarEvent;
-use Oro\Bundle\CalendarBundle\Validator\Constraints\AttendeeValidator;
 use Oro\Bundle\CalendarBundle\Validator\Constraints\Attendee;
+use Oro\Bundle\CalendarBundle\Validator\Constraints\AttendeeValidator;
+use Symfony\Component\Validator\Context\ExecutionContextInterface;
 
 class AttendeeValidatorTest extends \PHPUnit_Framework_TestCase
 {

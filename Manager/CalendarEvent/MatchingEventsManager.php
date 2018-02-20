@@ -3,7 +3,6 @@
 namespace Oro\Bundle\CalendarBundle\Manager\CalendarEvent;
 
 use Doctrine\Common\Collections\ArrayCollection;
-
 use Oro\Bundle\CalendarBundle\Entity\Attendee;
 use Oro\Bundle\CalendarBundle\Entity\CalendarEvent;
 use Oro\Bundle\CalendarBundle\Entity\Repository\CalendarEventRepository;

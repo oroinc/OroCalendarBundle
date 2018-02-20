@@ -3,10 +3,8 @@
 namespace Oro\Bundle\CalendarBundle\Migrations\Schema\v1_12;
 
 use Doctrine\DBAL\ConnectionException;
-
-use Psr\Log\LoggerInterface;
-
 use Oro\Bundle\MigrationBundle\Migration\ParametrizedMigrationQuery;
+use Psr\Log\LoggerInterface;
 
 class UpdateNotificationsEmailTemplates extends ParametrizedMigrationQuery
 {

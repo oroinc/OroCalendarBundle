@@ -2,15 +2,13 @@
 
 namespace Oro\Bundle\CalendarBundle\Tests\Unit\EventListener;
 
-use Oro\Bundle\SecurityBundle\Authentication\TokenAccessorInterface;
-use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
-
 use Knp\Menu\MenuFactory;
 use Knp\Menu\MenuItem;
-
 use Oro\Bundle\CalendarBundle\EventListener\NavigationListener;
 use Oro\Bundle\CalendarBundle\Provider\SystemCalendarConfig;
 use Oro\Bundle\NavigationBundle\Event\ConfigureMenuEvent;
+use Oro\Bundle\SecurityBundle\Authentication\TokenAccessorInterface;
+use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
 
 class NavigationListenerTest extends \PHPUnit_Framework_TestCase
 {

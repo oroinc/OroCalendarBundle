@@ -2,9 +2,8 @@
 
 namespace Oro\Bundle\CalendarBundle\Migrations\Schema\v1_13;
 
-use Psr\Log\LoggerInterface;
-
 use Oro\Bundle\MigrationBundle\Migration\ParametrizedMigrationQuery;
+use Psr\Log\LoggerInterface;
 
 class ConvertCalendarEventOwnerToAttendee extends ParametrizedMigrationQuery
 {

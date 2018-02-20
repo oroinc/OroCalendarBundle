@@ -3,7 +3,6 @@
 namespace Oro\Bundle\CalendarBundle\Resolver;
 
 use Doctrine\Common\Persistence\ManagerRegistry;
-
 use Oro\Bundle\CalendarBundle\Entity\CalendarEvent;
 use Oro\Bundle\UserBundle\Entity\User;
 

@@ -3,7 +3,6 @@
 namespace Oro\Bundle\CalendarBundle\Tests\Unit\Manager;
 
 use Doctrine\Common\Collections\ArrayCollection;
-
 use Oro\Bundle\CalendarBundle\Entity\SystemCalendar;
 use Oro\Bundle\CalendarBundle\Manager\CalendarEvent\NotificationManager;
 use Oro\Bundle\CalendarBundle\Model\Email\EmailNotificationSender;

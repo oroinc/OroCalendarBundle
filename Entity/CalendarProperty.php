@@ -3,7 +3,6 @@
 namespace Oro\Bundle\CalendarBundle\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
-
 use Oro\Bundle\CalendarBundle\Model\ExtendCalendarProperty;
 use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\Config;
 

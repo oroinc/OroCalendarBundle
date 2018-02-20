@@ -2,10 +2,9 @@
 
 namespace Oro\Bundle\CalendarBundle\Tests\Unit\Form\EventListener;
 
-use Symfony\Component\Form\FormEvent;
-
 use Oro\Bundle\CalendarBundle\Entity\Recurrence;
 use Oro\Bundle\CalendarBundle\Form\EventListener\CalendarEventRecurrenceSubscriber;
+use Symfony\Component\Form\FormEvent;
 
 class CalendarEventRecurrenceSubscriberTest extends \PHPUnit_Framework_TestCase
 {

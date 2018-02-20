@@ -2,10 +2,9 @@
 
 namespace Oro\Bundle\CalendarBundle\Manager;
 
-use Oro\Component\PhpUtils\ArrayUtil;
-
 use Oro\Bundle\CalendarBundle\Provider\CalendarPropertyProvider;
 use Oro\Bundle\CalendarBundle\Provider\CalendarProviderInterface;
+use Oro\Component\PhpUtils\ArrayUtil;
 
 class CalendarManager
 {

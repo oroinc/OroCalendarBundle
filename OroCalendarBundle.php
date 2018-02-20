@@ -2,12 +2,11 @@
 
 namespace Oro\Bundle\CalendarBundle;
 
-use Symfony\Component\DependencyInjection\ContainerBuilder;
-use Symfony\Component\HttpKernel\Bundle\Bundle;
-
 use Oro\Bundle\CalendarBundle\DependencyInjection\Compiler\CalendarProviderPass;
 use Oro\Bundle\CalendarBundle\DependencyInjection\Compiler\RecurrenceStrategyCompilerPass;
 use Oro\Bundle\CalendarBundle\DependencyInjection\Compiler\TwigSandboxConfigurationPass;
+use Symfony\Component\DependencyInjection\ContainerBuilder;
+use Symfony\Component\HttpKernel\Bundle\Bundle;
 
 class OroCalendarBundle extends Bundle
 {

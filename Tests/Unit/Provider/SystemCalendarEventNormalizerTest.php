@@ -2,9 +2,8 @@
 
 namespace Oro\Bundle\CalendarBundle\Tests\Unit\Provider;
 
-use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
-
 use Oro\Bundle\CalendarBundle\Provider\SystemCalendarEventNormalizer;
+use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
 
 class SystemCalendarEventNormalizerTest extends \PHPUnit_Framework_TestCase
 {

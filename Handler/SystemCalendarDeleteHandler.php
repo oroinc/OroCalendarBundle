@@ -3,12 +3,10 @@
 namespace Oro\Bundle\CalendarBundle\Handler;
 
 use Doctrine\Common\Persistence\ObjectManager;
-
-use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
-
+use Oro\Bundle\CalendarBundle\Provider\SystemCalendarConfig;
 use Oro\Bundle\SecurityBundle\Exception\ForbiddenException;
 use Oro\Bundle\SoapBundle\Handler\DeleteHandler;
-use Oro\Bundle\CalendarBundle\Provider\SystemCalendarConfig;
+use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
 
 class SystemCalendarDeleteHandler extends DeleteHandler
 {

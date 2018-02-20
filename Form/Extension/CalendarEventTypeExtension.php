@@ -2,14 +2,13 @@
 
 namespace Oro\Bundle\CalendarBundle\Form\Extension;
 
+use Oro\Bundle\CalendarBundle\Entity\CalendarEvent;
+use Oro\Bundle\CalendarBundle\Resolver\EventOrganizerResolver;
 use Symfony\Component\Form\AbstractTypeExtension;
 use Symfony\Component\Form\Extension\Core\Type\EmailType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Form\FormEvent;
 use Symfony\Component\Form\FormEvents;
-
-use Oro\Bundle\CalendarBundle\Entity\CalendarEvent;
-use Oro\Bundle\CalendarBundle\Resolver\EventOrganizerResolver;
 
 class CalendarEventTypeExtension extends AbstractTypeExtension
 {

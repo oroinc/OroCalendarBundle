@@ -8,17 +8,15 @@ use Doctrine\ORM\AbstractQuery;
 use Doctrine\ORM\EntityRepository;
 use Doctrine\ORM\Query;
 use Doctrine\ORM\QueryBuilder;
-
 use Oro\Bundle\CalendarBundle\Entity\Attendee;
+use Oro\Bundle\CalendarBundle\Entity\CalendarEvent;
 use Oro\Bundle\CalendarBundle\Entity\Repository\AttendeeRepository;
 use Oro\Bundle\CalendarBundle\Validator\Constraints\EventAttendees;
 use Oro\Bundle\CalendarBundle\Validator\Constraints\EventAttendeesValidator;
-use Symfony\Bridge\Doctrine\ManagerRegistry;
-
 use Oro\Bundle\CalendarBundle\Validator\Constraints\UnchangeableUid;
 use Oro\Bundle\CalendarBundle\Validator\Constraints\UnchangeableUidValidator;
-use Oro\Bundle\CalendarBundle\Entity\CalendarEvent;
 use Oro\Component\Testing\Validator\AbstractConstraintValidatorTest;
+use Symfony\Bridge\Doctrine\ManagerRegistry;
 
 class EventAttendeesValidatorTest extends AbstractConstraintValidatorTest
 {

@@ -3,14 +3,12 @@
 namespace Oro\Bundle\CalendarBundle\Validator\Constraints;
 
 use Doctrine\Common\Persistence\ObjectRepository;
-
+use Oro\Bundle\CalendarBundle\Entity\Attendee as AttendeeEntity;
+use Oro\Bundle\CalendarBundle\Entity\CalendarEvent;
+use Oro\Bundle\CalendarBundle\Entity\Repository\AttendeeRepository;
 use Symfony\Bridge\Doctrine\ManagerRegistry;
 use Symfony\Component\Validator\Constraint;
 use Symfony\Component\Validator\ConstraintValidator;
-
-use Oro\Bundle\CalendarBundle\Entity\CalendarEvent;
-use Oro\Bundle\CalendarBundle\Entity\Attendee as AttendeeEntity;
-use Oro\Bundle\CalendarBundle\Entity\Repository\AttendeeRepository;
 
 class EventAttendeesValidator extends ConstraintValidator
 {

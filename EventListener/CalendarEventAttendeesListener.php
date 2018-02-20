@@ -4,7 +4,6 @@ namespace Oro\Bundle\CalendarBundle\EventListener;
 
 use Doctrine\ORM\Event\OnFlushEventArgs;
 use Doctrine\ORM\UnitOfWork;
-
 use Oro\Bundle\CalendarBundle\Entity\Attendee;
 use Oro\Bundle\CalendarBundle\Entity\CalendarEvent;
 use Oro\Bundle\PlatformBundle\EventListener\OptionalListenerInterface;

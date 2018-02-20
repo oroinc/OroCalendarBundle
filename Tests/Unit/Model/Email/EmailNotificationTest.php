@@ -3,11 +3,10 @@
 namespace Oro\Bundle\CalendarBundle\Tests\Unit\Model\Email;
 
 use Doctrine\Common\Collections\ArrayCollection;
-
-use Oro\Bundle\EmailBundle\Entity\EmailTemplate;
-use Oro\Bundle\EmailBundle\Entity\EmailTemplateTranslation;
 use Oro\Bundle\CalendarBundle\Entity\CalendarEvent;
 use Oro\Bundle\CalendarBundle\Model\Email\EmailNotification;
+use Oro\Bundle\EmailBundle\Entity\EmailTemplate;
+use Oro\Bundle\EmailBundle\Entity\EmailTemplateTranslation;
 
 class EmailNotificationTest extends \PHPUnit_Framework_TestCase
 {

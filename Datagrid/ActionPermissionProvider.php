@@ -2,8 +2,8 @@
 
 namespace Oro\Bundle\CalendarBundle\Datagrid;
 
-use Oro\Bundle\DataGridBundle\Datasource\ResultRecordInterface;
 use Oro\Bundle\CalendarBundle\Entity\Attendee;
+use Oro\Bundle\DataGridBundle\Datasource\ResultRecordInterface;
 use Oro\Bundle\SecurityBundle\Authentication\TokenAccessorInterface;
 use Oro\Bundle\UserBundle\Entity\User;
 

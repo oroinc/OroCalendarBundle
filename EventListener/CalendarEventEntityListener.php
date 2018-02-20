@@ -5,7 +5,6 @@ namespace Oro\Bundle\CalendarBundle\EventListener;
 use Doctrine\ORM\Event\LifecycleEventArgs;
 use Doctrine\ORM\Event\PreUpdateEventArgs;
 use Doctrine\ORM\Mapping as ORM;
-
 use Oro\Bundle\CalendarBundle\Entity\CalendarEvent;
 use Oro\Bundle\CalendarBundle\Exception\UidAlreadySetException;
 use Oro\Bundle\SecurityBundle\Tools\UUIDGenerator;

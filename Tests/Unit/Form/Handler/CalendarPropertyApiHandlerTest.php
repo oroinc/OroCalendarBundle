@@ -3,11 +3,10 @@
 namespace Oro\Bundle\CalendarBundle\Tests\Unit\Form\Handler;
 
 use Doctrine\Common\Persistence\ObjectManager;
-use Symfony\Component\Form\Form;
-use Symfony\Component\HttpFoundation\Request;
-
 use Oro\Bundle\CalendarBundle\Entity\CalendarProperty;
 use Oro\Bundle\CalendarBundle\Form\Handler\CalendarPropertyApiHandler;
+use Symfony\Component\Form\Form;
+use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\RequestStack;
 
 class CalendarPropertyApiHandlerTest extends \PHPUnit_Framework_TestCase

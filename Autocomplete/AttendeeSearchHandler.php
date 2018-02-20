@@ -3,7 +3,6 @@
 namespace Oro\Bundle\CalendarBundle\Autocomplete;
 
 use Doctrine\Common\Util\ClassUtils;
-
 use Oro\Bundle\ActivityBundle\Autocomplete\ContextSearchHandler;
 use Oro\Bundle\CalendarBundle\Manager\AttendeeManager;
 use Oro\Bundle\SearchBundle\Query\Result\Item;

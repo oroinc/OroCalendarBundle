@@ -2,11 +2,9 @@
 
 namespace Oro\Bundle\CalendarBundle\Migrations\Schema\v1_11;
 
-use Psr\Log\LoggerInterface;
-
 use Exception;
-
 use Oro\Bundle\MigrationBundle\Migration\ParametrizedMigrationQuery;
+use Psr\Log\LoggerInterface;
 
 class FixEmailTemplates extends ParametrizedMigrationQuery
 {

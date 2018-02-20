@@ -2,12 +2,10 @@
 
 namespace Oro\Bundle\CalendarBundle\Migrations\Schema\v1_16;
 
-use Psr\Log\LoggerInterface;
-
 use Doctrine\DBAL\Connection;
-
 use Oro\Bundle\MigrationBundle\Migration\ArrayLogger;
 use Oro\Bundle\MigrationBundle\Migration\ParametrizedMigrationQuery;
+use Psr\Log\LoggerInterface;
 
 class RemoveInvitationStatusFieldConfigQuery extends ParametrizedMigrationQuery
 {

@@ -2,20 +2,18 @@
 
 namespace Oro\Bundle\CalendarBundle\Migrations\Data\B2C\ORM;
 
-use Doctrine\ORM\EntityRepository;
-use Doctrine\Common\Persistence\ObjectManager;
 use Doctrine\Common\DataFixtures\OrderedFixtureInterface;
-
-use Symfony\Component\DependencyInjection\ContainerInterface;
-
+use Doctrine\Common\Persistence\ObjectManager;
+use Doctrine\ORM\EntityRepository;
 use Oro\Bundle\CalendarBundle\Entity\Calendar;
 use Oro\Bundle\CalendarBundle\Entity\CalendarEvent;
 use Oro\Bundle\CalendarBundle\Entity\CalendarProperty;
 use Oro\Bundle\CalendarBundle\Entity\Repository\CalendarRepository;
+use Oro\Bundle\DemoDataCRMProBundle\Migrations\Data\B2C\ORM\AbstractFixture;
+use Oro\Bundle\DemoDataCRMProBundle\Model\WeekendCheckerTrait;
 use Oro\Bundle\UserBundle\Entity\Role;
 use Oro\Bundle\UserBundle\Migrations\Data\ORM\LoadRolesData;
-use Oro\Bundle\DemoDataCRMProBundle\Model\WeekendCheckerTrait;
-use Oro\Bundle\DemoDataCRMProBundle\Migrations\Data\B2C\ORM\AbstractFixture;
+use Symfony\Component\DependencyInjection\ContainerInterface;
 
 class LoadUsersCalendarData extends AbstractFixture implements OrderedFixtureInterface
 {

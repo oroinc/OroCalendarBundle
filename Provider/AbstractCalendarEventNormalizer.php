@@ -2,16 +2,14 @@
 
 namespace Oro\Bundle\CalendarBundle\Provider;
 
-use Doctrine\ORM\Proxy\Proxy;
 use Doctrine\ORM\AbstractQuery;
-
-use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
-
+use Doctrine\ORM\Proxy\Proxy;
 use Oro\Bundle\CalendarBundle\Entity\CalendarEvent;
 use Oro\Bundle\CalendarBundle\Entity\Repository\CalendarEventRepository;
 use Oro\Bundle\CalendarBundle\Manager\AttendeeManager;
 use Oro\Bundle\CalendarBundle\Manager\CalendarEventManager;
 use Oro\Bundle\ReminderBundle\Entity\Manager\ReminderManager;
+use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
 
 abstract class AbstractCalendarEventNormalizer
 {

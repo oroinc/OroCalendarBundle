@@ -2,11 +2,10 @@
 
 namespace Oro\Bundle\CalendarBundle\Tests\Functional\Controller;
 
-use Symfony\Component\DomCrawler\Crawler;
-
 use Oro\Bundle\CalendarBundle\Model\Recurrence;
 use Oro\Bundle\CalendarBundle\Tests\Functional\AbstractValidationErrorTestCase;
 use Oro\Bundle\CalendarBundle\Tests\Functional\DataFixtures\LoadUserData;
+use Symfony\Component\DomCrawler\Crawler;
 
 /**
  * The test covers validation errors triggered in calendar events form available on separate page.

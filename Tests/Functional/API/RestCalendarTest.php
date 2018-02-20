@@ -3,7 +3,6 @@
 namespace Oro\Bundle\CalendarBundle\Tests\Functional\API;
 
 use FOS\RestBundle\Util\Codes;
-
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 
 class RestCalendarTest extends WebTestCase

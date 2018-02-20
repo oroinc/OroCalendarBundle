@@ -3,16 +3,14 @@
 namespace Oro\Bundle\CalendarBundle\Migrations\Schema\v1_5;
 
 use Doctrine\DBAL\Schema\Schema;
-
+use Oro\Bundle\MigrationBundle\Migration\Migration;
+use Oro\Bundle\MigrationBundle\Migration\OrderedMigrationInterface;
 use Oro\Bundle\MigrationBundle\Migration\ParametrizedSqlMigrationQuery;
+use Oro\Bundle\MigrationBundle\Migration\QueryBag;
+use Oro\Bundle\SecurityBundle\Migration\DeleteAclMigrationQuery;
 use Symfony\Component\DependencyInjection\ContainerAwareInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\Security\Acl\Domain\ObjectIdentity;
-
-use Oro\Bundle\MigrationBundle\Migration\Migration;
-use Oro\Bundle\MigrationBundle\Migration\OrderedMigrationInterface;
-use Oro\Bundle\MigrationBundle\Migration\QueryBag;
-use Oro\Bundle\SecurityBundle\Migration\DeleteAclMigrationQuery;
 
 class RemoveCalendarConnection implements
     Migration,

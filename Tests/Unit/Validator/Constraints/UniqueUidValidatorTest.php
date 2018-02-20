@@ -4,15 +4,13 @@ namespace Oro\Bundle\CalendarBundle\Tests\Unit\Validator\Constraints;
 
 use Doctrine\Common\Persistence\ObjectManager;
 use Doctrine\Common\Persistence\ObjectRepository;
-
-use Symfony\Bridge\Doctrine\ManagerRegistry;
-
-use Oro\Bundle\CalendarBundle\Entity\Repository\CalendarEventRepository;
 use Oro\Bundle\CalendarBundle\Entity\Calendar;
 use Oro\Bundle\CalendarBundle\Entity\CalendarEvent;
+use Oro\Bundle\CalendarBundle\Entity\Repository\CalendarEventRepository;
 use Oro\Bundle\CalendarBundle\Validator\Constraints\UniqueUid;
 use Oro\Bundle\CalendarBundle\Validator\Constraints\UniqueUidValidator;
 use Oro\Component\Testing\Validator\AbstractConstraintValidatorTest;
+use Symfony\Bridge\Doctrine\ManagerRegistry;
 
 class UniqueUidValidatorTest extends AbstractConstraintValidatorTest
 {

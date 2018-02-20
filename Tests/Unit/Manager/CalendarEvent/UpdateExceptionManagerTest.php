@@ -3,11 +3,10 @@
 namespace Oro\Bundle\CalendarBundle\Tests\Unit\Manager;
 
 use Oro\Bundle\CalendarBundle\Entity\Recurrence;
-use Oro\Bundle\CalendarBundle\Tests\Unit\Fixtures\Entity\CalendarEvent;
 use Oro\Bundle\CalendarBundle\Manager\AttendeeManager;
 use Oro\Bundle\CalendarBundle\Manager\CalendarEvent\DeleteManager;
 use Oro\Bundle\CalendarBundle\Manager\CalendarEvent\UpdateExceptionManager;
-
+use Oro\Bundle\CalendarBundle\Tests\Unit\Fixtures\Entity\CalendarEvent;
 use Oro\Component\PropertyAccess\PropertyAccessor;
 
 class UpdateExceptionManagerTest extends \PHPUnit_Framework_TestCase

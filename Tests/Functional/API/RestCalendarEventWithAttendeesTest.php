@@ -3,7 +3,6 @@
 namespace Oro\Bundle\CalendarBundle\Tests\Functional\API;
 
 use Doctrine\Common\Collections\Collection;
-
 use Oro\Bundle\CalendarBundle\Entity\Attendee;
 use Oro\Bundle\CalendarBundle\Tests\Functional\DataFixtures\LoadUserData;
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;

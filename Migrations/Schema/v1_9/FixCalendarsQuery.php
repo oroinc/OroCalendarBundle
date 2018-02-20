@@ -2,11 +2,9 @@
 
 namespace Oro\Bundle\CalendarBundle\Migrations\Schema\v1_9;
 
-use Psr\Log\LoggerInterface;
-
 use Doctrine\DBAL\Connection;
-
 use Oro\Bundle\MigrationBundle\Migration\ParametrizedMigrationQuery;
+use Psr\Log\LoggerInterface;
 
 class FixCalendarsQuery extends ParametrizedMigrationQuery
 {

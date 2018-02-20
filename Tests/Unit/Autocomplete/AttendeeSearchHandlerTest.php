@@ -4,18 +4,16 @@ namespace Oro\Bundle\CalendarBundle\Tests\Unit\Autocomplete;
 
 use Doctrine\Common\Persistence\ObjectManager;
 use Doctrine\ORM\EntityRepository;
-
-use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorage;
-
 use Oro\Bundle\CalendarBundle\Autocomplete\AttendeeSearchHandler;
+use Oro\Bundle\CalendarBundle\Manager\AttendeeManager;
 use Oro\Bundle\CalendarBundle\Tests\Unit\Fixtures\Entity\Attendee;
 use Oro\Bundle\CalendarBundle\Tests\Unit\Fixtures\Entity\User;
-use Oro\Bundle\CalendarBundle\Manager\AttendeeManager;
 use Oro\Bundle\EntityExtendBundle\Tests\Unit\Fixtures\TestEnumValue;
 use Oro\Bundle\SearchBundle\Engine\Indexer;
 use Oro\Bundle\SearchBundle\Query\Query;
 use Oro\Bundle\SearchBundle\Query\Result;
 use Oro\Bundle\SearchBundle\Query\Result\Item;
+use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorage;
 
 class AttendeeSearchHandlerTest extends \PHPUnit_Framework_TestCase
 {

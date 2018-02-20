@@ -2,12 +2,11 @@
 
 namespace Oro\Bundle\CalendarBundle\Tests\Unit\Model\Recurrence;
 
-use Symfony\Component\Translation\TranslatorInterface;
-
 use Oro\Bundle\CalendarBundle\Entity;
 use Oro\Bundle\CalendarBundle\Model\Recurrence;
 use Oro\Bundle\CalendarBundle\Model\Recurrence\DailyStrategy;
 use Oro\Bundle\LocaleBundle\Model\LocaleSettings;
+use Symfony\Component\Translation\TranslatorInterface;
 
 class DailyStrategyTest extends AbstractTestStrategy
 {

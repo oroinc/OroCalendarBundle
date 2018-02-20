@@ -2,11 +2,10 @@
 
 namespace Oro\Bundle\CalendarBundle\Twig;
 
-use Symfony\Component\DependencyInjection\ContainerInterface;
-
-use Oro\Bundle\LocaleBundle\Formatter\DateTimeFormatter;
 use Oro\Bundle\ConfigBundle\Config\ConfigManager;
+use Oro\Bundle\LocaleBundle\Formatter\DateTimeFormatter;
 use Oro\Bundle\OrganizationBundle\Entity\OrganizationInterface;
+use Symfony\Component\DependencyInjection\ContainerInterface;
 
 class DateFormatExtension extends \Twig_Extension
 {

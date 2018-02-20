@@ -3,12 +3,10 @@
 namespace Oro\Bundle\CalendarBundle\Form\EventListener;
 
 use Doctrine\Common\Collections\Collection;
-
+use Oro\Bundle\CalendarBundle\Entity\Attendee;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\Form\FormEvent;
 use Symfony\Component\Form\FormEvents;
-
-use Oro\Bundle\CalendarBundle\Entity\Attendee;
 
 class AttendeesSubscriber implements EventSubscriberInterface
 {

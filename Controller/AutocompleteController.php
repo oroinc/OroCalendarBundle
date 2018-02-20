@@ -2,16 +2,14 @@
 
 namespace Oro\Bundle\CalendarBundle\Controller;
 
+use Oro\Bundle\CalendarBundle\Autocomplete\AttendeeSearchHandler;
+use Oro\Bundle\FormBundle\Model\AutocompleteRequest;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
-use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\JsonResponse;
+use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpKernel\Exception\HttpException;
 use Symfony\Component\Validator\ConstraintViolation;
-
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
-
-use Oro\Bundle\FormBundle\Model\AutocompleteRequest;
-use Oro\Bundle\CalendarBundle\Autocomplete\AttendeeSearchHandler;
 
 /**
  * @Route("/calendarevents/autocomplete")

@@ -2,6 +2,10 @@
 
 namespace Oro\Bundle\CalendarBundle\Form\Type;
 
+use Oro\Bundle\ActivityBundle\Form\DataTransformer\ContextsToViewTransformer;
+use Oro\Bundle\CalendarBundle\Entity\Attendee;
+use Oro\Bundle\CalendarBundle\Manager\AttendeeManager;
+use Oro\Bundle\CalendarBundle\Manager\AttendeeRelationManager;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\DataTransformerInterface;
 use Symfony\Component\Form\FormBuilderInterface;
@@ -9,11 +13,6 @@ use Symfony\Component\Form\FormInterface;
 use Symfony\Component\Form\FormView;
 use Symfony\Component\OptionsResolver\Options;
 use Symfony\Component\OptionsResolver\OptionsResolver;
-
-use Oro\Bundle\CalendarBundle\Entity\Attendee;
-use Oro\Bundle\CalendarBundle\Manager\AttendeeRelationManager;
-use Oro\Bundle\CalendarBundle\Manager\AttendeeManager;
-use Oro\Bundle\ActivityBundle\Form\DataTransformer\ContextsToViewTransformer;
 
 class CalendarEventAttendeesSelectType extends AbstractType
 {

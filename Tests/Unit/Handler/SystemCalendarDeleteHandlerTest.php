@@ -2,10 +2,9 @@
 
 namespace Oro\Bundle\CalendarBundle\Tests\Unit\Handler;
 
-use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
-
 use Oro\Bundle\CalendarBundle\Entity\SystemCalendar;
 use Oro\Bundle\CalendarBundle\Handler\SystemCalendarDeleteHandler;
+use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
 
 class SystemCalendarDeleteHandlerTest extends \PHPUnit_Framework_TestCase
 {

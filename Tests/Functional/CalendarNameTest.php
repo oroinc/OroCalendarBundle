@@ -2,10 +2,10 @@
 
 namespace Oro\Bundle\CalendarBundle\Tests\Functional;
 
-use Oro\Bundle\EntityBundle\Provider\EntityNameResolver;
-use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 use Oro\Bundle\CalendarBundle\Entity\Calendar;
 use Oro\Bundle\CalendarBundle\Tests\Functional\DataFixtures\LoadUserData;
+use Oro\Bundle\EntityBundle\Provider\EntityNameResolver;
+use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 
 class CalendarNameTest extends WebTestCase
 {

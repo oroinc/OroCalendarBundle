@@ -2,10 +2,9 @@
 
 namespace Oro\Bundle\CalendarBundle\Provider;
 
-use Symfony\Component\Translation\TranslatorInterface;
-
 use Oro\Bundle\CalendarBundle\Entity\Calendar;
 use Oro\Bundle\EntityBundle\Provider\EntityNameProviderInterface;
+use Symfony\Component\Translation\TranslatorInterface;
 
 class CalendarEntityNameProvider implements EntityNameProviderInterface
 {

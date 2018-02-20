@@ -2,8 +2,8 @@
 
 namespace Oro\Bundle\CalendarBundle\Model;
 
-use Oro\Bundle\CalendarBundle\Model\Recurrence\StrategyInterface;
 use Oro\Bundle\CalendarBundle\Entity;
+use Oro\Bundle\CalendarBundle\Model\Recurrence\StrategyInterface;
 
 class Recurrence
 {

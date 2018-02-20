@@ -2,9 +2,8 @@
 
 namespace Oro\Bundle\CalendarBundle\Tests\Unit\Form\Extension;
 
-use Symfony\Component\Form\FormView;
-
 use Oro\Bundle\CalendarBundle\Form\Extension\AclObjectLabelTypeExtension;
+use Symfony\Component\Form\FormView;
 
 class AclObjectLabelTypeExtensionTest extends \PHPUnit_Framework_TestCase
 {

@@ -2,9 +2,8 @@
 
 namespace Oro\Bundle\CalendarBundle\Tests\Unit\Entity;
 
-use Symfony\Component\PropertyAccess\PropertyAccess;
-
 use Oro\Bundle\CalendarBundle\Tests\Unit\ReflectionUtil;
+use Symfony\Component\PropertyAccess\PropertyAccess;
 
 abstract class AbstractEntityTest extends \PHPUnit_Framework_TestCase
 {

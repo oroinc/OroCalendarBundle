@@ -2,13 +2,12 @@
 
 namespace Oro\Bundle\CalendarBundle\Tests\Unit\Form\EventListener;
 
-use Symfony\Component\Form\FormEvents;
-use Symfony\Component\Form\FormEvent;
-use Symfony\Component\HttpFoundation\RequestStack;
-
 use Oro\Bundle\CalendarBundle\Entity\CalendarEvent;
 use Oro\Bundle\CalendarBundle\Form\EventListener\CalendarEventApiTypeSubscriber;
 use Oro\Bundle\CalendarBundle\Manager\CalendarEventManager;
+use Symfony\Component\Form\FormEvent;
+use Symfony\Component\Form\FormEvents;
+use Symfony\Component\HttpFoundation\RequestStack;
 
 class CalendarEventApiTypeSubscriberTest extends \PHPUnit_Framework_TestCase
 {

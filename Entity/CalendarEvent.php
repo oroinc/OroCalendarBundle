@@ -5,7 +5,6 @@ namespace Oro\Bundle\CalendarBundle\Entity;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
-
 use Oro\Bundle\CalendarBundle\Exception\NotUserCalendarEvent;
 use Oro\Bundle\CalendarBundle\Model\ExtendCalendarEvent;
 use Oro\Bundle\DataAuditBundle\Entity\AuditAdditionalFieldsInterface;

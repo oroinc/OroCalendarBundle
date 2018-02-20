@@ -3,7 +3,6 @@
 namespace Oro\Bundle\CalendarBundle\Form\DataTransformer;
 
 use Doctrine\ORM\EntityManager;
-
 use Oro\Bundle\ActivityBundle\Form\DataTransformer\ContextsToViewTransformer;
 use Oro\Bundle\CalendarBundle\Entity\Attendee;
 use Oro\Bundle\CalendarBundle\Manager\AttendeeManager;

@@ -3,7 +3,6 @@
 namespace Oro\Bundle\CalendarBundle\Tests\Functional\Entity;
 
 use Doctrine\Common\Persistence\ObjectManager;
-
 use Oro\Bundle\CalendarBundle\Entity\Attendee;
 use Oro\Bundle\CalendarBundle\Entity\Calendar;
 use Oro\Bundle\CalendarBundle\Entity\CalendarEvent;

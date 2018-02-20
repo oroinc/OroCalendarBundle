@@ -2,14 +2,13 @@
 
 namespace Oro\Bundle\CalendarBundle\Tests\Unit\Form\Type;
 
+use Oro\Bundle\CalendarBundle\Entity\SystemCalendar;
+use Oro\Bundle\CalendarBundle\Form\Type\SystemCalendarType;
+use Oro\Bundle\FormBundle\Form\Type\OroSimpleColorPickerType;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\PreloadedExtension;
 use Symfony\Component\Form\Test\TypeTestCase;
 use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
-
-use Oro\Bundle\CalendarBundle\Entity\SystemCalendar;
-use Oro\Bundle\CalendarBundle\Form\Type\SystemCalendarType;
-use Oro\Bundle\FormBundle\Form\Type\OroSimpleColorPickerType;
 
 class SystemCalendarTypeTest extends TypeTestCase
 {

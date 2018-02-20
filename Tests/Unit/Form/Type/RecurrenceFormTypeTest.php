@@ -2,10 +2,9 @@
 
 namespace Oro\Bundle\CalendarBundle\Tests\Unit\Form\Type;
 
-use Symfony\Component\Form\Extension\Core\Type\DateTimeType;
-
-use Oro\Bundle\CalendarBundle\Model\Recurrence;
 use Oro\Bundle\CalendarBundle\Form\Type\RecurrenceFormType;
+use Oro\Bundle\CalendarBundle\Model\Recurrence;
+use Symfony\Component\Form\Extension\Core\Type\DateTimeType;
 
 class RecurrenceFormTypeTest extends \PHPUnit_Framework_TestCase
 {

@@ -2,7 +2,6 @@
 namespace Oro\Bundle\CalendarBundle\Migrations\Schema\v1_16;
 
 use Doctrine\DBAL\Schema\Schema;
-
 use Oro\Bundle\MigrationBundle\Migration\Migration;
 use Oro\Bundle\MigrationBundle\Migration\QueryBag;
 

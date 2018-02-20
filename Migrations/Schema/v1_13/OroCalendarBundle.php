@@ -3,7 +3,6 @@
 namespace Oro\Bundle\CalendarBundle\Migrations\Schema\v1_13;
 
 use Doctrine\DBAL\Schema\Schema;
-
 use Oro\Bundle\CalendarBundle\Entity\Attendee;
 use Oro\Bundle\EntityExtendBundle\EntityConfig\ExtendScope;
 use Oro\Bundle\EntityExtendBundle\Migration\Extension\ExtendExtension;

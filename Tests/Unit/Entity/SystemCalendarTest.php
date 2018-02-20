@@ -2,12 +2,11 @@
 
 namespace Oro\Bundle\CalendarBundle\Tests\Unit\Entity;
 
-use Symfony\Component\PropertyAccess\PropertyAccess;
-
-use Oro\Bundle\CalendarBundle\Entity\SystemCalendar;
 use Oro\Bundle\CalendarBundle\Entity\CalendarEvent;
+use Oro\Bundle\CalendarBundle\Entity\SystemCalendar;
 use Oro\Bundle\CalendarBundle\Tests\Unit\ReflectionUtil;
 use Oro\Bundle\OrganizationBundle\Entity\Organization;
+use Symfony\Component\PropertyAccess\PropertyAccess;
 
 class SystemCalendarTest extends \PHPUnit_Framework_TestCase
 {

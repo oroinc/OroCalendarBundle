@@ -3,7 +3,6 @@
 namespace Oro\Bundle\CalendarBundle\Tests\Unit\Manager;
 
 use Doctrine\ORM\EntityManager;
-
 use Oro\Bundle\CalendarBundle\Entity\Attendee;
 use Oro\Bundle\CalendarBundle\Entity\Calendar;
 use Oro\Bundle\CalendarBundle\Entity\CalendarEvent;
@@ -12,7 +11,6 @@ use Oro\Bundle\CalendarBundle\Exception\NotUniqueAttendeeException;
 use Oro\Bundle\CalendarBundle\Manager\CalendarEvent\MatchingEventsManager;
 use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
 use Oro\Bundle\UserBundle\Entity\User;
-
 use Oro\Component\Testing\Unit\EntityTrait;
 
 class MatchingEventsManagerTest extends \PHPUnit_Framework_TestCase

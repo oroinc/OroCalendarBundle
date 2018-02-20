@@ -2,19 +2,18 @@
 
 namespace Oro\Bundle\CalendarBundle\Form\Type;
 
+use Oro\Bundle\CalendarBundle\Form\EventListener\AttendeesSubscriber;
+use Oro\Bundle\CalendarBundle\Form\EventListener\CalendarEventApiTypeSubscriber;
+use Oro\Bundle\CalendarBundle\Form\EventListener\CalendarEventRecurrenceSubscriber;
+use Oro\Bundle\CalendarBundle\Manager\CalendarEvent\NotificationManager;
+use Oro\Bundle\CalendarBundle\Manager\CalendarEventManager;
+use Oro\Bundle\SoapBundle\Form\EventListener\PatchSubscriber;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\DateTimeType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Validator\Constraints\Choice;
-
-use Oro\Bundle\CalendarBundle\Manager\CalendarEvent\NotificationManager;
-use Oro\Bundle\CalendarBundle\Form\EventListener\AttendeesSubscriber;
-use Oro\Bundle\CalendarBundle\Manager\CalendarEventManager;
-use Oro\Bundle\CalendarBundle\Form\EventListener\CalendarEventApiTypeSubscriber;
-use Oro\Bundle\CalendarBundle\Form\EventListener\CalendarEventRecurrenceSubscriber;
-use Oro\Bundle\SoapBundle\Form\EventListener\PatchSubscriber;
 
 class CalendarEventApiType extends AbstractType
 {

@@ -4,14 +4,12 @@ namespace Oro\Bundle\CalendarBundle\Tests\Unit\Model\Email;
 
 use Doctrine\Common\Persistence\ManagerRegistry;
 use Doctrine\Common\Persistence\ObjectManager;
-
 use Oro\Bundle\CalendarBundle\Model\Email\EmailNotification;
 use Oro\Bundle\CalendarBundle\Model\Email\EmailNotificationSender;
 use Oro\Bundle\CalendarBundle\Tests\Unit\Fixtures\Entity\Attendee;
 use Oro\Bundle\CalendarBundle\Tests\Unit\Fixtures\Entity\Calendar;
 use Oro\Bundle\CalendarBundle\Tests\Unit\Fixtures\Entity\CalendarEvent;
 use Oro\Bundle\CalendarBundle\Tests\Unit\Fixtures\Entity\User;
-
 use Oro\Bundle\NotificationBundle\Manager\EmailNotificationManager;
 
 class EmailNotificationSenderTest extends \PHPUnit_Framework_TestCase

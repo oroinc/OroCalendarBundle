@@ -2,13 +2,12 @@
 
 namespace Oro\Bundle\CalendarBundle\Tests\Unit\Validator;
 
-use Symfony\Component\Form\FormInterface;
-
 use Oro\Bundle\CalendarBundle\Entity\Calendar;
 use Oro\Bundle\CalendarBundle\Entity\CalendarEvent;
 use Oro\Bundle\CalendarBundle\Entity\Recurrence;
 use Oro\Bundle\CalendarBundle\Validator\Constraints\RecurringCalendarEventExceptionConstraint;
 use Oro\Bundle\CalendarBundle\Validator\RecurringCalendarEventExceptionValidator;
+use Symfony\Component\Form\FormInterface;
 
 class RecurringCalendarEventExceptionValidatorTest extends \PHPUnit_Framework_TestCase
 {

@@ -2,10 +2,9 @@
 
 namespace Oro\Bundle\CalendarBundle\Validator\Constraints;
 
+use Oro\Bundle\CalendarBundle\Entity\Attendee as AttendeeEntity;
 use Symfony\Component\Validator\Constraint;
 use Symfony\Component\Validator\ConstraintValidator;
-
-use Oro\Bundle\CalendarBundle\Entity\Attendee as AttendeeEntity;
 
 class AttendeeValidator extends ConstraintValidator
 {

@@ -3,7 +3,12 @@
 namespace Oro\Bundle\CalendarBundle\Form\Type;
 
 use Doctrine\Common\Persistence\ManagerRegistry;
-
+use Oro\Bundle\CalendarBundle\Entity\Calendar;
+use Oro\Bundle\CalendarBundle\Form\EventListener\CalendarEventRecurrenceSubscriber;
+use Oro\Bundle\CalendarBundle\Form\EventListener\CalendarSubscriber;
+use Oro\Bundle\CalendarBundle\Form\EventListener\CalendarUidSubscriber;
+use Oro\Bundle\CalendarBundle\Manager\CalendarEvent\NotificationManager;
+use Oro\Bundle\SecurityBundle\Authentication\TokenAccessorInterface;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Form\FormInterface;
@@ -11,13 +16,6 @@ use Symfony\Component\Form\FormView;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
 use Symfony\Component\Validator\Constraints\Choice;
-
-use Oro\Bundle\CalendarBundle\Manager\CalendarEvent\NotificationManager;
-use Oro\Bundle\CalendarBundle\Form\EventListener\CalendarSubscriber;
-use Oro\Bundle\CalendarBundle\Form\EventListener\CalendarEventRecurrenceSubscriber;
-use Oro\Bundle\CalendarBundle\Form\EventListener\CalendarUidSubscriber;
-use Oro\Bundle\CalendarBundle\Entity\Calendar;
-use Oro\Bundle\SecurityBundle\Authentication\TokenAccessorInterface;
 
 class CalendarEventType extends AbstractType
 {

@@ -3,7 +3,6 @@
 namespace Oro\Bundle\CalendarBundle\Model\Email;
 
 use Doctrine\Common\Persistence\ManagerRegistry;
-
 use Oro\Bundle\CalendarBundle\Entity\Attendee;
 use Oro\Bundle\CalendarBundle\Entity\CalendarEvent;
 use Oro\Bundle\NotificationBundle\Manager\EmailNotificationManager;
