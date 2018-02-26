@@ -21,6 +21,10 @@ use Oro\Bundle\OrganizationBundle\Entity\Organization;
 use Oro\Bundle\SecurityBundle\Authentication\TokenAccessorInterface;
 use Oro\Bundle\UserBundle\Entity\User;
 
+/**
+ * Calendar entities listener. Checks organization column for SystemCalendar entities, creates new calendar
+ * on user creation, updates 'calculatedEndTime' field value for Recurrence calendar events.
+ */
 class EntityListener
 {
     /** @var TokenAccessorInterface */
@@ -50,23 +54,7 @@ class EntityListener
      */
     public function preUpdate(PreUpdateEventArgs $args)
     {
-        $entity = $args->getEntity();
-        if ($entity instanceof SystemCalendar) {
-            if ($entity->isPublic()) {
-                // make sure that public calendar doesn't belong to any organization
-                $entity->setOrganization(null);
-            } elseif (!$entity->getOrganization()) {
-                // make sure an organization is set for system calendar
-                $organization = $this->tokenAccessor->getOrganization();
-                if ($organization) {
-                    $entity->setOrganization($organization);
-                }
-            }
-        }
-
-        if ($entity instanceof RecurrenceEntity) {
-            $entity->setCalculatedEndTime($this->recurrenceModel->getCalculatedEndTime($entity));
-        }
+        $this->processEntity($args->getEntity());
     }
 
     /**
@@ -74,10 +62,7 @@ class EntityListener
      */
     public function prePersist(LifecycleEventArgs $args)
     {
-        $entity = $args->getEntity();
-        if ($entity instanceof RecurrenceEntity) {
-            $entity->setCalculatedEndTime($this->recurrenceModel->getCalculatedEndTime($entity));
-        }
+        $this->processEntity($args->getEntity());
     }
 
     /**
@@ -193,5 +178,28 @@ class EntityListener
         }
 
         return $this->metadataLocalCache[$className];
+    }
+
+    /**
+     * @param object $entity
+     */
+    protected function processEntity($entity)
+    {
+        if ($entity instanceof SystemCalendar) {
+            if ($entity->isPublic()) {
+                // make sure that public calendar doesn't belong to any organization
+                $entity->setOrganization(null);
+            } elseif (!$entity->getOrganization()) {
+                // make sure an organization is set for system calendar
+                $organization = $this->tokenAccessor->getOrganization();
+                if ($organization) {
+                    $entity->setOrganization($organization);
+                }
+            }
+        }
+
+        if ($entity instanceof RecurrenceEntity) {
+            $entity->setCalculatedEndTime($this->recurrenceModel->getCalculatedEndTime($entity));
+        }
     }
 }
