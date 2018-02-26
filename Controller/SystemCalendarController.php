@@ -12,6 +12,9 @@ use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
 use Oro\Bundle\CalendarBundle\Entity\SystemCalendar;
 use Oro\Bundle\CalendarBundle\Provider\SystemCalendarConfig;
 
+/**
+ * System calendar controller.
+ */
 class SystemCalendarController extends Controller
 {
     /**
@@ -37,6 +40,14 @@ class SystemCalendarController extends Controller
     public function viewAction(SystemCalendar $entity)
     {
         $this->checkPermissionByConfig($entity);
+        $this->checkSystemCalendarEntityAccess($entity);
+
+        $isGranted = $entity->isPublic()
+            ? $this->isGranted('oro_public_calendar_management')
+            : $this->isGranted('oro_system_calendar_management');
+        if (!$isGranted) {
+            throw new AccessDeniedException();
+        }
 
         return [
             'entity'      => $entity,
@@ -54,6 +65,7 @@ class SystemCalendarController extends Controller
                 && $this->getCalendarConfig()->isSystemCalendarEnabled()
         ];
     }
+
     /**
      * @Route("/create", name="oro_system_calendar_create")
      * @Template("OroCalendarBundle:SystemCalendar:update.html.twig")
@@ -84,6 +96,7 @@ class SystemCalendarController extends Controller
     public function updateAction(SystemCalendar $entity)
     {
         $this->checkPermissionByConfig($entity);
+        $this->checkSystemCalendarEntityAccess($entity);
 
         $isGranted = $entity->isPublic()
             ? $this->isGranted('oro_public_calendar_management')
@@ -105,6 +118,7 @@ class SystemCalendarController extends Controller
     public function eventsAction(SystemCalendar $entity)
     {
         $this->checkPermissionByConfig($entity);
+        $this->checkSystemCalendarEntityAccess($entity);
 
         if (!$entity->isPublic() && !$this->isGranted('oro_system_calendar_management')) {
             // an user must have permissions to view system calendar
@@ -170,5 +184,16 @@ class SystemCalendarController extends Controller
     protected function getCalendarConfig()
     {
         return $this->get('oro_calendar.system_calendar_config');
+    }
+
+    /**
+     * @param SystemCalendar $entity
+     */
+    private function checkSystemCalendarEntityAccess(SystemCalendar $entity)
+    {
+        if (!$entity->isPublic()
+            && $entity->getOrganization()->getId() !== $this->get('oro_security.token_accessor')->getOrganizationId()) {
+            throw new AccessDeniedException();
+        }
     }
 }

@@ -357,6 +357,7 @@ services:
         calls:
             - [setCalendarConfig, ['@oro_calendar.system_calendar_config']]
             - [setAuthorizationChecker, ['@security.authorization_checker']]
+            - [setTokenAccessor, ['@oro_security.token_accessor']]
 
     oro_calendar.calendar_event.handler.delete:
         class: %oro_calendar.calendar_event.handler.delete.class%
