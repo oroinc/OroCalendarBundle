@@ -245,4 +245,34 @@ class EntityListenerTest extends \PHPUnit_Framework_TestCase
 
         return $coll;
     }
+
+    public function testPrePersistPublicCalendar()
+    {
+        $entity = new SystemCalendar();
+        $entity->setOrganization(new Organization());
+        $this->assertNotNull($entity->getOrganization());
+
+        $args      = new LifecycleEventArgs($entity, $this->em);
+
+        $entity->setPublic(true);
+        $this->listener->prePersist($args);
+        $this->assertNull($entity->getOrganization());
+    }
+
+    public function testPrePersistSystemCalendar()
+    {
+        $organization = new Organization();
+
+        $entity = new SystemCalendar();
+        $this->assertNull($entity->getOrganization());
+
+        $args      = new LifecycleEventArgs($entity, $this->em);
+
+        $this->tokenAccessor->expects($this->once())
+            ->method('getOrganization')
+            ->will($this->returnValue($organization));
+
+        $this->listener->prePersist($args);
+        $this->assertSame($organization, $entity->getOrganization());
+    }
 }
