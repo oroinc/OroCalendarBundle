@@ -2,7 +2,7 @@ Oro\Bundle\CalendarBundle\Entity\CalendarEvent:
   calendarEvent{1..26}:
     title: '<sentence(6, true)>'
     calendar: 1
-    organizerUser: @admin
+    organizerUser: '@admin'
     createdAt: '<dateTimeBetween("-200 days", "-10 days")>'
     updatedAt: '<dateTimeBetween($createdAt, "-10 days")>'
     start: '<dateTimeBetween($createdAt, $createdAt)>'
