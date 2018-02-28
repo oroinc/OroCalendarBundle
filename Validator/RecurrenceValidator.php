@@ -278,7 +278,7 @@ class RecurrenceValidator extends ConstraintValidator
             $violationBuilder->addViolation();
         } else {
             /** @var  $violationBuilder */
-            $violationBuilder = $this->buildViolation($message)
+            $violationBuilder = $this->context->buildViolation($message)
                 ->setInvalidValue($invalidValue)
                 ->setParameters($parameters);
 

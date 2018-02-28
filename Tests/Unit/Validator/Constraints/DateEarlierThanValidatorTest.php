@@ -5,6 +5,8 @@ namespace Oro\Bundle\CalendarBundle\Tests\Unit\Validator\Constraints;
 use Oro\Bundle\CalendarBundle\Validator\Constraints\DateEarlierThan;
 use Oro\Bundle\CalendarBundle\Validator\Constraints\DateEarlierThanValidator;
 use Symfony\Component\Form\Form;
+use Symfony\Component\Validator\Context\ExecutionContext;
+use Symfony\Component\Validator\Context\ExecutionContextInterface;
 
 class DateEarlierThanValidatorTest extends \PHPUnit_Framework_TestCase
 {
@@ -14,7 +16,7 @@ class DateEarlierThanValidatorTest extends \PHPUnit_Framework_TestCase
     protected $constraint;
 
     /**
-     * @var \Symfony\Component\Validator\ExecutionContext
+     * @var ExecutionContext
      */
     protected $context;
 
@@ -61,7 +63,7 @@ class DateEarlierThanValidatorTest extends \PHPUnit_Framework_TestCase
             ->method('has')
             ->will($this->returnValue(true));
 
-        $this->context = $this->createMock('\Symfony\Component\Validator\ExecutionContextInterface');
+        $this->context = $this->createMock(ExecutionContextInterface::class);
         $this->context->expects($this->any())
             ->method('getRoot')
             ->will($this->returnValue($form));
@@ -107,7 +109,7 @@ class DateEarlierThanValidatorTest extends \PHPUnit_Framework_TestCase
         $data->start = new \DateTime();
         $data->end = new \DateTime();
         
-        $this->context = $this->createMock('\Symfony\Component\Validator\ExecutionContextInterface');
+        $this->context = $this->createMock(ExecutionContextInterface::class);
         $this->context->expects($this->any())
             ->method('getRoot')
             ->will($this->returnValue($data));
@@ -155,7 +157,7 @@ class DateEarlierThanValidatorTest extends \PHPUnit_Framework_TestCase
         $formConfig = $this->createMock('\Symfony\Component\Form\FormConfigInterface');
         $form = new Form($formConfig);
 
-        $this->context = $this->createMock('\Symfony\Component\Validator\ExecutionContextInterface');
+        $this->context = $this->createMock(ExecutionContextInterface::class);
         $this->context->expects($this->any())
             ->method('getRoot')
             ->will($this->returnValue($form));

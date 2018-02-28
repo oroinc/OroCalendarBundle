@@ -5,9 +5,11 @@ namespace Oro\Bundle\CalendarBundle\Tests\Unit\Validator;
 use Oro\Bundle\CalendarBundle\Entity\Calendar;
 use Oro\Bundle\CalendarBundle\Entity\CalendarEvent;
 use Oro\Bundle\CalendarBundle\Entity\Recurrence;
+use Oro\Bundle\CalendarBundle\Manager\CalendarEventManager;
 use Oro\Bundle\CalendarBundle\Validator\Constraints\RecurringCalendarEventExceptionConstraint;
 use Oro\Bundle\CalendarBundle\Validator\RecurringCalendarEventExceptionValidator;
 use Symfony\Component\Form\FormInterface;
+use Symfony\Component\Validator\Context\ExecutionContextInterface;
 
 class RecurringCalendarEventExceptionValidatorTest extends \PHPUnit_Framework_TestCase
 {
@@ -23,10 +25,8 @@ class RecurringCalendarEventExceptionValidatorTest extends \PHPUnit_Framework_Te
     protected function setUp()
     {
         $this->constraint = new RecurringCalendarEventExceptionConstraint();
-        $this->context = $this->createMock('Symfony\Component\Validator\ExecutionContextInterface');
-        $this->calendarEventManager = $this->getMockBuilder('Oro\Bundle\CalendarBundle\Manager\CalendarEventManager')
-            ->disableOriginalConstructor()
-            ->getMock();
+        $this->context = $this->createMock(ExecutionContextInterface::class);
+        $this->calendarEventManager = $this->createMock(CalendarEventManager::class);
     }
 
     public function testValidateNoErrors()

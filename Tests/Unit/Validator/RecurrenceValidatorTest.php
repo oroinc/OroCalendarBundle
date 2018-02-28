@@ -6,6 +6,7 @@ use Oro\Bundle\CalendarBundle\Entity;
 use Oro\Bundle\CalendarBundle\Model;
 use Oro\Bundle\CalendarBundle\Validator\Constraints\Recurrence;
 use Oro\Bundle\CalendarBundle\Validator\RecurrenceValidator;
+use Symfony\Component\Validator\Context\ExecutionContextInterface;
 
 class RecurrenceValidatorTest extends \PHPUnit_Framework_TestCase
 {
@@ -57,7 +58,7 @@ class RecurrenceValidatorTest extends \PHPUnit_Framework_TestCase
     protected function setUp()
     {
         $this->constraint = new Recurrence();
-        $this->context = $this->createMock('Symfony\Component\Validator\Context\ExecutionContextInterface');
+        $this->context = $this->createMock(ExecutionContextInterface::class);
 
         $this->model = $this->getMockBuilder('Oro\Bundle\CalendarBundle\Model\Recurrence')
             ->disableOriginalConstructor()

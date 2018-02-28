@@ -19,7 +19,7 @@ class AttendeeValidatorTest extends \PHPUnit_Framework_TestCase
 
     public function setUp()
     {
-        $this->context = $this->createMock('Symfony\Component\Validator\Context\ExecutionContextInterface');
+        $this->context = $this->createMock(ExecutionContextInterface::class);
 
         $this->validator = new AttendeeValidator();
         $this->validator->initialize($this->context);
