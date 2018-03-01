@@ -69,7 +69,7 @@ class SystemCalendarType extends AbstractType
         $resolver->setDefaults(
             [
                 'data_class' => 'Oro\Bundle\CalendarBundle\Entity\SystemCalendar',
-                'intention'  => 'system_calendar',
+                'csrf_token_id'  => 'system_calendar',
             ]
         );
     }

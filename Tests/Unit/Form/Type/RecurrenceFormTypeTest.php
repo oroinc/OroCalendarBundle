@@ -158,7 +158,7 @@ class RecurrenceFormTypeTest extends \PHPUnit_Framework_TestCase
         $resolver->expects($this->once())
             ->method('setDefaults')
             ->with([
-                'intention' => 'oro_calendar_event_recurrence',
+                'csrf_token_id' => 'oro_calendar_event_recurrence',
                 'data_class' => 'Oro\Bundle\CalendarBundle\Entity\Recurrence',
             ]);
 

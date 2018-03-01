@@ -133,7 +133,7 @@ class RecurrenceFormType extends AbstractType
     {
         $resolver->setDefaults(
             [
-                'intention' => 'oro_calendar_event_recurrence',
+                'csrf_token_id' => 'oro_calendar_event_recurrence',
                 'data_class' => 'Oro\Bundle\CalendarBundle\Entity\Recurrence',
             ]
         );

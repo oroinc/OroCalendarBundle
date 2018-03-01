@@ -237,7 +237,7 @@ class CalendarEventTypeTest extends \PHPUnit_Framework_TestCase
                     'allow_change_calendar' => false,
                     'layout_template'       => false,
                     'data_class'            => 'Oro\Bundle\CalendarBundle\Entity\CalendarEvent',
-                    'intention'             => 'calendar_event',
+                    'csrf_token_id'         => 'calendar_event',
                     'csrf_protection'       => false,
                 ]
             );
