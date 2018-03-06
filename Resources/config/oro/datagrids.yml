@@ -22,7 +22,7 @@ datagrids:
                     - parentRecurringEvent
                     - parentRecurringEventRecurrence
                 from:
-                    - { table: %oro_calendar.calendar_event.entity.class%, alias: event }
+                    - { table: '%oro_calendar.calendar_event.entity.class%', alias: event }
                 join:
                     left:
                         - { join: event.parent, alias: parent }
@@ -38,7 +38,7 @@ datagrids:
                         - { join: event.calendar, alias: calendar }
                         - { join: calendar.owner, alias: owner }
                         -
-                            join: %oro_calendar.calendar_property.entity.class%
+                            join: '%oro_calendar.calendar_property.entity.class%'
                             alias: connection
                             conditionType: WITH
                             condition: "connection.calendarAlias = 'user' AND connection.calendar = calendar.id AND connection.visible = true"
@@ -208,7 +208,7 @@ datagrids:
                     - event.start
                     - event.end
                 from:
-                    - { table: %oro_calendar.calendar_event.entity.class%, alias: event }
+                    - { table: '%oro_calendar.calendar_event.entity.class%', alias: event }
         columns:
             title:
                 label: oro.calendar.calendarevent.title.label
@@ -265,7 +265,7 @@ datagrids:
                     - u.lastName
                     - u.enabled
                 from:
-                    - { table: %oro_calendar.calendar.entity.class%, alias: calendar }
+                    - { table: '%oro_calendar.calendar.entity.class%', alias: calendar }
                 join:
                     inner:
                         - { join: calendar.owner, alias: u }
@@ -303,7 +303,7 @@ datagrids:
                 enabled:
                     data_name: u.enabled
             default:
-                username: %oro_datagrid.extension.orm_sorter.class%::DIRECTION_ASC
+                username: '%oro_datagrid.extension.orm_sorter.class%::DIRECTION_ASC'
         filters:
             columns:
                 username:
@@ -339,7 +339,7 @@ datagrids:
                     - event.end
                     - (CASE WHEN (recurrence.id IS NULL) THEN false ELSE true END) as is_recurrent
                 from:
-                    - { table: %oro_calendar.calendar_event.entity.class%, alias: event }
+                    - { table: '%oro_calendar.calendar_event.entity.class%', alias: event }
                 join:
                     inner:
                         - { join: event.systemCalendar, alias: calendar }
@@ -458,7 +458,7 @@ datagrids:
                     - sc.name
                     - sc.public
                 from:
-                    - { table: %oro_calendar.system_calendar.entity.class%, alias: sc }
+                    - { table: '%oro_calendar.system_calendar.entity.class%', alias: sc }
         columns:
             name:
                 label: oro.calendar.systemcalendar.name.label
@@ -524,7 +524,7 @@ datagrids:
 
 
     calendar-event-for-context-grid:
-        extended_entity_name: %oro_calendar.calendar_event.entity.class%
+        extended_entity_name: '%oro_calendar.calendar_event.entity.class%'
         acl_resource: oro_calendar_event_view
         options:
             entityHint: calendar events
@@ -545,7 +545,7 @@ datagrids:
                     - parent.id as parentId
                     - owner.id as ownerId
                 from:
-                    - { table: %oro_calendar.calendar_event.entity.class%, alias: event }
+                    - { table: '%oro_calendar.calendar_event.entity.class%', alias: event }
                 join:
                     left:
                         - { join: event.parent, alias: parent }
@@ -553,7 +553,7 @@ datagrids:
                         - { join: event.calendar, alias: calendar }
                         - { join: calendar.owner, alias: owner }
                         -
-                            join: %oro_calendar.calendar_property.entity.class%
+                            join: '%oro_calendar.calendar_property.entity.class%'
                             alias: connection
                             conditionType: WITH
                             condition: "connection.calendarAlias = 'user' AND connection.calendar = calendar.id AND connection.visible = true"

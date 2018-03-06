@@ -50,7 +50,7 @@ parameters:
 
 services:
     oro_calendar.listener.entity_listener:
-        class: %oro_calendar.listener.entity_listener.class%
+        class: '%oro_calendar.listener.entity_listener.class%'
         arguments:
             - '@oro_security.token_accessor'
             - '@oro_calendar.model.recurrence'
@@ -72,7 +72,7 @@ services:
             - { name: doctrine.event_listener, event: onFlush }
 
     oro_calendar.listener.datagrid.activity:
-        class: %oro_calendar.listener.datagrid.activity.class%
+        class: '%oro_calendar.listener.datagrid.activity.class%'
         arguments:
             - '@oro_activity.manager'
             - '@oro_entity.routing_helper'
@@ -81,30 +81,30 @@ services:
             - { name: kernel.event_listener, event: oro_datagrid.datagrid.build.after.activity-calendar-event-grid, method: onBuildAfter }
 
     oro_calendar.datagrid.action_permission_provider:
-        class: %oro_calendar.datagrid.action_permission_provider.class%
+        class: '%oro_calendar.datagrid.action_permission_provider.class%'
         arguments:
             - '@oro_security.token_accessor'
 
     oro_calendar.calendar_event.manager.api:
-        class: %oro_calendar.calendar_event.manager.api.class%
+        class: '%oro_calendar.calendar_event.manager.api.class%'
         parent: oro_soap.manager.entity_manager.abstract
         arguments:
-            - %oro_calendar.calendar_event.entity.class%
+            - '%oro_calendar.calendar_event.entity.class%'
             - '@doctrine.orm.entity_manager'
 
     oro_calendar.calendar_property.manager.api:
-        class: %oro_calendar.calendar_property.manager.api.class%
+        class: '%oro_calendar.calendar_property.manager.api.class%'
         parent: oro_soap.manager.entity_manager.abstract
         arguments:
-            - %oro_calendar.calendar_property.entity.class%
+            - '%oro_calendar.calendar_property.entity.class%'
             - '@doctrine.orm.entity_manager'
             - '@oro_calendar.calendar_manager'
 
     oro_calendar.system_calendar.manager.api:
-        class: %oro_calendar.system_calendar.manager.api.class%
+        class: '%oro_calendar.system_calendar.manager.api.class%'
         parent: oro_soap.manager.entity_manager.abstract
         arguments:
-            - %oro_calendar.system_calendar.entity.class%
+            - '%oro_calendar.system_calendar.entity.class%'
             - '@doctrine.orm.entity_manager'
 
     oro_calendar.twig.dateformat:
@@ -124,12 +124,12 @@ services:
             - { name: twig.extension }
 
     oro_calendar.provider.calendar_config:
-        class: %oro_calendar.provider.calendar_config.class%
+        class: '%oro_calendar.provider.calendar_config.class%'
         arguments:
             - '@oro_locale.settings'
 
     oro_calendar.provider.attendee_email_recipients:
-        class: %oro_calendar.provider.attendee_email_recipients.class%
+        class: '%oro_calendar.provider.attendee_email_recipients.class%'
         arguments:
             - '@doctrine'
             - '@oro_email.provider.email_recipients.helper'
@@ -137,7 +137,7 @@ services:
             - { name: oro_email.recipients_provider, priority: 50 }
 
     oro_calendar.owner_assignment_checker.calendar:
-        class: %oro_calendar.owner_assignment_checker.calendar.class%
+        class: '%oro_calendar.owner_assignment_checker.calendar.class%'
         tags:
             - { name: oro_organization.owner_assignment_checker, entity: Oro\Bundle\CalendarBundle\Entity\Calendar }
 
@@ -151,7 +151,7 @@ services:
             - { name: oro_ui.update_action_provider, group: activity }
 
     oro_calendar.calendar_event_manager:
-        class: %oro_calendar.calendar_event_manager.class%
+        class: '%oro_calendar.calendar_event_manager.class%'
         arguments:
             - '@oro_calendar.calendar_event.update_manager'
             - '@doctrine'
@@ -207,32 +207,32 @@ services:
             - '@oro_entity.doctrine_helper'
 
     oro_calendar.calendar_manager:
-        class: %oro_calendar.calendar_manager.class%
+        class: '%oro_calendar.calendar_manager.class%'
         arguments:
             - '@oro_calendar.calendar_property_provider'
 
     oro_calendar.attendee_manager:
-        class: %oro_calendar.attendee_manager.class%
+        class: '%oro_calendar.attendee_manager.class%'
         arguments:
             - '@oro_entity.doctrine_helper'
             - '@oro_calendar.attendee_relation_manager'
 
     oro_calendar.attendee_relation_manager:
-        class: %oro_calendar.attendee_relation_manager.class%
+        class: '%oro_calendar.attendee_relation_manager.class%'
         arguments:
             - '@doctrine'
             - '@oro_locale.formatter.name'
             - '@oro_locale.dql.formatter.name'
 
     oro_calendar.calendar_property_provider:
-        class: %oro_calendar.calendar_property_provider.class%
+        class: '%oro_calendar.calendar_property_provider.class%'
         arguments:
             - '@oro_entity.doctrine_helper'
             - '@oro_entity_config.config_manager'
             - '@oro_entity_extend.extend.field_type_helper'
 
     oro_calendar.calendar_provider.user:
-        class: %oro_calendar.calendar_provider.user.class%
+        class: '%oro_calendar.calendar_provider.user.class%'
         arguments:
             - '@oro_entity.doctrine_helper'
             - '@oro_calendar.model.recurrence'
@@ -243,7 +243,7 @@ services:
             - { name: oro_calendar.calendar_provider, alias: user }
 
     oro_calendar.calendar_provider.system:
-        class: %oro_calendar.calendar_provider.system.class%
+        class: '%oro_calendar.calendar_provider.system.class%'
         arguments:
             - '@oro_entity.doctrine_helper'
             - '@oro_calendar.model.recurrence'
@@ -255,7 +255,7 @@ services:
             - { name: oro_calendar.calendar_provider, alias: system }
 
     oro_calendar.calendar_provider.public:
-        class: %oro_calendar.calendar_provider.public.class%
+        class: '%oro_calendar.calendar_provider.public.class%'
         arguments:
             - '@oro_entity.doctrine_helper'
             - '@oro_calendar.model.recurrence'
@@ -276,21 +276,21 @@ services:
             - '@security.authorization_checker'
 
     oro_calendar.calendar_event_normalizer.user:
-        class: %oro_calendar.calendar_event_normalizer.user.class%
+        class: '%oro_calendar.calendar_event_normalizer.user.class%'
         parent: oro_calendar.calendar_event_normalizer.abstract
         calls:
             - [ setTokenAccessor, ['@oro_security.token_accessor'] ]
 
     oro_calendar.calendar_event_normalizer.system:
-        class: %oro_calendar.calendar_event_normalizer.system.class%
+        class: '%oro_calendar.calendar_event_normalizer.system.class%'
         parent: oro_calendar.calendar_event_normalizer.abstract
 
     oro_calendar.calendar_event_normalizer.public:
-        class: %oro_calendar.calendar_event_normalizer.public.class%
+        class: '%oro_calendar.calendar_event_normalizer.public.class%'
         parent: oro_calendar.calendar_event_normalizer.abstract
 
     oro_calendar.autocomplete.user_calendar_handler:
-        class: %oro_calendar.autocomplete.user_calendar_handler.class%
+        class: '%oro_calendar.autocomplete.user_calendar_handler.class%'
         arguments:
             - '@doctrine.orm.entity_manager'
             - '@oro_attachment.manager'
@@ -308,7 +308,7 @@ services:
         lazy: true
 
     oro_calendar.activity_list.provider:
-        class: %oro_calendar.activity_list.provider.class%
+        class: '%oro_calendar.activity_list.provider.class%'
         arguments:
            - '@oro_entity.doctrine_helper'
            - '@oro_activity.association_helper'
@@ -324,7 +324,7 @@ services:
             - '@doctrine'
 
     oro_calendar.listener.datagrid.system_calendar:
-        class: %oro_calendar.listener.datagrid.system_calendar.class%
+        class: '%oro_calendar.listener.datagrid.system_calendar.class%'
         arguments:
             - '@security.authorization_checker'
             - '@oro_security.token_accessor'
@@ -334,17 +334,17 @@ services:
             - { name: kernel.event_listener, event: oro_datagrid.datagrid.build.after.system-calendar-grid, method: onBuildAfter }
 
     oro_calendar.datagrid.helper.calendar_event_grid:
-        class: %oro_calendar.datagrid.helper.calendar_event_grid.class%
+        class: '%oro_calendar.datagrid.helper.calendar_event_grid.class%'
         arguments:
             - '@router'
 
     oro_calendar.system_calendar_config:
-        class: %oro_calendar.system_calendar_config.class%
+        class: '%oro_calendar.system_calendar_config.class%'
         arguments:
-            - %oro_calendar.enabled_system_calendar%
+            - '%oro_calendar.enabled_system_calendar%'
 
     oro_calendar.event_listener.navigation:
-        class: %oro_calendar.event_listener.navigation.class%
+        class: '%oro_calendar.event_listener.navigation.class%'
         arguments:
             - '@oro_calendar.system_calendar_config'
         tags:
@@ -354,7 +354,7 @@ services:
             - [setTokenAccessor, ['@oro_security.token_accessor']]
 
     oro_calendar.system_calendar.handler.delete:
-        class: %oro_calendar.system_calendar.handler.delete.class%
+        class: '%oro_calendar.system_calendar.handler.delete.class%'
         parent: oro_soap.handler.delete.abstract
         calls:
             - [setCalendarConfig, ['@oro_calendar.system_calendar_config']]
@@ -362,7 +362,7 @@ services:
             - [setTokenAccessor, ['@oro_security.token_accessor']]
 
     oro_calendar.calendar_event.handler.delete:
-        class: %oro_calendar.calendar_event.handler.delete.class%
+        class: '%oro_calendar.calendar_event.handler.delete.class%'
         parent: oro_soap.handler.delete.abstract
         calls:
             - [setRequestStack, ['@request_stack']]
@@ -372,7 +372,7 @@ services:
             - [setDeleteManager, ['@oro_calendar.calendar_event.delete_manager']]
 
     oro_calendar.system_calendar_event.datagrid_helper:
-        class: %oro_calendar.system_calendar_event.datagrid_helper.class%
+        class: '%oro_calendar.system_calendar_event.datagrid_helper.class%'
         arguments:
             - '@security.authorization_checker'
 
