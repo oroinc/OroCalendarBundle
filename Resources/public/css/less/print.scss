@@ -1,0 +1,67 @@
+@media print {
+    #calendar {
+        @import "../lib/fullcalendar/fullcalendar.print_2.2.3";
+
+        border: none;
+
+        /*
+         * compilation of oro.css uses it's internal file order
+         * so import instruction moved into #calendar selector to override desktop styles
+         */
+        .oro-page-sidebar,
+        .invitation-status,
+        .reminder-status,
+        .span2 {
+            display: none !important;
+        }
+
+        .oro-page-body,
+        .span10 {
+            width: 100%;
+        }
+
+        .fc-day-grid-event,
+        .fc-time-grid-event,
+        .oro-page-body {
+            border: none !important;
+        }
+
+        .fc-time,
+        .fc-title {
+            display: block;
+
+            text-decoration: underline;
+        }
+
+        .fc-divider {
+            padding: 0;
+
+            border-width: 1px 0 0;
+        }
+
+        .fc-title {
+            white-space: normal;
+        }
+    }
+
+    .calendar-events.scrollable-container {
+        overflow-y: visible !important;
+        overflow-x: visible !important;
+        height: auto !important;
+    }
+
+    .calendar-container {
+        hr.timeline {
+            display: none;
+        }
+    }
+
+    .calendar-title-wrapper {
+        .user-name {
+            font-weight: normal;
+            font-size: 28px;
+
+            color: #9a9997 !important;
+        }
+    }
+}
