@@ -54,18 +54,24 @@ class CalendarChoiceType extends AbstractType
                 'translatable_options' => false
             )
         );
-        $resolver->setNormalizers(
-            array(
-                'expanded'    => function (Options $options, $expanded) {
-                    return count($options['choices']) === 1;
-                },
-                'multiple'    => function (Options $options, $multiple) {
-                    return count($options['choices']) === 1;
-                },
-                'empty_value' => function (Options $options, $emptyValue) {
-                    return count($options['choices']) !== 1 ? null : null;
-                },
-            )
+
+        $resolver->setNormalizer(
+            'expanded',
+            function (Options $options, $expanded) {
+                return count($options['choices']) === 1;
+            }
+        )
+        ->setNormalizer(
+            'multiple',
+            function (Options $options, $multiple) {
+                return count($options['choices']) === 1;
+            }
+        )
+        ->setNormalizer(
+            'empty_value',
+            function (Options $options, $emptyValue) {
+                return count($options['choices']) !== 1 ? null : null;
+            }
         );
     }
 
