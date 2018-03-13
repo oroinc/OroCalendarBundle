@@ -35,7 +35,7 @@ class RecurrenceFormType extends AbstractType
                 [
                     'required' => true,
                     'label' => 'oro.calendar.recurrence.entity_label',
-                    'empty_value' => false,
+                    'placeholder' => false,
                     'choices' => $this->recurrenceModel->getRecurrenceTypes(),
                 ]
             )
@@ -53,7 +53,7 @@ class RecurrenceFormType extends AbstractType
                 [
                     'required' => false,
                     'label' => 'oro.calendar.recurrence.instance.label',
-                    'empty_value' => false,
+                    'placeholder' => false,
                     'choices' => $this->recurrenceModel->getInstances(),
                 ]
             )

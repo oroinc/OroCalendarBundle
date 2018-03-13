@@ -87,7 +87,7 @@ class SystemCalendarType extends AbstractType
             $options = [
                 'required'    => false,
                 'label'       => 'oro.calendar.systemcalendar.public.label',
-                'empty_value' => false,
+                'placeholder' => false,
                 'choices'     => [
                     false => 'oro.calendar.systemcalendar.scope.organization',
                     true  => 'oro.calendar.systemcalendar.scope.system'
@@ -99,7 +99,7 @@ class SystemCalendarType extends AbstractType
                 $isPublicGranted = $this->authorizationChecker->isGranted('oro_public_calendar_management');
                 $isSystemGranted = $this->authorizationChecker->isGranted('oro_system_calendar_management');
                 if (!$isPublicGranted || !$isSystemGranted) {
-                    $options['read_only'] = true;
+                    $options['attr']['readonly'] = true;
                     if (!$data->getId() && !$isSystemGranted) {
                         $options['data'] = true;
                     }

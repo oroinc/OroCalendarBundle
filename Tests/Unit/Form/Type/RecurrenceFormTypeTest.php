@@ -40,7 +40,7 @@ class RecurrenceFormTypeTest extends \PHPUnit_Framework_TestCase
                 [
                     'required' => true,
                     'label' => 'oro.calendar.recurrence.entity_label',
-                    'empty_value' => false,
+                    'placeholder' => false,
                     'choices' => $this->model->getRecurrenceTypes(),
                 ]
             )
@@ -64,7 +64,7 @@ class RecurrenceFormTypeTest extends \PHPUnit_Framework_TestCase
                 [
                     'required' => false,
                     'label' => 'oro.calendar.recurrence.instance.label',
-                    'empty_value' => false,
+                    'placeholder' => false,
                     'choices' => $this->model->getInstances(),
                 ]
             )

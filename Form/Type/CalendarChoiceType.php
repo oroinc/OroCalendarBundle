@@ -68,7 +68,7 @@ class CalendarChoiceType extends AbstractType
             }
         )
         ->setNormalizer(
-            'empty_value',
+            'placeholder',
             function (Options $options, $emptyValue) {
                 return count($options['choices']) !== 1 ? null : null;
             }
