@@ -2,37 +2,30 @@
 
 namespace Oro\Bundle\CalendarBundle\Controller;
 
-use Symfony\Bundle\FrameworkBundle\Controller\Controller;
-use Symfony\Component\Security\Core\Exception\AccessDeniedException;
-use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
-
+use Oro\Bundle\CalendarBundle\Entity\CalendarEvent;
+use Oro\Bundle\CalendarBundle\Entity\SystemCalendar;
+use Oro\Bundle\CalendarBundle\Provider\SystemCalendarConfig;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
-
-use Oro\Bundle\CalendarBundle\Entity\SystemCalendar;
-use Oro\Bundle\CalendarBundle\Entity\CalendarEvent;
-use Oro\Bundle\CalendarBundle\Provider\SystemCalendarConfig;
+use Symfony\Bundle\FrameworkBundle\Controller\Controller;
+use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
+use Symfony\Component\Security\Core\Exception\AccessDeniedException;
 
 class SystemCalendarEventController extends Controller
 {
     /**
      * @Route("/event/view/{id}", name="oro_system_calendar_event_view", requirements={"id"="\d+"})
      * @Template
+     *
+     * @param CalendarEvent $entity
+     * @return array
      */
     public function viewAction(CalendarEvent $entity)
     {
         $calendar = $entity->getSystemCalendar();
-        if (!$calendar) {
-            // an event must belong to system calendar
-            throw $this->createNotFoundException('Not system calendar event.');
-        }
 
-        $this->checkPermissionByConfig($calendar);
-
-        if (!$calendar->isPublic() && !$this->isGranted('VIEW', $calendar)) {
-            // an user must have permissions to view system calendar
-            throw new AccessDeniedException();
-        }
+        $this->checkPermissions($calendar);
 
         $isEventManagementGranted = $calendar->isPublic()
             ? $this->isGranted('oro_public_calendar_management')
@@ -46,8 +39,38 @@ class SystemCalendarEventController extends Controller
     }
 
     /**
+     * @Route(
+     *      "/widget/info/{id}/{renderContexts}",
+     *      name="oro_system_calendar_event_widget_info",
+     *      requirements={"id"="\d+", "renderContexts"="\d+"},
+     *      defaults={"renderContexts"=true}
+     * )
+     * @Template
+     *
+     * @param Request $request
+     * @param CalendarEvent $entity
+     * @param int $renderContexts
+     * @return array
+     */
+    public function infoAction(Request $request, CalendarEvent $entity, $renderContexts)
+    {
+        $calendar = $entity->getSystemCalendar();
+
+        $this->checkPermissions($calendar);
+
+        return [
+            'entity' => $entity,
+            'target' => $this->getTargetEntity($request),
+            'renderContexts' => (bool)$renderContexts
+        ];
+    }
+
+    /**
      * @Route("/{id}/event/create", name="oro_system_calendar_event_create", requirements={"id"="\d+"})
      * @Template("OroCalendarBundle:SystemCalendarEvent:update.html.twig")
+     *
+     * @param SystemCalendar $calendar
+     * @return array
      */
     public function createAction(SystemCalendar $calendar)
     {
@@ -78,6 +101,9 @@ class SystemCalendarEventController extends Controller
     /**
      * @Route("/event/update/{id}", name="oro_system_calendar_event_update", requirements={"id"="\d+"})
      * @Template
+     *
+     * @param CalendarEvent $entity
+     * @return array
      */
     public function updateAction(CalendarEvent $entity)
     {
@@ -135,6 +161,40 @@ class SystemCalendarEventController extends Controller
             'form'       => $this->get('oro_calendar.calendar_event.form.handler')->getForm()->createView(),
             'formAction' => $formAction
         ];
+    }
+
+    /**
+     * @param Request $request
+     * @return object|null
+     */
+    private function getTargetEntity(Request $request)
+    {
+        $entityRoutingHelper = $this->get('oro_entity.routing_helper');
+        $targetEntityClass = $entityRoutingHelper->getEntityClassName($request, 'targetActivityClass');
+        $targetEntityId = $entityRoutingHelper->getEntityId($request, 'targetActivityId');
+        if (!$targetEntityClass || !$targetEntityId) {
+            return null;
+        }
+
+        return $entityRoutingHelper->getEntity($targetEntityClass, $targetEntityId);
+    }
+
+    /**
+     * @param SystemCalendar|null $systemCalendar
+     */
+    private function checkPermissions(SystemCalendar $systemCalendar = null)
+    {
+        if (!$systemCalendar) {
+            // an event must belong to system calendar
+            throw $this->createNotFoundException('Not system calendar event.');
+        }
+
+        $this->checkPermissionByConfig($systemCalendar);
+
+        if (!$systemCalendar->isPublic() && !$this->isGranted('VIEW', $systemCalendar)) {
+            // an user must have permissions to view system calendar
+            throw new AccessDeniedException();
+        }
     }
 
     /**

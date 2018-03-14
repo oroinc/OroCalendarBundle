@@ -1,0 +1,60 @@
+{% import 'OroUIBundle::macros.html.twig' as UI %}
+
+<div class="widget-content">
+    {% if saved is defined and saved %}
+        <div {{ UI.renderPageComponentAttributes({
+            module: 'oroui/js/app/components/widget-form-component',
+            options: {
+                _wid: app.request.get('_wid'),
+                data: saved|default(null),
+                message: 'oro.calendar.controller.event.saved.message'|trans
+            }
+        }) }}></div>
+    {% else %}
+        {% if not form.vars.valid and form.vars.errors|length %}
+            <div class="alert alert-error">
+                <div class="message">
+                    {{ form_errors(form) }}
+                </div>
+            </div>
+        {% endif %}
+
+        {% set calendarEventDateRange = {
+            module: 'orocalendar/js/app/components/calendar-event-date-range-component',
+            name: 'calendar-event-date-range',
+            options: {
+                nativeMode: isMobileVersion()
+            }
+        } %}
+        <div class="form-container">
+            <form id="{{ form.vars.id }}" name="{{ form.vars.name }}" action="{{ formAction }}" method="post">
+                <fieldset class="form form-horizontal">
+                    <div class="span6">
+                        {{ form_row(form.title) }}
+                        {{ form_row(form.description) }}
+                        {{ form_row(form.backgroundColor) }}
+
+                        {% for child in form.children if child.vars.extra_field is defined and child.vars.extra_field %}
+                            {{ form_row(child) }}
+                        {% endfor %}
+                    </div>
+                    <div class="span6">
+                        <div {{ UI.renderPageComponentAttributes(calendarEventDateRange) }}>
+                            {{ form_row(form.start) }}
+                            {{ form_row(form.end) }}
+                            {{ form_row(form.allDay) }}
+                        </div>
+                        {% if form.recurrence is defined %}
+                            {{ form_row(form.recurrence) }}
+                        {% endif %}
+                    </div>
+                    <div class="widget-actions form-actions">
+                        <button class="btn" type="reset">{{ 'Cancel'|trans }}</button>
+                        <button class="btn btn-primary" type="submit">{{ 'Save'|trans }}</button>
+                    </div>
+                </fieldset>
+            </form>
+            {{ oro_form_js_validation(form) }}
+        </div>
+    {% endif %}
+</div>
