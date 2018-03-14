@@ -8,11 +8,15 @@ use Oro\Bundle\ActivityListBundle\Entity\ActivityOwner;
 use Oro\Bundle\ActivityListBundle\Model\ActivityListDateProviderInterface;
 use Oro\Bundle\ActivityListBundle\Model\ActivityListProviderInterface;
 use Oro\Bundle\CalendarBundle\Entity\CalendarEvent;
+use Oro\Bundle\CalendarBundle\Entity\SystemCalendar;
 use Oro\Bundle\CommentBundle\Model\CommentProviderInterface;
 use Oro\Bundle\CommentBundle\Tools\CommentAssociationHelper;
 use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
 use Oro\Bundle\UserBundle\Entity\User;
 
+/**
+ * This provider provides additional activity-related information for CalendarEvent entity
+ */
 class CalendarEventActivityListProvider implements
     ActivityListProviderInterface,
     CommentProviderInterface,
@@ -60,13 +64,28 @@ class CalendarEventActivityListProvider implements
     /**
      * {@inheritdoc}
      */
-    public function getRoutes()
+    public function getRoutes($activityEntity)
     {
-        return [
-            'itemView'   => 'oro_calendar_event_widget_info',
-            'itemEdit'   => 'oro_calendar_event_update',
+        $routes = [
+            'itemViewLink' => 'oro_calendar_event_view',
+            'itemView' => 'oro_calendar_event_widget_info',
+            'itemEdit' => 'oro_calendar_event_update',
             'itemDelete' => 'oro_calendar_event_delete'
         ];
+
+        /** @var CalendarEvent $activityEntity */
+        if ($activityEntity->getSystemCalendar() instanceof SystemCalendar) {
+            $routes = array_merge(
+                $routes,
+                [
+                    'itemViewLink' => 'oro_system_calendar_event_view',
+                    'itemView' => 'oro_system_calendar_event_widget_info',
+                    'itemEdit' => 'oro_system_calendar_event_update',
+                ]
+            );
+        }
+
+        return $routes;
     }
 
     /**
@@ -165,11 +184,11 @@ class CalendarEventActivityListProvider implements
     public function isApplicable($entity)
     {
         if (is_object($entity)) {
-            return $this->doctrineHelper->getEntityClass($entity) == self::ACTIVITY_CLASS
+            return $this->doctrineHelper->getEntityClass($entity) === self::ACTIVITY_CLASS
                 && !$entity->getRecurringEvent();
         }
 
-        return $entity == self::ACTIVITY_CLASS;
+        return $entity === self::ACTIVITY_CLASS;
     }
 
     /**

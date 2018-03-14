@@ -28,7 +28,7 @@
     {% set actions = [action] %}
 
     {% set action %}
-        <a href="<%= routing.generate('oro_calendar_event_view', {'id': relatedActivityId}) %>"
+        <a href="<%= routing.generate(routes.itemViewLink, {'id': relatedActivityId}) %>"
            title="{{ 'oro.calendar.calendarevent.view_event'|trans({'{{ entity }}': entityName}) }}"><i
                 class="fa-eye hide-text">{{ 'oro.calendar.calendarevent.view_event'|trans({'{{ entity }}': entityName}) }}</i>
             {{ 'oro.calendar.calendarevent.view_event'|trans({'{{ entity }}': entityName}) }}
