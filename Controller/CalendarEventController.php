@@ -2,15 +2,15 @@
 
 namespace Oro\Bundle\CalendarBundle\Controller;
 
-use Symfony\Bundle\FrameworkBundle\Controller\Controller;
-use Symfony\Component\HttpFoundation\Request;
-
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
-
+use Oro\Bundle\CalendarBundle\Entity\CalendarEvent;
 use Oro\Bundle\SecurityBundle\Annotation\Acl;
 use Oro\Bundle\SecurityBundle\Annotation\AclAncestor;
-use Oro\Bundle\CalendarBundle\Entity\CalendarEvent;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
+use Symfony\Bundle\FrameworkBundle\Controller\Controller;
+use Symfony\Component\HttpFoundation\RedirectResponse;
+use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\Response;
 
 /**
  * @Route("/event")
@@ -30,18 +30,27 @@ class CalendarEventController extends Controller
      */
     public function indexAction()
     {
-        return array(
+        return [
             'entity_class' => $this->container->getParameter('oro_calendar.calendar_event.entity.class')
-        );
+        ];
     }
 
     /**
      * @Route("/view/{id}", name="oro_calendar_event_view", requirements={"id"="\d+"})
      * @Template
      * @AclAncestor("oro_calendar_event_view")
+     *
+     * @param CalendarEvent $entity
+     * @return array|RedirectResponse
      */
     public function viewAction(CalendarEvent $entity)
     {
+        if ($entity->getSystemCalendar()) {
+            return $this->redirect(
+                $this->generateUrl('oro_system_calendar_event_view', ['id' => $entity->getId()])
+            );
+        }
+
         $this->checkPermissionByParentCalendar($entity, 'view');
 
         $loggedUser = $this->get('oro_security.token_accessor')->getUser();
@@ -65,9 +74,23 @@ class CalendarEventController extends Controller
      * )
      * @Template
      * @AclAncestor("oro_calendar_event_view")
+     *
+     * @param CalendarEvent $entity
+     * @param $renderContexts
+     * @return array|Response
      */
     public function infoAction(CalendarEvent $entity, $renderContexts)
     {
+        if ($entity->getSystemCalendar()) {
+            $request = $this->get('request_stack')->getCurrentRequest();
+
+            return $this->forward(
+                'OroCalendarBundle:SystemCalendarEvent:info',
+                ['id' => $entity->getId(), 'renderContexts' => $renderContexts],
+                $request->query->all()
+            );
+        }
+
         $this->checkPermissionByParentCalendar($entity, 'view');
 
         $loggedUser = $this->get('oro_security.token_accessor')->getUser();
@@ -91,12 +114,16 @@ class CalendarEventController extends Controller
      * @Route("/activity/view/{entityClass}/{entityId}", name="oro_calendar_event_activity_view")
      * @AclAncestor("oro_calendar_event_view")
      * @Template
+     *
+     * @param string $entityClass
+     * @param int $entityId
+     * @return array
      */
     public function activityAction($entityClass, $entityId)
     {
-        return array(
+        return [
             'entity' => $this->get('oro_entity.routing_helper')->getEntity($entityClass, $entityId)
-        );
+        ];
     }
 
     /**
@@ -136,9 +163,22 @@ class CalendarEventController extends Controller
      *      permission="EDIT",
      *      group_name=""
      * )
+     *
+     * @param CalendarEvent $entity
+     * @return array|Response
      */
     public function updateAction(CalendarEvent $entity)
     {
+        if ($entity->getSystemCalendar()) {
+            $request = $this->get('request_stack')->getCurrentRequest();
+
+            return $this->forward(
+                'OroCalendarBundle:SystemCalendarEvent:update',
+                ['id' => $entity->getId()],
+                $request->query->all()
+            );
+        }
+
         $this->checkPermissionByParentCalendar($entity, 'edit');
 
         $formAction = $this->get('router')->generate('oro_calendar_event_update', ['id' => $entity->getId()]);
@@ -158,6 +198,10 @@ class CalendarEventController extends Controller
      *      permission="DELETE",
      *      group_name=""
      * )
+     *
+     * @param Request $request
+     * @param int $id
+     * @return Response
      */
     public function deleteAction(Request $request, $id)
     {
