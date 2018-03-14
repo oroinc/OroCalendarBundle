@@ -50,3 +50,7 @@ oro_behat_extension:
     My Calendar Choose Color Menu:
       class: Oro\Bundle\CalendarBundle\Tests\Behat\Element\MyCalendarChooseColorMenu
       selector: 'li[data-calendar-alias="user"] a.context-menu-button'
+    Calendar Activity Item:
+      selector:
+        locator: '//div[@class="accordion-heading clearfix"]'
+        type: xpath

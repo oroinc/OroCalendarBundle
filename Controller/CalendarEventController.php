@@ -10,6 +10,7 @@ use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\Response;
 
 /**
  * @Route("/event")
@@ -29,15 +30,18 @@ class CalendarEventController extends Controller
      */
     public function indexAction()
     {
-        return array(
+        return [
             'entity_class' => $this->container->getParameter('oro_calendar.calendar_event.entity.class')
-        );
+        ];
     }
 
     /**
      * @Route("/view/{id}", name="oro_calendar_event_view", requirements={"id"="\d+"})
      * @Template
      * @AclAncestor("oro_calendar_event_view")
+     *
+     * @param CalendarEvent $entity
+     * @return array|RedirectResponse
      */
     public function viewAction(CalendarEvent $entity)
     {
@@ -64,6 +68,7 @@ class CalendarEventController extends Controller
      * )
      * @Template
      * @AclAncestor("oro_calendar_event_view")
+     *
      * @param Request $request
      * @param CalendarEvent $entity
      * @param integer|bool $renderContexts
@@ -94,12 +99,16 @@ class CalendarEventController extends Controller
      * @Route("/activity/view/{entityClass}/{entityId}", name="oro_calendar_event_activity_view")
      * @AclAncestor("oro_calendar_event_view")
      * @Template
+     *
+     * @param string $entityClass
+     * @param int $entityId
+     * @return array
      */
     public function activityAction($entityClass, $entityId)
     {
-        return array(
+        return [
             'entity' => $this->get('oro_entity.routing_helper')->getEntity($entityClass, $entityId)
-        );
+        ];
     }
 
     /**
@@ -141,6 +150,7 @@ class CalendarEventController extends Controller
      *      permission="EDIT",
      *      group_name=""
      * )
+     *
      * @param Request $request
      * @param CalendarEvent $entity
      * @return array|RedirectResponse
@@ -166,6 +176,10 @@ class CalendarEventController extends Controller
      *      permission="DELETE",
      *      group_name=""
      * )
+     *
+     * @param Request $request
+     * @param int $id
+     * @return Response
      */
     public function deleteAction(Request $request, $id)
     {
