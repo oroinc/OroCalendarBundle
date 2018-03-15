@@ -13,8 +13,8 @@ use Oro\Bundle\UserBundle\Entity\User;
 
 class SystemCalendarEventControllerTest extends WebTestCase
 {
-    private const TITLE = 'System Calendar Event Title';
-    private const DESCRIPTION = 'System Calendar Event Description';
+    const TITLE = 'System Calendar Event Title';
+    const DESCRIPTION = 'System Calendar Event Description';
 
     /** @var ManagerRegistry */
     private $registry;
