@@ -84,8 +84,8 @@ define(function(require) {
 
         dataInputs: function() {
             var $dataInputs = RecurrenceMonthlyView.__super__.dataInputs.apply(this, arguments);
-            var hiddenControlBlock = this.$('[data-related-field="instance"]').val() ?
-                this.$('[data-name="repeat-on-day"]') : this.$('[data-name="repeat-on-instance"]');
+            var hiddenControlBlock = this.$('[data-related-field="instance"]').val()
+                ? this.$('[data-name="repeat-on-day"]') : this.$('[data-name="repeat-on-instance"]');
             return $dataInputs.filter(function(index, element) {
                 return !$.contains(hiddenControlBlock[0], element);
             });

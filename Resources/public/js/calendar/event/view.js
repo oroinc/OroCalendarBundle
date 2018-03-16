@@ -442,8 +442,8 @@ define(function(require) {
                 var $emptyColor = form.find('.empty-color');
                 var $selector = $(e.currentTarget);
                 var tagName = $selector.prop('tagName').toUpperCase();
-                var calendarUid = tagName === 'SELECT' || $selector.is(':checked') ?
-                    $selector.val() : this.model.get('calendarUid');
+                var calendarUid = tagName === 'SELECT' || $selector.is(':checked')
+                    ? $selector.val() : this.model.get('calendarUid');
                 var colors = this.options.colorManager.getCalendarColors(calendarUid);
                 var newCalendar = this.parseCalendarUid(calendarUid);
                 $emptyColor.css({'background-color': colors.backgroundColor, 'color': colors.color});
