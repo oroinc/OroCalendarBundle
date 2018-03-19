@@ -28,6 +28,13 @@ define(function(require) {
             timeZone: localeSettings.getTimeZone()
         },
 
+        /**
+         * @inheritDoc
+         */
+        constructor: function EventRecurrenceModel() {
+            EventRecurrenceModel.__super__.constructor.apply(this, arguments);
+        },
+
         isEmptyRecurrence: function() {
             return this.RECURRENCE_TYPES.indexOf(this.get('recurrenceType')) === -1;
         },

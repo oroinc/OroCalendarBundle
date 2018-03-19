@@ -7,6 +7,7 @@ define(function(require) {
 
     ActionTargetSelectView = BaseView.extend({
         template: require('tpl!orocalendar/templates/calendar/event/action-target-select.html'),
+
         actionType: null,
 
         /**
@@ -15,6 +16,16 @@ define(function(require) {
          */
         restrictOnlyThisEventAction: null,
 
+        /**
+         * @inheritDoc
+         */
+        constructor: function ActionTargetSelectView() {
+            ActionTargetSelectView.__super__.constructor.apply(this, arguments);
+        },
+
+        /**
+         * @inheritDoc
+         */
         initialize: function(options) {
             options = _.defaults(options, {restrictOnlyThisEventAction: false});
 
@@ -22,12 +33,14 @@ define(function(require) {
             this.restrictOnlyThisEventAction = options.restrictOnlyThisEventAction;
             ActionTargetSelectView.__super__.initialize.call(this, options);
         },
+
         getTemplateData: function() {
             var data = ActionTargetSelectView.__super__.getTemplateData.call(this);
             data.actionType = this.actionType;
             data.restrictOnlyThisEventAction = this.restrictOnlyThisEventAction;
             return data;
         },
+
         getValue: function() {
             return this.$el.find('[name="action-target"]:checked').val();
         }

@@ -28,6 +28,13 @@ define(function(require) {
         connectionCollection: null,
 
         /**
+         * @inheritDoc
+         */
+        constructor: function CalendarComponent() {
+            CalendarComponent.__super__.constructor.apply(this, arguments);
+        },
+
+        /**
          * @constructor
          * @param {Object} options
          */

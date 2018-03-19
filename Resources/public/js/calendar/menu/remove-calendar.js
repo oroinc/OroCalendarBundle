@@ -6,12 +6,24 @@ define([
 ], function(_, BaseView, __, messenger) {
     'use strict';
 
+    var RemoveCalendarView;
+
     /**
      * @export  orocalendar/js/calendar/menu/remove-calendar
      * @class   orocalendar.calendar.menu.RemoveCalendar
      * @extends oroui/js/app/views/base/view
      */
-    return BaseView.extend({
+    RemoveCalendarView = BaseView.extend({
+        /**
+         * @inheritDoc
+         */
+        constructor: function RemoveCalendarView() {
+            RemoveCalendarView.__super__.constructor.apply(this, arguments);
+        },
+
+        /**
+         * @inheritDoc
+         */
         initialize: function(options) {
             this.connectionsView = options.connectionsView;
         },
@@ -49,4 +61,6 @@ define([
             messenger.showErrorMessage(message, err);
         }
     });
+
+    return RemoveCalendarView;
 });

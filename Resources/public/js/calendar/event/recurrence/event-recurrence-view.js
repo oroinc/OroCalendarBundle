@@ -54,6 +54,16 @@ define(function(require) {
             'change model': 'onModelChange'
         },
 
+        /**
+         * @inheritDoc
+         */
+        constructor: function EventRecurrenceView() {
+            EventRecurrenceView.__super__.constructor.apply(this, arguments);
+        },
+
+        /**
+         * @inheritDoc
+         */
         initialize: function(options) {
             _.extend(this, _.pick(options, 'inputNamePrefixes', 'errors'));
             this._initModelData = this.model.toJSON();

@@ -5,12 +5,13 @@ define([
 ], function(Backbone, routing, EventModel) {
     'use strict';
 
+    var CalendarEventCollection;
     /**
      * @export  orocalendar/js/calendar/event/collection
      * @class   orocalendar.calendar.event.Collection
      * @extends Backbone.Collection
      */
-    return Backbone.Collection.extend({
+    CalendarEventCollection = Backbone.Collection.extend({
         route: 'oro_api_get_calendarevents',
         url: null,
         model: EventModel,
@@ -26,6 +27,13 @@ define([
          * @property {bool}
          */
         subordinate: false,
+
+        /**
+         * @inheritDoc
+         */
+        constructor: function CalendarEventCollection() {
+            CalendarEventCollection.__super__.constructor.apply(this, arguments);
+        },
 
         /**
          * Sets a range of calendar events this collection works with
@@ -58,4 +66,6 @@ define([
             return this.calendar;
         }
     });
+
+    return CalendarEventCollection;
 });

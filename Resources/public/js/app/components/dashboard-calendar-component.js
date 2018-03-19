@@ -6,10 +6,18 @@ define(function(require) {
     var moment = require('moment');
 
     var DashboardCalendarComponent = CalendarComponent.extend({
+        /**
+         * @inheritDoc
+         */
+        constructor: function DashboardCalendarComponent() {
+            DashboardCalendarComponent.__super__.constructor.apply(this, arguments);
+        },
+
         renderCalendar: function() {
             DashboardCalendarComponent.__super__.renderCalendar.call(this);
             this.adoptWidgetActions();
         },
+
         adoptWidgetActions: function() {
             var component = this;
             function roundToHalfAnHour(moment) {

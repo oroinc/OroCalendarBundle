@@ -15,6 +15,16 @@ define([
             click: 'sendUpdate'
         },
 
+        /**
+         * @inheritDoc
+         */
+        constructor: function ChangeStatusView() {
+            ChangeStatusView.__super__.constructor.apply(this, arguments);
+        },
+
+        /**
+         * @inheritDoc
+         */
         initialize: function(options) {
             ChangeStatusView.__super__.initialize.call(this, options);
             this.triggerEventName = _.isEmpty(options.triggerEventName) ? '' : options.triggerEventName;

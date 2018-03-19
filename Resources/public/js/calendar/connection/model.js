@@ -5,12 +5,14 @@ define([
 ], function(_, Backbone, routing) {
     'use strict';
 
+    var CalendarConnectionModel;
+
     /**
      * @export  orocalendar/js/calendar/connection/model
      * @class   orocalendar.calendar.connection.Model
      * @extends Backbone.Model
      */
-    return Backbone.Model.extend({
+    CalendarConnectionModel = Backbone.Model.extend({
         route: 'oro_api_post_calendar_connection',
         urlRoot: null,
 
@@ -41,6 +43,16 @@ define([
             options: null
         },
 
+        /**
+         * @inheritDoc
+         */
+        constructor: function CalendarConnectionModel() {
+            CalendarConnectionModel.__super__.constructor.apply(this, arguments);
+        },
+
+        /**
+         * @inheritDoc
+         */
         initialize: function() {
             this.urlRoot = routing.generate(this.route);
             this._updateCalendarUidAttribute();
@@ -82,4 +94,6 @@ define([
             this.set('calendarUid', calendarUid);
         }
     });
+
+    return CalendarConnectionModel;
 });

@@ -10,10 +10,22 @@ define(function(require) {
 
     RecurrenceEndsView = SwitchableRecurrenceSubview.extend(/** @exports RecurrenceEndsView.prototype */{
         template: require('tpl!orocalendar/templates/calendar/event/recurrence/recurrence-ends.html'),
+
         relatedFields: ['occurrences', 'endTime'],
+
         /** @type {string|null} datetime in ISO format */
         minDatetime: null,
 
+        /**
+         * @inheritDoc
+         */
+        constructor: function RecurrenceEndsView() {
+            RecurrenceEndsView.__super__.constructor.apply(this, arguments);
+        },
+
+        /**
+         * @inheritDoc
+         */
         initialize: function(options) {
             _.extend(this, _.pick(options, 'minDatetime'));
             RecurrenceEndsView.__super__.initialize.call(this, options);

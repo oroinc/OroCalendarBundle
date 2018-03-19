@@ -14,6 +14,16 @@ define(function(require) {
             'change :input[data-related-field]': 'updateModel'
         },
 
+        /**
+         * @inheritDoc
+         */
+        constructor: function AbstractRecurrenceSubview() {
+            AbstractRecurrenceSubview.__super__.constructor.apply(this, arguments);
+        },
+
+        /**
+         * @inheritDoc
+         */
         initialize: function(options) {
             if ('relatedFields' in this === false) {
                 throw new Error('Property "relatedFields" should be declare in successor class');

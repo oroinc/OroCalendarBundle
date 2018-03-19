@@ -10,12 +10,14 @@ define([
 ], function($, _, Backbone, __, messenger, ConnectionCollection, ConnectionModel, tools) {
     'use strict';
 
+    var CalendarConnectionView;
+
     /**
      * @export  orocalendar/js/calendar/connection/view
      * @class   orocalendar.calendar.connection.View
      * @extends Backbone.View
      */
-    return Backbone.View.extend({
+    CalendarConnectionView = Backbone.View.extend({
         /** @property {Object} */
         attrs: {
             calendarUid: 'data-calendar-uid',
@@ -44,6 +46,16 @@ define([
             'mouseout .connection-item': 'onOutCalendarItem'
         },
 
+        /**
+         * @inheritDoc
+         */
+        constructor: function CalendarConnectionView() {
+            CalendarConnectionView.__super__.constructor.apply(this, arguments);
+        },
+
+        /**
+         * @inheritDoc
+         */
         initialize: function(options) {
             this.options = _.defaults(options || {}, this.options);
             this.collection = this.collection || new ConnectionCollection();
@@ -382,4 +394,6 @@ define([
             return true;
         }
     });
+
+    return CalendarConnectionView;
 });

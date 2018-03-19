@@ -24,6 +24,13 @@ define([
         endAtTimeElement: null,
         oldEndAtValue: null,
 
+        /**
+         * @inheritDoc
+         */
+        constructor: function CalendarEventAllDayView() {
+            CalendarEventAllDayView.__super__.constructor.apply(this, arguments);
+        },
+
         render: function() {
             this.handleAllDayEventFlag(this.$('input[name$="[allDay]"]'), 0);
         },

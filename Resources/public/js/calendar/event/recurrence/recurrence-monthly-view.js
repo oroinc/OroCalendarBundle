@@ -10,7 +10,9 @@ define(function(require) {
 
     RecurrenceMonthlyView = AbstractRecurrenceSubview.extend(/** @exports RecurrenceMonthlyView.prototype */{
         template: require('tpl!orocalendar/templates/calendar/event/recurrence/recurrence-monthly.html'),
+
         relatedFields: ['recurrenceType', 'interval', 'instance', 'dayOfWeek', 'dayOfMonth'],
+
         events: {
             'change [data-related-field="instance"]': 'onInstanceChange'
         },
@@ -19,6 +21,16 @@ define(function(require) {
             'change model': 'onModelChange'
         },
 
+        /**
+         * @inheritDoc
+         */
+        constructor: function RecurrenceMonthlyView() {
+            RecurrenceMonthlyView.__super__.constructor.apply(this, arguments);
+        },
+
+        /**
+         * @inheritDoc
+         */
         getTemplateData: function() {
             var data = RecurrenceMonthlyView.__super__.getTemplateData.apply(this, arguments);
             data.repeatOnOptions = _.map(this.model.RECURRENCE_INSTANCE, function(item, key) {

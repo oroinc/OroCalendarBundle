@@ -9,12 +9,14 @@ define([
 ], function($, _, BaseView, __, messenger) {
     'use strict';
 
+    var ChangeCalendarColorView;
+
     /**
      * @export  orocalendar/js/calendar/menu/change-calendar-color
      * @class   orocalendar.calendar.menu.ChangeCalendarColor
      * @extends oroui/js/app/views/base/view
      */
-    return BaseView.extend({
+    ChangeCalendarColorView = BaseView.extend({
         /** @property */
         customColorPickerActionsTemplate: _.template('<div class="form-actions">' +
                 '<button class="btn btn-primary pull-right" data-action="ok" type="button"><%= __("OK") %></button>' +
@@ -28,6 +30,16 @@ define([
             'click button[data-action=cancel]': 'onCancel'
         },
 
+        /**
+         * @inheritDoc
+         */
+        constructor: function ChangeCalendarColorView() {
+            ChangeCalendarColorView.__super__.constructor.apply(this, arguments);
+        },
+
+        /**
+         * @inheritDoc
+         */
         initialize: function(options) {
             this.colorManager = options.colorManager;
             this.connectionsView = options.connectionsView;
@@ -166,4 +178,6 @@ define([
             messenger.showErrorMessage(message, err);
         }
     });
+
+    return ChangeCalendarColorView;
 });

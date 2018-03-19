@@ -29,6 +29,7 @@ define(function(require) {
 
     CalendarView = BaseView.extend({
         MOMENT_BACKEND_FORMAT: dateTimeFormatter.getBackendDateTimeFormat(),
+
         /** @property */
         eventsTemplate: _.template(
             '<div>' +
@@ -95,9 +96,13 @@ define(function(require) {
          * @property {bool}
          */
         enableEventLoading: false,
+
         fullCalendar: null,
+
         eventView: null,
+
         loadingMask: null,
+
         colorManager: null,
 
         /**
@@ -118,6 +123,16 @@ define(function(require) {
          */
         layout: undefined,
 
+        /**
+         * @inheritDoc
+         */
+        constructor: function CalendarView() {
+            CalendarView.__super__.constructor.apply(this, arguments);
+        },
+
+        /**
+         * @inheritDoc
+         */
         initialize: function(options) {
             if (!options) {
                 options = {};

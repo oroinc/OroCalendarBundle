@@ -22,7 +22,14 @@ define([
         },
 
         /**
-         * @constructor
+         * @inheritDoc
+         */
+        constructor: function AttendeeNotifierView() {
+            AttendeeNotifierView.__super__.constructor.apply(this, arguments);
+        },
+
+        /**
+         * @inheritDoc
          */
         initialize: function(options) {
             this.options = _.defaults(_.pick(options || {}, _.keys(this.options)), this.options);

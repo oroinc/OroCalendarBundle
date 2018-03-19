@@ -1,7 +1,7 @@
 define(function(require) {
     'use strict';
 
-    var EventModel;
+    var CalendarEventModel;
     var _ = require('underscore');
     var routing = require('routing');
     var moment = require('moment');
@@ -12,7 +12,7 @@ define(function(require) {
      * @class   orocalendar.calendar.event.Model
      * @extends BaseModel
      */
-    EventModel = BaseModel.extend({
+    CalendarEventModel = BaseModel.extend({
         route: 'oro_api_get_calendarevents',
         urlRoot: null,
         originalId: null, // original id received from a server
@@ -45,6 +45,16 @@ define(function(require) {
             notifyAttendees: 'all'
         },
 
+        /**
+         * @inheritDoc
+         */
+        constructor: function CalendarEventModel() {
+            CalendarEventModel.__super__.constructor.apply(this, arguments);
+        },
+
+        /**
+         * @inheritDoc
+         */
         initialize: function() {
             this.urlRoot = routing.generate(this.route);
             this._updateComputableAttributes();
@@ -56,7 +66,7 @@ define(function(require) {
             var id = this.get(this.idAttribute);
 
             this.set(this.idAttribute, this.originalId, {silent: true});
-            url = EventModel.__super__.url.call(this, arguments);
+            url = CalendarEventModel.__super__.url.call(this, arguments);
             this.set(this.idAttribute, id, {silent: true});
 
             return url;
@@ -106,7 +116,7 @@ define(function(require) {
             options.contentType = 'application/json';
             options.data = JSON.stringify(modelData);
 
-            EventModel.__super__.save.call(this, attrs, options);
+            CalendarEventModel.__super__.save.call(this, attrs, options);
         },
 
         _updateComputableAttributes: function() {
@@ -144,5 +154,5 @@ define(function(require) {
         }
     });
 
-    return EventModel;
+    return CalendarEventModel;
 });

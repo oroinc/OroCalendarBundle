@@ -7,8 +7,19 @@ define(function(require) {
 
     RecurrenceYearlyView = RecurrenceMonthlyView.extend(/** @exports RecurrenceYearlyView.prototype */{
         template: require('tpl!orocalendar/templates/calendar/event/recurrence/recurrence-yearly.html'),
+
         relatedFields: ['recurrenceType', 'interval', 'instance', 'dayOfWeek', 'dayOfMonth', 'monthOfYear'],
 
+        /**
+         * @inheritDoc
+         */
+        constructor: function RecurrenceYearlyView() {
+            RecurrenceYearlyView.__super__.constructor.apply(this, arguments);
+        },
+
+        /**
+         * @inheritDoc
+         */
         getTemplateData: function() {
             var data = RecurrenceYearlyView.__super__.getTemplateData.apply(this, arguments);
             if (data.interval && data.interval >= 12) {

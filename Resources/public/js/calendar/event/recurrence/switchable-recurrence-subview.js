@@ -8,11 +8,19 @@ define(function(require) {
 
     SwitchableRecurrenceSubview = AbstractRecurrenceSubview.extend({
         RADIOBUTTON_SELECTOR: '[data-role="control-section-switcher"]>input[type="radio"]',
+
         SECTION_SELECTOR: '[data-role="control-section-switcher"]',
 
         events: {
             'change [data-role="control-section-switcher"]>input[type="radio"]': 'onSectionSwitch',
             'mousedown [data-role="control-section-switcher"]': 'onSectionSwitchMousedown'
+        },
+
+        /**
+         * @inheritDoc
+         */
+        constructor: function SwitchableRecurrenceSubview() {
+            SwitchableRecurrenceSubview.__super__.constructor.apply(this, arguments);
         },
 
         onSectionSwitchMousedown: function(e) {

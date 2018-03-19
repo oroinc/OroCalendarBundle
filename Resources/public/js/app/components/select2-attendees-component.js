@@ -8,9 +8,20 @@ define(function(require) {
     var Select2AutocompleteComponent = require('oro/select2-autocomplete-component');
 
     Select2AttendeesComponent = Select2AutocompleteComponent.extend({
+        /**
+         * @inheritDoc
+         */
+        constructor: function Select2AttendeesComponent() {
+            Select2AttendeesComponent.__super__.constructor.apply(this, arguments);
+        },
+
+        /**
+         * @inheritDoc
+         */
         initialize: function(options) {
             Select2AttendeesComponent.__super__.initialize.call(this, options);
         },
+
         preConfig: function(config) {
             Select2AttendeesComponent.__super__.preConfig.call(this, config);
             config.maximumInputLength = 50;
@@ -54,6 +65,7 @@ define(function(require) {
 
             return config;
         },
+
         setConfig: function(config) {
             config.selected = config.selected || {};
             config = Select2AttendeesComponent.__super__.setConfig.apply(this, arguments);

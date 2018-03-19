@@ -48,6 +48,16 @@ define(function(require) {
             {fieldName: 'attendees', emptyValue: '', selector: 'input[name$="[attendees]"]'}
         ],
 
+        /**
+         * @inheritDoc
+         */
+        constructor: function CalendarEventView() {
+            CalendarEventView.__super__.constructor.apply(this, arguments);
+        },
+
+        /**
+         * @inheritDoc
+         */
         initialize: function(options) {
             this.options = _.defaults(_.pick(options || {}, _.keys(this.options)), this.options);
             this.viewTemplate = _.template($(options.viewTemplateSelector).html());
