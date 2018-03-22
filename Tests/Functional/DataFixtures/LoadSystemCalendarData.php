@@ -9,8 +9,8 @@ use Oro\Bundle\TestFrameworkBundle\Test\DataFixtures\AbstractFixture;
 
 class LoadSystemCalendarData extends AbstractFixture implements DependentFixtureInterface
 {
-    public const SYSTEM_CALENDAR_PUBLIC = 'system_calendar.public';
-    public const SYSTEM_CALENDAR_ORGANIZATION = 'system_calendar.organization';
+    const SYSTEM_CALENDAR_PUBLIC = 'system_calendar.public';
+    const SYSTEM_CALENDAR_ORGANIZATION = 'system_calendar.organization';
 
     /** @var array */
     private $calendars = [
