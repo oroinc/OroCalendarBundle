@@ -2,6 +2,8 @@
 
 namespace Oro\Bundle\CalendarBundle\Form\Extension;
 
+use Oro\Bundle\CalendarBundle\Form\Type\CalendarEventApiType;
+
 class CalendarEventApiTypeExtension extends CalendarEventTypeExtension
 {
     /**
@@ -9,6 +11,6 @@ class CalendarEventApiTypeExtension extends CalendarEventTypeExtension
      */
     public function getExtendedType()
     {
-        return 'oro_calendar_event_api';
+        return CalendarEventApiType::class;
     }
 }

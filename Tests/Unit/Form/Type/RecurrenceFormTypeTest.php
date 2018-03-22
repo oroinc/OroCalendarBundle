@@ -4,7 +4,9 @@ namespace Oro\Bundle\CalendarBundle\Tests\Unit\Form\Type;
 
 use Oro\Bundle\CalendarBundle\Form\Type\RecurrenceFormType;
 use Oro\Bundle\CalendarBundle\Model\Recurrence;
+use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\Extension\Core\Type\DateTimeType;
+use Symfony\Component\Form\Extension\Core\Type\IntegerType;
 
 class RecurrenceFormTypeTest extends \PHPUnit_Framework_TestCase
 {
@@ -36,7 +38,7 @@ class RecurrenceFormTypeTest extends \PHPUnit_Framework_TestCase
             ->method('add')
             ->with(
                 'recurrenceType',
-                'choice',
+                ChoiceType::class,
                 [
                     'required' => true,
                     'label' => 'oro.calendar.recurrence.entity_label',
@@ -49,7 +51,7 @@ class RecurrenceFormTypeTest extends \PHPUnit_Framework_TestCase
             ->method('add')
             ->with(
                 'interval',
-                'integer',
+                IntegerType::class,
                 [
                     'required' => true,
                     'label' => 'oro.calendar.recurrence.interval.label',
@@ -60,7 +62,7 @@ class RecurrenceFormTypeTest extends \PHPUnit_Framework_TestCase
             ->method('add')
             ->with(
                 'instance',
-                'choice',
+                ChoiceType::class,
                 [
                     'required' => false,
                     'label' => 'oro.calendar.recurrence.instance.label',
@@ -73,7 +75,7 @@ class RecurrenceFormTypeTest extends \PHPUnit_Framework_TestCase
             ->method('add')
             ->with(
                 'dayOfWeek',
-                'choice',
+                ChoiceType::class,
                 [
                     'required' => false,
                     'label' => 'oro.calendar.recurrence.day_of_week.label',
@@ -86,7 +88,7 @@ class RecurrenceFormTypeTest extends \PHPUnit_Framework_TestCase
             ->method('add')
             ->with(
                 'dayOfMonth',
-                'integer',
+                IntegerType::class,
                 [
                     'required' => false,
                     'label' => 'oro.calendar.recurrence.day_of_month.label',
@@ -97,7 +99,7 @@ class RecurrenceFormTypeTest extends \PHPUnit_Framework_TestCase
             ->method('add')
             ->with(
                 'monthOfYear',
-                'integer',
+                IntegerType::class,
                 [
                     'required' => false,
                     'label' => 'oro.calendar.recurrence.month_of_year.label',
@@ -108,7 +110,7 @@ class RecurrenceFormTypeTest extends \PHPUnit_Framework_TestCase
             ->method('add')
             ->with(
                 'startTime',
-                'datetime',
+                DateTimeType::class,
                 [
                     'required' => true,
                     'label' => 'oro.calendar.recurrence.start_time.label',
@@ -123,7 +125,7 @@ class RecurrenceFormTypeTest extends \PHPUnit_Framework_TestCase
             ->method('add')
             ->with(
                 'endTime',
-                'datetime',
+                DateTimeType::class,
                 [
                     'required' => false,
                     'label' => 'oro.calendar.recurrence.end_time.label',
@@ -138,7 +140,7 @@ class RecurrenceFormTypeTest extends \PHPUnit_Framework_TestCase
             ->method('add')
             ->with(
                 'occurrences',
-                'integer',
+                IntegerType::class,
                 [
                     'required' => false,
                     'label' => 'oro.calendar.recurrence.occurrences.label',
@@ -163,10 +165,5 @@ class RecurrenceFormTypeTest extends \PHPUnit_Framework_TestCase
             ]);
 
         $this->type->configureOptions($resolver);
-    }
-
-    public function testGetName()
-    {
-        $this->assertEquals('oro_calendar_event_recurrence', $this->type->getName());
     }
 }

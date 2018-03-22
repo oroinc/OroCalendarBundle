@@ -4,7 +4,10 @@ namespace Oro\Bundle\CalendarBundle\Form\Type;
 
 use Oro\Bundle\CalendarBundle\Model\Recurrence;
 use Symfony\Component\Form\AbstractType;
+use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\Extension\Core\Type\DateTimeType;
+use Symfony\Component\Form\Extension\Core\Type\IntegerType;
+use Symfony\Component\Form\Extension\Core\Type\TimezoneType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
@@ -31,7 +34,7 @@ class RecurrenceFormType extends AbstractType
         $builder
             ->add(
                 'recurrenceType',
-                'choice',
+                ChoiceType::class,
                 [
                     'required' => true,
                     'label' => 'oro.calendar.recurrence.entity_label',
@@ -41,7 +44,7 @@ class RecurrenceFormType extends AbstractType
             )
             ->add(
                 'interval',
-                'integer',
+                IntegerType::class,
                 [
                     'required' => true,
                     'label' => 'oro.calendar.recurrence.interval.label',
@@ -49,7 +52,7 @@ class RecurrenceFormType extends AbstractType
             )
             ->add(
                 'instance',
-                'choice',
+                ChoiceType::class,
                 [
                     'required' => false,
                     'label' => 'oro.calendar.recurrence.instance.label',
@@ -59,7 +62,7 @@ class RecurrenceFormType extends AbstractType
             )
             ->add(
                 'dayOfWeek',
-                'choice',
+                ChoiceType::class,
                 [
                     'required' => false,
                     'label' => 'oro.calendar.recurrence.day_of_week.label',
@@ -69,7 +72,7 @@ class RecurrenceFormType extends AbstractType
             )
             ->add(
                 'dayOfMonth',
-                'integer',
+                IntegerType::class,
                 [
                     'required' => false,
                     'label' => 'oro.calendar.recurrence.day_of_month.label',
@@ -77,7 +80,7 @@ class RecurrenceFormType extends AbstractType
             )
             ->add(
                 'monthOfYear',
-                'integer',
+                IntegerType::class,
                 [
                     'required' => false,
                     'label' => 'oro.calendar.recurrence.month_of_year.label',
@@ -85,7 +88,7 @@ class RecurrenceFormType extends AbstractType
             )
             ->add(
                 'startTime',
-                'datetime',
+                DateTimeType::class,
                 [
                     'required' => true,
                     'label' => 'oro.calendar.recurrence.start_time.label',
@@ -97,7 +100,7 @@ class RecurrenceFormType extends AbstractType
             )
             ->add(
                 'endTime',
-                'datetime',
+                DateTimeType::class,
                 [
                     'required' => false,
                     'label' => 'oro.calendar.recurrence.end_time.label',
@@ -109,7 +112,7 @@ class RecurrenceFormType extends AbstractType
             )
             ->add(
                 'occurrences',
-                'integer',
+                IntegerType::class,
                 [
                     'required' => false,
                     'label' => 'oro.calendar.recurrence.occurrences.label',
@@ -118,7 +121,7 @@ class RecurrenceFormType extends AbstractType
             )
             ->add(
                 'timeZone',
-                'timezone',
+                TimezoneType::class,
                 [
                     'required' => true,
                     'label' => 'oro.calendar.recurrence.timezone.label',

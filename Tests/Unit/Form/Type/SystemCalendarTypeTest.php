@@ -5,8 +5,8 @@ namespace Oro\Bundle\CalendarBundle\Tests\Unit\Form\Type;
 use Oro\Bundle\CalendarBundle\Entity\SystemCalendar;
 use Oro\Bundle\CalendarBundle\Form\Type\SystemCalendarType;
 use Oro\Bundle\FormBundle\Form\Type\OroSimpleColorPickerType;
+use Oro\Component\Testing\Unit\PreloadedExtension;
 use Symfony\Component\Form\AbstractType;
-use Symfony\Component\Form\PreloadedExtension;
 use Symfony\Component\Form\Test\TypeTestCase;
 use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
 
@@ -55,7 +55,8 @@ class SystemCalendarTypeTest extends TypeTestCase
     protected function loadTypes()
     {
         $types = [
-            new OroSimpleColorPickerType($this->configManager, $this->translator),
+            SystemCalendarType::class => new SystemCalendarType($this->authorizationChecker, $this->calendarConfig),
+            OroSimpleColorPickerType::class => new OroSimpleColorPickerType($this->configManager, $this->translator),
         ];
 
         $keys = array_map(
@@ -94,8 +95,7 @@ class SystemCalendarTypeTest extends TypeTestCase
                 )
             );
 
-        $type = new SystemCalendarType($this->authorizationChecker, $this->calendarConfig);
-        $form = $this->factory->create($type);
+        $form = $this->factory->create(SystemCalendarType::class);
         $form->submit($formData);
 
         $this->assertTrue($form->isSynchronized());
@@ -122,8 +122,7 @@ class SystemCalendarTypeTest extends TypeTestCase
             ->method('isSystemCalendarEnabled')
             ->will($this->returnValue(false));
 
-        $type = new SystemCalendarType($this->authorizationChecker, $this->calendarConfig);
-        $form = $this->factory->create($type);
+        $form = $this->factory->create(SystemCalendarType::class);
         $form->submit($formData);
 
         $this->assertTrue($form->isSynchronized());
@@ -150,8 +149,7 @@ class SystemCalendarTypeTest extends TypeTestCase
             ->method('isSystemCalendarEnabled')
             ->will($this->returnValue(true));
 
-        $type = new SystemCalendarType($this->authorizationChecker, $this->calendarConfig);
-        $form = $this->factory->create($type);
+        $form = $this->factory->create(SystemCalendarType::class);
         $form->submit($formData);
 
         $this->assertTrue($form->isSynchronized());
@@ -179,11 +177,5 @@ class SystemCalendarTypeTest extends TypeTestCase
 
         $type = new SystemCalendarType($this->authorizationChecker, $this->calendarConfig);
         $type->configureOptions($resolver);
-    }
-
-    public function testGetName()
-    {
-        $type = new SystemCalendarType($this->authorizationChecker, $this->calendarConfig);
-        $this->assertEquals('oro_system_calendar', $type->getName());
     }
 }

@@ -7,8 +7,8 @@ use Oro\Bundle\CalendarBundle\Entity\CalendarProperty;
 use Oro\Bundle\CalendarBundle\Form\Type\CalendarPropertyApiType;
 use Oro\Bundle\CalendarBundle\Tests\Unit\ReflectionUtil;
 use Oro\Bundle\FormBundle\Form\Type\EntityIdentifierType;
+use Oro\Component\Testing\Unit\PreloadedExtension;
 use Symfony\Component\Form\AbstractType;
-use Symfony\Component\Form\PreloadedExtension;
 use Symfony\Component\Form\Test\TypeTestCase;
 
 class CalendarPropertyApiTypeTest extends TypeTestCase
@@ -97,8 +97,7 @@ class CalendarPropertyApiTypeTest extends TypeTestCase
             'backgroundColor' => '#00FF00',
         ];
 
-        $type = new CalendarPropertyApiType();
-        $form = $this->factory->create($type);
+        $form = $this->factory->create(CalendarPropertyApiType::class);
 
         $form->submit($formData);
 
@@ -139,11 +138,5 @@ class CalendarPropertyApiTypeTest extends TypeTestCase
 
         $type = new CalendarPropertyApiType();
         $type->configureOptions($resolver);
-    }
-
-    public function testGetName()
-    {
-        $type = new CalendarPropertyApiType();
-        $this->assertEquals('oro_calendar_property_api', $type->getName());
     }
 }

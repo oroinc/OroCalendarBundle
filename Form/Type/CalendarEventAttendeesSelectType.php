@@ -6,6 +6,7 @@ use Oro\Bundle\ActivityBundle\Form\DataTransformer\ContextsToViewTransformer;
 use Oro\Bundle\CalendarBundle\Entity\Attendee;
 use Oro\Bundle\CalendarBundle\Manager\AttendeeManager;
 use Oro\Bundle\CalendarBundle\Manager\AttendeeRelationManager;
+use Oro\Bundle\FormBundle\Form\Type\Select2HiddenType;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\DataTransformerInterface;
 use Symfony\Component\Form\FormBuilderInterface;
@@ -147,7 +148,7 @@ class CalendarEventAttendeesSelectType extends AbstractType
      */
     public function getParent()
     {
-        return 'oro_select2_hidden';
+        return Select2HiddenType::class;
     }
 
     /**
