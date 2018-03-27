@@ -114,7 +114,7 @@ class CalendarEventHandlerTest extends \PHPUnit_Framework_TestCase
         $this->entity->setCalendar($calendar);
 
         $this->form->expects($this->never())
-            ->method('submit');
+            ->method('handleRequest');
 
         $this->assertFalse(
             $this->handler->process($this->entity)
@@ -146,7 +146,7 @@ class CalendarEventHandlerTest extends \PHPUnit_Framework_TestCase
             ->method('setData')
             ->with($this->identicalTo($this->entity));
         $this->form->expects($this->once())
-            ->method('submit')
+            ->method('handleRequest')
             ->with($this->identicalTo($this->request));
         $this->form->expects($this->once())
             ->method('isValid')
@@ -179,7 +179,7 @@ class CalendarEventHandlerTest extends \PHPUnit_Framework_TestCase
             ->method('setData')
             ->with($this->identicalTo($this->entity));
         $this->form->expects($this->once())
-            ->method('submit')
+            ->method('handleRequest')
             ->with($this->identicalTo($this->request));
         $this->form->expects($this->once())
             ->method('isValid')
@@ -277,7 +277,7 @@ class CalendarEventHandlerTest extends \PHPUnit_Framework_TestCase
         $this->request->setMethod($method);
 
         $this->form->expects($this->never())
-            ->method('submit')
+            ->method('handleRequest')
             ->with($this->identicalTo($this->request));
 
         $this->tokenAccessor->expects($this->once())
@@ -318,7 +318,7 @@ class CalendarEventHandlerTest extends \PHPUnit_Framework_TestCase
             ->method('setData')
             ->with($this->identicalTo($this->entity));
         $this->form->expects($this->once())
-            ->method('submit')
+            ->method('handleRequest')
             ->with($this->identicalTo($this->request));
         $this->form->expects($this->once())
             ->method('isValid')
@@ -406,7 +406,7 @@ class CalendarEventHandlerTest extends \PHPUnit_Framework_TestCase
             ->method('setData')
             ->with($this->identicalTo($this->entity));
         $this->form->expects($this->once())
-            ->method('submit')
+            ->method('handleRequest')
             ->with($this->identicalTo($this->request));
         $this->form->expects($this->once())
             ->method('isValid')

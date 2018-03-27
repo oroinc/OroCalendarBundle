@@ -55,7 +55,7 @@ class SystemCalendarHandlerTest extends \PHPUnit_Framework_TestCase
             ->method('setData')
             ->with($this->identicalTo($this->entity));
         $this->form->expects($this->once())
-            ->method('submit')
+            ->method('handleRequest')
             ->with($this->identicalTo($this->request));
         $this->form->expects($this->once())
             ->method('isValid')
@@ -83,7 +83,7 @@ class SystemCalendarHandlerTest extends \PHPUnit_Framework_TestCase
             ->method('setData')
             ->with($this->identicalTo($this->entity));
         $this->form->expects($this->once())
-            ->method('submit')
+            ->method('handleRequest')
             ->with($this->identicalTo($this->request));
         $this->form->expects($this->once())
             ->method('isValid')

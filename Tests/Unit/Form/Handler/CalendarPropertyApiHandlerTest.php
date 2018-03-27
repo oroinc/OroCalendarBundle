@@ -33,7 +33,7 @@ class CalendarPropertyApiHandlerTest extends \PHPUnit_Framework_TestCase
             ->method('setData')
             ->with($this->identicalTo($obj));
         $form->expects($this->once())
-            ->method('submit')
+            ->method('handleRequest')
             ->with($this->identicalTo($request));
         $form->expects($this->once())
             ->method('isValid')
