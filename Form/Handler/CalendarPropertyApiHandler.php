@@ -4,11 +4,14 @@ namespace Oro\Bundle\CalendarBundle\Form\Handler;
 
 use Doctrine\Common\Persistence\ObjectManager;
 use Oro\Bundle\CalendarBundle\Entity\CalendarProperty;
+use Oro\Bundle\FormBundle\Form\Handler\RequestHandlerTrait;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\HttpFoundation\RequestStack;
 
 class CalendarPropertyApiHandler
 {
+    use RequestHandlerTrait;
+
     /**
      * @var FormInterface
      */
@@ -49,7 +52,7 @@ class CalendarPropertyApiHandler
 
         $request = $this->requestStack->getCurrentRequest();
         if (in_array($request->getMethod(), ['POST', 'PUT'], true)) {
-            $this->form->handleRequest($request);
+            $this->submitPostPutRequest($this->form, $request);
 
             if ($this->form->isValid()) {
                 $this->onSuccess($entity);

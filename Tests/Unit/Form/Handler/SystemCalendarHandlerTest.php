@@ -11,6 +11,8 @@ use Symfony\Component\HttpFoundation\RequestStack;
 
 class SystemCalendarHandlerTest extends \PHPUnit_Framework_TestCase
 {
+    const FORM_DATA = ['field' => 'value'];
+
     /** @var \PHPUnit_Framework_MockObject_MockObject */
     protected $form;
 
@@ -49,14 +51,15 @@ class SystemCalendarHandlerTest extends \PHPUnit_Framework_TestCase
      */
     public function testProcessInvalidData($method)
     {
+        $this->request->initialize([], self::FORM_DATA);
         $this->request->setMethod($method);
 
         $this->form->expects($this->once())
             ->method('setData')
             ->with($this->identicalTo($this->entity));
         $this->form->expects($this->once())
-            ->method('handleRequest')
-            ->with($this->identicalTo($this->request));
+            ->method('submit')
+            ->with($this->identicalTo(self::FORM_DATA));
         $this->form->expects($this->once())
             ->method('isValid')
             ->will($this->returnValue(false));
@@ -77,14 +80,15 @@ class SystemCalendarHandlerTest extends \PHPUnit_Framework_TestCase
      */
     public function testProcessValidData($method)
     {
+        $this->request->initialize([], self::FORM_DATA);
         $this->request->setMethod($method);
 
         $this->form->expects($this->once())
             ->method('setData')
             ->with($this->identicalTo($this->entity));
         $this->form->expects($this->once())
-            ->method('handleRequest')
-            ->with($this->identicalTo($this->request));
+            ->method('submit')
+            ->with($this->identicalTo(self::FORM_DATA));
         $this->form->expects($this->once())
             ->method('isValid')
             ->will($this->returnValue(true));

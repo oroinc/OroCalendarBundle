@@ -4,9 +4,12 @@ namespace Oro\Bundle\CalendarBundle\Form\Handler;
 
 use Oro\Bundle\CalendarBundle\Entity\CalendarEvent;
 use Oro\Bundle\CalendarBundle\Manager\CalendarEvent\NotificationManager;
+use Oro\Bundle\FormBundle\Form\Handler\RequestHandlerTrait;
 
 class SystemCalendarEventHandler extends AbstractCalendarEventHandler
 {
+    use RequestHandlerTrait;
+
     /**
      * Process form
      *
@@ -22,7 +25,7 @@ class SystemCalendarEventHandler extends AbstractCalendarEventHandler
 
         if (in_array($request->getMethod(), array('POST', 'PUT'))) {
             $originalEntity = clone $entity;
-            $this->form->handleRequest($request);
+            $this->submitPostPutRequest($this->form, $request);
 
             if ($this->form->isValid()) {
                 // TODO: should be refactored after finishing BAP-8722

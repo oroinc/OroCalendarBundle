@@ -17,6 +17,8 @@ use Symfony\Component\HttpFoundation\RequestStack;
 
 class CalendarEventHandlerTest extends \PHPUnit_Framework_TestCase
 {
+    const FORM_DATA = ['field' => 'value'];
+
     /** @var \PHPUnit_Framework_MockObject_MockObject */
     protected $form;
 
@@ -114,7 +116,7 @@ class CalendarEventHandlerTest extends \PHPUnit_Framework_TestCase
         $this->entity->setCalendar($calendar);
 
         $this->form->expects($this->never())
-            ->method('handleRequest');
+            ->method('submit');
 
         $this->assertFalse(
             $this->handler->process($this->entity)
@@ -140,14 +142,15 @@ class CalendarEventHandlerTest extends \PHPUnit_Framework_TestCase
             ->getMock();
         $this->entity->setCalendar($calendar);
 
+        $this->request->initialize([], self::FORM_DATA);
         $this->request->setMethod($method);
 
         $this->form->expects($this->once())
             ->method('setData')
             ->with($this->identicalTo($this->entity));
         $this->form->expects($this->once())
-            ->method('handleRequest')
-            ->with($this->identicalTo($this->request));
+            ->method('submit')
+            ->with($this->identicalTo(self::FORM_DATA));
         $this->form->expects($this->once())
             ->method('isValid')
             ->will($this->returnValue(false));
@@ -173,14 +176,15 @@ class CalendarEventHandlerTest extends \PHPUnit_Framework_TestCase
             ->getMock();
         $this->entity->setCalendar($calendar);
 
+        $this->request->initialize([], self::FORM_DATA);
         $this->request->setMethod($method);
 
         $this->form->expects($this->once())
             ->method('setData')
             ->with($this->identicalTo($this->entity));
         $this->form->expects($this->once())
-            ->method('handleRequest')
-            ->with($this->identicalTo($this->request));
+            ->method('submit')
+            ->with($this->identicalTo(self::FORM_DATA));
         $this->form->expects($this->once())
             ->method('isValid')
             ->will($this->returnValue(true));
@@ -219,6 +223,7 @@ class CalendarEventHandlerTest extends \PHPUnit_Framework_TestCase
         ReflectionUtil::setId($organization, 1);
         $owner->setOrganization($organization);
 
+        $this->request->initialize([], self::FORM_DATA);
         $this->request->setMethod($method);
         $this->form->expects($this->any())
             ->method('get')
@@ -277,8 +282,8 @@ class CalendarEventHandlerTest extends \PHPUnit_Framework_TestCase
         $this->request->setMethod($method);
 
         $this->form->expects($this->never())
-            ->method('handleRequest')
-            ->with($this->identicalTo($this->request));
+            ->method('submit')
+            ->with($this->identicalTo(self::FORM_DATA));
 
         $this->tokenAccessor->expects($this->once())
             ->method('getUserId')
@@ -312,14 +317,15 @@ class CalendarEventHandlerTest extends \PHPUnit_Framework_TestCase
             ->method('getAction')
             ->will($this->returnValue('assign'));
 
+        $this->request->initialize([], self::FORM_DATA);
         $this->request->setMethod($method);
 
         $this->form->expects($this->once())
             ->method('setData')
             ->with($this->identicalTo($this->entity));
         $this->form->expects($this->once())
-            ->method('handleRequest')
-            ->with($this->identicalTo($this->request));
+            ->method('submit')
+            ->with($this->identicalTo(self::FORM_DATA));
         $this->form->expects($this->once())
             ->method('isValid')
             ->will($this->returnValue(true));
@@ -400,14 +406,15 @@ class CalendarEventHandlerTest extends \PHPUnit_Framework_TestCase
             ->method('getAction')
             ->will($this->returnValue('activity'));
 
+        $this->request->initialize([], self::FORM_DATA);
         $this->request->setMethod($method);
 
         $this->form->expects($this->once())
             ->method('setData')
             ->with($this->identicalTo($this->entity));
         $this->form->expects($this->once())
-            ->method('handleRequest')
-            ->with($this->identicalTo($this->request));
+            ->method('submit')
+            ->with($this->identicalTo(self::FORM_DATA));
         $this->form->expects($this->once())
             ->method('isValid')
             ->will($this->returnValue(true));

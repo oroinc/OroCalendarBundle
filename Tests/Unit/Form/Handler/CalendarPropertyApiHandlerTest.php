@@ -11,6 +11,8 @@ use Symfony\Component\HttpFoundation\RequestStack;
 
 class CalendarPropertyApiHandlerTest extends \PHPUnit_Framework_TestCase
 {
+    const FORM_DATA = ['field' => 'value'];
+
     /**
      * @dataProvider supportedMethods
      *
@@ -22,6 +24,8 @@ class CalendarPropertyApiHandlerTest extends \PHPUnit_Framework_TestCase
         $om = $this->createMock(ObjectManager::class);
 
         $request = new Request();
+
+        $request->initialize([], self::FORM_DATA);
         $request->setMethod($method);
 
         $requestStack = new RequestStack();
@@ -33,8 +37,8 @@ class CalendarPropertyApiHandlerTest extends \PHPUnit_Framework_TestCase
             ->method('setData')
             ->with($this->identicalTo($obj));
         $form->expects($this->once())
-            ->method('handleRequest')
-            ->with($this->identicalTo($request));
+            ->method('submit')
+            ->with($this->identicalTo(self::FORM_DATA));
         $form->expects($this->once())
             ->method('isValid')
             ->will($this->returnValue(true));

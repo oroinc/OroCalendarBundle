@@ -6,12 +6,15 @@ use Oro\Bundle\CalendarBundle\Entity\Calendar;
 use Oro\Bundle\CalendarBundle\Entity\CalendarEvent;
 use Oro\Bundle\CalendarBundle\Manager\CalendarEvent\NotificationManager;
 use Oro\Bundle\EntityBundle\Tools\EntityRoutingHelper;
+use Oro\Bundle\FormBundle\Form\Handler\RequestHandlerTrait;
 use Oro\Bundle\UserBundle\Entity\User;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Security\Core\Exception\AccessDeniedException;
 
 class CalendarEventHandler extends AbstractCalendarEventHandler
 {
+    use RequestHandlerTrait;
+
     /**
      * @var EntityRoutingHelper
      */
@@ -49,7 +52,7 @@ class CalendarEventHandler extends AbstractCalendarEventHandler
 
             $this->ensureCalendarSet($entity);
 
-            $this->form->handleRequest($request);
+            $this->submitPostPutRequest($this->form, $request);
 
             if ($this->form->isValid()) {
                 // TODO: should be refactored after finishing BAP-8722
