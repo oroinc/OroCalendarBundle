@@ -169,6 +169,12 @@ class CalendarChoiceTypeTest extends TypeTestCase
         $this->assertTrue($form->isSynchronized());
     }
 
+    public function testGetName()
+    {
+        $type = new CalendarChoiceType($this->calendarEventManager, $this->translator);
+        $this->assertEquals('oro_calendar_choice', $type->getName());
+    }
+
     public function testGetParent()
     {
         $type = new CalendarChoiceType($this->calendarEventManager, $this->translator);

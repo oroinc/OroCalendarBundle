@@ -277,6 +277,11 @@ class CalendarEventApiTypeTest extends TypeTestCase
         $this->calendarEventApiType->configureOptions($resolver);
     }
 
+    public function testGetName()
+    {
+        $this->assertEquals('oro_calendar_event_api', $this->calendarEventApiType->getName());
+    }
+
     /**
      * @return AbstractType[]
      */

@@ -178,4 +178,10 @@ class SystemCalendarTypeTest extends TypeTestCase
         $type = new SystemCalendarType($this->authorizationChecker, $this->calendarConfig);
         $type->configureOptions($resolver);
     }
+
+    public function testGetName()
+    {
+        $type = new SystemCalendarType($this->authorizationChecker, $this->calendarConfig);
+        $this->assertEquals('oro_system_calendar', $type->getName());
+    }
 }
