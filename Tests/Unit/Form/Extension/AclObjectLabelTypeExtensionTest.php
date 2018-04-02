@@ -3,6 +3,7 @@
 namespace Oro\Bundle\CalendarBundle\Tests\Unit\Form\Extension;
 
 use Oro\Bundle\CalendarBundle\Form\Extension\AclObjectLabelTypeExtension;
+use Oro\Bundle\SecurityBundle\Form\Type\ObjectLabelType;
 use Symfony\Component\Form\FormView;
 
 class AclObjectLabelTypeExtensionTest extends \PHPUnit_Framework_TestCase
@@ -42,6 +43,6 @@ class AclObjectLabelTypeExtensionTest extends \PHPUnit_Framework_TestCase
 
     public function testGetExtendedType()
     {
-        $this->assertEquals('oro_acl_label', $this->formExtension->getExtendedType());
+        $this->assertEquals(ObjectLabelType::class, $this->formExtension->getExtendedType());
     }
 }

@@ -3,6 +3,7 @@
 namespace Oro\Bundle\CalendarBundle\Form\Extension;
 
 use Oro\Bundle\CalendarBundle\Entity\CalendarEvent;
+use Oro\Bundle\CalendarBundle\Form\Type\CalendarEventType;
 use Oro\Bundle\CalendarBundle\Resolver\EventOrganizerResolver;
 use Symfony\Component\Form\AbstractTypeExtension;
 use Symfony\Component\Form\Extension\Core\Type\EmailType;
@@ -52,6 +53,6 @@ class CalendarEventTypeExtension extends AbstractTypeExtension
      */
     public function getExtendedType()
     {
-        return 'oro_calendar_event';
+        return CalendarEventType::class;
     }
 }

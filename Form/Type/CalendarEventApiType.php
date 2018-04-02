@@ -7,9 +7,15 @@ use Oro\Bundle\CalendarBundle\Form\EventListener\CalendarEventApiTypeSubscriber;
 use Oro\Bundle\CalendarBundle\Form\EventListener\CalendarEventRecurrenceSubscriber;
 use Oro\Bundle\CalendarBundle\Manager\CalendarEvent\NotificationManager;
 use Oro\Bundle\CalendarBundle\Manager\CalendarEventManager;
+use Oro\Bundle\FormBundle\Form\Type\CollectionType;
+use Oro\Bundle\FormBundle\Form\Type\EntityIdentifierType;
+use Oro\Bundle\ReminderBundle\Form\Type\ReminderCollectionType;
 use Oro\Bundle\SoapBundle\Form\EventListener\PatchSubscriber;
 use Symfony\Component\Form\AbstractType;
+use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
 use Symfony\Component\Form\Extension\Core\Type\DateTimeType;
+use Symfony\Component\Form\Extension\Core\Type\HiddenType;
+use Symfony\Component\Form\Extension\Core\Type\IntegerType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
@@ -45,11 +51,11 @@ class CalendarEventApiType extends AbstractType
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         $builder
-            ->add('id', 'hidden', ['mapped' => false])
+            ->add('id', HiddenType::class, ['mapped' => false])
             ->add('uid', TextType::class, ['required' => false])
             ->add(
                 'calendar',
-                'integer',
+                IntegerType::class,
                 [
                     'required' => false,
                     'mapped'   => false,
@@ -57,17 +63,17 @@ class CalendarEventApiType extends AbstractType
             )
             ->add(
                 'calendarAlias',
-                'text',
+                TextType::class,
                 [
                     'required' => false,
                     'mapped'   => false,
                 ]
             )
-            ->add('title', 'text', ['required' => true])
-            ->add('description', 'text', ['required' => false])
+            ->add('title', TextType::class, ['required' => true])
+            ->add('description', TextType::class, ['required' => false])
             ->add(
                 'start',
-                'datetime',
+                DateTimeType::class,
                 [
                     'required'       => true,
                     'with_seconds'   => true,
@@ -78,7 +84,7 @@ class CalendarEventApiType extends AbstractType
             )
             ->add(
                 'end',
-                'datetime',
+                DateTimeType::class,
                 [
                     'required'       => true,
                     'with_seconds'   => true,
@@ -87,16 +93,16 @@ class CalendarEventApiType extends AbstractType
                     'model_timezone' => 'UTC',
                 ]
             )
-            ->add('allDay', 'checkbox', ['required' => false])
-            ->add('backgroundColor', 'text', ['required' => false])
-            ->add('reminders', 'oro_reminder_collection', ['required' => false])
+            ->add('allDay', CheckboxType::class, ['required' => false])
+            ->add('backgroundColor', TextType::class, ['required' => false])
+            ->add('reminders', ReminderCollectionType::class, ['required' => false])
             ->add(
                 $builder->create(
                     'attendees',
-                    'oro_collection',
+                    CollectionType::class,
                     [
                         'property_path' => 'attendees',
-                        'type' => 'oro_calendar_event_attendees_api',
+                        'type' => CalendarEventAttendeesApiType::class,
                         'error_bubbling' => false,
                         'entry_options' => [
                             'required' => false,
@@ -108,7 +114,7 @@ class CalendarEventApiType extends AbstractType
             )
             ->add(
                 'notifyAttendees',
-                'hidden',
+                HiddenType::class,
                 [
                     'mapped'         => false,
                     'error_bubbling' => false,
@@ -123,7 +129,7 @@ class CalendarEventApiType extends AbstractType
             )
             ->add(
                 'createdAt',
-                'datetime',
+                DateTimeType::class,
                 [
                     'required'       => false,
                     'with_seconds'   => true,
@@ -134,14 +140,14 @@ class CalendarEventApiType extends AbstractType
             )
             ->add(
                 'recurrence',
-                'oro_calendar_event_recurrence',
+                RecurrenceFormType::class,
                 [
                     'required' => false,
                 ]
             )
             ->add(
                 'recurringEventId',
-                'oro_entity_identifier',
+                EntityIdentifierType::class,
                 [
                     'required'      => false,
                     'property_path' => 'recurringEvent',
@@ -151,7 +157,7 @@ class CalendarEventApiType extends AbstractType
             )
             ->add(
                 'originalStart',
-                'datetime',
+                DateTimeType::class,
                 [
                     'required'       => false,
                     'with_seconds'   => true,
@@ -162,7 +168,7 @@ class CalendarEventApiType extends AbstractType
             )
             ->add(
                 'isCancelled',
-                'checkbox',
+                CheckboxType::class,
                 [
                     'required' => false,
                     'property_path' => 'cancelled',
@@ -170,7 +176,7 @@ class CalendarEventApiType extends AbstractType
             )
             ->add(
                 'updateExceptions',
-                'checkbox',
+                CheckboxType::class,
                 [
                     'required' => false,
                     'mapped' => false,

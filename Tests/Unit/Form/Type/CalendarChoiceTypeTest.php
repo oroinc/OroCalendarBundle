@@ -4,6 +4,9 @@ namespace Oro\Bundle\CalendarBundle\Tests\Unit\Form\Type;
 
 use Oro\Bundle\CalendarBundle\Entity\CalendarEvent;
 use Oro\Bundle\CalendarBundle\Form\Type\CalendarChoiceType;
+use Oro\Component\Testing\Unit\PreloadedExtension;
+use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
+use Symfony\Component\Form\Extension\Core\Type\FormType;
 use Symfony\Component\Form\Test\TypeTestCase;
 
 class CalendarChoiceTypeTest extends TypeTestCase
@@ -21,7 +24,11 @@ class CalendarChoiceTypeTest extends TypeTestCase
             ->getMock();
         $this->translator = $this->createMock('Symfony\Component\Translation\TranslatorInterface');
 
-        return [];
+        return [
+            new PreloadedExtension([
+                new CalendarChoiceType($this->calendarEventManager, $this->translator)
+            ], [])
+        ];
     }
 
     public function testSubmitValidData()
@@ -78,10 +85,9 @@ class CalendarChoiceTypeTest extends TypeTestCase
                 )
             );
 
-        $type = new CalendarChoiceType($this->calendarEventManager, $this->translator);
         $form = $this->factory->createNamed(
             'calendarUid',
-            $type,
+            CalendarChoiceType::class,
             null,
             [
                 'mapped'          => false,
@@ -89,7 +95,7 @@ class CalendarChoiceTypeTest extends TypeTestCase
             ]
         );
 
-        $parentForm = $this->factory->create('form', $entity);
+        $parentForm = $this->factory->create(FormType::class, $entity);
         $parentForm->add($form);
 
         $parentForm->submit($formData);
@@ -144,10 +150,9 @@ class CalendarChoiceTypeTest extends TypeTestCase
                 )
             );
 
-        $type = new CalendarChoiceType($this->calendarEventManager, $this->translator);
         $form = $this->factory->createNamed(
             'calendarUid',
-            $type,
+            CalendarChoiceType::class,
             null,
             [
                 'mapped'          => false,
@@ -156,7 +161,7 @@ class CalendarChoiceTypeTest extends TypeTestCase
             ]
         );
 
-        $parentForm = $this->factory->create('form', $entity);
+        $parentForm = $this->factory->create(FormType::class, $entity);
         $parentForm->add($form);
 
         $parentForm->submit($formData);
@@ -173,6 +178,6 @@ class CalendarChoiceTypeTest extends TypeTestCase
     public function testGetParent()
     {
         $type = new CalendarChoiceType($this->calendarEventManager, $this->translator);
-        $this->assertEquals('choice', $type->getParent());
+        $this->assertEquals(ChoiceType::class, $type->getParent());
     }
 }

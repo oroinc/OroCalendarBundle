@@ -2,6 +2,7 @@
 
 namespace Oro\Bundle\CalendarBundle\Form\Extension;
 
+use Oro\Bundle\SecurityBundle\Form\Type\ObjectLabelType;
 use Symfony\Component\Form\AbstractTypeExtension;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\Form\FormView;
@@ -23,6 +24,6 @@ class AclObjectLabelTypeExtension extends AbstractTypeExtension
      */
     public function getExtendedType()
     {
-        return 'oro_acl_label';
+        return ObjectLabelType::class;
     }
 }

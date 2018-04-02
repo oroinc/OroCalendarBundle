@@ -4,7 +4,11 @@ namespace Oro\Bundle\CalendarBundle\Form\Type;
 
 use Oro\Bundle\CalendarBundle\Entity\SystemCalendar;
 use Oro\Bundle\CalendarBundle\Provider\SystemCalendarConfig;
+use Oro\Bundle\FormBundle\Form\Type\OroSimpleColorPickerType;
 use Symfony\Component\Form\AbstractType;
+use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
+use Symfony\Component\Form\Extension\Core\Type\HiddenType;
+use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Form\FormEvent;
 use Symfony\Component\Form\FormEvents;
@@ -39,7 +43,7 @@ class SystemCalendarType extends AbstractType
         $builder
             ->add(
                 'name',
-                'text',
+                TextType::class,
                 [
                     'required' => true,
                     'label'    => 'oro.calendar.systemcalendar.name.label'
@@ -47,7 +51,7 @@ class SystemCalendarType extends AbstractType
             )
             ->add(
                 'backgroundColor',
-                'oro_simple_color_picker',
+                OroSimpleColorPickerType::class,
                 [
                     'required'           => false,
                     'label'              => 'oro.calendar.systemcalendar.background_color.label',
@@ -106,11 +110,11 @@ class SystemCalendarType extends AbstractType
                     unset($options['choices'][$isSystemGranted]);
                 }
             }
-            $form->add('public', 'choice', $options);
+            $form->add('public', ChoiceType::class, $options);
         } elseif ($this->calendarConfig->isPublicCalendarEnabled()) {
-            $form->add('public', 'hidden', ['data' => true]);
+            $form->add('public', HiddenType::class, ['data' => true]);
         } elseif ($this->calendarConfig->isSystemCalendarEnabled()) {
-            $form->add('public', 'hidden', ['data' => false]);
+            $form->add('public', HiddenType::class, ['data' => false]);
         }
     }
 

@@ -2,8 +2,13 @@
 
 namespace Oro\Bundle\CalendarBundle\Form\Type;
 
+use Oro\Bundle\FormBundle\Form\Type\EntityIdentifierType;
 use Oro\Bundle\SoapBundle\Form\EventListener\PatchSubscriber;
 use Symfony\Component\Form\AbstractType;
+use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
+use Symfony\Component\Form\Extension\Core\Type\HiddenType;
+use Symfony\Component\Form\Extension\Core\Type\IntegerType;
+use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
@@ -15,21 +20,21 @@ class CalendarPropertyApiType extends AbstractType
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         $builder
-            ->add('id', 'hidden', ['mapped' => false])
+            ->add('id', HiddenType::class, ['mapped' => false])
             ->add(
                 'targetCalendar',
-                'oro_entity_identifier',
+                EntityIdentifierType::class,
                 [
                     'required' => true,
                     'class'    => 'OroCalendarBundle:Calendar',
                     'multiple' => false
                 ]
             )
-            ->add('calendarAlias', 'text', ['required' => true])
-            ->add('calendar', 'integer', ['required' => true])
-            ->add('position', 'integer', ['required' => false])
-            ->add('visible', 'checkbox', ['required' => false])
-            ->add('backgroundColor', 'text', ['required' => false]);
+            ->add('calendarAlias', TextType::class, ['required' => true])
+            ->add('calendar', IntegerType::class, ['required' => true])
+            ->add('position', IntegerType::class, ['required' => false])
+            ->add('visible', CheckboxType::class, ['required' => false])
+            ->add('backgroundColor', TextType::class, ['required' => false]);
 
         $builder->addEventSubscriber(new PatchSubscriber());
     }

@@ -3,10 +3,20 @@
 namespace Oro\Bundle\CalendarBundle\Tests\Unit\Form\Type;
 
 use Oro\Bundle\CalendarBundle\Entity\Calendar;
+use Oro\Bundle\CalendarBundle\Form\Type\CalendarEventAttendeesSelectType;
 use Oro\Bundle\CalendarBundle\Form\Type\CalendarEventType;
+use Oro\Bundle\CalendarBundle\Form\Type\RecurrenceFormType;
 use Oro\Bundle\CalendarBundle\Manager\CalendarEvent\NotificationManager;
 use Oro\Bundle\EntityExtendBundle\Tests\Unit\Fixtures\TestEnumValue;
+use Oro\Bundle\FormBundle\Form\Type\OroDateTimeType;
+use Oro\Bundle\FormBundle\Form\Type\OroResizeableRichTextType;
+use Oro\Bundle\FormBundle\Form\Type\OroSimpleColorPickerType;
+use Oro\Bundle\ReminderBundle\Form\Type\ReminderCollectionType;
 use Oro\Bundle\SecurityBundle\Authentication\TokenAccessorInterface;
+use Oro\Bundle\UserBundle\Form\Type\UserSelectType;
+use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
+use Symfony\Component\Form\Extension\Core\Type\HiddenType;
+use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
 use Symfony\Component\Validator\Constraints\Choice;
 
@@ -90,7 +100,7 @@ class CalendarEventTypeTest extends \PHPUnit_Framework_TestCase
                 ->method('add')
                 ->with(
                     'calendar',
-                    'oro_user_select',
+                    UserSelectType::class,
                     [
                         'label' => 'oro.calendar.owner.label',
                         'required' => true,
@@ -117,7 +127,7 @@ class CalendarEventTypeTest extends \PHPUnit_Framework_TestCase
             ->method('add')
             ->with(
                 'title',
-                'text',
+                TextType::class,
                 ['required' => true, 'label' => 'oro.calendar.calendarevent.title.label']
             )
             ->will($this->returnSelf());
@@ -125,7 +135,7 @@ class CalendarEventTypeTest extends \PHPUnit_Framework_TestCase
             ->method('add')
             ->with(
                 'description',
-                'oro_resizeable_rich_text',
+                OroResizeableRichTextType::class,
                 ['required' => false, 'label' => 'oro.calendar.calendarevent.description.label']
             )
             ->will($this->returnSelf());
@@ -133,7 +143,7 @@ class CalendarEventTypeTest extends \PHPUnit_Framework_TestCase
             ->method('add')
             ->with(
                 'start',
-                'oro_datetime',
+                OroDateTimeType::class,
                 [
                     'required' => true,
                     'label'    => 'oro.calendar.calendarevent.start.label',
@@ -146,7 +156,7 @@ class CalendarEventTypeTest extends \PHPUnit_Framework_TestCase
             ->method('add')
             ->with(
                 'end',
-                'oro_datetime',
+                OroDateTimeType::class,
                 [
                     'required' => true,
                     'label'    => 'oro.calendar.calendarevent.end.label',
@@ -159,7 +169,7 @@ class CalendarEventTypeTest extends \PHPUnit_Framework_TestCase
             ->method('add')
             ->with(
                 'allDay',
-                'checkbox',
+                CheckboxType::class,
                 ['required' => false, 'label' => 'oro.calendar.calendarevent.all_day.label']
             )
             ->will($this->returnSelf());
@@ -167,7 +177,7 @@ class CalendarEventTypeTest extends \PHPUnit_Framework_TestCase
             ->method('add')
             ->with(
                 'backgroundColor',
-                'oro_simple_color_picker',
+                OroSimpleColorPickerType::class,
                 [
                     'required'           => false,
                     'label'              => 'oro.calendar.calendarevent.background_color.label',
@@ -182,7 +192,7 @@ class CalendarEventTypeTest extends \PHPUnit_Framework_TestCase
             ->method('add')
             ->with(
                 'reminders',
-                'oro_reminder_collection',
+                ReminderCollectionType::class,
                 ['required' => false, 'label' => 'oro.reminder.entity_plural_label']
             )
             ->will($this->returnSelf());
@@ -190,7 +200,7 @@ class CalendarEventTypeTest extends \PHPUnit_Framework_TestCase
             ->method('add')
             ->with(
                 'attendees',
-                'oro_calendar_event_attendees_select',
+                CalendarEventAttendeesSelectType::class,
                 [
                     'required' => false,
                     'label' => 'oro.calendar.calendarevent.attendees.label',
@@ -203,7 +213,7 @@ class CalendarEventTypeTest extends \PHPUnit_Framework_TestCase
             ->method('add')
             ->with(
                 'notifyAttendees',
-                'hidden',
+                HiddenType::class,
                 [
                     'mapped' => false,
                     'constraints' => [new Choice()]
@@ -215,7 +225,7 @@ class CalendarEventTypeTest extends \PHPUnit_Framework_TestCase
             ->method('add')
             ->with(
                 'recurrence',
-                'oro_calendar_event_recurrence',
+                RecurrenceFormType::class,
                 [
                     'required' => false,
                 ]

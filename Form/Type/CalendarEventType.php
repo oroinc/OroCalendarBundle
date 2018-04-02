@@ -8,8 +8,16 @@ use Oro\Bundle\CalendarBundle\Form\EventListener\CalendarEventRecurrenceSubscrib
 use Oro\Bundle\CalendarBundle\Form\EventListener\CalendarSubscriber;
 use Oro\Bundle\CalendarBundle\Form\EventListener\CalendarUidSubscriber;
 use Oro\Bundle\CalendarBundle\Manager\CalendarEvent\NotificationManager;
+use Oro\Bundle\FormBundle\Form\Type\OroDateTimeType;
+use Oro\Bundle\FormBundle\Form\Type\OroResizeableRichTextType;
+use Oro\Bundle\FormBundle\Form\Type\OroSimpleColorPickerType;
+use Oro\Bundle\ReminderBundle\Form\Type\ReminderCollectionType;
 use Oro\Bundle\SecurityBundle\Authentication\TokenAccessorInterface;
+use Oro\Bundle\UserBundle\Form\Type\UserSelectType;
 use Symfony\Component\Form\AbstractType;
+use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
+use Symfony\Component\Form\Extension\Core\Type\HiddenType;
+use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\Form\FormView;
@@ -63,7 +71,7 @@ class CalendarEventType extends AbstractType
         $builder
             ->add(
                 'title',
-                'text',
+                TextType::class,
                 [
                     'required' => true,
                     'label'    => 'oro.calendar.calendarevent.title.label'
@@ -71,7 +79,7 @@ class CalendarEventType extends AbstractType
             )
             ->add(
                 'description',
-                'oro_resizeable_rich_text',
+                OroResizeableRichTextType::class,
                 [
                     'required' => false,
                     'label'    => 'oro.calendar.calendarevent.description.label'
@@ -79,7 +87,7 @@ class CalendarEventType extends AbstractType
             )
             ->add(
                 'start',
-                'oro_datetime',
+                OroDateTimeType::class,
                 [
                     'required' => true,
                     'label'    => 'oro.calendar.calendarevent.start.label',
@@ -89,7 +97,7 @@ class CalendarEventType extends AbstractType
             )
             ->add(
                 'end',
-                'oro_datetime',
+                OroDateTimeType::class,
                 [
                     'required' => true,
                     'label'    => 'oro.calendar.calendarevent.end.label',
@@ -99,7 +107,7 @@ class CalendarEventType extends AbstractType
             )
             ->add(
                 'allDay',
-                'checkbox',
+                CheckboxType::class,
                 [
                     'required' => false,
                     'label'    => 'oro.calendar.calendarevent.all_day.label'
@@ -107,7 +115,7 @@ class CalendarEventType extends AbstractType
             )
             ->add(
                 'backgroundColor',
-                'oro_simple_color_picker',
+                OroSimpleColorPickerType::class,
                 [
                     'required'           => false,
                     'label'              => 'oro.calendar.calendarevent.background_color.label',
@@ -119,7 +127,7 @@ class CalendarEventType extends AbstractType
             )
             ->add(
                 'reminders',
-                'oro_reminder_collection',
+                ReminderCollectionType::class,
                 [
                     'required' => false,
                     'label'    => 'oro.reminder.entity_plural_label'
@@ -127,7 +135,7 @@ class CalendarEventType extends AbstractType
             )
             ->add(
                 'attendees',
-                'oro_calendar_event_attendees_select',
+                CalendarEventAttendeesSelectType::class,
                 [
                     'required' => false,
                     'label'    => 'oro.calendar.calendarevent.attendees.label',
@@ -136,7 +144,7 @@ class CalendarEventType extends AbstractType
             )
             ->add(
                 'notifyAttendees',
-                'hidden',
+                HiddenType::class,
                 [
                     'mapped' => false,
                     'constraints' => [
@@ -150,7 +158,7 @@ class CalendarEventType extends AbstractType
             )
             ->add(
                 'recurrence',
-                'oro_calendar_event_recurrence',
+                RecurrenceFormType::class,
                 [
                     'required' => false,
                 ]
@@ -217,7 +225,7 @@ class CalendarEventType extends AbstractType
             $builder
                 ->add(
                     'calendar',
-                    'oro_user_select',
+                    UserSelectType::class,
                     [
                         'label' => 'oro.calendar.owner.label',
                         'required' => true,

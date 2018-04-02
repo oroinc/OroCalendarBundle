@@ -21,9 +21,9 @@ use Oro\Bundle\ReminderBundle\Form\Type\ReminderIntervalType;
 use Oro\Bundle\ReminderBundle\Form\Type\ReminderType;
 use Oro\Bundle\ReminderBundle\Model\SendProcessorRegistry;
 use Oro\Bundle\UserBundle\Form\Type\UserMultiSelectType;
+use Oro\Component\Testing\Unit\PreloadedExtension;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Validator\ValidatorExtension;
-use Symfony\Component\Form\PreloadedExtension;
 use Symfony\Component\Form\Test\TypeTestCase;
 use Symfony\Component\Validator\Validation;
 
@@ -165,7 +165,7 @@ class CalendarEventApiTypeTest extends TypeTestCase
             ->willReturn([]);
 
         $form = $this->factory->create(
-            $this->calendarEventApiType,
+            CalendarEventApiType::class,
             null,
             ['data_class' => 'Oro\Bundle\CalendarBundle\Tests\Unit\Fixtures\Entity\CalendarEvent']
         );
@@ -222,7 +222,7 @@ class CalendarEventApiTypeTest extends TypeTestCase
             ->willReturn([]);
 
         $form = $this->factory->create(
-            $this->calendarEventApiType,
+            CalendarEventApiType::class,
             null,
             ['data_class' => 'Oro\Bundle\CalendarBundle\Tests\Unit\Fixtures\Entity\CalendarEvent']
         );
@@ -309,6 +309,7 @@ class CalendarEventApiTypeTest extends TypeTestCase
         $recurrenceModel = new Recurrence($strategy);
 
         $types = [
+            $this->calendarEventApiType,
             new ReminderCollectionType($this->registry),
             new CollectionType($this->registry),
             new ReminderType($this->registry),
