@@ -46,7 +46,7 @@ class SystemCalendarEventControllerTest extends WebTestCase
 
         $form = $crawler->selectButton('Save and Close')->form();
         $form['oro_calendar_event_form[title]'] = self::TITLE;
-        $form['oro_calendar_event_form[description]'] = 'System Calendar Event Description';
+        $form['oro_calendar_event_form[description]'] = self::DESCRIPTION;
         $form['oro_calendar_event_form[start]'] = '2018-03-08 12:00:00';
         $form['oro_calendar_event_form[end]'] = '2018-03-08 20:00:00';
         $form['oro_calendar_event_form[attendees]'] = implode(
@@ -63,6 +63,11 @@ class SystemCalendarEventControllerTest extends WebTestCase
         $this->assertHtmlResponseStatusCodeEquals($this->client->getResponse(), 200);
         $this->assertContains('Calendar event saved', $crawler->html());
         $this->assertCount(2, $this->registry->getRepository(Attendee::class)->findAll());
+
+        $mainEvent = $this->getCalendarEvent();
+        $repository = $this->registry->getRepository(CalendarEvent::class);
+
+        $this->assertCount(2, $repository->findBy(['title' => self::TITLE, 'parent' => $mainEvent]));
     }
 
     /**
@@ -148,7 +153,8 @@ class SystemCalendarEventControllerTest extends WebTestCase
      */
     protected function getCalendarEvent()
     {
-        $calendarEvent = $this->registry->getRepository(CalendarEvent::class)->findOneBy(['title' => self::TITLE]);
+        $calendarEvent = $this->registry->getRepository(CalendarEvent::class)
+            ->findOneBy(['title' => self::TITLE, 'parent' => null]);
         $this->assertNotNull($calendarEvent);
 
         return $calendarEvent;
