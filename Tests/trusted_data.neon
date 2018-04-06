@@ -1,0 +1,8 @@
+trusted_data:
+    variables:
+        Oro\Bundle\CalendarBundle\Provider\CalendarPropertyProvider:
+            getItems:
+                selectItems: true
+    safe_methods:
+        Oro\Bundle\CalendarBundle\Entity\Repository\CalendarEventRepository:
+            getBaseFields: true
