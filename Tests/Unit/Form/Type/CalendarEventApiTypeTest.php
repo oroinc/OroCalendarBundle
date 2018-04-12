@@ -190,8 +190,8 @@ class CalendarEventApiTypeTest extends TypeTestCase
         $this->assertEquals('MOCK-UID-11111', $result->getUid());
         $this->assertEquals('testTitle', $result->getTitle());
         $this->assertEquals('testDescription', $result->getDescription());
-        $this->assertDateTimeEquals(new \DateTime('2013-10-05T13:00:00Z'), $result->getStart());
-        $this->assertDateTimeEquals(new \DateTime('2013-10-05T13:30:00Z'), $result->getEnd());
+        $this->assertEquals((new \DateTime('2013-10-05T13:00:00Z'))->format('U'), $result->getStart()->format('U'));
+        $this->assertEquals((new \DateTime('2013-10-05T13:30:00Z'))->format('U'), $result->getEnd()->format('U'));
         $this->assertTrue($result->getAllDay());
         $this->assertEquals('#FF0000', $result->getBackgroundColor());
 
@@ -247,8 +247,8 @@ class CalendarEventApiTypeTest extends TypeTestCase
         $this->assertNull($result->getUid());
         $this->assertEquals('testTitle', $result->getTitle());
         $this->assertEquals('testDescription', $result->getDescription());
-        $this->assertDateTimeEquals(new \DateTime('2013-10-05T13:00:00Z'), $result->getStart());
-        $this->assertDateTimeEquals(new \DateTime('2013-10-05T13:30:00Z'), $result->getEnd());
+        $this->assertEquals((new \DateTime('2013-10-05T13:00:00Z'))->format('U'), $result->getStart()->format('U'));
+        $this->assertEquals((new \DateTime('2013-10-05T13:30:00Z'))->format('U'), $result->getEnd()->format('U'));
         $this->assertTrue($result->getAllDay());
         $this->assertEquals('#FF0000', $result->getBackgroundColor());
 
