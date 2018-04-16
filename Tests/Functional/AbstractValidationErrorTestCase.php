@@ -231,7 +231,7 @@ abstract class AbstractValidationErrorTestCase extends AbstractTestCase
                 ],
                 'errors' => [
                     'timeZone' => [
-                        'This value is not valid.'
+                        'The value you selected is not a valid choice.'
                     ]
                 ]
             ],
