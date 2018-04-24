@@ -5,7 +5,6 @@ namespace Oro\Bundle\CalendarBundle\Migrations\Schema\v1_14;
 use Doctrine\DBAL\Schema\Schema;
 use Oro\Bundle\EntityBundle\EntityConfig\DatagridScope;
 use Oro\Bundle\EntityExtendBundle\EntityConfig\ExtendScope;
-use Oro\Bundle\FormBundle\Form\Type\OroResizeableRichTextType;
 use Oro\Bundle\MigrationBundle\Migration\Migration;
 use Oro\Bundle\MigrationBundle\Migration\QueryBag;
 
@@ -27,7 +26,7 @@ class AddExtendDescription implements Migration
                         'datagrid'  => ['is_visible' => DatagridScope::IS_VISIBLE_FALSE],
                         'merge'     => ['display' => true],
                         'dataaudit' => ['auditable' => true],
-                        'form'      => ['type' => OroResizeableRichTextType::class],
+                        'form'      => ['type' => 'oro_resizeable_rich_text'],
                         'view'      => ['type' => 'html'],
                     ]
                 ]
