@@ -9,6 +9,7 @@ use Oro\Bundle\OrganizationBundle\Entity\Organization;
 use Oro\Bundle\SecurityBundle\Annotation\Acl;
 use Oro\Bundle\SecurityBundle\Annotation\AclAncestor;
 use Oro\Bundle\UserBundle\Entity\User;
+use Oro\Bundle\UserBundle\Form\Type\UserSelectType;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
@@ -65,7 +66,7 @@ class CalendarController extends Controller
             'user_select_form' => $this->get('form.factory')
                 ->createNamed(
                     'new_calendar',
-                    'oro_user_select',
+                    UserSelectType::class,
                     null,
                     array(
                         'autocomplete_alias' => 'user_calendars',

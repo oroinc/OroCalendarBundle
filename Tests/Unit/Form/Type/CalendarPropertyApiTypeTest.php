@@ -139,10 +139,4 @@ class CalendarPropertyApiTypeTest extends TypeTestCase
         $type = new CalendarPropertyApiType();
         $type->configureOptions($resolver);
     }
-
-    public function testGetName()
-    {
-        $type = new CalendarPropertyApiType();
-        $this->assertEquals('oro_calendar_property_api', $type->getName());
-    }
 }

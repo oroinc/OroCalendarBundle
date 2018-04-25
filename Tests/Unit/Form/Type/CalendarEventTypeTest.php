@@ -254,9 +254,4 @@ class CalendarEventTypeTest extends \PHPUnit_Framework_TestCase
 
         $this->type->configureOptions($resolver);
     }
-
-    public function testGetName()
-    {
-        $this->assertEquals('oro_calendar_event', $this->type->getName());
-    }
 }
