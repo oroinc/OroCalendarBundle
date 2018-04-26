@@ -92,9 +92,11 @@ class SystemCalendarType extends AbstractType
                 'required'    => false,
                 'label'       => 'oro.calendar.systemcalendar.public.label',
                 'placeholder' => false,
+                // TODO: remove 'choices_as_values' option below in scope of BAP-15236
+                'choices_as_values' => true,
                 'choices'     => [
-                    false => 'oro.calendar.systemcalendar.scope.organization',
-                    true  => 'oro.calendar.systemcalendar.scope.system'
+                    'oro.calendar.systemcalendar.scope.organization' => 0,
+                    'oro.calendar.systemcalendar.scope.system' => 1,
                 ]
             ];
             /** @var SystemCalendar|null $data */
