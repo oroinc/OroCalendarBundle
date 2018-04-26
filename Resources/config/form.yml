@@ -37,14 +37,14 @@ services:
         factory: 'form.factory:createNamed'
         arguments:
             - "oro_calendar_event_form"
-            - "oro_calendar_event"
+            - Oro\Bundle\CalendarBundle\Form\Type\CalendarEventType
 
     oro_calendar.calendar_event.form.template:
         class:   'Symfony\Component\Form\Form'
         factory: 'form.factory:createNamed'
         arguments:
             - "oro_calendar_event_form"
-            - "oro_calendar_event"
+            - Oro\Bundle\CalendarBundle\Form\Type\CalendarEventType
             - ~
             - {allow_change_calendar: true, layout_template: true}
 
@@ -53,7 +53,7 @@ services:
         factory: 'form.factory:createNamed'
         arguments:
             - ~
-            - "oro_calendar_event_api"
+            - Oro\Bundle\CalendarBundle\Form\Type\CalendarEventApiType
 
     oro_calendar.calendar_event.form.handler.abstract:
         class: 'Oro\Bundle\CalendarBundle\Form\Handler\AbstractCalendarEventHandler'
@@ -115,14 +115,14 @@ services:
         factory: 'form.factory:createNamed'
         arguments:
             - ~
-            - "oro_calendar_property_api"
+            - Oro\Bundle\CalendarBundle\Form\Type\CalendarPropertyApiType
 
     oro_calendar.calendar_property.form.soap.api:
         class:    'Symfony\Component\Form\Form'
         factory: 'form.factory:createNamed'
         arguments:
             - "calendarProperty"
-            - "oro_calendar_property_api"
+            - Oro\Bundle\CalendarBundle\Form\Type\CalendarPropertyApiType
 
     oro_calendar.calendar_property.form.handler.api:
         class: '%oro_calendar.calendar_property.form.handler.api.class%'
@@ -164,7 +164,7 @@ services:
         factory: 'form.factory:createNamed'
         arguments:
             - "oro_system_calendar_form"
-            - "oro_system_calendar"
+            - Oro\Bundle\CalendarBundle\Form\Type\SystemCalendarType
 
     oro_calendar.system_calendar.form.handler:
         class: '%oro_calendar.system_calendar.form.handler.class%'

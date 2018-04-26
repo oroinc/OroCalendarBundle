@@ -43,6 +43,7 @@ class RecurrenceFormTypeTest extends \PHPUnit_Framework_TestCase
                     'required' => true,
                     'label' => 'oro.calendar.recurrence.entity_label',
                     'placeholder' => false,
+                    'choices_as_values' => true,
                     'choices' => $this->model->getRecurrenceTypes(),
                 ]
             )
@@ -67,6 +68,7 @@ class RecurrenceFormTypeTest extends \PHPUnit_Framework_TestCase
                     'required' => false,
                     'label' => 'oro.calendar.recurrence.instance.label',
                     'placeholder' => false,
+                    'choices_as_values' => true,
                     'choices' => $this->model->getInstances(),
                 ]
             )
@@ -80,6 +82,7 @@ class RecurrenceFormTypeTest extends \PHPUnit_Framework_TestCase
                     'required' => false,
                     'label' => 'oro.calendar.recurrence.day_of_week.label',
                     'multiple' => true,
+                    'choices_as_values' => true,
                     'choices' => $this->model->getDaysOfWeek(),
                 ]
             )
@@ -165,10 +168,5 @@ class RecurrenceFormTypeTest extends \PHPUnit_Framework_TestCase
             ]);
 
         $this->type->configureOptions($resolver);
-    }
-
-    public function testGetName()
-    {
-        $this->assertEquals('oro_calendar_event_recurrence', $this->type->getName());
     }
 }
