@@ -48,8 +48,6 @@ class CalendarChoiceType extends AbstractType
     {
         $resolver->setDefaults(
             [
-                // TODO: remove 'choices_as_values' option below in scope of BAP-15236
-                'choices_as_values'    => true,
                 'choices'              => function (Options $options) {
                     return $this->getChoices($options['is_new']);
                 },
