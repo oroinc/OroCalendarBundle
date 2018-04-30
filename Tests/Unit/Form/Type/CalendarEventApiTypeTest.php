@@ -13,7 +13,6 @@ use Oro\Bundle\CalendarBundle\Model\Recurrence;
 use Oro\Bundle\FormBundle\Form\Type\CollectionType;
 use Oro\Bundle\FormBundle\Form\Type\EntityIdentifierType;
 use Oro\Bundle\FormBundle\Form\Type\OroJquerySelect2HiddenType;
-use Oro\Bundle\FormBundle\Form\Type\Select2Type;
 use Oro\Bundle\ReminderBundle\Form\Type\MethodType;
 use Oro\Bundle\ReminderBundle\Form\Type\ReminderCollectionType;
 use Oro\Bundle\ReminderBundle\Form\Type\ReminderInterval\UnitType;
@@ -21,13 +20,13 @@ use Oro\Bundle\ReminderBundle\Form\Type\ReminderIntervalType;
 use Oro\Bundle\ReminderBundle\Form\Type\ReminderType;
 use Oro\Bundle\ReminderBundle\Model\SendProcessorRegistry;
 use Oro\Bundle\UserBundle\Form\Type\UserMultiSelectType;
+use Oro\Component\Testing\Unit\FormIntegrationTestCase;
 use Oro\Component\Testing\Unit\PreloadedExtension;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Validator\ValidatorExtension;
-use Symfony\Component\Form\Test\TypeTestCase;
 use Symfony\Component\Validator\Validation;
 
-class CalendarEventApiTypeTest extends TypeTestCase
+class CalendarEventApiTypeTest extends FormIntegrationTestCase
 {
     /** @var \PHPUnit_Framework_MockObject_MockObject */
     protected $registry;
@@ -313,10 +312,6 @@ class CalendarEventApiTypeTest extends TypeTestCase
             new UnitType(),
             new UserMultiSelectType($this->entityManager),
             new OroJquerySelect2HiddenType($this->entityManager, $searchRegistry, $configProvider),
-            new Select2Type(
-                'Symfony\Component\Form\Extension\Core\Type\HiddenType',
-                'oro_select2_hidden'
-            ),
             new CalendarEventAttendeesApiType(),
             new RecurrenceFormType($recurrenceModel),
             new EntityIdentifierType($this->registry),
