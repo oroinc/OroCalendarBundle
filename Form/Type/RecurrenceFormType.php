@@ -28,6 +28,8 @@ class RecurrenceFormType extends AbstractType
 
     /**
      * {@inheritdoc}
+     * // TODO: remove SuppressWarnings with choices_as_values in scope of BAP-15236
+     * @SuppressWarnings(PHPMD.ExcessiveMethodLength)
      */
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
@@ -39,6 +41,8 @@ class RecurrenceFormType extends AbstractType
                     'required' => true,
                     'label' => 'oro.calendar.recurrence.entity_label',
                     'placeholder' => false,
+                    // TODO: remove 'choices_as_values' option below in scope of BAP-15236
+                    'choices_as_values' => true,
                     'choices' => $this->recurrenceModel->getRecurrenceTypes(),
                 ]
             )
@@ -57,6 +61,8 @@ class RecurrenceFormType extends AbstractType
                     'required' => false,
                     'label' => 'oro.calendar.recurrence.instance.label',
                     'placeholder' => false,
+                    // TODO: remove 'choices_as_values' option below in scope of BAP-15236
+                    'choices_as_values' => true,
                     'choices' => $this->recurrenceModel->getInstances(),
                 ]
             )
@@ -67,6 +73,8 @@ class RecurrenceFormType extends AbstractType
                     'required' => false,
                     'label' => 'oro.calendar.recurrence.day_of_week.label',
                     'multiple' => true,
+                    // TODO: remove 'choices_as_values' option below in scope of BAP-15236
+                    'choices_as_values' => true,
                     'choices' => $this->recurrenceModel->getDaysOfWeek(),
                 ]
             )

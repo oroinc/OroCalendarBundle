@@ -166,7 +166,7 @@ class Recurrence
      */
     public function getRecurrenceTypesValues()
     {
-        return array_keys($this->getRecurrenceTypes());
+        return array_values($this->getRecurrenceTypes());
     }
 
     /**
@@ -176,7 +176,7 @@ class Recurrence
      */
     public function getDaysOfWeekValues()
     {
-        return array_keys($this->getDaysOfWeek());
+        return array_values($this->getDaysOfWeek());
     }
 
     /**
@@ -187,12 +187,12 @@ class Recurrence
     public function getRecurrenceTypes()
     {
         return [
-            self::TYPE_DAILY => 'oro.calendar.recurrence.types.daily',
-            self::TYPE_WEEKLY => 'oro.calendar.recurrence.types.weekly',
-            self::TYPE_MONTHLY => 'oro.calendar.recurrence.types.monthly',
-            self::TYPE_MONTH_N_TH => 'oro.calendar.recurrence.types.monthnth',
-            self::TYPE_YEARLY => 'oro.calendar.recurrence.types.yearly',
-            self::TYPE_YEAR_N_TH => 'oro.calendar.recurrence.types.yearnth',
+            'oro.calendar.recurrence.types.daily' => self::TYPE_DAILY,
+            'oro.calendar.recurrence.types.weekly' => self::TYPE_WEEKLY,
+            'oro.calendar.recurrence.types.monthly' => self::TYPE_MONTHLY,
+            'oro.calendar.recurrence.types.monthnth' => self::TYPE_MONTH_N_TH,
+            'oro.calendar.recurrence.types.yearly' => self::TYPE_YEARLY,
+            'oro.calendar.recurrence.types.yearnth' => self::TYPE_YEAR_N_TH,
         ];
     }
 
@@ -204,11 +204,11 @@ class Recurrence
     public function getInstances()
     {
         return [
-            self::INSTANCE_FIRST => 'oro.calendar.recurrence.instances.first',
-            self::INSTANCE_SECOND => 'oro.calendar.recurrence.instances.second',
-            self::INSTANCE_THIRD => 'oro.calendar.recurrence.instances.third',
-            self::INSTANCE_FOURTH => 'oro.calendar.recurrence.instances.fourth',
-            self::INSTANCE_LAST => 'oro.calendar.recurrence.instances.last',
+            'oro.calendar.recurrence.instances.first' => self::INSTANCE_FIRST,
+            'oro.calendar.recurrence.instances.second' => self::INSTANCE_SECOND,
+            'oro.calendar.recurrence.instances.third' => self::INSTANCE_THIRD,
+            'oro.calendar.recurrence.instances.fourth' => self::INSTANCE_FOURTH,
+            'oro.calendar.recurrence.instances.last' => self::INSTANCE_LAST,
         ];
     }
 
@@ -220,13 +220,13 @@ class Recurrence
     public function getDaysOfWeek()
     {
         return [
-            self::DAY_SUNDAY => 'oro.calendar.recurrence.days.sunday',
-            self::DAY_MONDAY => 'oro.calendar.recurrence.days.monday',
-            self::DAY_TUESDAY => 'oro.calendar.recurrence.days.tuesday',
-            self::DAY_WEDNESDAY => 'oro.calendar.recurrence.days.wednesday',
-            self::DAY_THURSDAY => 'oro.calendar.recurrence.days.thursday',
-            self::DAY_FRIDAY => 'oro.calendar.recurrence.days.friday',
-            self::DAY_SATURDAY => 'oro.calendar.recurrence.days.saturday',
+            'oro.calendar.recurrence.days.sunday' => self::DAY_SUNDAY,
+            'oro.calendar.recurrence.days.monday' => self::DAY_MONDAY,
+            'oro.calendar.recurrence.days.tuesday' => self::DAY_TUESDAY,
+            'oro.calendar.recurrence.days.wednesday' => self::DAY_WEDNESDAY,
+            'oro.calendar.recurrence.days.thursday' => self::DAY_THURSDAY,
+            'oro.calendar.recurrence.days.friday' => self::DAY_FRIDAY,
+            'oro.calendar.recurrence.days.saturday' => self::DAY_SATURDAY,
         ];
     }
 }
