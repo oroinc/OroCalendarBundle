@@ -13,7 +13,7 @@ System calendars can be used to provide common events for all users, for example
 
 ## Configuration
 
-By default both organization and system wide calendars are enabled, but you can easy disable any of them in `app/config.yml`. Just add `enabled_system_calendar` option as it is shown in the following example:
+By default both organization and system wide calendars are enabled, but you can easy disable any of them in `config.yml`. Just add `enabled_system_calendar` option as it is shown in the following example:
 
 ``` yml
 oro_calendar:
