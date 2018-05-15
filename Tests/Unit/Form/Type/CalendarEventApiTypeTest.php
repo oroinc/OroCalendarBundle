@@ -2,7 +2,6 @@
 
 namespace Oro\Bundle\CalendarBundle\Tests\Unit\Form\Type;
 
-use Doctrine\Common\Collections\ArrayCollection;
 use Oro\Bundle\CalendarBundle\Entity\Calendar;
 use Oro\Bundle\CalendarBundle\Entity\CalendarEvent;
 use Oro\Bundle\CalendarBundle\Form\Type\CalendarEventApiType;
@@ -10,6 +9,7 @@ use Oro\Bundle\CalendarBundle\Form\Type\CalendarEventAttendeesApiType;
 use Oro\Bundle\CalendarBundle\Form\Type\RecurrenceFormType;
 use Oro\Bundle\CalendarBundle\Manager\CalendarEvent\NotificationManager;
 use Oro\Bundle\CalendarBundle\Model\Recurrence;
+use Oro\Bundle\CalendarBundle\Tests\Unit\Fixtures\Entity\CalendarEvent as CalendarEventFixture;
 use Oro\Bundle\FormBundle\Form\Type\CollectionType;
 use Oro\Bundle\FormBundle\Form\Type\EntityIdentifierType;
 use Oro\Bundle\FormBundle\Form\Type\OroJquerySelect2HiddenType;
@@ -154,8 +154,8 @@ class CalendarEventApiTypeTest extends FormIntegrationTestCase
             'end'             => '2013-10-05T13:30:00+00:00',
             'allDay'          => true,
             'backgroundColor' => '#FF0000',
-            'reminders'       => new ArrayCollection(),
-            'attendees'       => new ArrayCollection(),
+            'reminders'       => [],
+            'attendees'       => [],
         ];
 
         $this->notificationManager
@@ -166,7 +166,10 @@ class CalendarEventApiTypeTest extends FormIntegrationTestCase
         $form = $this->factory->create(
             CalendarEventApiType::class,
             null,
-            ['data_class' => 'Oro\Bundle\CalendarBundle\Tests\Unit\Fixtures\Entity\CalendarEvent']
+            [
+                'data_class' => CalendarEventFixture::class,
+                'data' => new CalendarEventFixture()
+            ]
         );
 
         $this->calendarEventManager->expects($this->once())
@@ -212,7 +215,7 @@ class CalendarEventApiTypeTest extends FormIntegrationTestCase
             'end'             => '2013-10-05T13:30:00+00:00',
             'allDay'          => true,
             'backgroundColor' => '#FF0000',
-            'reminders'       => new ArrayCollection(),
+            'reminders'       => [],
         ];
 
         $this->notificationManager
@@ -223,7 +226,10 @@ class CalendarEventApiTypeTest extends FormIntegrationTestCase
         $form = $this->factory->create(
             CalendarEventApiType::class,
             null,
-            ['data_class' => 'Oro\Bundle\CalendarBundle\Tests\Unit\Fixtures\Entity\CalendarEvent']
+            [
+                'data_class' => CalendarEventFixture::class,
+                'data' => new CalendarEventFixture()
+            ]
         );
 
         $this->calendarEventManager->expects($this->once())

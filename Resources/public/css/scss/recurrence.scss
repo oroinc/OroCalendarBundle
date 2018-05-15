@@ -72,7 +72,7 @@
   }
   &-summary {
     padding: 4px 10px 9px 0;
-    border-radius: @inputBorderRadius;
+    border-radius: $inputBorderRadius;
     &.control-group .control-label.wrap {
       color: #3a87ad;
     }
