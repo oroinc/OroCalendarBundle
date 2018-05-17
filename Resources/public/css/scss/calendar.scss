@@ -290,13 +290,13 @@ i.invitation-status.fa-question-circle {
     }
   }
   &__item-title {
-    color: $bodyColor;
+    color: $body-color;
     font-weight: bold;
     font-size: 14px;
     margin-left: 20px;
   }
   &__item-desc {
-    color: lighten($bodyColor, 25%);
+    color: lighten($body-color, 25%);
     font-size: 12px;
     margin-left: 20px;
   }
