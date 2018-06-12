@@ -7,9 +7,6 @@ use Oro\Bundle\CalendarBundle\Model\Recurrence;
 use Oro\Bundle\CalendarBundle\Tests\Unit\Fixtures\Entity\Attendee;
 use Oro\Bundle\UserBundle\Entity\User;
 
-/**
- * @dbIsolationPerTest
- */
 class RecurringEventWithAttendeesAndAttendeesCleanTest extends AbstractUseCaseTestCase
 {
     /**

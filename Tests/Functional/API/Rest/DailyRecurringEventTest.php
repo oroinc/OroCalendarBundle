@@ -15,14 +15,14 @@ use Oro\Bundle\CalendarBundle\Tests\Functional\AbstractTestCase;
  * - Expanding of recurring event with recurrence pattern "Daily, every day" and with correct
  *   start/end dates for days when DST starts/ends.
  *
- * @dbIsolation
+ * @dbIsolationPerTest
  */
 class DailyRecurringEventTest extends AbstractTestCase
 {
     protected function setUp()
     {
-        $this->initClient([], $this->generateWsseAuthHeader(), true);
-        $this->loadFixtures([LoadUserData::class], true);
+        $this->initClient([], $this->generateWsseAuthHeader());
+        $this->loadFixtures([LoadUserData::class]);
     }
 
     /**

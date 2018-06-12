@@ -17,8 +17,6 @@ use Oro\Bundle\CalendarBundle\Entity\CalendarEvent;
  * - Update recurrence data of recurring calendar event changes "updatedAt" field.
  * - Delete attendee of calendar event changes "updatedAt" field.
  *
- * @dbIsolation
- *
  * @SuppressWarnings(PHPMD.ExcessiveClassLength)
  */
 class BasicCrudTest extends AbstractTestCase

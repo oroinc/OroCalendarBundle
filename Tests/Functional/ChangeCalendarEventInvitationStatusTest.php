@@ -22,8 +22,6 @@ use Oro\Bundle\CalendarBundle\Tests\Functional\DataFixtures\LoadUserData;
  * - set invitation status of the event to "accepted" (oro_calendar_event_accepted)
  * - set invitation status of the event to "declined" (oro_calendar_event_declined)
  * - set invitation status of the event to "tentative" (oro_calendar_event_tentative)
- *
- * @dbIsolation
  */
 class ChangeCalendarEventInvitationStatusTest extends AbstractTestCase
 {

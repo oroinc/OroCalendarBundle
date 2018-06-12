@@ -7,9 +7,6 @@ use Oro\Bundle\CalendarBundle\Tests\Functional\DataFixtures\LoadUserData;
 use Oro\Bundle\UserBundle\Entity\User;
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 
-/**
- * @dbIsolation
- */
 class CalendarConnectionControllerTest extends WebTestCase
 {
     const DEFAULT_USER_CALENDAR_ID = 1;

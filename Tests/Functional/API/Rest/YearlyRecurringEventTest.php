@@ -14,14 +14,14 @@ use Oro\Bundle\CalendarBundle\Tests\Functional\AbstractTestCase;
  * - Expanding of recurring event with recurrence pattern "Yearly every X year(s) on Y month Z day" in case
  *   when Z is greater than count of days in Y month.
  *
- * @dbIsolation
+ * @dbIsolationPerTest
  */
 class YearlyRecurringEventTest extends AbstractTestCase
 {
     protected function setUp()
     {
-        $this->initClient([], $this->generateWsseAuthHeader(), true);
-        $this->loadFixtures([LoadUserData::class], true);
+        $this->initClient([], $this->generateWsseAuthHeader());
+        $this->loadFixtures([LoadUserData::class]);
     }
 
     /**
