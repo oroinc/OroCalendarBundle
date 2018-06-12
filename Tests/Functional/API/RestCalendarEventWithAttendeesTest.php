@@ -10,8 +10,6 @@ use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 use Oro\Bundle\UserBundle\Entity\User;
 
 /**
- * @dbIsolation
- *
  * @SuppressWarnings(PHPMD.TooManyPublicMethods)
  */
 class RestCalendarEventWithAttendeesTest extends WebTestCase

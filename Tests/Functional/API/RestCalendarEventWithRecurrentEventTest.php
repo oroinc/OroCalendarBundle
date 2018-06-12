@@ -7,8 +7,6 @@ use Oro\Bundle\CalendarBundle\Entity\CalendarEvent;
 use Oro\Bundle\CalendarBundle\Model\Recurrence;
 
 /**
- * @dbIsolation
- *
  * @SuppressWarnings(PHPMD.TooManyPublicMethods)
  */
 class RestCalendarEventWithRecurrentEventTest extends AbstractCalendarEventTest

@@ -25,7 +25,7 @@ class RecurringCalendarEventMassDeleteTest extends AbstractTestCase
     {
         parent::setUp();
 
-        $this->loadFixtures([LoadUserData::class]);  // force load fixtures
+        $this->loadFixtures([LoadUserData::class]);
     }
 
     /**
@@ -184,7 +184,7 @@ class RecurringCalendarEventMassDeleteTest extends AbstractTestCase
         $regularEvent = $this->getEntity(CalendarEvent::class, $response['id']);
 
         // Step 4. Execute delete mass action for regular event and exception event.
-        $this->client->reboot(false);
+        $this->client->disableReboot();
         $url = $this->getUrl(
             'oro_datagrid_mass_action',
             [
@@ -461,7 +461,7 @@ class RecurringCalendarEventMassDeleteTest extends AbstractTestCase
         $this->assertJsonResponseStatusCodeEquals($this->client->getResponse(), 201);
 
         // Step 4. Execute delete mass action for recurring event.
-        $this->client->reboot(false);
+        $this->client->disableReboot();
         $url = $this->getUrl(
             'oro_datagrid_mass_action',
             [

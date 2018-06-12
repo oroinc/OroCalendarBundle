@@ -16,8 +16,6 @@ use Oro\Bundle\CalendarBundle\Tests\Functional\DataFixtures\LoadUserData;
  *
  * Resources used:
  * - create event (oro_calendar_event_create)
- *
- * @dbIsolation
  */
 class ValidationFailedTest extends AbstractValidationErrorTestCase
 {

@@ -5,9 +5,6 @@ namespace Oro\Bundle\CalendarBundle\Tests\Functional\Entity\Repository;
 use Oro\Bundle\CalendarBundle\Entity\Repository\CalendarRepository;
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 
-/**
- * @dbIsolation
- */
 class CalendarRepositoryTest extends WebTestCase
 {
     /**

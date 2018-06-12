@@ -4,9 +4,6 @@ namespace Oro\Bundle\CalendarBundle\Tests\Functional;
 
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 
-/**
- * @dbIsolation
- */
 class ControllersTest extends WebTestCase
 {
     const DEFAULT_USER_CALENDAR_ID = 1;

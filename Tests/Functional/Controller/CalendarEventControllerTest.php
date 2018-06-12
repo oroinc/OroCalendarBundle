@@ -6,10 +6,6 @@ use Oro\Bundle\ActivityBundle\Form\DataTransformer\ContextsToViewTransformer;
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 use Oro\Bundle\UserBundle\Entity\User;
 
-/**
- * @dbIsolation
- * @dbReindex
- */
 class CalendarEventControllerTest extends WebTestCase
 {
     protected function setUp()
