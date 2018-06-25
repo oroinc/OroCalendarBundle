@@ -9,7 +9,7 @@ use Oro\Bundle\CalendarBundle\Validator\Constraints\Attendee;
 use Oro\Bundle\CalendarBundle\Validator\Constraints\AttendeeValidator;
 use Symfony\Component\Validator\Context\ExecutionContextInterface;
 
-class AttendeeValidatorTest extends \PHPUnit_Framework_TestCase
+class AttendeeValidatorTest extends \PHPUnit\Framework\TestCase
 {
     /** @var ExecutionContextInterface */
     protected $context;

@@ -11,15 +11,15 @@ use Oro\Bundle\SecurityBundle\Authentication\TokenAccessorInterface;
 use Symfony\Component\Form\FormEvent;
 use Symfony\Component\Form\FormEvents;
 
-class CalendarSubscriberTest extends \PHPUnit_Framework_TestCase
+class CalendarSubscriberTest extends \PHPUnit\Framework\TestCase
 {
     /** @var CalendarSubscriber */
     protected $calendarSubscriber;
 
-    /** @var \PHPUnit_Framework_MockObject_MockObject|TokenAccessorInterface */
+    /** @var \PHPUnit\Framework\MockObject\MockObject|TokenAccessorInterface */
     protected $tokenAccessor;
 
-    /** @var \PHPUnit_Framework_MockObject_MockObject|ManagerRegistry */
+    /** @var \PHPUnit\Framework\MockObject\MockObject|ManagerRegistry */
     protected $registry;
 
     public function setUp()

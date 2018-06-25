@@ -4,7 +4,7 @@ namespace Oro\Bundle\CalendarBundle\Tests\Unit\Form\Type;
 
 use Oro\Bundle\CalendarBundle\Form\Type\CalendarChoiceTemplateType;
 
-class CalendarChoiceTemplateTypeTest extends \PHPUnit_Framework_TestCase
+class CalendarChoiceTemplateTypeTest extends \PHPUnit\Framework\TestCase
 {
     /** @var CalendarChoiceTemplateType */
     protected $type;

@@ -8,7 +8,7 @@ use Oro\Bundle\EntityBundle\Tests\Unit\ORM\Stub\ItemStub;
 use Oro\Component\ConfigExpression\ContextAccessor;
 use Symfony\Component\PropertyAccess\PropertyPath;
 
-class CreateCalendarEventActionTest extends \PHPUnit_Framework_TestCase
+class CreateCalendarEventActionTest extends \PHPUnit\Framework\TestCase
 {
     const CLASS_NAME_CALENDAR_EVENT = 'Oro\Bundle\CalendarBundle\Entity\CalendarEvent';
     const CLASS_NAME_REMINDER       = 'Oro\Bundle\ReminderBundle\Entity\Reminder';
@@ -19,7 +19,7 @@ class CreateCalendarEventActionTest extends \PHPUnit_Framework_TestCase
     private $contextAccessor;
 
     /**
-     * @var \PHPUnit_Framework_MockObject_MockObject
+     * @var \PHPUnit\Framework\MockObject\MockObject
      */
     private $registry;
 
@@ -218,7 +218,7 @@ class CreateCalendarEventActionTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * @return \PHPUnit_Framework_MockObject_MockObject
+     * @return \PHPUnit\Framework\MockObject\MockObject
      */
     protected function getUserMock()
     {

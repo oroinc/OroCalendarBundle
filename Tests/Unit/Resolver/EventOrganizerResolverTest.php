@@ -11,9 +11,9 @@ use Oro\Bundle\CalendarBundle\Resolver\EventOrganizerResolver;
 use Oro\Bundle\CalendarBundle\Tests\Unit\Entity\CalendarEventTest;
 use Oro\Bundle\UserBundle\Entity\User;
 
-class EventOrganizerResolverTest extends \PHPUnit_Framework_TestCase
+class EventOrganizerResolverTest extends \PHPUnit\Framework\TestCase
 {
-    /** @var ObjectRepository|\PHPUnit_Framework_MockObject_MockObject */
+    /** @var ObjectRepository|\PHPUnit\Framework\MockObject\MockObject */
     private $repository;
 
     /** @var EventOrganizerResolver */

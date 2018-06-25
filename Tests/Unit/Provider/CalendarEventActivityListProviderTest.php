@@ -19,17 +19,17 @@ use Oro\Component\Testing\Unit\EntityTrait;
 /**
  * @SuppressWarnings(PHPMD.TooManyPublicMethods)
  */
-class CalendarEventActivityListProviderTest extends \PHPUnit_Framework_TestCase
+class CalendarEventActivityListProviderTest extends \PHPUnit\Framework\TestCase
 {
     use EntityTrait;
 
-    /** @var DoctrineHelper|\PHPUnit_Framework_MockObject_MockObject */
+    /** @var DoctrineHelper|\PHPUnit\Framework\MockObject\MockObject */
     protected $doctrineHelper;
 
-    /** @var ActivityAssociationHelper|\PHPUnit_Framework_MockObject_MockObject */
+    /** @var ActivityAssociationHelper|\PHPUnit\Framework\MockObject\MockObject */
     protected $activityAssociationHelper;
 
-    /** @var CommentAssociationHelper|\PHPUnit_Framework_MockObject_MockObject */
+    /** @var CommentAssociationHelper|\PHPUnit\Framework\MockObject\MockObject */
     protected $commentAssociationHelper;
 
     /** @var CalendarEventActivityListProvider */

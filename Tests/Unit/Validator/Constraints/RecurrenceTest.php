@@ -5,7 +5,7 @@ namespace Oro\Bundle\CalendarBundle\Tests\Unit\Validator\Constraints;
 use Oro\Bundle\CalendarBundle\Validator\Constraints\Recurrence;
 use Symfony\Component\Validator\Constraint;
 
-class RecurrenceTest extends \PHPUnit_Framework_TestCase
+class RecurrenceTest extends \PHPUnit\Framework\TestCase
 {
     /** @var Recurrence */
     protected $constraint;

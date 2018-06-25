@@ -5,7 +5,7 @@ namespace Oro\Bundle\CalendarBundle\Tests\Unit\Model\Recurrence;
 use Oro\Bundle\CalendarBundle\Entity\Recurrence;
 use Oro\Bundle\CalendarBundle\Model\Recurrence\DelegateStrategy;
 
-class DelegateStrategyTest extends \PHPUnit_Framework_TestCase
+class DelegateStrategyTest extends \PHPUnit\Framework\TestCase
 {
     /** @var DelegateStrategy $strategy */
     protected $strategy;
@@ -191,7 +191,7 @@ class DelegateStrategyTest extends \PHPUnit_Framework_TestCase
      *
      * @param string $name
      *
-     * @return \Oro\Bundle\CalendarBundle\Model\Recurrence\StrategyInterface|\PHPUnit_Framework_MockObject_MockObject
+     * @return \Oro\Bundle\CalendarBundle\Model\Recurrence\StrategyInterface|\PHPUnit\Framework\MockObject\MockObject
      */
     protected function createStrategy($name)
     {

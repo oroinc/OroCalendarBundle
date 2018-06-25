@@ -10,7 +10,7 @@ use Oro\Bundle\NavigationBundle\Event\ConfigureMenuEvent;
 use Oro\Bundle\SecurityBundle\Authentication\TokenAccessorInterface;
 use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
 
-class NavigationListenerTest extends \PHPUnit_Framework_TestCase
+class NavigationListenerTest extends \PHPUnit\Framework\TestCase
 {
     /**
      * @dataProvider dataProviderWithToken

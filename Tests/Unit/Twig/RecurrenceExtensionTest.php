@@ -9,20 +9,20 @@ use Oro\Bundle\CalendarBundle\Twig\RecurrenceExtension;
 use Oro\Component\Testing\Unit\TwigExtensionTestCaseTrait;
 use Symfony\Component\Translation\TranslatorInterface;
 
-class RecurrenceExtensionTest extends \PHPUnit_Framework_TestCase
+class RecurrenceExtensionTest extends \PHPUnit\Framework\TestCase
 {
     use TwigExtensionTestCaseTrait;
 
     /** @var RecurrenceExtension */
     protected $extension;
 
-    /** @var \PHPUnit_Framework_MockObject_MockObject */
+    /** @var \PHPUnit\Framework\MockObject\MockObject */
     protected $translator;
 
-    /** @var \PHPUnit_Framework_MockObject_MockObject */
+    /** @var \PHPUnit\Framework\MockObject\MockObject */
     protected $strategy;
 
-    /** @var \PHPUnit_Framework_MockObject_MockObject */
+    /** @var \PHPUnit\Framework\MockObject\MockObject */
     protected $recurrenceModel;
 
     protected function setUp()

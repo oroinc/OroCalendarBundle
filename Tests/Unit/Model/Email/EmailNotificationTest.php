@@ -8,13 +8,13 @@ use Oro\Bundle\CalendarBundle\Model\Email\EmailNotification;
 use Oro\Bundle\EmailBundle\Entity\EmailTemplate;
 use Oro\Bundle\EmailBundle\Entity\EmailTemplateTranslation;
 
-class EmailNotificationTest extends \PHPUnit_Framework_TestCase
+class EmailNotificationTest extends \PHPUnit\Framework\TestCase
 {
     const LOCALE     = 'locale';
     const CLASS_NAME = 'Oro\Bundle\CalendarBundle\Entity\CalendarEvent';
 
     /**
-     * @var \PHPUnit_Framework_MockObject_MockObject
+     * @var \PHPUnit\Framework\MockObject\MockObject
      */
     protected $em;
 

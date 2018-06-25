@@ -9,7 +9,7 @@ use Oro\Bundle\OrganizationBundle\Entity\Organization;
 use Oro\Bundle\UserBundle\Entity\User;
 use Symfony\Component\PropertyAccess\PropertyAccess;
 
-class CalendarTest extends \PHPUnit_Framework_TestCase
+class CalendarTest extends \PHPUnit\Framework\TestCase
 {
     public function testIdGetter()
     {

@@ -15,10 +15,10 @@ use Oro\Bundle\EntityExtendBundle\Entity\AbstractEnumValue;
 /**
  * @SuppressWarnings(PHPMD.ExcessiveClassLength)
  */
-class NotificationManagerTest extends \PHPUnit_Framework_TestCase
+class NotificationManagerTest extends \PHPUnit\Framework\TestCase
 {
     /**
-     * @var \PHPUnit_Framework_MockObject_MockObject|EmailNotificationSender
+     * @var \PHPUnit\Framework\MockObject\MockObject|EmailNotificationSender
      */
     protected $emailNotificationSender;
 
