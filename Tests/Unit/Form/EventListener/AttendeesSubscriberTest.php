@@ -8,7 +8,7 @@ use Oro\Bundle\CalendarBundle\Tests\Unit\Fixtures\Entity\Attendee;
 use Symfony\Component\Form\FormEvent;
 use Symfony\Component\Form\FormEvents;
 
-class AttendeesSubscriberTest extends \PHPUnit_Framework_TestCase
+class AttendeesSubscriberTest extends \PHPUnit\Framework\TestCase
 {
     /** @var AttendeesSubscriber */
     protected $attendeesSubscriber;

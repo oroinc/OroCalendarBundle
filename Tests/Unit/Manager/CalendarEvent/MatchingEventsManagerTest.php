@@ -13,17 +13,17 @@ use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
 use Oro\Bundle\UserBundle\Entity\User;
 use Oro\Component\Testing\Unit\EntityTrait;
 
-class MatchingEventsManagerTest extends \PHPUnit_Framework_TestCase
+class MatchingEventsManagerTest extends \PHPUnit\Framework\TestCase
 {
     use EntityTrait;
 
     const UID = '17f409b2-7393-42b1-9976-3394d9f5302e';
     const EMAIL = 'email@oroinc.com';
 
-    /** @var EntityManager|\PHPUnit_Framework_MockObject_MockObject */
+    /** @var EntityManager|\PHPUnit\Framework\MockObject\MockObject */
     private $entityManager;
 
-    /** @var CalendarEventRepository|\PHPUnit_Framework_MockObject_MockObject */
+    /** @var CalendarEventRepository|\PHPUnit\Framework\MockObject\MockObject */
     private $repository;
 
     /** @var MatchingEventsManager */
@@ -43,7 +43,7 @@ class MatchingEventsManagerTest extends \PHPUnit_Framework_TestCase
             ->with(CalendarEvent::class)
             ->willReturn($this->repository);
 
-        /** @var DoctrineHelper|\PHPUnit_Framework_MockObject_MockObject $doctrineHelper */
+        /** @var DoctrineHelper|\PHPUnit\Framework\MockObject\MockObject $doctrineHelper */
         $doctrineHelper = $this->getMockBuilder(DoctrineHelper::class)
             ->disableOriginalConstructor()
             ->getMock();

@@ -14,7 +14,7 @@ use Symfony\Component\Form\Test\TypeTestCase;
 class CalendarPropertyApiTypeTest extends TypeTestCase
 {
     /**
-     * @var \PHPUnit_Framework_MockObject_MockObject
+     * @var \PHPUnit\Framework\MockObject\MockObject
      */
     protected $registry;
 

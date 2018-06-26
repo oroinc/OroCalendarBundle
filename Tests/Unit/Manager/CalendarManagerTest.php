@@ -4,15 +4,15 @@ namespace Oro\Bundle\CalendarBundle\Tests\Unit\Manager;
 
 use Oro\Bundle\CalendarBundle\Manager\CalendarManager;
 
-class CalendarManagerTest extends \PHPUnit_Framework_TestCase
+class CalendarManagerTest extends \PHPUnit\Framework\TestCase
 {
-    /** @var \PHPUnit_Framework_MockObject_MockObject */
+    /** @var \PHPUnit\Framework\MockObject\MockObject */
     protected $calendarPropertyProvider;
 
-    /** @var \PHPUnit_Framework_MockObject_MockObject */
+    /** @var \PHPUnit\Framework\MockObject\MockObject */
     protected $provider1;
 
-    /** @var \PHPUnit_Framework_MockObject_MockObject */
+    /** @var \PHPUnit\Framework\MockObject\MockObject */
     protected $provider2;
 
     /** @var CalendarManager */

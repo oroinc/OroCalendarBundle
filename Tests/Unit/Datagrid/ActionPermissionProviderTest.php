@@ -6,12 +6,12 @@ use Oro\Bundle\CalendarBundle\Datagrid\ActionPermissionProvider;
 use Oro\Bundle\SecurityBundle\Authentication\TokenAccessorInterface;
 use Oro\Bundle\UserBundle\Entity\User;
 
-class ActionPermissionProviderTest extends \PHPUnit_Framework_TestCase
+class ActionPermissionProviderTest extends \PHPUnit\Framework\TestCase
 {
     const ADMIN = 1;
     const USER  = 2;
 
-    /** @var \PHPUnit_Framework_MockObject_MockObject */
+    /** @var \PHPUnit\Framework\MockObject\MockObject */
     protected $tokenAccessor;
 
     /**

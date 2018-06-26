@@ -11,7 +11,7 @@ use Oro\Bundle\CalendarBundle\Entity\CalendarEvent;
 use Oro\Bundle\CalendarBundle\EventListener\CalendarEventEntityListener;
 use Oro\Bundle\CalendarBundle\Exception\UidAlreadySetException;
 
-class CalendarEventEntityListenerTest extends \PHPUnit_Framework_TestCase
+class CalendarEventEntityListenerTest extends \PHPUnit\Framework\TestCase
 {
     const UID = 'MOCK-UUID-123456';
 

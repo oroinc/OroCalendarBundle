@@ -4,7 +4,7 @@ namespace Oro\Bundle\CalendarBundle\Tests\Unit\Provider;
 
 use Oro\Bundle\CalendarBundle\Provider\SystemCalendarConfig;
 
-class SystemCalendarConfigTest extends \PHPUnit_Framework_TestCase
+class SystemCalendarConfigTest extends \PHPUnit\Framework\TestCase
 {
     /**
      * @dataProvider configProvider

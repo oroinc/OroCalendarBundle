@@ -20,21 +20,21 @@ use Symfony\Component\HttpFoundation\RequestStack;
 /**
  * @SuppressWarnings(PHPMD.TooManyPublicMethods)
  */
-class CalendarEventApiHandlerTest extends \PHPUnit_Framework_TestCase
+class CalendarEventApiHandlerTest extends \PHPUnit\Framework\TestCase
 {
-    /** @var \PHPUnit_Framework_MockObject_MockObject */
+    /** @var \PHPUnit\Framework\MockObject\MockObject */
     protected $form;
 
-    /** @var \PHPUnit_Framework_MockObject_MockObject */
+    /** @var \PHPUnit\Framework\MockObject\MockObject */
     protected $request;
 
     /** @var RequestStack */
     protected $requestStack;
 
-    /** @var \PHPUnit_Framework_MockObject_MockObject */
+    /** @var \PHPUnit\Framework\MockObject\MockObject */
     protected $tokenAccessor;
 
-    /** @var \PHPUnit_Framework_MockObject_MockObject */
+    /** @var \PHPUnit\Framework\MockObject\MockObject */
     protected $notificationManager;
 
     /** @var CalendarEvent */
@@ -46,7 +46,7 @@ class CalendarEventApiHandlerTest extends \PHPUnit_Framework_TestCase
     /** @var ActivityManager */
     protected $activityManager;
 
-    /** @var \PHPUnit_Framework_MockObject_MockObject|CalendarEventManager */
+    /** @var \PHPUnit\Framework\MockObject\MockObject|CalendarEventManager */
     protected $calendarEventManager;
 
     /** @var CalendarEventApiHandler */

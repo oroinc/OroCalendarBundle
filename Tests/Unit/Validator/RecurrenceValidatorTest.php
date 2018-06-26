@@ -6,9 +6,10 @@ use Oro\Bundle\CalendarBundle\Entity;
 use Oro\Bundle\CalendarBundle\Model;
 use Oro\Bundle\CalendarBundle\Validator\Constraints\Recurrence;
 use Oro\Bundle\CalendarBundle\Validator\RecurrenceValidator;
+use PHPUnit\Framework\MockObject\Matcher\Invocation;
 use Symfony\Component\Validator\Context\ExecutionContextInterface;
 
-class RecurrenceValidatorTest extends \PHPUnit_Framework_TestCase
+class RecurrenceValidatorTest extends \PHPUnit\Framework\TestCase
 {
     /**
      * @var array
@@ -41,12 +42,12 @@ class RecurrenceValidatorTest extends \PHPUnit_Framework_TestCase
     protected $constraint;
 
     /**
-     * @var \PHPUnit_Framework_MockObject_MockObject
+     * @var \PHPUnit\Framework\MockObject\MockObject
      */
     protected $context;
 
     /**
-     * @var \PHPUnit_Framework_MockObject_MockObject
+     * @var \PHPUnit\Framework\MockObject\MockObject
      */
     protected $model;
 
@@ -344,14 +345,14 @@ class RecurrenceValidatorTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * @param \PHPUnit_Framework_MockObject_Matcher_Invocation $matcher
+     * @param \PHPUnit\Framework\MockObject\Matcher\Invocation $matcher
      * @param string $message
      * @param array $parameters
      * @param mixed $invalidValue
      * @param string|null $path
      */
     protected function expectAddViolation(
-        \PHPUnit_Framework_MockObject_Matcher_Invocation $matcher,
+        Invocation $matcher,
         $message,
         array $parameters,
         $invalidValue,
