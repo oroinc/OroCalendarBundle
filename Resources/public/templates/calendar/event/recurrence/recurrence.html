@@ -13,7 +13,7 @@
 </div>
 <div data-name="recurrence-settings"<% if (!recurrenceType) { %> style="display: none"<% } %>>
     <% if (!_.isEmpty(errors)) { %>
-    <div class="control-group alert alert-error">
+    <div class="control-group alert alert-error" role="alert">
         <ul class="controls">
         <% _.each(errors, function(item) {
             _.each(item.messages, function(message) { %>
@@ -51,4 +51,4 @@
     </div>
     <div data-name="recurrence-origin-values" class="hide"></div>
 </div>
-<div class="alert alert-warning" data-name="recurrence-warning" style="display: none"></div>
+<div class="alert alert-warning" role="alert" data-name="recurrence-warning" style="display: none"></div>
