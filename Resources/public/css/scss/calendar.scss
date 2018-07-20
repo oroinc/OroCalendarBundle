@@ -185,7 +185,7 @@
 .connection-item .custom-color[data-selected]:after {
     font-family: 'FontAwesome';
     -webkit-font-smoothing: antialiased;
-    content: '\f00c';
+    content: $fa-var-check;
     position: absolute;
     top: -2px;
     left: 2px;
