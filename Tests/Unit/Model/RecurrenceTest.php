@@ -5,12 +5,12 @@ namespace Oro\Bundle\CalendarBundle\Tests\Unit\Model;
 use Oro\Bundle\CalendarBundle\Entity;
 use Oro\Bundle\CalendarBundle\Model\Recurrence;
 
-class RecurrenceTest extends \PHPUnit_Framework_TestCase
+class RecurrenceTest extends \PHPUnit\Framework\TestCase
 {
     /** @var Recurrence */
     protected $model;
 
-    /** @var \PHPUnit_Framework_MockObject_MockObject */
+    /** @var \PHPUnit\Framework\MockObject\MockObject */
     protected $strategy;
 
     protected function setUp()

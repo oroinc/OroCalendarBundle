@@ -4,7 +4,7 @@ namespace Oro\Bundle\CalendarBundle\Tests\Unit\Validator\Constraints;
 
 use Oro\Bundle\CalendarBundle\Validator\Constraints\DateEarlierThan;
 
-class DateEarlierThanTest extends \PHPUnit_Framework_TestCase
+class DateEarlierThanTest extends \PHPUnit\Framework\TestCase
 {
     protected $field;
     protected $requiredOption;

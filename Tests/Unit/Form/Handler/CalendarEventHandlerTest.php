@@ -15,11 +15,11 @@ use Oro\Bundle\UserBundle\Entity\User;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\RequestStack;
 
-class CalendarEventHandlerTest extends \PHPUnit_Framework_TestCase
+class CalendarEventHandlerTest extends \PHPUnit\Framework\TestCase
 {
     const FORM_DATA = ['field' => 'value'];
 
-    /** @var \PHPUnit_Framework_MockObject_MockObject */
+    /** @var \PHPUnit\Framework\MockObject\MockObject */
     protected $form;
 
     /** @var RequestStack */
@@ -28,19 +28,19 @@ class CalendarEventHandlerTest extends \PHPUnit_Framework_TestCase
     /** @var Request */
     protected $request;
 
-    /** @var \PHPUnit_Framework_MockObject_MockObject */
+    /** @var \PHPUnit\Framework\MockObject\MockObject */
     protected $objectManager;
 
-    /** @var \PHPUnit_Framework_MockObject_MockObject */
+    /** @var \PHPUnit\Framework\MockObject\MockObject */
     protected $activityManager;
 
-    /** @var \PHPUnit_Framework_MockObject_MockObject */
+    /** @var \PHPUnit\Framework\MockObject\MockObject */
     protected $entityRoutingHelper;
 
-    /** @var \PHPUnit_Framework_MockObject_MockObject */
+    /** @var \PHPUnit\Framework\MockObject\MockObject */
     protected $tokenAccessor;
 
-    /** @var \PHPUnit_Framework_MockObject_MockObject|CalendarEventManager */
+    /** @var \PHPUnit\Framework\MockObject\MockObject|CalendarEventManager */
     protected $calendarEventManager;
 
     /** @var CalendarEventHandler */
@@ -52,7 +52,7 @@ class CalendarEventHandlerTest extends \PHPUnit_Framework_TestCase
     /** @var Organization */
     protected $organization;
 
-    /** @var \PHPUnit_Framework_MockObject_MockObject */
+    /** @var \PHPUnit\Framework\MockObject\MockObject */
     protected $notificationManager;
 
     protected function setUp()

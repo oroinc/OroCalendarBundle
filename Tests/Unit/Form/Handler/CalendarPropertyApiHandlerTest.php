@@ -9,7 +9,7 @@ use Symfony\Component\Form\Form;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\RequestStack;
 
-class CalendarPropertyApiHandlerTest extends \PHPUnit_Framework_TestCase
+class CalendarPropertyApiHandlerTest extends \PHPUnit\Framework\TestCase
 {
     const FORM_DATA = ['field' => 'value'];
 

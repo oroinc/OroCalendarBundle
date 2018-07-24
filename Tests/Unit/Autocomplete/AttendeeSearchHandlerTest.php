@@ -15,18 +15,18 @@ use Oro\Bundle\SearchBundle\Query\Result;
 use Oro\Bundle\SearchBundle\Query\Result\Item;
 use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorage;
 
-class AttendeeSearchHandlerTest extends \PHPUnit_Framework_TestCase
+class AttendeeSearchHandlerTest extends \PHPUnit\Framework\TestCase
 {
-    /** @var \PHPUnit_Framework_MockObject_MockObject|Indexer */
+    /** @var \PHPUnit\Framework\MockObject\MockObject|Indexer */
     protected $indexer;
 
-    /** @var \PHPUnit_Framework_MockObject_MockObject|ObjectManager */
+    /** @var \PHPUnit\Framework\MockObject\MockObject|ObjectManager */
     protected $om;
 
     /** @var EntityRepository */
     protected $entityRepository;
 
-    /** @var \PHPUnit_Framework_MockObject_MockObject|AttendeeManager */
+    /** @var \PHPUnit\Framework\MockObject\MockObject|AttendeeManager */
     protected $attendeeManager;
 
     /** @var AttendeeSearchHandler */

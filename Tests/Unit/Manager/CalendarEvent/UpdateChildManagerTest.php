@@ -8,9 +8,9 @@ use Oro\Bundle\CalendarBundle\Entity\CalendarEvent;
 use Oro\Bundle\CalendarBundle\Manager\CalendarEvent\UpdateChildManager;
 use Oro\Bundle\OrganizationBundle\Entity\Organization;
 
-class UpdateChildManagerTest extends \PHPUnit_Framework_TestCase
+class UpdateChildManagerTest extends \PHPUnit\Framework\TestCase
 {
-    /** @var ManagerRegistry|\PHPUnit_Framework_MockObject_MockObject */
+    /** @var ManagerRegistry|\PHPUnit\Framework\MockObject\MockObject */
     private $doctrine;
 
     /** @var UpdateChildManager */

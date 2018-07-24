@@ -29,7 +29,7 @@ use Oro\Bundle\SecurityBundle\Authentication\TokenAccessorInterface;
 /**
  * Old tests moved after remove of \Oro\Bundle\CalendarBundle\Tests\Unit\Form\EventListener\ChildEventsSubscriberTest.
  */
-class CalendarEventManagerLegacyTest extends \PHPUnit_Framework_TestCase
+class CalendarEventManagerLegacyTest extends \PHPUnit\Framework\TestCase
 {
     /** @var CalendarEventManager */
     protected $calendarEventManager;
@@ -286,7 +286,7 @@ class CalendarEventManagerLegacyTest extends \PHPUnit_Framework_TestCase
 
     /**
      * @param Attendee $relatedAttendee
-     * @return CalendarEvent|\PHPUnit_Framework_MockObject_MockObject
+     * @return CalendarEvent|\PHPUnit\Framework\MockObject\MockObject
      */
     protected function getCalendarEventWithExpectedRelatedAttendee(Attendee $relatedAttendee)
     {

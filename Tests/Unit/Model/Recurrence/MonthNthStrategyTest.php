@@ -13,14 +13,14 @@ class MonthNthStrategyTest extends AbstractTestStrategy
     /** @var MonthNthStrategy  */
     protected $strategy;
 
-    /** @var \PHPUnit_Framework_MockObject_MockObject */
+    /** @var \PHPUnit\Framework\MockObject\MockObject */
     protected $validator;
 
     protected function setUp()
     {
         $this->validator = $this->getMockBuilder('Symfony\Component\Validator\Validator\ValidatorInterface')
             ->getMock();
-        /** @var \PHPUnit_Framework_MockObject_MockObject|TranslatorInterface */
+        /** @var \PHPUnit\Framework\MockObject\MockObject|TranslatorInterface */
         $translator = $this->createMock('Symfony\Component\Translation\TranslatorInterface');
         $translator->expects($this->any())
             ->method('transChoice')
@@ -44,7 +44,7 @@ class MonthNthStrategyTest extends AbstractTestStrategy
             ->disableOriginalConstructor()
             ->getMock();
 
-        /** @var LocaleSettings|\PHPUnit_Framework_MockObject_MockObject $localeSettings */
+        /** @var LocaleSettings|\PHPUnit\Framework\MockObject\MockObject $localeSettings */
         $localeSettings = $this->getMockBuilder('Oro\Bundle\LocaleBundle\Model\LocaleSettings')
             ->disableOriginalConstructor()
             ->setMethods(['getTimezone'])

@@ -12,15 +12,15 @@ use Oro\Bundle\CalendarBundle\Tests\Unit\Fixtures\Entity\CalendarEvent;
 use Oro\Bundle\CalendarBundle\Tests\Unit\Fixtures\Entity\User;
 use Oro\Bundle\NotificationBundle\Manager\EmailNotificationManager;
 
-class EmailNotificationSenderTest extends \PHPUnit_Framework_TestCase
+class EmailNotificationSenderTest extends \PHPUnit\Framework\TestCase
 {
     /**
-     * @var \PHPUnit_Framework_MockObject_MockObject
+     * @var \PHPUnit\Framework\MockObject\MockObject
      */
     protected $entityManager;
 
     /**
-     * @var \PHPUnit_Framework_MockObject_MockObject
+     * @var \PHPUnit\Framework\MockObject\MockObject
      */
     protected $emailNotificationManager;
 
@@ -231,7 +231,7 @@ class EmailNotificationSenderTest extends \PHPUnit_Framework_TestCase
      * @param $expectedEntity
      * @param $expectedEmail
      * @param $expectedTemplate
-     * @return \PHPUnit_Framework_Constraint_Callback
+     * @return \PHPUnit\Framework\Constraint\Callback
      */
     public function notificationEqualTo($expectedEntity, $expectedEmail, $expectedTemplate)
     {

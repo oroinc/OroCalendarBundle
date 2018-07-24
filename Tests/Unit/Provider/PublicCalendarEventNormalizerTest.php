@@ -5,18 +5,18 @@ namespace Oro\Bundle\CalendarBundle\Tests\Unit\Provider;
 use Oro\Bundle\CalendarBundle\Provider\PublicCalendarEventNormalizer;
 use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
 
-class PublicCalendarEventNormalizerTest extends \PHPUnit_Framework_TestCase
+class PublicCalendarEventNormalizerTest extends \PHPUnit\Framework\TestCase
 {
-    /** @var \PHPUnit_Framework_MockObject_MockObject */
+    /** @var \PHPUnit\Framework\MockObject\MockObject */
     protected $calendarEventManager;
 
-    /** @var \PHPUnit_Framework_MockObject_MockObject */
+    /** @var \PHPUnit\Framework\MockObject\MockObject */
     protected $attendeeManager;
 
-    /** @var \PHPUnit_Framework_MockObject_MockObject */
+    /** @var \PHPUnit\Framework\MockObject\MockObject */
     protected $reminderManager;
 
-    /** @var \PHPUnit_Framework_MockObject_MockObject */
+    /** @var \PHPUnit\Framework\MockObject\MockObject */
     protected $authorizationChecker;
 
     /** @var PublicCalendarEventNormalizer */

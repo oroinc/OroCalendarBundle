@@ -7,25 +7,25 @@ use Oro\Bundle\CalendarBundle\Manager\CalendarEvent\MatchingEventsManager;
 use Oro\Bundle\CalendarBundle\Manager\CalendarEvent\UpdateManager;
 use Oro\Bundle\OrganizationBundle\Entity\Organization;
 
-class UpdateManagerTest extends \PHPUnit_Framework_TestCase
+class UpdateManagerTest extends \PHPUnit\Framework\TestCase
 {
     /**
-     * @var \PHPUnit_Framework_MockObject_MockObject
+     * @var \PHPUnit\Framework\MockObject\MockObject
      */
     protected $updateAttendeeManager;
 
     /**
-     * @var \PHPUnit_Framework_MockObject_MockObject
+     * @var \PHPUnit\Framework\MockObject\MockObject
      */
     protected $updateChildManager;
 
     /**
-     * @var \PHPUnit_Framework_MockObject_MockObject
+     * @var \PHPUnit\Framework\MockObject\MockObject
      */
     protected $updateExceptionManager;
 
     /**
-     * @var MatchingEventsManager|\PHPUnit_Framework_MockObject_MockObject
+     * @var MatchingEventsManager|\PHPUnit\Framework\MockObject\MockObject
      */
     protected $matchingEventsManager;
 

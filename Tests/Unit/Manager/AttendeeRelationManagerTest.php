@@ -9,7 +9,7 @@ use Oro\Bundle\CalendarBundle\Tests\Unit\Fixtures\Entity\User;
 use Oro\Bundle\LocaleBundle\Formatter\NameFormatter;
 use Oro\Bundle\UserBundle\Entity\Email;
 
-class AttendeeRelationManagerTest extends \PHPUnit_Framework_TestCase
+class AttendeeRelationManagerTest extends \PHPUnit\Framework\TestCase
 {
     /** @var AttendeeRelationManager */
     protected $attendeeRelationManager;

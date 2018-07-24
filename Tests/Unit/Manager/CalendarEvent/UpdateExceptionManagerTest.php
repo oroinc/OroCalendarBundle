@@ -9,15 +9,15 @@ use Oro\Bundle\CalendarBundle\Manager\CalendarEvent\UpdateExceptionManager;
 use Oro\Bundle\CalendarBundle\Tests\Unit\Fixtures\Entity\CalendarEvent;
 use Oro\Component\PropertyAccess\PropertyAccessor;
 
-class UpdateExceptionManagerTest extends \PHPUnit_Framework_TestCase
+class UpdateExceptionManagerTest extends \PHPUnit\Framework\TestCase
 {
     /**
-     * @var \PHPUnit_Framework_MockObject_MockObject|AttendeeManager
+     * @var \PHPUnit\Framework\MockObject\MockObject|AttendeeManager
      */
     protected $attendeeManager;
 
     /**
-     * @var \PHPUnit_Framework_MockObject_MockObject
+     * @var \PHPUnit\Framework\MockObject\MockObject
      */
     protected $deleteManager;
 

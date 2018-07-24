@@ -11,18 +11,18 @@ use Oro\Bundle\CalendarBundle\Tests\Unit\Fixtures\Entity\Attendee;
 use Oro\Bundle\CalendarBundle\Tests\Unit\Fixtures\Entity\User;
 use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
 
-class AttendeeManagerTest extends \PHPUnit_Framework_TestCase
+class AttendeeManagerTest extends \PHPUnit\Framework\TestCase
 {
-    /** @var \PHPUnit_Framework_MockObject_MockObject|DoctrineHelper */
+    /** @var \PHPUnit\Framework\MockObject\MockObject|DoctrineHelper */
     protected $doctrineHelper;
 
-    /** @var \PHPUnit_Framework_MockObject_MockObject|CalendarEventRepository */
+    /** @var \PHPUnit\Framework\MockObject\MockObject|CalendarEventRepository */
     protected $calendarEventRepository;
 
-    /** @var \PHPUnit_Framework_MockObject_MockObject|AttendeeRepository */
+    /** @var \PHPUnit\Framework\MockObject\MockObject|AttendeeRepository */
     protected $attendeeRepository;
 
-    /** @var \PHPUnit_Framework_MockObject_MockObject|AttendeeRelationManager */
+    /** @var \PHPUnit\Framework\MockObject\MockObject|AttendeeRelationManager */
     protected $attendeeRelationManager;
 
     /** @var AttendeeManager */

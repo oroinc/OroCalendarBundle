@@ -13,21 +13,21 @@ use Oro\Bundle\EntityExtendBundle\Tests\Unit\Fixtures\TestEnumValue;
 use Oro\Bundle\OrganizationBundle\Entity\Organization;
 use Oro\Bundle\SecurityBundle\Authentication\TokenAccessorInterface;
 
-class CalendarEventManagerTest extends \PHPUnit_Framework_TestCase
+class CalendarEventManagerTest extends \PHPUnit\Framework\TestCase
 {
-    /** @var \PHPUnit_Framework_MockObject_MockObject */
+    /** @var \PHPUnit\Framework\MockObject\MockObject */
     protected $updateManager;
 
-    /** @var \PHPUnit_Framework_MockObject_MockObject */
+    /** @var \PHPUnit\Framework\MockObject\MockObject */
     protected $doctrine;
 
-    /** @var \PHPUnit_Framework_MockObject_MockObject */
+    /** @var \PHPUnit\Framework\MockObject\MockObject */
     protected $tokenAccessor;
 
-    /** @var \PHPUnit_Framework_MockObject_MockObject */
+    /** @var \PHPUnit\Framework\MockObject\MockObject */
     protected $entityNameResolver;
 
-    /** @var \PHPUnit_Framework_MockObject_MockObject */
+    /** @var \PHPUnit\Framework\MockObject\MockObject */
     protected $calendarConfig;
 
     /** @var CalendarEventManager */
@@ -391,7 +391,7 @@ class CalendarEventManagerTest extends \PHPUnit_Framework_TestCase
 
     /**
      * @param Attendee $relatedAttendee
-     * @return CalendarEvent|\PHPUnit_Framework_MockObject_MockObject
+     * @return CalendarEvent|\PHPUnit\Framework\MockObject\MockObject
      */
     protected function getCalendarEventWithExpectedRelatedAttendee(Attendee $relatedAttendee)
     {

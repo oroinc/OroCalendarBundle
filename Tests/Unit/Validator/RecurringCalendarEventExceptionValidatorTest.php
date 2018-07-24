@@ -11,15 +11,15 @@ use Oro\Bundle\CalendarBundle\Validator\RecurringCalendarEventExceptionValidator
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\Validator\Context\ExecutionContextInterface;
 
-class RecurringCalendarEventExceptionValidatorTest extends \PHPUnit_Framework_TestCase
+class RecurringCalendarEventExceptionValidatorTest extends \PHPUnit\Framework\TestCase
 {
     /** @var RecurringCalendarEventExceptionConstraint */
     protected $constraint;
 
-    /** @var \PHPUnit_Framework_MockObject_MockObject */
+    /** @var \PHPUnit\Framework\MockObject\MockObject */
     protected $context;
 
-    /** @var \PHPUnit_Framework_MockObject_MockObject */
+    /** @var \PHPUnit\Framework\MockObject\MockObject */
     protected $calendarEventManager;
 
     protected function setUp()
@@ -145,7 +145,7 @@ class RecurringCalendarEventExceptionValidatorTest extends \PHPUnit_Framework_Te
      * @param array      $getMethodMapping
      * @param mixed|null $data
      *
-     * @return \PHPUnit_Framework_MockObject_MockObject
+     * @return \PHPUnit\Framework\MockObject\MockObject
      */
     protected function prepareFormStub(array $hasMethodMapping, array $getMethodMapping, $data = null)
     {

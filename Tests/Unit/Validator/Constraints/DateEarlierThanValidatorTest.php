@@ -8,7 +8,7 @@ use Symfony\Component\Form\Form;
 use Symfony\Component\Validator\Context\ExecutionContext;
 use Symfony\Component\Validator\Context\ExecutionContextInterface;
 
-class DateEarlierThanValidatorTest extends \PHPUnit_Framework_TestCase
+class DateEarlierThanValidatorTest extends \PHPUnit\Framework\TestCase
 {
     /**
      * @var DateEarlierThan
