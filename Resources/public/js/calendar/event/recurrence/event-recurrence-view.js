@@ -192,6 +192,8 @@ define(function(require) {
                 };
             });
 
+            this.$el.inputWidget('seekAndCreate');
+
             return data;
         },
 
@@ -203,6 +205,7 @@ define(function(require) {
                 html = '<input name="' + this.inputNamePrefixes + '" value="" />';
             }
             this.findElement('origin-values').html(html);
+            this.$el.inputWidget('seekAndCreate');
         },
 
         findElement: function(shortName) {
