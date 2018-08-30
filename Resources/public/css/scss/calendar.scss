@@ -229,6 +229,8 @@ i.invitation-status.fa-question-circle {
 
 .calendar-dashboard-widget {
     margin-top: 10px;
+    position: relative;
+    z-index: 0;
 }
 
 .calendar-dashboard-widget .fc-toolbar {
