@@ -12,7 +12,7 @@ Feature: Application search
     And I follow "Search"
     And type "Common" in "search"
     And I should see 3 search suggestions
-    When I press "Go"
+    When I click "Go"
     Then I should be on Search Result page
     And I should see following search entity types:
       | Type            | N | isSelected |

@@ -7,7 +7,7 @@ Feature: Create calendar events
   Scenario: Create AllDay No-repeat calendar event
     Given I login as administrator
     And go to Activities/ Calendar Events
-    And press "Create Calendar event"
+    And click "Create Calendar event"
     When I save and close form
     Then I should see validation errors:
       | Title | This value should not be blank. |
@@ -24,7 +24,7 @@ Feature: Create calendar events
       | Email         | days          | 1               |
       | Flash message | minutes       | 30              |
     And I save and close form
-    And press "Notify"
+    And click "Notify"
     Then I should see "Calendar event saved" flash message
     When I click My Calendar in user menu
     Then I should see "All day no repeat Event" in calendar with:
@@ -34,7 +34,7 @@ Feature: Create calendar events
 
   Scenario: Create daily weekday never ending Event
     When I go to Activities/ Calendar Events
-    And press "Create Calendar event"
+    And click "Create Calendar event"
     Then I fill "Event Form" with:
       | Title           | Daily weekday never ending Event |
       | Start           | <DateTime:today>                 |
@@ -53,7 +53,7 @@ Feature: Create calendar events
 
   Scenario: Create Daily every 3 days, after 5 occurrences ending Event
     When I go to Activities/ Calendar Events
-    And press "Create Calendar event"
+    And click "Create Calendar event"
     Then I fill "Event Form" with:
       | Title           | Three days five occ ending Event |
       | Start           | <DateTime:today>                 |
@@ -72,7 +72,7 @@ Feature: Create calendar events
 
   Scenario: Create Daily every 5 days, by next month ending Event
     When I go to Activities/ Calendar Events
-    And press "Create Calendar event"
+    And click "Create Calendar event"
     Then I fill "Event Form" with:
       | Title           | Two days by month ending Event |
       | Start           | <DateTime:today>               |
@@ -91,7 +91,7 @@ Feature: Create calendar events
 
   Scenario: Create weekly, every 2 weeks on Monday, 2 occ ending Event
     When I go to Activities/ Calendar Events
-    And press "Create Calendar event"
+    And click "Create Calendar event"
     Then I fill "Event Form" with:
       | Title            | Two weeks two occ ending Event         |
       | Start            | <DateTime:today>                       |
@@ -109,7 +109,7 @@ Feature: Create calendar events
 
   Scenario: Create weekly, every 3 weeks never ending Event
     When I go to Activities/ Calendar Events
-    And press "Create Calendar event"
+    And click "Create Calendar event"
     Then I fill "Event Form" with:
       | Title            | Three weeks never ending Event         |
       | Start            | <DateTime:today>                       |
@@ -127,7 +127,7 @@ Feature: Create calendar events
 
   Scenario: Create Monthly First Weekday next year ending Event
     When I go to Activities/ Calendar Events
-    And press "Create Calendar event"
+    And click "Create Calendar event"
     Then I fill "Event Form" with:
       | Title             | Monthly First Weekday by ny ending Event |
       | Start             | <DateTime:today>                         |
@@ -147,7 +147,7 @@ Feature: Create calendar events
   @skip
   Scenario: Create yearly April Day 1, 5 recurrence ending Event
     When I go to Activities/ Calendar Events
-    And press "Create Calendar event"
+    And click "Create Calendar event"
     Then I fill "Event Form" with:
       | Title            | Yearly April Day one rcr five ending Event  |
       | Start            | <DateTime:today>                            |
@@ -164,7 +164,7 @@ Feature: Create calendar events
       | Recurrence    | Yearly every 1 year on the first day of Apr, end after 5 occurrences |
 
   Scenario: Edit yearly April Day 1, 5 recurrence ending Event
-    When I press "Edit Calendar event"
+    When I click "Edit Calendar event"
     And I fill "Event Form" with:
       | Title            | New year Event                                |
       | Start            | <DateTime:today>                              |
@@ -181,7 +181,7 @@ Feature: Create calendar events
       | Recurrence    | Yearly every 1 year on the first day of Jan   |
 
   Scenario: Delete calendar event
-    Given I press "Delete"
+    Given I click "Delete"
     When I confirm deletion
     Then I should see "Calendar event deleted" flash message
     And I should not see "New year Event"
