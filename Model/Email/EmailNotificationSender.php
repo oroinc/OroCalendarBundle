@@ -3,9 +3,9 @@
 namespace Oro\Bundle\CalendarBundle\Model\Email;
 
 use Doctrine\Common\Persistence\ManagerRegistry;
-
 use Oro\Bundle\CalendarBundle\Entity\Attendee;
 use Oro\Bundle\CalendarBundle\Entity\CalendarEvent;
+use Oro\Bundle\EmailBundle\Model\EmailHolderInterface;
 use Oro\Bundle\NotificationBundle\Manager\EmailNotificationManager;
 use Oro\Bundle\UserBundle\Entity\User;
 
@@ -129,9 +129,9 @@ class EmailNotificationSender
                 $attendeeEvent = $calendarEvent;
             }
             $this->addEmailNotification(
-                $this->createEmailNotification(
+                $this->createTemplateEmailNotification(
                     $attendeeEvent,
-                    $attendee->getEmail(),
+                    $attendee,
                     $templateName
                 )
             );
@@ -144,13 +144,34 @@ class EmailNotificationSender
      * @param CalendarEvent $calendarEvent  Calendar event of the notification.
      * @param string        $email          Recipient's email
      * @param string        $templateName   Name of template
-     *
      * @return EmailNotification
+     *
+     * @deprecated since 2.6, will be removed in 3.1. Use ::createTemplateEmailNotification instead.
      */
     protected function createEmailNotification(CalendarEvent $calendarEvent, $email, $templateName)
     {
         $result = new EmailNotification($this->managerRegistry->getManager());
         $result->setEmails([$email]);
+        $result->setCalendarEvent($calendarEvent);
+        $result->setTemplateName($templateName);
+
+        return $result;
+    }
+
+    /**
+     * @param CalendarEvent        $calendarEvent  Calendar event of the notification.
+     * @param EmailHolderInterface $recipient      Recipient's object
+     * @param string               $templateName   Name of template
+     * @return TemplateEmailNotification
+     */
+    private function createTemplateEmailNotification(
+        CalendarEvent $calendarEvent,
+        EmailHolderInterface $recipient,
+        string $templateName
+    ) {
+        $result = new TemplateEmailNotification($this->managerRegistry->getManager());
+        $result->addRecipient($recipient);
+        $result->setEmails([$recipient->getEmail()]);
         $result->setCalendarEvent($calendarEvent);
         $result->setTemplateName($templateName);
 
@@ -268,9 +289,9 @@ class EmailNotificationSender
         }
 
         $this->addEmailNotification(
-            $this->createEmailNotification(
+            $this->createTemplateEmailNotification(
                 $calendarEvent,
-                $user->getEmail(),
+                $user,
                 $templateName
             )
         );
