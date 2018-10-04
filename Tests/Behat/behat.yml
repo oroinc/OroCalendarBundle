@@ -64,5 +64,5 @@ oro_behat_extension:
       selector: 'li[data-calendar-alias="user"] a.context-menu-button'
     Calendar Activity Item:
       selector:
-        locator: '//div[@class="accordion-heading clearfix"]'
+        locator: '//div[@class="accordion-heading"]'
         type: xpath
