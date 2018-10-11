@@ -2,19 +2,40 @@
 
 namespace Oro\Bundle\CalendarBundle\Tests\Functional\API;
 
+use Oro\Bundle\CalendarBundle\Tests\Functional\DataFixtures\LoadCalendarEventData;
+use Oro\Bundle\CalendarBundle\Tests\Functional\DataFixtures\LoadUserData;
+use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
+use Oro\Bundle\TestFrameworkBundle\Tests\Functional\DataFixtures\LoadActivityTargets;
+
 /**
  * @SuppressWarnings(PHPMD.TooManyPublicMethods)
  */
-class RestCalendarEventWithRegularEventTest extends AbstractCalendarEventTest
+class RestCalendarEventWithRegularEventTest extends WebTestCase
 {
+    const DATE_RANGE_START = '-5 day';
+    const DATE_RANGE_END = '+5 day';
+
+    const DEFAULT_USER_CALENDAR_ID = 1;
+
+    protected function setUp()
+    {
+        $this->initClient([], $this->generateWsseAuthHeader());
+        $this->loadFixtures([
+            LoadCalendarEventData::class,
+            LoadActivityTargets::class,
+            LoadUserData::class,
+        ]);
+    }
+
     /**
      * Creates regular event.
      *
-     * @return int
+     * @return array
      */
     public function testPostRegularEvent()
     {
-        $this->client->request('POST', $this->getUrl('oro_api_post_calendarevent'), self::$regularEventParameters);
+        $parameters = $this->getRegularEventParameters();
+        $this->client->request('POST', $this->getUrl('oro_api_post_calendarevent'), $parameters);
         $result = $this->getJsonResponseContent($this->client->getResponse(), 201);
 
         $this->assertNotEmpty($result);
@@ -24,7 +45,7 @@ class RestCalendarEventWithRegularEventTest extends AbstractCalendarEventTest
             ->find($result['id']);
         $this->assertNotNull($event);
 
-        return $result['id'];
+        return ['id' => $result['id'], 'regularEventParameters' => $parameters];
     }
 
     /**
@@ -32,10 +53,12 @@ class RestCalendarEventWithRegularEventTest extends AbstractCalendarEventTest
      *
      * @depends testPostRegularEvent
      *
-     * @param int $id
+     * @param array $data
      */
-    public function testGetRegularEvent($id)
+    public function testGetRegularEvent(array $data)
     {
+        $id = $data['id'];
+
         $this->client->request(
             'GET',
             $this->getUrl('oro_api_get_calendarevent', ['id' => $id])
@@ -44,7 +67,8 @@ class RestCalendarEventWithRegularEventTest extends AbstractCalendarEventTest
 
         $this->assertNotEmpty($result);
         $this->assertEquals($id, $result['id']);
-        foreach (self::$regularEventParameters as $attribute => $value) {
+
+        foreach ($data['regularEventParameters'] as $attribute => $value) {
             $this->assertArrayHasKey($attribute, $result);
             $this->assertEquals(
                 $value,
@@ -59,21 +83,23 @@ class RestCalendarEventWithRegularEventTest extends AbstractCalendarEventTest
      *
      * @depends testPostRegularEvent
      *
-     * @param int $id
+     * @param array $data
      */
-    public function testPutRegularEvent($id)
+    public function testPutRegularEvent(array $data)
     {
-        self::$regularEventParameters['title'] = 'Test Regular Event Updated';
+        $id = $data['id'];
+        $parameters = $data['regularEventParameters'];
+        $parameters['title'] = 'Test Regular Event Updated';
         $this->client->request(
             'PUT',
             $this->getUrl('oro_api_put_calendarevent', ['id' => $id]),
-            self::$regularEventParameters
+            $parameters
         );
 
         $result = $this->getJsonResponseContent($this->client->getResponse(), 200);
         $event = $this->getContainer()->get('doctrine')->getRepository('OroCalendarBundle:CalendarEvent')
             ->find($id);
-        $this->assertEquals(self::$regularEventParameters['title'], $event->getTitle());
+        $this->assertEquals($parameters['title'], $event->getTitle());
     }
 
     /**
@@ -81,10 +107,12 @@ class RestCalendarEventWithRegularEventTest extends AbstractCalendarEventTest
      *
      * @depends testPostRegularEvent
      *
-     * @param int $id
+     * @param array $data
      */
-    public function testDeleteRegularEvent($id)
+    public function testDeleteRegularEvent(array $data)
     {
+        $id = $data['id'];
+
         $this->client->request(
             'DELETE',
             $this->getUrl('oro_api_delete_calendarevent', ['id' => $id])
@@ -211,5 +239,21 @@ class RestCalendarEventWithRegularEventTest extends AbstractCalendarEventTest
 
         $this->assertNotEmpty($result);
         $this->assertEquals($id, $result['id']);
+    }
+
+    /**
+     * @return array
+     */
+    protected function getRegularEventParameters()
+    {
+        return [
+            'title' => 'Test Regular Event',
+            'description' => 'Test Regular Event Description',
+            'start' => gmdate(DATE_RFC3339),
+            'end' => gmdate(DATE_RFC3339),
+            'allDay' => true,
+            'backgroundColor' => '#FF0000',
+            'calendar' => $this->getReference('oro_calendar:calendar:system_user_1')->getId(),
+        ];
     }
 }
