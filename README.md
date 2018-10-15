@@ -18,7 +18,7 @@ The bundle adds an individual calendar for every application user with an abilit
 
 ## Overview
 
-This bundle integrates the [jQuery FullCalendar](http://arshaw.com/fullcalendar/) plugin into the OroPlatform and provides other calendar related functionality, such as view calendars of other users, system calendars, synchronization with external calendars, etc.
+This bundle integrates the [jQuery FullCalendar](http://arshaw.com/fullcalendar/) plugin into OroPlatform and provides other calendar related functionality, such as view calendars of other users, system calendars, synchronization with external calendars, etc.
 
 ## UI
 
