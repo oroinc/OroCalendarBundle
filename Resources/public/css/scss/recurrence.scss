@@ -47,10 +47,21 @@
       position: relative;
       display: inline-block;
       max-width: 252px;
+
+      input[type="text"] {
+        &.datepicker-input {
+          width: 176px;
+        }
+        &.timepicker-input {
+          width: 70px;
+        }
+      }
     }
     &__number {
-      width: 36px;
-      margin-right: 6px;
+      &:not(textarea) {
+        width: 36px;
+        margin-right: 6px;
+      }
     }
     &__text {
       vertical-align: middle;
