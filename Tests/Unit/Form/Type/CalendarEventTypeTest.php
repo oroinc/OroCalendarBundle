@@ -107,7 +107,7 @@ class CalendarEventTypeTest extends \PHPUnit\Framework\TestCase
                         'autocomplete_alias' => 'user_calendars',
                         'entity_class' => Calendar::class,
                         'configs' => array(
-                            'entity_name' => 'OroCalendarBundle:Calendar',
+                            'entity_name' => Calendar::class,
                             'excludeCurrent' => true,
                             'component' => 'acl-user-autocomplete',
                             'permission' => 'VIEW',

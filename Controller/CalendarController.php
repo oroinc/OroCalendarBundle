@@ -14,6 +14,9 @@ use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 
+/**
+ * Controller for viewing calendar information
+ */
 class CalendarController extends Controller
 {
     /**
@@ -53,6 +56,8 @@ class CalendarController extends Controller
      *      permission="VIEW",
      *      group_name=""
      * )
+     * @param Calendar $calendar
+     * @return array
      */
     public function viewAction(Calendar $calendar)
     {
@@ -73,7 +78,7 @@ class CalendarController extends Controller
 
                         'configs' => array(
                             'entity_id'               => $calendar->getId(),
-                            'entity_name'             => 'OroCalendarBundle:Calendar',
+                            'entity_name'             => Calendar::class,
                             'excludeCurrent'          => true,
                             'component'               => 'acl-user-autocomplete',
                             'permission'              => 'VIEW',

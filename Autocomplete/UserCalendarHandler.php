@@ -5,6 +5,7 @@ namespace Oro\Bundle\CalendarBundle\Autocomplete;
 use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\QueryBuilder;
 use Oro\Bundle\AttachmentBundle\Manager\AttachmentManager;
+use Oro\Bundle\EntityBundle\Tools\EntityRoutingHelper;
 use Oro\Bundle\OrganizationBundle\Entity\Organization;
 use Oro\Bundle\SecurityBundle\Acl\Voter\AclVoter;
 use Oro\Bundle\SecurityBundle\Authentication\TokenAccessorInterface;
@@ -14,6 +15,9 @@ use Oro\Bundle\UserBundle\Autocomplete\UserAclHandler;
 use Oro\Bundle\UserBundle\Entity\User;
 use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
 
+/**
+ * Autocomplete search handler for users with ACL access level protection for calendar package
+ */
 class UserCalendarHandler extends UserAclHandler
 {
     /** @var AclHelper */
@@ -26,6 +30,7 @@ class UserCalendarHandler extends UserAclHandler
      * @param AuthorizationCheckerInterface $authorizationChecker
      * @param TokenAccessorInterface        $tokenAccessor
      * @param OwnerTreeProvider             $treeProvider
+     * @param EntityRoutingHelper $entityRoutingHelper
      * @param AclHelper                     $aclHelper
      * @param AclVoter                      $aclVoter
      */
@@ -36,6 +41,7 @@ class UserCalendarHandler extends UserAclHandler
         AuthorizationCheckerInterface $authorizationChecker,
         TokenAccessorInterface $tokenAccessor,
         OwnerTreeProvider $treeProvider,
+        EntityRoutingHelper $entityRoutingHelper,
         AclHelper $aclHelper,
         AclVoter $aclVoter = null
     ) {
@@ -46,6 +52,7 @@ class UserCalendarHandler extends UserAclHandler
             $authorizationChecker,
             $tokenAccessor,
             $treeProvider,
+            $entityRoutingHelper,
             $aclVoter
         );
 
