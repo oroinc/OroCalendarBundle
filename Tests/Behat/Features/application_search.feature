@@ -9,10 +9,10 @@ Feature: Application search
 
   Scenario: Search all
     Given I login as administrator
-    And I follow "Search"
+    And I click "Search"
     And type "Common" in "search"
     And I should see 3 search suggestions
-    When I click "Go"
+    When I click "Search Submit"
     Then I should be on Search Result page
     And I should see following search entity types:
       | Type            | N | isSelected |
