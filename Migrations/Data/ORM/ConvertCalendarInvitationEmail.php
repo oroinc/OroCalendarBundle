@@ -21,7 +21,7 @@ class ConvertCalendarInvitationEmail extends AbstractEmailFixture implements Dep
     {
         return $this->container
             ->get('kernel')
-            ->locateResource('@OroCalendarBundle/Migrations/Data/ORM/data/emails/v1_0');
+            ->locateResource('@OroCalendarBundle/Migrations/Data/ORM/data/emails/invitation');
     }
 
     /**
@@ -82,6 +82,6 @@ class ConvertCalendarInvitationEmail extends AbstractEmailFixture implements Dep
     {
         return $this->container
             ->get('kernel')
-            ->locateResource('@OroCalendarBundle/Migrations/Data/ORM/data/emails/invitation');
+            ->locateResource('@OroCalendarBundle/Migrations/Data/ORM/data/emails/v1_0');
     }
 }
