@@ -27,12 +27,12 @@
                     <td style="width: 65pt; padding: 0 5pt 0 9pt; line-height: 1.3em; font-family: Arial, Helvetica, sans-serif; font-size: 10pt; vertical-align: top"><strong>When:</strong></td>
                     <td style="padding: 0 9pt 0 0; line-height: 1.3em; font-family: Arial, Helvetica, sans-serif; font-size: 10pt; vertical-align: top">{{ calendar_date_range_organization(entity.start, entity.end, entity.allDay, 1, null, null, null, entity.calendar.organization) }}</td>
                 </tr>
-                {% if get_event_recurrence_pattern(entity) %}
-                    <tr>
-                        <td style="width: 65pt; padding: 0 5pt 0 9pt; line-height: 1.3em; font-family: Arial, Helvetica, sans-serif; font-size: 10pt; vertical-align: top"><strong>Repeats:</strong></td>
-                        <td style="padding: 0 9pt 0 0; line-height: 1.3em; font-family: Arial, Helvetica, sans-serif; font-size: 10pt; vertical-align: top">{{ get_event_recurrence_pattern(entity) }}</td>
-                    </tr>
-                {% endif %}
+                <!--{% if get_event_recurrence_pattern(entity) %}-->
+                <tr>
+                    <td style="width: 65pt; padding: 0 5pt 0 9pt; line-height: 1.3em; font-family: Arial, Helvetica, sans-serif; font-size: 10pt; vertical-align: top"><strong>Repeats:</strong></td>
+                    <td style="padding: 0 9pt 0 0; line-height: 1.3em; font-family: Arial, Helvetica, sans-serif; font-size: 10pt; vertical-align: top">{{ get_event_recurrence_pattern(entity) }}</td>
+                </tr>
+                <!--{% endif %}-->
                 <tr>
                     <td style="width: 65pt; padding: 0 5pt 0 9pt; line-height: 1.3em; height:1em; font-family: Arial, Helvetica, sans-serif; font-size: 10pt; vertical-align: top"><strong>Calendar:</strong></td>
                     <td style="padding: 0 9pt 0 0; line-height: 1.3em; height:1em; font-family: Arial, Helvetica, sans-serif; font-size: 10pt; vertical-align: top">{{ entity.calendar }}</td>
@@ -41,14 +41,14 @@
                     <td style="width: 65pt; padding: 0 5pt 0 9pt; line-height: 1.3em; height:1em; font-family: Arial, Helvetica, sans-serif; font-size: 10pt; vertical-align: top"><strong>Description:</strong></td>
                     <td style="padding: 0 9pt 0 0; line-height: 1.3em; height:1em; font-family: Arial, Helvetica, sans-serif; font-size: 10pt; vertical-align: top">{{ entity.description }}</td>
                 </tr>
-                {% if entity.parent %}
-                    <tr>
-                        <td style="width: 65pt; padding: 0 5pt 9pt 9pt; line-height: 1.3em; font-family: Arial, Helvetica, sans-serif; font-size: 10pt; vertical-align: top">&nbsp;</td>
-                        <td style="padding: 0 9pt 9pt 0; line-height: 1.3em; font-family: Arial, Helvetica, sans-serif; font-size: 10pt; vertical-align: top">
-                            <a href="{{ oro_config_value('oro_ui.application_url') }}{{ path('oro_calendar_event_view', {'id': entity.id}) }}" target="_blank">more details »</a>
-                        </td>
-                    </tr>
-                {% endif %}
+                <!--{% if entity.parent %}-->
+                <tr>
+                    <td style="width: 65pt; padding: 0 5pt 9pt 9pt; line-height: 1.3em; font-family: Arial, Helvetica, sans-serif; font-size: 10pt; vertical-align: top">&nbsp;</td>
+                    <td style="padding: 0 9pt 9pt 0; line-height: 1.3em; font-family: Arial, Helvetica, sans-serif; font-size: 10pt; vertical-align: top">
+                        <a href="{{ oro_config_value('oro_ui.application_url') }}{{ path('oro_calendar_event_view', {'id': entity.id}) }}" target="_blank">more details »</a>
+                    </td>
+                </tr>
+                <!--{% endif %}-->
             </table>
         </td>
     </tr>
