@@ -27,7 +27,6 @@ parameters:
     oro_calendar.calendar_event_normalizer.user.class:           Oro\Bundle\CalendarBundle\Provider\UserCalendarEventNormalizer
     oro_calendar.calendar_event_normalizer.system.class:         Oro\Bundle\CalendarBundle\Provider\SystemCalendarEventNormalizer
     oro_calendar.calendar_event_normalizer.public.class:         Oro\Bundle\CalendarBundle\Provider\PublicCalendarEventNormalizer
-    oro_calendar.autocomplete.user_calendar_handler.class:       Oro\Bundle\CalendarBundle\Autocomplete\UserCalendarHandler
     oro_calendar.system_calendar_config.class:                   Oro\Bundle\CalendarBundle\Provider\SystemCalendarConfig
     oro_calendar.event_listener.navigation.class:                Oro\Bundle\CalendarBundle\EventListener\NavigationListener
     oro_calendar.system_calendar.handler.delete.class:           Oro\Bundle\CalendarBundle\Handler\SystemCalendarDeleteHandler
@@ -290,7 +289,7 @@ services:
         parent: oro_calendar.calendar_event_normalizer.abstract
 
     oro_calendar.autocomplete.user_calendar_handler:
-        class: '%oro_calendar.autocomplete.user_calendar_handler.class%'
+        class: Oro\Bundle\CalendarBundle\Autocomplete\UserCalendarHandler
         arguments:
             - '@doctrine.orm.entity_manager'
             - '@oro_attachment.manager'
@@ -298,6 +297,7 @@ services:
             - '@security.authorization_checker'
             - '@oro_security.token_accessor'
             - '@oro_security.ownership_tree_provider'
+            - '@oro_entity.routing_helper'
             - '@oro_security.acl_helper'
             - '@?security.acl.voter.basic_permissions'
         calls:

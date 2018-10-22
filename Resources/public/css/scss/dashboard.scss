@@ -1,0 +1,11 @@
+/* @theme: admin.oro; */
+
+.dashboard-container {
+  .responsive-cell {
+    .dashboard-widget {
+      .calendar-events {
+        margin: side-values(0 0 10px 10px);
+      }
+    }
+  }
+}

@@ -27,6 +27,9 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
 use Symfony\Component\Validator\Constraints\Choice;
 
+/**
+ * Form type for CalendarEvent entity
+ */
 class CalendarEventType extends AbstractType
 {
     /** @var NotificationManager */
@@ -234,7 +237,7 @@ class CalendarEventType extends AbstractType
                         'autocomplete_alias' => 'user_calendars',
                         'entity_class' => Calendar::class,
                         'configs' => array(
-                            'entity_name' => 'OroCalendarBundle:Calendar',
+                            'entity_name' => Calendar::class,
                             'excludeCurrent' => true,
                             'component' => 'acl-user-autocomplete',
                             'permission' => 'VIEW',

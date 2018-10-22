@@ -2,73 +2,75 @@
 
 namespace Oro\Bundle\CalendarBundle\Tests\Unit\Autocomplete;
 
+use Doctrine\ORM\EntityManager;
+use Oro\Bundle\AttachmentBundle\Manager\AttachmentManager;
 use Oro\Bundle\CalendarBundle\Autocomplete\UserCalendarHandler;
 use Oro\Bundle\CalendarBundle\Entity\Calendar;
 use Oro\Bundle\CalendarBundle\Tests\Unit\ReflectionUtil;
+use Oro\Bundle\EntityBundle\Provider\EntityNameResolver;
+use Oro\Bundle\EntityBundle\Tools\EntityRoutingHelper;
+use Oro\Bundle\SecurityBundle\Acl\Voter\AclVoter;
 use Oro\Bundle\SecurityBundle\Authentication\TokenAccessorInterface;
+use Oro\Bundle\SecurityBundle\ORM\Walker\AclHelper;
+use Oro\Bundle\SecurityBundle\Owner\OwnerTreeProvider;
 use Oro\Bundle\UserBundle\Entity\User;
 use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
 
 class UserCalendarHandlerTest extends \PHPUnit\Framework\TestCase
 {
-    /** @var \PHPUnit\Framework\MockObject\MockObject */
+    /** @var EntityManager|\PHPUnit\Framework\MockObject\MockObject */
     protected $em;
 
-    /** @var \PHPUnit\Framework\MockObject\MockObject */
+    /** @var AttachmentManager|\PHPUnit\Framework\MockObject\MockObject */
     protected $attachmentManager;
 
-    /** @var \PHPUnit\Framework\MockObject\MockObject */
+    /** @var AuthorizationCheckerInterface|\PHPUnit\Framework\MockObject\MockObject */
     protected $authorizationChecker;
 
-    /** @var \PHPUnit\Framework\MockObject\MockObject */
+    /** @var TokenAccessorInterface|\PHPUnit\Framework\MockObject\MockObject */
     protected $tokenAccessor;
 
-    /** @var \PHPUnit\Framework\MockObject\MockObject */
+    /** @var OwnerTreeProvider|\PHPUnit\Framework\MockObject\MockObject */
     protected $treeProvider;
 
-    /** @var \PHPUnit\Framework\MockObject\MockObject */
+    /** @var AclVoter|\PHPUnit\Framework\MockObject\MockObject */
     protected $aclVoter;
 
-    /** @var \PHPUnit\Framework\MockObject\MockObject */
+    /** @var AclHelper|\PHPUnit\Framework\MockObject\MockObject */
     protected $aclHelper;
 
-    /** @var \PHPUnit\Framework\MockObject\MockObject */
+    /** @var EntityRoutingHelper|\PHPUnit\Framework\MockObject\MockObject */
     protected $entityNameResolver;
 
-    /** @var  UserCalendarHandler */
+    /** @var EntityRoutingHelper|\PHPUnit\Framework\MockObject\MockObject */
+    protected $entityRoutingHelper;
+
+    /** @var UserCalendarHandler */
     protected $handler;
 
     protected function setUp()
     {
-        $this->em = $this->getMockBuilder('Doctrine\ORM\EntityManager')
-            ->disableOriginalConstructor()
-            ->getMock();
-        $this->attachmentManager = $this->getMockBuilder('Oro\Bundle\AttachmentBundle\Manager\AttachmentManager')
-            ->disableOriginalConstructor()
-            ->getMock();
+        $this->em = $this->createMock(EntityManager::class);
+        $this->attachmentManager = $this->createMock(AttachmentManager::class);
         $this->authorizationChecker = $this->createMock(AuthorizationCheckerInterface::class);
         $this->tokenAccessor = $this->createMock(TokenAccessorInterface::class);
-        $this->treeProvider = $this->getMockBuilder('Oro\Bundle\SecurityBundle\Owner\OwnerTreeProvider')
-            ->disableOriginalConstructor()
-            ->getMock();
-        $this->aclVoter = $this->getMockBuilder('Oro\Bundle\SecurityBundle\Acl\Voter\AclVoter')
-            ->disableOriginalConstructor()
-            ->getMock();
-        $this->aclHelper = $this->getMockBuilder('Oro\Bundle\SecurityBundle\ORM\Walker\AclHelper')
-            ->disableOriginalConstructor()
-            ->getMock();
+        $this->treeProvider = $this->createMock(OwnerTreeProvider::class);
+        $this->aclVoter = $this->createMock(AclVoter::class);
+        $this->aclHelper = $this->createMock(AclHelper::class);
+        $this->entityRoutingHelper = $this->createMock(EntityRoutingHelper::class);
+
         $this->handler = new UserCalendarHandler(
             $this->em,
             $this->attachmentManager,
-            'Oro\Bundle\CalendarBundle\Autocomplete\UserCalendarHandler',
+            UserCalendarHandler::class,
             $this->authorizationChecker,
             $this->tokenAccessor,
             $this->treeProvider,
+            $this->entityRoutingHelper,
             $this->aclHelper
         );
-        $this->entityNameResolver = $this->getMockBuilder('Oro\Bundle\EntityBundle\Provider\EntityNameResolver')
-            ->disableOriginalConstructor()
-            ->getMock();
+        $this->entityNameResolver = $this->createMock(EntityNameResolver::class);
+
         $this->handler->setEntityNameResolver($this->entityNameResolver);
         $this->handler->setProperties([
             'avatar',
