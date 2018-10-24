@@ -61,6 +61,8 @@ datagrids:
                     recurringEventRecurrence.id,
                     parentRecurringEvent.id,
                     parentRecurringEventRecurrence.id
+            hints:
+                - HINT_TRANSLATABLE
         columns:
             title:
                 label: oro.calendar.calendarevent.title.label
