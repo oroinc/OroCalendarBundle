@@ -1,94 +1,91 @@
-.ui-dialog .form-horizontal .control-group.control-group-choice {
-  margin-bottom: 8px;
-}
 .recurrence {
-  &-subview-control {
-    &__items {
-      margin-top: 0;
-    }
-    &__item {
-      label {
-        height: 30px;
-        line-height: 30px;
-        vertical-align: middle;
-        display: inline-block;
-      }
-      input[type=radio] {
-        margin: 0 8px 0 0 ;
-      }
-      .fields-row {
-        display: inline-block;
-        line-height: 30px;
-      }
-      .hasDatepicker {
-        width: 95px;
-        margin: 0 6px 0 0;
-      }
-      .ui-datepicker-dialog-is-below, .timepicker-dialog-is-below {
-        + span.validation-failed {
-          &:after {
-            margin-top: -38px;
-          }
-          > span {
-            margin-top: -35px;
-          }
+    &-subview-control {
+        &__items {
+            margin-top: 0;
         }
-      }
-    }
-    &__item:last-child label {
-      margin-bottom: 0;
-    }
-    &__item-datetime {
-      label {
-        vertical-align: top;
-      }
-    }
-    &__datetime-wrapper {
-      position: relative;
-      display: inline-block;
-      max-width: 252px;
+        &__item {
+            label {
+                height: 30px;
+                line-height: 30px;
+                vertical-align: middle;
+                display: inline-block;
+            }
+            input[type=radio] {
+                margin: 0 8px 0 0 ;
+            }
+            .fields-row {
+                display: inline-block;
+                line-height: 30px;
+            }
+            .hasDatepicker {
+                width: 95px;
+                margin: 0 6px 0 0;
+            }
+            .ui-datepicker-dialog-is-below, .timepicker-dialog-is-below {
+                + span.validation-failed {
+                    &:after {
+                        margin-top: -38px;
+                    }
+                    > span {
+                        margin-top: -35px;
+                    }
+                }
+            }
+        }
+        &__item:last-child label {
+            margin-bottom: 0;
+        }
+        &__item-datetime {
+            label {
+                vertical-align: top;
+            }
+        }
+        &__datetime-wrapper {
+            position: relative;
+            display: inline-block;
+            max-width: 252px;
 
-      input[type="text"] {
-        &.datepicker-input {
-          width: 176px;
+            input[type="text"] {
+                &.datepicker-input {
+                    width: 176px;
+                }
+                &.timepicker-input {
+                    width: 70px;
+                }
+            }
         }
-        &.timepicker-input {
-          width: 70px;
+        &__number {
+            &:not(textarea) {
+                width: 36px;
+                margin-right: 6px;
+            }
         }
-      }
+        &__text {
+            vertical-align: middle;
+            text-transform: none;
+        }
+        input[type=radio] + &__text {
+            display: inline-block;
+            min-width: 36px;
+        }
+        &__row {
+            margin-bottom: 10px;
+        }
+        .controls select {
+            width: auto;
+        }
+        .ui-dialog .form-horizontal & .control-group {
+            margin-bottom: 4px;
+        }
     }
-    &__number {
-      &:not(textarea) {
-        width: 36px;
-        margin-right: 6px;
-      }
+    &-summary {
+        padding: 4px 10px 9px 0;
+        border-radius: $input-border-radius;
+        &.control-group .control-label.wrap {
+            color: #3a87ad;
+        }
+        .controls {
+            padding-top: 6px;
+        }
     }
-    &__text {
-      vertical-align: middle;
-      text-transform: none;
-    }
-    input[type=radio] + &__text {
-      display: inline-block;
-      min-width: 36px;
-    }
-    &__row {
-      margin-bottom: 10px;
-    }
-    .controls select {
-      width: auto;
-    }
-    .ui-dialog .form-horizontal & .control-group {
-      margin-bottom: 4px;
-    }
-  }
-  &-summary {
-    padding: 4px 10px 9px 0;
-    border-radius: $input-border-radius;
-    &.control-group .control-label.wrap {
-      color: #3a87ad;
-    }
-    .controls {
-      padding-top: 6px;
-    }
-  }
 }
