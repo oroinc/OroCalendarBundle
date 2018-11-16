@@ -35,11 +35,11 @@ class CalendarEventInfo extends UiDialog
      */
     protected function init()
     {
-        $dataGroup = $this->findAll('css', ".control-group");
+        $dataGroup = $this->findAll('css', ".attribute-item");
         /** @var NodeElement $group */
         foreach ($dataGroup as $group) {
-            $label = $group->find('css', 'label.control-label')->getText();
-            $value = $group->find('css', '.controls > div')->getText();
+            $label = $group->find('css', 'label.attribute-item__term')->getText();
+            $value = $group->find('css', '.attribute-item__description > div')->getText();
 
             if (strtotime(trim($value))) {
                 $value = new \DateTime($value);
