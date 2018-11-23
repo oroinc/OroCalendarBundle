@@ -47,8 +47,8 @@ class SystemCalendarEventControllerTest extends WebTestCase
         $form = $crawler->selectButton('Save and Close')->form();
         $form['oro_calendar_event_form[title]'] = self::TITLE;
         $form['oro_calendar_event_form[description]'] = self::DESCRIPTION;
-        $form['oro_calendar_event_form[start]'] = '2018-03-08 12:00:00';
-        $form['oro_calendar_event_form[end]'] = '2018-03-08 20:00:00';
+        $form['oro_calendar_event_form[start]'] = '2018-03-08T12:00:00Z';
+        $form['oro_calendar_event_form[end]'] = '2018-03-08T20:00:00Z';
         $form['oro_calendar_event_form[attendees]'] = implode(
             ContextsToViewTransformer::SEPARATOR,
             [
