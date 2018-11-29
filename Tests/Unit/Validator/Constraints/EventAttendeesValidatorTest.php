@@ -4,21 +4,15 @@ namespace Oro\Bundle\CalendarBundle\Tests\Unit\Validator\Constraints;
 
 use Doctrine\Common\Persistence\ObjectManager;
 use Doctrine\Common\Persistence\ObjectRepository;
-use Doctrine\ORM\AbstractQuery;
-use Doctrine\ORM\EntityRepository;
-use Doctrine\ORM\Query;
-use Doctrine\ORM\QueryBuilder;
 use Oro\Bundle\CalendarBundle\Entity\Attendee;
 use Oro\Bundle\CalendarBundle\Entity\CalendarEvent;
 use Oro\Bundle\CalendarBundle\Entity\Repository\AttendeeRepository;
 use Oro\Bundle\CalendarBundle\Validator\Constraints\EventAttendees;
 use Oro\Bundle\CalendarBundle\Validator\Constraints\EventAttendeesValidator;
-use Oro\Bundle\CalendarBundle\Validator\Constraints\UnchangeableUid;
-use Oro\Bundle\CalendarBundle\Validator\Constraints\UnchangeableUidValidator;
-use Oro\Component\Testing\Validator\AbstractConstraintValidatorTest;
 use Symfony\Bridge\Doctrine\ManagerRegistry;
+use Symfony\Component\Validator\Test\ConstraintValidatorTestCase;
 
-class EventAttendeesValidatorTest extends AbstractConstraintValidatorTest
+class EventAttendeesValidatorTest extends ConstraintValidatorTestCase
 {
     /** @var ManagerRegistry|\PHPUnit\Framework\MockObject\MockObject */
     private $registry;

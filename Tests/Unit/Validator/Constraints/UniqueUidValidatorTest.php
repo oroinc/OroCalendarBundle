@@ -9,10 +9,10 @@ use Oro\Bundle\CalendarBundle\Entity\CalendarEvent;
 use Oro\Bundle\CalendarBundle\Entity\Repository\CalendarEventRepository;
 use Oro\Bundle\CalendarBundle\Validator\Constraints\UniqueUid;
 use Oro\Bundle\CalendarBundle\Validator\Constraints\UniqueUidValidator;
-use Oro\Component\Testing\Validator\AbstractConstraintValidatorTest;
 use Symfony\Bridge\Doctrine\ManagerRegistry;
+use Symfony\Component\Validator\Test\ConstraintValidatorTestCase;
 
-class UniqueUidValidatorTest extends AbstractConstraintValidatorTest
+class UniqueUidValidatorTest extends ConstraintValidatorTestCase
 {
     /** @var ManagerRegistry|\PHPUnit\Framework\MockObject\MockObject */
     private $registry;
