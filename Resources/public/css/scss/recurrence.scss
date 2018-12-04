@@ -78,12 +78,16 @@
             margin-bottom: 4px;
         }
     }
+
     &-summary {
+        margin-top: $content-padding-medium;
         padding: 4px 10px 9px 0;
         border-radius: $input-border-radius;
+
         &.control-group .control-label.wrap {
             color: #3a87ad;
         }
+
         .controls {
             padding-top: 6px;
         }
