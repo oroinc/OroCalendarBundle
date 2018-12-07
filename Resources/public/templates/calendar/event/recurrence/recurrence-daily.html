@@ -14,7 +14,7 @@
                            type="text"
                            data-related-field="interval"
                            data-validation="<%-JSON.stringify({NotBlank: {}, Number: {min: 1, max: 99}, Type: {type: 'integer'}}) %>"
-                           value="<%=interval %>">
+                           value="<%- interval %>">
                     <span class="recurrence-subview-control__text"><%- _.__('oro.calendar.event.recurrence.controls.days') %></span>
                 </label>
             </div>
@@ -27,7 +27,7 @@
                        data-related-field="recurrenceType"
                        value="weekly">
                 <select style="display: none" data-related-field="dayOfWeek" multiple>
-                    <% _.each(weekDays, function(day) { %><option value="<%= day %>" selected="selected"></option><% }) %>
+                    <% _.each(weekDays, function(day) { %><option value="<%- day %>" selected="selected"></option><% }) %>
                 </select>
             </div>
         </div>

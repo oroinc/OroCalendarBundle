@@ -9,7 +9,7 @@
                        type="text"
                        data-related-field="interval"
                        data-validation="<%-JSON.stringify({NotBlank: {}, Number: {min: 1, max: 80}, Type: {type: 'integer'}}) %>"
-                       value="<%=interval %>">
+                       value="<%- interval %>">
                 <span class="recurrence-subview-control__text"><%- _.__('oro.calendar.event.recurrence.controls.years') %></span>
             </label>
         </div>
@@ -22,7 +22,7 @@
             <div class="recurrence-subview-control__row">
                 <select data-related-field="monthOfYear">
                     <% _.each(monthsOptions, function (option) { %>
-                    <option value="<%= option.value %>"
+                    <option value="<%- option.value %>"
                     <% if (option.selected) { %> selected="selected"<% } %>>
                     <%- option.text %>
                     </option>
@@ -33,7 +33,7 @@
                 <option value=""><%- _.__('oro.calendar.event.recurrence.controls.monthly-repeat-on.day') %></option>
                 <option disabled>&#9473;&#9473;&#9473;&#9473;&#9473;&#9473;&#9473;&#9473;&#9473;</option>
                 <% _.each(repeatOnOptions, function (option) { %>
-                <option value="<%= option.value %>"
+                <option value="<%- option.value %>"
                 <% if (option.selected) { %> selected="selected"<% } %>>
                 <%- _.__('oro.calendar.event.recurrence.controls.monthly-repeat-on.' + option.text) %>
                 </option>
@@ -45,7 +45,7 @@
                            type="text"
                            data-related-field="dayOfMonth"
                            data-validation="<%-JSON.stringify({NotBlank: {}, Number: {min: 1, max: 31}, Type: {type: 'integer'}}) %>"
-                           value="<%=dayOfMonth %>">
+                           value="<%- dayOfMonth %>">
                     <input type="hidden"
                            data-related-field="recurrenceType"
                            value="yearly">
@@ -54,14 +54,14 @@
             <span data-name="repeat-on-instance">
                 <select data-related-field="dayOfWeek">
                     <% _.each(groupWeekDayOptions, function (option) { %>
-                    <option value="<%= option.value %>"
+                    <option value="<%- option.value %>"
                     <% if (option.selected) { %> selected="selected"<% } %>>
                     <%- _.__('oro.calendar.event.recurrence.controls.' + option.text) %>
                     </option>
                     <% }); %>
                     <option disabled></option>
                     <% _.each(dayOfWeekOptions, function (option) { %>
-                    <option value="<%= option.value %>"
+                    <option value="<%- option.value %>"
                     <% if (_.isEqual(dayOfWeek, [option.value])) { %> selected="selected"<% } %>>
                     <%- option.text %>
                     </option>
