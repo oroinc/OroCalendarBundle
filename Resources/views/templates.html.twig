@@ -3,7 +3,7 @@
 <script type="text/template" id="activity-context-activity-list">
     <div class="context-item" style="border: none" data-cid="<%= entity.cid %>">
         <span data-id="<%- entity.get('targetId') %>">
-            <span class="<%- entity.get('icon') %>"></span>
+            <span class="context-icon <%- entity.get('icon') %>" aria-hidden="true"></span>
 
             <% if (entity.get('link')) { %>
                 <a href="<%- entity.get('link') %>">
@@ -13,7 +13,7 @@
                 <span class="context-label" title="<%- entity.get('title') %>"><%- entity.get('title') %></span>
             <% } %>
             <% if (editable) { %>
-                <i class="fa-close"></i>
+                <span class="fa-close" aria-hidden="true" data-role="delete-item"></span>
             <% } %>
         </span>
     </div>

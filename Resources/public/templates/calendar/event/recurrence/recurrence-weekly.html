@@ -12,7 +12,7 @@
                        type="text"
                        data-related-field="interval"
                        data-validation="<%-JSON.stringify({NotBlank: {}, Number: {min: 1, max: 999}, Type: {type: 'integer'}}) %>"
-                       value="<%=interval %>">
+                       value="<%- interval %>">
                 <span class="recurrence-subview-control__text"><%- _.__('oro.calendar.event.recurrence.controls.weeks') %></span>
             </label>
         </div>
