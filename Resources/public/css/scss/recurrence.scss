@@ -3,6 +3,7 @@
         &__items {
             margin-top: 0;
         }
+
         &__item {
             label {
                 height: 30px;
@@ -10,82 +11,99 @@
                 vertical-align: middle;
                 display: inline-block;
             }
-            input[type=radio] {
-                margin: 0 8px 0 0 ;
+
+            input[type='radio'] {
+                margin: side-values(0 $content-padding-small 0 0);
             }
+
             .fields-row {
                 display: inline-block;
                 line-height: 30px;
             }
+
             .hasDatepicker {
                 width: 95px;
-                margin: 0 6px 0 0;
+                margin: side-values(0 $content-padding-small 0 0);
             }
-            .ui-datepicker-dialog-is-below, .timepicker-dialog-is-below {
+
+            .ui-datepicker-dialog-is-below,
+            .timepicker-dialog-is-below {
                 + span.validation-failed {
                     &:after {
                         margin-top: -38px;
                     }
+
                     > span {
                         margin-top: -35px;
                     }
                 }
             }
         }
+
         &__item:last-child label {
             margin-bottom: 0;
         }
+
         &__item-datetime {
             label {
                 vertical-align: top;
             }
         }
+
         &__datetime-wrapper {
             position: relative;
             display: inline-block;
             max-width: 252px;
+            margin-#{$start}: $content-padding-small;
 
             input[type="text"] {
                 &.datepicker-input {
-                    width: 176px;
+                    width: 170px;
                 }
+
                 &.timepicker-input {
                     width: 70px;
                 }
             }
         }
+
         &__number {
             &:not(textarea) {
                 width: 36px;
-                margin-right: 6px;
+                margin-#{$end}: $content-padding-small;
             }
         }
+
         &__text {
             vertical-align: middle;
             text-transform: none;
+
+            + input {
+                margin-#{$start}: $content-padding-small;
+            }
         }
-        input[type=radio] + &__text {
+
+        input[type='radio'] + &__text {
             display: inline-block;
             min-width: 36px;
         }
+
         &__row {
-            margin-bottom: 10px;
+            margin-bottom: $content-padding-small;
         }
+
         .controls select {
             width: auto;
-        }
-        .ui-dialog .form-horizontal & .control-group {
-            margin-bottom: 4px;
         }
     }
 
     &-summary {
         margin-top: $content-padding-medium;
-        padding: 4px 10px 9px 0;
+        padding: side-values(4px 10px 9px 0);
         border-radius: $input-border-radius;
 
         &.control-group .control-label.wrap {
-            color: #3a87ad;
+            color: $info-ultra-dark;
         }
 
         .controls {

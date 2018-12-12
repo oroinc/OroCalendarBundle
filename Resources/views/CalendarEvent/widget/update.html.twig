@@ -31,7 +31,7 @@
             <form id="{{ form.vars.id }}" name="{{ form.vars.name }}" action="{{ formAction }}" method="post">
                 <fieldset class="form form-horizontal">
                     {% set rightColumn %}
-                        <div {{ UI.renderPageComponentAttributes(calendarEventDateRange) }}>
+                        <div class="control-group-container" {{ UI.renderPageComponentAttributes(calendarEventDateRange) }}>
                             {{ form_row(form.start) }}
                             {{ form_row(form.end) }}
                             {{ form_row(form.allDay) }}
@@ -57,10 +57,10 @@
                         {{ form_rest(form) }}
                     {% endset %}
 
-                    <div class="span6">
+                    <div class="span6 control-group-container">
                         {{ leftColumn }}
                     </div>
-                    <div class="span6">
+                    <div class="span6 control-group-container">
                         {{ rightColumn }}
                     </div>
 
