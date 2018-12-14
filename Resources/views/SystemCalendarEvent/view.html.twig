@@ -4,7 +4,7 @@
 {% import 'OroActivityBundle::macros.html.twig' as AC %}
 
 {% oro_title_set({params : {
-    "%entity.title%": entity.title|default('N/A'),
+    "%entity.title%": entity.title|default('N/A'|trans),
     "%parent.name%": entity.systemCalendar.name
 }}) %}
 
@@ -40,7 +40,7 @@
         'entity':      entity,
         'indexPath':   path('oro_system_calendar_index'),
         'indexLabel':  'oro.calendar.systemcalendar.entity_plural_label'|trans,
-        'entityTitle': entity.title|default('N/A'),
+        'entityTitle': entity.title|default('N/A'|trans),
         'additional': [{
             'indexPath':   path('oro_system_calendar_view', {'id': entity.systemCalendar.id}),
             'indexLabel':  entity.systemCalendar.name,
