@@ -1,7 +1,7 @@
 {% extends 'OroUIBundle:actions:view.html.twig' %}
 {% import 'OroCalendarBundle::templates.html.twig' as calendarTemplates %}
 
-{% set name = entity.owner|oro_format_name|default('N/A') %}
+{% set name = entity.owner|oro_format_name|default('N/A'|trans) %}
 {% oro_title_set({params : {"%username%": name, "%calendarname%": entity.name|default(name) }}) %}
 
 {% block navButtons %}
