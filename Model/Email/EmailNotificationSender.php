@@ -21,7 +21,7 @@ use Oro\Bundle\UserBundle\Entity\User;
  *      - calendar_invitation_invite                - Send to all attendees when new event is created.
  *                                                  - Send to new attendees added to the event.
  *      - calendar_invitation_update                - Send to all existed attendees when event is updated.
- *      - calendar_invitation_uninvite              - Send to existed attendees removed from the the event.
+ *      - calendar_invitation_uninvite              - Send to existed attendees removed from the event.
  *      - calendar_invitation_delete_parent_event   - Send to existed attendees when the event is removed.
  *  Available variables in the template:
  *      - entity                                    - Case 1: Child event in the calendar of recipient user.
