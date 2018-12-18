@@ -1,5 +1,6 @@
 datagrids:
     calendar-event-grid:
+        extended_entity_name: Oro\Bundle\CalendarBundle\Entity\CalendarEvent
         acl_resource: oro_calendar_event_view
         source:
             type: orm
