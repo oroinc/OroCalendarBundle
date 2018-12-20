@@ -12,18 +12,18 @@ use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
 /**
  * @SuppressWarnings(PHPMD.TooManyPublicMethods)
  */
-class SystemCalendarGridListenerTest extends \PHPUnit_Framework_TestCase
+class SystemCalendarGridListenerTest extends \PHPUnit\Framework\TestCase
 {
     /** @var SystemCalendarGridListener */
     protected $listener;
 
-    /** @var \PHPUnit_Framework_MockObject_MockObject */
+    /** @var \PHPUnit\Framework\MockObject\MockObject */
     protected $authorizationChecker;
 
-    /** @var \PHPUnit_Framework_MockObject_MockObject */
+    /** @var \PHPUnit\Framework\MockObject\MockObject */
     protected $tokenAccessor;
 
-    /** @var \PHPUnit_Framework_MockObject_MockObject */
+    /** @var \PHPUnit\Framework\MockObject\MockObject */
     protected $calendarConfig;
 
     protected function setUp()

@@ -9,9 +9,9 @@ use Symfony\Component\Form\FormEvent;
 use Symfony\Component\Form\FormEvents;
 use Symfony\Component\HttpFoundation\RequestStack;
 
-class CalendarEventApiTypeSubscriberTest extends \PHPUnit_Framework_TestCase
+class CalendarEventApiTypeSubscriberTest extends \PHPUnit\Framework\TestCase
 {
-    /** @var CalendarEventManager|\PHPUnit_Framework_MockObject_MockObject */
+    /** @var CalendarEventManager|\PHPUnit\Framework\MockObject\MockObject */
     protected $calendarEventManager;
 
     /** @var RequestStack */

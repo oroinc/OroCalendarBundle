@@ -14,11 +14,11 @@ use Oro\Bundle\UserBundle\Entity\User;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\RequestStack;
 
-class SystemCalendarEventHandlerTest extends \PHPUnit_Framework_TestCase
+class SystemCalendarEventHandlerTest extends \PHPUnit\Framework\TestCase
 {
     const FORM_DATA = ['field' => 'value'];
 
-    /** @var \PHPUnit_Framework_MockObject_MockObject */
+    /** @var \PHPUnit\Framework\MockObject\MockObject */
     protected $form;
 
     /** @var Request */
@@ -27,10 +27,10 @@ class SystemCalendarEventHandlerTest extends \PHPUnit_Framework_TestCase
     /** @var RequestStack */
     protected $requestStack;
 
-    /** @var \PHPUnit_Framework_MockObject_MockObject */
+    /** @var \PHPUnit\Framework\MockObject\MockObject */
     protected $objectManager;
 
-    /** @var \PHPUnit_Framework_MockObject_MockObject */
+    /** @var \PHPUnit\Framework\MockObject\MockObject */
     protected $tokenAccessor;
 
     /** @var SystemCalendarEventHandler */
@@ -42,13 +42,13 @@ class SystemCalendarEventHandlerTest extends \PHPUnit_Framework_TestCase
     /** @var Organization */
     protected $organization;
 
-    /** @var \PHPUnit_Framework_MockObject_MockObject */
+    /** @var \PHPUnit\Framework\MockObject\MockObject */
     protected $activityManager;
 
-    /** @var \PHPUnit_Framework_MockObject_MockObject|CalendarEventManager */
+    /** @var \PHPUnit\Framework\MockObject\MockObject|CalendarEventManager */
     protected $calendarEventManager;
 
-    /** @var \PHPUnit_Framework_MockObject_MockObject */
+    /** @var \PHPUnit\Framework\MockObject\MockObject */
     protected $notificationManager;
 
     protected function setUp()

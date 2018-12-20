@@ -12,16 +12,16 @@ use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
 
 class SystemCalendarTypeTest extends TypeTestCase
 {
-    /** @var \PHPUnit_Framework_MockObject_MockObject */
+    /** @var \PHPUnit\Framework\MockObject\MockObject */
     protected $authorizationChecker;
 
-    /** @var \PHPUnit_Framework_MockObject_MockObject */
+    /** @var \PHPUnit\Framework\MockObject\MockObject */
     protected $calendarConfig;
 
-    /** @var \PHPUnit_Framework_MockObject_MockObject */
+    /** @var \PHPUnit\Framework\MockObject\MockObject */
     protected $configManager;
 
-    /** @var \PHPUnit_Framework_MockObject_MockObject */
+    /** @var \PHPUnit\Framework\MockObject\MockObject */
     protected $translator;
 
     protected function getExtensions()
@@ -177,11 +177,5 @@ class SystemCalendarTypeTest extends TypeTestCase
 
         $type = new SystemCalendarType($this->authorizationChecker, $this->calendarConfig);
         $type->configureOptions($resolver);
-    }
-
-    public function testGetName()
-    {
-        $type = new SystemCalendarType($this->authorizationChecker, $this->calendarConfig);
-        $this->assertEquals('oro_system_calendar', $type->getName());
     }
 }

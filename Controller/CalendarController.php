@@ -9,10 +9,14 @@ use Oro\Bundle\OrganizationBundle\Entity\Organization;
 use Oro\Bundle\SecurityBundle\Annotation\Acl;
 use Oro\Bundle\SecurityBundle\Annotation\AclAncestor;
 use Oro\Bundle\UserBundle\Entity\User;
+use Oro\Bundle\UserBundle\Form\Type\UserSelectType;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 
+/**
+ * Controller for viewing calendar information
+ */
 class CalendarController extends Controller
 {
     /**
@@ -52,6 +56,8 @@ class CalendarController extends Controller
      *      permission="VIEW",
      *      group_name=""
      * )
+     * @param Calendar $calendar
+     * @return array
      */
     public function viewAction(Calendar $calendar)
     {
@@ -65,14 +71,14 @@ class CalendarController extends Controller
             'user_select_form' => $this->get('form.factory')
                 ->createNamed(
                     'new_calendar',
-                    'oro_user_select',
+                    UserSelectType::class,
                     null,
                     array(
                         'autocomplete_alias' => 'user_calendars',
 
                         'configs' => array(
                             'entity_id'               => $calendar->getId(),
-                            'entity_name'             => 'OroCalendarBundle:Calendar',
+                            'entity_name'             => Calendar::class,
                             'excludeCurrent'          => true,
                             'component'               => 'acl-user-autocomplete',
                             'permission'              => 'VIEW',

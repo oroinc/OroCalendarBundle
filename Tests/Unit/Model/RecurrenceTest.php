@@ -5,12 +5,12 @@ namespace Oro\Bundle\CalendarBundle\Tests\Unit\Model;
 use Oro\Bundle\CalendarBundle\Entity;
 use Oro\Bundle\CalendarBundle\Model\Recurrence;
 
-class RecurrenceTest extends \PHPUnit_Framework_TestCase
+class RecurrenceTest extends \PHPUnit\Framework\TestCase
 {
     /** @var Recurrence */
     protected $model;
 
-    /** @var \PHPUnit_Framework_MockObject_MockObject */
+    /** @var \PHPUnit\Framework\MockObject\MockObject */
     protected $strategy;
 
     protected function setUp()
@@ -118,12 +118,12 @@ class RecurrenceTest extends \PHPUnit_Framework_TestCase
     {
         $this->assertEquals(
             [
-                Recurrence::TYPE_DAILY => 'oro.calendar.recurrence.types.daily',
-                Recurrence::TYPE_WEEKLY => 'oro.calendar.recurrence.types.weekly',
-                Recurrence::TYPE_MONTHLY => 'oro.calendar.recurrence.types.monthly',
-                Recurrence::TYPE_MONTH_N_TH => 'oro.calendar.recurrence.types.monthnth',
-                Recurrence::TYPE_YEARLY => 'oro.calendar.recurrence.types.yearly',
-                Recurrence::TYPE_YEAR_N_TH => 'oro.calendar.recurrence.types.yearnth',
+                'oro.calendar.recurrence.types.daily' => Recurrence::TYPE_DAILY,
+                'oro.calendar.recurrence.types.weekly' => Recurrence::TYPE_WEEKLY,
+                'oro.calendar.recurrence.types.monthly' => Recurrence::TYPE_MONTHLY,
+                'oro.calendar.recurrence.types.monthnth' => Recurrence::TYPE_MONTH_N_TH,
+                'oro.calendar.recurrence.types.yearly' => Recurrence::TYPE_YEARLY,
+                'oro.calendar.recurrence.types.yearnth' => Recurrence::TYPE_YEAR_N_TH,
             ],
             $this->model->getRecurrenceTypes()
         );
@@ -133,11 +133,11 @@ class RecurrenceTest extends \PHPUnit_Framework_TestCase
     {
         $this->assertEquals(
             [
-                Recurrence::INSTANCE_FIRST => 'oro.calendar.recurrence.instances.first',
-                Recurrence::INSTANCE_SECOND => 'oro.calendar.recurrence.instances.second',
-                Recurrence::INSTANCE_THIRD => 'oro.calendar.recurrence.instances.third',
-                Recurrence::INSTANCE_FOURTH => 'oro.calendar.recurrence.instances.fourth',
-                Recurrence::INSTANCE_LAST => 'oro.calendar.recurrence.instances.last',
+                'oro.calendar.recurrence.instances.first' => Recurrence::INSTANCE_FIRST,
+                'oro.calendar.recurrence.instances.second' => Recurrence::INSTANCE_SECOND,
+                'oro.calendar.recurrence.instances.third' => Recurrence::INSTANCE_THIRD,
+                'oro.calendar.recurrence.instances.fourth' => Recurrence::INSTANCE_FOURTH,
+                'oro.calendar.recurrence.instances.last' => Recurrence::INSTANCE_LAST,
             ],
             $this->model->getInstances()
         );
@@ -147,13 +147,13 @@ class RecurrenceTest extends \PHPUnit_Framework_TestCase
     {
         $this->assertEquals(
             [
-                Recurrence::DAY_SUNDAY => 'oro.calendar.recurrence.days.sunday',
-                Recurrence::DAY_MONDAY => 'oro.calendar.recurrence.days.monday',
-                Recurrence::DAY_TUESDAY => 'oro.calendar.recurrence.days.tuesday',
-                Recurrence::DAY_WEDNESDAY => 'oro.calendar.recurrence.days.wednesday',
-                Recurrence::DAY_THURSDAY => 'oro.calendar.recurrence.days.thursday',
-                Recurrence::DAY_FRIDAY => 'oro.calendar.recurrence.days.friday',
-                Recurrence::DAY_SATURDAY => 'oro.calendar.recurrence.days.saturday',
+                'oro.calendar.recurrence.days.sunday' => Recurrence::DAY_SUNDAY,
+                'oro.calendar.recurrence.days.monday' => Recurrence::DAY_MONDAY,
+                'oro.calendar.recurrence.days.tuesday' => Recurrence::DAY_TUESDAY,
+                'oro.calendar.recurrence.days.wednesday' => Recurrence::DAY_WEDNESDAY,
+                'oro.calendar.recurrence.days.thursday' => Recurrence::DAY_THURSDAY,
+                'oro.calendar.recurrence.days.friday' => Recurrence::DAY_FRIDAY,
+                'oro.calendar.recurrence.days.saturday' => Recurrence::DAY_SATURDAY,
             ],
             $this->model->getDaysOfWeek()
         );

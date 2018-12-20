@@ -4,23 +4,29 @@ namespace Oro\Bundle\CalendarBundle\Tests\Unit\Model\Email;
 
 use Doctrine\Common\Persistence\ManagerRegistry;
 use Doctrine\Common\Persistence\ObjectManager;
-use Oro\Bundle\CalendarBundle\Model\Email\EmailNotification;
+use Oro\Bundle\CalendarBundle\Entity\Attendee as AttendeeEntity;
 use Oro\Bundle\CalendarBundle\Model\Email\EmailNotificationSender;
 use Oro\Bundle\CalendarBundle\Tests\Unit\Fixtures\Entity\Attendee;
 use Oro\Bundle\CalendarBundle\Tests\Unit\Fixtures\Entity\Calendar;
 use Oro\Bundle\CalendarBundle\Tests\Unit\Fixtures\Entity\CalendarEvent;
 use Oro\Bundle\CalendarBundle\Tests\Unit\Fixtures\Entity\User;
+use Oro\Bundle\EmailBundle\Model\EmailTemplateCriteria;
 use Oro\Bundle\NotificationBundle\Manager\EmailNotificationManager;
+use Oro\Bundle\NotificationBundle\Model\TemplateEmailNotification;
+use Oro\Component\Testing\Unit\EntityTrait;
+use PHPUnit\Framework\MockObject\MockObject;
 
-class EmailNotificationSenderTest extends \PHPUnit_Framework_TestCase
+class EmailNotificationSenderTest extends \PHPUnit\Framework\TestCase
 {
+    use EntityTrait;
+
     /**
-     * @var \PHPUnit_Framework_MockObject_MockObject
+     * @var \PHPUnit\Framework\MockObject\MockObject
      */
     protected $entityManager;
 
     /**
-     * @var \PHPUnit_Framework_MockObject_MockObject
+     * @var \PHPUnit\Framework\MockObject\MockObject|EmailNotificationManager
      */
     protected $emailNotificationManager;
 
@@ -37,6 +43,7 @@ class EmailNotificationSenderTest extends \PHPUnit_Framework_TestCase
             ->getMock();
 
         $this->entityManager = $this->createMock(ObjectManager::class);
+        /** @var ManagerRegistry|MockObject $managerRegistry */
         $managerRegistry = $this->createMock(ManagerRegistry::class);
         $managerRegistry->expects($this->any())
             ->method('getManager')
@@ -56,43 +63,42 @@ class EmailNotificationSenderTest extends \PHPUnit_Framework_TestCase
      */
     public function testSendAttendeesNotifications($addNotificationMethod, $expectedTemplateName)
     {
+        $attendeeWithUser = $this->getEntity(
+            AttendeeEntity::class,
+            ['email' => 'foo@example.com', 'user' => (new User())->setEmail('foo@example.com')]
+        );
+        $attendeeWithoutUser1 = $this->getEntity(AttendeeEntity::class, ['email' => 'bar@example.com']);
+        $attendeeWithoutUser2 = $this->getEntity(AttendeeEntity::class);
+
         $calendarEvent = $this->createCalendarEventWithAttendees(
             [
-                ['email' => 'foo@example.com', 'hasUser' => true],
-                ['email' => 'bar@example.com', 'hasUser' => false],
-                ['email' => null, 'hasUser' => false],
+                $attendeeWithUser,
+                $attendeeWithoutUser1,
+                $attendeeWithoutUser2
             ]
         );
 
         $this->emailNotificationSender->$addNotificationMethod(
             $calendarEvent,
-            $calendarEvent->getAttendees()->toArray()
+            [$attendeeWithUser, $attendeeWithoutUser1, $attendeeWithoutUser2]
         );
 
-        $this->emailNotificationManager->expects($this->exactly(2))
-            ->method('process');
+        $expectedNotifications = [
+            new TemplateEmailNotification(
+                new EmailTemplateCriteria($expectedTemplateName),
+                [$attendeeWithUser],
+                $this->getChildEventByEmail($calendarEvent, 'foo@example.com')
+            ),
+            new TemplateEmailNotification(
+                new EmailTemplateCriteria($expectedTemplateName),
+                [$attendeeWithoutUser1],
+                $calendarEvent
+            )
+        ];
 
-        $this->emailNotificationManager->expects($this->at(0))
+        $this->emailNotificationManager->expects($this->once())
             ->method('process')
-            ->with(
-                $this->getChildEventByEmail($calendarEvent, 'foo@example.com'),
-                $this->notificationEqualTo(
-                    $this->getChildEventByEmail($calendarEvent, 'foo@example.com'),
-                    'foo@example.com',
-                    $expectedTemplateName
-                )
-            );
-
-        $this->emailNotificationManager->expects($this->at(1))
-            ->method('process')
-            ->with(
-                $calendarEvent,
-                $this->notificationEqualTo(
-                    $calendarEvent,
-                    'bar@example.com',
-                    $expectedTemplateName
-                )
-            );
+            ->with($expectedNotifications);
 
         $this->entityManager->expects($this->once())
             ->method('flush');
@@ -133,11 +139,18 @@ class EmailNotificationSenderTest extends \PHPUnit_Framework_TestCase
      */
     public function testSendInvitationStatusChangeNotifications($statusCode, $expectedTemplateName)
     {
+        $attendeeWithUser = $this->getEntity(
+            AttendeeEntity::class,
+            ['email' => 'foo@example.com', 'user' => (new User())->setEmail('foo@example.com')]
+        );
+        $attendeeWithoutUser1 = $this->getEntity(AttendeeEntity::class, ['email' => 'bar@example.com']);
+        $attendeeWithoutUser2 = $this->getEntity(AttendeeEntity::class);
+
         $calendarEvent = $this->createCalendarEventWithAttendees(
             [
-                ['email' => 'foo@example.com', 'hasUser' => true],
-                ['email' => 'bar@example.com', 'hasUser' => false],
-                ['email' => null, 'hasUser' => false],
+                $attendeeWithUser,
+                $attendeeWithoutUser1,
+                $attendeeWithoutUser2
             ]
         );
 
@@ -152,16 +165,17 @@ class EmailNotificationSenderTest extends \PHPUnit_Framework_TestCase
             $statusCode
         );
 
+        $expectedNotifications = [
+            new TemplateEmailNotification(
+                new EmailTemplateCriteria($expectedTemplateName),
+                [$ownerUser],
+                $childCalendarEvent
+            ),
+        ];
+
         $this->emailNotificationManager->expects($this->once())
             ->method('process')
-            ->with(
-                $childCalendarEvent,
-                $this->notificationEqualTo(
-                    $childCalendarEvent,
-                    'owner@example.com',
-                    $expectedTemplateName
-                )
-            );
+            ->with($expectedNotifications);
 
         $this->entityManager->expects($this->once())
             ->method('flush');
@@ -171,11 +185,18 @@ class EmailNotificationSenderTest extends \PHPUnit_Framework_TestCase
 
     public function testDeleteChildCalendarEventNotifications()
     {
+        $attendeeWithUser = $this->getEntity(
+            AttendeeEntity::class,
+            ['email' => 'foo@example.com', 'user' => (new User())->setEmail('foo@example.com')]
+        );
+        $attendeeWithoutUser1 = $this->getEntity(AttendeeEntity::class, ['email' => 'bar@example.com']);
+        $attendeeWithoutUser2 = $this->getEntity(AttendeeEntity::class);
+
         $calendarEvent = $this->createCalendarEventWithAttendees(
             [
-                ['email' => 'foo@example.com', 'hasUser' => true],
-                ['email' => 'bar@example.com', 'hasUser' => false],
-                ['email' => null, 'hasUser' => false],
+                $attendeeWithUser,
+                $attendeeWithoutUser1,
+                $attendeeWithoutUser2
             ]
         );
 
@@ -189,16 +210,17 @@ class EmailNotificationSenderTest extends \PHPUnit_Framework_TestCase
             $ownerUser
         );
 
+        $expectedNotifications = [
+            new TemplateEmailNotification(
+                new EmailTemplateCriteria(EmailNotificationSender::NOTIFICATION_TEMPLATE_DELETE_CHILD),
+                [$ownerUser],
+                $childCalendarEvent
+            ),
+        ];
+
         $this->emailNotificationManager->expects($this->once())
             ->method('process')
-            ->with(
-                $childCalendarEvent,
-                $this->notificationEqualTo(
-                    $childCalendarEvent,
-                    'owner@example.com',
-                    EmailNotificationSender::NOTIFICATION_TEMPLATE_DELETE_CHILD
-                )
-            );
+            ->with($expectedNotifications);
 
         $this->entityManager->expects($this->once())
             ->method('flush');
@@ -228,30 +250,6 @@ class EmailNotificationSenderTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * @param $expectedEntity
-     * @param $expectedEmail
-     * @param $expectedTemplate
-     * @return \PHPUnit_Framework_Constraint_Callback
-     */
-    public function notificationEqualTo($expectedEntity, $expectedEmail, $expectedTemplate)
-    {
-        return $this->callback(
-            function ($notifications) use ($expectedEntity, $expectedEmail, $expectedTemplate) {
-                $this->assertInternalType('array', $notifications);
-                $this->assertCount(1, $notifications);
-                /** @var EmailNotification $notification */
-                $notification = $notifications[0];
-                $this->assertInstanceOf(EmailNotification::class, $notification);
-                $this->assertSame($expectedEntity, $notification->getEntity());
-                $this->assertEquals([$expectedEmail], $notification->getRecipientEmails());
-                $this->assertAttributeEquals($expectedTemplate, 'templateName', $notification);
-
-                return true;
-            }
-        );
-    }
-
-    /**
      * Creates calendar event with attendees.
      *
      * @param array $attendeesData Data for attendees.
@@ -266,17 +264,11 @@ class EmailNotificationSenderTest extends \PHPUnit_Framework_TestCase
         $ownerCalendarEvent = new CalendarEvent();
         $ownerCalendarEvent->setCalendar($ownerCalendar);
 
-        foreach ($attendeesData as $attendeeData) {
-            $attendee = new Attendee();
-            $attendee->setEmail($attendeeData['email']);
-            if (!empty($attendeeData['hasUser'])) {
-                $attendeeUser = new User();
-                $attendeeUser->setEmail($attendeeData['email']);
-
-                $attendee->setUser($attendeeUser);
-
+        /** @var Attendee $attendee */
+        foreach ($attendeesData as $attendee) {
+            if (null !== $attendee->getUser()) {
                 $attendeeCalendar = new Calendar();
-                $attendeeCalendar->setOwner($attendeeUser);
+                $attendeeCalendar->setOwner($attendee->getUser());
 
                 $attendeeCalendarEvent = new CalendarEvent();
                 $attendeeCalendarEvent->setCalendar($attendeeCalendar);

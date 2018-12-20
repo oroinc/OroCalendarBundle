@@ -5,9 +5,9 @@ namespace Oro\Bundle\CalendarBundle\Tests\Unit\Datagrid;
 use Oro\Bundle\CalendarBundle\Datagrid\SystemCalendarEventGridHelper;
 use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
 
-class SystemCalendarEventGridHelperTest extends \PHPUnit_Framework_TestCase
+class SystemCalendarEventGridHelperTest extends \PHPUnit\Framework\TestCase
 {
-    /** @var \PHPUnit_Framework_MockObject_MockObject */
+    /** @var \PHPUnit\Framework\MockObject\MockObject */
     protected $authorizationChecker;
 
     /** @var SystemCalendarEventGridHelper */

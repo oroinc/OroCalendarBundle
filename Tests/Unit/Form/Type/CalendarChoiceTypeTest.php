@@ -11,10 +11,10 @@ use Symfony\Component\Form\Test\TypeTestCase;
 
 class CalendarChoiceTypeTest extends TypeTestCase
 {
-    /** @var \PHPUnit_Framework_MockObject_MockObject */
+    /** @var \PHPUnit\Framework\MockObject\MockObject */
     protected $calendarEventManager;
 
-    /** @var \PHPUnit_Framework_MockObject_MockObject */
+    /** @var \PHPUnit\Framework\MockObject\MockObject */
     protected $translator;
 
     protected function getExtensions()
@@ -167,12 +167,6 @@ class CalendarChoiceTypeTest extends TypeTestCase
         $parentForm->submit($formData);
 
         $this->assertTrue($form->isSynchronized());
-    }
-
-    public function testGetName()
-    {
-        $type = new CalendarChoiceType($this->calendarEventManager, $this->translator);
-        $this->assertEquals('oro_calendar_choice', $type->getName());
     }
 
     public function testGetParent()

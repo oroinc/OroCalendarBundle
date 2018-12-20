@@ -47,13 +47,13 @@ class CalendarChoiceType extends AbstractType
     public function configureOptions(OptionsResolver $resolver)
     {
         $resolver->setDefaults(
-            array(
+            [
                 'choices'              => function (Options $options) {
                     return $this->getChoices($options['is_new']);
                 },
                 'is_new'               => false,
                 'translatable_options' => false
-            )
+            ]
         );
 
         $resolver->setNormalizer(
@@ -160,7 +160,7 @@ class CalendarChoiceType extends AbstractType
                 ? $calendar['alias']
                 : ($calendar['public'] ? SystemCalendar::PUBLIC_CALENDAR_ALIAS : SystemCalendar::CALENDAR_ALIAS);
             $calendarUid           = $this->calendarEventManager->getCalendarUid($alias, $calendar['id']);
-            $choices[$calendarUid] = $calendar['name'];
+            $choices[$calendar['name']] = $calendarUid;
         }
 
         return $choices;

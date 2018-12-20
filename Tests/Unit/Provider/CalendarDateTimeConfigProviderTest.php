@@ -5,15 +5,15 @@ namespace Oro\Bundle\CalendarBundle\Tests\Unit\Provider;
 use Oro\Bundle\CalendarBundle\Provider\CalendarDateTimeConfigProvider;
 use Oro\Bundle\CalendarBundle\Tests\Unit\ReflectionUtil;
 
-class CalendarDateTimeConfigProviderTest extends \PHPUnit_Framework_TestCase
+class CalendarDateTimeConfigProviderTest extends \PHPUnit\Framework\TestCase
 {
     /**
-     * @var \PHPUnit_Framework_MockObject_MockObject
+     * @var \PHPUnit\Framework\MockObject\MockObject
      */
     protected $localeSettings;
 
     /**
-     * @var \PHPUnit_Framework_MockObject_MockObject
+     * @var \PHPUnit\Framework\MockObject\MockObject
      */
     protected $calendar;
 

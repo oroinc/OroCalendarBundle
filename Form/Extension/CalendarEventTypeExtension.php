@@ -7,6 +7,7 @@ use Oro\Bundle\CalendarBundle\Form\Type\CalendarEventType;
 use Oro\Bundle\CalendarBundle\Resolver\EventOrganizerResolver;
 use Symfony\Component\Form\AbstractTypeExtension;
 use Symfony\Component\Form\Extension\Core\Type\EmailType;
+use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Form\FormEvent;
 use Symfony\Component\Form\FormEvents;
@@ -33,7 +34,7 @@ class CalendarEventTypeExtension extends AbstractTypeExtension
     {
         parent::buildForm($builder, $options);
         $builder
-            ->add('organizerDisplayName')
+            ->add('organizerDisplayName', TextType::class)
             ->add('organizerEmail', EmailType::class)
             ->addEventListener(FormEvents::POST_SUBMIT, [$this, 'setDefaultOrganizer']);
     }

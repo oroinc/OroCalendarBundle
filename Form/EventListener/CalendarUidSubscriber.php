@@ -3,6 +3,8 @@
 namespace Oro\Bundle\CalendarBundle\Form\EventListener;
 
 use Oro\Bundle\CalendarBundle\Entity\CalendarEvent;
+use Oro\Bundle\CalendarBundle\Form\Type\CalendarChoiceTemplateType;
+use Oro\Bundle\CalendarBundle\Form\Type\CalendarChoiceType;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\Form\FormEvent;
 use Symfony\Component\Form\FormEvents;
@@ -36,7 +38,7 @@ class CalendarUidSubscriber implements EventSubscriberInterface
         if ($config->getOption('layout_template')) {
             $form->add(
                 'calendarUid',
-                'oro_calendar_choice_template',
+                CalendarChoiceTemplateType::class,
                 [
                     'required' => false,
                     'mapped'   => false,
@@ -49,7 +51,7 @@ class CalendarUidSubscriber implements EventSubscriberInterface
             $form->add(
                 $form->getConfig()->getFormFactory()->createNamed(
                     'calendarUid',
-                    'oro_calendar_choice',
+                    CalendarChoiceType::class,
                     $data ? $data->getCalendarUid() : null,
                     [
                         'required'        => false,

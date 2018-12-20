@@ -93,8 +93,8 @@ class SystemCalendarType extends AbstractType
                 'label'       => 'oro.calendar.systemcalendar.public.label',
                 'placeholder' => false,
                 'choices'     => [
-                    false => 'oro.calendar.systemcalendar.scope.organization',
-                    true  => 'oro.calendar.systemcalendar.scope.system'
+                    'oro.calendar.systemcalendar.scope.organization' => 0,
+                    'oro.calendar.systemcalendar.scope.system' => 1,
                 ]
             ];
             /** @var SystemCalendar|null $data */

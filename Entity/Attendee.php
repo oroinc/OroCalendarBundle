@@ -4,11 +4,14 @@ namespace Oro\Bundle\CalendarBundle\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
 use Oro\Bundle\CalendarBundle\Model\ExtendAttendee;
+use Oro\Bundle\EmailBundle\Model\EmailHolderInterface;
 use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\Config;
 use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\ConfigField;
 use Oro\Bundle\UserBundle\Entity\User;
 
 /**
+ * Represents calendar event's attendee and holds information about related user and calendar event.
+ *
  * @ORM\Entity(repositoryClass="Oro\Bundle\CalendarBundle\Entity\Repository\AttendeeRepository")
  * @ORM\Table(name="oro_calendar_event_attendee")
  * @ORM\HasLifecycleCallbacks()
@@ -23,7 +26,7 @@ use Oro\Bundle\UserBundle\Entity\User;
  *      }
  * )
  */
-class Attendee extends ExtendAttendee
+class Attendee extends ExtendAttendee implements EmailHolderInterface
 {
     const STATUS_ENUM_CODE = 'ce_attendee_status';
     const TYPE_ENUM_CODE = 'ce_attendee_type';

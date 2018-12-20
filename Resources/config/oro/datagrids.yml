@@ -1,5 +1,6 @@
 datagrids:
     calendar-event-grid:
+        extended_entity_name: %oro_calendar.calendar_event.entity.class%
         acl_resource: oro_calendar_event_view
         source:
             type: orm
@@ -61,6 +62,8 @@ datagrids:
                     recurringEventRecurrence.id,
                     parentRecurringEvent.id,
                     parentRecurringEventRecurrence.id
+            hints:
+                - HINT_TRANSLATABLE
         columns:
             title:
                 label: oro.calendar.calendarevent.title.label
@@ -285,8 +288,8 @@ datagrids:
                 label: oro.user.enabled.label
                 frontend_type: select
                 choices:
-                   - Disabled
-                   - Enabled
+                    oro.user.datagrid.user.columns.disabled: 0
+                    oro.user.datagrid.user.columns.enabled: 1
 
         properties:
             id: ~
@@ -324,8 +327,8 @@ datagrids:
                     options:
                         field_options:
                             choices:
-                                2: Disabled
-                                1: Enabled
+                                oro.user.datagrid.user.filters.disabled: 2
+                                oro.user.datagrid.user.filters.enabled: 1
 
     base-system-calendar-event-grid:
         source:
@@ -466,8 +469,8 @@ datagrids:
                 label: oro.calendar.systemcalendar.public.label
                 frontend_type: select
                 choices:
-                    0: oro.calendar.systemcalendar.scope.organization
-                    1: oro.calendar.systemcalendar.scope.system
+                    oro.calendar.systemcalendar.scope.organization: 0
+                    oro.calendar.systemcalendar.scope.system: 1
         sorters:
             columns:
                 name:
@@ -487,8 +490,8 @@ datagrids:
                     options:
                         field_options:
                             choices:
-                                0: oro.calendar.systemcalendar.scope.organization
-                                1: oro.calendar.systemcalendar.scope.system
+                                oro.calendar.systemcalendar.scope.organization: 0
+                                oro.calendar.systemcalendar.scope.system: 1
         properties:
             id: ~
             view_link:

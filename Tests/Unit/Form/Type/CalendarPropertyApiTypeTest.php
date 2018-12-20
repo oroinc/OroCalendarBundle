@@ -14,7 +14,7 @@ use Symfony\Component\Form\Test\TypeTestCase;
 class CalendarPropertyApiTypeTest extends TypeTestCase
 {
     /**
-     * @var \PHPUnit_Framework_MockObject_MockObject
+     * @var \PHPUnit\Framework\MockObject\MockObject
      */
     protected $registry;
 
@@ -138,11 +138,5 @@ class CalendarPropertyApiTypeTest extends TypeTestCase
 
         $type = new CalendarPropertyApiType();
         $type->configureOptions($resolver);
-    }
-
-    public function testGetName()
-    {
-        $type = new CalendarPropertyApiType();
-        $this->assertEquals('oro_calendar_property_api', $type->getName());
     }
 }

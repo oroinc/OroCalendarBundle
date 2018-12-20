@@ -4,21 +4,23 @@
             <label><%- _.__('oro.calendar.event.recurrence.control-label.repeat-every') %></label>
         </div>
         <div class="controls recurrence-subview-control__items" data-name="control-sections">
-            <div class="recurrence-subview-control__item">
+            <div class="control-group-subline recurrence-subview-control__item">
                 <label class="fields-row" data-role="control-section-switcher">
                     <input type="radio" checked="checked">
-                    <input type="hidden"
-                           data-related-field="recurrenceType"
-                           value="daily">
-                    <input class="recurrence-subview-control__number"
-                           type="text"
-                           data-related-field="interval"
-                           data-validation="<%-JSON.stringify({NotBlank: {}, Number: {min: 1, max: 99}, Type: {type: 'integer'}}) %>"
-                           value="<%=interval %>">
-                    <span class="recurrence-subview-control__text"><%- _.__('oro.calendar.event.recurrence.controls.days') %></span>
+                    <span class="checkbox-view-label">
+                        <input type="hidden"
+                               data-related-field="recurrenceType"
+                               value="daily">
+                        <input class="recurrence-subview-control__number"
+                               type="text"
+                               data-related-field="interval"
+                               data-validation="<%-JSON.stringify({NotBlank: {}, Number: {min: 1, max: 99}, Type: {type: 'integer'}}) %>"
+                               value="<%- interval %>">
+                        <span class="recurrence-subview-control__text"><%- _.__('oro.calendar.event.recurrence.controls.days') %></span>
+                    </span>
                 </label>
             </div>
-            <div class="recurrence-subview-control__item">
+            <div class="control-group-subline recurrence-subview-control__item">
                 <label data-role="control-section-switcher">
                     <input type="radio">
                     <span class="recurrence-subview-control__text"><%- _.__('oro.calendar.event.recurrence.control-modes.weekday') %></span>
@@ -27,7 +29,7 @@
                        data-related-field="recurrenceType"
                        value="weekly">
                 <select style="display: none" data-related-field="dayOfWeek" multiple>
-                    <% _.each(weekDays, function(day) { %><option value="<%= day %>" selected="selected"></option><% }) %>
+                    <% _.each(weekDays, function(day) { %><option value="<%- day %>" selected="selected"></option><% }) %>
                 </select>
             </div>
         </div>

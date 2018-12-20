@@ -5,7 +5,7 @@ namespace Oro\Bundle\CalendarBundle\Tests\Unit\Validator\Constraints;
 use Oro\Bundle\CalendarBundle\Validator\Constraints\RecurringCalendarEventExceptionConstraint;
 use Symfony\Component\Validator\Constraint;
 
-class RecurringCalendarEventExceptionConstraintTest extends \PHPUnit_Framework_TestCase
+class RecurringCalendarEventExceptionConstraintTest extends \PHPUnit\Framework\TestCase
 {
     /** @var RecurringCalendarEventExceptionConstraint */
     protected $constraint;

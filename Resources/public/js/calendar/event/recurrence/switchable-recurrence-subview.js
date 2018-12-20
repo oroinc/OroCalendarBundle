@@ -7,12 +7,12 @@ define(function(require) {
     var AbstractRecurrenceSubview = require('orocalendar/js/calendar/event/recurrence/abstract-recurrence-subview');
 
     SwitchableRecurrenceSubview = AbstractRecurrenceSubview.extend({
-        RADIOBUTTON_SELECTOR: '[data-role="control-section-switcher"]>input[type="radio"]',
+        RADIOBUTTON_SELECTOR: '[data-role="control-section-switcher"] input[type="radio"]',
 
         SECTION_SELECTOR: '[data-role="control-section-switcher"]',
 
         events: {
-            'change [data-role="control-section-switcher"]>input[type="radio"]': 'onSectionSwitch',
+            'change [data-role="control-section-switcher"] input[type="radio"]': 'onSectionSwitch',
             'mousedown [data-role="control-section-switcher"]': 'onSectionSwitchMousedown'
         },
 

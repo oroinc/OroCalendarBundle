@@ -5,7 +5,7 @@
 {% import 'OroEntityConfigBundle::macros.html.twig' as entityConfig %}
 {% import 'OroActivityBundle::macros.html.twig' as AC %}
 
-{% oro_title_set({params : {"%entity.title%": entity.title|default('N/A') }}) %}
+{% oro_title_set({params : {"%entity.title%": entity.title|default('N/A'|trans) }}) %}
 
 {% block navButtons %}
     {% if entity.parent is empty and is_granted('EDIT', entity) %}
@@ -39,7 +39,7 @@
         'entity':      entity,
         'indexPath':   path('oro_calendar_event_index'),
         'indexLabel':  'oro.calendar.calendarevent.entity_plural_label'|trans,
-        'entityTitle': entity.title|default('N/A'),
+        'entityTitle': entity.title|default('N/A'|trans),
     } %}
     {{ parent() }}
 {% endblock pageHeader %}

@@ -20,15 +20,15 @@ use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
 use Symfony\Component\Validator\Constraints\Choice;
 
-class CalendarEventTypeTest extends \PHPUnit_Framework_TestCase
+class CalendarEventTypeTest extends \PHPUnit\Framework\TestCase
 {
-    /** @var \PHPUnit_Framework_MockObject_MockObject */
+    /** @var \PHPUnit\Framework\MockObject\MockObject */
     protected $notificationManager;
 
-    /** @var \PHPUnit_Framework_MockObject_MockObject */
+    /** @var \PHPUnit\Framework\MockObject\MockObject */
     protected $authorizationChecker;
 
-    /** @var \PHPUnit_Framework_MockObject_MockObject */
+    /** @var \PHPUnit\Framework\MockObject\MockObject */
     protected $tokenAccessor;
 
     /**
@@ -107,7 +107,7 @@ class CalendarEventTypeTest extends \PHPUnit_Framework_TestCase
                         'autocomplete_alias' => 'user_calendars',
                         'entity_class' => Calendar::class,
                         'configs' => array(
-                            'entity_name' => 'OroCalendarBundle:Calendar',
+                            'entity_name' => Calendar::class,
                             'excludeCurrent' => true,
                             'component' => 'acl-user-autocomplete',
                             'permission' => 'VIEW',
@@ -253,10 +253,5 @@ class CalendarEventTypeTest extends \PHPUnit_Framework_TestCase
             );
 
         $this->type->configureOptions($resolver);
-    }
-
-    public function testGetName()
-    {
-        $this->assertEquals('oro_calendar_event', $this->type->getName());
     }
 }

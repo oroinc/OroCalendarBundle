@@ -1,8 +1,11 @@
-OroCalendarBundle
-=================
+# OroCalendarBundle
 
-Table of content
--------
+OroCalendarBundle enables a Calendar feature and related functionality in Oro applications.
+
+The bundle adds an individual calendar for every application user with an ability to create personal one-time or recurring calendar events, allows admin users to create system calendars with events available for all application users, and provides interfaces for developers that help to add additional types of calendars or implement synchronization with external calendars in custom Oro applications.
+
+## Table of content
+
 - [Overview](#overview)
 - [Calendar Providers](./Resources/doc/provider.md)
 - [Context Calendar Menu](./Resources/doc/contextMenu.md)
@@ -15,7 +18,7 @@ Table of content
 
 ## Overview
 
-This bundle integrates the [jQuery FullCalendar](http://arshaw.com/fullcalendar/) plugin into the Oro Platform and provides other calendar related functionality, such as view calendars of other users, system calendars, synchronization with external calendars, etc.
+This bundle integrates the [jQuery FullCalendar](http://arshaw.com/fullcalendar/) plugin into OroPlatform and provides other calendar related functionality, such as view calendars of other users, system calendars, synchronization with external calendars, etc.
 
 ## UI
 

@@ -6,12 +6,12 @@ system_configuration:
     fields:
         oro_calendar.calendar_colors:
             data_type: array
-            type: oro_color_table
+            type: Oro\Bundle\FormBundle\Form\Type\OroColorTableType
             options:
                 label: oro.calendar.system_configuration.fields.calendar_colors.label
         oro_calendar.event_colors:
             data_type: array
-            type: oro_color_table
+            type: Oro\Bundle\FormBundle\Form\Type\OroColorTableType
             options:
                 label: oro.calendar.system_configuration.fields.event_colors.label
 

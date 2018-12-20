@@ -6,3 +6,4 @@ dashboards:
             acl:         oro_calendar_view
             description: oro.calendar.my_calendar_widget_description
             icon:        bundles/orocalendar/img/my_calendar.png
+            icon_class:  fa-calendar-check-o

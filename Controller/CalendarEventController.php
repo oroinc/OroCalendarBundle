@@ -185,8 +185,8 @@ class CalendarEventController extends Controller
     {
         return $this->forward(
             'OroCalendarBundle:Api/Rest/CalendarEvent:delete',
-            ['id' => $id],
-            array_merge($request->query->all(), ['isCancelInsteadDelete' => true, '_format' => 'json'])
+            ['id' => $id, '_format' => 'json'],
+            array_merge($request->query->all(), ['isCancelInsteadDelete' => true])
         );
     }
 

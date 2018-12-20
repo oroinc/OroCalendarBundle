@@ -8,7 +8,7 @@ use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\Extension\Core\Type\DateTimeType;
 use Symfony\Component\Form\Extension\Core\Type\IntegerType;
 
-class RecurrenceFormTypeTest extends \PHPUnit_Framework_TestCase
+class RecurrenceFormTypeTest extends \PHPUnit\Framework\TestCase
 {
     /** @var RecurrenceFormType */
     protected $type;
@@ -165,10 +165,5 @@ class RecurrenceFormTypeTest extends \PHPUnit_Framework_TestCase
             ]);
 
         $this->type->configureOptions($resolver);
-    }
-
-    public function testGetName()
-    {
-        $this->assertEquals('oro_calendar_event_recurrence', $this->type->getName());
     }
 }

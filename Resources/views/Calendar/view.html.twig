@@ -1,7 +1,7 @@
 {% extends 'OroUIBundle:actions:view.html.twig' %}
 {% import 'OroCalendarBundle::templates.html.twig' as calendarTemplates %}
 
-{% set name = entity.owner|oro_format_name|default('N/A') %}
+{% set name = entity.owner|oro_format_name|default('N/A'|trans) %}
 {% oro_title_set({params : {"%username%": name, "%calendarname%": entity.name|default(name) }}) %}
 
 {% block navButtons %}
@@ -68,16 +68,18 @@
             ]
         }
     %}
+    {% set togglerId = 'dropdown-'|uniqid %}
     <div class="oro-page collapsible-sidebar clearfix" id="calendar"
          data-page-component-module="orocalendar/js/app/components/calendar-component"
          data-page-component-options="{{ calendarOptions | json_encode }}">
         <div class="oro-page-sidebar search-entity-types-column dropdown">
-            <a href="javascript: void(0);" class="dropdown-toggle" data-toggle="dropdown">
-                <i class="fa-filter"></i>
-                Select calendars
-                <i class="fa-sort-desc"></i>
+            <a href="#" role="button" id="{{ togglerId }}" class="dropdown-toggle" data-toggle="dropdown"
+               aria-haspopup="true" aria-expanded="false">
+                <span class="fa-filter" aria-hidden="true"></span>
+                {{ 'oro.calendar.select'|trans }}
+                <span class="fa-sort-desc" aria-hidden="true"></span>
             </a>
-            <div class="dropdown-menu" role="menu" aria-labelledby="dropdownMenu">
+            <div class="dropdown-menu" role="menu" aria-labelledby="{{ togglerId }}">
                 <div class="calendars">
                     <div class="calendar-connections"></div>
                     <form action="#">

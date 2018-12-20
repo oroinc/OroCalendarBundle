@@ -21,6 +21,7 @@ oro:
         organization_calendar:      Organization Calendar
         view:                       View event
         label_not_available:        N/A
+        select:                     Select calendars
 
         action:
             public_calendar_management:

@@ -9,18 +9,18 @@ use Oro\Bundle\CalendarBundle\Entity\CalendarEvent;
 use Oro\Bundle\CalendarBundle\Entity\Repository\CalendarEventRepository;
 use Oro\Bundle\CalendarBundle\Validator\Constraints\UniqueUid;
 use Oro\Bundle\CalendarBundle\Validator\Constraints\UniqueUidValidator;
-use Oro\Component\Testing\Validator\AbstractConstraintValidatorTest;
 use Symfony\Bridge\Doctrine\ManagerRegistry;
+use Symfony\Component\Validator\Test\ConstraintValidatorTestCase;
 
-class UniqueUidValidatorTest extends AbstractConstraintValidatorTest
+class UniqueUidValidatorTest extends ConstraintValidatorTestCase
 {
-    /** @var ManagerRegistry|\PHPUnit_Framework_MockObject_MockObject */
+    /** @var ManagerRegistry|\PHPUnit\Framework\MockObject\MockObject */
     private $registry;
 
-    /** @var ObjectRepository|\PHPUnit_Framework_MockObject_MockObject */
+    /** @var ObjectRepository|\PHPUnit\Framework\MockObject\MockObject */
     private $repository;
 
-    /** @var ObjectManager|\PHPUnit_Framework_MockObject_MockObject */
+    /** @var ObjectManager|\PHPUnit\Framework\MockObject\MockObject */
     private $manager;
 
     protected function setUp()
@@ -81,6 +81,10 @@ class UniqueUidValidatorTest extends AbstractConstraintValidatorTest
 
     public function testNoValidationErrorsWhenAddingUniqueUid()
     {
+        $this->repository->expects($this->once())
+            ->method('findDuplicatedEvent')
+            ->willReturn([]);
+
         $constraint = new UniqueUid();
 
         $calendarEvent = new CalendarEvent();

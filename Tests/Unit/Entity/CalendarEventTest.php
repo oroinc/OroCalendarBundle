@@ -21,7 +21,7 @@ use Symfony\Component\PropertyAccess\PropertyAccess;
  * @SuppressWarnings(PHPMD.ExcessivePublicCount)
  * @SuppressWarnings(PHPMD.TooManyMethods)
  */
-class CalendarEventTest extends \PHPUnit_Framework_TestCase
+class CalendarEventTest extends \PHPUnit\Framework\TestCase
 {
     use EntityTrait;
 

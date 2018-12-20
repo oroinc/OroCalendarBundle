@@ -8,7 +8,7 @@ use Oro\Bundle\CalendarBundle\Tests\Unit\ReflectionUtil;
 use Oro\Bundle\OrganizationBundle\Entity\Organization;
 use Symfony\Component\PropertyAccess\PropertyAccess;
 
-class SystemCalendarTest extends \PHPUnit_Framework_TestCase
+class SystemCalendarTest extends \PHPUnit\Framework\TestCase
 {
     public function testIdGetter()
     {

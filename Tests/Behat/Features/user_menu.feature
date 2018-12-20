@@ -2,7 +2,7 @@
 @automatically-ticket-tagged
 Feature: User menu
   In order to have some quick links related to current user
-  As a BAP user
+  As an OroPlatform user
   I need to user navigation menu
 
   Scenario: My Calendar

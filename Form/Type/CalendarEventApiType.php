@@ -102,7 +102,7 @@ class CalendarEventApiType extends AbstractType
                     CollectionType::class,
                     [
                         'property_path' => 'attendees',
-                        'type' => CalendarEventAttendeesApiType::class,
+                        'entry_type' => CalendarEventAttendeesApiType::class,
                         'error_bubbling' => false,
                         'entry_options' => [
                             'required' => false,

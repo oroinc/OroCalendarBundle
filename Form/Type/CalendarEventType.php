@@ -7,6 +7,8 @@ use Oro\Bundle\CalendarBundle\Entity\Calendar;
 use Oro\Bundle\CalendarBundle\Form\EventListener\CalendarEventRecurrenceSubscriber;
 use Oro\Bundle\CalendarBundle\Form\EventListener\CalendarSubscriber;
 use Oro\Bundle\CalendarBundle\Form\EventListener\CalendarUidSubscriber;
+use Oro\Bundle\CalendarBundle\Form\Type\CalendarEventAttendeesSelectType;
+use Oro\Bundle\CalendarBundle\Form\Type\RecurrenceFormType;
 use Oro\Bundle\CalendarBundle\Manager\CalendarEvent\NotificationManager;
 use Oro\Bundle\FormBundle\Form\Type\OroDateTimeType;
 use Oro\Bundle\FormBundle\Form\Type\OroResizeableRichTextType;
@@ -25,6 +27,9 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
 use Symfony\Component\Validator\Constraints\Choice;
 
+/**
+ * Form type for CalendarEvent entity
+ */
 class CalendarEventType extends AbstractType
 {
     /** @var NotificationManager */
@@ -232,7 +237,7 @@ class CalendarEventType extends AbstractType
                         'autocomplete_alias' => 'user_calendars',
                         'entity_class' => Calendar::class,
                         'configs' => array(
-                            'entity_name' => 'OroCalendarBundle:Calendar',
+                            'entity_name' => Calendar::class,
                             'excludeCurrent' => true,
                             'component' => 'acl-user-autocomplete',
                             'permission' => 'VIEW',

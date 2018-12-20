@@ -11,9 +11,9 @@ use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 use Oro\Bundle\UserBundle\Entity\User;
 
 /**
- * @deprecated Use \Oro\Bundle\CalendarBundle\Tests\Functional\AbstractTestCase instead.
+ * Use \Oro\Bundle\CalendarBundle\Tests\Functional\AbstractTestCase instead of extending this.
  */
-class AbstractUseCaseTestCase extends WebTestCase
+abstract class AbstractUseCaseTestCase extends WebTestCase
 {
     const DEFAULT_USER_CALENDAR_ID = 1;
 

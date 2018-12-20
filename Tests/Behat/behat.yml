@@ -1,4 +1,16 @@
 oro_behat_extension:
+  suites:
+    OroCalendarBundle:
+      contexts:
+        - Oro\Bundle\CalendarBundle\Tests\Behat\Context\FeatureContext
+        - Oro\Bundle\ConfigBundle\Tests\Behat\Context\FeatureContext
+        - Oro\Bundle\DataGridBundle\Tests\Behat\Context\GridContext
+        - Oro\Bundle\EmailBundle\Tests\Behat\Context\EmailContext
+        - Oro\Bundle\FormBundle\Tests\Behat\Context\FormContext
+        - Oro\Bundle\TestFrameworkBundle\Tests\Behat\Context\OroMainContext
+        - OroSearchBundle::SearchContext
+      paths:
+      - '@OroCalendarBundle/Tests/Behat/Features'
   pages:
     Default Calendar View:
       class: Oro\Bundle\CalendarBundle\Tests\Behat\Page\DefaultCalendarView
@@ -52,5 +64,5 @@ oro_behat_extension:
       selector: 'li[data-calendar-alias="user"] a.context-menu-button'
     Calendar Activity Item:
       selector:
-        locator: '//div[@class="accordion-heading clearfix"]'
+        locator: '//div[@class="accordion-heading"]'
         type: xpath
