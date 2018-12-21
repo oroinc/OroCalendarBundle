@@ -109,7 +109,7 @@ class RecurrenceFormTypeTest extends \PHPUnit_Framework_TestCase
             ->method('add')
             ->with(
                 'startTime',
-                'datetime',
+                'oro_datetime',
                 [
                     'required' => true,
                     'label' => 'oro.calendar.recurrence.start_time.label',
@@ -124,7 +124,7 @@ class RecurrenceFormTypeTest extends \PHPUnit_Framework_TestCase
             ->method('add')
             ->with(
                 'endTime',
-                'datetime',
+                'oro_datetime',
                 [
                     'required' => false,
                     'label' => 'oro.calendar.recurrence.end_time.label',

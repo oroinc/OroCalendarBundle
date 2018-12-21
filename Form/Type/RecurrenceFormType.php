@@ -86,7 +86,7 @@ class RecurrenceFormType extends AbstractType
             )
             ->add(
                 'startTime',
-                'datetime',
+                'oro_datetime',
                 [
                     'required' => true,
                     'label' => 'oro.calendar.recurrence.start_time.label',
@@ -98,7 +98,7 @@ class RecurrenceFormType extends AbstractType
             )
             ->add(
                 'endTime',
-                'datetime',
+                'oro_datetime',
                 [
                     'required' => false,
                     'label' => 'oro.calendar.recurrence.end_time.label',

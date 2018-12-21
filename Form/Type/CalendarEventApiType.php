@@ -68,7 +68,7 @@ class CalendarEventApiType extends AbstractType
             ->add('description', 'text', ['required' => false])
             ->add(
                 'start',
-                'datetime',
+                'oro_datetime',
                 [
                     'required'       => true,
                     'with_seconds'   => true,
@@ -79,7 +79,7 @@ class CalendarEventApiType extends AbstractType
             )
             ->add(
                 'end',
-                'datetime',
+                'oro_datetime',
                 [
                     'required'       => true,
                     'with_seconds'   => true,
@@ -124,7 +124,7 @@ class CalendarEventApiType extends AbstractType
             )
             ->add(
                 'createdAt',
-                'datetime',
+                'oro_datetime',
                 [
                     'required'       => false,
                     'with_seconds'   => true,
@@ -152,7 +152,7 @@ class CalendarEventApiType extends AbstractType
             )
             ->add(
                 'originalStart',
-                'datetime',
+                'oro_datetime',
                 [
                     'required'       => false,
                     'with_seconds'   => true,

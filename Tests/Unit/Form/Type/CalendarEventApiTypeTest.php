@@ -2,6 +2,7 @@
 
 namespace Oro\Bundle\CalendarBundle\Tests\Unit\Form\Type;
 
+use Oro\Bundle\FormBundle\Form\Type\OroDateTimeType;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Validator\ValidatorExtension;
 use Symfony\Component\Form\PreloadedExtension;
@@ -324,6 +325,7 @@ class CalendarEventApiTypeTest extends TypeTestCase
             new CalendarEventAttendeesApiType(),
             new RecurrenceFormType($recurrenceModel),
             new EntityIdentifierType($this->registry),
+            new OroDateTimeType()
         ];
 
         $keys = array_map(
