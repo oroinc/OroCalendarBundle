@@ -9,6 +9,7 @@ use Oro\Bundle\CalendarBundle\Manager\CalendarEvent\NotificationManager;
 use Oro\Bundle\CalendarBundle\Manager\CalendarEventManager;
 use Oro\Bundle\FormBundle\Form\Type\CollectionType;
 use Oro\Bundle\FormBundle\Form\Type\EntityIdentifierType;
+use Oro\Bundle\FormBundle\Form\Type\OroDateTimeType;
 use Oro\Bundle\ReminderBundle\Form\Type\ReminderCollectionType;
 use Oro\Bundle\SoapBundle\Form\EventListener\PatchSubscriber;
 use Symfony\Component\Form\AbstractType;
@@ -21,6 +22,9 @@ use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Validator\Constraints\Choice;
 
+/**
+ * Form type for Calendar Event
+ */
 class CalendarEventApiType extends AbstractType
 {
     /**
@@ -73,7 +77,7 @@ class CalendarEventApiType extends AbstractType
             ->add('description', TextType::class, ['required' => false])
             ->add(
                 'start',
-                DateTimeType::class,
+                OroDateTimeType::class,
                 [
                     'required'       => true,
                     'with_seconds'   => true,
@@ -84,7 +88,7 @@ class CalendarEventApiType extends AbstractType
             )
             ->add(
                 'end',
-                DateTimeType::class,
+                OroDateTimeType::class,
                 [
                     'required'       => true,
                     'with_seconds'   => true,
@@ -129,7 +133,7 @@ class CalendarEventApiType extends AbstractType
             )
             ->add(
                 'createdAt',
-                DateTimeType::class,
+                OroDateTimeType::class,
                 [
                     'required'       => false,
                     'with_seconds'   => true,
@@ -157,7 +161,7 @@ class CalendarEventApiType extends AbstractType
             )
             ->add(
                 'originalStart',
-                DateTimeType::class,
+                OroDateTimeType::class,
                 [
                     'required'       => false,
                     'with_seconds'   => true,
