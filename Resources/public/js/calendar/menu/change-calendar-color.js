@@ -43,7 +43,6 @@ define([
         initialize: function(options) {
             this.colorManager = options.colorManager;
             this.connectionsView = options.connectionsView;
-            this.closeContextMenu = options.closeContextMenu;
             this.$colorPicker = this.$el.find('.color-picker');
             this.$customColor = this.$el.find('.custom-color');
             this.$customColorParent = this.$customColor.parent();
@@ -96,7 +95,7 @@ define([
                 this.$customColor.attr('data-selected', '');
                 this.$customColor.css('color', this.colorManager.getContrastColor(this.model.get('backgroundColor')));
             } else {
-                this.$customColor.hide();
+                this.$customColorParent.hide();
             }
 
             // add buttons
@@ -104,19 +103,17 @@ define([
         },
 
         onChange: function(e) {
-            this.closeContextMenu();
             this.changeColor(e.currentTarget.value);
         },
 
         onOpen: function(e) {
             e.stopPropagation();
             this.$customColor.minicolors('show');
-            this.$customColor.show();
+            this.$customColorParent.show();
         },
 
         onOk: function() {
             this.$customColor.minicolors('hide');
-            this.closeContextMenu();
             this.changeColor(this.$customColor.minicolors('value'));
         },
 
@@ -130,7 +127,7 @@ define([
             } else {
                 this.$customColor.removeAttr('data-selected');
                 this.$colorPicker.simplecolorpicker('selectColor', this.model.get('backgroundColor'));
-                this.$customColor.hide();
+                this.$customColorParent.hide();
             }
         },
 

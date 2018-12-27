@@ -908,7 +908,6 @@ define(function(require) {
             }
             // initialize jQuery FullCalendar control
             this.initializeFullCalendar();
-
             return this;
         },
 
@@ -1010,7 +1009,7 @@ define(function(require) {
                 return;
             }
             var $fcView = this.getCalendarElement().find('.fc-view:first');
-            var $sidebar = $('.oro-page-sidebar');
+            var $sidebar = $('[data-role="calendar-sidebar"]');
             var preferredLayout = mediator.execute('layout:getPreferredLayout', $fcView);
             if (preferredLayout === 'fullscreen' &&
                 $sidebar.height() > mediator.execute('layout:getAvailableHeight', $sidebar)) {

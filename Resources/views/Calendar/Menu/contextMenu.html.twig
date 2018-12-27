@@ -12,5 +12,5 @@
 {% endblock %}
 
 {% block linkElement %}
-    <a href="javascript:void(0);" class="action">{{ block('label') }}</a>
+    <a href="#" role="button" {{ oro_menu.attributes(linkAttributes) }}>{{ block('label') }}</a>
 {% endblock %}

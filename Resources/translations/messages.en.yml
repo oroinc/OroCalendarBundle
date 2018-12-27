@@ -55,14 +55,14 @@ oro:
             remove: Remove calendar
             hide: Hide calendar
             show: Show calendar
-            edit_color: Edit color...
+            edit_color: Edit color
 
         control:
             all_day: ""
-            today:   today
-            month:   month
-            week:    week
-            day:     day
+            today:   Today
+            month:   Month
+            week:    Week
+            day:     Day
 
         reminder_template:
             due_message: is starting at

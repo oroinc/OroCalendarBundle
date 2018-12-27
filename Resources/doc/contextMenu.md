@@ -61,7 +61,6 @@ In a template developer should provide ```<li{{ oro_menu.attributes(itemAttribut
 - **colorManager** - [manager](../public/js/calendar/color-manager.js) that consist functions and list of predefined and
  used colors for calendar
 - **connectionsView** - a Backbone view represents [a calendar items list](../public/js/calendar/connection/view.js)
-- **closeContextMenu** - a function that closes context menu
 
 In JavaScript module developer can use default method **execute**. This method will call when user click on your item menu, for
  example:

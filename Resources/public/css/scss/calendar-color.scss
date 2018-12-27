@@ -1,0 +1,66 @@
+/* @theme: admin.oro; */
+
+.calendar-color {
+    display: inline-block;
+
+    &__storage {
+        visibility: hidden;
+
+        line-height: 1;
+
+        color: $checkbox-icon-border-color-default;
+    }
+
+    .checkbox-view {
+        line-height: 1;
+
+        visibility: hidden;
+
+        @at-root .is-colored > .checkbox-view {
+            border-color: inherit;
+            background-color: inherit;
+            color: inherit;
+        }
+
+        &:hover,
+        &:focus {
+            border-color: inherit;
+            background-color: inherit;
+            color: inherit;
+        }
+    }
+
+    .checkbox-view__input {
+        visibility: visible;
+
+        &:hover,
+        &:focus {
+            & ~ .checkbox-view__icon {
+                border-color: inherit;
+                color: inherit;
+            }
+        }
+
+        &:checked {
+            ~ .checkbox-view__icon {
+                border-color: inherit;
+                background-color: inherit;
+            }
+
+            &:hover,
+            &:focus {
+                & ~ .checkbox-view__icon {
+                    border-color: inherit;
+
+                    &:before {
+                        color: $checkbox-icon-color;
+                    }
+                }
+            }
+        }
+    }
+
+    .checkbox-view__icon {
+        visibility: visible;
+    }
+}

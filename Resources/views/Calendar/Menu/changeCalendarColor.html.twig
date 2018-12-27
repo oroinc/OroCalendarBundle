@@ -1,4 +1,15 @@
+{% import 'OroNavigationBundle:Menu:menu.html.twig' as oro_menu %}
+
+{% spaceless %}
 <li {{ oro_menu.attributes(itemAttributes) }}>
     <div class="color-picker"></div>
-    <a class="custom-color-link" href="javascript: void(0)" class="custom-color-picker"><span class="custom-color"></span>{{ 'oro.calendar.context.edit_color'|trans }}</a>
+    <div class="dropdown-divider context-menu-divider"></div>
+        {%- set linkAttributes = item.linkAttributes %}
+        <a href="#" role="button" {{ oro_menu.attributes(linkAttributes) }}>
+            <span class="custom-color-wrapper">
+                <span class="custom-color"></span>
+            </span>
+            <span class="custom-color-name">{{ 'oro.calendar.context.edit_color'|trans }}</span>
+        </a>
 </li>
+{% endspaceless %}

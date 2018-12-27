@@ -2,10 +2,10 @@ oro:
     calendar:
         control:
             all_day: " "
-            today:   today
-            month:   month
-            week:    week
-            day:     day
+            today:   Today
+            month:   Month
+            week:    Week
+            day:     Day
         error_message:
             event_model:
                 end_date_earlier_than_start: "The end date can't be earlier than start date"

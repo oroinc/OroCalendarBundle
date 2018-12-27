@@ -1,15 +1,18 @@
+{% import 'OroNavigationBundle:Menu:menu.html.twig' as oro_menu %}
+
 <% if (removable) { %>
-    {% set Label %}
-        {%- if item.getExtra('icon') %}
-            <i class="{{- item.getExtra('icon') -}}"></i>
-        {% endif -%}
-        {% if options.allow_safe_labels and item.getExtra('safe_label', false) %}
+    {%- set Label -%}
+        {%- if item.getExtra('icon') -%}
+            <span class="{{- item.getExtra('icon') -}}" aria-hidden="true"></span>
+        {%- endif -%}
+        {%- if options.allow_safe_labels and item.getExtra('safe_label', false) -%}
             {{- item.label|trans|raw -}}
-        {% else %}
+        {%- else -%}
             {{- item.label|trans(item.getExtra('translateParams', {}), item.getExtra('translateDomain', 'messages')) -}}
-        {% endif %}
-    {% endset %}
+        {%- endif -%}
+    {%- endset -%}
     <li{{ oro_menu.attributes(itemAttributes) }}>
-        <a href="javascript:void(0);" class="action">{{ Label }}</a>
+        {%- set linkAttributes = item.linkAttributes -%}
+        <a href="#" role="button" {{ oro_menu.attributes(linkAttributes) }}>{{- Label -}}</a>
     </li>
 <% } %>

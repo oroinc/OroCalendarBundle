@@ -3,7 +3,7 @@ navigation:
         templates:
             calendar_menu:
                 template: 'OroCalendarBundle:Calendar:Menu/contextMenu.html.twig'
-                root_class: 'dropdown-menu context-menu'
+                root_class: 'context-menu'
         items:
             oro_calendar_view_default:
                 label: 'oro.calendar.menu.view_default'
@@ -13,23 +13,32 @@ navigation:
                 label: 'oro.calendar.context.remove'
                 uri: '#'
                 position: 20
+                linkAttributes:
+                    class: 'dropdown-item action'
                 extras:
                     module: 'orocalendar/js/calendar/menu/remove-calendar'
                     template: 'OroCalendarBundle:Calendar:Menu/removeCalendar.html.twig'
+                    icon: fa-trash
             oro_calendar_toggle_action:
                 uri: '#'
                 position: 10
+                linkAttributes:
+                    class: 'dropdown-item action'
                 extras:
                     module: 'orocalendar/js/calendar/menu/toggle-calendar'
                     template: 'OroCalendarBundle:Calendar:Menu/toggleCalendar.html.twig'
             oro_calendar_menu_divider:
                 label: ''
                 position: 95
+                attributes:
+                    class: 'dropdown-divider context-menu-divider'
                 extras:
                     divider: true
             oro_calendar_color_action:
                 uri: '#'
                 position: 100
+                linkAttributes:
+                    class: 'dropdown-item custom-color-link'
                 extras:
                     module: 'orocalendar/js/calendar/menu/change-calendar-color'
                     template: 'OroCalendarBundle:Calendar:Menu/changeCalendarColor.html.twig'
