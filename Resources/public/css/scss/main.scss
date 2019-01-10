@@ -2,10 +2,15 @@
 
 @import "oroui/css/scss/variables";
 @import "oroui/css/scss/mixins";
+@import "oroui/css/scss/oro/variables/checkbox-variables";
 
-@import "./calendar";
-@import "./dashboard";
-@import "./recurrence";
+@import "../lib/fullcalendar/fullcalendar";
+
+@import "calendar";
+@import "calendar-connections";
+@import "calendar-color";
+@import "dashboard";
+@import "recurrence";
 
 // mobile resolution
 @import "mobile/main";

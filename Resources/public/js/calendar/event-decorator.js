@@ -7,11 +7,11 @@ define([
     return {
         /** @property {Object} */
         templates: {
-            reminderIcon: '<i class="reminder-status fa-bell-o" title="' + __('Reminders') + '"></i>',
-            notRespondedIcon: '<i class="invitation-status fa-reply" title="' + __('Not responded') + '"></i>',
-            tentativeIcon: '<i class="invitation-status fa-question-circle" title="' +
-                __('Tentatively accepted') + '"></i>',
-            acceptedIcon: '<i class="invitation-status fa-check" title="' + __('Accepted') + '"></i>'
+            reminderIcon: '<span class="reminder-status fa-bell-o" title="' + __('Reminders') + '"></span>',
+            notRespondedIcon: '<span class="invitation-status fa-reply" title="' + __('Not responded') + '"></span>',
+            tentativeIcon: '<span class="invitation-status fa-question-circle" title="' +
+                __('Tentatively accepted') + '"></span>',
+            acceptedIcon: '<span class="invitation-status fa-check" title="' + __('Accepted') + '"></span>'
         },
 
         decorate: function(eventModel, $el) {

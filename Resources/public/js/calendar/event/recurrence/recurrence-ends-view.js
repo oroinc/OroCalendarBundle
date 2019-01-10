@@ -39,13 +39,11 @@ define(function(require) {
                 el: this.$('[data-related-field="endTime"]'),
                 dateInputAttrs: {
                     'placeholder': __('oro.form.choose_date'),
-                    'autocomplete': 'off',
                     'class': 'datepicker-input',
                     'data-validation': JSON.stringify({Date: {}})
                 },
                 timeInputAttrs: {
                     'placeholder': __('oro.form.choose_time'),
-                    'autocomplete': 'off',
                     'class': 'timepicker-input',
                     'data-validation': JSON.stringify({Time: {}})
                 },

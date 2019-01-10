@@ -28,15 +28,28 @@
 {% endblock breadcrumb %}
 
 {% block pageHeader %}
-    <div class="calendar-title-wrapper">
+    <div class="calendar-title-wrapper navbar-extra">
         {% if breadcrumbs is not defined %}
             {% set breadcrumbs = {'entityTitle': 'oro.calendar.entity_label'|trans } %}
         {% endif %}
-        {{ parent() }}
+        {{- parent() -}}
     </div>
 {% endblock pageHeader %}
 
 {% block stats %}{% endblock stats %}
+
+{% block calendar_connections %}
+    <div class="calendars">
+        <form action="#">
+            {{ form_row(user_select_form) }}
+        </form>
+        <div class="calendar-connections"></div>
+    </div>
+{% endblock calendar_connections %}
+
+{% block calendar_events %}
+    <div class="calendar-events"></div>
+{% endblock calendar_events %}
 
 {% block content_data %}
     {% set calendarOptions = {
@@ -49,8 +62,8 @@
                 'containerSelector': '.calendar-events',
                 'itemViewTemplateSelector': '#template-view-calendar-event',
                 'itemFormTemplateSelector': '#template-calendar-event',
-                'leftHeader': 'prev,next today title',
-                'centerHeader': '',
+                'leftHeader': 'prev,next today',
+                'centerHeader': 'title',
                 'rightHeader': 'month,agendaWeek,agendaDay',
             },
             connectionsOptions: {
@@ -68,62 +81,81 @@
             ]
         }
     %}
-    {% set togglerId = 'dropdown-'|uniqid %}
-    <div class="oro-page collapsible-sidebar clearfix" id="calendar"
-         data-page-component-module="orocalendar/js/app/components/calendar-component"
-         data-page-component-options="{{ calendarOptions | json_encode }}">
-        <div class="oro-page-sidebar search-entity-types-column dropdown">
-            <a href="#" role="button" id="{{ togglerId }}" class="dropdown-toggle" data-toggle="dropdown"
-               aria-haspopup="true" aria-expanded="false">
-                <span class="fa-filter" aria-hidden="true"></span>
-                {{ 'oro.calendar.select'|trans }}
-                <span class="fa-sort-desc" aria-hidden="true"></span>
-            </a>
-            <div class="dropdown-menu" role="menu" aria-labelledby="{{ togglerId }}">
-                <div class="calendars">
-                    <div class="calendar-connections"></div>
-                    <form action="#">
-                        {{ form_row(user_select_form) }}
-                    </form>
+
+    <div class="sidebar-container">
+        <div id="calendar" {% if isDesktopVersion() %} class="content-with-sidebar--container"{% endif %}
+             data-page-component-module="orocalendar/js/app/components/calendar-component"
+             data-page-component-options="{{ calendarOptions | json_encode }}"
+        >
+        {% if isMobileVersion() %}
+            {% set togglerId = 'dropdown-'|uniqid %}
+            <div class="calendar-connections-header">
+                <div class="dropdown">
+                    <a href="#" role="button" id="{{ togglerId }}" class="btn btn-large dropdown-toggle--no-caret" data-toggle="dropdown"
+                       aria-haspopup="true" aria-expanded="false">
+                        <span class="fa-filter" aria-hidden="true"></span>
+                        {{ 'oro.calendar.select'|trans }}
+                    </a>
+                    <div class="dropdown-menu" role="menu" aria-labelledby="{{ togglerId }}">
+                        {{ block('calendar_connections') }}
+                    </div>
                 </div>
             </div>
-        </div>
-        <div class="oro-page-body search-results-column">
-            <div class="calendar-events"></div>
+            {{ block('calendar_events') }}
+        {% else %}
+            <div class="content-with-sidebar--sidebar calendar-sidebar" data-role="calendar-sidebar">
+                {{ block('calendar_connections') }}
+            </div>
+            <div class="content-with-sidebar--content">
+                <div class="category-data">
+                    {{ block('calendar_events') }}
+                </div>
+            </div>
+        {% endif %}
         </div>
     </div>
-    <script type="text/html" id="template-calendar-menu">
+    <script type="text/template" id="template-calendar-menu">
         {{ oro_menu_render('calendar_menu') }}
     </script>
 
-    <script type="text/html" id="template-calendar-connections">
-        <ul class="oro-page-menu-items connection-container">
+    <script type="text/template" id="template-calendar-connections">
+        <ul class="connection-container">
         </ul>
     </script>
 
-    <script type="text/html" id="template-calendar-connection-item">
-        <li class="connection-item<% if (visible) { %> active<% } %>" >
-            <div class="pull-right">
-                <div class="connection-menu-container dropdown pull-left icons-holder">
-                    <a href="javascript: void(0);" class="icons-holder-text no-hash context-menu-button">
-                        <i class="fa-ellipsis-h"></i>
-                    </a>
+    <script type="text/template" id="template-calendar-connection-item">
+        {% spaceless %}
+        <li class="connection-item<% if (visible) { %> active<% } %>">
+            <span class="connection-item-label" data-role="connection-label">
+                <span class="calendar-color">
+                    <% className = 'calendar-color__storage shift-checkbox' + (visible ? ' is-colored' : '')  %>
+                    <span class="<%- className %>" data-role="calendar-color-storage"
+                        <% if (!_.isEmpty(backgroundColor)) { %>
+                            style="background-color: <%- backgroundColor %>; border-color: <%- backgroundColor %>; color: <%- backgroundColor %>;"
+                        <% } %>
+                    >
+                        <input data-role="color-checkbox" type="checkbox" <% if (visible) { %> checked <% } %>>
+                    </span>
+                </span>
+                <span class="user-calendar" title="<%- calendarName %>"><%- calendarName %></span>
+            </span>
+            <div class="connection-menu-container dropdown">
+                {% set connectionTogglerId = 'connection-dropdown-'|uniqid %}
+                <button id="{{ connectionTogglerId }}"
+                        class="btn btn-square-light context-menu-button"
+                        data-toggle="dropdown"
+                        aria-haspopup="true" aria-expanded="false"
+                        data-target="{{ connectionTogglerId }}"
+                        data-placement="bottom-end"
+                >
+                    <span class="fa-ellipsis-h fa-offset-none" aria-hidden="true"></span>
+                </button>
+                <div class="dropdown-menu" aria-labelledby="{{ connectionTogglerId }}">
+                    <div data-role="connection-menu-content"></div>
                 </div>
             </div>
-            <a href="javascript: void(0);" class="no-action">
-                <span
-                    <% if (visible) { %>
-                    class="calendar-color"
-                        <% if (!_.isEmpty(backgroundColor)) { %>
-                        style="background-color: <%- backgroundColor %>; border-color: <%- backgroundColor %>"
-                        <% } %>
-                    <% } else { %>
-                        class="calendar-color un-color"
-                    <% } %>
-                ></span>
-                <span class="user-calendar" title="<%- calendarName %>"><%- calendarName %></span>
-            </a>
         </li>
+        {% endspaceless %}
     </script>
 
     {{ calendarTemplates.calendar_event_view_template('template-view-calendar-event') }}

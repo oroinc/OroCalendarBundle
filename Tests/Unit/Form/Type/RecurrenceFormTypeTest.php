@@ -4,6 +4,7 @@ namespace Oro\Bundle\CalendarBundle\Tests\Unit\Form\Type;
 
 use Oro\Bundle\CalendarBundle\Form\Type\RecurrenceFormType;
 use Oro\Bundle\CalendarBundle\Model\Recurrence;
+use Oro\Bundle\FormBundle\Form\Type\OroDateTimeType;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\Extension\Core\Type\DateTimeType;
 use Symfony\Component\Form\Extension\Core\Type\IntegerType;
@@ -110,7 +111,7 @@ class RecurrenceFormTypeTest extends \PHPUnit\Framework\TestCase
             ->method('add')
             ->with(
                 'startTime',
-                DateTimeType::class,
+                OroDateTimeType::class,
                 [
                     'required' => true,
                     'label' => 'oro.calendar.recurrence.start_time.label',
@@ -125,7 +126,7 @@ class RecurrenceFormTypeTest extends \PHPUnit\Framework\TestCase
             ->method('add')
             ->with(
                 'endTime',
-                DateTimeType::class,
+                OroDateTimeType::class,
                 [
                     'required' => false,
                     'label' => 'oro.calendar.recurrence.end_time.label',

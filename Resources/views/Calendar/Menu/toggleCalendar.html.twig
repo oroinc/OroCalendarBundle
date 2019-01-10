@@ -1,9 +1,14 @@
+{% import 'OroNavigationBundle:Menu:menu.html.twig' as oro_menu %}
+
+{% spaceless %}
 <li{{ oro_menu.attributes(itemAttributes) }}>
-    <a href="javascript:void(0);" class="action">
+    {%- set linkAttributes = item.linkAttributes %}
+    <a href="#" role="button" {{ oro_menu.attributes(linkAttributes) }}>
     <% if (visible) { %>
-        {{ 'oro.calendar.context.hide'|trans }}
+        <span class="fa-eye-slash" aria-hidden="true"></span>{{ 'oro.calendar.context.hide'|trans }}
     <% } else { %>
-        {{ 'oro.calendar.context.show'|trans }}
+        <span class="fa-eye" aria-hidden="true"></span>{{ 'oro.calendar.context.show'|trans }}
     <% } %>
     </a>
 </li>
+{% endspaceless %}

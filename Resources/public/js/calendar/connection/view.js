@@ -38,12 +38,14 @@ define([
             },
             newCalendarSelector: '#new_calendar',
             contextMenuTemplate: '#template-calendar-menu',
-            visibilityButton: '.calendar-color'
+            visibilityButton: '[data-role="calendar-color-storage"]'
         },
 
         events: {
-            'mouseover .connection-item': 'onOverCalendarItem',
-            'mouseout .connection-item': 'onOutCalendarItem'
+            'mouseover [data-role="connection-label"]': 'onOverCalendarLabel',
+            'mouseout [data-role="connection-label"]': 'onOutCalendarLabel',
+            'shown.bs.dropdown': 'onOpenDropdown',
+            'hide.bs.dropdown': 'onHideDropdown'
         },
 
         /**
@@ -101,29 +103,50 @@ define([
             return this.$el.find(this.selectors.findItemByCalendar(model.get('calendarUid')));
         },
 
-        setItemVisibility: function($item, backgroundColor, skipActive) {
+        onOpenDropdown: function(event) {
+            $(event.relatedTarget).addClass('visible');
+        },
+
+        onHideDropdown: function(event) {
+            $(event.relatedTarget).removeClass('visible');
+        },
+
+        onOverCalendarLabel: function(event) {
+            $(event.currentTarget).find('[data-role="color-checkbox"]').trigger('focus');
+        },
+
+        onOutCalendarLabel: function(event) {
+            $(event.currentTarget).find('[data-role="color-checkbox"]').trigger('blur');
+        },
+
+        setItemVisibility: function($item, backgroundColor) {
             var $visibilityButton = $item.find(this.selectors.visibilityButton);
-            var colors;
-            if (backgroundColor) {
-                if (skipActive !== true) {
-                    $item.addClass('active');
-                    $item.attr(this.attrs.visible, 'true');
-                    $item.attr(this.attrs.backgroundColor, backgroundColor);
-                    $item.attr(this.attrs.color, this.options.colorManager.getContrastColor(backgroundColor));
-                }
-                $visibilityButton.removeClass('un-color');
-                $visibilityButton.css({backgroundColor: backgroundColor, borderColor: backgroundColor});
+            var colors = this.options.colorManager.getCalendarColors($item.attr(this.attrs.calendarUid));
+
+            $item
+                .attr(this.attrs.visible, backgroundColor.length ? 'true' : 'false')
+                .attr(this.attrs.backgroundColor, backgroundColor || colors.backgroundColor)
+                .attr(this.attrs.color, backgroundColor
+                    ? this.options.colorManager.getContrastColor(backgroundColor)
+                    : colors.color
+                );
+            $visibilityButton
+                .css({
+                    backgroundColor: backgroundColor || colors.backgroundColor,
+                    borderColor: backgroundColor || colors.backgroundColor,
+                    color: backgroundColor || colors.backgroundColor
+                });
+
+            if (backgroundColor.length) {
+                $item.addClass('active');
+                $visibilityButton.addClass('is-colored');
             } else {
-                if (skipActive !== true) {
-                    $item.removeClass('active');
-                    $item.attr(this.attrs.visible, 'false');
-                    colors = this.options.colorManager.getCalendarColors($item.attr(this.attrs.calendarUid));
-                    $item.attr(this.attrs.backgroundColor, colors.backgroundColor);
-                    $item.attr(this.attrs.color, colors.color);
-                }
-                $visibilityButton.css({backgroundColor: '', borderColor: ''});
-                $visibilityButton.addClass('un-color');
+                $item.removeClass('active');
+                $visibilityButton.removeClass('is-colored');
             }
+
+            $visibilityButton
+                .find('[data-role="color-checkbox"]').prop('checked', backgroundColor.length).trigger('focus');
         },
 
         onModelAdded: function(model) {
@@ -145,21 +168,9 @@ define([
                 $el.attr(value, viewModel[key]);
             });
             // subscribe to toggle context menu
-            $el.on('click', '.context-menu-button', _.bind(function(e) {
-                e.stopPropagation();
-
-                var $currentTarget = $(e.currentTarget);
-                var $contextMenu = $currentTarget.closest(this.selectors.item).find('.context-menu');
-                if ($contextMenu.length) {
-                    $contextMenu.remove();
-                } else {
-                    if (this._closeContextMenu) {
-                        this._closeContextMenu();
-                    }
-
-                    this.showContextMenu($currentTarget, model, e.pageX, e.pageY);
-                }
-            }, this));
+            $el.on('shown.bs.dropdown', function(e) {
+                this.showContextMenu($(e.currentTarget), model);
+            }.bind(this));
 
             this.$el.find(this.selectors.itemContainer).append($el);
 
@@ -168,6 +179,7 @@ define([
             if (model.get('visible')) {
                 this.trigger('connectionAdd', model);
             }
+            this.$el.trigger('content:changed');
         },
 
         onModelChanged: function(model) {
@@ -179,20 +191,6 @@ define([
             this.options.colorManager.removeCalendarColors(model.get('calendarUid'));
             this.findItem(model).remove();
             this.trigger('connectionRemove', model);
-        },
-
-        onOverCalendarItem: function(e) {
-            var $item = $(e.currentTarget);
-            if ($item.attr(this.attrs.visible) === 'false') {
-                this.setItemVisibility($item, $item.attr(this.attrs.backgroundColor), true);
-            }
-        },
-
-        onOutCalendarItem: function(e) {
-            var $item = $(e.currentTarget);
-            if ($item.attr(this.attrs.visible) === 'false') {
-                this.setItemVisibility($item, '', true);
-            }
         },
 
         showCalendar: function(model) {
@@ -211,32 +209,23 @@ define([
             }
         },
 
-        showContextMenu: function($button, model, posX, posY) {
-            var $container = $button.closest(this.selectors.item);
+        showContextMenu: function($button, model) {
+            var $container = $button.find('[data-role="connection-menu-content"]');
             var $contextMenu = $(this.contextMenuTemplate(model.toJSON()));
-            var closeContextMenu = _.bind(function() {
-                $('.context-menu-button').css('display', '');
-                $contextMenu.remove();
-                $(document).off('.' + this.cid);
-                delete this._closeContextMenu;
-            }, this);
             var modules = _.uniq($contextMenu.find('li[data-module]').map(function() {
                 return $(this).data('module');
             }).get());
-            var buttonHtml = $button.html();
-            var showLoadingTimeout;
 
-            this._closeContextMenu = closeContextMenu;
+            var showLoadingTimeout;
 
             if (modules.length > 0 && this._initActionSyncObject()) {
                 // show loading message, if loading takes more than 100ms
                 showLoadingTimeout = setTimeout(_.bind(function() {
-                    $button.html('<span class="loading-indicator"></span>');
+                    $container.html('<span class="loading-indicator"></span>');
                 }, this), 100);
                 // load context menu
                 tools.loadModules(_.object(modules, modules), _.bind(function(modules) {
                     clearTimeout(showLoadingTimeout);
-                    $button.html(buttonHtml);
 
                     _.each(modules, _.bind(function(ModuleConstructor, moduleName) {
                         $contextMenu.find('li[data-module="' + moduleName + '"]').each(_.bind(function(index, el) {
@@ -245,27 +234,17 @@ define([
                                 model: model,
                                 collection: this.options.collection,
                                 connectionsView: this.options.connectionsView,
-                                colorManager: this.options.colorManager,
-                                closeContextMenu: closeContextMenu
+                                colorManager: this.options.colorManager
                             });
                             action.$el.one('click', '.action', _.bind(function(e) {
                                 if (this._initActionSyncObject()) {
-                                    closeContextMenu();
                                     action.execute(model, this._actionSyncObject);
                                 }
                             }, this));
                         }, this));
                     }, this));
 
-                    $contextMenu.appendTo($container.find('.connection-menu-container'));
-                    $container.find('.context-menu-button').css('display', 'block');
-
-                    $(document).on('click.' + this.cid, _.bind(function(event) {
-                        if (!$(event.target).hasClass('context-menu') &&
-                            !$(event.target).closest('.context-menu').length) {
-                            closeContextMenu();
-                        }
-                    }, this));
+                    $container.html($contextMenu);
 
                     this._actionSyncObject.resolve();
                 }, this));
@@ -367,7 +346,7 @@ define([
         },
 
         _addVisibilityButtonEventListener: function($connection, model) {
-            $connection.on('click.' + this.cid, _.bind(function(e) {
+            $connection.find('[data-role="connection-label"]').on('click.' + this.cid, _.bind(function(e) {
                 if (this._initActionSyncObject()) {
                     this.toggleCalendar(model);
                 }
