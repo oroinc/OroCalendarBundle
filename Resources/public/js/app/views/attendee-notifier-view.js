@@ -90,7 +90,7 @@ define([
                     this.isModalShown = false;
                 }, this));
                 this.listenTo(this.confirmModal, 'cancel', _.bind(function() {
-                    this.$form.find('input[name*="[notifyAttendees]"]').val('added_or_deleted');
+                    this.$form.find('input[name*="[notifyAttendees]"]').val('none');
                     this.$form.submit();
                     this.isModalShown = false;
                 }, this));
