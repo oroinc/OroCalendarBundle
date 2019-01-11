@@ -159,7 +159,7 @@ define(function(require) {
                     }, this));
 
                     this.modal.on('cancel', _.bind(function() {
-                        attrs.notifyAttendees = 'added_or_deleted';
+                        attrs.notifyAttendees = 'none';
                         deferredConfirmation.resolve();
                         _.defer(cleanUp);
                     }, this));
