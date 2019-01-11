@@ -13,11 +13,10 @@ Feature: Localized email notification for calendar event
     When I proceed as the Admin
     And I login as administrator
     And I go to System / Configuration
-    And I follow "System Configuration/General Setup/Language Settings" on configuration sidebar
+    And I follow "System Configuration/General Setup/Localization" on configuration sidebar
     And I fill form with:
-      | Supported Languages | [English, German, French] |
-      | Use Default         | false                     |
-      | Default Language    | English                   |
+      | Enabled Localizations | [English, German Localization, French Localization] |
+      | Default Localization  | English                                             |
     And I submit form
     Then I should see "Configuration saved" flash message
 
@@ -41,18 +40,18 @@ Feature: Localized email notification for calendar event
 
   Scenario: Set appropriate language setting for users
     Given I click My Configuration in user menu
-    When I follow "System Configuration/General Setup/Language Settings" on configuration sidebar
+    When I follow "System Configuration/General Setup/Localization" on configuration sidebar
+    And uncheck "Use Organization" for "Default Localization" field
     And I fill form with:
-      | Use Organization | false  |
-      | Default Language | German |
+      | Default Localization | German Localization |
     And I submit form
     Then I should see "Configuration saved" flash message
     When I go to System / User Management / Users
     And I click configuration "Charlie" in grid
-    And I follow "System Configuration/General Setup/Language Settings" on configuration sidebar
+    And I follow "System Configuration/General Setup/Localization" on configuration sidebar
+    And uncheck "Use Organization" for "Default Localization" field
     And I fill form with:
-      | Use Organization | false  |
-      | Default Language | French |
+      | Default Localization | French Localization |
     And I submit form
     Then I should see "Configuration saved" flash message
 
@@ -60,10 +59,10 @@ Feature: Localized email notification for calendar event
     Given go to Activities/ Calendar Events
     When click "Create Calendar event"
     And I fill "Event Form" with:
-      | Title  | Some Calendar event |
-      | Start  | 2018-09-01 12:00 AM |
-      | End    | 2020-02-26 12:00 AM |
-      | Guests | [Charlie Sheen, Megan Fox|
+      | Title  | Some Calendar event       |
+      | Start  | 2018-09-01 18:00          |
+      | End    | 2020-02-26 18:00          |
+      | Guests | [Charlie Sheen, Megan Fox |
     And I save and close form
     And click "Notify"
     Then I should see "Calendar event saved" flash message

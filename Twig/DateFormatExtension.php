@@ -3,10 +3,15 @@
 namespace Oro\Bundle\CalendarBundle\Twig;
 
 use Oro\Bundle\ConfigBundle\Config\ConfigManager;
+use Oro\Bundle\LocaleBundle\DependencyInjection\Configuration;
 use Oro\Bundle\LocaleBundle\Formatter\DateTimeFormatter;
+use Oro\Bundle\LocaleBundle\Manager\LocalizationManager;
 use Oro\Bundle\OrganizationBundle\Entity\OrganizationInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
+/**
+ * Provides twig functions related to formatting calendar data.
+ */
 class DateFormatExtension extends \Twig_Extension
 {
     /** @var ContainerInterface */
@@ -196,10 +201,23 @@ class DateFormatExtension extends \Twig_Extension
     protected function getOrganizationLocaleSettings(OrganizationInterface $organization)
     {
         $configManager = $this->getConfigManager();
-        $locale = $configManager->get('oro_locale.locale');
+
+        $localizationId = $configManager->get(Configuration::getConfigKeyByName(Configuration::DEFAULT_LOCALIZATION));
         $timeZone = $configManager->get('oro_locale.timezone');
 
-        return [$locale, $timeZone];
+        return [$this->getFormattingCode((int) $localizationId), $timeZone];
+    }
+
+    /**
+     * @param int $localizationId
+     * @return string
+     */
+    protected function getFormattingCode(int $localizationId)
+    {
+        $localizationData = $this->container->get('oro_locale.manager.localization')
+            ->getLocalizationData($localizationId);
+
+        return $localizationData['formattingCode'] ?? Configuration::DEFAULT_LOCALE;
     }
 
     /**

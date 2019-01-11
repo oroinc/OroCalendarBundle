@@ -5,6 +5,7 @@ namespace Oro\Bundle\CalendarBundle\Tests\Unit\Twig;
 use Oro\Bundle\CalendarBundle\Twig\DateFormatExtension;
 use Oro\Bundle\ConfigBundle\Config\ConfigManager;
 use Oro\Bundle\LocaleBundle\Formatter\DateTimeFormatter;
+use Oro\Bundle\LocaleBundle\Manager\LocalizationManager;
 use Oro\Bundle\OrganizationBundle\Tests\Unit\Fixture\Entity\Organization;
 use Oro\Component\Testing\Unit\TwigExtensionTestCaseTrait;
 
@@ -13,26 +14,27 @@ class DateFormatExtensionTest extends \PHPUnit\Framework\TestCase
     use TwigExtensionTestCaseTrait;
 
     /** @var DateFormatExtension */
-    protected $extension;
+    private $extension;
 
-    /** @var \PHPUnit\Framework\MockObject\MockObject */
-    protected $formatter;
+    /** @var DateTimeFormatter|\PHPUnit\Framework\MockObject\MockObject */
+    private $formatter;
 
-    /** @var \PHPUnit\Framework\MockObject\MockObject */
-    protected $configManager;
+    /** @var ConfigManager|\PHPUnit\Framework\MockObject\MockObject */
+    private $configManager;
+
+    /** @var LocalizationManager|\PHPUnit\Framework\MockObject\MockObject */
+    private $localizationManager;
 
     protected function setUp()
     {
-        $this->configManager = $this->getMockBuilder(ConfigManager::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-        $this->formatter = $this->getMockBuilder(DateTimeFormatter::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $this->configManager = $this->createMock(ConfigManager::class);
+        $this->formatter = $this->createMock(DateTimeFormatter::class);
+        $this->localizationManager = $this->createMock(LocalizationManager::class);
 
         $container = self::getContainerBuilder()
             ->add('oro_locale.formatter.date_time', $this->formatter)
             ->add('oro_config.global', $this->configManager)
+            ->add('oro_locale.manager.localization', $this->localizationManager)
             ->getContainer($this);
 
         $this->extension = new DateFormatExtension($container);
@@ -67,18 +69,21 @@ class DateFormatExtensionTest extends \PHPUnit\Framework\TestCase
         );
     }
 
+    /**
+     * @return array
+     */
     public function formatCalendarDateRangeProvider()
     {
-        return array(
-            array('2010-05-01T10:30:15+00:00', null, false, 'DateTime'),
-            array('2010-05-01T10:30:15+00:00', null, true, 'Date'),
-            array('2010-05-01T10:30:15+00:00', '2010-05-01T10:30:15+00:00', false, 'DateTime'),
-            array('2010-05-01T10:30:15+00:00', '2010-05-01T10:30:15+00:00', true, 'Date'),
-            array('2010-05-01T10:30:15+00:00', '2010-05-01T11:30:15+00:00', false, 'Date Time - Time'),
-            array('2010-05-01T10:30:15+00:00', '2010-05-01T11:30:15+00:00', true, 'Date'),
-            array('2010-05-01T10:30:15+00:00', '2010-05-02T10:30:15+00:00', false, 'DateTime - DateTime'),
-            array('2010-05-01T10:30:15+00:00', '2010-05-02T10:30:15+00:00', true, 'Date - Date'),
-        );
+        return [
+            ['2010-05-01T10:30:15+00:00', null, false, 'DateTime'],
+            ['2010-05-01T10:30:15+00:00', null, true, 'Date'],
+            ['2010-05-01T10:30:15+00:00', '2010-05-01T10:30:15+00:00', false, 'DateTime'],
+            ['2010-05-01T10:30:15+00:00', '2010-05-01T10:30:15+00:00', true, 'Date'],
+            ['2010-05-01T10:30:15+00:00', '2010-05-01T11:30:15+00:00', false, 'Date Time - Time'],
+            ['2010-05-01T10:30:15+00:00', '2010-05-01T11:30:15+00:00', true, 'Date'],
+            ['2010-05-01T10:30:15+00:00', '2010-05-02T10:30:15+00:00', false, 'DateTime - DateTime'],
+            ['2010-05-01T10:30:15+00:00', '2010-05-02T10:30:15+00:00', true, 'Date - Date'],
+        ];
     }
 
     /**
@@ -104,14 +109,17 @@ class DateFormatExtensionTest extends \PHPUnit\Framework\TestCase
 
         $this->configManager->expects($this->any())
             ->method('get')
-            ->will(
-                $this->returnValueMap(
-                    [
-                        ['oro_locale.locale', false, false, $config['locale']],
-                        ['oro_locale.timezone', false, false, $config['timeZone']],
-                    ]
-                )
+            ->willReturnMap(
+                [
+                    ['oro_locale.default_localization', false, false, null, 42],
+                    ['oro_locale.timezone', false, false, null, $config['timeZone']],
+                ]
             );
+
+        $this->localizationManager->expects($this->any())
+            ->method('getLocalizationData')
+            ->with(42)
+            ->willReturn(['formattingCode' => $config['locale']]);
 
         self::callTwigFunction(
             $this->extension,
@@ -146,9 +154,12 @@ class DateFormatExtensionTest extends \PHPUnit\Framework\TestCase
         );
     }
 
+    /**
+     * @return array
+     */
     public function formatCalendarDateRangeOrganizationProvider()
     {
-        $organization = new Organization(1);
+        $organization = new Organization();
         return [
             'Localization settings from global scope' => [
                 '2016-05-01T10:30:15+00:00',
