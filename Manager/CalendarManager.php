@@ -6,6 +6,9 @@ use Oro\Bundle\CalendarBundle\Provider\CalendarPropertyProvider;
 use Oro\Bundle\CalendarBundle\Provider\CalendarProviderInterface;
 use Oro\Component\PhpUtils\ArrayUtil;
 
+/**
+ * Allows to get information about calendars.
+ */
 class CalendarManager
 {
     /** @var CalendarPropertyProvider */
@@ -28,7 +31,7 @@ class CalendarManager
      * @param string                    $alias
      * @param CalendarProviderInterface $provider
      */
-    public function addProvider($alias, CalendarProviderInterface $provider)
+    public function addProvider(string $alias, CalendarProviderInterface $provider)
     {
         $this->providers[$alias] = $provider;
     }
