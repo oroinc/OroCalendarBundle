@@ -8,7 +8,9 @@ use Doctrine\ORM\Query\Expr;
 use Doctrine\ORM\QueryBuilder;
 
 use Oro\Bundle\CalendarBundle\Entity\Attendee;
+use Oro\Bundle\CalendarBundle\Entity\Calendar;
 use Oro\Bundle\CalendarBundle\Entity\CalendarEvent;
+use Oro\Component\DoctrineUtils\ORM\QueryBuilderUtil;
 
 class CalendarEventRepository extends EntityRepository
 {
@@ -133,7 +135,7 @@ class CalendarEventRepository extends EntityRepository
 
         if ($extraFields) {
             foreach ($extraFields as $field) {
-                $qb->addSelect('e.' . $field);
+                $qb->addSelect(QueryBuilderUtil::getField('e', $field));
             }
         }
 
