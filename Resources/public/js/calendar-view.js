@@ -756,6 +756,7 @@ define(function(require) {
             // prepare options for jQuery FullCalendar control
             options = { // prepare options for jQuery FullCalendar control
                 timezone: this.options.timezone,
+                selectLongPressDelay: 30,
                 displayEventEnd: {
                     month: true
                 },
@@ -777,7 +778,7 @@ define(function(require) {
             };
             keys = [
                 'defaultDate', 'defaultView', 'editable', 'selectable',
-                'header', 'allDayText', 'allDaySlot', 'buttonText',
+                'header', 'allDayText', 'allDaySlot', 'buttonText', 'selectLongPressDelay',
                 'titleFormat', 'columnFormat', 'timeFormat', 'slotLabelFormat',
                 'minTime', 'maxTime', 'scrollTime', 'slotEventOverlap',
                 'firstDay', 'monthNames', 'monthNamesShort', 'dayNames',
