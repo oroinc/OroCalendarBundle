@@ -1,6 +1,9 @@
 /* @theme: admin.oro; */
 
 .mobile-version {
+    @import "oroui/css/scss/mobile/variables/layout";
+
     @import "./recurrence";
     @import "./calendar-connections";
+    @import "./dashboard";
 }
