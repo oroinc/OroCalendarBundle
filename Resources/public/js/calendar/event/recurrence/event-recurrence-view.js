@@ -131,6 +131,8 @@ define(function(require) {
 
             this.renderOriginValues();
 
+            this.$el.trigger('content:changed');
+
             return this;
         },
 
