@@ -6,8 +6,6 @@
 
         &__item {
             label {
-                height: 30px;
-                line-height: 30px;
                 vertical-align: middle;
                 display: inline-block;
             }
@@ -18,7 +16,6 @@
 
             .fields-row {
                 display: inline-block;
-                line-height: 30px;
             }
 
             .hasDatepicker {
@@ -47,22 +44,23 @@
         &__item-datetime {
             label {
                 vertical-align: top;
+                margin-top: 6px;
             }
         }
 
         &__datetime-wrapper {
             position: relative;
             display: inline-block;
-            max-width: 252px;
+            max-width: 238px;
             margin-#{$start}: $content-padding-small;
 
             input[type="text"] {
                 &.datepicker-input {
-                    width: 170px;
+                    width: 150px;
                 }
 
                 &.timepicker-input {
-                    width: 70px;
+                    width: 80px;
                 }
             }
         }

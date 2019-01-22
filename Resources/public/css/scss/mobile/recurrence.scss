@@ -8,9 +8,24 @@
         }
 
         &__item {
+            label {
+                height: auto;
+                line-height: normal;
+            }
+
+            &-datetime {
+                label {
+                    margin-top: 9px;
+                }
+
+                &-wrapper {
+                    max-width: 231px;
+                }
+            }
+
             .fields-row {
                 .hasDatepicker {
-                    width: 112px;
+                    width: 133px;
                 }
 
                 .timepicker-input {
