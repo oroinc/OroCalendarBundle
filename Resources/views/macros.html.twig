@@ -16,3 +16,8 @@
         {% endif %}
     </div>
 {% endmacro %}
+
+{% macro briefDateCell(theDate) %}
+    <span class="day-of-week">{{ theDate|date('D', oro_timezone()) }}</span>
+    <span class="day-of-month">{{ theDate|date('j', oro_timezone()) }}</span>
+{% endmacro %}

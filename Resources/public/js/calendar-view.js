@@ -778,7 +778,7 @@ define(function(require) {
             };
             keys = [
                 'defaultDate', 'defaultView', 'editable', 'selectable',
-                'header', 'allDayText', 'allDaySlot', 'buttonText', 'selectLongPressDelay',
+                'header', 'allDayText', 'allDayHtml', 'allDaySlot', 'buttonText', 'selectLongPressDelay',
                 'titleFormat', 'columnFormat', 'timeFormat', 'slotLabelFormat',
                 'minTime', 'maxTime', 'scrollTime', 'slotEventOverlap',
                 'firstDay', 'monthNames', 'monthNamesShort', 'dayNames',

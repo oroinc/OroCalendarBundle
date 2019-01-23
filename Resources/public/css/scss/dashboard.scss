@@ -1,11 +1,44 @@
 /* @theme: admin.oro; */
 
-.dashboard-container {
-  .responsive-cell {
-    .dashboard-widget {
-      .calendar-events {
-        margin: side-values(0 0 10px 10px);
-      }
+.calendar-dashboard-widget {
+    position: relative;
+    z-index: 0;
+
+    .fc-toolbar,
+    .fc-head-container {
+        display: none;
     }
-  }
+
+    td.fc-today {
+        background: transparent;
+    }
+
+    .fc-bg {
+        .fc-axis {
+            padding-top: 4px;
+
+            width: 54px;
+            height: 54px;
+
+            vertical-align: top;
+        }
+    }
+
+    .fc-content-skeleton {
+        min-height: 56px;
+    }
+
+    .fc-body > tr > td {
+        border-left: 0 none;
+        border-top: 0 none;
+        border-right: 0 none;
+    }
+
+    .fc-day-grid .fc-row {
+        border-color: transparent;
+    }
+
+    .fc-time-grid .fc-slats td {
+        vertical-align: middle;
+    }
 }
