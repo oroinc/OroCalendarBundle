@@ -42,6 +42,11 @@ class YearlyStrategyTest extends AbstractTestStrategy
         $dateTimeFormatter = $this->getMockBuilder('Oro\Bundle\LocaleBundle\Formatter\DateTimeFormatter')
             ->disableOriginalConstructor()
             ->getMock();
+        $dateTimeFormatter->expects($this->any())
+            ->method('formatDay')
+            ->willReturnCallback(function (\DateTime $date) {
+                return $date->setTimezone(new \DateTimeZone('UTC'))->format('M d');
+            });
 
         /** @var LocaleSettings|\PHPUnit_Framework_MockObject_MockObject $localeSettings */
         $localeSettings = $this->getMockBuilder('Oro\Bundle\LocaleBundle\Model\LocaleSettings')
@@ -83,7 +88,7 @@ class YearlyStrategyTest extends AbstractTestStrategy
             ->setInterval($recurrenceData['interval'])
             ->setDayOfMonth($recurrenceData['dayOfMonth'])
             ->setMonthOfYear($recurrenceData['monthOfYear'])
-            ->setStartTime(new \DateTime($recurrenceData['startTime'], $this->getTimeZone()))
+            ->setStartTime(new \DateTime($recurrenceData['startTime']))
             ->setTimeZone($recurrenceData['timeZone'])
             ->setEndTime($recurrenceData['endTime'] === null
                 ? null
@@ -289,7 +294,7 @@ class YearlyStrategyTest extends AbstractTestStrategy
                     'occurrences' => null,
                     'timeZone' => 'UTC',
                 ],
-                'expected' => 'oro.calendar.recurrence.patterns.yearly0'
+                'expected' => 'oro.calendar.recurrence.patterns.yearly0Jun 13'
             ],
             'with_occurrences' => [
                 'params' => [
@@ -301,7 +306,8 @@ class YearlyStrategyTest extends AbstractTestStrategy
                     'occurrences' => 3,
                     'timeZone' => 'UTC',
                 ],
-                'expected' => 'oro.calendar.recurrence.patterns.yearly0oro.calendar.recurrence.patterns.occurrences3'
+                'expected' =>
+                    'oro.calendar.recurrence.patterns.yearly0Jun 13oro.calendar.recurrence.patterns.occurrences3'
             ],
             'with_end_date' => [
                 'params' => [
@@ -313,7 +319,7 @@ class YearlyStrategyTest extends AbstractTestStrategy
                     'occurrences' => null,
                     'timeZone' => 'UTC',
                 ],
-                'expected' => 'oro.calendar.recurrence.patterns.yearly0oro.calendar.recurrence.patterns.end_date'
+                'expected' => 'oro.calendar.recurrence.patterns.yearly0Jun 13oro.calendar.recurrence.patterns.end_date'
             ],
             'with_timezone' => [
                 'params' => [
@@ -325,7 +331,19 @@ class YearlyStrategyTest extends AbstractTestStrategy
                     'occurrences' => null,
                     'timeZone' => 'America/Los_Angeles',
                 ],
-                'expected' => 'oro.calendar.recurrence.patterns.yearly0oro.calendar.recurrence.patterns.timezone'
+                'expected' => 'oro.calendar.recurrence.patterns.yearly0Jun 13oro.calendar.recurrence.patterns.timezone'
+            ],
+            'with_time_offset' => [
+                'params' => [
+                    'interval' => 12,
+                    'dayOfMonth' => 8,
+                    'monthOfYear' => 1,
+                    'startTime' => '2016-01-07T22:00:00-03:00',
+                    'endTime' => null,
+                    'occurrences' => null,
+                    'timeZone' => 'Europe/Kiev',
+                ],
+                'expected' => 'oro.calendar.recurrence.patterns.yearly1Jan 08',
             ],
         ];
     }

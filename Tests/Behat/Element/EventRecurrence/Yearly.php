@@ -36,7 +36,7 @@ class Yearly extends AbstractEventRecurrence
                 $dayInput,
                 "Recurrence days input not found (input[data-related-field='dayOfMonth'])"
             );
-            $dayInput->setValue($matches['dayOfWeek']);
+            $this->getDriver()->typeIntoInput($dayInput->getXpath(), $matches['dayOfWeek']);
         } else {
             $this->selectRecurrenceOption('select[data-related-field="instance"]', $matches['value']);
             $this->selectRecurrenceOption('select[data-related-field="dayOfWeek"]', $matches['dayOfWeek']);
