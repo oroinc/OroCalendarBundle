@@ -25,6 +25,8 @@ define(function(require) {
     var AttendeesPlugin = require('orocalendar/js/app/plugins/calendar/attendees-plugin');
     var EventRecurrencePlugin = require('orocalendar/js/app/plugins/calendar/event-recurrence-plugin');
     var persistentStorage = require('oroui/js/persistent-storage');
+    var Modal = require('oroui/js/modal');
+
     require('fullcalendar');
 
     CalendarView = BaseView.extend({
@@ -38,6 +40,10 @@ define(function(require) {
                 '</div>' +
             '</div>'
         ),
+
+        events: {
+            'click [data-role="show-connections-modal"]': 'onConnectionsButtonClick'
+        },
 
         /** @property {Object} */
         selectors: {
@@ -105,6 +111,8 @@ define(function(require) {
 
         colorManager: null,
 
+        childDialogOfModal: null,
+
         /**
          * This property can be used to prevent unnecessary reloading of calendar events.
          * key = calendarUid
@@ -114,7 +122,9 @@ define(function(require) {
 
         listen: {
             'layout:reposition mediator': 'onWindowResize',
-            'widget_success:attendee_status:change mediator': 'onAttendeeStatusChange'
+            'widget_success:attendee_status:change mediator': 'onAttendeeStatusChange',
+            'widget_dialog:open mediator': 'onWidgetDialogOpen',
+            'widget_dialog:close mediator': 'onWidgetDialogClose'
         },
 
         /**
@@ -215,18 +225,21 @@ define(function(require) {
             if (this.disposed) {
                 return;
             }
+
             if (this.layout === 'fullscreen') {
                 // fullscreen layout has side effects, need to clean up
                 this.setLayout('default');
             }
+
             this.pluginManager.dispose();
             clearInterval(this.timelineUpdateIntervalId);
+
             if (this.getCalendarElement().data('fullCalendar')) {
                 this.getCalendarElement().fullCalendar('destroy');
             }
-            if (this.connectionsView) {
-                this.connectionsView.dispose.call(this);
-            }
+
+            this.childDialogOfModal = null;
+
             CalendarView.__super__.dispose.call(this);
         },
 
@@ -320,7 +333,7 @@ define(function(require) {
 
             // make sure that a calendar is visible when a new event is added to it
             if (!connectionModel.get('visible')) {
-                this.connectionsView.showCalendar(connectionModel);
+                this.subview('connectionsView').showCalendar(connectionModel);
             }
         },
 
@@ -859,20 +872,37 @@ define(function(require) {
             this.enableEventLoading = true;
         },
 
-        initializeConnectionsView: function() {
-            var connectionsContainer;
-            var connectionsTemplate;
+        prepareConnectionsContainer: function() {
+            var parentElement;
+
+            if (this.options.connectionsOptions.modalContentTemplateId) {
+                var modalContentTemplate = $('#' + this.options.connectionsOptions.modalContentTemplateId).html();
+                var innerModalView = new BaseView({el: $(modalContentTemplate)});
+
+                this.subview('innerModalView', innerModalView);
+                innerModalView.render().initLayout();
+                parentElement = innerModalView.$el;
+            } else {
+                parentElement = this.$el;
+            }
+
+            var connectionsContainer = parentElement.find(this.options.connectionsOptions.containerSelector);
+
             // init connections container
-            connectionsContainer = this.$el.find(this.options.connectionsOptions.containerSelector);
             if (connectionsContainer.length === 0) {
                 throw new Error('Cannot find "' + this.options.connectionsOptions.containerSelector + '" element.');
             }
-            connectionsContainer.empty();
-            connectionsTemplate = _.template($(this.options.connectionsOptions.containerTemplateSelector).html());
-            connectionsContainer.append($(connectionsTemplate()));
+
+            return connectionsContainer;
+        },
+
+        initializeConnectionsView: function(connectionsContainer) {
+            var connectionsTemplate = _.template($(this.options.connectionsOptions.containerTemplateSelector).html());
+
+            connectionsContainer.html(connectionsTemplate());
 
             // create a view for a list of connections
-            this.connectionsView = new ConnectionView({
+            var connectionsView = new ConnectionView({
                 el: connectionsContainer,
                 collection: this.options.connectionsOptions.collection,
                 calendar: this.options.calendar,
@@ -880,9 +910,50 @@ define(function(require) {
                 colorManager: this.colorManager
             });
 
-            this.listenTo(this.connectionsView, 'connectionAdd', this.onConnectionAdded);
-            this.listenTo(this.connectionsView, 'connectionChange', this.onConnectionChanged);
-            this.listenTo(this.connectionsView, 'connectionRemove', this.onConnectionDeleted);
+            this.subview('connectionsView', connectionsView);
+
+            this.listenTo(connectionsView, 'connectionAdd', this.onConnectionAdded);
+            this.listenTo(connectionsView, 'connectionChange', this.onConnectionChanged);
+            this.listenTo(connectionsView, 'connectionRemove', this.onConnectionDeleted);
+        },
+
+        onConnectionsButtonClick: function() {
+            var connectionModal = this.subview('connectionModal');
+
+            if (!connectionModal) {
+                connectionModal = new Modal({
+                    autoRender: true,
+                    content: this.subview('innerModalView'),
+                    title: __('oro.calendar.select'),
+                    allowOk: false,
+                    className: 'modal oro-modal-normal modal--fullscreen-small-device',
+                    disposeOnHidden: false
+                });
+
+                this.subview('connectionModal', connectionModal);
+            }
+
+            connectionModal.open();
+        },
+
+        onWidgetDialogOpen: function(dialogWidget) {
+            var connectionModal = this.subview('connectionModal');
+
+            if (connectionModal && connectionModal.isOpen() && !this.childDialogOfModal) {
+                connectionModal.suspend();
+
+                // Opened dialog can have a nested one so we need to store it for catching of its closing
+                this.childDialogOfModal = dialogWidget;
+            }
+        },
+
+        onWidgetDialogClose: function(dialogWidget) {
+            var connectionModal = this.subview('connectionModal');
+
+            if (connectionModal && connectionModal.isOpen() && this.childDialogOfModal === dialogWidget) {
+                connectionModal.restore();
+                this.childDialogOfModal = null;
+            }
         },
 
         loadConnectionColors: function() {
@@ -905,7 +976,9 @@ define(function(require) {
             if (_.isUndefined(this.options.connectionsOptions.containerTemplateSelector)) {
                 this.loadConnectionColors();
             } else {
-                this.initializeConnectionsView();
+                var connectionsContainer = this.prepareConnectionsContainer();
+
+                this.initializeConnectionsView(connectionsContainer);
             }
             // initialize jQuery FullCalendar control
             this.initializeFullCalendar();

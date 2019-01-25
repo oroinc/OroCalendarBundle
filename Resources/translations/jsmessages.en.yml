@@ -17,6 +17,7 @@ oro:
             calendar_removed: "Calendar was removed"
             calendar_updating: "Updating calendar, please wait ..."
             calendar_updated: "Calendar was updated"
+        select: Select calendars
         event:
             na: 'N/A'
             recurrence:
