@@ -4,10 +4,25 @@ Feature: Create calendar events
   As Admin user
   I need to be able to create events with different recurrences
 
-  Scenario: Create AllDay No-repeat calendar event
+  Scenario: Create AllDay calendar event from calendar week view
     Given I login as administrator
-    And go to Activities/ Calendar Events
+    And I click My Calendar in user menu
+    And I click "week"
+    And I click "First All Day Cell"
+    And "Event Form" must contains values:
+      | All-Day Event | true |
+    Then I check start and end dates are the same for calendar event
+    When I fill "Event Form" with:
+      | Title | One day Event |
+    And I click "Save"
+    Then I should see "One day Event" in calendar with:
+      | All-day event | Yes |
+    And I should not see an "Multiday Event" element
+
+  Scenario: Create AllDay No-repeat calendar event
+    Given go to Activities/ Calendar Events
     And click "Create Calendar event"
+    Then I check switching All-Day Event on and off doesn't change event start and end time
     When I save and close form
     Then I should see validation errors:
       | Title | This value should not be blank. |
@@ -31,6 +46,8 @@ Feature: Create calendar events
       | Description   | testfull desc                |
       | Guests        | John Doe (admin@example.com) |
       | All-day event | Yes                          |
+      | Start         | 2017-01-24 12:00 AM          |
+      | End           | 2020-02-26 11:59 PM          |
 
   Scenario: Create daily weekday never ending Event
     When I go to Activities/ Calendar Events

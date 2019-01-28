@@ -26,9 +26,23 @@ oro_behat_extension:
     Calendar Event Info:
       class: Oro\Bundle\CalendarBundle\Tests\Behat\Element\CalendarEventInfo
       selector: '.ui-dialog'
+    First All Day Cell:
+      selector:
+        type: 'xpath'
+        locator: '(//*[contains(@class, "fc-week")]/descendant::*[contains(@class, "fc-day")])[1]'
+    Multiday Event:
+      selector:
+        type: 'xpath'
+        locator: '//td[contains(@class, "fc-event-container")][@colspan]/*[contains(@class, "fc-event")]'
     Event Form:
       class: Oro\Bundle\CalendarBundle\Tests\Behat\Element\EventForm
       selector: 'form[name="oro_calendar_event_form"]'
+    Start Datetime:
+      selector: '[name="oro_calendar_event_form[start]"]'
+    End Datetime:
+      selector: '[name="oro_calendar_event_form[end]"]'
+    All Day Event:
+      selector: '[name="oro_calendar_event_form[allDay]"]'
     EndsRecurrence:
       class: Oro\Bundle\CalendarBundle\Tests\Behat\Element\EventRecurrence\End
       selector: 'div[data-name="recurrence-ends"]'
