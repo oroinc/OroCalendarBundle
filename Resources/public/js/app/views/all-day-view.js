@@ -52,11 +52,12 @@ define([
                 this.oldStartAtValue = this.startAtTimeElement.timepicker('getTime');
                 this.oldEndAtValue = this.endAtTimeElement.timepicker('getTime');
 
-                var resetTimeDelegate = function() {
+                this.startAtTimeElement.hide(animationDuration, function() {
                     $(this).timepicker('setTime', 0).trigger('change');
-                };
-                this.startAtTimeElement.hide(animationDuration, resetTimeDelegate);
-                this.endAtTimeElement.hide(animationDuration, resetTimeDelegate);
+                });
+                this.endAtTimeElement.hide(animationDuration, function() {
+                    $(this).timepicker('setTime', '11:59pm').trigger('change');
+                });
             } else {
                 if (this.oldStartAtValue) {
                     this.startAtTimeElement.timepicker('setTime', this.oldStartAtValue).trigger('change');

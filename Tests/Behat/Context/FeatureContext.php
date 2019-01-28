@@ -59,4 +59,118 @@ class FeatureContext extends OroFeatureContext implements OroPageObjectAware
     {
         $this->getCalendar()->go2Today();
     }
+
+    /**
+     * Asserts switching All-Day Event on and off doesn't change event start and end time
+     *
+     * Example: Then I check switching All-Day Event on and off doesn't change event start and end time
+     *
+     * @Then /^(?:|I )check switching All-Day Event on and off doesn't change event start and end time$/
+     */
+    public function checkAllDayOnOffPreservesEventTime()
+    {
+        $startField = $this->elementFactory->createElement('Start Datetime');
+        $endField = $this->elementFactory->createElement('End Datetime');
+        $allDay = $this->elementFactory->createElement('All Day Event');
+
+        // Save event start and end time
+        /** @var string $oldStartDateTime */
+        $oldStartDateTime = $startField->getValue();
+        /** @var string $oldEndDateTime */
+        $oldEndDateTime = $endField->getValue();
+
+        // Switch All-Day Event on and off
+        $allDay->setValue(true);
+        $this->waitForAjax();
+        $allDay->setValue(false);
+        $this->waitForAjax();
+
+        // Compare datetimes before and after
+        /** @var string $newStartDateTime */
+        $newStartDateTime = $startField->getValue();
+        /** @var string $newEndDateTime */
+        $newEndDateTime = $endField->getValue();
+
+        $compareFormat = 'Y-m-d H:i';
+
+        self::assertTrue(
+            $this->isDateTimesEqual($compareFormat, $newStartDateTime, $oldStartDateTime),
+            'Start datetime was changed after switching All-Day Event on and off'
+        );
+        self::assertTrue(
+            $this->isDateTimesEqual($compareFormat, $newEndDateTime, $oldEndDateTime),
+            'End datetime was changed after switching All-Day Event on and off'
+        );
+    }
+
+    /**
+     * Asserts start and end dates are the same for calendar event
+     *
+     * Example: Then I check start and end dates are the same for calendar event
+     *
+     * @Then /^(?:|I )check start and end dates are the same for calendar event$/
+     */
+    public function checkStartEndDatesEqual()
+    {
+        $compareFormat = 'Y-m-d';
+
+        self::assertTrue(
+            $this->isStartEndDateTimesEqualForCalendarEvent($compareFormat),
+            'Start and end dates are not equal'
+        );
+    }
+
+    /**
+     * Asserts start and end dates and times are the same for calendar event
+     *
+     * Example: Then I check start and end datetimes are the same for calendar event
+     *
+     * @Then /^(?:|I )check start and end datetimes are the same for calendar event$/
+     */
+    public function checkStartEndDateTimesEqual()
+    {
+        $compareFormat = 'Y-m-d H:i';
+
+        self::assertTrue(
+            $this->isStartEndDateTimesEqualForCalendarEvent($compareFormat),
+            'Start and end datetimes are not equal'
+        );
+    }
+
+    /**
+     * @param string $format
+     * @return bool
+     */
+    private function isStartEndDateTimesEqualForCalendarEvent(string $format): bool
+    {
+        $startField = $this->elementFactory->createElement('Start Datetime');
+        $endField = $this->elementFactory->createElement('End Datetime');
+
+        // Compare dates for start and end
+        /** @var string $startDateTime */
+        $startDateTime = $startField->getValue();
+        /** @var string $endDateTime */
+        $endDateTime = $endField->getValue();
+
+        return $this->isDateTimesEqual($format, $startDateTime, $endDateTime);
+    }
+
+    /**
+     * @param string $format
+     * @param string $inputDateTime1
+     * @param string $inputDateTime2
+     * @return bool
+     */
+    private function isDateTimesEqual(string $format, string $inputDateTime1, string $inputDateTime2): bool
+    {
+        $dateTime1 = new \DateTime();
+        $dateTime1->setTimestamp(strtotime($inputDateTime1));
+        $formattedDateTime1 = $dateTime1->format($format);
+
+        $dateTime2 = new \DateTime();
+        $dateTime2->setTimestamp(strtotime($inputDateTime2));
+        $formattedDateTime2 = $dateTime2->format($format);
+
+        return $formattedDateTime1 === $formattedDateTime2;
+    }
 }
