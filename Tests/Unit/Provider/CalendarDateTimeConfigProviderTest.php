@@ -3,7 +3,6 @@
 namespace Oro\Bundle\CalendarBundle\Tests\Unit\Provider;
 
 use Oro\Bundle\CalendarBundle\Provider\CalendarDateTimeConfigProvider;
-use Oro\Bundle\CalendarBundle\Tests\Unit\ReflectionUtil;
 
 class CalendarDateTimeConfigProviderTest extends \PHPUnit\Framework\TestCase
 {

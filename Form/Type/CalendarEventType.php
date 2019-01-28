@@ -7,8 +7,6 @@ use Oro\Bundle\CalendarBundle\Entity\Calendar;
 use Oro\Bundle\CalendarBundle\Form\EventListener\CalendarEventRecurrenceSubscriber;
 use Oro\Bundle\CalendarBundle\Form\EventListener\CalendarSubscriber;
 use Oro\Bundle\CalendarBundle\Form\EventListener\CalendarUidSubscriber;
-use Oro\Bundle\CalendarBundle\Form\Type\CalendarEventAttendeesSelectType;
-use Oro\Bundle\CalendarBundle\Form\Type\RecurrenceFormType;
 use Oro\Bundle\CalendarBundle\Manager\CalendarEvent\NotificationManager;
 use Oro\Bundle\FormBundle\Form\Type\OroDateTimeType;
 use Oro\Bundle\FormBundle\Form\Type\OroResizeableRichTextType;

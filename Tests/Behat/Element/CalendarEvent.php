@@ -2,7 +2,6 @@
 
 namespace Oro\Bundle\CalendarBundle\Tests\Behat\Element;
 
-use Behat\Mink\Element\NodeElement;
 use Oro\Bundle\TestFrameworkBundle\Behat\Element\Element;
 
 class CalendarEvent extends Element

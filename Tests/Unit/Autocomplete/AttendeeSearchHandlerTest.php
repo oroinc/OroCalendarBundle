@@ -13,7 +13,6 @@ use Oro\Bundle\SearchBundle\Engine\Indexer;
 use Oro\Bundle\SearchBundle\Query\Query;
 use Oro\Bundle\SearchBundle\Query\Result;
 use Oro\Bundle\SearchBundle\Query\Result\Item;
-use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorage;
 
 class AttendeeSearchHandlerTest extends \PHPUnit\Framework\TestCase
 {

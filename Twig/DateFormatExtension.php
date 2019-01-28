@@ -5,7 +5,6 @@ namespace Oro\Bundle\CalendarBundle\Twig;
 use Oro\Bundle\ConfigBundle\Config\ConfigManager;
 use Oro\Bundle\LocaleBundle\DependencyInjection\Configuration;
 use Oro\Bundle\LocaleBundle\Formatter\DateTimeFormatter;
-use Oro\Bundle\LocaleBundle\Manager\LocalizationManager;
 use Oro\Bundle\OrganizationBundle\Entity\OrganizationInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 

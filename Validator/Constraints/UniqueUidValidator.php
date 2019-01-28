@@ -2,7 +2,6 @@
 
 namespace Oro\Bundle\CalendarBundle\Validator\Constraints;
 
-use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Persistence\ObjectRepository;
 use Oro\Bundle\CalendarBundle\Entity\CalendarEvent;
 use Oro\Bundle\CalendarBundle\Entity\Repository\CalendarEventRepository;
