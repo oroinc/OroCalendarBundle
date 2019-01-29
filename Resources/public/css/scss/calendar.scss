@@ -74,8 +74,10 @@
 }
 
 .reminder-status {
+    margin-top: 4px;
+    margin-right: 4px;
+
     float: #{$end};
-    margin-top: 1px;
 }
 
 .invitation-response .control-group {
