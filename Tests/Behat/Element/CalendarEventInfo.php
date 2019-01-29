@@ -43,7 +43,6 @@ class CalendarEventInfo extends UiDialog
 
             if (strtotime(trim($value))) {
                 $value = new \DateTime($value);
-                $value->setTime(0, 0, 0);
             }
 
             $this->calendarItemInfo[$label] = $value;

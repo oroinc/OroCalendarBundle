@@ -28,20 +28,6 @@
     display: none;
 }
 
-.calendar-dashboard-widget {
-    margin-top: 10px;
-    position: relative;
-    z-index: 0;
-
-    .fc-toolbar {
-        display: none;
-    }
-
-    td.fc-today {
-        background: transparent;
-    }
-}
-
 .form-horizontal .control-group .controls .recurrent-event-notifier {
     padding-top: 14px;
 }
@@ -114,4 +100,18 @@
 
 .invitation-status-declined {
     text-decoration: line-through;
+}
+
+.day-of-week {
+    display: block;
+    font-size: $base-font-size--sm;
+    text-align: center;
+}
+
+.day-of-month {
+    display: block;
+    font-size: $base-font-size--xl;
+    line-height: 1;
+    text-align: center;
+    color: $primary-100;
 }
