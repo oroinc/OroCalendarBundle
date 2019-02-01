@@ -6,6 +6,10 @@
     .context-menu-button {
         visibility: visible;
     }
+
+    .connection-menu-container .dropdown-menu {
+        max-width: none;
+    }
 }
 
 .connection-item {
@@ -22,5 +26,13 @@
 
     .dropdown-menu {
         padding: 12px;
+    }
+}
+
+@media only screen and (max-width: $small-devices-media-breakpoint) {
+    .calendars .entity-create-or-select-container .select2-container {
+        max-width: none;
+
+        flex-grow: 1;
     }
 }
