@@ -229,7 +229,7 @@ define([
                 // to do nothing since used wont see result of menu rendering
                 var onDropdownHidden = function() {
                     $contextMenu = null;
-                }
+                };
 
                 $connection.one('hide.bs.dropdown', onDropdownHidden);
 
