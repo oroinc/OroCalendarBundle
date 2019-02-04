@@ -83,6 +83,10 @@ class UniqueUidValidatorTest extends AbstractConstraintValidatorTest
 
     public function testNoValidationErrorsWhenAddingUniqueUid()
     {
+        $this->repository->expects($this->once())
+            ->method('findDuplicatedEvent')
+            ->willReturn([]);
+
         $constraint = new UniqueUid();
 
         $calendarEvent = new CalendarEvent();
