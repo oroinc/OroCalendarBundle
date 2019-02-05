@@ -1,0 +1,9 @@
+/* @theme: admin.oro; */
+
+@media only screen and (max-width: $small-devices-media-breakpoint) {
+  .my-calendar-widget-header {
+    .widget-actions-section {
+      display: none;
+    }
+  }
+}

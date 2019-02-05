@@ -25,7 +25,7 @@ define(function(require) {
     var AttendeesPlugin = require('orocalendar/js/app/plugins/calendar/attendees-plugin');
     var EventRecurrencePlugin = require('orocalendar/js/app/plugins/calendar/event-recurrence-plugin');
     var persistentStorage = require('oroui/js/persistent-storage');
-    require('fullcalendar');
+    require('orocalendar/js/fullcalendar');
 
     CalendarView = BaseView.extend({
         MOMENT_BACKEND_FORMAT: dateTimeFormatter.getBackendDateTimeFormat(),
@@ -68,7 +68,7 @@ define(function(require) {
                 calendar: null,
                 subordinate: true,
                 defaultTimedEventDuration: moment.duration('00:30:00'),
-                defaultAllDayEventDuration: moment.duration('24:00:00'),
+                defaultAllDayEventDuration: moment.duration('23:59:00'),
                 header: {
                     ignoreTimezone: false,
                     allDayDefault: false
@@ -441,6 +441,12 @@ define(function(require) {
                 start: start.clone().tz(this.options.timezone, true),
                 end: end.clone().tz(this.options.timezone, true)
             };
+
+            // As end day is inclusive now in case of all-day event, end day must be the same as start day
+            if (attrs.allDay) {
+                attrs.end = attrs.end.clone().subtract(1, 'days');
+            }
+
             this.showAddEventDialog(attrs);
         },
 
@@ -473,7 +479,7 @@ define(function(require) {
             var oldState = fcEvent._beforeDragState;
             var isDroppedOnDayGrid =
                     fcEvent.start.time().as('ms') === 0 &&
-                        (fcEvent.end === null || fcEvent.end.time().as('ms') === 0);
+                        (fcEvent.end === null || fcEvent.endTime !== null);
 
             // when on week view all-day event is dropped at 12AM to hour view
             // previous condition gives false positive result
@@ -692,12 +698,21 @@ define(function(require) {
             if (fcEvent.start !== null && !moment.isMoment(fcEvent.start)) {
                 fcEvent.start = $.fullCalendar.moment(fcEvent.start).tz(this.options.timezone);
             }
+
             if (fcEvent.end !== null && !moment.isMoment(fcEvent.end)) {
-                fcEvent.end = $.fullCalendar.moment(fcEvent.end).tz(this.options.timezone);
+                var end = $.fullCalendar.moment(fcEvent.end);
+                fcEvent.end = end.tz(this.options.timezone);
+
+                if (fcEvent.allDay) {
+                    fcEvent.endTime = end.time();
+                } else {
+                    fcEvent.endTime = null;
+                }
             }
 
             if (fcEvent.end && fcEvent.end.diff(fcEvent.start) === 0) {
                 fcEvent.end = null;
+                fcEvent.endTime = null;
             }
             return fcEvent;
         },
@@ -756,6 +771,7 @@ define(function(require) {
             // prepare options for jQuery FullCalendar control
             options = { // prepare options for jQuery FullCalendar control
                 timezone: this.options.timezone,
+                selectLongPressDelay: 30,
                 displayEventEnd: {
                     month: true
                 },
@@ -776,8 +792,8 @@ define(function(require) {
                 views: {}
             };
             keys = [
-                'defaultDate', 'defaultView', 'editable', 'selectable',
-                'header', 'allDayText', 'allDaySlot', 'buttonText',
+                'defaultDate', 'defaultView', 'editable', 'selectable', 'selectLongPressDelay',
+                'header', 'allDayText', 'allDayHtml', 'allDaySlot', 'buttonText',
                 'titleFormat', 'columnFormat', 'timeFormat', 'slotLabelFormat',
                 'minTime', 'maxTime', 'scrollTime', 'slotEventOverlap',
                 'firstDay', 'monthNames', 'monthNamesShort', 'dayNames',
