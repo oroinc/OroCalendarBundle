@@ -1,0 +1,36 @@
+@media only screen and (max-width: $small-devices-media-breakpoint) {
+    .fc-header-toolbar {
+        display: flex;
+        flex-direction: column;
+
+        .fc-left {
+            order: 1;
+
+            .fc-today-button {
+                float: $end;
+            }
+        }
+
+        .fc-center {
+            order: 2;
+            margin: 12px 0;
+
+            h2 {
+                width: 100%;
+                padding-top: 0;
+            }
+        }
+
+        .fc-right {
+            order: 3;
+
+            .fc-button-group {
+                width: 100%;
+
+                .fc-button {
+                    width: 33%;
+                }
+            }
+        }
+    }
+}

@@ -76,6 +76,12 @@ navigation:
                     oro_calendar_menu_divider: ~
                     oro_calendar_color_action: ~
 
+            calendar_menu_mobile:
+                type: calendar_menu
+                children:
+                    oro_calendar_remove_action: ~
+                    oro_calendar_toggle_action: ~
+
     titles:
         oro_calendar_view_default: "My Calendar - %username%"
         oro_calendar_view: "%calendarname% - Calendars - %username%"

@@ -67,6 +67,7 @@
                 'rightHeader': 'month,agendaWeek,agendaDay',
             },
             connectionsOptions: {
+                'modalContentTemplateId': isMobileVersion() ? 'connections-modal-content-template' : null,
                 'containerSelector': '.calendar-connections',
                 'containerTemplateSelector': '#template-calendar-connections',
                 'itemTemplateSelector': '#template-calendar-connection-item',
@@ -88,20 +89,18 @@
              data-page-component-options="{{ calendarOptions | json_encode }}"
         >
         {% if isMobileVersion() %}
-            {% set togglerId = 'dropdown-'|uniqid %}
             <div class="calendar-connections-header">
                 <div class="dropdown">
-                    <a href="#" role="button" id="{{ togglerId }}" class="btn btn-large dropdown-toggle--no-caret" data-toggle="dropdown"
-                       aria-haspopup="true" aria-expanded="false">
+                    <button data-role="show-connections-modal" class="btn btn-large">
                         <span class="fa-filter" aria-hidden="true"></span>
                         {{ 'oro.calendar.select'|trans }}
-                    </a>
-                    <div class="dropdown-menu" role="menu" aria-labelledby="{{ togglerId }}">
-                        {{ block('calendar_connections') }}
-                    </div>
+                    </button>
                 </div>
             </div>
             {{ block('calendar_events') }}
+            <script id="{{ calendarOptions.connectionsOptions.modalContentTemplateId }}" type="text/template">
+                <div data-layout="separate">{{ block('calendar_connections') }}</div>
+            </script>
         {% else %}
             <div class="content-with-sidebar--sidebar calendar-sidebar" data-role="calendar-sidebar">
                 {{ block('calendar_connections') }}
@@ -115,7 +114,7 @@
         </div>
     </div>
     <script type="text/template" id="template-calendar-menu">
-        {{ oro_menu_render('calendar_menu') }}
+        {{ oro_menu_render(isMobileVersion() ? 'calendar_menu_mobile' : 'calendar_menu') }}
     </script>
 
     <script type="text/template" id="template-calendar-connections">

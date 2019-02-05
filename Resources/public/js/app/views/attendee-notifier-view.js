@@ -113,7 +113,8 @@ define([
                 cancelText: __('Don\'t notify'),
                 content: notifyMessage,
                 className: 'modal modal-primary',
-                handleClose: true
+                handleClose: true,
+                disposeOnHidden: false
             });
         }
     });

@@ -209,8 +209,9 @@ define([
             }
         },
 
-        showContextMenu: function($button, model) {
-            var $container = $button.find('[data-role="connection-menu-content"]');
+        showContextMenu: function($connection, model) {
+            var $dropdownToggle = $connection.find('[data-toggle=dropdown]');
+            var $container = $connection.find('[data-role="connection-menu-content"]');
             var $contextMenu = $(this.contextMenuTemplate(model.toJSON()));
             var modules = _.uniq($contextMenu.find('li[data-module]').map(function() {
                 return $(this).data('module');
@@ -218,14 +219,28 @@ define([
 
             var showLoadingTimeout;
 
-            if (modules.length > 0 && this._initActionSyncObject()) {
+            if (modules.length > 0) {
                 // show loading message, if loading takes more than 100ms
                 showLoadingTimeout = setTimeout(_.bind(function() {
                     $container.html('<span class="loading-indicator"></span>');
                 }, this), 100);
+
+                // If dropdown will be closed before module are loaded just remove prepared context menu
+                // to do nothing since used wont see result of menu rendering
+                var onDropdownHidden = function() {
+                    $contextMenu = null;
+                };
+
+                $connection.one('hide.bs.dropdown', onDropdownHidden);
+
                 // load context menu
                 tools.loadModules(_.object(modules, modules), _.bind(function(modules) {
                     clearTimeout(showLoadingTimeout);
+                    $connection.off('hide.bs.dropdown', onDropdownHidden);
+
+                    if ($contextMenu === null) {
+                        return;
+                    }
 
                     _.each(modules, _.bind(function(ModuleConstructor, moduleName) {
                         $contextMenu.find('li[data-module="' + moduleName + '"]').each(_.bind(function(index, el) {
@@ -246,7 +261,8 @@ define([
 
                     $container.html($contextMenu);
 
-                    this._actionSyncObject.resolve();
+                    // Dropdown changed its size after content was inserted so it needs to correct its position
+                    $dropdownToggle.dropdown('update');
                 }, this));
             }
         },
