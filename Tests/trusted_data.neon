@@ -4,6 +4,9 @@ trusted_data:
         Oro\Bundle\CalendarBundle\Provider\CalendarPropertyProvider:
             getItems:
                 selectItems: true
+        Oro\Bundle\CalendarBundle\Ownership\CalendarOwnerAssignmentChecker:
+            getHasAssignmentsQueryBuilder:
+                qbParam: true
     safe_methods:
         Oro\Bundle\CalendarBundle\Entity\Repository\CalendarEventRepository:
             getBaseFields: true
