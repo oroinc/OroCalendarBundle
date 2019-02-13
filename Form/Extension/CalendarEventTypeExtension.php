@@ -33,8 +33,20 @@ class CalendarEventTypeExtension extends AbstractTypeExtension
     {
         parent::buildForm($builder, $options);
         $builder
-            ->add('organizerDisplayName')
-            ->add('organizerEmail', EmailType::class)
+            ->add(
+                'organizerDisplayName',
+                null,
+                [
+                    'label' => 'oro.calendar.calendarevent.organizer_display_name.label'
+                ]
+            )
+            ->add(
+                'organizerEmail',
+                EmailType::class,
+                [
+                    'label' => 'oro.calendar.calendarevent.organizer_email.label'
+                ]
+            )
             ->addEventListener(FormEvents::POST_SUBMIT, [$this, 'setDefaultOrganizer']);
     }
 
