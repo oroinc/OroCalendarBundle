@@ -12,6 +12,9 @@ use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Form\FormEvent;
 use Symfony\Component\Form\FormEvents;
 
+/**
+ * Adds organizer field to calendar event form.
+ */
 class CalendarEventTypeExtension extends AbstractTypeExtension
 {
     /**
@@ -34,8 +37,20 @@ class CalendarEventTypeExtension extends AbstractTypeExtension
     {
         parent::buildForm($builder, $options);
         $builder
-            ->add('organizerDisplayName', TextType::class)
-            ->add('organizerEmail', EmailType::class)
+            ->add(
+                'organizerDisplayName',
+                TextType::class,
+                [
+                    'label' => 'oro.calendar.calendarevent.organizer_display_name.label'
+                ]
+            )
+            ->add(
+                'organizerEmail',
+                EmailType::class,
+                [
+                    'label' => 'oro.calendar.calendarevent.organizer_email.label'
+                ]
+            )
             ->addEventListener(FormEvents::POST_SUBMIT, [$this, 'setDefaultOrganizer']);
     }
 

@@ -1,15 +1,7 @@
 /* @theme: admin.oro; */
 
-.box-type1 {
-  margin: 0 $content-padding $content-padding;
-  border-radius: 3px;
-
-  .title {
-    padding: $content-padding $content-padding $content-padding 0;
-  }
-
-  .calendar-container {
-    padding: 0;
-    z-index: 0;
+@media only screen and (max-width: $small-devices-media-breakpoint) {
+  .calendar-connections-header .btn {
+    width: 100%;
   }
 }

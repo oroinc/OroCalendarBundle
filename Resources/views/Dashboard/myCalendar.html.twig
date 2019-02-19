@@ -24,7 +24,12 @@
             connectionsOptions: {},
             colorManagerOptions: {
                 colors: oro_config_value('oro_calendar.calendar_colors')
-            }
+            },
+            invitationStatuses: [
+                constant('Oro\\Bundle\\CalendarBundle\\Entity\\Attendee::STATUS_ACCEPTED'),
+                constant('Oro\\Bundle\\CalendarBundle\\Entity\\Attendee::STATUS_TENTATIVE'),
+                constant('Oro\\Bundle\\CalendarBundle\\Entity\\Attendee::STATUS_DECLINED'),
+            ]
         }
     %}
     <div class="calendar-dashboard-widget" data-page-component-module="orocalendar/js/app/components/dashboard-calendar-component"
