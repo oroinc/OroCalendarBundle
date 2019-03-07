@@ -9,8 +9,12 @@ use Oro\Bundle\CalendarBundle\Entity\Repository\CalendarEventRepository;
 use Oro\Bundle\CalendarBundle\Manager\AttendeeManager;
 use Oro\Bundle\CalendarBundle\Manager\CalendarEventManager;
 use Oro\Bundle\ReminderBundle\Entity\Manager\ReminderManager;
+use Oro\Bundle\UIBundle\Tools\HtmlTagHelper;
 use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
 
+/**
+ * Abstract class for converters of calendar events.
+ */
 abstract class AbstractCalendarEventNormalizer
 {
     /**
@@ -34,6 +38,11 @@ abstract class AbstractCalendarEventNormalizer
     protected $authorizationChecker;
 
     /**
+     * @var HtmlTagHelper
+     */
+    protected $htmlTagHelper;
+
+    /**
      * @var array
      */
     protected $currentCalendarEventIds;
@@ -53,17 +62,20 @@ abstract class AbstractCalendarEventNormalizer
      * @param AttendeeManager               $attendeeManager
      * @param ReminderManager               $reminderManager
      * @param AuthorizationCheckerInterface $authorizationChecker
+     * @param HtmlTagHelper                 $htmlTagHelper
      */
     public function __construct(
         CalendarEventManager $calendarEventManager,
         AttendeeManager $attendeeManager,
         ReminderManager $reminderManager,
-        AuthorizationCheckerInterface $authorizationChecker
+        AuthorizationCheckerInterface $authorizationChecker,
+        HtmlTagHelper $htmlTagHelper
     ) {
         $this->calendarEventManager = $calendarEventManager;
         $this->attendeeManager = $attendeeManager;
         $this->reminderManager = $reminderManager;
         $this->authorizationChecker = $authorizationChecker;
+        $this->htmlTagHelper = $htmlTagHelper;
     }
 
     /**

@@ -273,6 +273,7 @@ services:
             - '@oro_calendar.attendee_manager'
             - '@oro_reminder.entity.manager'
             - '@security.authorization_checker'
+            - '@oro_ui.html_tag_helper'
 
     oro_calendar.calendar_event_normalizer.user:
         class: '%oro_calendar.calendar_event_normalizer.user.class%'

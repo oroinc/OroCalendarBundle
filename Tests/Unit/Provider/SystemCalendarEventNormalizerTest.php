@@ -3,6 +3,7 @@
 namespace Oro\Bundle\CalendarBundle\Tests\Unit\Provider;
 
 use Oro\Bundle\CalendarBundle\Provider\SystemCalendarEventNormalizer;
+use Oro\Bundle\UIBundle\Tools\HtmlTagHelper;
 use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
 
 class SystemCalendarEventNormalizerTest extends \PHPUnit\Framework\TestCase
@@ -46,7 +47,8 @@ class SystemCalendarEventNormalizerTest extends \PHPUnit\Framework\TestCase
             $this->calendarEventManager,
             $this->attendeeManager,
             $this->reminderManager,
-            $this->authorizationChecker
+            $this->authorizationChecker,
+            $this->createMock(HtmlTagHelper::class)
         );
     }
 

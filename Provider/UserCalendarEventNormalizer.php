@@ -10,6 +10,9 @@ use Oro\Component\PropertyAccess\PropertyAccessor;
 use Symfony\Component\PropertyAccess\Exception\InvalidPropertyPathException;
 use Symfony\Component\PropertyAccess\Exception\NoSuchPropertyException;
 
+/**
+ * Serializes user`s calendar event object into an array.
+ */
 class UserCalendarEventNormalizer extends AbstractCalendarEventNormalizer
 {
     /** @var PropertyAccessor */
@@ -88,6 +91,20 @@ class UserCalendarEventNormalizer extends AbstractCalendarEventNormalizer
         $this->applySerializedExtraFields($item, $event, $extraFields);
 
         return $item;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    protected function transformEntity($entity)
+    {
+        $result = parent::transformEntity($entity);
+
+        if (isset($result['description'])) {
+            $result['description'] = $this->htmlTagHelper->sanitize($result['description']);
+        }
+
+        return $result;
     }
 
     /**
