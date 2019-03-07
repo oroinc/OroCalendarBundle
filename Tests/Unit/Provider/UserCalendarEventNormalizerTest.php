@@ -3,12 +3,16 @@
 namespace Oro\Bundle\CalendarBundle\Tests\Unit\Provider;
 
 use Oro\Bundle\CalendarBundle\Entity\Calendar;
+use Oro\Bundle\CalendarBundle\Manager\AttendeeManager;
+use Oro\Bundle\CalendarBundle\Manager\CalendarEventManager;
 use Oro\Bundle\CalendarBundle\Provider\UserCalendarEventNormalizer;
 use Oro\Bundle\CalendarBundle\Tests\Unit\Fixtures\Entity\Attendee;
 use Oro\Bundle\CalendarBundle\Tests\Unit\Fixtures\Entity\CalendarEvent;
 use Oro\Bundle\CalendarBundle\Tests\Unit\Fixtures\Entity\User;
 use Oro\Bundle\EntityExtendBundle\Tests\Unit\Fixtures\TestEnumValue;
+use Oro\Bundle\ReminderBundle\Entity\Manager\ReminderManager;
 use Oro\Bundle\SecurityBundle\Authentication\TokenAccessorInterface;
+use Oro\Bundle\UIBundle\Tools\HtmlTagHelper;
 use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
 
 class UserCalendarEventNormalizerTest extends \PHPUnit\Framework\TestCase
@@ -25,6 +29,9 @@ class UserCalendarEventNormalizerTest extends \PHPUnit\Framework\TestCase
     /** @var \PHPUnit\Framework\MockObject\MockObject */
     protected $authorizationChecker;
 
+    /** @var HtmlTagHelper|\PHPUnit\Framework\MockObject\MockObject */
+    protected $htmlTagHelper;
+
     /** @var \PHPUnit\Framework\MockObject\MockObject */
     protected $tokenAccessor;
 
@@ -33,17 +40,20 @@ class UserCalendarEventNormalizerTest extends \PHPUnit\Framework\TestCase
 
     protected function setUp()
     {
-        $this->calendarEventManager = $this->getMockBuilder('Oro\Bundle\CalendarBundle\Manager\CalendarEventManager')
-            ->disableOriginalConstructor()
-            ->getMock();
-        $this->attendeeManager = $this->getMockBuilder('Oro\Bundle\CalendarBundle\Manager\AttendeeManager')
-            ->disableOriginalConstructor()
-            ->getMock();
-        $this->reminderManager = $this->getMockBuilder('Oro\Bundle\ReminderBundle\Entity\Manager\ReminderManager')
-            ->disableOriginalConstructor()
-            ->getMock();
+        $this->calendarEventManager = $this->createMock(CalendarEventManager::class);
+        $this->attendeeManager = $this->createMock(AttendeeManager::class);
+        $this->reminderManager = $this->createMock(ReminderManager::class);
         $this->authorizationChecker = $this->createMock(AuthorizationCheckerInterface::class);
         $this->tokenAccessor = $this->createMock(TokenAccessorInterface::class);
+
+        $this->htmlTagHelper = $this->createMock(HtmlTagHelper::class);
+        $this->htmlTagHelper->expects($this->any())
+            ->method('sanitize')
+            ->willReturnCallback(
+                function (string $value) {
+                    return $value . 's';
+                }
+            );
 
         $this->normalizer = new UserCalendarEventNormalizer(
             $this->calendarEventManager,
@@ -52,6 +62,7 @@ class UserCalendarEventNormalizerTest extends \PHPUnit\Framework\TestCase
             $this->authorizationChecker
         );
         $this->normalizer->setTokenAccessor($this->tokenAccessor);
+        $this->normalizer->setHtmlTagHelper($this->htmlTagHelper);
     }
 
     /**
@@ -445,7 +456,7 @@ class UserCalendarEventNormalizerTest extends \PHPUnit\Framework\TestCase
                     'id' => 1,
                     'uid' => 'b139fecc-41cf-478d-8f8e-b6122f491ace',
                     'title' => 'test',
-                    'description' => null,
+                    'description' => 'test_description',
                     'start' => $startDate,
                     'end' => $endDate,
                     'allDay' => false,
@@ -470,7 +481,7 @@ class UserCalendarEventNormalizerTest extends \PHPUnit\Framework\TestCase
                     'id' => 1,
                     'uid' => 'b139fecc-41cf-478d-8f8e-b6122f491ace',
                     'title' => 'test',
-                    'description' => null,
+                    'description' => 'test_descriptions',
                     'start' => $startDate->format('c'),
                     'end' => $endDate->format('c'),
                     'allDay' => false,
@@ -498,7 +509,7 @@ class UserCalendarEventNormalizerTest extends \PHPUnit\Framework\TestCase
                     'id' => 1,
                     'uid' => null,
                     'title' => 'test',
-                    'description' => null,
+                    'description' => 'test_description',
                     'start' => $startDate,
                     'end' => $endDate,
                     'allDay' => false,
@@ -526,7 +537,7 @@ class UserCalendarEventNormalizerTest extends \PHPUnit\Framework\TestCase
                     'id' => 1,
                     'uid' => null,
                     'title' => 'test',
-                    'description' => null,
+                    'description' => 'test_descriptions',
                     'start' => $startDate->format('c'),
                     'end' => $endDate->format('c'),
                     'allDay' => null,
@@ -632,6 +643,9 @@ class UserCalendarEventNormalizerTest extends \PHPUnit\Framework\TestCase
         }
         if (!empty($data['title'])) {
             $event->setTitle($data['title']);
+        }
+        if (!empty($data['description'])) {
+            $event->setDescription($data['description']);
         }
         if (!empty($data['start'])) {
             $event->setStart($data['start']);
