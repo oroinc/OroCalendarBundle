@@ -4,10 +4,13 @@ namespace Oro\Bundle\CalendarBundle\Tests\Unit\Provider;
 
 use Oro\Bundle\CalendarBundle\Entity\Calendar;
 use Oro\Bundle\CalendarBundle\Provider\CalendarPropertyProvider;
+use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
 use Oro\Bundle\EntityConfigBundle\Config\Config;
+use Oro\Bundle\EntityConfigBundle\Config\ConfigManager;
 use Oro\Bundle\EntityConfigBundle\Config\Id\FieldConfigId;
 use Oro\Bundle\EntityExtendBundle\EntityConfig\ExtendScope;
 use Oro\Bundle\EntityExtendBundle\Extend\FieldTypeHelper;
+use Oro\Bundle\EntityExtendBundle\Provider\EntityExtendConfigurationProvider;
 
 class CalendarPropertyProviderTest extends \PHPUnit\Framework\TestCase
 {
@@ -17,26 +20,23 @@ class CalendarPropertyProviderTest extends \PHPUnit\Framework\TestCase
     /** @var \PHPUnit\Framework\MockObject\MockObject */
     protected $configManager;
 
-    /** @var FieldTypeHelper */
-    protected $fieldTypeHelper;
-
     /** @var CalendarPropertyProvider */
     protected $provider;
 
     protected function setUp()
     {
-        $this->doctrineHelper  = $this->getMockBuilder('Oro\Bundle\EntityBundle\ORM\DoctrineHelper')
-            ->disableOriginalConstructor()
-            ->getMock();
-        $this->configManager   = $this->getMockBuilder('Oro\Bundle\EntityConfigBundle\Config\ConfigManager')
-            ->disableOriginalConstructor()
-            ->getMock();
-        $this->fieldTypeHelper = new FieldTypeHelper(['enum' => 'manyToOne', 'multiEnum' => 'manyToMany']);
+        $this->doctrineHelper = $this->createMock(DoctrineHelper::class);
+        $this->configManager = $this->createMock(ConfigManager::class);
+
+        $entityExtendConfigurationProvider = $this->createMock(EntityExtendConfigurationProvider::class);
+        $entityExtendConfigurationProvider->expects(self::any())
+            ->method('getUnderlyingTypes')
+            ->willReturn(['enum' => 'manyToOne', 'multiEnum' => 'manyToMany']);
 
         $this->provider = new CalendarPropertyProvider(
             $this->doctrineHelper,
             $this->configManager,
-            $this->fieldTypeHelper
+            new FieldTypeHelper($entityExtendConfigurationProvider)
         );
     }
 
