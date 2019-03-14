@@ -56,7 +56,7 @@
                     return attendeeName;
                 }); %>
                 <% if (attendeesView.length > 0) { %>
-                    {{ UI.renderAttribute('oro.calendar.calendarevent.attendees.label'|trans, '<div class="calendar-event-attendees-widget"><%= attendeesView.join(", ") %></div>') }}
+                    {{ UI.renderAttribute('oro.calendar.calendarevent.attendees.label'|trans, '<div class="calendar-event-attendees-widget"><%- attendeesView.join(", ") %></div>') }}
                 <% } %>
                 <% if (editableInvitationStatus) { %>
                     <% var properties = []; %>

@@ -131,6 +131,11 @@ abstract class AbstractCalendarEventNormalizer
         $result = [];
         foreach ($entity as $field => $value) {
             $this->transformEntityField($value);
+
+            if ($this->htmlTagHelper && $field === 'description') {
+                $value = $this->htmlTagHelper->sanitize($value);
+            }
+
             $result[$field] = $value;
         }
 
