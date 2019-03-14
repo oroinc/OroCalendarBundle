@@ -49,13 +49,27 @@ class PublicCalendarEventNormalizerTest extends \PHPUnit\Framework\TestCase
             $this->reminderManager,
             $this->authorizationChecker
         );
-        $this->normalizer->setHtmlTagHelper($this->createMock(HtmlTagHelper::class));
+
+        /** @var HtmlTagHelper|\PHPUnit\Framework\MockObject\MockObject $htmlTagHelper */
+        $htmlTagHelper = $this->createMock(HtmlTagHelper::class);
+        $htmlTagHelper->expects($this->any())
+            ->method('sanitize')
+            ->willReturnCallback(
+                function ($value) {
+                    return $value ? $value . 's' : $value;
+                }
+            );
+
+        $this->normalizer->setHtmlTagHelper($htmlTagHelper);
     }
 
     /**
      * @dataProvider getCalendarEventsProvider
+     *
+     * @param array $events
+     * @param array $expected
      */
-    public function testGetCalendarEvents($events, $expected)
+    public function testGetCalendarEvents(array $events, array $expected)
     {
         $calendarId = 123;
 
@@ -77,8 +91,11 @@ class PublicCalendarEventNormalizerTest extends \PHPUnit\Framework\TestCase
 
     /**
      * @dataProvider getGrantedCalendarEventsProvider
+     *
+     * @param array $events
+     * @param array $expected
      */
-    public function testGetCalendarEventsWithGrantedManagement($events, $expected)
+    public function testGetCalendarEventsWithGrantedManagement(array $events, array $expected)
     {
         $calendarId = 123;
 
@@ -101,6 +118,9 @@ class PublicCalendarEventNormalizerTest extends \PHPUnit\Framework\TestCase
         $this->assertEquals($expected, $result);
     }
 
+    /**
+     * @return array
+     */
     public function getCalendarEventsProvider()
     {
         $startDate = new \DateTime();
@@ -117,6 +137,7 @@ class PublicCalendarEventNormalizerTest extends \PHPUnit\Framework\TestCase
                         'calendar' => 123,
                         'id'       => 1,
                         'title'    => 'test',
+                        'description' => 'description',
                         'start'    => $startDate,
                         'end'      => $endDate
                     ],
@@ -126,6 +147,7 @@ class PublicCalendarEventNormalizerTest extends \PHPUnit\Framework\TestCase
                         'calendar'  => 123,
                         'id'        => 1,
                         'title'     => 'test',
+                        'description' => 'descriptions',
                         'start'     => $startDate->format('c'),
                         'end'       => $endDate->format('c'),
                         'attendees' => [],
@@ -140,6 +162,7 @@ class PublicCalendarEventNormalizerTest extends \PHPUnit\Framework\TestCase
                         'calendar' => 123,
                         'id'       => 1,
                         'title'    => 'test',
+                        'description' => 'description',
                         'start'    => $startDate,
                         'end'      => $endDate,
                         'attendees' => [],
@@ -150,6 +173,7 @@ class PublicCalendarEventNormalizerTest extends \PHPUnit\Framework\TestCase
                         'calendar'  => 123,
                         'id'        => 1,
                         'title'     => 'test',
+                        'description' => 'descriptions',
                         'start'     => $startDate->format('c'),
                         'end'       => $endDate->format('c'),
                         'attendees' => [],
@@ -161,6 +185,9 @@ class PublicCalendarEventNormalizerTest extends \PHPUnit\Framework\TestCase
         ];
     }
 
+    /**
+     * @return array
+     */
     public function getGrantedCalendarEventsProvider()
     {
         $startDate = new \DateTime();

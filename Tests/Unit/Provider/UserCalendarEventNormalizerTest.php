@@ -29,9 +29,6 @@ class UserCalendarEventNormalizerTest extends \PHPUnit\Framework\TestCase
     /** @var \PHPUnit\Framework\MockObject\MockObject */
     protected $authorizationChecker;
 
-    /** @var HtmlTagHelper|\PHPUnit\Framework\MockObject\MockObject */
-    protected $htmlTagHelper;
-
     /** @var \PHPUnit\Framework\MockObject\MockObject */
     protected $tokenAccessor;
 
@@ -46,15 +43,6 @@ class UserCalendarEventNormalizerTest extends \PHPUnit\Framework\TestCase
         $this->authorizationChecker = $this->createMock(AuthorizationCheckerInterface::class);
         $this->tokenAccessor = $this->createMock(TokenAccessorInterface::class);
 
-        $this->htmlTagHelper = $this->createMock(HtmlTagHelper::class);
-        $this->htmlTagHelper->expects($this->any())
-            ->method('sanitize')
-            ->willReturnCallback(
-                function (string $value) {
-                    return $value . 's';
-                }
-            );
-
         $this->normalizer = new UserCalendarEventNormalizer(
             $this->calendarEventManager,
             $this->attendeeManager,
@@ -62,7 +50,18 @@ class UserCalendarEventNormalizerTest extends \PHPUnit\Framework\TestCase
             $this->authorizationChecker
         );
         $this->normalizer->setTokenAccessor($this->tokenAccessor);
-        $this->normalizer->setHtmlTagHelper($this->htmlTagHelper);
+
+        /** @var HtmlTagHelper|\PHPUnit\Framework\MockObject\MockObject $htmlTagHelper */
+        $htmlTagHelper = $this->createMock(HtmlTagHelper::class);
+        $htmlTagHelper->expects($this->any())
+            ->method('sanitize')
+            ->willReturnCallback(
+                function ($value) {
+                    return $value ? $value . 's' : $value;
+                }
+            );
+
+        $this->normalizer->setHtmlTagHelper($htmlTagHelper);
     }
 
     /**

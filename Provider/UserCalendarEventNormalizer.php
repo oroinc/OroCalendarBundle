@@ -98,13 +98,7 @@ class UserCalendarEventNormalizer extends AbstractCalendarEventNormalizer
      */
     protected function transformEntity($entity)
     {
-        $result = parent::transformEntity($entity);
-
-        if ($this->htmlTagHelper && isset($result['description'])) {
-            $result['description'] = $this->htmlTagHelper->sanitize($result['description']);
-        }
-
-        return $result;
+        return parent::transformEntity($entity);
     }
 
     /**
