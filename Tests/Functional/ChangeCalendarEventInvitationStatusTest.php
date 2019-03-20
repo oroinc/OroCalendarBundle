@@ -254,11 +254,10 @@ class ChangeCalendarEventInvitationStatusTest extends AbstractTestCase
         // Step 4. Update invitation status of the main event to "accepted".
         $this->restRequest(
             [
-                'method' => 'GET',
+                'method' => 'POST',
                 'url' => $this->getUrl('oro_calendar_event_accepted', ['id' => $newEvent->getId()]),
                 'server' => array_merge(
-                    $this->generateBasicAuthHeader('foo_user_1', 'password'),
-                    ['HTTP_X-CSRF-Header' => 1]
+                    $this->generateBasicAuthHeader('foo_user_1', 'password')
                 )
             ]
         );
@@ -414,11 +413,10 @@ class ChangeCalendarEventInvitationStatusTest extends AbstractTestCase
         // Step 6. Update invitation status of the main event to "tentative".
         $this->restRequest(
             [
-                'method' => 'GET',
+                'method' => 'POST',
                 'url' => $this->getUrl('oro_calendar_event_tentative', ['id' => $newEvent->getId()]),
                 'server' => array_merge(
-                    $this->generateBasicAuthHeader('foo_user_1', 'password'),
-                    ['HTTP_X-CSRF-Header' => 1]
+                    $this->generateBasicAuthHeader('foo_user_1', 'password')
                 )
             ]
         );
@@ -574,11 +572,10 @@ class ChangeCalendarEventInvitationStatusTest extends AbstractTestCase
         // Step 8. Update invitation status of the main event to "declined".
         $this->restRequest(
             [
-                'method' => 'GET',
+                'method' => 'POST',
                 'url' => $this->getUrl('oro_calendar_event_declined', ['id' => $newEvent->getId()]),
                 'server' => array_merge(
-                    $this->generateBasicAuthHeader('foo_user_1', 'password'),
-                    ['HTTP_X-CSRF-Header' => 1]
+                    $this->generateBasicAuthHeader('foo_user_1', 'password')
                 )
             ]
         );
@@ -738,11 +735,10 @@ class ChangeCalendarEventInvitationStatusTest extends AbstractTestCase
 
         $this->restRequest(
             [
-                'method' => 'GET',
+                'method' => 'POST',
                 'url' => $this->getUrl('oro_calendar_event_accepted', ['id' => $newChildEvent->getId()]),
                 'server' => array_merge(
-                    $this->generateBasicAuthHeader('foo_user_2', 'password'),
-                    ['HTTP_X-CSRF-Header' => 1]
+                    $this->generateBasicAuthHeader('foo_user_2', 'password')
                 )
             ]
         );
