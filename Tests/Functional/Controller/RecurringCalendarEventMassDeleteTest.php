@@ -191,11 +191,10 @@ class RecurringCalendarEventMassDeleteTest extends AbstractTestCase
                 'gridName'   => 'calendar-event-grid',
                 'actionName' => 'delete',
                 'inset'      => 1,
-                'values'     => implode(',', [$regularEvent->getId(), $exceptionEvent->getId()]),
-                'token'      => $this->getCsrfToken('delete')->getValue(),
+                'values'     => implode(',', [$regularEvent->getId(), $exceptionEvent->getId()])
             ]
         );
-        $this->client->request('DELETE', $url, [], [], $this->generateBasicAuthHeader('foo_user_1', 'password'));
+        $this->ajaxRequest('DELETE', $url, [], [], $this->generateBasicAuthHeader('foo_user_1', 'password'));
         $result = $this->client->getResponse();
         $data = json_decode($result->getContent(), true);
         $this->assertTrue($data['successful'] === true);
@@ -468,11 +467,10 @@ class RecurringCalendarEventMassDeleteTest extends AbstractTestCase
                 'gridName'   => 'calendar-event-grid',
                 'actionName' => 'delete',
                 'inset'      => 1,
-                'values'     => implode(',', [$recurringEvent->getId()]),
-                'token'      => $this->getCsrfToken('delete')->getValue(),
+                'values'     => implode(',', [$recurringEvent->getId()])
             ]
         );
-        $this->client->request('DELETE', $url, [], [], $this->generateBasicAuthHeader('foo_user_1', 'password'));
+        $this->ajaxRequest('DELETE', $url, [], [], $this->generateBasicAuthHeader('foo_user_1', 'password'));
         $result = $this->client->getResponse();
         $data = json_decode($result->getContent(), true);
         $this->assertTrue($data['successful'] === true);

@@ -1,3 +1,9 @@
+## 2.6.40
+### Changed
+* In `Oro\Bundle\CalendarBundle\Controller\AjaxCalendarEventController::changeStatusAction` 
+ (`oro_calendar_event_accepted`, `oro_calendar_event_tentative` and `oro_calendar_event_declined` routes)
+ action the request method was changed to POST.
+ 
 ## 2.5.0 (2017-11-30)
 [Show detailed list of changes](incompatibilities-2-5.md)
 

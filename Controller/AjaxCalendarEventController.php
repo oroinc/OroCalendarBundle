@@ -2,8 +2,8 @@
 
 namespace Oro\Bundle\CalendarBundle\Controller;
 
-use Oro\Bundle\SecurityBundle\Authentication\TokenAccessorInterface;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
 
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -13,9 +13,10 @@ use Oro\Bundle\CalendarBundle\Entity\CalendarEvent;
 use Oro\Bundle\CalendarBundle\Exception\ChangeInvitationStatusException;
 use Oro\Bundle\CalendarBundle\Manager\AttendeeManager;
 use Oro\Bundle\CalendarBundle\Manager\CalendarEvent\NotificationManager;
-use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
+use Oro\Bundle\SecurityBundle\Annotation\CsrfProtection;
 
 /**
+ * AJAX calendar event controller
  * @Route("/event/ajax")
  */
 class AjaxCalendarEventController extends Controller
@@ -30,6 +31,8 @@ class AjaxCalendarEventController extends Controller
      * @Route("/declined/{id}",
      *      name="oro_calendar_event_declined",
      *      requirements={"id"="\d+"}, defaults={"status"="declined"})
+     * @Method({"POST"})
+     * @CsrfProtection()
      *
      * @param CalendarEvent $entity
      * @param string        $status
