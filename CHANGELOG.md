@@ -2,6 +2,12 @@ Please refer first to [UPGRADE.md](UPGRADE.md) for the most important items that
 
 The current file describes significant changes in the code that may affect the upgrade of your customizations.
 
+## 3.1.4
+### Changed
+* In `Oro\Bundle\CalendarBundle\Controller\AjaxCalendarEventController::changeStatusAction` 
+ (`oro_calendar_event_accepted`, `oro_calendar_event_tentative` and `oro_calendar_event_declined` routes)
+ action the request method was changed to POST.
+
 ## 3.1.0 (2019-01-30)
 [Show detailed list of changes](incompatibilities-3-1.md)
 
