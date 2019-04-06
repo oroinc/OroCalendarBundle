@@ -76,7 +76,7 @@ class AbstractTestCase extends WebTestCase
             $parameters['url'] = $this->getUrl($parameters['route'], $parameters['routeParameters']);
         }
 
-        $this->client->request(
+        $this->ajaxRequest(
             $parameters['method'],
             $parameters['url'],
             $parameters['parameters'],

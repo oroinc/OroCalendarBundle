@@ -94,20 +94,6 @@ class UserCalendarEventNormalizer extends AbstractCalendarEventNormalizer
     }
 
     /**
-     * {@inheritdoc}
-     */
-    protected function transformEntity($entity)
-    {
-        $result = parent::transformEntity($entity);
-
-        if (isset($result['description'])) {
-            $result['description'] = $this->htmlTagHelper->sanitize($result['description']);
-        }
-
-        return $result;
-    }
-
-    /**
      * Adds recurrence to the serialized calendar event data.
      *
      * @param array $item Serialized calendar event data to update.

@@ -2,6 +2,18 @@ Please refer first to [UPGRADE.md](UPGRADE.md) for the most important items that
 
 The current file describes significant changes in the code that may affect the upgrade of your customizations.
 
+## 4.0.0-beta
+### Changed
+* In `Oro\Bundle\AuthorizeNetBundle\Controller\Frontend\PaymentProfileController::deleteAction` 
+ (`oro_authorize_net_payment_profile_frontend_delete` route)
+ action the request method was changed to DELETE. 
+* In `Oro\Bundle\AuthorizeNetBundle\Controller\SettingsController::checkCredentialsAction` 
+ (`oro_authorize_net_settings_check_credentials` route)
+ action the request method was changed to POST. 
+
+## 3.1.0 (2019-01-30)
+[Show detailed list of changes](incompatibilities-3-1.md)
+ 
 ## 3.0.0-beta (2018-03-30)
 [Show detailed list of changes](incompatibilities-3-0-beta.md)
 
