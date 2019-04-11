@@ -80,3 +80,6 @@ oro_behat_extension:
       selector:
         locator: '//div[@class="accordion-heading"]'
         type: xpath
+    System Calendars Grid:
+      selector: 'div[data-page-component-name="system-calendar-grid"]'
+      class: Oro\Bundle\DataGridBundle\Tests\Behat\Element\Grid

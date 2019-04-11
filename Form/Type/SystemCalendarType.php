@@ -15,6 +15,9 @@ use Symfony\Component\Form\FormEvents;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
 
+/**
+ * Form type for SystemCalendar entity
+ */
 class SystemCalendarType extends AbstractType
 {
     /** @var AuthorizationCheckerInterface */
@@ -93,8 +96,8 @@ class SystemCalendarType extends AbstractType
                 'label'       => 'oro.calendar.systemcalendar.public.label',
                 'placeholder' => false,
                 'choices'     => [
-                    'oro.calendar.systemcalendar.scope.organization' => 0,
-                    'oro.calendar.systemcalendar.scope.system' => 1,
+                    'oro.calendar.systemcalendar.scope.organization' => false,
+                    'oro.calendar.systemcalendar.scope.system' => true,
                 ]
             ];
             /** @var SystemCalendar|null $data */
