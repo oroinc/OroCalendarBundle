@@ -113,6 +113,10 @@ define(function(require) {
                     autoResize: true,
                     close: _.bind(this.disposePageComponents, this)
                 }),
+                initLayoutOptions: {
+                    model: this.model,
+                    commonEventBus: this.options.commonEventBus
+                },
                 submitHandler: _.bind(this.onEventFormSubmit, this)
             };
 
@@ -122,8 +126,7 @@ define(function(require) {
                 defaultOptions.type = 'Calendar';
             } else {
                 defaultOptions.el = this.model.isNew() ? this.getEventForm() : this.getEventView();
-                defaultOptions.el.wrapInner('<div data-layout="separate" />');
-                this.setElement(defaultOptions.el.find('>*:first'));
+                this.setElement(defaultOptions.el);
                 if (this.model.isNew()) {
                     defaultOptions.dialogOptions.width = 1000;
                 }
@@ -135,6 +138,7 @@ define(function(require) {
                 defaultOptions
             ));
             this.listenTo(this.eventDialog, 'widgetRemove', this.dispose);
+            this.listenTo(this.eventDialog, 'widgetReady', this._hideMask);
             this.eventDialog.render();
 
             // subscribe to 'delete event' event
@@ -150,12 +154,7 @@ define(function(require) {
             this.loadingMask = new LoadingMask({
                 container: this.eventDialog.$el.closest('.ui-dialog')
             });
-
             this.showLoadingMask();
-            this.initLayout({
-                model: this.model,
-                commonEventBus: this.options.commonEventBus
-            }).always(_.bind(this._hideMask, this));
 
             return this;
         },
