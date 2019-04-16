@@ -40,9 +40,7 @@ class MonthNthStrategyTest extends AbstractTestStrategy
                     }
                 )
             );
-        $dateTimeFormatter = $this->getMockBuilder('Oro\Bundle\LocaleBundle\Formatter\DateTimeFormatter')
-            ->disableOriginalConstructor()
-            ->getMock();
+        $dateTimeFormatter = $this->createMock('Oro\Bundle\LocaleBundle\Formatter\DateTimeFormatterInterface');
 
         /** @var LocaleSettings|\PHPUnit\Framework\MockObject\MockObject $localeSettings */
         $localeSettings = $this->getMockBuilder('Oro\Bundle\LocaleBundle\Model\LocaleSettings')

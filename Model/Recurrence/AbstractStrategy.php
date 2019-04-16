@@ -4,10 +4,13 @@ namespace Oro\Bundle\CalendarBundle\Model\Recurrence;
 
 use Oro\Bundle\CalendarBundle\Entity;
 use Oro\Bundle\CalendarBundle\Model\Recurrence;
-use Oro\Bundle\LocaleBundle\Formatter\DateTimeFormatter;
+use Oro\Bundle\LocaleBundle\Formatter\DateTimeFormatterInterface;
 use Oro\Bundle\LocaleBundle\Model\LocaleSettings;
 use Symfony\Component\Translation\TranslatorInterface;
 
+/**
+ * Provide default functionality for calendar strategies
+ */
 abstract class AbstractStrategy implements StrategyInterface
 {
     /**
@@ -18,7 +21,7 @@ abstract class AbstractStrategy implements StrategyInterface
     /** @var TranslatorInterface */
     protected $translator;
 
-    /** @var DateTimeFormatter */
+    /** @var DateTimeFormatterInterface */
     protected $dateTimeFormatter;
 
     /** @var \DateTimeZone */
@@ -31,12 +34,12 @@ abstract class AbstractStrategy implements StrategyInterface
      * AbstractStrategy constructor.
      *
      * @param TranslatorInterface $translator
-     * @param DateTimeFormatter $formatter
+     * @param DateTimeFormatterInterface $formatter
      * @param LocaleSettings $localeSettings
      */
     public function __construct(
         TranslatorInterface $translator,
-        DateTimeFormatter $formatter,
+        DateTimeFormatterInterface $formatter,
         LocaleSettings $localeSettings
     ) {
         $this->translator = $translator;

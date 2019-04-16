@@ -4,7 +4,7 @@ namespace Oro\Bundle\CalendarBundle\Twig;
 
 use Oro\Bundle\ConfigBundle\Config\ConfigManager;
 use Oro\Bundle\LocaleBundle\DependencyInjection\Configuration;
-use Oro\Bundle\LocaleBundle\Formatter\DateTimeFormatter;
+use Oro\Bundle\LocaleBundle\Formatter\DateTimeFormatterInterface;
 use Oro\Bundle\OrganizationBundle\Entity\OrganizationInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
@@ -25,7 +25,7 @@ class DateFormatExtension extends \Twig_Extension
     }
 
     /**
-     * @return DateTimeFormatter
+     * @return DateTimeFormatterInterface
      */
     protected function getDateTimeFormatter()
     {
