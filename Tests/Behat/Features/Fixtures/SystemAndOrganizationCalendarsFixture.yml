@@ -1,0 +1,13 @@
+Oro\Bundle\CalendarBundle\Entity\SystemCalendar:
+    systemCalendar{1..3}:
+        name: 'System Calendar <current()>'
+        public: true
+        createdAt: '<dateTime()>'
+        updatedAt: '<dateTime()>'
+        organization: '@organization'
+    organizationCalendar{1..5}:
+        name: 'Organization Calendar <current()>'
+        public: false
+        createdAt: '<dateTime()>'
+        updatedAt: '<dateTime()>'
+        organization: '@organization'
