@@ -39,9 +39,8 @@ class YearlyStrategyTest extends AbstractTestStrategy
                     }
                 )
             );
-        $dateTimeFormatter = $this->getMockBuilder('Oro\Bundle\LocaleBundle\Formatter\DateTimeFormatter')
-            ->disableOriginalConstructor()
-            ->getMock();
+        $dateTimeFormatter = $this->createMock('Oro\Bundle\LocaleBundle\Formatter\DateTimeFormatterInterface');
+
         $dateTimeFormatter->expects($this->any())
             ->method('formatDay')
             ->willReturnCallback(function (\DateTime $date) {

@@ -469,8 +469,8 @@ datagrids:
                 label: oro.calendar.systemcalendar.public.label
                 frontend_type: select
                 choices:
-                    oro.calendar.systemcalendar.scope.organization: 0
-                    oro.calendar.systemcalendar.scope.system: 1
+                    oro.calendar.systemcalendar.scope.organization: false
+                    oro.calendar.systemcalendar.scope.system: true
         sorters:
             columns:
                 name:
@@ -485,12 +485,12 @@ datagrids:
                     type:       string
                     data_name:  sc.name
                 public:
-                    type:       choice
+                    type:       boolean
                     data_name:  sc.public
                     options:
                         field_options:
                             choices:
-                                oro.calendar.systemcalendar.scope.organization: 0
+                                oro.calendar.systemcalendar.scope.organization: 2
                                 oro.calendar.systemcalendar.scope.system: 1
         properties:
             id: ~
