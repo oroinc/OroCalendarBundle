@@ -8,9 +8,9 @@ use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
 use Oro\Bundle\EntityConfigBundle\Config\Config;
 use Oro\Bundle\EntityConfigBundle\Config\ConfigManager;
 use Oro\Bundle\EntityConfigBundle\Config\Id\FieldConfigId;
+use Oro\Bundle\EntityExtendBundle\Configuration\EntityExtendConfigurationProvider;
 use Oro\Bundle\EntityExtendBundle\EntityConfig\ExtendScope;
 use Oro\Bundle\EntityExtendBundle\Extend\FieldTypeHelper;
-use Oro\Bundle\EntityExtendBundle\Provider\EntityExtendConfigurationProvider;
 
 class CalendarPropertyProviderTest extends \PHPUnit\Framework\TestCase
 {
