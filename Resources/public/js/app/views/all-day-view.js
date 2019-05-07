@@ -59,15 +59,23 @@ define([
                     $(this).timepicker('setTime', '11:59pm').trigger('change');
                 });
             } else {
-                if (this.oldStartAtValue) {
-                    this.startAtTimeElement.timepicker('setTime', this.oldStartAtValue).trigger('change');
-                }
-                if (this.oldEndAtValue) {
-                    this.endAtTimeElement.timepicker('setTime', this.oldEndAtValue).trigger('change');
-                }
+                this.startAtTimeElement.show({
+                    duration: animationDuration,
+                    start: function() {
+                        if (this.oldStartAtValue) {
+                            this.startAtTimeElement.timepicker('setTime', this.oldStartAtValue).trigger('change');
+                        }
+                    }.bind(this)
+                });
 
-                this.startAtTimeElement.show(animationDuration);
-                this.endAtTimeElement.show(animationDuration);
+                this.endAtTimeElement.show({
+                    duration: animationDuration,
+                    start: function() {
+                        if (this.oldEndAtValue) {
+                            this.endAtTimeElement.timepicker('setTime', this.oldEndAtValue).trigger('change');
+                        }
+                    }.bind(this)
+                });
             }
         }
     });
