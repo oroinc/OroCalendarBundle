@@ -33,6 +33,12 @@ class YearlyStrategy extends MonthlyStrategy
     {
         $interval = (int)($recurrence->getInterval() / 12);
         $recurrenceStartDate = $recurrence->getStartTime();
+        $anyDateWithMonthRecurrence = (new \DateTime())->setTimestamp(mktime(
+            0,
+            0,
+            0,
+            $recurrence->getMonthOfYear()
+        ));
         // Some monthly patterns are equivalent to yearly patterns.
         // In these cases, day should be adjusted to fit last day of month.
         // For example "Monthly day 31 of every 12 months, start Wed 11/30/2016" === "Yearly every 1 year on Nov 30".
@@ -40,9 +46,10 @@ class YearlyStrategy extends MonthlyStrategy
             ->setDate(
                 $recurrenceStartDate->format('Y'),
                 $recurrence->getMonthOfYear(),
-                $this->getDayOfMonthInValidRange($recurrence, $recurrenceStartDate)
+                $this->getDayOfMonthInValidRange($recurrence, $anyDateWithMonthRecurrence)
             );
         $formattedDay = $this->dateTimeFormatter->formatDay($date, null, null, 'UTC');
+        
         return $this->getFullRecurrencePattern(
             $recurrence,
             'oro.calendar.recurrence.patterns.yearly',
