@@ -82,15 +82,20 @@ define(function(require) {
                 data.count = Math.floor(data.interval / 12);
             }
             if (Number(data.dayOfMonth) > 0) {
-                var dayInCurrentYear = new Date(data.startTime);
-                dayInCurrentYear.setMonth(data.monthOfYear - 1);
                 // adjust dateOfMonth to fit last day of month.
                 var daysInMonth = Number(
                     new Date(new Date(data.startTime).getFullYear(), data.monthOfYear, 0).getDate()
                 );
                 var dayOfMonth = (Number(data.dayOfMonth) > daysInMonth) ? daysInMonth : Number(data.dayOfMonth);
-                dayInCurrentYear.setDate(dayOfMonth);
-                data.day = datetimeFormatter.formatDayDateTime(dayInCurrentYear);
+
+                var year = new Date(data.startTime).getFullYear();
+                var month = data.monthOfYear;
+                var momentDate = moment(
+                    year.toString() + '-' + month.toString() + '-' + dayOfMonth.toString(),
+                    'YYYY-M-D'
+                );
+
+                data.day = momentDate.format(datetimeFormatter.getDayFormat());
             }
             return data;
         },

@@ -2,13 +2,15 @@
 
 namespace Oro\Bundle\CalendarBundle\Model\Recurrence;
 
+use Oro\Bundle\CalendarBundle\Entity;
+use Oro\Bundle\CalendarBundle\Model\Recurrence;
+use Oro\Bundle\LocaleBundle\Formatter\DateTimeFormatter;
 use Oro\Bundle\LocaleBundle\Model\LocaleSettings;
 use Symfony\Component\Translation\TranslatorInterface;
 
-use Oro\Bundle\CalendarBundle\Model\Recurrence;
-use Oro\Bundle\CalendarBundle\Entity;
-use Oro\Bundle\LocaleBundle\Formatter\DateTimeFormatter;
-
+/**
+ * Provide default functionality for calendar strategies
+ */
 abstract class AbstractStrategy implements StrategyInterface
 {
     /**
