@@ -41,7 +41,7 @@ Developer may define attributes:
 - **Template** - it is name of item template. Example of item template:
 ``` twig
 <li{{ oro_menu.attributes(itemAttributes) }}>
-    <a href="javascript:void(0);" class="action">
+    <a href="#" class="action">
     <% if (visible) { %>
         {{ 'oro.calendar.context.hide'|trans }}
     <% } else { %>
