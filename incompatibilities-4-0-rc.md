@@ -1,0 +1,3 @@
+CalendarBundle
+--------------
+* The `AbstractStrategy::__construct(TranslatorInterface $translator, DateTimeFormatter $formatter, LocaleSettings $localeSettings)`<sup>[[?]](https://github.com/oroinc/OroCalendarBundle/tree/4.0.0-beta/Model/Recurrence/AbstractStrategy.php#L37 "Oro\Bundle\CalendarBundle\Model\Recurrence\AbstractStrategy")</sup> method was changed to `AbstractStrategy::__construct(TranslatorInterface $translator, DateTimeFormatterInterface $formatter, LocaleSettings $localeSettings)`<sup>[[?]](https://github.com/oroinc/OroCalendarBundle/tree/4.0.0-rc/Model/Recurrence/AbstractStrategy.php#L40 "Oro\Bundle\CalendarBundle\Model\Recurrence\AbstractStrategy")</sup>
