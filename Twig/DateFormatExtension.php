@@ -5,13 +5,15 @@ namespace Oro\Bundle\CalendarBundle\Twig;
 use Oro\Bundle\ConfigBundle\Config\ConfigManager;
 use Oro\Bundle\LocaleBundle\DependencyInjection\Configuration;
 use Oro\Bundle\LocaleBundle\Formatter\DateTimeFormatterInterface;
+use Oro\Bundle\LocaleBundle\Manager\LocalizationManager;
 use Oro\Bundle\OrganizationBundle\Entity\OrganizationInterface;
-use Symfony\Component\DependencyInjection\ContainerInterface;
+use Psr\Container\ContainerInterface;
+use Symfony\Component\DependencyInjection\ServiceSubscriberInterface;
 
 /**
  * Provides twig functions related to formatting calendar data.
  */
-class DateFormatExtension extends \Twig_Extension
+class DateFormatExtension extends \Twig_Extension implements ServiceSubscriberInterface
 {
     /** @var ContainerInterface */
     protected $container;
@@ -225,5 +227,17 @@ class DateFormatExtension extends \Twig_Extension
     public function getName()
     {
         return 'oro_calendar';
+    }
+
+    /**
+     * {@inheritdoc]
+     */
+    public static function getSubscribedServices()
+    {
+        return [
+            'oro_locale.formatter.date_time' => DateTimeFormatterInterface::class,
+            'oro_config.global' => ConfigManager::class,
+            'oro_locale.manager.localization' => LocalizationManager::class,
+        ];
     }
 }
