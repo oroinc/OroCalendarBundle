@@ -8,6 +8,9 @@ use Oro\Bundle\LocaleBundle\Formatter\DateTimeFormatter;
 use Oro\Bundle\LocaleBundle\Model\LocaleSettings;
 use Symfony\Component\Translation\TranslatorInterface;
 
+/**
+ * Provide default functionality for calendar strategies
+ */
 abstract class AbstractStrategy implements StrategyInterface
 {
     /**
