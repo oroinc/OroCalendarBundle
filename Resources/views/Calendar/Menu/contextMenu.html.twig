@@ -12,5 +12,6 @@
 {% endblock %}
 
 {% block linkElement %}
+    {% import 'OroNavigationBundle:Menu:menu.html.twig' as oro_menu %}
     <a href="#" role="button" {{ oro_menu.attributes(linkAttributes) }}>{{ block('label') }}</a>
 {% endblock %}

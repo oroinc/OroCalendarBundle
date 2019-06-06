@@ -11,7 +11,7 @@
             {{- item.label|trans(item.getExtra('translateParams', {}), item.getExtra('translateDomain', 'messages')) -}}
         {%- endif -%}
     {%- endset -%}
-    <li{{ oro_menu.attributes(itemAttributes) }}>
+    <li {{ oro_menu.attributes(itemAttributes) }}>
         {%- set linkAttributes = item.linkAttributes -%}
         <a href="#" role="button" {{ oro_menu.attributes(linkAttributes) }}>{{- Label -}}</a>
     </li>

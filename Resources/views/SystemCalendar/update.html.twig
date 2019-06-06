@@ -4,6 +4,8 @@
 {% set entityId = entity.id %}
 
 {% block navButtons %}
+    {% import 'OroUIBundle::macros.html.twig' as UI %}
+
     {% set html = UI.saveAndCloseButton({
         'route': 'oro_system_calendar_view',
         'params': {'id': '$id'}

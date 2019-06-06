@@ -4,6 +4,8 @@
 {% set pageTitle = 'oro.calendar.systemcalendar.entity_plural_label'|trans %}
 
 {% block navButtons %}
+    {% import 'OroUIBundle::macros.html.twig' as UI %}
+
     {% if is_granted('oro_public_calendar_management') or is_granted('oro_system_calendar_management') %}
         <div class="btn-group">
             {{ UI.addButton({

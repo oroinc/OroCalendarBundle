@@ -6,8 +6,15 @@ use Oro\Bundle\CalendarBundle\Entity;
 use Oro\Bundle\CalendarBundle\Model\Recurrence;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\Translation\TranslatorInterface;
+use Twig\Extension\AbstractExtension;
+use Twig\TwigFunction;
 
-class RecurrenceExtension extends \Twig_Extension
+/**
+ * Provides Twig functions to display calendar event recurrence:
+ *   - get_recurrence_text_value
+ *   - get_event_recurrence_pattern
+ */
+class RecurrenceExtension extends AbstractExtension
 {
     /** @var ContainerInterface */
     protected $container;
@@ -45,8 +52,8 @@ class RecurrenceExtension extends \Twig_Extension
     public function getFunctions()
     {
         return [
-            new \Twig_SimpleFunction('get_recurrence_text_value', [$this, 'getRecurrenceTextValue']),
-            new \Twig_SimpleFunction('get_event_recurrence_pattern', [$this, 'getEventRecurrencePattern'])
+            new TwigFunction('get_recurrence_text_value', [$this, 'getRecurrenceTextValue']),
+            new TwigFunction('get_event_recurrence_pattern', [$this, 'getEventRecurrencePattern'])
         ];
     }
 

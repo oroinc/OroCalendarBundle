@@ -9,11 +9,15 @@ use Oro\Bundle\LocaleBundle\Manager\LocalizationManager;
 use Oro\Bundle\OrganizationBundle\Entity\OrganizationInterface;
 use Psr\Container\ContainerInterface;
 use Symfony\Component\DependencyInjection\ServiceSubscriberInterface;
+use Twig\Extension\AbstractExtension;
+use Twig\TwigFunction;
 
 /**
- * Provides twig functions related to formatting calendar data.
+ * Provides twig functions to format date ranges:
+ *   - calendar_date_range
+ *   - calendar_date_range_organization
  */
-class DateFormatExtension extends \Twig_Extension implements ServiceSubscriberInterface
+class DateFormatExtension extends AbstractExtension implements ServiceSubscriberInterface
 {
     /** @var ContainerInterface */
     protected $container;
@@ -48,11 +52,11 @@ class DateFormatExtension extends \Twig_Extension implements ServiceSubscriberIn
     public function getFunctions()
     {
         return [
-            new \Twig_SimpleFunction(
+            new TwigFunction(
                 'calendar_date_range',
                 [$this, 'formatCalendarDateRange']
             ),
-            new \Twig_SimpleFunction(
+            new TwigFunction(
                 'calendar_date_range_organization',
                 [$this, 'formatCalendarDateRangeOrganization']
             )

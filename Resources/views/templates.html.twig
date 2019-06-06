@@ -22,6 +22,7 @@
 <script type="text/html" id="{{ id }}">
     {% import 'OroUIBundle::macros.html.twig' as UI %}
     {% import 'OroCalendarBundle::invitations.html.twig' as invitations %}
+    {% import _self as templates %}
     {% macro rawLink(parameters) %}
         {% spaceless %}
             <a href="{{ parameters.path }}" {% for dataItemName,dataItemValue in parameters.data %} data-{{ dataItemName }}="{{ dataItemValue|e('html_attr')|raw }}"{% endfor %} title="{{ parameters.title }}">{{ parameters.label|trim }}</a>
@@ -68,7 +69,7 @@
                     {% for status in statuses %}
                         <% if (invitationStatus !== "{{ status }}") { %>
                             <% var link='{{
-                                    _self.rawLink({
+                                    templates.rawLink({
                                         'label': invitations.calendar_event_invitation_going_status(status),
                                         'title': invitations.calendar_event_invitation_going_status(status),
                                         'path': '%path%',

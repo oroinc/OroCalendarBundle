@@ -8,6 +8,8 @@
 {% set entityId = entity.id %}
 
 {% block navButtons %}
+    {% import 'OroUIBundle::macros.html.twig' as UI %}
+
     {% set html = UI.saveAndCloseButton({
         'route': 'oro_system_calendar_view',
         'params': {'id': '$systemCalendar.id'}
@@ -48,6 +50,8 @@
 {% endblock pageHeader %}
 
 {% block content_data %}
+    {% import 'OroUIBundle::macros.html.twig' as UI %}
+
     {% set id = 'calendarevent-form' %}
     {% set calendarEventDateRange = {
         module: 'orocalendar/js/app/components/calendar-event-date-range-component',

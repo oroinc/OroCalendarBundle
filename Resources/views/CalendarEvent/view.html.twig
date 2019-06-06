@@ -8,6 +8,9 @@
 {% oro_title_set({params : {"%entity.title%": entity.title|default('N/A'|trans) }}) %}
 
 {% block navButtons %}
+    {% import 'OroActivityBundle::macros.html.twig' as AC %}
+    {% import 'OroUIBundle::macros.html.twig' as UI %}
+
     {% if entity.parent is empty and is_granted('EDIT', entity) %}
         {# Button for add context on the activity list item view page #}
         {{ AC.addContextButton(entity) }}
@@ -28,6 +31,8 @@
 {% endblock navButtons %}
 
 {% block stats %}
+    {% import 'OroActivityBundle::macros.html.twig' as AC %}
+
     {# Display contexts targets in the activity view page #}
     <li class="context-data activity-context-activity-block">
         {{ AC.activity_contexts(entity) }}
@@ -59,6 +64,8 @@
 {% endblock breadcrumbs %}
 
 {% block content_data %}
+    {% import 'OroUIBundle::macros.html.twig' as UI %}
+
     {%- set calendarEventInformation -%}
         <div class="row-fluid form-horizontal">
             <div class="responsive-block">
