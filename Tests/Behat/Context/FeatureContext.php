@@ -9,6 +9,9 @@ use Oro\Bundle\TestFrameworkBundle\Behat\Element\Form;
 use Oro\Bundle\TestFrameworkBundle\Behat\Element\OroPageObjectAware;
 use Oro\Bundle\TestFrameworkBundle\Tests\Behat\Context\PageObjectDictionary;
 
+/**
+ * Calendar feature for automatic test
+ */
 class FeatureContext extends OroFeatureContext implements OroPageObjectAware
 {
     use PageObjectDictionary;
@@ -50,6 +53,28 @@ class FeatureContext extends OroFeatureContext implements OroPageObjectAware
     public function iGoToNextCalendarPage()
     {
         $this->getCalendar()->goToNextPage();
+    }
+
+    /**
+     * @Given /^(?:|I )go to month page by name "(?P<monthName>.*)"$/
+     * @param string $monthName
+     */
+    public function iGoToMonthPageByName(string $monthName)
+    {
+        $calendar = $this->getCalendar();
+        $currentMonth = $calendar->getCurrentMonth();
+        if (strstr($currentMonth, $monthName)) {
+            return;
+        }
+
+        for ($iteration = 1; $iteration <= 12; $iteration++) {
+            $calendar->goToNextPage();
+            $this->waitForAjax();
+            $currentMonth = $calendar->getCurrentMonth();
+            if (strstr($currentMonth, $monthName)) {
+                return;
+            }
+        }
     }
 
     /**

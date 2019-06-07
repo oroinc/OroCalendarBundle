@@ -80,3 +80,5 @@ oro_behat_extension:
     System Calendars Grid:
       selector: 'div[data-page-component-name="system-calendar-grid"]'
       class: Oro\Bundle\DataGridBundle\Tests\Behat\Element\Grid
+    Event in calendar March 31:
+      selector: '.fc-event-container span.fc-title:contains("All-Day event with repeats 31")'
