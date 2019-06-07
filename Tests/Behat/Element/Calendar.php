@@ -4,6 +4,9 @@ namespace Oro\Bundle\CalendarBundle\Tests\Behat\Element;
 
 use Oro\Bundle\TestFrameworkBundle\Behat\Element\Element;
 
+/**
+ * Calendar element
+ */
 class Calendar extends Element
 {
     /**
@@ -26,6 +29,17 @@ class Calendar extends Element
         self::assertNotNull($nextButton, "Calendar 'next' button not found on current page");
 
         $nextButton->press();
+    }
+
+    /**
+     * @return string
+     */
+    public function getCurrentMonth(): string
+    {
+        return $this->find(
+            'css',
+            '.calendar-container .calendar .fc-header-toolbar .fc-left h2'
+        )->getText();
     }
 
     public function go2Today()

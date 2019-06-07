@@ -80,3 +80,5 @@ oro_behat_extension:
       selector:
         locator: '//div[@class="accordion-heading clearfix"]'
         type: xpath
+    Event in calendar March 31:
+      selector: '.fc-event-container span.fc-title:contains("All-Day event with repeats 31")'
