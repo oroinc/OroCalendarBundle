@@ -64,13 +64,19 @@ class YearlyStrategy extends MonthlyStrategy
      */
     protected function getFirstOccurrence(Entity\Recurrence $recurrence)
     {
+        $anyDateWithMonthRecurrence = (new \DateTime())->setTimestamp(mktime(
+            0,
+            0,
+            0,
+            $recurrence->getMonthOfYear()
+        ));
         $monthOfYear = $recurrence->getMonthOfYear();
         $interval = $recurrence->getInterval(); // a number of months, which is a multiple of 12
         $occurrenceDate = clone $recurrence->getStartTime();
         $occurrenceDate->setDate(
             $occurrenceDate->format('Y'),
             $monthOfYear,
-            $this->getDayOfMonthInValidRange($recurrence, $occurrenceDate)
+            $this->getDayOfMonthInValidRange($recurrence, $anyDateWithMonthRecurrence)
         );
 
         if ($occurrenceDate < $recurrence->getStartTime()) {
