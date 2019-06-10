@@ -2,14 +2,22 @@
 
 namespace Oro\Bundle\CalendarBundle\Controller\Dashboard;
 
+use Doctrine\Common\Persistence\ManagerRegistry;
+use Oro\Bundle\CalendarBundle\Entity\Calendar;
+use Oro\Bundle\CalendarBundle\Form\Type\CalendarEventType;
 use Oro\Bundle\CalendarBundle\Provider\CalendarDateTimeConfigProvider;
+use Oro\Bundle\DashboardBundle\Model\WidgetConfigs;
 use Oro\Bundle\LocaleBundle\Model\LocaleSettings;
 use Oro\Bundle\SecurityBundle\Authentication\TokenAccessorInterface;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
-use Symfony\Bundle\FrameworkBundle\Controller\Controller;
+use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\Form\FormFactoryInterface;
 
-class DashboardController extends Controller
+/**
+ * Calendar dashboard widget controller
+ */
+class DashboardController extends AbstractController
 {
     /**
      * @Route(
@@ -18,47 +26,73 @@ class DashboardController extends Controller
      *      requirements={"widget"="[\w-]+"}
      * )
      * @Template("OroCalendarBundle:Dashboard:myCalendar.html.twig")
+     * @param string $widget
+     * @return array
      */
     public function myCalendarAction($widget)
     {
-        /** @var TokenAccessorInterface $tokenAccessor */
-        $tokenAccessor = $this->get('oro_security.token_accessor');
-        /** @var CalendarDateTimeConfigProvider $calendarConfigProvider */
-        $calendarConfigProvider = $this->get('oro_calendar.provider.calendar_config');
-        /** @var LocaleSettings $localeSettings */
-        $localeSettings = $this->get('oro_locale.settings');
+        $calendar = $this->get(ManagerRegistry::class)
+            ->getRepository(Calendar::class)
+            ->findDefaultCalendar(
+                $this->getUser()->getId(),
+                $this->get(TokenAccessorInterface::class)->getOrganization()->getId()
+            );
 
-        $calendar    = $this->getDoctrine()->getManager()
-            ->getRepository('OroCalendarBundle:Calendar')
-            ->findDefaultCalendar($this->getUser()->getId(), $tokenAccessor->getOrganization()->getId());
-        $currentDate = new \DateTime('now', new \DateTimeZone($localeSettings->getTimeZone()));
-        $startDate   = clone $currentDate;
+        $currentDate = new \DateTime('now', new \DateTimeZone($this->get(LocaleSettings::class)->getTimeZone()));
+
+        $startDate = clone $currentDate;
         $startDate->setTime(0, 0, 0);
+
         $endDate = clone $startDate;
         $endDate->add(new \DateInterval('P1D'));
+
         $firstHour = intval($currentDate->format('G'));
         if (intval($currentDate->format('i')) <= 30 && $firstHour !== 0) {
             $firstHour--;
         }
 
-        $result = array(
-            'event_form' => $this->get('oro_calendar.calendar_event.form.template')->createView(),
+        $eventForm = $this->get(FormFactoryInterface::class)->createNamed(
+            'oro_calendar_event_form',
+            CalendarEventType::class,
+            null,
+            [
+                'allow_change_calendar' => true,
+                'layout_template' => true,
+            ]
+        );
+
+        $result = [
+            'event_form' => $eventForm->createView(),
             'entity'     => $calendar,
-            'calendar'   => array(
+            'calendar'   => [
                 'selectable'     => $this->isGranted('oro_calendar_event_create'),
                 'editable'       => $this->isGranted('oro_calendar_event_update'),
                 'removable'      => $this->isGranted('oro_calendar_event_delete'),
-                'timezoneOffset' => $calendarConfigProvider->getTimezoneOffset()
-            ),
+                'timezoneOffset' => $this->get(CalendarDateTimeConfigProvider::class)->getTimezoneOffset()
+            ],
             'startDate'  => $startDate,
             'endDate'    => $endDate,
             'firstHour'  => $firstHour
-        );
-        $result = array_merge(
-            $result,
-            $this->get('oro_dashboard.widget_configs')->getWidgetAttributesForTwig($widget)
-        );
+        ];
 
-        return $result;
+        return array_merge(
+            $result,
+            $this->get(WidgetConfigs::class)->getWidgetAttributesForTwig($widget)
+        );
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public static function getSubscribedServices(): array
+    {
+        return array_merge(parent::getSubscribedServices(), [
+            TokenAccessorInterface::class,
+            CalendarDateTimeConfigProvider::class,
+            LocaleSettings::class,
+            WidgetConfigs::class,
+            ManagerRegistry::class,
+            FormFactoryInterface::class,
+        ]);
     }
 }

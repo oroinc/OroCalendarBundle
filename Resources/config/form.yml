@@ -39,15 +39,6 @@ services:
             - "oro_calendar_event_form"
             - Oro\Bundle\CalendarBundle\Form\Type\CalendarEventType
 
-    oro_calendar.calendar_event.form.template:
-        class:   'Symfony\Component\Form\Form'
-        factory: 'form.factory:createNamed'
-        arguments:
-            - "oro_calendar_event_form"
-            - Oro\Bundle\CalendarBundle\Form\Type\CalendarEventType
-            - ~
-            - {allow_change_calendar: true, layout_template: true}
-
     oro_calendar.calendar_event.form.api:
         class:   'Symfony\Component\Form\Form'
         factory: 'form.factory:createNamed'

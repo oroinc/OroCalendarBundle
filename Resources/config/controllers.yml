@@ -1,0 +1,23 @@
+services:
+    _defaults:
+        public: true
+
+    oro_calendar.controller.calendar:
+        class: Oro\Bundle\CalendarBundle\Controller\CalendarController
+        calls:
+            - ['setContainer', ['@Psr\Container\ContainerInterface']]
+        tags:
+            - { name: container.service_subscriber }
+
+    Oro\Bundle\CalendarBundle\Controller\CalendarController:
+        alias: 'oro_calendar.controller.calendar'
+
+    oro_calendar.controller.dashboard:
+        class: Oro\Bundle\CalendarBundle\Controller\Dashboard\DashboardController
+        calls:
+            - ['setContainer', ['@Psr\Container\ContainerInterface']]
+        tags:
+            - { name: container.service_subscriber }
+
+    Oro\Bundle\CalendarBundle\Controller\Dashboard\DashboardController:
+        alias: 'oro_calendar.controller.dashboard'

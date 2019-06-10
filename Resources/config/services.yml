@@ -12,7 +12,6 @@ parameters:
     oro_calendar.calendar_event.manager.api.class:               Oro\Bundle\SoapBundle\Entity\Manager\ApiEntityManager
     oro_calendar.calendar_property.manager.api.class:            Oro\Bundle\CalendarBundle\Manager\CalendarPropertyApiEntityManager
     oro_calendar.system_calendar.manager.api.class:              Oro\Bundle\SoapBundle\Entity\Manager\ApiEntityManager
-    oro_calendar.provider.calendar_config.class:                 Oro\Bundle\CalendarBundle\Provider\CalendarDateTimeConfigProvider
     oro_calendar.provider.attendee_email_recipients.class:       Oro\Bundle\CalendarBundle\Provider\AttendeeEmailRecipientsProvider
     oro_calendar.owner_assignment_checker.calendar.class:        Oro\Bundle\CalendarBundle\Ownership\CalendarOwnerAssignmentChecker
     oro_calendar.activity_list.provider.class:                   Oro\Bundle\CalendarBundle\Provider\CalendarEventActivityListProvider
@@ -126,9 +125,12 @@ services:
             - { name: twig.extension }
 
     oro_calendar.provider.calendar_config:
-        class: '%oro_calendar.provider.calendar_config.class%'
+        class: 'Oro\Bundle\CalendarBundle\Provider\CalendarDateTimeConfigProvider'
         arguments:
             - '@oro_locale.settings'
+
+    Oro\Bundle\CalendarBundle\Provider\CalendarDateTimeConfigProvider:
+        alias: 'oro_calendar.provider.calendar_config'
 
     oro_calendar.provider.attendee_email_recipients:
         class: '%oro_calendar.provider.attendee_email_recipients.class%'
