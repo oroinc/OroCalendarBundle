@@ -89,11 +89,11 @@ define(function(require) {
                             {id: element.val()}
                         ),
                         type: 'GET',
-                        success: $.proxy(function(data) {
+                        success: function(data) {
                             config.selected = data.excluded;
                             callback(data.result);
                             element.trigger('select2-data-loaded');
-                        }, this)
+                        }
                     });
                 };
             }
