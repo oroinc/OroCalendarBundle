@@ -15,10 +15,7 @@ parameters:
     oro_calendar.provider.attendee_email_recipients.class:       Oro\Bundle\CalendarBundle\Provider\AttendeeEmailRecipientsProvider
     oro_calendar.owner_assignment_checker.calendar.class:        Oro\Bundle\CalendarBundle\Ownership\CalendarOwnerAssignmentChecker
     oro_calendar.activity_list.provider.class:                   Oro\Bundle\CalendarBundle\Provider\CalendarEventActivityListProvider
-    oro_calendar.calendar_event_manager.class:                   Oro\Bundle\CalendarBundle\Manager\CalendarEventManager
     oro_calendar.calendar_manager.class:                         Oro\Bundle\CalendarBundle\Manager\CalendarManager
-    oro_calendar.attendee_manager.class:                         Oro\Bundle\CalendarBundle\Manager\AttendeeManager
-    oro_calendar.attendee_relation_manager.class:                Oro\Bundle\CalendarBundle\Manager\AttendeeRelationManager
     oro_calendar.calendar_property_provider.class:               Oro\Bundle\CalendarBundle\Provider\CalendarPropertyProvider
     oro_calendar.calendar_provider.user.class:                   Oro\Bundle\CalendarBundle\Provider\UserCalendarProvider
     oro_calendar.calendar_provider.system.class:                 Oro\Bundle\CalendarBundle\Provider\SystemCalendarProvider
@@ -155,13 +152,16 @@ services:
             - { name: oro_ui.update_action_provider, group: activity }
 
     oro_calendar.calendar_event_manager:
-        class: '%oro_calendar.calendar_event_manager.class%'
+        class: 'Oro\Bundle\CalendarBundle\Manager\CalendarEventManager'
         arguments:
             - '@oro_calendar.calendar_event.update_manager'
             - '@doctrine'
             - '@oro_security.token_accessor'
             - '@oro_entity.entity_name_resolver'
             - '@oro_calendar.system_calendar_config'
+
+    Oro\Bundle\CalendarBundle\Manager\CalendarEventManager:
+        alias: 'oro_calendar.calendar_event_manager'
 
     oro_calendar.calendar_event.update_manager:
         class: 'Oro\Bundle\CalendarBundle\Manager\CalendarEvent\UpdateManager'
@@ -204,6 +204,9 @@ services:
         arguments:
             - '@oro_calendar.email.notification_sender'
 
+    Oro\Bundle\CalendarBundle\Manager\CalendarEvent\NotificationManager:
+        alias: 'oro_calendar.calendar_event.notification_manager'
+
     oro_calendar.calendar_event.matching_events_manager:
         class: Oro\Bundle\CalendarBundle\Manager\CalendarEvent\MatchingEventsManager
         public: false
@@ -216,17 +219,23 @@ services:
             - '@oro_calendar.calendar_property_provider'
 
     oro_calendar.attendee_manager:
-        class: '%oro_calendar.attendee_manager.class%'
+        class: 'Oro\Bundle\CalendarBundle\Manager\AttendeeManager'
         arguments:
             - '@oro_entity.doctrine_helper'
             - '@oro_calendar.attendee_relation_manager'
 
+    Oro\Bundle\CalendarBundle\Manager\AttendeeManager:
+        alias: 'oro_calendar.attendee_manager'
+
     oro_calendar.attendee_relation_manager:
-        class: '%oro_calendar.attendee_relation_manager.class%'
+        class: 'Oro\Bundle\CalendarBundle\Manager\AttendeeRelationManager'
         arguments:
             - '@doctrine'
             - '@oro_locale.formatter.name'
             - '@oro_locale.dql.formatter.name'
+
+    Oro\Bundle\CalendarBundle\Manager\AttendeeRelationManager:
+        alias: 'oro_calendar.attendee_relation_manager'
 
     oro_calendar.calendar_property_provider:
         class: '%oro_calendar.calendar_property_provider.class%'
@@ -396,6 +405,8 @@ services:
         calls:
             - [setAttendeeManager, ['@oro_calendar.attendee_manager']]
 
+    Oro\Bundle\CalendarBundle\Autocomplete\AttendeeSearchHandler:
+        alias: 'oro_calendar.autocomplete.attendee_search_handler'
 
     # Recurrence Strategies
     oro_calendar.recurrence.strategy.abstract:

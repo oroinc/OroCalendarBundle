@@ -2,7 +2,25 @@ services:
     _defaults:
         public: true
 
+    Oro\Bundle\CalendarBundle\Controller\AjaxCalendarEventController:
+        calls:
+            - ['setContainer', ['@Psr\Container\ContainerInterface']]
+        tags:
+            - { name: container.service_subscriber }
+
+    Oro\Bundle\CalendarBundle\Controller\AutocompleteController:
+        calls:
+            - ['setContainer', ['@Psr\Container\ContainerInterface']]
+        tags:
+            - { name: container.service_subscriber }
+
     Oro\Bundle\CalendarBundle\Controller\CalendarController:
+        calls:
+            - ['setContainer', ['@Psr\Container\ContainerInterface']]
+        tags:
+            - { name: container.service_subscriber }
+
+    Oro\Bundle\CalendarBundle\Controller\CalendarEventController:
         calls:
             - ['setContainer', ['@Psr\Container\ContainerInterface']]
         tags:

@@ -3,19 +3,27 @@
 namespace Oro\Bundle\CalendarBundle\Controller;
 
 use Oro\Bundle\CalendarBundle\Entity\CalendarEvent;
+use Oro\Bundle\CalendarBundle\Form\Handler\CalendarEventHandler;
+use Oro\Bundle\CalendarBundle\Manager\CalendarEventManager;
+use Oro\Bundle\EntityBundle\Tools\EntityRoutingHelper;
 use Oro\Bundle\SecurityBundle\Annotation\Acl;
 use Oro\Bundle\SecurityBundle\Annotation\AclAncestor;
+use Oro\Bundle\SecurityBundle\Authentication\TokenAccessorInterface;
+use Oro\Bundle\UIBundle\Route\Router;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
-use Symfony\Bundle\FrameworkBundle\Controller\Controller;
+use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\Translation\TranslatorInterface;
 
 /**
+ * Calendar event controller
+ *
  * @Route("/event")
  */
-class CalendarEventController extends Controller
+class CalendarEventController extends AbstractController
 {
     /**
      * @Route(name="oro_calendar_event_index")
@@ -31,7 +39,7 @@ class CalendarEventController extends Controller
     public function indexAction()
     {
         return [
-            'entity_class' => $this->container->getParameter('oro_calendar.calendar_event.entity.class')
+            'entity_class' => CalendarEvent::class,
         ];
     }
 
@@ -47,8 +55,8 @@ class CalendarEventController extends Controller
     {
         $this->checkPermissionByParentCalendar($entity, 'view');
 
-        $loggedUser = $this->get('oro_security.token_accessor')->getUser();
-        $canChangeInvitationStatus = $this->get('oro_calendar.calendar_event_manager')
+        $loggedUser = $this->get(TokenAccessorInterface::class)->getUser();
+        $canChangeInvitationStatus = $this->get(CalendarEventManager::class)
             ->canChangeInvitationStatus(
                 $entity,
                 $loggedUser
@@ -78,8 +86,8 @@ class CalendarEventController extends Controller
     {
         $this->checkPermissionByParentCalendar($entity, 'view');
 
-        $loggedUser = $this->get('oro_security.token_accessor')->getUser();
-        $canChangeInvitationStatus = $this->get('oro_calendar.calendar_event_manager')
+        $loggedUser = $this->get(TokenAccessorInterface::class)->getUser();
+        $canChangeInvitationStatus = $this->get(CalendarEventManager::class)
             ->canChangeInvitationStatus(
                 $entity,
                 $loggedUser
@@ -107,7 +115,7 @@ class CalendarEventController extends Controller
     public function activityAction($entityClass, $entityId)
     {
         return [
-            'entity' => $this->get('oro_entity.routing_helper')->getEntity($entityClass, $entityId)
+            'entity' => $this->get(EntityRoutingHelper::class)->getEntity($entityClass, $entityId)
         ];
     }
 
@@ -134,7 +142,7 @@ class CalendarEventController extends Controller
         $entity->setStart($startTime);
         $entity->setEnd($endTime);
 
-        $formAction = $this->get('oro_entity.routing_helper')
+        $formAction = $this->get(EntityRoutingHelper::class)
             ->generateUrlByRequest('oro_calendar_event_create', $request);
 
         return $this->update($request, $entity, $formAction);
@@ -201,14 +209,15 @@ class CalendarEventController extends Controller
     {
         $saved = false;
 
-        if ($this->get('oro_calendar.calendar_event.form.handler')->process($entity)) {
+        $formHandler = $this->get(CalendarEventHandler::class);
+        if ($formHandler->process($entity)) {
             if (!$request->get('_widgetContainer')) {
                 $this->get('session')->getFlashBag()->add(
                     'success',
-                    $this->get('translator')->trans('oro.calendar.controller.event.saved.message')
+                    $this->get(TranslatorInterface::class)->trans('oro.calendar.controller.event.saved.message')
                 );
 
-                return $this->get('oro_ui.router')->redirect($entity);
+                return $this->get(Router::class)->redirect($entity);
             }
             $saved = true;
         }
@@ -216,7 +225,7 @@ class CalendarEventController extends Controller
         return [
             'entity'     => $entity,
             'saved'      => $saved,
-            'form'       => $this->get('oro_calendar.calendar_event.form.handler')->getForm()->createView(),
+            'form'       => $formHandler->getForm()->createView(),
             'formAction' => $formAction
         ];
     }
@@ -229,7 +238,7 @@ class CalendarEventController extends Controller
      */
     protected function getTargetEntity(Request $request)
     {
-        $entityRoutingHelper = $this->get('oro_entity.routing_helper');
+        $entityRoutingHelper = $this->get(EntityRoutingHelper::class);
         $targetEntityClass   = $entityRoutingHelper->getEntityClassName($request, 'targetActivityClass');
         $targetEntityId      = $entityRoutingHelper->getEntityId($request, 'targetActivityId');
         if (!$targetEntityClass || !$targetEntityId) {
@@ -241,7 +250,7 @@ class CalendarEventController extends Controller
 
     /**
      * Checks access to manipulate the calendar event by it's calendar
-     * todo: Temporary solution. Should be deleted in scope of BAP-13256
+     * Temporary solution. Should be deleted in scope of BAP-13256
      *
      * @param CalendarEvent $entity
      * @param string        $action
@@ -258,5 +267,23 @@ class CalendarEventController extends Controller
                 sprintf('You does not have no access to %s this calendar event', $action)
             );
         }
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public static function getSubscribedServices()
+    {
+        return array_merge(
+            parent::getSubscribedServices(),
+            [
+                TokenAccessorInterface::class,
+                CalendarEventManager::class,
+                CalendarEventHandler::class,
+                EntityRoutingHelper::class,
+                Router::class,
+                TranslatorInterface::class,
+            ]
+        );
     }
 }

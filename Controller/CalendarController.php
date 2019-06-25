@@ -119,11 +119,14 @@ class CalendarController extends AbstractController
      */
     public static function getSubscribedServices()
     {
-        return array_merge(parent::getSubscribedServices(), [
-            TokenAccessorInterface::class,
-            CalendarDateTimeConfigProvider::class,
-            ManagerRegistry::class,
-            FormFactoryInterface::class,
-        ]);
+        return array_merge(
+            parent::getSubscribedServices(),
+            [
+                TokenAccessorInterface::class,
+                CalendarDateTimeConfigProvider::class,
+                ManagerRegistry::class,
+                FormFactoryInterface::class,
+            ]
+        );
     }
 }

@@ -64,6 +64,9 @@ services:
             - ['setForm', ['@oro_calendar.calendar_event.form']]
             - ['setEntityRoutingHelper', ['@oro_entity.routing_helper']]
 
+    Oro\Bundle\CalendarBundle\Form\Handler\CalendarEventHandler:
+        alias: 'oro_calendar.calendar_event.form.handler'
+
     oro_calendar.system_calendar_event.form.handler:
         class: 'Oro\Bundle\CalendarBundle\Form\Handler\SystemCalendarEventHandler'
         parent: 'oro_calendar.calendar_event.form.handler.abstract'

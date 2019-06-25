@@ -6,18 +6,21 @@ use Oro\Bundle\CalendarBundle\Entity\Attendee;
 use Oro\Bundle\CalendarBundle\Entity\CalendarEvent;
 use Oro\Bundle\CalendarBundle\Exception\ChangeInvitationStatusException;
 use Oro\Bundle\CalendarBundle\Manager\AttendeeManager;
+use Oro\Bundle\CalendarBundle\Manager\AttendeeRelationManager;
 use Oro\Bundle\CalendarBundle\Manager\CalendarEvent\NotificationManager;
+use Oro\Bundle\CalendarBundle\Manager\CalendarEventManager;
 use Oro\Bundle\SecurityBundle\Annotation\CsrfProtection;
+use Oro\Bundle\SecurityBundle\Authentication\TokenAccessorInterface;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
-use Symfony\Bundle\FrameworkBundle\Controller\Controller;
+use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 
 /**
  * AJAX calendar event controller
  * @Route("/event/ajax")
  */
-class AjaxCalendarEventController extends Controller
+class AjaxCalendarEventController extends AbstractController
 {
     /**
      * @Route("/accepted/{id}",
@@ -40,8 +43,8 @@ class AjaxCalendarEventController extends Controller
     public function changeStatusAction(CalendarEvent $entity, $status)
     {
         try {
-            $loggedUser = $this->get('oro_security.token_accessor')->getUser();
-            $manager = $this->get('oro_calendar.calendar_event_manager');
+            $loggedUser = $this->get(TokenAccessorInterface::class)->getUser();
+            $manager = $this->get(CalendarEventManager::class);
             $manager->changeInvitationStatus($entity, $status, $loggedUser);
         } catch (ChangeInvitationStatusException $exception) {
             return new JsonResponse(
@@ -56,7 +59,7 @@ class AjaxCalendarEventController extends Controller
             ->getManagerForClass('Oro\Bundle\CalendarBundle\Entity\CalendarEvent')
             ->flush();
 
-        $this->get('oro_calendar.calendar_event.notification_manager')->onChangeInvitationStatus(
+        $this->get(NotificationManager::class)->onChangeInvitationStatus(
             $entity,
             NotificationManager::ALL_NOTIFICATIONS_STRATEGY
         );
@@ -77,10 +80,10 @@ class AjaxCalendarEventController extends Controller
      */
     public function attendeesAutocompleteDataAction($id)
     {
-        $attendeeManager = $this->getAttendeeManager();
+        $attendeeManager = $this->get(AttendeeManager::class);
         $attendees = $attendeeManager->loadAttendeesByCalendarEventId($id);
 
-        $attendeeRelationManager = $this->get('oro_calendar.attendee_relation_manager');
+        $attendeeRelationManager = $this->get(AttendeeRelationManager::class);
 
         $result = [];
 
@@ -112,10 +115,19 @@ class AjaxCalendarEventController extends Controller
     }
 
     /**
-     * @return AttendeeManager
+     * {@inheritdoc}
      */
-    protected function getAttendeeManager()
+    public static function getSubscribedServices()
     {
-        return $this->get('oro_calendar.attendee_manager');
+        return array_merge(
+            parent::getSubscribedServices(),
+            [
+                TokenAccessorInterface::class,
+                CalendarEventManager::class,
+                NotificationManager::class,
+                AttendeeRelationManager::class,
+                AttendeeManager::class,
+            ]
+        );
     }
 }
