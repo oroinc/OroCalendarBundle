@@ -1,10 +1,11 @@
-define([
-    'underscore',
-    'orotranslation/js/translator',
-    'oroui/js/app/views/base/view',
-    'oroui/js/modal'
-], function(_, __, BaseView, Modal) {
+define(function(require) {
     'use strict';
+
+    var _ = require('underscore');
+    var __ = require('orotranslation/js/translator');
+    var BaseView = require('oroui/js/app/views/base/view');
+    var Modal = require('oroui/js/modal');
+    var modalTemplate = require('tpl!oroui/templates/three-buttons-modal.html');
 
     var AttendeeNotifierView = BaseView.extend({
         /** @property {Array} */
@@ -13,7 +14,8 @@ define([
             'input[name$="[backgroundColor]"]',
             'select[name*="[reminders]"]',
             'input[name*="[reminders]"]',
-            'select[name*="[calendarUid]"]'
+            'select[name*="[calendarUid]"]',
+            'input[name*="[notifyAttendees]"]'
         ],
 
         /** @property {Object} */
@@ -33,27 +35,30 @@ define([
          */
         initialize: function(options) {
             this.options = _.defaults(_.pick(options || {}, _.keys(this.options)), this.options);
-            var self = this;
             this.$form = this.$el.closest('form');
-            this.$form.on('select2-data-loaded', function() {
-                self.formInitialState = self.getFormState();
-                self.attendeeInitialValues = self.getAttendeeValues();
-            });
-            this.formInitialState = this.getFormState();
-            this.attendeeInitialValues = this.getAttendeeValues();
-            this.isModalShown = false;
-            this.notifyMessage = __('Notify about update message');
+            this.$form.on('select2-data-loaded', this.updateInitialState.bind(this));
+            this.$notifyInput = this.$form.find('input[name*="[notifyAttendees]"]');
+            this.updateInitialState();
             this.$form.parent().on('submit.' + this.cid, _.bind(function(e) {
-                if (!this.isModalShown && this.getFormState() !== this.formInitialState && this.hasAttendees()) {
-                    if (!this.attendeeInitialValues.length) {
-                        this.notifyMessage = __('Notify guests message');
+                if (this.hasAttendees()) {
+                    if (this.getFormState() !== this.formInitialState) {
+                        this.$notifyInput.val('');
                     }
 
-                    this.getConfirmDialog().open();
-                    this.isModalShown = true;
-                    e.preventDefault();
+                    if (_.isEmpty(this.$notifyInput.val())) {
+                        this.getConfirmDialog().open();
+
+                        e.preventDefault();
+                    }
                 }
             }, this));
+        },
+
+        updateInitialState: function() {
+            this.formInitialState = this.getFormState();
+            this.attendeeInitialValues = this.getAttendeeValues();
+            this.notifyMessage =
+                __(this.attendeeInitialValues.length ? 'Notify about update message': 'Notify guests message');
         },
 
         /**
@@ -85,17 +90,16 @@ define([
             if (!this.confirmModal) {
                 this.confirmModal = AttendeeNotifierView.createConfirmNotificationDialog(this.notifyMessage);
                 this.listenTo(this.confirmModal, 'ok', _.bind(function() {
-                    this.$form.find('input[name*="[notifyAttendees]"]').val('all');
+                    this.$notifyInput.val('all');
+                    this.updateInitialState();
                     this.$form.submit();
-                    this.isModalShown = false;
                 }, this));
-                this.listenTo(this.confirmModal, 'cancel', _.bind(function() {
-                    this.$form.find('input[name*="[notifyAttendees]"]').val('none');
-                    this.$form.submit();
-                    this.isModalShown = false;
-                }, this));
-                this.listenTo(this.confirmModal, 'close', _.bind(function() {
-                    this.isModalShown = false;
+                this.listenTo(this.confirmModal, 'buttonClick', _.bind(function(buttonId) {
+                    if (buttonId === 'secondary') {
+                        this.$notifyInput.val('none');
+                        this.updateInitialState();
+                        this.$form.submit();
+                    }
                 }, this));
             }
             return this.confirmModal;
@@ -110,10 +114,11 @@ define([
             return new Modal({
                 title: __('Notify guests title'),
                 okText: __('Notify'),
-                cancelText: __('Don\'t notify'),
+                secondaryText: __('Don\'t notify'),
+                secondaryButtonClass: 'btn btn-primary',
                 content: notifyMessage,
                 className: 'modal modal-primary',
-                handleClose: true,
+                template: modalTemplate,
                 disposeOnHidden: false
             });
         }
