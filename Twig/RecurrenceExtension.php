@@ -4,7 +4,8 @@ namespace Oro\Bundle\CalendarBundle\Twig;
 
 use Oro\Bundle\CalendarBundle\Entity;
 use Oro\Bundle\CalendarBundle\Model\Recurrence;
-use Symfony\Component\DependencyInjection\ContainerInterface;
+use Psr\Container\ContainerInterface;
+use Symfony\Component\DependencyInjection\ServiceSubscriberInterface;
 use Symfony\Component\Translation\TranslatorInterface;
 use Twig\Extension\AbstractExtension;
 use Twig\TwigFunction;
@@ -14,7 +15,7 @@ use Twig\TwigFunction;
  *   - get_recurrence_text_value
  *   - get_event_recurrence_pattern
  */
-class RecurrenceExtension extends AbstractExtension
+class RecurrenceExtension extends AbstractExtension implements ServiceSubscriberInterface
 {
     /** @var ContainerInterface */
     protected $container;
@@ -104,5 +105,16 @@ class RecurrenceExtension extends AbstractExtension
     public function getName()
     {
         return 'oro_recurrence';
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public static function getSubscribedServices()
+    {
+        return [
+            'translator' => TranslatorInterface::class,
+            'oro_calendar.model.recurrence' => Recurrence::class,
+        ];
     }
 }

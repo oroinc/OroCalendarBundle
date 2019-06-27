@@ -106,18 +106,15 @@ services:
         class: Oro\Bundle\CalendarBundle\Twig\DateFormatExtension
         public: false
         arguments:
-            - '@Psr\Container\ContainerInterface'
+            - '@oro_platform.twig.service_locator'
         tags:
             - { name: twig.extension }
-            - { name: container.service_subscriber, id: 'oro_config.global' }
-            - { name: container.service_subscriber, id: 'oro_locale.formatter.date_time' }
-            - { name: container.service_subscriber, id: 'oro_locale.manager.localization' }
 
     oro_calendar.twig.recurrence:
         class: Oro\Bundle\CalendarBundle\Twig\RecurrenceExtension
         public: false
         arguments:
-            - '@service_container'
+            - '@oro_platform.twig.service_locator'
         tags:
             - { name: twig.extension }
 
