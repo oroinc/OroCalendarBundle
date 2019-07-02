@@ -82,6 +82,8 @@ services:
 
     oro_calendar.calendar_event.manager.api:
         class: '%oro_calendar.calendar_event.manager.api.class%'
+        # This service marked as public for compatibility with Symfony 4. All dependencies must be refactored after BAP-17037
+        public: true
         parent: oro_soap.manager.entity_manager.abstract
         arguments:
             - '%oro_calendar.calendar_event.entity.class%'
@@ -89,6 +91,8 @@ services:
 
     oro_calendar.calendar_property.manager.api:
         class: '%oro_calendar.calendar_property.manager.api.class%'
+        # This service marked as public for compatibility with Symfony 4. All dependencies must be refactored after BAP-17037
+        public: true
         parent: oro_soap.manager.entity_manager.abstract
         arguments:
             - '%oro_calendar.calendar_property.entity.class%'
@@ -97,6 +101,8 @@ services:
 
     oro_calendar.system_calendar.manager.api:
         class: '%oro_calendar.system_calendar.manager.api.class%'
+        # This service marked as public for compatibility with Symfony 4. All dependencies must be refactored after BAP-17037
+        public: true
         parent: oro_soap.manager.entity_manager.abstract
         arguments:
             - '%oro_calendar.system_calendar.entity.class%'
@@ -212,6 +218,8 @@ services:
 
     oro_calendar.calendar_manager:
         class: '%oro_calendar.calendar_manager.class%'
+        # This service marked as public for compatibility with Symfony 4. All dependencies must be refactored after BAP-17037
+        public: true
         arguments:
             - '@oro_calendar.calendar_property_provider'
 
@@ -288,6 +296,8 @@ services:
 
     oro_calendar.calendar_event_normalizer.user:
         class: '%oro_calendar.calendar_event_normalizer.user.class%'
+        # This service marked as public for compatibility with Symfony 4. All dependencies must be refactored after BAP-17037
+        public: true
         parent: oro_calendar.calendar_event_normalizer.abstract
         calls:
             - [ setTokenAccessor, ['@oro_security.token_accessor'] ]
@@ -352,6 +362,8 @@ services:
 
     oro_calendar.system_calendar_config:
         class: '%oro_calendar.system_calendar_config.class%'
+        # This service marked as public for compatibility with Symfony 4. All dependencies must be refactored after BAP-17037
+        public: true
         arguments:
             - '%oro_calendar.enabled_system_calendar%'
 
@@ -367,6 +379,8 @@ services:
 
     oro_calendar.system_calendar.handler.delete:
         class: '%oro_calendar.system_calendar.handler.delete.class%'
+        # This service marked as public for compatibility with Symfony 4. All dependencies must be refactored after BAP-17037
+        public: true
         parent: oro_soap.handler.delete.abstract
         calls:
             - [setCalendarConfig, ['@oro_calendar.system_calendar_config']]
@@ -375,6 +389,8 @@ services:
 
     oro_calendar.calendar_event.handler.delete:
         class: '%oro_calendar.calendar_event.handler.delete.class%'
+        # This service marked as public for compatibility with Symfony 4. All dependencies must be refactored after BAP-17037
+        public: true
         parent: oro_soap.handler.delete.abstract
         calls:
             - [setRequestStack, ['@request_stack']]

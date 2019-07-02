@@ -41,6 +41,8 @@ services:
 
     oro_calendar.calendar_event.form.api:
         class:   'Symfony\Component\Form\Form'
+        # This service marked as public for compatibility with Symfony 4. All dependencies must be refactored after BAP-17037
+        public: true
         factory: 'form.factory:createNamed'
         arguments:
             - ~
@@ -59,6 +61,8 @@ services:
 
     oro_calendar.calendar_event.form.handler:
         class: 'Oro\Bundle\CalendarBundle\Form\Handler\CalendarEventHandler'
+        # This service marked as public for compatibility with Symfony 4. All dependencies must be refactored after BAP-17037
+        public: true
         parent: 'oro_calendar.calendar_event.form.handler.abstract'
         calls:
             - ['setForm', ['@oro_calendar.calendar_event.form']]
@@ -69,12 +73,16 @@ services:
 
     oro_calendar.system_calendar_event.form.handler:
         class: 'Oro\Bundle\CalendarBundle\Form\Handler\SystemCalendarEventHandler'
+        # This service marked as public for compatibility with Symfony 4. All dependencies must be refactored after BAP-17037
+        public: true
         parent: 'oro_calendar.calendar_event.form.handler.abstract'
         calls:
             - ['setForm', ['@oro_calendar.calendar_event.form']]
 
     oro_calendar.calendar_event.form.handler.api:
         class: 'Oro\Bundle\CalendarBundle\Form\Handler\CalendarEventApiHandler'
+        # This service marked as public for compatibility with Symfony 4. All dependencies must be refactored after BAP-17037
+        public: true
         parent: 'oro_calendar.calendar_event.form.handler.abstract'
         calls:
             - ['setForm', ['@oro_calendar.calendar_event.form.api']]
@@ -106,6 +114,8 @@ services:
 
     oro_calendar.calendar_property.form.api:
         class:    'Symfony\Component\Form\Form'
+        # This service marked as public for compatibility with Symfony 4. All dependencies must be refactored after BAP-17037
+        public: true
         factory: 'form.factory:createNamed'
         arguments:
             - ~
@@ -120,6 +130,8 @@ services:
 
     oro_calendar.calendar_property.form.handler.api:
         class: '%oro_calendar.calendar_property.form.handler.api.class%'
+        # This service marked as public for compatibility with Symfony 4. All dependencies must be refactored after BAP-17037
+        public: true
         arguments:
             - '@oro_calendar.calendar_property.form.api'
             - '@request_stack'
@@ -162,6 +174,8 @@ services:
 
     oro_calendar.system_calendar.form.handler:
         class: '%oro_calendar.system_calendar.form.handler.class%'
+        # This service marked as public for compatibility with Symfony 4. All dependencies must be refactored after BAP-17037
+        public: true
         arguments:
             - '@oro_calendar.system_calendar.form'
             - '@request_stack'
