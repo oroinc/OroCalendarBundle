@@ -8,7 +8,6 @@ use FOS\RestBundle\Controller\Annotations\Post;
 use FOS\RestBundle\Controller\Annotations\QueryParam;
 use FOS\RestBundle\Controller\Annotations\RouteResource;
 use FOS\RestBundle\Routing\ClassResourceInterface;
-use FOS\RestBundle\Util\Codes;
 use Nelmio\ApiDocBundle\Annotation\ApiDoc;
 use Oro\Bundle\CalendarBundle\Entity\CalendarEvent;
 use Oro\Bundle\CalendarBundle\Entity\Repository\CalendarEventRepository;
@@ -169,7 +168,7 @@ class CalendarEventController extends RestController implements ClassResourceInt
             );
         }
 
-        return new Response(json_encode($result), Codes::HTTP_OK);
+        return new Response(json_encode($result), Response::HTTP_OK);
     }
 
     /**
@@ -191,7 +190,7 @@ class CalendarEventController extends RestController implements ClassResourceInt
         $entity = $this->getManager()->find($id);
 
         $result = null;
-        $code   = Codes::HTTP_NOT_FOUND;
+        $code   = Response::HTTP_NOT_FOUND;
         if ($entity) {
             $result = $this->get('oro_calendar.calendar_event_normalizer.user')
                 ->getCalendarEvent(
@@ -199,7 +198,7 @@ class CalendarEventController extends RestController implements ClassResourceInt
                     null,
                     $this->getExtendFieldNames('Oro\Bundle\CalendarBundle\Entity\CalendarEvent')
                 );
-            $code   = Codes::HTTP_OK;
+            $code   = Response::HTTP_OK;
         }
 
         return $this->buildResponse($result ? : '', self::ACTION_READ, ['result' => $result], $code);
@@ -229,11 +228,11 @@ class CalendarEventController extends RestController implements ClassResourceInt
         $entity = $this->getManager()->find($eventId);
 
         $result = null;
-        $code   = Codes::HTTP_NOT_FOUND;
+        $code   = Response::HTTP_NOT_FOUND;
         if ($entity) {
             $result = $this->get('oro_calendar.calendar_event_normalizer.user')
                 ->getCalendarEvent($entity, (int)$id);
-            $code   = Codes::HTTP_OK;
+            $code   = Response::HTTP_OK;
         }
 
         return $this->buildResponse($result ? : '', self::ACTION_READ, ['result' => $result], $code);
@@ -336,15 +335,15 @@ class CalendarEventController extends RestController implements ClassResourceInt
                 if ($entity) {
                     $response = $this->createResponseData($entity);
                     unset($response['id']);
-                    $view = $this->view($response, Codes::HTTP_OK);
+                    $view = $this->view($response, Response::HTTP_OK);
                 } else {
-                    $view = $this->view($this->getForm(), Codes::HTTP_BAD_REQUEST);
+                    $view = $this->view($this->getForm(), Response::HTTP_BAD_REQUEST);
                 }
             } catch (ForbiddenException $forbiddenEx) {
-                $view = $this->view(['reason' => $forbiddenEx->getReason()], Codes::HTTP_FORBIDDEN);
+                $view = $this->view(['reason' => $forbiddenEx->getReason()], Response::HTTP_FORBIDDEN);
             }
         } else {
-            $view = $this->view(null, Codes::HTTP_NOT_FOUND);
+            $view = $this->view(null, Response::HTTP_NOT_FOUND);
         }
 
         return $this->buildResponse($view, self::ACTION_UPDATE, ['id' => $id, 'entity' => $entity]);
@@ -361,15 +360,15 @@ class CalendarEventController extends RestController implements ClassResourceInt
         try {
             $entity = $this->processForm($entity);
             if ($entity) {
-                $view        = $this->view($this->createResponseData($entity), Codes::HTTP_CREATED);
+                $view        = $this->view($this->createResponseData($entity), Response::HTTP_CREATED);
                 $isProcessed = true;
             } else {
-                $view = $this->view($this->getForm(), Codes::HTTP_BAD_REQUEST);
+                $view = $this->view($this->getForm(), Response::HTTP_BAD_REQUEST);
             }
         } catch (ForbiddenException $forbiddenEx) {
-            $view = $this->view(['reason' => $forbiddenEx->getReason()], Codes::HTTP_FORBIDDEN);
+            $view = $this->view(['reason' => $forbiddenEx->getReason()], Response::HTTP_FORBIDDEN);
         } catch (NotUserCalendarEvent $e) {
-            $view = $this->view(['error' => $e->getMessage()], Codes::HTTP_BAD_REQUEST);
+            $view = $this->view(['error' => $e->getMessage()], Response::HTTP_BAD_REQUEST);
         }
 
         return $this->buildResponse($view, self::ACTION_CREATE, ['success' => $isProcessed, 'entity' => $entity]);

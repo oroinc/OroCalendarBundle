@@ -8,7 +8,6 @@ use FOS\RestBundle\Controller\Annotations\NamePrefix;
 use FOS\RestBundle\Controller\Annotations\Post;
 use FOS\RestBundle\Controller\Annotations\Put;
 use FOS\RestBundle\Routing\ClassResourceInterface;
-use FOS\RestBundle\Util\Codes;
 use Nelmio\ApiDocBundle\Annotation\ApiDoc;
 use Oro\Bundle\CalendarBundle\Manager\CalendarPropertyApiEntityManager;
 use Oro\Bundle\SecurityBundle\Annotation\AclAncestor;
@@ -46,7 +45,7 @@ class CalendarConnectionController extends RestController implements ClassResour
                 $id
             );
 
-        return new Response(json_encode($items), Codes::HTTP_OK);
+        return new Response(json_encode($items), Response::HTTP_OK);
     }
 
     /**

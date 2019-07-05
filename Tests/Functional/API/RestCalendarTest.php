@@ -2,8 +2,8 @@
 
 namespace Oro\Bundle\CalendarBundle\Tests\Functional\API;
 
-use FOS\RestBundle\Util\Codes;
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
+use Symfony\Component\HttpFoundation\Response;
 
 class RestCalendarTest extends WebTestCase
 {
@@ -19,7 +19,7 @@ class RestCalendarTest extends WebTestCase
     {
         $this->client->request('GET', $this->getUrl('oro_api_get_calendar_default'));
 
-        $result = $this->getJsonResponseContent($this->client->getResponse(), Codes::HTTP_OK);
+        $result = $this->getJsonResponseContent($this->client->getResponse(), Response::HTTP_OK);
 
         $this->assertNotEmpty($result);
     }

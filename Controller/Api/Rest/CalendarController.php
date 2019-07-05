@@ -6,7 +6,6 @@ use FOS\RestBundle\Controller\Annotations\Get;
 use FOS\RestBundle\Controller\Annotations\NamePrefix;
 use FOS\RestBundle\Controller\Annotations\RouteResource;
 use FOS\RestBundle\Controller\FOSRestController;
-use FOS\RestBundle\Util\Codes;
 use Nelmio\ApiDocBundle\Annotation\ApiDoc;
 use Oro\Bundle\CalendarBundle\Entity\Repository\CalendarRepository;
 use Oro\Bundle\OrganizationBundle\Entity\Organization;
@@ -57,6 +56,6 @@ class CalendarController extends FOSRestController
             $result['calendarName'] = $this->get('oro_entity.entity_name_resolver')->getName($calendar->getOwner());
         }
 
-        return new Response(json_encode($result), Codes::HTTP_OK);
+        return new Response(json_encode($result), Response::HTTP_OK);
     }
 }
