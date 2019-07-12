@@ -22,7 +22,7 @@ class CalendarChoiceTypeTest extends TypeTestCase
         $this->calendarEventManager = $this->getMockBuilder('Oro\Bundle\CalendarBundle\Manager\CalendarEventManager')
             ->disableOriginalConstructor()
             ->getMock();
-        $this->translator = $this->createMock('Symfony\Component\Translation\TranslatorInterface');
+        $this->translator = $this->createMock('Symfony\Contracts\Translation\TranslatorInterface');
 
         return [
             new PreloadedExtension([

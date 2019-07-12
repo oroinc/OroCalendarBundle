@@ -19,8 +19,8 @@ class MonthlyStrategyTest extends AbstractTestStrategy
     {
         $this->validator = $this->getMockBuilder('Symfony\Component\Validator\Validator\ValidatorInterface')
             ->getMock();
-        /** @var \PHPUnit\Framework\MockObject\MockObject|\Symfony\Component\Translation\TranslatorInterface */
-        $translator = $this->createMock('Symfony\Component\Translation\TranslatorInterface');
+        /** @var \PHPUnit\Framework\MockObject\MockObject|\Symfony\Component\Translation\Translator */
+        $translator = $this->createMock('Symfony\Component\Translation\Translator');
         $translator->expects($this->any())
             ->method('transChoice')
             ->will(

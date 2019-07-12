@@ -6,7 +6,7 @@ use Oro\Bundle\CalendarBundle\Entity;
 use Oro\Bundle\CalendarBundle\Model\Recurrence;
 use Oro\Bundle\CalendarBundle\Model\Recurrence\MonthNthStrategy;
 use Oro\Bundle\LocaleBundle\Model\LocaleSettings;
-use Symfony\Component\Translation\TranslatorInterface;
+use Symfony\Component\Translation\Translator;
 
 class MonthNthStrategyTest extends AbstractTestStrategy
 {
@@ -20,8 +20,8 @@ class MonthNthStrategyTest extends AbstractTestStrategy
     {
         $this->validator = $this->getMockBuilder('Symfony\Component\Validator\Validator\ValidatorInterface')
             ->getMock();
-        /** @var \PHPUnit\Framework\MockObject\MockObject|TranslatorInterface */
-        $translator = $this->createMock('Symfony\Component\Translation\TranslatorInterface');
+        /** @var \PHPUnit\Framework\MockObject\MockObject|Translator */
+        $translator = $this->createMock('Symfony\Component\Translation\Translator');
         $translator->expects($this->any())
             ->method('transChoice')
             ->will(

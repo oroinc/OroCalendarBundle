@@ -7,7 +7,7 @@ use Oro\Bundle\CalendarBundle\Model\Recurrence;
 use Oro\Bundle\CalendarBundle\Model\Recurrence\StrategyInterface;
 use Oro\Bundle\CalendarBundle\Twig\RecurrenceExtension;
 use Oro\Component\Testing\Unit\TwigExtensionTestCaseTrait;
-use Symfony\Component\Translation\TranslatorInterface;
+use Symfony\Contracts\Translation\TranslatorInterface;
 
 class RecurrenceExtensionTest extends \PHPUnit\Framework\TestCase
 {
