@@ -9,24 +9,24 @@ Oro\Bundle\OrganizationBundle\Entity\BusinessUnit:
 Oro\Bundle\CalendarBundle\Entity\CalendarEvent:
   calendarEvent_1:
     title: Call to client
-    calendar: 1
+    calendar: '@first_calendar'
     start: <dateTimeBetween('today 13:00', 'today 13:05')>
     end: <dateTimeBetween('today 13:55', 'today 13:59')>
     allDay: false
     organizerUser: '@charlie'
     organizerDisplayName: Charlie Sheen
-    organizerEmail: charlie@example.com
+    organizerEmail: 'charlie@example.com'
   calendarEvent_2:
     title: Meeting
-    calendar: 1
+    calendar: '@first_calendar'
     start: <dateTimeBetween('today 14:00', 'today 14:05')>
     end: <dateTimeBetween('today 14:55', 'today 14:59')>
     allDay: false
     organizerDisplayName: Charlie Sheen
-    organizerEmail: charlie@example.com
+    organizerEmail: 'charlie@example.com'
   calendarEvent_3:
     title: Business trip
-    calendar: 1
+    calendar: '@first_calendar'
     start: <dateTimeBetween('today 15:00', 'today 15:05')>
     end: <dateTimeBetween('today 15:55', 'today 15:59')>
     allDay: false

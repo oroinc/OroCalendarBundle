@@ -24,4 +24,5 @@ Oro\Bundle\CalendarBundle\Entity\CalendarEvent:
     end: '<dateTime()>'
     createdAt: '<dateTime()>'
     updatedAt: '<dateTime()>'
-    addActivityTarget: ['@contact1']
+    __calls:
+      - addActivityTarget: ['@contact1']
