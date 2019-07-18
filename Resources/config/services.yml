@@ -347,6 +347,7 @@ services:
 
     oro_calendar.listener.datagrid.system_calendar:
         class: '%oro_calendar.listener.datagrid.system_calendar.class%'
+        public: true
         arguments:
             - '@security.authorization_checker'
             - '@oro_security.token_accessor'
@@ -357,6 +358,7 @@ services:
 
     oro_calendar.datagrid.helper.calendar_event_grid:
         class: '%oro_calendar.datagrid.helper.calendar_event_grid.class%'
+        public: true
         arguments:
             - '@router'
 
@@ -401,6 +403,7 @@ services:
 
     oro_calendar.system_calendar_event.datagrid_helper:
         class: '%oro_calendar.system_calendar_event.datagrid_helper.class%'
+        public: true
         arguments:
             - '@security.authorization_checker'
 
