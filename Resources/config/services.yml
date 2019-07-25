@@ -519,6 +519,7 @@ services:
 
     oro_calendar.datagrid.mass_action.handler.delete:
         class: Oro\Bundle\CalendarBundle\Datagrid\MassAction\DeleteMassActionHandler
+        public: true
         parent: oro_datagrid.extension.mass_action.handler.delete
         calls:
             - [setDeleteManager, ['@oro_calendar.calendar_event.delete_manager']]
