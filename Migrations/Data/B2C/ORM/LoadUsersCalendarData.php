@@ -142,6 +142,7 @@ class LoadUsersCalendarData extends AbstractFixture implements OrderedFixtureInt
         }
 
         $manager->flush();
+        $this->cleanSecurityContext();
     }
 
     /**
