@@ -15,9 +15,6 @@ use Oro\Bundle\UserBundle\Entity\Role;
 use Oro\Bundle\UserBundle\Migrations\Data\ORM\LoadRolesData;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
-/**
- * Loads new Calendar entities.
- */
 class LoadUsersCalendarData extends AbstractFixture implements OrderedFixtureInterface
 {
     use WeekendCheckerTrait;
@@ -145,7 +142,6 @@ class LoadUsersCalendarData extends AbstractFixture implements OrderedFixtureInt
         }
 
         $manager->flush();
-        $this->cleanSecurityContext();
     }
 
     /**
