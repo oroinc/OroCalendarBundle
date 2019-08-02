@@ -5,6 +5,7 @@ namespace Oro\Bundle\CalendarBundle\Tests\Functional\DataFixtures;
 use Doctrine\Common\DataFixtures\DependentFixtureInterface;
 use Doctrine\Common\Persistence\ObjectManager;
 use Oro\Bundle\TestFrameworkBundle\Test\DataFixtures\AbstractFixture;
+use Oro\Bundle\TestFrameworkBundle\Tests\Functional\DataFixtures\LoadBusinessUnit;
 use Oro\Bundle\UserBundle\Entity\User;
 use Oro\Bundle\UserBundle\Entity\UserApi;
 use Symfony\Component\DependencyInjection\ContainerAwareInterface;
@@ -139,6 +140,7 @@ class LoadUserData extends AbstractFixture implements ContainerAwareInterface, D
         foreach ($this->data as $data) {
             /** @var User $user */
             $user = $userManager->createUser();
+            $user->setOwner($this->getReference('business_unit'));
 
             if (!empty($data['isAdministrator'])) {
                 $role = $manager->getRepository('OroUserBundle:Role')->findOneBy(['role' => 'ROLE_ADMINISTRATOR']);
@@ -194,6 +196,6 @@ class LoadUserData extends AbstractFixture implements ContainerAwareInterface, D
      */
     public function getDependencies()
     {
-        return [LoadOrganizationData::class];
+        return [LoadOrganizationData::class, LoadBusinessUnit::class];
     }
 }
