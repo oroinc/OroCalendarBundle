@@ -6,18 +6,12 @@ use Doctrine\Common\DataFixtures\DependentFixtureInterface;
 use Doctrine\Common\Persistence\ObjectManager;
 use Oro\Bundle\TestFrameworkBundle\Test\DataFixtures\AbstractFixture;
 use Oro\Bundle\TestFrameworkBundle\Tests\Functional\DataFixtures\LoadBusinessUnit;
+use Oro\Bundle\UserBundle\Entity\Role;
 use Oro\Bundle\UserBundle\Entity\User;
 use Oro\Bundle\UserBundle\Entity\UserApi;
-use Symfony\Component\DependencyInjection\ContainerAwareInterface;
-use Symfony\Component\DependencyInjection\ContainerInterface;
 
-class LoadUserData extends AbstractFixture implements ContainerAwareInterface, DependentFixtureInterface
+class LoadUserData extends AbstractFixture implements DependentFixtureInterface
 {
-    /**
-     * @var ContainerInterface
-     */
-    protected $container;
-
     /**
      * @var array
      */
@@ -124,29 +118,23 @@ class LoadUserData extends AbstractFixture implements ContainerAwareInterface, D
     /**
      * {@inheritdoc}
      */
-    public function setContainer(ContainerInterface $container = null)
-    {
-        $this->container = $container;
-    }
-
-    /**
-     * {@inheritdoc}
-     */
     public function load(ObjectManager $manager)
     {
         $userManager = $this->container->get('oro_user.manager');
+        $businessUnit = $this->getReference('business_unit');
+        $defaultRole = $manager->getRepository(Role::class)->findOneBy(['role' => User::ROLE_DEFAULT]);
 
-        $users = [];
         foreach ($this->data as $data) {
             /** @var User $user */
             $user = $userManager->createUser();
-            $user->setOwner($this->getReference('business_unit'));
+            $user->setOwner($businessUnit);
 
+            $role = $defaultRole;
             if (!empty($data['isAdministrator'])) {
-                $role = $manager->getRepository('OroUserBundle:Role')->findOneBy(['role' => 'ROLE_ADMINISTRATOR']);
-                $user->addRole($role);
+                $role = $manager->getRepository(Role::class)->findOneBy(['role' => User::ROLE_ADMINISTRATOR]);
             }
             unset($data['isAdministrator']);
+            $user->addRole($role);
 
             $this->resolveReferences($data, ['organization']);
             $this->setEntityPropertyValues(
@@ -166,7 +154,6 @@ class LoadUserData extends AbstractFixture implements ContainerAwareInterface, D
 
             $userManager->updateUser($user);
             $this->setReference($data['reference'], $user);
-            $users[] = $user;
         }
 
         $manager->flush();
