@@ -27,6 +27,6 @@ api:
 #                delete_list:
 #                    acl_resource: ~
 
-        # remove these exclusions when calendar entities will be enabled for Data API
+        # remove these exclusions when calendar entities will be enabled for API
         Extend\Entity\EV_Ce_Attendee_Status: { exclude: true}
         Extend\Entity\EV_Ce_Attendee_Type: { exclude: true}
