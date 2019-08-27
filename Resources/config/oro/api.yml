@@ -9,7 +9,6 @@ api:
 #
 #        Oro\Bundle\CalendarBundle\Entity\CalendarEvent:
 #            documentation_resource: '@OroCalendarBundle/Resources/doc/api/calendar_event.md'
-#            delete_handler: oro_calendar.calendar_event.handler.delete
 #            fields:
 #               activityTargets:
 #                   data_type: association:manyToMany:activity
@@ -20,7 +19,6 @@ api:
 #        Oro\Bundle\CalendarBundle\Entity\CalendarProperty: ~
 #
 #        Oro\Bundle\CalendarBundle\Entity\SystemCalendar:
-#            delete_handler: oro_calendar.system_calendar.handler.delete
 #            actions:
 #                delete:
 #                    acl_resource: ~

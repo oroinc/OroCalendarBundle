@@ -2,215 +2,191 @@
 
 namespace Oro\Bundle\CalendarBundle\Tests\Unit\Handler;
 
-use Doctrine\Common\Persistence\ObjectManager;
+use Doctrine\Common\Persistence\ManagerRegistry;
+use Doctrine\ORM\EntityManagerInterface;
 use Oro\Bundle\CalendarBundle\Entity\CalendarEvent;
 use Oro\Bundle\CalendarBundle\Entity\SystemCalendar;
 use Oro\Bundle\CalendarBundle\Handler\CalendarEventDeleteHandler;
+use Oro\Bundle\CalendarBundle\Handler\CalendarEventDeleteHandlerExtension;
 use Oro\Bundle\CalendarBundle\Manager\CalendarEvent\DeleteManager;
 use Oro\Bundle\CalendarBundle\Manager\CalendarEvent\NotificationManager;
 use Oro\Bundle\CalendarBundle\Provider\SystemCalendarConfig;
 use Oro\Bundle\CalendarBundle\Tests\Unit\Fixtures\Entity\Calendar;
-use Oro\Bundle\OrganizationBundle\Ownership\OwnerDeletionManager;
-use Oro\Bundle\SoapBundle\Entity\Manager\ApiEntityManager;
-use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\HttpFoundation\RequestStack;
+use Oro\Bundle\EntityBundle\Handler\EntityDeleteAccessDeniedExceptionFactory;
+use Oro\Bundle\EntityBundle\Handler\EntityDeleteHandlerExtensionRegistry;
 use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
 
 class CalendarEventDeleteHandlerTest extends \PHPUnit\Framework\TestCase
 {
-    /** @var \PHPUnit\Framework\MockObject\MockObject */
-    protected $authorizationChecker;
+    /** @var ManagerRegistry|\PHPUnit\Framework\MockObject\MockObject */
+    private $doctrine;
 
-    /** @var \PHPUnit\Framework\MockObject\MockObject */
-    protected $calendarConfig;
+    /** @var SystemCalendarConfig|\PHPUnit\Framework\MockObject\MockObject */
+    private $calendarConfig;
 
-    /** @var \PHPUnit\Framework\MockObject\MockObject */
-    protected $manager;
+    /** @var AuthorizationCheckerInterface|\PHPUnit\Framework\MockObject\MockObject */
+    private $authorizationChecker;
 
-    /** @var \PHPUnit\Framework\MockObject\MockObject */
-    protected $notificationManager;
+    /** @var DeleteManager|\PHPUnit\Framework\MockObject\MockObject */
+    private $deleteManager;
 
-    /** @var RequestStack */
-    protected $requestStack;
-
-    /** @var \PHPUnit\Framework\MockObject\MockObject */
-    protected $deleteManager;
+    /** @var NotificationManager|\PHPUnit\Framework\MockObject\MockObject */
+    private $notificationManager;
 
     /** @var CalendarEventDeleteHandler */
-    protected $handler;
+    private $handler;
 
     protected function setUp()
     {
+        $this->doctrine = $this->createMock(ManagerRegistry::class);
+        $this->calendarConfig = $this->createMock(SystemCalendarConfig::class);
         $this->authorizationChecker = $this->createMock(AuthorizationCheckerInterface::class);
-        $this->calendarConfig = $this->getMockBuilder(SystemCalendarConfig::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-        $this->manager = $this->getMockBuilder(ApiEntityManager::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-        $this->notificationManager = $this->getMockBuilder(NotificationManager::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-        $objectManager = $this->createMock(ObjectManager::class);
-        $this->manager->expects($this->any())
-            ->method('getObjectManager')
-            ->will($this->returnValue($objectManager));
-        $ownerDeletionManager = $this->getMockBuilder(OwnerDeletionManager::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-        $this->requestStack = new RequestStack();
-        $this->deleteManager = $this->getMockBuilder(DeleteManager::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $this->deleteManager = $this->createMock(DeleteManager::class);
+        $this->notificationManager = $this->createMock(NotificationManager::class);
 
-        $this->handler = new CalendarEventDeleteHandler();
-        $this->handler->setCalendarConfig($this->calendarConfig);
-        $this->handler->setAuthorizationChecker($this->authorizationChecker);
-        $this->handler->setOwnerDeletionManager($ownerDeletionManager);
-        $this->handler->setNotificationManager($this->notificationManager);
-        $this->handler->setRequestStack($this->requestStack);
-        $this->handler->setDeleteManager($this->deleteManager);
-    }
+        $accessDeniedExceptionFactory = new EntityDeleteAccessDeniedExceptionFactory();
 
-    public function testHandleDelete()
-    {
-        $this->manager->expects($this->once())
-            ->method('find')
-            ->will($this->returnValue(new CalendarEvent()));
+        $extension = new CalendarEventDeleteHandlerExtension(
+            $this->calendarConfig,
+            $this->authorizationChecker,
+            $this->notificationManager
+        );
+        $extension->setDoctrine($this->doctrine);
+        $extension->setAccessDeniedExceptionFactory($accessDeniedExceptionFactory);
+        $extensionRegistry = $this->createMock(EntityDeleteHandlerExtensionRegistry::class);
+        $extensionRegistry->expects($this->any())
+            ->method('getHandlerExtension')
+            ->with(CalendarEvent::class)
+            ->willReturn($extension);
 
-        $this->authorizationChecker->expects($this->once())
-            ->method('isGranted')
-            ->willReturn(true);
-
-        $this->handler->handleDelete(1, $this->manager);
+        $this->handler = new CalendarEventDeleteHandler(
+            $this->deleteManager
+        );
+        $this->handler->setDoctrine($this->doctrine);
+        $this->handler->setAccessDeniedExceptionFactory($accessDeniedExceptionFactory);
+        $this->handler->setExtensionRegistry($extensionRegistry);
     }
 
     /**
-     * @expectedException \Oro\Bundle\SecurityBundle\Exception\ForbiddenException
-     * @expectedExceptionMessage Public calendars are disabled.
+     * @expectedException \Symfony\Component\Security\Core\Exception\AccessDeniedException
+     * @expectedExceptionMessage The delete operation is forbidden. Reason: public calendars are disabled.
      */
-    public function testHandleDeleteWhenPublicCalendarDisabled()
+    public function testDeleteWhenPublicCalendarDisabled()
     {
         $calendar = new SystemCalendar();
         $calendar->setPublic(true);
         $event = new CalendarEvent();
         $event->setSystemCalendar($calendar);
 
-        $this->manager->expects($this->once())
-            ->method('find')
-            ->will($this->returnValue($event));
         $this->calendarConfig->expects($this->once())
             ->method('isPublicCalendarEnabled')
-            ->will($this->returnValue(false));
+            ->willReturn(false);
         $this->deleteManager->expects($this->never())
             ->method($this->anything());
 
-        $this->handler->handleDelete(1, $this->manager);
+        $this->handler->delete($event);
     }
 
     /**
-     * @expectedException \Oro\Bundle\SecurityBundle\Exception\ForbiddenException
-     * @expectedExceptionMessage Access denied.
+     * @expectedException \Symfony\Component\Security\Core\Exception\AccessDeniedException
+     * @expectedExceptionMessage The delete operation is forbidden. Reason: access denied.
      */
-    public function testHandleDeleteWhenPublicCalendarEventManagementNotGranted()
+    public function testDeleteWhenPublicCalendarEventManagementNotGranted()
     {
         $calendar = new SystemCalendar();
         $calendar->setPublic(true);
         $event = new CalendarEvent();
         $event->setSystemCalendar($calendar);
 
-        $this->manager->expects($this->once())
-            ->method('find')
-            ->will($this->returnValue($event));
         $this->calendarConfig->expects($this->once())
             ->method('isPublicCalendarEnabled')
-            ->will($this->returnValue(true));
+            ->willReturn(true);
         $this->authorizationChecker->expects($this->once())
             ->method('isGranted')
             ->with('oro_public_calendar_management')
-            ->will($this->returnValue(false));
+            ->willReturn(false);
         $this->deleteManager->expects($this->never())
             ->method($this->anything());
 
-        $this->handler->handleDelete(1, $this->manager);
+        $this->handler->delete($event);
     }
 
     /**
-     * @expectedException \Oro\Bundle\SecurityBundle\Exception\ForbiddenException
-     * @expectedExceptionMessage System calendars are disabled.
+     * @expectedException \Symfony\Component\Security\Core\Exception\AccessDeniedException
+     * @expectedExceptionMessage The delete operation is forbidden. Reason: system calendars are disabled.
      */
-    public function testHandleDeleteWhenSystemCalendarDisabled()
+    public function testDeleteWhenSystemCalendarDisabled()
     {
         $calendar = new SystemCalendar();
         $event = new CalendarEvent();
         $event->setSystemCalendar($calendar);
 
-        $this->manager->expects($this->once())
-            ->method('find')
-            ->will($this->returnValue($event));
         $this->calendarConfig->expects($this->once())
             ->method('isSystemCalendarEnabled')
-            ->will($this->returnValue(false));
+            ->willReturn(false);
         $this->deleteManager->expects($this->never())
             ->method($this->anything());
 
-        $this->handler->handleDelete(1, $this->manager);
+        $this->handler->delete($event);
     }
 
     /**
-     * @expectedException \Oro\Bundle\SecurityBundle\Exception\ForbiddenException
-     * @expectedExceptionMessage Access denied.
+     * @expectedException \Symfony\Component\Security\Core\Exception\AccessDeniedException
+     * @expectedExceptionMessage The delete operation is forbidden. Reason: access denied.
      */
-    public function testHandleDeleteWhenSystemCalendarEventManagementNotGranted()
+    public function testDeleteWhenSystemCalendarEventManagementNotGranted()
     {
         $calendar = new SystemCalendar();
         $event = new CalendarEvent();
         $event->setSystemCalendar($calendar);
 
-        $this->manager->expects($this->once())
-            ->method('find')
-            ->will($this->returnValue($event));
         $this->calendarConfig->expects($this->once())
             ->method('isSystemCalendarEnabled')
-            ->will($this->returnValue(true));
+            ->willReturn(true);
         $this->authorizationChecker->expects($this->once())
             ->method('isGranted')
             ->with('oro_system_calendar_management')
-            ->will($this->returnValue(false));
+            ->willReturn(false);
         $this->deleteManager->expects($this->never())
             ->method($this->anything());
 
-        $this->handler->handleDelete(1, $this->manager);
+        $this->handler->delete($event);
     }
 
-    public function testProcessDeleteShouldSendNotificationIfNotifyAttendeesIsAll()
+    public function testDeleteShouldSendNotificationIfNotifyAttendeesIsAll()
     {
-        $this->requestStack->push(new Request(['notifyAttendees' => NotificationManager::ALL_NOTIFICATIONS_STRATEGY]));
-
         $event = new CalendarEvent();
+
+        $this->authorizationChecker->expects($this->once())
+            ->method('isGranted')
+            ->willReturn(true);
+
+        $this->deleteManager->expects($this->once())
+            ->method('deleteOrCancel')
+            ->with($event, false);
+
+        $em = $this->createMock(EntityManagerInterface::class);
+        $this->doctrine->expects($this->any())
+            ->method('getManagerForClass')
+            ->with(CalendarEvent::class)
+            ->willReturn($em);
+        $em->expects($this->once())
+            ->method('contains')
+            ->with($this->identicalTo($event))
+            ->willReturn(false);
+        $em->expects($this->once())
+            ->method('flush');
+
         $this->notificationManager->expects($this->once())
             ->method('onDelete')
             ->with($event, NotificationManager::ALL_NOTIFICATIONS_STRATEGY);
 
-        $this->authorizationChecker->expects($this->once())
-            ->method('isGranted')
-            ->willReturn(true);
-
-        $this->deleteManager->expects($this->once())
-            ->method('deleteOrCancel')
-            ->with($event, false);
-
-        $this->handler->processDelete($event, $this->manager->getObjectManager());
+        $this->handler->delete($event, true, ['notifyAttendees' => NotificationManager::ALL_NOTIFICATIONS_STRATEGY]);
     }
 
-    public function testProcessDeleteShouldNotSendNotificationIfNotifyAttendeesIsNone()
+    public function testDeleteShouldNotSendNotificationIfNotifyAttendeesIsNone()
     {
-        $this->requestStack->push(new Request(['notifyAttendees' => NotificationManager::NONE_NOTIFICATIONS_STRATEGY]));
-
         $event = new CalendarEvent();
-        $this->notificationManager->expects($this->once())
-            ->method('onDelete')
-            ->with($event, NotificationManager::NONE_NOTIFICATIONS_STRATEGY);
 
         $this->authorizationChecker->expects($this->once())
             ->method('isGranted')
@@ -220,36 +196,29 @@ class CalendarEventDeleteHandlerTest extends \PHPUnit\Framework\TestCase
             ->method('deleteOrCancel')
             ->with($event, false);
 
-        $this->handler->processDelete($event, $this->manager->getObjectManager());
-    }
-
-    public function testProcessDeleteShouldSendNotificationIfRequestIsNull()
-    {
-        $event = new CalendarEvent();
-        $this->notificationManager->expects($this->once())
-            ->method('onDelete')
-            ->with($event, NotificationManager::ALL_NOTIFICATIONS_STRATEGY);
-
-        $this->authorizationChecker->expects($this->once())
-            ->method('isGranted')
-            ->willReturn(true);
-
-        $this->deleteManager->expects($this->once())
-            ->method('deleteOrCancel')
-            ->with($event, false);
-
-        $this->handler->processDelete($event, $this->manager->getObjectManager());
-    }
-
-    public function testProcessDeleteShouldNotSendNotification()
-    {
-        $event = new CalendarEvent();
-        $this->requestStack->push(new Request());
+        $em = $this->createMock(EntityManagerInterface::class);
+        $this->doctrine->expects($this->any())
+            ->method('getManagerForClass')
+            ->with(CalendarEvent::class)
+            ->willReturn($em);
+        $em->expects($this->once())
+            ->method('contains')
+            ->with($this->identicalTo($event))
+            ->willReturn(false);
+        $em->expects($this->once())
+            ->method('flush');
 
         $this->notificationManager->expects($this->once())
             ->method('onDelete')
             ->with($event, NotificationManager::NONE_NOTIFICATIONS_STRATEGY);
 
+        $this->handler->delete($event, true, ['notifyAttendees' => NotificationManager::NONE_NOTIFICATIONS_STRATEGY]);
+    }
+
+    public function testDeleteShouldSendNotificationIfNotifyStrategyIsNotSet()
+    {
+        $event = new CalendarEvent();
+
         $this->authorizationChecker->expects($this->once())
             ->method('isGranted')
             ->willReturn(true);
@@ -258,22 +227,34 @@ class CalendarEventDeleteHandlerTest extends \PHPUnit\Framework\TestCase
             ->method('deleteOrCancel')
             ->with($event, false);
 
-        $this->handler->processDelete($event, $this->manager->getObjectManager());
+        $em = $this->createMock(EntityManagerInterface::class);
+        $this->doctrine->expects($this->any())
+            ->method('getManagerForClass')
+            ->with(CalendarEvent::class)
+            ->willReturn($em);
+        $em->expects($this->once())
+            ->method('contains')
+            ->with($this->identicalTo($event))
+            ->willReturn(false);
+        $em->expects($this->once())
+            ->method('flush');
+
+        $this->notificationManager->expects($this->once())
+            ->method('onDelete')
+            ->with($event, NotificationManager::ALL_NOTIFICATIONS_STRATEGY);
+
+        $this->handler->delete($event);
     }
 
     /**
-     * @expectedException \Oro\Bundle\SecurityBundle\Exception\ForbiddenException
-     * @expectedExceptionMessage Access denied.
+     * @expectedException \Symfony\Component\Security\Core\Exception\AccessDeniedException
+     * @expectedExceptionMessage The delete operation is forbidden. Reason: access denied.
      */
-    public function testHandleDeleteInCaseIfUserHaveNoAccessToCallendar()
+    public function testDeleteInCaseIfUserHaveNoAccessToCalendar()
     {
-        $calendarEvent = new CalendarEvent();
         $calendar = new Calendar();
-        $calendarEvent->setCalendar($calendar);
-
-        $this->manager->expects($this->once())
-            ->method('find')
-            ->will($this->returnValue($calendarEvent));
+        $event = new CalendarEvent();
+        $event->setCalendar($calendar);
 
         $this->authorizationChecker->expects($this->once())
             ->method('isGranted')
@@ -283,6 +264,6 @@ class CalendarEventDeleteHandlerTest extends \PHPUnit\Framework\TestCase
         $this->deleteManager->expects($this->never())
             ->method($this->anything());
 
-        $this->handler->handleDelete(1, $this->manager);
+        $this->handler->delete($event);
     }
 }

@@ -16,9 +16,12 @@ use Oro\Bundle\EntityBundle\Provider\EntityNameResolver;
 use Oro\Bundle\EntityExtendBundle\Tools\ExtendHelper;
 use Oro\Bundle\OrganizationBundle\Entity\Organization;
 use Oro\Bundle\SecurityBundle\Authentication\TokenAccessorInterface;
-use Oro\Bundle\SecurityBundle\Exception\ForbiddenException;
 use Oro\Bundle\UserBundle\Entity\User;
+use Symfony\Component\Security\Core\Exception\AccessDeniedException;
 
+/**
+ * The class that helps to manage calendar events.
+ */
 class CalendarEventManager
 {
     /** @var UpdateManager */
@@ -71,7 +74,7 @@ class CalendarEventManager
             ->getQuery()
             ->getArrayResult();
 
-        // @todo: check ACL here. will be done in BAP-6575
+        // check ACL here. will be done in BAP-6575
 
         return $calendars;
     }
@@ -174,7 +177,7 @@ class CalendarEventManager
      * @param int           $calendarId
      *
      * @throws \LogicException
-     * @throws ForbiddenException
+     * @throws AccessDeniedException
      */
     public function setCalendar(CalendarEvent $event, $calendarAlias, $calendarId)
     {
@@ -185,12 +188,11 @@ class CalendarEventManager
             }
         } elseif (in_array($calendarAlias, [SystemCalendar::CALENDAR_ALIAS, SystemCalendar::PUBLIC_CALENDAR_ALIAS])) {
             $systemCalendar = $this->findSystemCalendar($calendarId);
-            //@TODO: Added permission verification
             if ($systemCalendar->isPublic() && !$this->calendarConfig->isPublicCalendarEnabled()) {
-                throw new ForbiddenException('Public calendars are disabled.');
+                throw new AccessDeniedException('Public calendars are disabled.');
             }
             if (!$systemCalendar->isPublic() && !$this->calendarConfig->isSystemCalendarEnabled()) {
-                throw new ForbiddenException('System calendars are disabled.');
+                throw new AccessDeniedException('System calendars are disabled.');
             }
             $event->setSystemCalendar($systemCalendar);
         } else {

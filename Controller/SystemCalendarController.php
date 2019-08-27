@@ -27,7 +27,7 @@ class SystemCalendarController extends Controller
         $this->checkPublicAndSystemCalendarsEnabled();
 
         return [
-            'entity_class' => $this->container->getParameter('oro_calendar.system_calendar.entity.class')
+            'entity_class' => SystemCalendar::class
         ];
     }
 

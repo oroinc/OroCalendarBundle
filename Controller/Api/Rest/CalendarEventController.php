@@ -12,13 +12,12 @@ use Nelmio\ApiDocBundle\Annotation\ApiDoc;
 use Oro\Bundle\CalendarBundle\Entity\CalendarEvent;
 use Oro\Bundle\CalendarBundle\Entity\Repository\CalendarEventRepository;
 use Oro\Bundle\CalendarBundle\Exception\NotUserCalendarEvent;
-use Oro\Bundle\CalendarBundle\Provider\SystemCalendarConfig;
+use Oro\Bundle\CalendarBundle\Manager\CalendarEvent\NotificationManager;
 use Oro\Bundle\EntityConfigBundle\Config\ConfigInterface;
 use Oro\Bundle\EntityExtendBundle\EntityConfig\ExtendScope;
 use Oro\Bundle\EntityExtendBundle\Tools\ExtendHelper;
 use Oro\Bundle\SecurityBundle\Annotation\Acl;
 use Oro\Bundle\SecurityBundle\Annotation\AclAncestor;
-use Oro\Bundle\SecurityBundle\Exception\ForbiddenException;
 use Oro\Bundle\SoapBundle\Controller\Api\Rest\RestController;
 use Oro\Bundle\SoapBundle\Entity\Manager\ApiEntityManager;
 use Oro\Bundle\SoapBundle\Form\Handler\ApiFormHandler;
@@ -27,8 +26,11 @@ use Symfony\Component\Form\Form;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
+use Symfony\Component\Security\Core\Exception\AccessDeniedException;
 
 /**
+ * API CRUD controller for CalendarEvent entity.
+ *
  * @RouteResource("calendarevent")
  * @NamePrefix("oro_api_")
  */
@@ -294,7 +296,17 @@ class CalendarEventController extends RestController implements ClassResourceInt
      */
     public function deleteAction($id)
     {
-        return $this->handleDeleteRequest($id);
+        $options = [];
+        $request = $this->get('request_stack')->getCurrentRequest();
+        if ($request) {
+            if ((bool)$request->query->get('isCancelInsteadDelete', false)) {
+                $options['cancelInsteadDelete'] = true;
+            }
+            $options['notifyAttendees'] = $request->query
+                ->get('notifyAttendees', NotificationManager::NONE_NOTIFICATIONS_STRATEGY);
+        }
+
+        return $this->handleDeleteRequest($id, $options);
     }
 
     /**
@@ -339,8 +351,8 @@ class CalendarEventController extends RestController implements ClassResourceInt
                 } else {
                     $view = $this->view($this->getForm(), Response::HTTP_BAD_REQUEST);
                 }
-            } catch (ForbiddenException $forbiddenEx) {
-                $view = $this->view(['reason' => $forbiddenEx->getReason()], Response::HTTP_FORBIDDEN);
+            } catch (AccessDeniedException $e) {
+                $view = $this->view(['reason' => $e->getMessage()], Response::HTTP_FORBIDDEN);
             }
         } else {
             $view = $this->view(null, Response::HTTP_NOT_FOUND);
@@ -365,8 +377,8 @@ class CalendarEventController extends RestController implements ClassResourceInt
             } else {
                 $view = $this->view($this->getForm(), Response::HTTP_BAD_REQUEST);
             }
-        } catch (ForbiddenException $forbiddenEx) {
-            $view = $this->view(['reason' => $forbiddenEx->getReason()], Response::HTTP_FORBIDDEN);
+        } catch (AccessDeniedException $e) {
+            $view = $this->view(['reason' => $e->getMessage()], Response::HTTP_FORBIDDEN);
         } catch (NotUserCalendarEvent $e) {
             $view = $this->view(['error' => $e->getMessage()], Response::HTTP_BAD_REQUEST);
         }
@@ -390,22 +402,6 @@ class CalendarEventController extends RestController implements ClassResourceInt
         );
 
         return true;
-    }
-
-    /**
-     * @return SystemCalendarConfig
-     */
-    protected function getCalendarConfig()
-    {
-        return $this->get('oro_calendar.system_calendar_config');
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    protected function getDeleteHandler()
-    {
-        return $this->get('oro_calendar.calendar_event.handler.delete');
     }
 
     /**

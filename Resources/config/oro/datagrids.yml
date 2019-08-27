@@ -1,6 +1,6 @@
 datagrids:
     calendar-event-grid:
-        extended_entity_name: '%oro_calendar.calendar_event.entity.class%'
+        extended_entity_name: Oro\Bundle\CalendarBundle\Entity\CalendarEvent
         acl_resource: oro_calendar_event_view
         source:
             type: orm
@@ -23,7 +23,7 @@ datagrids:
                     - parentRecurringEvent
                     - parentRecurringEventRecurrence
                 from:
-                    - { table: '%oro_calendar.calendar_event.entity.class%', alias: event }
+                    - { table: Oro\Bundle\CalendarBundle\Entity\CalendarEvent, alias: event }
                 join:
                     left:
                         - { join: event.parent, alias: parent }
@@ -39,7 +39,7 @@ datagrids:
                         - { join: event.calendar, alias: calendar }
                         - { join: calendar.owner, alias: owner }
                         -
-                            join: '%oro_calendar.calendar_property.entity.class%'
+                            join: Oro\Bundle\CalendarBundle\Entity\CalendarProperty
                             alias: connection
                             conditionType: WITH
                             condition: "connection.calendarAlias = 'user' AND connection.calendar = calendar.id AND connection.visible = true"
@@ -211,7 +211,7 @@ datagrids:
                     - event.start
                     - event.end
                 from:
-                    - { table: '%oro_calendar.calendar_event.entity.class%', alias: event }
+                    - { table: Oro\Bundle\CalendarBundle\Entity\CalendarEvent, alias: event }
         columns:
             title:
                 label: oro.calendar.calendarevent.title.label
@@ -268,7 +268,7 @@ datagrids:
                     - u.lastName
                     - u.enabled
                 from:
-                    - { table: '%oro_calendar.calendar.entity.class%', alias: calendar }
+                    - { table: Oro\Bundle\CalendarBundle\Entity\Calendar, alias: calendar }
                 join:
                     inner:
                         - { join: calendar.owner, alias: u }
@@ -342,7 +342,7 @@ datagrids:
                     - event.end
                     - (CASE WHEN (recurrence.id IS NULL) THEN false ELSE true END) as is_recurrent
                 from:
-                    - { table: '%oro_calendar.calendar_event.entity.class%', alias: event }
+                    - { table: Oro\Bundle\CalendarBundle\Entity\CalendarEvent, alias: event }
                 join:
                     inner:
                         - { join: event.systemCalendar, alias: calendar }
@@ -461,7 +461,7 @@ datagrids:
                     - sc.name
                     - sc.public
                 from:
-                    - { table: '%oro_calendar.system_calendar.entity.class%', alias: sc }
+                    - { table: Oro\Bundle\CalendarBundle\Entity\SystemCalendar, alias: sc }
         columns:
             name:
                 label: oro.calendar.systemcalendar.name.label
@@ -527,7 +527,7 @@ datagrids:
 
 
     calendar-event-for-context-grid:
-        extended_entity_name: '%oro_calendar.calendar_event.entity.class%'
+        extended_entity_name: Oro\Bundle\CalendarBundle\Entity\CalendarEvent
         acl_resource: oro_calendar_event_view
         options:
             entityHint: oro.calendar.calendarevent.entity_plural_label
@@ -548,7 +548,7 @@ datagrids:
                     - parent.id as parentId
                     - owner.id as ownerId
                 from:
-                    - { table: '%oro_calendar.calendar_event.entity.class%', alias: event }
+                    - { table: Oro\Bundle\CalendarBundle\Entity\CalendarEvent, alias: event }
                 join:
                     left:
                         - { join: event.parent, alias: parent }
@@ -556,7 +556,7 @@ datagrids:
                         - { join: event.calendar, alias: calendar }
                         - { join: calendar.owner, alias: owner }
                         -
-                            join: '%oro_calendar.calendar_property.entity.class%'
+                            join: Oro\Bundle\CalendarBundle\Entity\CalendarProperty
                             alias: connection
                             conditionType: WITH
                             condition: "connection.calendarAlias = 'user' AND connection.calendar = calendar.id AND connection.visible = true"

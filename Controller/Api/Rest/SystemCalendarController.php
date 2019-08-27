@@ -10,6 +10,8 @@ use Oro\Bundle\SoapBundle\Controller\Api\Rest\RestController;
 use Symfony\Component\HttpFoundation\Response;
 
 /**
+ * API CRUD controller for SystemCalendar entity.
+ *
  * @RouteResource("systemcalendar")
  * @NamePrefix("oro_api_")
  */
@@ -56,13 +58,5 @@ class SystemCalendarController extends RestController implements ClassResourceIn
     {
         throw new \BadMethodCallException('Not implemented');
         //return $this->get('oro_calendar.system_calendar.form.handler.api');
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    protected function getDeleteHandler()
-    {
-        return $this->get('oro_calendar.system_calendar.handler.delete');
     }
 }

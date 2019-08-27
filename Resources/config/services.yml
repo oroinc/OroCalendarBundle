@@ -1,51 +1,6 @@
-parameters:
-    oro_calendar.calendar.entity.class:                          Oro\Bundle\CalendarBundle\Entity\Calendar
-    oro_calendar.calendar_event.entity.class:                    Oro\Bundle\CalendarBundle\Entity\CalendarEvent
-    oro_calendar.calendar_event_attendee.entity.class:           Oro\Bundle\CalendarBundle\Entity\Attendee
-    oro_calendar.calendar_property.entity.class:                 Oro\Bundle\CalendarBundle\Entity\CalendarProperty
-    oro_calendar.system_calendar.entity.class:                   Oro\Bundle\CalendarBundle\Entity\SystemCalendar
-    oro_calendar.listener.entity_listener.class:                 Oro\Bundle\CalendarBundle\EventListener\EntityListener
-    oro_calendar.listener.datagrid.activity.class:               Oro\Bundle\CalendarBundle\EventListener\Datagrid\ActivityGridListener
-    oro_calendar.listener.datagrid.system_calendar.class:        Oro\Bundle\CalendarBundle\EventListener\Datagrid\SystemCalendarGridListener
-    oro_calendar.datagrid.helper.calendar_event_grid.class:      Oro\Bundle\CalendarBundle\Datagrid\CalendarEventGridHelper
-    oro_calendar.datagrid.action_permission_provider.class:      Oro\Bundle\CalendarBundle\Datagrid\ActionPermissionProvider
-    oro_calendar.calendar_event.manager.api.class:               Oro\Bundle\SoapBundle\Entity\Manager\ApiEntityManager
-    oro_calendar.calendar_property.manager.api.class:            Oro\Bundle\CalendarBundle\Manager\CalendarPropertyApiEntityManager
-    oro_calendar.system_calendar.manager.api.class:              Oro\Bundle\SoapBundle\Entity\Manager\ApiEntityManager
-    oro_calendar.provider.attendee_email_recipients.class:       Oro\Bundle\CalendarBundle\Provider\AttendeeEmailRecipientsProvider
-    oro_calendar.owner_assignment_checker.calendar.class:        Oro\Bundle\CalendarBundle\Ownership\CalendarOwnerAssignmentChecker
-    oro_calendar.activity_list.provider.class:                   Oro\Bundle\CalendarBundle\Provider\CalendarEventActivityListProvider
-    oro_calendar.calendar_manager.class:                         Oro\Bundle\CalendarBundle\Manager\CalendarManager
-    oro_calendar.calendar_property_provider.class:               Oro\Bundle\CalendarBundle\Provider\CalendarPropertyProvider
-    oro_calendar.calendar_provider.user.class:                   Oro\Bundle\CalendarBundle\Provider\UserCalendarProvider
-    oro_calendar.calendar_provider.system.class:                 Oro\Bundle\CalendarBundle\Provider\SystemCalendarProvider
-    oro_calendar.calendar_provider.public.class:                 Oro\Bundle\CalendarBundle\Provider\PublicCalendarProvider
-    oro_calendar.calendar_event_normalizer.user.class:           Oro\Bundle\CalendarBundle\Provider\UserCalendarEventNormalizer
-    oro_calendar.calendar_event_normalizer.system.class:         Oro\Bundle\CalendarBundle\Provider\SystemCalendarEventNormalizer
-    oro_calendar.calendar_event_normalizer.public.class:         Oro\Bundle\CalendarBundle\Provider\PublicCalendarEventNormalizer
-    oro_calendar.system_calendar_config.class:                   Oro\Bundle\CalendarBundle\Provider\SystemCalendarConfig
-    oro_calendar.event_listener.navigation.class:                Oro\Bundle\CalendarBundle\EventListener\NavigationListener
-    oro_calendar.system_calendar.handler.delete.class:           Oro\Bundle\CalendarBundle\Handler\SystemCalendarDeleteHandler
-    oro_calendar.calendar_event.handler.delete.class:            Oro\Bundle\CalendarBundle\Handler\CalendarEventDeleteHandler
-    oro_calendar.system_calendar_event.datagrid_helper.class:    Oro\Bundle\CalendarBundle\Datagrid\SystemCalendarEventGridHelper
-
-    oro_calendar.strategy.abstract.class:                        Oro\Bundle\CalendarBundle\Model\Recurrence\AbstractStrategy
-    oro_calendar.strategy.delegate.class:                        Oro\Bundle\CalendarBundle\Model\Recurrence\DelegateStrategy
-    oro_calendar.strategy.daily.class:                           Oro\Bundle\CalendarBundle\Model\Recurrence\DailyStrategy
-    oro_calendar.strategy.weekly.class:                          Oro\Bundle\CalendarBundle\Model\Recurrence\WeeklyStrategy
-    oro_calendar.strategy.monthly.class:                         Oro\Bundle\CalendarBundle\Model\Recurrence\MonthlyStrategy
-    oro_calendar.strategy.yearly.class:                          Oro\Bundle\CalendarBundle\Model\Recurrence\YearlyStrategy
-    oro_calendar.strategy.monthnth.class:                        Oro\Bundle\CalendarBundle\Model\Recurrence\MonthNthStrategy
-    oro_calendar.strategy.yearnth.class:                         Oro\Bundle\CalendarBundle\Model\Recurrence\YearNthStrategy
-
-    oro_calendar.model.recurrence.class:                         Oro\Bundle\CalendarBundle\Model\Recurrence
-
-    oro_calendar.validator.recurrence.class:                          Oro\Bundle\CalendarBundle\Validator\RecurrenceValidator
-    oro_calendar.validator.recurring_calendar_event_exception.class:  Oro\Bundle\CalendarBundle\Validator\RecurringCalendarEventExceptionValidator
-
 services:
     oro_calendar.listener.entity_listener:
-        class: '%oro_calendar.listener.entity_listener.class%'
+        class: Oro\Bundle\CalendarBundle\EventListener\EntityListener
         arguments:
             - '@oro_security.token_accessor'
             - '@oro_calendar.model.recurrence'
@@ -58,8 +13,8 @@ services:
     oro_calendar.entity_listener.calendar_event:
         class: Oro\Bundle\CalendarBundle\EventListener\CalendarEventEntityListener
         tags:
-            - { name: doctrine.orm.entity_listener, entity_manager: default, entity: '%oro_calendar.calendar_event.entity.class%', event: prePersist}
-            - { name: doctrine.orm.entity_listener, entity_manager: default, entity: '%oro_calendar.calendar_event.entity.class%', event: preUpdate}
+            - { name: doctrine.orm.entity_listener, entity_manager: default, entity: Oro\Bundle\CalendarBundle\Entity\CalendarEvent, event: prePersist}
+            - { name: doctrine.orm.entity_listener, entity_manager: default, entity: Oro\Bundle\CalendarBundle\Entity\CalendarEvent, event: preUpdate}
 
     oro_calendar.listener.calendar_event_attendees:
         class: Oro\Bundle\CalendarBundle\EventListener\CalendarEventAttendeesListener
@@ -67,7 +22,7 @@ services:
             - { name: doctrine.event_listener, event: onFlush }
 
     oro_calendar.listener.datagrid.activity:
-        class: '%oro_calendar.listener.datagrid.activity.class%'
+        class: Oro\Bundle\CalendarBundle\EventListener\Datagrid\ActivityGridListener
         arguments:
             - '@oro_activity.manager'
             - '@oro_entity.routing_helper'
@@ -76,37 +31,37 @@ services:
             - { name: kernel.event_listener, event: oro_datagrid.datagrid.build.after.activity-calendar-event-grid, method: onBuildAfter }
 
     oro_calendar.datagrid.action_permission_provider:
-        class: '%oro_calendar.datagrid.action_permission_provider.class%'
+        class: Oro\Bundle\CalendarBundle\Datagrid\ActionPermissionProvider
         public: true
         arguments:
             - '@oro_security.token_accessor'
 
     oro_calendar.calendar_event.manager.api:
-        class: '%oro_calendar.calendar_event.manager.api.class%'
+        class: Oro\Bundle\SoapBundle\Entity\Manager\ApiEntityManager
         # This service marked as public for compatibility with Symfony 4. All dependencies must be refactored after BAP-17037
         public: true
         parent: oro_soap.manager.entity_manager.abstract
         arguments:
-            - '%oro_calendar.calendar_event.entity.class%'
+            - 'Oro\Bundle\CalendarBundle\Entity\CalendarEvent'
             - '@doctrine.orm.entity_manager'
 
     oro_calendar.calendar_property.manager.api:
-        class: '%oro_calendar.calendar_property.manager.api.class%'
+        class: Oro\Bundle\CalendarBundle\Manager\CalendarPropertyApiEntityManager
         # This service marked as public for compatibility with Symfony 4. All dependencies must be refactored after BAP-17037
         public: true
         parent: oro_soap.manager.entity_manager.abstract
         arguments:
-            - '%oro_calendar.calendar_property.entity.class%'
+            - 'Oro\Bundle\CalendarBundle\Entity\CalendarProperty'
             - '@doctrine.orm.entity_manager'
             - '@oro_calendar.calendar_manager'
 
     oro_calendar.system_calendar.manager.api:
-        class: '%oro_calendar.system_calendar.manager.api.class%'
+        class: Oro\Bundle\SoapBundle\Entity\Manager\ApiEntityManager
         # This service marked as public for compatibility with Symfony 4. All dependencies must be refactored after BAP-17037
         public: true
         parent: oro_soap.manager.entity_manager.abstract
         arguments:
-            - '%oro_calendar.system_calendar.entity.class%'
+            - 'Oro\Bundle\CalendarBundle\Entity\SystemCalendar'
             - '@doctrine.orm.entity_manager'
 
     oro_calendar.twig.dateformat:
@@ -134,7 +89,7 @@ services:
         alias: 'oro_calendar.provider.calendar_config'
 
     oro_calendar.provider.attendee_email_recipients:
-        class: '%oro_calendar.provider.attendee_email_recipients.class%'
+        class: Oro\Bundle\CalendarBundle\Provider\AttendeeEmailRecipientsProvider
         arguments:
             - '@doctrine'
             - '@oro_email.provider.email_recipients.helper'
@@ -142,7 +97,7 @@ services:
             - { name: oro_email.recipients_provider, priority: 50 }
 
     oro_calendar.owner_assignment_checker.calendar:
-        class: '%oro_calendar.owner_assignment_checker.calendar.class%'
+        class: Oro\Bundle\CalendarBundle\Ownership\CalendarOwnerAssignmentChecker
         tags:
             - { name: oro_organization.owner_assignment_checker, entity: Oro\Bundle\CalendarBundle\Entity\Calendar }
 
@@ -218,7 +173,7 @@ services:
             - '@oro_entity.doctrine_helper'
 
     oro_calendar.calendar_manager:
-        class: '%oro_calendar.calendar_manager.class%'
+        class: Oro\Bundle\CalendarBundle\Manager\CalendarManager
         # This service marked as public for compatibility with Symfony 4. All dependencies must be refactored after BAP-17037
         public: true
         arguments:
@@ -244,14 +199,14 @@ services:
         alias: 'oro_calendar.attendee_relation_manager'
 
     oro_calendar.calendar_property_provider:
-        class: '%oro_calendar.calendar_property_provider.class%'
+        class: Oro\Bundle\CalendarBundle\Provider\CalendarPropertyProvider
         arguments:
             - '@oro_entity.doctrine_helper'
             - '@oro_entity_config.config_manager'
             - '@oro_entity_extend.extend.field_type_helper'
 
     oro_calendar.calendar_provider.user:
-        class: '%oro_calendar.calendar_provider.user.class%'
+        class: Oro\Bundle\CalendarBundle\Provider\UserCalendarProvider
         arguments:
             - '@oro_entity.doctrine_helper'
             - '@oro_calendar.model.recurrence'
@@ -262,7 +217,7 @@ services:
             - { name: oro_calendar.calendar_provider, alias: user }
 
     oro_calendar.calendar_provider.system:
-        class: '%oro_calendar.calendar_provider.system.class%'
+        class: Oro\Bundle\CalendarBundle\Provider\SystemCalendarProvider
         arguments:
             - '@oro_entity.doctrine_helper'
             - '@oro_calendar.model.recurrence'
@@ -274,7 +229,7 @@ services:
             - { name: oro_calendar.calendar_provider, alias: system }
 
     oro_calendar.calendar_provider.public:
-        class: '%oro_calendar.calendar_provider.public.class%'
+        class: Oro\Bundle\CalendarBundle\Provider\PublicCalendarProvider
         arguments:
             - '@oro_entity.doctrine_helper'
             - '@oro_calendar.model.recurrence'
@@ -296,7 +251,7 @@ services:
             - '@oro_ui.html_tag_helper'
 
     oro_calendar.calendar_event_normalizer.user:
-        class: '%oro_calendar.calendar_event_normalizer.user.class%'
+        class: Oro\Bundle\CalendarBundle\Provider\UserCalendarEventNormalizer
         # This service marked as public for compatibility with Symfony 4. All dependencies must be refactored after BAP-17037
         public: true
         parent: oro_calendar.calendar_event_normalizer.abstract
@@ -304,11 +259,11 @@ services:
             - [ setTokenAccessor, ['@oro_security.token_accessor'] ]
 
     oro_calendar.calendar_event_normalizer.system:
-        class: '%oro_calendar.calendar_event_normalizer.system.class%'
+        class: Oro\Bundle\CalendarBundle\Provider\SystemCalendarEventNormalizer
         parent: oro_calendar.calendar_event_normalizer.abstract
 
     oro_calendar.calendar_event_normalizer.public:
-        class: '%oro_calendar.calendar_event_normalizer.public.class%'
+        class: Oro\Bundle\CalendarBundle\Provider\PublicCalendarEventNormalizer
         parent: oro_calendar.calendar_event_normalizer.abstract
 
     oro_calendar.autocomplete.user_calendar_handler:
@@ -331,7 +286,7 @@ services:
         lazy: true
 
     oro_calendar.activity_list.provider:
-        class: '%oro_calendar.activity_list.provider.class%'
+        class: Oro\Bundle\CalendarBundle\Provider\CalendarEventActivityListProvider
         arguments:
            - '@oro_entity.doctrine_helper'
            - '@oro_activity.association_helper'
@@ -347,7 +302,7 @@ services:
             - '@doctrine'
 
     oro_calendar.listener.datagrid.system_calendar:
-        class: '%oro_calendar.listener.datagrid.system_calendar.class%'
+        class: Oro\Bundle\CalendarBundle\EventListener\Datagrid\SystemCalendarGridListener
         public: true
         arguments:
             - '@security.authorization_checker'
@@ -358,20 +313,20 @@ services:
             - { name: kernel.event_listener, event: oro_datagrid.datagrid.build.after.system-calendar-grid, method: onBuildAfter }
 
     oro_calendar.datagrid.helper.calendar_event_grid:
-        class: '%oro_calendar.datagrid.helper.calendar_event_grid.class%'
+        class: Oro\Bundle\CalendarBundle\Datagrid\CalendarEventGridHelper
         public: true
         arguments:
             - '@router'
 
     oro_calendar.system_calendar_config:
-        class: '%oro_calendar.system_calendar_config.class%'
+        class: Oro\Bundle\CalendarBundle\Provider\SystemCalendarConfig
         # This service marked as public for compatibility with Symfony 4. All dependencies must be refactored after BAP-17037
         public: true
         arguments:
             - '%oro_calendar.enabled_system_calendar%'
 
     oro_calendar.event_listener.navigation:
-        class: '%oro_calendar.event_listener.navigation.class%'
+        class: Oro\Bundle\CalendarBundle\EventListener\NavigationListener
         arguments:
             - '@oro_calendar.system_calendar_config'
         tags:
@@ -380,30 +335,36 @@ services:
             - [setAuthorizationChecker, ['@security.authorization_checker']]
             - [setTokenAccessor, ['@oro_security.token_accessor']]
 
-    oro_calendar.system_calendar.handler.delete:
-        class: '%oro_calendar.system_calendar.handler.delete.class%'
-        # This service marked as public for compatibility with Symfony 4. All dependencies must be refactored after BAP-17037
-        public: true
-        parent: oro_soap.handler.delete.abstract
-        calls:
-            - [setCalendarConfig, ['@oro_calendar.system_calendar_config']]
-            - [setAuthorizationChecker, ['@security.authorization_checker']]
-            - [setTokenAccessor, ['@oro_security.token_accessor']]
+    oro_calendar.delete_handler_extension.system_calendar:
+        class: Oro\Bundle\CalendarBundle\Handler\SystemCalendarDeleteHandlerExtension
+        parent: oro_entity.delete_handler_extension
+        arguments:
+            - '@oro_calendar.system_calendar_config'
+            - '@security.authorization_checker'
+            - '@oro_security.token_accessor'
+        tags:
+            - { name: oro_entity.delete_handler_extension, entity: Oro\Bundle\CalendarBundle\Entity\SystemCalendar }
 
-    oro_calendar.calendar_event.handler.delete:
-        class: '%oro_calendar.calendar_event.handler.delete.class%'
-        # This service marked as public for compatibility with Symfony 4. All dependencies must be refactored after BAP-17037
-        public: true
-        parent: oro_soap.handler.delete.abstract
-        calls:
-            - [setRequestStack, ['@request_stack']]
-            - [setCalendarConfig, ['@oro_calendar.system_calendar_config']]
-            - [setAuthorizationChecker, ['@security.authorization_checker']]
-            - [setNotificationManager, ['@oro_calendar.calendar_event.notification_manager']]
-            - [setDeleteManager, ['@oro_calendar.calendar_event.delete_manager']]
+    oro_calendar.delete_handler.calendar_event:
+        class: Oro\Bundle\CalendarBundle\Handler\CalendarEventDeleteHandler
+        parent: oro_entity.delete_handler
+        arguments:
+            - '@oro_calendar.calendar_event.delete_manager'
+        tags:
+            - { name: oro_entity.delete_handler, entity: Oro\Bundle\CalendarBundle\Entity\CalendarEvent }
+
+    oro_calendar.delete_handler_extension.calendar_event:
+        class: Oro\Bundle\CalendarBundle\Handler\CalendarEventDeleteHandlerExtension
+        parent: oro_entity.delete_handler_extension
+        arguments:
+            - '@oro_calendar.system_calendar_config'
+            - '@security.authorization_checker'
+            - '@oro_calendar.calendar_event.notification_manager'
+        tags:
+            - { name: oro_entity.delete_handler_extension, entity: Oro\Bundle\CalendarBundle\Entity\CalendarEvent }
 
     oro_calendar.system_calendar_event.datagrid_helper:
-        class: '%oro_calendar.system_calendar_event.datagrid_helper.class%'
+        class: Oro\Bundle\CalendarBundle\Datagrid\SystemCalendarEventGridHelper
         public: true
         arguments:
             - '@security.authorization_checker'
@@ -425,9 +386,8 @@ services:
     Oro\Bundle\CalendarBundle\Autocomplete\AttendeeSearchHandler:
         alias: 'oro_calendar.autocomplete.attendee_search_handler'
 
-    # Recurrence Strategies
     oro_calendar.recurrence.strategy.abstract:
-        class: '%oro_calendar.strategy.abstract.class%'
+        class: Oro\Bundle\CalendarBundle\Model\Recurrence\AbstractStrategy
         abstract: true
         public: false
         arguments:
@@ -436,68 +396,68 @@ services:
             - '@oro_locale.settings'
 
     oro_calendar.recurrence.strategy.delegate:
-        class: '%oro_calendar.strategy.delegate.class%'
+        class: Oro\Bundle\CalendarBundle\Model\Recurrence\DelegateStrategy
 
     oro_calendar.recurrence.strategy:
         alias: oro_calendar.recurrence.strategy.delegate
 
     oro_calendar.recurrence.strategy.daily:
-        class: '%oro_calendar.strategy.daily.class%'
+        class: Oro\Bundle\CalendarBundle\Model\Recurrence\DailyStrategy
         public: false
         parent: oro_calendar.recurrence.strategy.abstract
         tags:
             - { name: oro_calendar.recurrence.strategy}
 
     oro_calendar.recurrence.strategy.weekly:
-        class: '%oro_calendar.strategy.weekly.class%'
+        class: Oro\Bundle\CalendarBundle\Model\Recurrence\WeeklyStrategy
         public: false
         parent: oro_calendar.recurrence.strategy.abstract
         tags:
             - { name: oro_calendar.recurrence.strategy}
 
     oro_calendar.recurrence.strategy.monthly:
-        class: '%oro_calendar.strategy.monthly.class%'
+        class: Oro\Bundle\CalendarBundle\Model\Recurrence\MonthlyStrategy
         public: false
         parent: oro_calendar.recurrence.strategy.abstract
         tags:
             - { name: oro_calendar.recurrence.strategy}
 
     oro_calendar.recurrence.strategy.yearly:
-        class: '%oro_calendar.strategy.yearly.class%'
+        class: Oro\Bundle\CalendarBundle\Model\Recurrence\YearlyStrategy
         public: false
         parent: oro_calendar.recurrence.strategy.abstract
         tags:
             - { name: oro_calendar.recurrence.strategy}
 
     oro_calendar.recurrence.strategy.monthnth:
-        class: '%oro_calendar.strategy.monthnth.class%'
+        class: Oro\Bundle\CalendarBundle\Model\Recurrence\MonthNthStrategy
         public: false
         parent: oro_calendar.recurrence.strategy.abstract
         tags:
             - { name: oro_calendar.recurrence.strategy}
 
     oro_calendar.recurrence.strategy.yearnth:
-        class: '%oro_calendar.strategy.yearnth.class%'
+        class: Oro\Bundle\CalendarBundle\Model\Recurrence\YearNthStrategy
         public: false
         parent: oro_calendar.recurrence.strategy.abstract
         tags:
             - { name: oro_calendar.recurrence.strategy}
 
     oro_calendar.model.recurrence:
-        class: '%oro_calendar.model.recurrence.class%'
+        class: Oro\Bundle\CalendarBundle\Model\Recurrence
         arguments:
             - '@oro_calendar.recurrence.strategy'
         lazy: true
 
     oro_calendar.validator.recurrence:
-        class: '%oro_calendar.validator.recurrence.class%'
+        class: Oro\Bundle\CalendarBundle\Validator\RecurrenceValidator
         arguments:
             - '@oro_calendar.model.recurrence'
         tags:
             - { name: validator.constraint_validator, alias: oro_calendar.recurrence_validator }
 
     oro_calendar.validator.recurring_calendar_event_exception:
-        class: '%oro_calendar.validator.recurring_calendar_event_exception.class%'
+        class: Oro\Bundle\CalendarBundle\Validator\RecurringCalendarEventExceptionValidator
         arguments:
             - '@oro_calendar.calendar_event_manager'
         tags:

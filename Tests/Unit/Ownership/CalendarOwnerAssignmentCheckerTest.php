@@ -4,25 +4,24 @@ namespace Oro\Bundle\CalendarBundle\Tests\Ownership;
 
 use Doctrine\Common\Annotations\AnnotationReader;
 use Doctrine\ORM\Mapping\Driver\AnnotationDriver;
+use Oro\Bundle\CalendarBundle\Entity\Calendar;
 use Oro\Bundle\CalendarBundle\Ownership\CalendarOwnerAssignmentChecker;
 use Oro\Component\TestUtils\ORM\Mocks\EntityManagerMock;
 use Oro\Component\TestUtils\ORM\OrmTestCase;
 
 class CalendarOwnerAssignmentCheckerTest extends OrmTestCase
 {
-    /**
-     * @var EntityManagerMock
-     */
-    protected $em;
+    /** @var EntityManagerMock */
+    private $em;
 
     protected function setUp()
     {
-        $reader         = new AnnotationReader();
+        $reader = new AnnotationReader();
         $metadataDriver = new AnnotationDriver(
             $reader,
             [
                 'Oro\Bundle\CalendarBundle\Entity',
-                'Oro\Bundle\UserBundle\Entity',
+                'Oro\Bundle\UserBundle\Entity'
             ]
         );
 
@@ -31,7 +30,7 @@ class CalendarOwnerAssignmentCheckerTest extends OrmTestCase
         $this->em->getConfiguration()->setEntityNamespaces(
             [
                 'OroCalendarBundle' => 'Oro\Bundle\CalendarBundle\Entity',
-                'OroUserBundle' => 'Oro\Bundle\UserBundle\Entity',
+                'OroUserBundle'     => 'Oro\Bundle\UserBundle\Entity'
             ]
         );
     }
@@ -45,20 +44,16 @@ class CalendarOwnerAssignmentCheckerTest extends OrmTestCase
         $statement = $this->createFetchStatementMock($records);
         $this->getDriverConnectionMock($this->em)->expects($this->any())
             ->method('prepare')
-            ->will(
-                $this->returnCallback(
-                    function ($prepareString) use (&$statement, &$actualSql) {
-                        $actualSql = $prepareString;
+            ->willReturnCallback(function ($prepareString) use (&$statement, &$actualSql) {
+                $actualSql = $prepareString;
 
-                        return $statement;
-                    }
-                )
-            );
+                return $statement;
+            });
 
-        $checker      = new CalendarOwnerAssignmentChecker();
+        $checker = new CalendarOwnerAssignmentChecker();
         $actualResult = $checker->hasAssignments(
             1,
-            'Oro\Bundle\CalendarBundle\Entity\Calendar',
+            Calendar::class,
             'owner',
             $this->em
         );
