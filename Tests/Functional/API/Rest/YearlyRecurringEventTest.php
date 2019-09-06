@@ -35,8 +35,6 @@ class YearlyRecurringEventTest extends AbstractTestCase
      */
     public function testExpandingOfEventWithBorderConditionsOfDayOfMonth()
     {
-        $this->markTestSkipped('Test temporary skipped in scope of BAP-19167');
-
         // Step 1. Create new calendar event with pattern
         // "Yearly Day 31 of every 1 year Start Sun 2/28/2015 No end date".
         $eventData = [
