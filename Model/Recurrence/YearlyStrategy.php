@@ -37,7 +37,8 @@ class YearlyStrategy extends MonthlyStrategy
             0,
             0,
             0,
-            $recurrence->getMonthOfYear()
+            $recurrence->getMonthOfYear(),
+            $this->getRecurrenceDay($recurrence->getMonthOfYear())
         ));
         // Some monthly patterns are equivalent to yearly patterns.
         // In these cases, day should be adjusted to fit last day of month.
@@ -67,7 +68,8 @@ class YearlyStrategy extends MonthlyStrategy
             0,
             0,
             0,
-            $recurrence->getMonthOfYear()
+            $recurrence->getMonthOfYear(),
+            $this->getRecurrenceDay($recurrence->getMonthOfYear())
         ));
         $monthOfYear = $recurrence->getMonthOfYear();
         $interval = $recurrence->getInterval(); // a number of months, which is a multiple of 12
@@ -83,6 +85,20 @@ class YearlyStrategy extends MonthlyStrategy
         }
 
         return $occurrenceDate;
+    }
+
+    /**
+     * @param int $month
+     * @return int
+     */
+    private function getRecurrenceDay(int $month): int
+    {
+        $date = new \DateTime(sprintf('%d-%d-1', date('Y'), $month));
+
+        $lastDay = date('t', $date->getTimestamp());
+        $currentDay = date('d');
+
+        return $currentDay > $lastDay ? $lastDay : $currentDay;
     }
 
     /**
