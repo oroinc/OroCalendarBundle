@@ -4,11 +4,11 @@ namespace Oro\Bundle\CalendarBundle\Controller;
 
 use Oro\Bundle\CalendarBundle\Autocomplete\AttendeeSearchHandler;
 use Oro\Bundle\FormBundle\Model\AutocompleteRequest;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpKernel\Exception\HttpException;
+use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Validator\ConstraintViolation;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
 

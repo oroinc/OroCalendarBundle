@@ -11,10 +11,9 @@ use Oro\Bundle\CalendarBundle\Manager\CalendarEvent\NotificationManager;
 use Oro\Bundle\CalendarBundle\Manager\CalendarEventManager;
 use Oro\Bundle\SecurityBundle\Annotation\CsrfProtection;
 use Oro\Bundle\SecurityBundle\Authentication\TokenAccessorInterface;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
+use Symfony\Component\Routing\Annotation\Route;
 
 /**
  * AJAX calendar event controller
@@ -23,16 +22,15 @@ use Symfony\Component\HttpFoundation\JsonResponse;
 class AjaxCalendarEventController extends AbstractController
 {
     /**
-     * @Route("/accepted/{id}",
+     * @Route("/accepted/{id}", methods={"POST"},
      *      name="oro_calendar_event_accepted",
      *      requirements={"id"="\d+"}, defaults={"status"="accepted"})
-     * @Route("/tentative/{id}",
+     * @Route("/tentative/{id}", methods={"POST"},
      *      name="oro_calendar_event_tentative",
      *      requirements={"id"="\d+"}, defaults={"status"="tentative"})
-     * @Route("/declined/{id}",
+     * @Route("/declined/{id}", methods={"POST"},
      *      name="oro_calendar_event_declined",
      *      requirements={"id"="\d+"}, defaults={"status"="declined"})
-     * @Method({"POST"})
      * @CsrfProtection()
      *
      * @param CalendarEvent $entity

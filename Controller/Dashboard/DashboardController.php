@@ -9,10 +9,10 @@ use Oro\Bundle\CalendarBundle\Provider\CalendarDateTimeConfigProvider;
 use Oro\Bundle\DashboardBundle\Model\WidgetConfigs;
 use Oro\Bundle\LocaleBundle\Model\LocaleSettings;
 use Oro\Bundle\SecurityBundle\Authentication\TokenAccessorInterface;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Form\FormFactoryInterface;
+use Symfony\Component\Routing\Annotation\Route;
 
 /**
  * Calendar dashboard widget controller
