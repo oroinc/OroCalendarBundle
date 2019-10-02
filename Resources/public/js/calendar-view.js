@@ -783,7 +783,7 @@ define(function(require) {
             var self;
             var scrollTime;
             // prepare options for jQuery FullCalendar control
-            options = { // prepare options for jQuery FullCalendar control
+            options = {// prepare options for jQuery FullCalendar control
                 timezone: this.options.timezone,
                 selectLongPressDelay: 30,
                 displayEventEnd: {
