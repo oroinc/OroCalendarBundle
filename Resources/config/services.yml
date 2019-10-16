@@ -497,9 +497,10 @@ services:
         arguments:
             - '@doctrine'
 
-    oro_calendar.provider.attendee_preferred_language_provider:
-        class: Oro\Bundle\CalendarBundle\Provider\AttendeePreferredLanguageProvider
+    oro_calendar.provider.attendee_preferred_localization_provider:
+        class: 'Oro\Bundle\CalendarBundle\Provider\AttendeePreferredLocalizationProvider'
         public: false
-        arguments: ['@oro_locale.provider.chain_preferred_language_provider']
+        arguments:
+            - '@oro_locale.provider.preferred_localization_provider'
         tags:
-            - { name: oro_locale.preferred_language_provider }
+            - { name: oro_locale.preferred_localization_provider }

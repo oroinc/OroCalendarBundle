@@ -29,12 +29,17 @@ Feature: Localized email notification for calendar event
       | Content | English Calendar Invitation Invite Body    |
     And I click "French"
     And fill "Email Template Form" with:
-      | Subject | French Calendar Invitation Invite Subject |
-      | Content | French Calendar Invitation Invite Body    |
+      | Subject Fallback | false                                     |
+      | Content Fallback | false                                     |
+      | Subject          | French Calendar Invitation Invite Subject |
+      | Content          | French Calendar Invitation Invite Body    |
     And I click "German"
     And fill "Email Template Form" with:
-      | Subject | German Calendar Invitation Invite Subject |
-      | Content | German Calendar Invitation Invite Body    |
+      | Subject Fallback | false                                     |
+      | Content Fallback | false                                     |
+      | Subject          | German Calendar Invitation Invite Subject |
+      | Content          | German Calendar Invitation Invite Body    |
+    And I wait for action
     And I submit form
     Then I should see "Template saved" flash message
 
