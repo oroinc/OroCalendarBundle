@@ -6,7 +6,7 @@ define(function(require) {
     var RecurrenceMonthlyView = require('orocalendar/js/calendar/event/recurrence/recurrence-monthly-view');
 
     RecurrenceYearlyView = RecurrenceMonthlyView.extend(/** @exports RecurrenceYearlyView.prototype */{
-        template: require('tpl!orocalendar/templates/calendar/event/recurrence/recurrence-yearly.html'),
+        template: require('tpl-loader!orocalendar/templates/calendar/event/recurrence/recurrence-yearly.html'),
 
         relatedFields: ['recurrenceType', 'interval', 'instance', 'dayOfWeek', 'dayOfMonth', 'monthOfYear'],
 

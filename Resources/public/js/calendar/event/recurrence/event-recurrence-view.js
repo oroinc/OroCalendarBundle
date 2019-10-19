@@ -4,9 +4,9 @@ define(function(require) {
     var EventRecurrenceView;
     var _ = require('underscore');
     var __ = require('orotranslation/js/translator');
-    var template = require('tpl!orocalendar/templates/calendar/event/recurrence/recurrence.html');
+    var template = require('tpl-loader!orocalendar/templates/calendar/event/recurrence/recurrence.html');
     var originValuesTemplate =
-        require('tpl!orocalendar/templates/calendar/event/recurrence/recurrence-origin-values.html');
+        require('tpl-loader!orocalendar/templates/calendar/event/recurrence/recurrence-origin-values.html');
     var BaseView = require('oroui/js/app/views/base/view');
     var RecurrenceEndsView = require('orocalendar/js/calendar/event/recurrence/recurrence-ends-view');
     var RecurrenceSummaryView = require('orocalendar/js/calendar/event/recurrence/recurrence-summary-view');

@@ -12,7 +12,7 @@ define(function(require) {
     RecurrenceSummaryView = BaseView.extend(/** @exports RecurrenceSummaryView.prototype */{
         daysTranslationCache: {},
 
-        template: require('tpl!orocalendar/templates/calendar/event/recurrence/recurrence-summary.html'),
+        template: require('tpl-loader!orocalendar/templates/calendar/event/recurrence/recurrence-summary.html'),
 
         listen: {
             'change model': 'render'

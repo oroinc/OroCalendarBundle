@@ -1,0 +1,17 @@
+aliases:
+    fullcalendar$: bowerassets/fullcalendar/dist/fullcalendar
+    oro/select2-attendees-component$: orocalendar/js/app/components/select2-attendees-component
+app-modules:
+    - orocalendar/js/app/modules/calendar-module
+dynamic-imports:
+    orocalendar:
+        - oro/select2-attendees-component
+        - orocalendar/js/app/components/calendar-component
+        - orocalendar/js/app/components/calendar-event-date-range-component
+        - orocalendar/js/app/components/calendar-event-recurrence-component
+        - orocalendar/js/app/components/dashboard-calendar-component
+        - orocalendar/js/app/views/attendee-notifier-view
+        - orocalendar/js/app/views/change-status-view
+        - orocalendar/js/calendar/menu/change-calendar-color
+        - orocalendar/js/calendar/menu/toggle-calendar
+        - orocalendar/js/validator/dateearlierthan

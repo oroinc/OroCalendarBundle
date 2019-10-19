@@ -5,7 +5,7 @@ define(function(require) {
     var __ = require('orotranslation/js/translator');
     var BaseView = require('oroui/js/app/views/base/view');
     var Modal = require('oroui/js/modal');
-    var modalTemplate = require('tpl!oroui/templates/three-buttons-modal.html');
+    var modalTemplate = require('tpl-loader!oroui/templates/three-buttons-modal.html');
 
     var AttendeeNotifierView = BaseView.extend({
         /** @property {Array} */

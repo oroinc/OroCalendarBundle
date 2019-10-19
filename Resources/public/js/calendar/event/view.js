@@ -14,7 +14,7 @@ define(function(require) {
     var DeleteConfirmation = require('oroui/js/delete-confirmation');
     var fieldFormatter = require('oroform/js/formatter/field');
     var ActivityContextComponent = require('oroactivity/js/app/components/activity-context-activity-component');
-    var orginizerTemplate = require('tpl!orocalendar/templates/calendar/event/organizer.html');
+    var orginizerTemplate = require('tpl-loader!orocalendar/templates/calendar/event/organizer.html');
 
     CalendarEventView = BaseView.extend({
         /** @property {Object} */
