@@ -9,14 +9,12 @@ define([
 ], function($, _, BaseView, __, messenger) {
     'use strict';
 
-    var ChangeCalendarColorView;
-
     /**
      * @export  orocalendar/js/calendar/menu/change-calendar-color
      * @class   orocalendar.calendar.menu.ChangeCalendarColor
      * @extends oroui/js/app/views/base/view
      */
-    ChangeCalendarColorView = BaseView.extend({
+    const ChangeCalendarColorView = BaseView.extend({
         /** @property */
         customColorPickerActionsTemplate: _.template('<div class="form-actions">' +
                 '<button class="btn btn-primary pull-right" data-action="ok" type="button"><%= __("OK") %></button>' +
@@ -33,8 +31,8 @@ define([
         /**
          * @inheritDoc
          */
-        constructor: function ChangeCalendarColorView() {
-            ChangeCalendarColorView.__super__.constructor.apply(this, arguments);
+        constructor: function ChangeCalendarColorView(options) {
+            ChangeCalendarColorView.__super__.constructor.call(this, options);
         },
 
         /**
@@ -57,7 +55,7 @@ define([
         },
 
         initializeColorPicker: function() {
-            var colors = _.map(this.colorManager.colors, function(value) {
+            const colors = _.map(this.colorManager.colors, function(value) {
                 return {id: value, text: value};
             });
 
@@ -76,11 +74,10 @@ define([
                     this.$customColor.css('color', this.colorManager.getContrastColor(hex));
                 }, this),
                 show: _.bind(function() {
-                    var color = this.customColor || this.model.get('backgroundColor');
-                    var $panel = this.$customColorParent.find('.minicolors-panel');
-                    var h;
+                    const color = this.customColor || this.model.get('backgroundColor');
+                    const $panel = this.$customColorParent.find('.minicolors-panel');
                     $panel.css('top', 0);
-                    h = $panel.outerHeight() + 39;
+                    const h = $panel.outerHeight() + 39;
                     $panel.css('top', $(document).height() < $panel.offset().top + h ? -h : 0);
                     this.$colorPicker.simplecolorpicker('selectColor', null);
                     this.$customColor.minicolors('value', color);
@@ -133,10 +130,10 @@ define([
 
         changeColor: function(color) {
             if (this.connectionsView._initActionSyncObject()) {
-                var savingMsg = messenger.notificationMessage('warning',
+                const savingMsg = messenger.notificationMessage('warning',
                     __('oro.calendar.flash_message.calendar_updating'));
-                var $connection = this.connectionsView.findItem(this.model);
-                var saveAttributes = {backgroundColor: color};
+                const $connection = this.connectionsView.findItem(this.model);
+                const saveAttributes = {backgroundColor: color};
                 if (!this.model.get('visible')) {
                     saveAttributes.visible = true;
                 }

@@ -1,11 +1,10 @@
 define(function(require) {
     'use strict';
 
-    var RecurrenceWeeklyView;
-    var WeekDayPickerView = require('oroform/js/app/views/week-day-picker-view');
-    var AbstractRecurrenceSubview = require('orocalendar/js/calendar/event/recurrence/abstract-recurrence-subview');
+    const WeekDayPickerView = require('oroform/js/app/views/week-day-picker-view');
+    const AbstractRecurrenceSubview = require('orocalendar/js/calendar/event/recurrence/abstract-recurrence-subview');
 
-    RecurrenceWeeklyView = AbstractRecurrenceSubview.extend(/** @exports RecurrenceWeeklyView.prototype */{
+    const RecurrenceWeeklyView = AbstractRecurrenceSubview.extend(/** @exports RecurrenceWeeklyView.prototype */{
         template: require('tpl-loader!orocalendar/templates/calendar/event/recurrence/recurrence-weekly.html'),
 
         relatedFields: ['recurrenceType', 'interval', 'dayOfWeek'],
@@ -13,16 +12,16 @@ define(function(require) {
         /**
          * @inheritDoc
          */
-        constructor: function RecurrenceWeeklyView() {
-            RecurrenceWeeklyView.__super__.constructor.apply(this, arguments);
+        constructor: function RecurrenceWeeklyView(options) {
+            RecurrenceWeeklyView.__super__.constructor.call(this, options);
         },
 
         /**
          * @inheritDoc
          */
         render: function() {
-            var data = this.getTemplateData();
-            RecurrenceWeeklyView.__super__.render.apply(this, arguments);
+            const data = this.getTemplateData();
+            RecurrenceWeeklyView.__super__.render.call(this);
             this.subview('week-day-picker', new WeekDayPickerView({
                 autoRender: true,
                 el: this.$('[data-name="recurrence-week-day-picker"]'),
@@ -36,7 +35,7 @@ define(function(require) {
         },
 
         getValue: function() {
-            var value = RecurrenceWeeklyView.__super__.getValue.apply(this, arguments);
+            const value = RecurrenceWeeklyView.__super__.getValue.call(this);
             value.dayOfWeek = this.subview('week-day-picker').getValue();
             return value;
         }

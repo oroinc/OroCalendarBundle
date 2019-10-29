@@ -1,14 +1,13 @@
 define(function(require) {
     'use strict';
 
-    var RecurrenceMonthlyView;
-    var _ = require('underscore');
-    var __ = require('orotranslation/js/translator');
-    var $ = require('jquery');
-    var localeSettings = require('orolocale/js/locale-settings');
-    var AbstractRecurrenceSubview = require('orocalendar/js/calendar/event/recurrence/abstract-recurrence-subview');
+    const _ = require('underscore');
+    const __ = require('orotranslation/js/translator');
+    const $ = require('jquery');
+    const localeSettings = require('orolocale/js/locale-settings');
+    const AbstractRecurrenceSubview = require('orocalendar/js/calendar/event/recurrence/abstract-recurrence-subview');
 
-    RecurrenceMonthlyView = AbstractRecurrenceSubview.extend(/** @exports RecurrenceMonthlyView.prototype */{
+    const RecurrenceMonthlyView = AbstractRecurrenceSubview.extend(/** @exports RecurrenceMonthlyView.prototype */{
         template: require('tpl-loader!orocalendar/templates/calendar/event/recurrence/recurrence-monthly.html'),
 
         relatedFields: ['recurrenceType', 'interval', 'instance', 'dayOfWeek', 'dayOfMonth'],
@@ -24,15 +23,15 @@ define(function(require) {
         /**
          * @inheritDoc
          */
-        constructor: function RecurrenceMonthlyView() {
-            RecurrenceMonthlyView.__super__.constructor.apply(this, arguments);
+        constructor: function RecurrenceMonthlyView(options) {
+            RecurrenceMonthlyView.__super__.constructor.call(this, options);
         },
 
         /**
          * @inheritDoc
          */
         getTemplateData: function() {
-            var data = RecurrenceMonthlyView.__super__.getTemplateData.apply(this, arguments);
+            const data = RecurrenceMonthlyView.__super__.getTemplateData.call(this);
             data.repeatOnOptions = _.map(this.model.RECURRENCE_INSTANCE, function(item, key) {
                 return {
                     value: key,
@@ -40,7 +39,7 @@ define(function(require) {
                     selected: Number(key) === Number(data.instance)
                 };
             });
-            var dayOfWeek = _.object(
+            const dayOfWeek = _.object(
                 localeSettings.getSortedDayOfWeekNames('mnemonic'),
                 localeSettings.getSortedDayOfWeekNames('wide')
             );
@@ -69,7 +68,7 @@ define(function(require) {
         },
 
         render: function() {
-            RecurrenceMonthlyView.__super__.render.apply(this, arguments);
+            RecurrenceMonthlyView.__super__.render.call(this);
             this.updateControlBlocksState();
             return this;
         },
@@ -89,14 +88,14 @@ define(function(require) {
         },
 
         updateControlBlocksState: function() {
-            var repeatOnInstance = !this.$('[data-related-field="instance"]').val();
+            const repeatOnInstance = !this.$('[data-related-field="instance"]').val();
             this.$('[data-name="repeat-on-day"]').toggle(repeatOnInstance);
             this.$('[data-name="repeat-on-instance"]').toggle(!repeatOnInstance);
         },
 
         dataInputs: function() {
-            var $dataInputs = RecurrenceMonthlyView.__super__.dataInputs.apply(this, arguments);
-            var hiddenControlBlock = this.$('[data-related-field="instance"]').val()
+            const $dataInputs = RecurrenceMonthlyView.__super__.dataInputs.call(this);
+            const hiddenControlBlock = this.$('[data-related-field="instance"]').val()
                 ? this.$('[data-name="repeat-on-day"]') : this.$('[data-name="repeat-on-instance"]');
             return $dataInputs.filter(function(index, element) {
                 return !$.contains(hiddenControlBlock[0], element);
@@ -104,7 +103,7 @@ define(function(require) {
         },
 
         onModelChange: function() {
-            var dayOfMonth = Number(this.model.get('dayOfMonth'));
+            const dayOfMonth = Number(this.model.get('dayOfMonth'));
             if (!this.model.get('instance') && dayOfMonth >= 29 && dayOfMonth <= 31) {
                 this.setFewerDaysWarning(dayOfMonth);
             } else {
@@ -113,7 +112,7 @@ define(function(require) {
         },
 
         getValue: function() {
-            var value = RecurrenceMonthlyView.__super__.getValue.apply(this, arguments);
+            const value = RecurrenceMonthlyView.__super__.getValue.call(this);
             if (value.dayOfWeek === 'weekday') {
                 value.dayOfWeek = _.clone(this.model.RECURRENCE_WEEKDAYS);
             } else if (value.dayOfWeek === 'weekend-day') {

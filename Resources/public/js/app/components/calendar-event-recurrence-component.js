@@ -1,21 +1,20 @@
 define(function(require) {
     'use strict';
 
-    var CalendarEventRecurrenceComponent;
-    var _ = require('underscore');
-    var EventRecurrenceView = require('orocalendar/js/calendar/event/recurrence/event-recurrence-view');
-    var EventRecurrenceModel = require('orocalendar/js/calendar/event/recurrence/event-recurrence-model');
-    var BaseComponent = require('oroui/js/app/components/base/component');
+    const _ = require('underscore');
+    const EventRecurrenceView = require('orocalendar/js/calendar/event/recurrence/event-recurrence-view');
+    const EventRecurrenceModel = require('orocalendar/js/calendar/event/recurrence/event-recurrence-model');
+    const BaseComponent = require('oroui/js/app/components/base/component');
 
-    CalendarEventRecurrenceComponent = BaseComponent.extend({
+    const CalendarEventRecurrenceComponent = BaseComponent.extend({
         /** @type {Backbone.Event|null} */
         commonEventBus: null,
 
         /**
          * @inheritDoc
          */
-        constructor: function CalendarEventRecurrenceComponent() {
-            CalendarEventRecurrenceComponent.__super__.constructor.apply(this, arguments);
+        constructor: function CalendarEventRecurrenceComponent(options) {
+            CalendarEventRecurrenceComponent.__super__.constructor.call(this, options);
         },
 
         /**
@@ -24,13 +23,13 @@ define(function(require) {
          * @param {Object} options
          */
         initialize: function(options) {
-            var modelAttrs = options.modelAttrs;
+            let modelAttrs = options.modelAttrs;
             if (this.model) {
                 // if there's event model, take recurrence attributes from there
                 modelAttrs = this.model.get('recurrence');
             }
             _.extend(this, _.pick(options, 'commonEventBus'));
-            var viewOptions = this._prepareEventRecurrenceViewOptions(options);
+            const viewOptions = this._prepareEventRecurrenceViewOptions(options);
             this.recurrenceView = this._initEventRecurrenceView(_.extend(viewOptions, {
                 model: this._initEventRecurrenceModel(modelAttrs)
             }));

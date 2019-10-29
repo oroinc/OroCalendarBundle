@@ -1,13 +1,12 @@
 define(function(require) {
     'use strict';
 
-    var AttendeesPlugin;
-    var $ = require('jquery');
-    var _ = require('underscore');
-    var BasePlugin = require('oroui/js/app/plugins/base/plugin');
-    var AttendeeNotifierView = require('orocalendar/js/app/views/attendee-notifier-view');
+    const $ = require('jquery');
+    const _ = require('underscore');
+    const BasePlugin = require('oroui/js/app/plugins/base/plugin');
+    const AttendeeNotifierView = require('orocalendar/js/app/views/attendee-notifier-view');
 
-    AttendeesPlugin = BasePlugin.extend({
+    const AttendeesPlugin = BasePlugin.extend({
         enable: function() {
             this.listenTo(this.main, 'event:added', this.onEventAdded);
             this.listenTo(this.main, 'event:changed', this.onEventChanged);
@@ -25,10 +24,10 @@ define(function(require) {
          * @returns {boolean}
          */
         hasParentEvent: function(eventModel) {
-            var result = false;
-            var parentEventId = eventModel.get('parentEventId');
-            var alias = eventModel.get('calendarAlias');
-            var self = this;
+            let result = false;
+            const parentEventId = eventModel.get('parentEventId');
+            const alias = eventModel.get('calendarAlias');
+            const self = this;
             if (parentEventId) {
                 result = Boolean(this.main.getConnectionCollection().find(function(c) {
                     return c.get('calendarAlias') === alias &&
@@ -45,8 +44,8 @@ define(function(require) {
          * @returns {boolean}
          */
         hasLoadedAttendeeEvents: function(parentEventModel) {
-            var result = false;
-            var attendees = parentEventModel.get('attendees');
+            let result = false;
+            let attendees = parentEventModel.get('attendees');
             attendees = _.isNull(attendees) ? [] : attendees;
             if (parentEventModel.hasChanged('attendees') && !_.isEmpty(parentEventModel.previous('attendees'))) {
                 attendees = _.union(attendees, parentEventModel.previous('attendees'));
@@ -89,9 +88,9 @@ define(function(require) {
          * @param eventModel
          */
         onEventChanged: function(eventModel) {
-            var attendeeEventModels;
-            var i;
-            var updatedAttrs;
+            let attendeeEventModels;
+            let i;
+            let updatedAttrs;
             eventModel.set('editable', eventModel.get('editable') && !this.hasParentEvent(eventModel), {silent: true});
             if (this.hasLoadedAttendeeEvents(eventModel)) {
                 if (eventModel.hasChanged('attendees')) {
@@ -115,8 +114,8 @@ define(function(require) {
          * @param eventModel
          */
         onEventDeleted: function(eventModel) {
-            var attendeeEventModels;
-            var i;
+            let attendeeEventModels;
+            let i;
             if (this.hasLoadedAttendeeEvents(eventModel)) {
                 // remove guests
                 attendeeEventModels = _.filter(this.findAttendeeEventModels(eventModel), function(attendeeEventModel) {
@@ -141,8 +140,8 @@ define(function(require) {
          */
         onEventBeforeSave: function(eventModel, promises, attrs) {
             if (this.hasLoadedAttendeeEvents(eventModel)) {
-                var cleanUp;
-                var deferredConfirmation = $.Deferred();
+                let cleanUp;
+                const deferredConfirmation = $.Deferred();
                 promises.push(deferredConfirmation);
 
                 if (!this.modal) {

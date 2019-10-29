@@ -1,16 +1,16 @@
 define(function(require) {
     'use strict';
 
-    var CalendarComponent = require('orocalendar/js/app/components/calendar-component');
-    var widgetManager = require('oroui/js/widget-manager');
-    var moment = require('moment');
+    const CalendarComponent = require('orocalendar/js/app/components/calendar-component');
+    const widgetManager = require('oroui/js/widget-manager');
+    const moment = require('moment');
 
-    var DashboardCalendarComponent = CalendarComponent.extend({
+    const DashboardCalendarComponent = CalendarComponent.extend({
         /**
          * @inheritDoc
          */
-        constructor: function DashboardCalendarComponent() {
-            DashboardCalendarComponent.__super__.constructor.apply(this, arguments);
+        constructor: function DashboardCalendarComponent(options) {
+            DashboardCalendarComponent.__super__.constructor.call(this, options);
         },
 
         renderCalendar: function() {
@@ -19,9 +19,9 @@ define(function(require) {
         },
 
         adoptWidgetActions: function() {
-            var component = this;
+            const component = this;
             function roundToHalfAnHour(moment) {
-                var minutesToAdd = moment.minutes() < 30 ? 30 : 60;
+                const minutesToAdd = moment.minutes() < 30 ? 30 : 60;
                 return moment.startOf('hour').add(minutesToAdd, 'm');
             }
             widgetManager.getWidgetInstance(this.options.widgetId, function(widget) {

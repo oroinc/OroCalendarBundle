@@ -1,11 +1,10 @@
 define(function(require) {
     'use strict';
 
-    var RecurrenceYearlyView;
-    var _ = require('underscore');
-    var RecurrenceMonthlyView = require('orocalendar/js/calendar/event/recurrence/recurrence-monthly-view');
+    const _ = require('underscore');
+    const RecurrenceMonthlyView = require('orocalendar/js/calendar/event/recurrence/recurrence-monthly-view');
 
-    RecurrenceYearlyView = RecurrenceMonthlyView.extend(/** @exports RecurrenceYearlyView.prototype */{
+    const RecurrenceYearlyView = RecurrenceMonthlyView.extend(/** @exports RecurrenceYearlyView.prototype */{
         template: require('tpl-loader!orocalendar/templates/calendar/event/recurrence/recurrence-yearly.html'),
 
         relatedFields: ['recurrenceType', 'interval', 'instance', 'dayOfWeek', 'dayOfMonth', 'monthOfYear'],
@@ -13,15 +12,15 @@ define(function(require) {
         /**
          * @inheritDoc
          */
-        constructor: function RecurrenceYearlyView() {
-            RecurrenceYearlyView.__super__.constructor.apply(this, arguments);
+        constructor: function RecurrenceYearlyView(options) {
+            RecurrenceYearlyView.__super__.constructor.call(this, options);
         },
 
         /**
          * @inheritDoc
          */
         getTemplateData: function() {
-            var data = RecurrenceYearlyView.__super__.getTemplateData.apply(this, arguments);
+            const data = RecurrenceYearlyView.__super__.getTemplateData.call(this);
             if (data.interval && data.interval >= 12) {
                 data.interval /= 12;
             }
@@ -36,12 +35,12 @@ define(function(require) {
         },
 
         onModelChange: function(model) {
-            var dayOfMonth = !this.model.get('instance') ? Number(this.model.get('dayOfMonth')) : null;
-            var monthOfYear = Number(this.model.get('monthOfYear'));
-            var daysInMonth = this._daysInMonth(monthOfYear);
-            var $dayOfMonthField = this.$('[data-related-field="dayOfMonth"]');
+            const dayOfMonth = !this.model.get('instance') ? Number(this.model.get('dayOfMonth')) : null;
+            const monthOfYear = Number(this.model.get('monthOfYear'));
+            const daysInMonth = this._daysInMonth(monthOfYear);
+            const $dayOfMonthField = this.$('[data-related-field="dayOfMonth"]');
             if (model.hasChanged('monthOfYear') || model.hasChanged('startTime')) {
-                var dayValidationRules = $dayOfMonthField.data('validation');
+                const dayValidationRules = $dayOfMonthField.data('validation');
                 dayValidationRules.Number.max = daysInMonth;
                 if ($dayOfMonthField.val()) {
                     $dayOfMonthField.trigger('blur');
@@ -56,12 +55,12 @@ define(function(require) {
         },
 
         _daysInMonth: function(month) {
-            var fullYear = new Date(this.model.get('startTime')).getFullYear();
+            const fullYear = new Date(this.model.get('startTime')).getFullYear();
             return new Date(fullYear, month, 0).getDate();
         },
 
         getValue: function() {
-            var value = RecurrenceYearlyView.__super__.getValue.apply(this, arguments);
+            const value = RecurrenceYearlyView.__super__.getValue.call(this);
             if (value.interval) {
                 value.interval *= 12;
             }

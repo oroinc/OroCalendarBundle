@@ -1,17 +1,16 @@
 define(function(require) {
     'use strict';
 
-    var EventRecurrencePlugin;
-    var moment = require('moment');
-    var $ = require('jquery');
-    var _ = require('underscore');
-    var __ = require('orotranslation/js/translator');
-    var EventModel = require('orocalendar/js/calendar/event/model');
-    var DialogWidget = require('oro/dialog-widget');
-    var ActionTargetSelectView = require('orocalendar/js/calendar/event/action-target-select-view');
-    var BasePlugin = require('oroui/js/app/plugins/base/plugin');
+    const moment = require('moment');
+    const $ = require('jquery');
+    const _ = require('underscore');
+    const __ = require('orotranslation/js/translator');
+    const EventModel = require('orocalendar/js/calendar/event/model');
+    const DialogWidget = require('oro/dialog-widget');
+    const ActionTargetSelectView = require('orocalendar/js/calendar/event/action-target-select-view');
+    const BasePlugin = require('oroui/js/app/plugins/base/plugin');
 
-    EventRecurrencePlugin = BasePlugin.extend({
+    const EventRecurrencePlugin = BasePlugin.extend({
         enable: function() {
             this.listenTo(this.main.commonEventBus, {
                 'event:beforeSave': this.onEventBeforeSave,
@@ -36,9 +35,9 @@ define(function(require) {
          * @param {Object} attrs to be set on event model
          */
         onEventBeforeSave: function(eventModel, promises, attrs) {
-            var promise;
-            var onSelectCallback;
-            var options;
+            let promise;
+            let onSelectCallback;
+            let options;
             if (eventModel.get('recurrence')) {
                 options = {
                     actionType: 'edit',
@@ -55,9 +54,9 @@ define(function(require) {
                         });
                         eventModel.originalId = null;
                     } else {
-                        var timeShift = moment(attrs.start).diff(eventModel.get('start'));
-                        var duration = moment(attrs.end).diff(attrs.start);
-                        var initialStart =
+                        const timeShift = moment(attrs.start).diff(eventModel.get('start'));
+                        const duration = moment(attrs.end).diff(attrs.start);
+                        const initialStart =
                             this._calculateInitialEvenStartEnd(eventModel.get('recurrence').startTime, attrs).start;
                         attrs.start = moment(initialStart).add(timeShift).tz('UTC').format();
                         attrs.end = moment(attrs.start).add(duration).tz('UTC').format();
@@ -88,12 +87,12 @@ define(function(require) {
                 return;
             }
 
-            var options = {
+            const options = {
                 actionType: 'edit',
                 dialogTitle: __('Edit Event')
             };
-            var onSelectCallback = function(value) {
-                var attrs;
+            const onSelectCallback = function(value) {
+                let attrs;
                 if (value === 'exception') {
                     attrs = {
                         isException: true,
@@ -102,7 +101,7 @@ define(function(require) {
                 }
                 return attrs;
             };
-            var promise = this._selectActionTarget(onSelectCallback, options);
+            const promise = this._selectActionTarget(onSelectCallback, options);
 
             promises.push(promise);
         },
@@ -119,20 +118,20 @@ define(function(require) {
                 return;
             }
 
-            var promise;
+            let promise;
 
             // Restrict remove occurrence of recurring event in child calendar.
             // @todo This restriction should be removed in CRM-6758.
-            var restrictOnlyThisEventOperation = eventModel.get('parentEventId') !== null &&
+            const restrictOnlyThisEventOperation = eventModel.get('parentEventId') !== null &&
                 eventModel.get('recurringEventId') === null;
 
-            var options = {
+            const options = {
                 actionType: 'delete',
                 dialogTitle: __('Delete Event'),
                 restrictOnlyThisEventAction: restrictOnlyThisEventOperation
             };
-            var onSelectCallback = function(value) {
-                var attrs;
+            const onSelectCallback = function(value) {
+                let attrs;
                 if (value === 'exception' && !restrictOnlyThisEventOperation) {
                     attrs = {
                         isException: true,
@@ -213,18 +212,18 @@ define(function(require) {
         },
 
         _selectActionTarget: function(onSelectCallback, options) {
-            var deferredTargetSelection = $.Deferred();
+            const deferredTargetSelection = $.Deferred();
 
             options = _.defaults(options, {restrictOnlyThisEventAction: false});
 
-            var contentView = new ActionTargetSelectView({
+            const contentView = new ActionTargetSelectView({
                 autoRender: true,
                 actionType: options.actionType,
                 // @todo This option should be removed in CRM-6758.
                 restrictOnlyThisEventAction: options.restrictOnlyThisEventAction
             });
 
-            var eventDialog = new DialogWidget({
+            const eventDialog = new DialogWidget({
                 autoRender: true,
                 el: contentView.$el.wrap('<div class="widget-content"/>').parent(),
                 title: options.dialogTitle,
@@ -246,7 +245,7 @@ define(function(require) {
 
             eventDialog.getAction('apply', 'adopted', function(applyAction) {
                 applyAction.on('click', function() {
-                    var value = contentView.getValue();
+                    const value = contentView.getValue();
                     deferredTargetSelection.resolve(onSelectCallback(value));
                     eventDialog.remove();
                 });
@@ -264,7 +263,7 @@ define(function(require) {
          * @protected
          */
         _calculateInitialEvenStartEnd: function(recurrenceStart, eventAttrs) {
-            var duration = moment(eventAttrs.end).diff(eventAttrs.start);
+            const duration = moment(eventAttrs.end).diff(eventAttrs.start);
             return {
                 start: recurrenceStart,
                 end: moment(recurrenceStart).add(duration).tz('UTC').format()

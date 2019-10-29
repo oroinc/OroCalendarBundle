@@ -5,14 +5,12 @@ define([
 ], function(_, Backbone, routing) {
     'use strict';
 
-    var CalendarConnectionModel;
-
     /**
      * @export  orocalendar/js/calendar/connection/model
      * @class   orocalendar.calendar.connection.Model
      * @extends Backbone.Model
      */
-    CalendarConnectionModel = Backbone.Model.extend({
+    const CalendarConnectionModel = Backbone.Model.extend({
         route: 'oro_api_post_calendar_connection',
         urlRoot: null,
 
@@ -46,8 +44,8 @@ define([
         /**
          * @inheritDoc
          */
-        constructor: function CalendarConnectionModel() {
-            CalendarConnectionModel.__super__.constructor.apply(this, arguments);
+        constructor: function CalendarConnectionModel(attrs, options) {
+            CalendarConnectionModel.__super__.constructor.call(this, attrs, options);
         },
 
         /**
@@ -60,7 +58,7 @@ define([
         },
 
         save: function(key, val, options) {
-            var attrs;
+            let attrs;
 
             // Handle both `"key", value` and `{key: value}` -style arguments.
             if (key === null || key === undefined || typeof key === 'object') {
@@ -88,9 +86,9 @@ define([
         },
 
         _updateCalendarUidAttribute: function() {
-            var calendarAlias = this.get('calendarAlias');
-            var calendarId = this.get('calendar');
-            var calendarUid = calendarAlias && calendarId ? calendarAlias + '_' + calendarId : null;
+            const calendarAlias = this.get('calendarAlias');
+            const calendarId = this.get('calendar');
+            const calendarUid = calendarAlias && calendarId ? calendarAlias + '_' + calendarId : null;
             this.set('calendarUid', calendarUid);
         }
     });

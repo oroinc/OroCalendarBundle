@@ -1,15 +1,14 @@
 define(function(require) {
     'use strict';
 
-    var RecurrenceSummaryView;
-    var _ = require('underscore');
-    var __ = require('orotranslation/js/translator');
-    var localeSettings = require('orolocale/js/locale-settings');
-    var moment = require('moment');
-    var datetimeFormatter = require('orolocale/js/formatter/datetime');
-    var BaseView = require('oroui/js/app/views/base/view');
+    const _ = require('underscore');
+    const __ = require('orotranslation/js/translator');
+    const localeSettings = require('orolocale/js/locale-settings');
+    const moment = require('moment');
+    const datetimeFormatter = require('orolocale/js/formatter/datetime');
+    const BaseView = require('oroui/js/app/views/base/view');
 
-    RecurrenceSummaryView = BaseView.extend(/** @exports RecurrenceSummaryView.prototype */{
+    const RecurrenceSummaryView = BaseView.extend(/** @exports RecurrenceSummaryView.prototype */{
         daysTranslationCache: {},
 
         template: require('tpl-loader!orocalendar/templates/calendar/event/recurrence/recurrence-summary.html'),
@@ -21,18 +20,18 @@ define(function(require) {
         /**
          * @inheritDoc
          */
-        constructor: function RecurrenceSummaryView() {
-            RecurrenceSummaryView.__super__.constructor.apply(this, arguments);
+        constructor: function RecurrenceSummaryView(options) {
+            RecurrenceSummaryView.__super__.constructor.call(this, options);
         },
 
         /**
          * @inheritDoc
          */
         getTemplateData: function() {
-            var data = RecurrenceSummaryView.__super__.getTemplateData.apply(this, arguments);
+            let data = RecurrenceSummaryView.__super__.getTemplateData.call(this);
             if (data.recurrenceType !== null) {
-                var startTimeEventTZMoment = moment(data.startTime).tz(data.timeZone);
-                var startTimeUserTZMoment = moment(data.startTime).tz(localeSettings.getTimeZone());
+                const startTimeEventTZMoment = moment(data.startTime).tz(data.timeZone);
+                const startTimeUserTZMoment = moment(data.startTime).tz(localeSettings.getTimeZone());
                 if (startTimeEventTZMoment.format('dm') !== startTimeUserTZMoment.format('dm')) {
                     data.timezone_offset = startTimeEventTZMoment.format('Z');
                 }
@@ -50,7 +49,7 @@ define(function(require) {
                         return this._translateDayOfWeek(dayMnemonic, 'wide');
                     }, this)).join(', ');
                 }
-                var methodName = 'process' + _.capitalize(data.recurrenceType) + 'RecurrenceData';
+                const methodName = 'process' + _.capitalize(data.recurrenceType) + 'RecurrenceData';
                 if (methodName in this && _.isFunction(this[methodName])) {
                     data = this[methodName](data);
                 }
@@ -65,7 +64,7 @@ define(function(require) {
         },
 
         processWeeklyRecurrenceData: function(data) {
-            var presetDaysValue = this._getPresetDaysValue(data.dayOfWeek);
+            const presetDaysValue = this._getPresetDaysValue(data.dayOfWeek);
             if (presetDaysValue === 'weekday' && Number(data.interval) === 1) {
                 data.exclusion = 'weekday';
             }
@@ -80,7 +79,7 @@ define(function(require) {
         },
 
         processMonthnthRecurrenceData: function(data) {
-            var presetDaysValue = this._getPresetDaysValue(data.dayOfWeek);
+            const presetDaysValue = this._getPresetDaysValue(data.dayOfWeek);
             if (presetDaysValue !== null) {
                 data.day = __('oro.calendar.event.recurrence.days.' + presetDaysValue);
             }
@@ -95,14 +94,14 @@ define(function(require) {
             }
             if (Number(data.dayOfMonth) > 0) {
                 // adjust dateOfMonth to fit last day of month.
-                var daysInMonth = Number(
+                const daysInMonth = Number(
                     new Date(new Date(data.startTime).getFullYear(), data.monthOfYear, 0).getDate()
                 );
-                var dayOfMonth = (Number(data.dayOfMonth) > daysInMonth) ? daysInMonth : Number(data.dayOfMonth);
+                const dayOfMonth = (Number(data.dayOfMonth) > daysInMonth) ? daysInMonth : Number(data.dayOfMonth);
 
-                var year = new Date(data.startTime).getFullYear();
-                var month = data.monthOfYear;
-                var momentDate = moment(
+                const year = new Date(data.startTime).getFullYear();
+                const month = data.monthOfYear;
+                const momentDate = moment(
                     year.toString() + '-' + month.toString() + '-' + dayOfMonth.toString(),
                     'YYYY-M-D'
                 );
@@ -114,7 +113,7 @@ define(function(require) {
 
         processYearnthRecurrenceData: function(data) {
             data = this.processMonthnthRecurrenceData(data);
-            var months = localeSettings.getCalendarMonthNames('wide');
+            const months = localeSettings.getCalendarMonthNames('wide');
             if (Number(data.interval) >= 12) {
                 data.count = Math.floor(data.interval / 12);
             }

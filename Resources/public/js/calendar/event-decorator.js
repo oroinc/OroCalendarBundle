@@ -15,10 +15,10 @@ define([
         },
 
         decorate: function(eventModel, $el) {
-            var $body = $el.find('.fc-content');
-            var $timePlace = $el.find('.fc-time');
-            var reminders = eventModel.get('reminders');
-            var invitationStatus = eventModel.getInvitationStatus();
+            const $body = $el.find('.fc-content');
+            let $timePlace = $el.find('.fc-time');
+            const reminders = eventModel.get('reminders');
+            const invitationStatus = eventModel.getInvitationStatus();
             // if $time is not displayed show related info into $body
             if (!$timePlace.length) {
                 $timePlace = $body;

@@ -1,22 +1,21 @@
 define(function(require) {
     'use strict';
 
-    var CalendarEventView;
-    var $ = require('jquery');
-    var _ = require('underscore');
-    var BaseView = require('oroui/js/app/views/base/view');
-    var __ = require('orotranslation/js/translator');
-    var routing = require('routing');
-    var DialogWidget = require('oro/dialog-widget');
-    var mediator = require('oroui/js/mediator');
-    var LoadingMask = require('oroui/js/app/views/loading-mask-view');
-    var FormValidation = require('orocalendar/js/form-validation');
-    var DeleteConfirmation = require('oroui/js/delete-confirmation');
-    var fieldFormatter = require('oroform/js/formatter/field');
-    var ActivityContextComponent = require('oroactivity/js/app/components/activity-context-activity-component');
-    var orginizerTemplate = require('tpl-loader!orocalendar/templates/calendar/event/organizer.html');
+    const $ = require('jquery');
+    const _ = require('underscore');
+    const BaseView = require('oroui/js/app/views/base/view');
+    const __ = require('orotranslation/js/translator');
+    const routing = require('routing');
+    const DialogWidget = require('oro/dialog-widget');
+    const mediator = require('oroui/js/mediator');
+    const LoadingMask = require('oroui/js/app/views/loading-mask-view');
+    const FormValidation = require('orocalendar/js/form-validation');
+    const DeleteConfirmation = require('oroui/js/delete-confirmation');
+    const fieldFormatter = require('oroform/js/formatter/field');
+    const ActivityContextComponent = require('oroactivity/js/app/components/activity-context-activity-component');
+    const orginizerTemplate = require('tpl-loader!orocalendar/templates/calendar/event/organizer.html');
 
-    CalendarEventView = BaseView.extend({
+    const CalendarEventView = BaseView.extend({
         /** @property {Object} */
         options: {
             calendar: null,
@@ -51,8 +50,8 @@ define(function(require) {
         /**
          * @inheritDoc
          */
-        constructor: function CalendarEventView() {
-            CalendarEventView.__super__.constructor.apply(this, arguments);
+        constructor: function CalendarEventView(options) {
+            CalendarEventView.__super__.constructor.call(this, options);
         },
 
         /**
@@ -75,7 +74,7 @@ define(function(require) {
                 this.activityContext.dispose();
                 delete this.activityContext;
             }
-            CalendarEventView.__super__.remove.apply(this, arguments);
+            CalendarEventView.__super__.remove.call(this);
         },
 
         /**
@@ -101,8 +100,8 @@ define(function(require) {
         },
 
         render: function() {
-            var widgetOptions = this.options.widgetOptions || {};
-            var defaultOptions = {
+            const widgetOptions = this.options.widgetOptions || {};
+            const defaultOptions = {
                 title: this.model.isNew() ? __('Add New Event') : __('View Event'),
                 stateEnabled: false,
                 incrementalPosition: false,
@@ -160,17 +159,17 @@ define(function(require) {
         },
 
         _executePreAction: function(preactionName) {
-            var promises = [];
-            var $dialog = this.eventDialog.widget.closest('.ui-dialog');
+            const promises = [];
+            const $dialog = this.eventDialog.widget.closest('.ui-dialog');
             $dialog.addClass('invisible');
             this.options.commonEventBus.trigger('event:' + preactionName, this.model, promises, this.predefinedAttrs);
-            return $.when.apply($, promises)
-                .done(_.bind(function() {
-                    var attrs = _.extend.apply(_, arguments);
+            return $.when(...promises)
+                .done(function(...args) {
+                    const attrs = _.extend(...args);
                     this.setPredefinedAttrs(attrs);
                     $dialog.removeClass('invisible');
-                }, this))
-                .fail(_.bind(this.eventDialog.remove, this.eventDialog));
+                }.bind(this))
+                .fail(this.eventDialog.remove.bind(this.eventDialog));
         },
 
         _onClickEditDialogAction: function(e) {
@@ -179,7 +178,7 @@ define(function(require) {
         },
 
         _onEditDialogAction: function(e) {
-            var $content = this.getEventForm();
+            const $content = this.getEventForm();
             $content.wrapInner('<div data-layout="separate" />');
             this.setElement($content.find('>*:first'));
             this.eventDialog.setTitle(__('Edit Event'));
@@ -202,9 +201,9 @@ define(function(require) {
         },
 
         _onDeleteDialogAction: function(e) {
-            var $el = $(e.currentTarget);
-            var deleteUrl = $el.data('url');
-            var deleteConfirmationMessage = $el.data('message');
+            const $el = $(e.currentTarget);
+            const deleteUrl = $el.data('url');
+            const deleteConfirmationMessage = $el.data('message');
             if (this.model.get('recurrence')) {
                 if (this.predefinedAttrs.isException) {
                     this.model.once('sync', function(model) {
@@ -230,7 +229,7 @@ define(function(require) {
             if (this.model.get('recurringEventId')) {
                 message += '<br/>' + __('Only this particular event will be deleted from the series.');
             }
-            var confirm = new DeleteConfirmation({
+            const confirm = new DeleteConfirmation({
                 content: message
             });
             confirm.on('ok', callback);
@@ -244,10 +243,10 @@ define(function(require) {
         },
 
         _saveEventFromData: function(formData) {
-            var previousData = this.model.toJSON();
+            const previousData = this.model.toJSON();
             this.options.commonEventBus.trigger('eventForm:fetchData', this.model, formData, this.predefinedAttrs);
             this.model.set(formData);
-            var errors;
+            let errors;
             if (this.model.isValid()) {
                 this.showSavingMask();
                 try {
@@ -277,7 +276,7 @@ define(function(require) {
         deleteModel: function(deleteUrl) {
             this.showDeletingMask();
             try {
-                var options = {
+                const options = {
                     wait: true,
                     errorHandlerMessage: false,
                     error: _.bind(this._handleResponseError, this)
@@ -337,13 +336,13 @@ define(function(require) {
         },
 
         fillForm: function(form, modelData) {
-            var self = this;
+            const self = this;
             form = $(form);
 
             self.buildForm(form, modelData);
 
-            var inputs = form.find('[name]');
-            var fieldNameRegex = /\[(\w+)\]/g;
+            const inputs = form.find('[name]');
+            const fieldNameRegex = /\[(\w+)\]/g;
 
             // show loading mask if child events users should be updated
             if (!_.isEmpty(modelData.attendees)) {
@@ -354,16 +353,16 @@ define(function(require) {
 
             _.each(inputs, function(input) {
                 input = $(input);
-                var name = input.attr('name');
-                var matches = [];
-                var match;
+                const name = input.attr('name');
+                const matches = [];
+                let match;
 
                 while ((match = fieldNameRegex.exec(name)) !== null) {
                     matches.push(match[1]);
                 }
 
                 if (matches.length) {
-                    var value = self.getValueByPath(modelData, matches);
+                    const value = self.getValueByPath(modelData, matches);
                     if (input.is(':checkbox')) {
                         if (value === false || value === true) {
                             input.prop('checked', value);
@@ -390,13 +389,13 @@ define(function(require) {
         },
 
         buildForm: function(form, modelData) {
-            var self = this;
+            const self = this;
             form = $(form);
             _.each(modelData, function(value, key) {
                 if (typeof value === 'object') {
-                    var container = form.find('.' + key + '-collection');
+                    const container = form.find('.' + key + '-collection');
                     if (container) {
-                        var prototype = container.data('prototype');
+                        const prototype = container.data('prototype');
                         if (prototype) {
                             _.each(value, function(collectionValue, collectionKey) {
                                 container.append(prototype.replace(/__name__/g, collectionKey));
@@ -411,19 +410,19 @@ define(function(require) {
 
         getEventView: function() {
             // fetch calendar related connection
-            var connection = this.options.connections.findWhere({calendarUid: this.model.get('calendarUid')});
-            var invitationUrls = [];
+            const connection = this.options.connections.findWhere({calendarUid: this.model.get('calendarUid')});
+            const invitationUrls = [];
             _.each(this.options.invitationStatuses, function(status) {
                 invitationUrls[status] = routing.generate('oro_calendar_event_' + status, {id: this.model.originalId});
             }, this);
-            var $element = $(this.viewTemplate(_.extend(this.model.toJSON(), {
+            const $element = $(this.viewTemplate(_.extend(this.model.toJSON(), {
                 organizerHTML: this._getOrganizerHTML(),
                 formatter: fieldFormatter,
                 connection: connection ? connection.toJSON() : null,
                 invitationUrls: invitationUrls,
                 originalId: this.model.originalId
             })));
-            var $contextsSource = $element.find('.activity-context-activity');
+            const $contextsSource = $element.find('.activity-context-activity');
             this.activityContext = new ActivityContextComponent({
                 _sourceElement: $contextsSource,
                 checkTarget: false,
@@ -436,9 +435,9 @@ define(function(require) {
         },
 
         getEventForm: function() {
-            var templateData = this.getEventFormTemplateData();
-            var form = this.fillForm(this.template(templateData), templateData);
-            var calendarColors = this.options.colorManager.getCalendarColors(this.model.get('calendarUid'));
+            const templateData = this.getEventFormTemplateData();
+            const form = this.fillForm(this.template(templateData), templateData);
+            const calendarColors = this.options.colorManager.getCalendarColors(this.model.get('calendarUid'));
 
             form.find(this.selectors.backgroundColor)
                 .data('page-component-options').emptyColor = calendarColors.backgroundColor;
@@ -448,13 +447,13 @@ define(function(require) {
             this._toggleCalendarUidByInvitedUsers(form);
 
             form.find(this.selectors.calendarUid).on('change', _.bind(function(e) {
-                var $emptyColor = form.find('.empty-color');
-                var $selector = $(e.currentTarget);
-                var tagName = $selector.prop('tagName').toUpperCase();
-                var calendarUid = tagName === 'SELECT' || $selector.is(':checked')
+                const $emptyColor = form.find('.empty-color');
+                const $selector = $(e.currentTarget);
+                const tagName = $selector.prop('tagName').toUpperCase();
+                const calendarUid = tagName === 'SELECT' || $selector.is(':checked')
                     ? $selector.val() : this.model.get('calendarUid');
-                var colors = this.options.colorManager.getCalendarColors(calendarUid);
-                var newCalendar = this.parseCalendarUid(calendarUid);
+                const colors = this.options.colorManager.getCalendarColors(calendarUid);
+                const newCalendar = this.parseCalendarUid(calendarUid);
                 $emptyColor.css({'background-color': colors.backgroundColor, 'color': colors.color});
                 if (newCalendar.calendarAlias === 'user') {
                     this._showUserCalendarOnlyFields(form);
@@ -468,16 +467,16 @@ define(function(require) {
 
             // Adds calendar event activity contexts items to the form
             if (this.model.originalId) {
-                var contexts = form.find(this.selectors.contexts);
+                const contexts = form.find(this.selectors.contexts);
                 $.ajax({
                     url: routing.generate('oro_api_get_activity_context', {
                         activity: 'calendarevents', id: this.model.originalId
                     }),
                     type: 'GET',
                     success: _.bind(function(targets) {
-                        var targetsStrArray = [];
+                        const targetsStrArray = [];
                         targets.forEach(function(target) {
-                            var targetData = {
+                            const targetData = {
                                 entityClass: target.targetClassName.split('_').join('\\'),
                                 entityId: target.targetId
                             };
@@ -493,11 +492,11 @@ define(function(require) {
         },
 
         getEventFormData: function() {
-            var fieldNameFilterRegex = /^oro_calendar_event_form/;
-            var fieldNameRegex = /\[(\w+)\]/g;
-            var data = {};
-            var $form = this.eventDialog.form;
-            var formData = this.eventDialog.form.serializeArray().filter(function(item) {
+            const fieldNameFilterRegex = /^oro_calendar_event_form/;
+            const fieldNameRegex = /\[(\w+)\]/g;
+            const data = {};
+            const $form = this.eventDialog.form;
+            let formData = this.eventDialog.form.serializeArray().filter(function(item) {
                 return fieldNameFilterRegex.test(item.name);
             });
             formData = formData.concat(this.eventDialog.form.find('input[name][type=checkbox]:not(:checked)')
@@ -509,7 +508,7 @@ define(function(require) {
                 }).get());
             // convert multiselect separate values into array of values
             formData = _.reduce(formData, function(result, item) {
-                var existingItem = _.findWhere(result, {name: item.name});
+                const existingItem = _.findWhere(result, {name: item.name});
                 if (!existingItem && _.isArray($form.find('[name="' + item.name + '"]').val())) {
                     // convert first value of multiselect into array
                     item.value = [item.value];
@@ -522,8 +521,8 @@ define(function(require) {
                 return result;
             }, []);
             _.each(formData, function(dataItem) {
-                var matches = [];
-                var match;
+                const matches = [];
+                let match;
                 while ((match = fieldNameRegex.exec(dataItem.name)) !== null) {
                     matches.push(match[1]);
                 }
@@ -548,7 +547,7 @@ define(function(require) {
             }
 
             if (data.hasOwnProperty('attendees')) {
-                var attendees = this.eventDialog.form.find('[name="oro_calendar_event_form[attendees]"]')
+                const attendees = this.eventDialog.form.find('[name="oro_calendar_event_form[attendees]"]')
                     .select2('data');
                 data.attendees = _.map(attendees, function(attendee) {
                     return {
@@ -590,7 +589,7 @@ define(function(require) {
         },
 
         _toggleCalendarUidByInvitedUsers: function(form) {
-            var $calendarUid = form.find(this.selectors.calendarUid);
+            const $calendarUid = form.find(this.selectors.calendarUid);
             if (!$calendarUid.length) {
                 return;
             }
@@ -599,7 +598,7 @@ define(function(require) {
                 return;
             }
 
-            var $attendeesSelect = form.find(this.selectors.attendees);
+            const $attendeesSelect = form.find(this.selectors.attendees);
             if ($attendeesSelect.val() && $attendeesSelect.select2('data').length > 0) {
                 $calendarUid.attr('disabled', 'disabled');
                 $calendarUid.parent().attr('title', __('The calendar cannot be changed because the event has guests'));
@@ -624,8 +623,8 @@ define(function(require) {
         },
 
         setValueByPath: function(obj, value, path) {
-            var parent = obj;
-            var i;
+            let parent = obj;
+            let i;
 
             for (i = 0; i < path.length - 1; i++) {
                 if (parent[path[i]] === undefined) {
@@ -638,8 +637,8 @@ define(function(require) {
         },
 
         getValueByPath: function(obj, path) {
-            var current = obj;
-            var i;
+            let current = obj;
+            let i;
 
             for (i = 0; i < path.length; i++) {
                 if (current[path[i]] === undefined || current[path[i]] === null) {
@@ -652,17 +651,17 @@ define(function(require) {
         },
 
         getEventFormTemplateData: function() {
-            var isNew = this.model.isNew();
-            var formData = this.model.toJSON();
-            var templateType = '';
-            var calendars = [];
-            var ownCalendar = null;
-            var isOwnCalendar = function(item) {
+            const isNew = this.model.isNew();
+            const formData = this.model.toJSON();
+            let templateType = '';
+            const calendars = [];
+            let ownCalendar = null;
+            const isOwnCalendar = function(item) {
                 return (item.get('calendarAlias') === 'user' && item.get('calendar') === item.get('targetCalendar'));
             };
 
             this.options.connections.each(function(item) {
-                var calendar;
+                let calendar;
                 if (item.get('canAddEvent')) {
                     calendar = {uid: item.get('calendarUid'), name: item.get('calendarName')};
                     if (!ownCalendar && isOwnCalendar(item)) {
@@ -695,7 +694,7 @@ define(function(require) {
         },
 
         _getOrganizerHTML: function() {
-            var model = this.model;
+            const model = this.model;
 
             return orginizerTemplate({
                 routing: routing,

@@ -1,21 +1,20 @@
 define(function(require) {
     'use strict';
 
-    var EventRecurrenceView;
-    var _ = require('underscore');
-    var __ = require('orotranslation/js/translator');
-    var template = require('tpl-loader!orocalendar/templates/calendar/event/recurrence/recurrence.html');
-    var originValuesTemplate =
+    const _ = require('underscore');
+    const __ = require('orotranslation/js/translator');
+    const template = require('tpl-loader!orocalendar/templates/calendar/event/recurrence/recurrence.html');
+    const originValuesTemplate =
         require('tpl-loader!orocalendar/templates/calendar/event/recurrence/recurrence-origin-values.html');
-    var BaseView = require('oroui/js/app/views/base/view');
-    var RecurrenceEndsView = require('orocalendar/js/calendar/event/recurrence/recurrence-ends-view');
-    var RecurrenceSummaryView = require('orocalendar/js/calendar/event/recurrence/recurrence-summary-view');
-    var RecurrenceDailyView = require('orocalendar/js/calendar/event/recurrence/recurrence-daily-view');
-    var RecurrenceWeeklyView = require('orocalendar/js/calendar/event/recurrence/recurrence-weekly-view');
-    var RecurrenceMonthlyView = require('orocalendar/js/calendar/event/recurrence/recurrence-monthly-view');
-    var RecurrenceYearlyView = require('orocalendar/js/calendar/event/recurrence/recurrence-yearly-view');
+    const BaseView = require('oroui/js/app/views/base/view');
+    const RecurrenceEndsView = require('orocalendar/js/calendar/event/recurrence/recurrence-ends-view');
+    const RecurrenceSummaryView = require('orocalendar/js/calendar/event/recurrence/recurrence-summary-view');
+    const RecurrenceDailyView = require('orocalendar/js/calendar/event/recurrence/recurrence-daily-view');
+    const RecurrenceWeeklyView = require('orocalendar/js/calendar/event/recurrence/recurrence-weekly-view');
+    const RecurrenceMonthlyView = require('orocalendar/js/calendar/event/recurrence/recurrence-monthly-view');
+    const RecurrenceYearlyView = require('orocalendar/js/calendar/event/recurrence/recurrence-yearly-view');
 
-    EventRecurrenceView = BaseView.extend({
+    const EventRecurrenceView = BaseView.extend({
         RECURRENCE_REPEATS: {
             daily: 'daily',
             weekly: 'weekly',
@@ -57,8 +56,8 @@ define(function(require) {
         /**
          * @inheritDoc
          */
-        constructor: function EventRecurrenceView() {
-            EventRecurrenceView.__super__.constructor.apply(this, arguments);
+        constructor: function EventRecurrenceView(options) {
+            EventRecurrenceView.__super__.constructor.call(this, options);
         },
 
         /**
@@ -75,7 +74,7 @@ define(function(require) {
 
         delegateEvents: function(events) {
             EventRecurrenceView.__super__.delegateEvents.call(this, events);
-            var $from = this.$el.closest('form');
+            const $from = this.$el.closest('form');
             this.$eventStart = $from.find('[data-name="field__start"]');
             this.$eventStart.on('change' + this.eventNamespace(), _.bind(this.onEventStartChange, this));
             this.$eventEnd = $from.find('[data-name="field__end"]');
@@ -105,8 +104,8 @@ define(function(require) {
         },
 
         getTemplateData: function() {
-            var data = EventRecurrenceView.__super__.getTemplateData.call(this);
-            var repeatViewName = this.getRepeatViewName(data.recurrenceType);
+            const data = EventRecurrenceView.__super__.getTemplateData.call(this);
+            const repeatViewName = this.getRepeatViewName(data.recurrenceType);
 
             data.errors = this.errors;
             data.cid = this.cid;
@@ -137,11 +136,11 @@ define(function(require) {
         },
 
         renderSubviews: function() {
-            var repeatViewName = this.getRepeatViewName(this.model.get('recurrenceType')) ||
+            const repeatViewName = this.getRepeatViewName(this.model.get('recurrenceType')) ||
                 _.keys(this.RECURRENCE_REPEAT_VIEWS)[0];
 
             _.each(this.RECURRENCE_REPEAT_VIEWS, function(View, name) {
-                var $el = this.findElement(name).hide();
+                const $el = this.findElement(name).hide();
                 this.subview(name, new View({
                     enabled: repeatViewName === name,
                     autoRender: true,
@@ -169,7 +168,7 @@ define(function(require) {
         },
 
         getOriginValuesTemplateData: function() {
-            var data = EventRecurrenceView.__super__.getTemplateData.call(this);
+            const data = EventRecurrenceView.__super__.getTemplateData.call(this);
 
             data.inputNamePrefixes = this.inputNamePrefixes;
             data.recurrenceTypeOptions = _.map(this.model.RECURRENCE_TYPES, function(item) {
@@ -200,7 +199,7 @@ define(function(require) {
         },
 
         renderOriginValues: function() {
-            var html;
+            let html;
             if (!this.model.isEmptyRecurrence() && this.findElement('repeat').is(':checked')) {
                 html = originValuesTemplate(this.getOriginValuesTemplateData());
             } else {
@@ -215,7 +214,7 @@ define(function(require) {
         },
 
         onRecurrenceToggle: function(e) {
-            var isRecurrenceActive = e.target.checked;
+            const isRecurrenceActive = e.target.checked;
             if (!this._isCompletelyRendered) {
                 this.renderSubviews();
             }
@@ -228,7 +227,7 @@ define(function(require) {
         },
 
         onRepeatsChange: function(e) {
-            var repeatViewName = e.target.value;
+            const repeatViewName = e.target.value;
             this.switchRepeatView(repeatViewName);
         },
 
@@ -243,7 +242,7 @@ define(function(require) {
         },
 
         updateWarning: function() {
-            var message = null;
+            let message = null;
             if (this._initModelData.recurrenceType) {
                 if (!this.$('[data-name="recurrence-repeat"]').is(':checked')) {
                     message = __('oro.calendar.event.recurrence.warning.removing-all-series');
@@ -255,7 +254,7 @@ define(function(require) {
         },
 
         onEventEndChange: function() {
-            var endsView = this.subview('ends');
+            const endsView = this.subview('ends');
             if (endsView) {
                 endsView.syncRecurrenceEnd(this.$eventEnd.val());
             }
@@ -267,7 +266,7 @@ define(function(require) {
 
         switchRepeatView: function(repeatViewName) {
             _.each(_.keys(this.RECURRENCE_REPEAT_VIEWS), function(name) {
-                var subview = this.subview(name);
+                const subview = this.subview(name);
                 if (subview.isEnabled() && repeatViewName !== name) {
                     subview.disable();
                 }
@@ -289,7 +288,7 @@ define(function(require) {
         },
 
         toggleEventReminders: function(isAvailable) {
-            var $controlGroup = this.$el.closest('form').find('[name$="[reminders]"]').closest('.control-group');
+            const $controlGroup = this.$el.closest('form').find('[name$="[reminders]"]').closest('.control-group');
             $controlGroup.find(':input[name*="[reminders]"]').each(function() {
                 this.disabled = !isAvailable;
             });

@@ -1,11 +1,10 @@
 define(function(require) {
     'use strict';
 
-    var ActionTargetSelectView;
-    var _ = require('underscore');
-    var BaseView = require('oroui/js/app/views/base/view');
+    const _ = require('underscore');
+    const BaseView = require('oroui/js/app/views/base/view');
 
-    ActionTargetSelectView = BaseView.extend({
+    const ActionTargetSelectView = BaseView.extend({
         template: require('tpl-loader!orocalendar/templates/calendar/event/action-target-select.html'),
 
         actionType: null,
@@ -19,8 +18,8 @@ define(function(require) {
         /**
          * @inheritDoc
          */
-        constructor: function ActionTargetSelectView() {
-            ActionTargetSelectView.__super__.constructor.apply(this, arguments);
+        constructor: function ActionTargetSelectView(options) {
+            ActionTargetSelectView.__super__.constructor.call(this, options);
         },
 
         /**
@@ -35,7 +34,7 @@ define(function(require) {
         },
 
         getTemplateData: function() {
-            var data = ActionTargetSelectView.__super__.getTemplateData.call(this);
+            const data = ActionTargetSelectView.__super__.getTemplateData.call(this);
             data.actionType = this.actionType;
             data.restrictOnlyThisEventAction = this.restrictOnlyThisEventAction;
             return data;

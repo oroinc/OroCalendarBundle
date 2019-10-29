@@ -1,18 +1,17 @@
 define(function(require) {
     'use strict';
 
-    var Select2AttendeesComponent;
-    var $ = require('jquery');
-    var _ = require('underscore');
-    var routing = require('routing');
-    var Select2AutocompleteComponent = require('oro/select2-autocomplete-component');
+    const $ = require('jquery');
+    const _ = require('underscore');
+    const routing = require('routing');
+    const Select2AutocompleteComponent = require('oro/select2-autocomplete-component');
 
-    Select2AttendeesComponent = Select2AutocompleteComponent.extend({
+    const Select2AttendeesComponent = Select2AutocompleteComponent.extend({
         /**
          * @inheritDoc
          */
-        constructor: function Select2AttendeesComponent() {
-            Select2AttendeesComponent.__super__.constructor.apply(this, arguments);
+        constructor: function Select2AttendeesComponent(options) {
+            Select2AttendeesComponent.__super__.constructor.call(this, options);
         },
 
         /**
@@ -27,18 +26,18 @@ define(function(require) {
             config.maximumInputLength = 50;
 
             config.createSearchChoice = function(term, data) {
-                var match = _.find(data, function(item) {
+                const match = _.find(data, function(item) {
                     return item.displayName.toLowerCase().localeCompare(term.toLowerCase()) === 0;
                 });
                 if (typeof match === 'undefined') {
-                    var emailPattern = /[a-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\.[a-z0-9!#$%&'*+/=?^_`{|}~-]+)*@(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?/ig;
-                    var emails = term.match(emailPattern);
-                    var email = emails ? emails.shift() : '';
-                    var disallowSymbolsPattern = /[^a-zA-Z0-9\s._-]/ig;
-                    var displayName = term.replace(emailPattern, '')
+                    const emailPattern = /[a-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\.[a-z0-9!#$%&'*+/=?^_`{|}~-]+)*@(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?/ig;
+                    const emails = term.match(emailPattern);
+                    const email = emails ? emails.shift() : '';
+                    const disallowSymbolsPattern = /[^a-zA-Z0-9\s._-]/ig;
+                    const displayName = term.replace(emailPattern, '')
                         .replace(disallowSymbolsPattern, '')
                         .trim();
-                    var text = ''; // it is used as text for autocomplete item
+                    let text = ''; // it is used as text for autocomplete item
                     if (displayName) {
                         text = displayName + (email ? ' <' + email + '>' : '');
                     } else {
@@ -68,10 +67,10 @@ define(function(require) {
 
         setConfig: function(config) {
             config.selected = config.selected || {};
-            config = Select2AttendeesComponent.__super__.setConfig.apply(this, arguments);
+            config = Select2AttendeesComponent.__super__.setConfig.call(this, config);
 
             config.ajax.results = _.wrap(config.ajax.results, function(func, data, page) {
-                var response = func.call(this, data, page);
+                const response = func.call(this, data, page);
                 _.each(response.results, function(item) {
                     if (config.selected[item.id]) {
                         item.id = config.selected[item.id];

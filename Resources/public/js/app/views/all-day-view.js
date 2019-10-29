@@ -4,8 +4,7 @@ define([
 ], function($, BaseView) {
     'use strict';
 
-    var CalendarEventAllDayView;
-    CalendarEventAllDayView = BaseView.extend({
+    const CalendarEventAllDayView = BaseView.extend({
 
         /**
          * Options
@@ -27,8 +26,8 @@ define([
         /**
          * @inheritDoc
          */
-        constructor: function CalendarEventAllDayView() {
-            CalendarEventAllDayView.__super__.constructor.apply(this, arguments);
+        constructor: function CalendarEventAllDayView(options) {
+            CalendarEventAllDayView.__super__.constructor.call(this, options);
         },
 
         render: function() {
@@ -41,11 +40,11 @@ define([
 
         handleAllDayEventFlag: function(allDayEventElement, animationDuration) {
             if (!this.startAtTimeElement) {
-                var startAtElements = this.$('input[name$="[start]"]').closest('.control-group-datetime');
+                const startAtElements = this.$('input[name$="[start]"]').closest('.control-group-datetime');
                 this.startAtTimeElement = startAtElements.find('.timepicker-input');
             }
             if (!this.endAtTimeElement) {
-                var endAtElements = this.$('input[name$="[end]"]').closest('.control-group-datetime');
+                const endAtElements = this.$('input[name$="[end]"]').closest('.control-group-datetime');
                 this.endAtTimeElement = endAtElements.find('.timepicker-input');
             }
             if (allDayEventElement.prop('checked')) {
