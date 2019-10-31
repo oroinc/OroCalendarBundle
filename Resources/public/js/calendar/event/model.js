@@ -1,18 +1,17 @@
 define(function(require) {
     'use strict';
 
-    var CalendarEventModel;
-    var _ = require('underscore');
-    var routing = require('routing');
-    var moment = require('moment');
-    var BaseModel = require('oroui/js/app/models/base/model');
+    const _ = require('underscore');
+    const routing = require('routing');
+    const moment = require('moment');
+    const BaseModel = require('oroui/js/app/models/base/model');
 
     /**
      * @export  orocalendar/js/calendar/event/model
      * @class   orocalendar.calendar.event.Model
      * @extends BaseModel
      */
-    CalendarEventModel = BaseModel.extend({
+    const CalendarEventModel = BaseModel.extend({
         route: 'oro_api_get_calendarevents',
         urlRoot: null,
         originalId: null, // original id received from a server
@@ -48,8 +47,8 @@ define(function(require) {
         /**
          * @inheritDoc
          */
-        constructor: function CalendarEventModel() {
-            CalendarEventModel.__super__.constructor.apply(this, arguments);
+        constructor: function CalendarEventModel(attrs, options) {
+            CalendarEventModel.__super__.constructor.call(this, attrs, options);
         },
 
         /**
@@ -62,19 +61,17 @@ define(function(require) {
         },
 
         url: function() {
-            var url;
-            var id = this.get(this.idAttribute);
+            const id = this.get(this.idAttribute);
 
             this.set(this.idAttribute, this.originalId, {silent: true});
-            url = CalendarEventModel.__super__.url.call(this, arguments);
+            const url = CalendarEventModel.__super__.url.call(this);
             this.set(this.idAttribute, id, {silent: true});
 
             return url;
         },
 
         save: function(key, val, options) {
-            var attrs;
-            var modelData;
+            let attrs;
 
             // Handle both `"key", value` and `{key: value}` -style arguments.
             if (key === null || key === undefined || typeof key === 'object') {
@@ -85,7 +82,7 @@ define(function(require) {
                 attrs[key] = val;
             }
 
-            var auxiliaryAttrs = [
+            const auxiliaryAttrs = [
                 'id',
                 'editable',
                 'editableInvitationStatus',
@@ -104,7 +101,7 @@ define(function(require) {
                 auxiliaryAttrs.push('recurrence');
             }
 
-            modelData = _.extend(
+            const modelData = _.extend(
                 {id: this.originalId},
                 _.omit(this.toJSON(), auxiliaryAttrs),
                 attrs || {}
@@ -120,9 +117,9 @@ define(function(require) {
         },
 
         _updateComputableAttributes: function() {
-            var calendarAlias = this.get('calendarAlias');
-            var calendarId = this.get('calendar');
-            var calendarUid = calendarAlias && calendarId ? calendarAlias + '_' + calendarId : null;
+            const calendarAlias = this.get('calendarAlias');
+            const calendarId = this.get('calendar');
+            const calendarUid = calendarAlias && calendarId ? calendarAlias + '_' + calendarId : null;
 
             this.set('calendarUid', calendarUid);
 
@@ -132,13 +129,13 @@ define(function(require) {
             }
 
             if (this.get('recurrence') && !this.isNew()) {
-                var start = new Date(this.get('start'));
+                const start = new Date(this.get('start'));
                 this.set('id', this.id + '_' + start.getTime(), {silent: true});
             }
         },
 
         validate: function(attrs) {
-            var errors = [];
+            const errors = [];
 
             if (moment(attrs.end).diff(attrs.start) < 0) {
                 errors.push('oro.calendar.error_message.event_model.end_date_earlier_than_start');
@@ -148,7 +145,7 @@ define(function(require) {
         },
 
         getInvitationStatus: function() {
-            var invitationStatus = this.get('invitationStatus');
+            const invitationStatus = this.get('invitationStatus');
 
             return invitationStatus === '' ? null : invitationStatus;
         }

@@ -10,14 +10,12 @@ define([
 ], function($, _, Backbone, __, messenger, ConnectionCollection, ConnectionModel, tools) {
     'use strict';
 
-    var CalendarConnectionView;
-
     /**
      * @export  orocalendar/js/calendar/connection/view
      * @class   orocalendar.calendar.connection.View
      * @extends Backbone.View
      */
-    CalendarConnectionView = Backbone.View.extend({
+    const CalendarConnectionView = Backbone.View.extend({
         /** @property {Object} */
         attrs: {
             calendarUid: 'data-calendar-uid',
@@ -51,8 +49,8 @@ define([
         /**
          * @inheritDoc
          */
-        constructor: function CalendarConnectionView() {
-            CalendarConnectionView.__super__.constructor.apply(this, arguments);
+        constructor: function CalendarConnectionView(options) {
+            CalendarConnectionView.__super__.constructor.call(this, options);
         },
 
         /**
@@ -75,9 +73,9 @@ define([
             this.listenTo(this.collection, 'destroy', this.onModelDeleted);
 
             // subscribe to connect new calendar event
-            var container = this.$el.closest(this.selectors.container);
+            const container = this.$el.closest(this.selectors.container);
             container.find(this.selectors.newCalendarSelector).on('change', _.bind(function(e) {
-                var itemData = $(e.target).inputWidget('data');
+                const itemData = $(e.target).inputWidget('data');
                 this.addModel(e.val, itemData.fullName, itemData.userId);
                 // clear autocomplete
                 $(e.target).inputWidget('val', '');
@@ -120,8 +118,8 @@ define([
         },
 
         setItemVisibility: function($item, backgroundColor) {
-            var $visibilityButton = $item.find(this.selectors.visibilityButton);
-            var colors = this.options.colorManager.getCalendarColors($item.attr(this.attrs.calendarUid));
+            const $visibilityButton = $item.find(this.selectors.visibilityButton);
+            const colors = this.options.colorManager.getCalendarColors($item.attr(this.attrs.calendarUid));
 
             $item
                 .attr(this.attrs.visible, backgroundColor.length ? 'true' : 'false')
@@ -150,19 +148,18 @@ define([
         },
 
         onModelAdded: function(model) {
-            var $el;
-            var viewModel = model.toJSON();
+            const viewModel = model.toJSON();
             // init text/background colors
             this.options.colorManager.applyColors(viewModel, _.bind(function() {
-                var $last = this.$el.find(this.selectors.lastItem);
-                var calendarAlias = $last.attr(this.attrs.calendarAlias);
+                const $last = this.$el.find(this.selectors.lastItem);
+                const calendarAlias = $last.attr(this.attrs.calendarAlias);
                 return ['user', 'system', 'public'].indexOf(calendarAlias) !== -1
                     ? $last.attr(this.attrs.backgroundColor) : null;
             }, this));
             this.options.colorManager.setCalendarColors(viewModel.calendarUid, viewModel.backgroundColor);
             model.set('backgroundColor', viewModel.backgroundColor);
 
-            $el = $(this.template(viewModel));
+            const $el = $(this.template(viewModel));
             // set 'data-' attributes
             _.each(this.attrs, function(value, key) {
                 $el.attr(value, viewModel[key]);
@@ -210,14 +207,14 @@ define([
         },
 
         showContextMenu: function($connection, model) {
-            var $dropdownToggle = $connection.find('[data-toggle=dropdown]');
-            var $container = $connection.find('[data-role="connection-menu-content"]');
-            var $contextMenu = $(this.contextMenuTemplate(model.toJSON()));
-            var modules = _.uniq($contextMenu.find('li[data-module]').map(function() {
+            const $dropdownToggle = $connection.find('[data-toggle=dropdown]');
+            const $container = $connection.find('[data-role="connection-menu-content"]');
+            let $contextMenu = $(this.contextMenuTemplate(model.toJSON()));
+            const modules = _.uniq($contextMenu.find('li[data-module]').map(function() {
                 return $(this).data('module');
             }).get());
 
-            var showLoadingTimeout;
+            let showLoadingTimeout;
 
             if (modules.length > 0) {
                 // show loading message, if loading takes more than 100ms
@@ -227,7 +224,7 @@ define([
 
                 // If dropdown will be closed before module are loaded just remove prepared context menu
                 // to do nothing since used wont see result of menu rendering
-                var onDropdownHidden = function() {
+                const onDropdownHidden = function() {
                     $contextMenu = null;
                 };
 
@@ -244,7 +241,7 @@ define([
 
                     _.each(modules, _.bind(function(ModuleConstructor, moduleName) {
                         $contextMenu.find('li[data-module="' + moduleName + '"]').each(_.bind(function(index, el) {
-                            var action = new ModuleConstructor({
+                            const action = new ModuleConstructor({
                                 el: el,
                                 model: model,
                                 collection: this.options.collection,
@@ -268,11 +265,11 @@ define([
         },
 
         addModel: function(calendarId, calendarName, userId) {
-            var savingMsg;
-            var model;
-            var calendarAlias = 'user';
-            var calendarUid = calendarAlias + '_' + calendarId;
-            var el = this.$el.find(this.selectors.findItemByCalendar(calendarUid));
+            let savingMsg;
+            let model;
+            const calendarAlias = 'user';
+            const calendarUid = calendarAlias + '_' + calendarId;
+            const el = this.$el.find(this.selectors.findItemByCalendar(calendarUid));
             if (el.length > 0) {
                 messenger.notificationFlashMessage('warning',
                     __('oro.calendar.flash_message.calendar_already_exists'), {namespace: 'calendar-ns'});
@@ -323,9 +320,9 @@ define([
         },
 
         _showItem: function(model, visible) {
-            var savingMsg = messenger.notificationMessage('warning',
+            const savingMsg = messenger.notificationMessage('warning',
                 __('oro.calendar.flash_message.calendar_updating'));
-            var $connection = this.findItem(model);
+            const $connection = this.findItem(model);
             this._removeVisibilityButtonEventListener($connection, model);
             this.setItemVisibility($connection, visible ? model.get('backgroundColor') : '');
             try {

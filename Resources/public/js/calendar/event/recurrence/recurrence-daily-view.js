@@ -1,10 +1,9 @@
 define(function(require) {
     'use strict';
 
-    var RecurrenceDailyView;
-    var SwitchableRecurrenceSubview = require('orocalendar/js/calendar/event/recurrence/switchable-recurrence-subview');
+    const SwitchableRecurrenceSubview = require('orocalendar/js/calendar/event/recurrence/switchable-recurrence-subview');
 
-    RecurrenceDailyView = SwitchableRecurrenceSubview.extend(/** @exports RecurrenceDailyView.prototype */{
+    const RecurrenceDailyView = SwitchableRecurrenceSubview.extend(/** @exports RecurrenceDailyView.prototype */{
         template: require('tpl-loader!orocalendar/templates/calendar/event/recurrence/recurrence-daily.html'),
 
         relatedFields: ['recurrenceType', 'interval', 'dayOfWeek'],
@@ -12,15 +11,15 @@ define(function(require) {
         /**
          * @inheritDoc
          */
-        constructor: function RecurrenceDailyView() {
-            RecurrenceDailyView.__super__.constructor.apply(this, arguments);
+        constructor: function RecurrenceDailyView(options) {
+            RecurrenceDailyView.__super__.constructor.call(this, options);
         },
 
         /**
          * @inheritDoc
          */
         getTemplateData: function() {
-            var data = RecurrenceDailyView.__super__.getTemplateData.apply(this, arguments);
+            const data = RecurrenceDailyView.__super__.getTemplateData.call(this);
             data.weekDays = this.model.RECURRENCE_DAYOFWEEK.slice(1, 6); // days except weekend
             return data;
         }

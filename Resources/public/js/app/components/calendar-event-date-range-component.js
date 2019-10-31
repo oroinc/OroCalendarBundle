@@ -1,19 +1,18 @@
 define(function(require) {
     'use strict';
 
-    var CalendarEventDateRangeComponent;
-    var $ = require('jquery');
-    var _ = require('underscore');
-    var BaseComponent = require('oroui/js/app/components/base/component');
-    var DatepairView = require('oroform/js/app/views/datepair-view');
-    var AllDayView = require('orocalendar/js/app/views/all-day-view');
+    const $ = require('jquery');
+    const _ = require('underscore');
+    const BaseComponent = require('oroui/js/app/components/base/component');
+    const DatepairView = require('oroform/js/app/views/datepair-view');
+    const AllDayView = require('orocalendar/js/app/views/all-day-view');
 
-    CalendarEventDateRangeComponent = BaseComponent.extend({
+    const CalendarEventDateRangeComponent = BaseComponent.extend({
         /**
          * @inheritDoc
          */
-        constructor: function CalendarEventDateRangeComponent() {
-            CalendarEventDateRangeComponent.__super__.constructor.apply(this, arguments);
+        constructor: function CalendarEventDateRangeComponent(options) {
+            CalendarEventDateRangeComponent.__super__.constructor.call(this, options);
         },
 
         /**
@@ -22,12 +21,12 @@ define(function(require) {
          * @param {Object} options
          */
         initialize: function(options) {
-            var subPromises = _.values(options._subPromises);
-            var opts = _.omit(options, this.AUXILIARY_OPTIONS);
+            const subPromises = _.values(options._subPromises);
+            const opts = _.omit(options, this.AUXILIARY_OPTIONS);
             opts.el = options._sourceElement;
 
             this._deferredInit();
-            $.when.apply($, _.compact(subPromises)).then(_.bind(function() {
+            $.when(..._.compact(subPromises)).then(_.bind(function() {
                 this.handleLayoutInit(opts);
                 this._resolveDeferredInit();
             }, this));

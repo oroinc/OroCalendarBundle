@@ -1,12 +1,11 @@
 define(function(require) {
     'use strict';
 
-    var AbstractRecurrenceSubview;
-    var _ = require('underscore');
-    var $ = require('jquery');
-    var BaseView = require('oroui/js/app/views/base/view');
+    const _ = require('underscore');
+    const $ = require('jquery');
+    const BaseView = require('oroui/js/app/views/base/view');
 
-    AbstractRecurrenceSubview = BaseView.extend(/** @exports AbstractRecurrenceSubview.prototype */{
+    const AbstractRecurrenceSubview = BaseView.extend(/** @exports AbstractRecurrenceSubview.prototype */{
         /** @type {boolean} */
         _isEnabled: true,
 
@@ -17,8 +16,8 @@ define(function(require) {
         /**
          * @inheritDoc
          */
-        constructor: function AbstractRecurrenceSubview() {
-            AbstractRecurrenceSubview.__super__.constructor.apply(this, arguments);
+        constructor: function AbstractRecurrenceSubview(options) {
+            AbstractRecurrenceSubview.__super__.constructor.call(this, options);
         },
 
         /**
@@ -35,7 +34,7 @@ define(function(require) {
         },
 
         getTemplateData: function() {
-            var data = AbstractRecurrenceSubview.__super__.getTemplateData.call(this);
+            const data = AbstractRecurrenceSubview.__super__.getTemplateData.call(this);
             if (!this._isEnabled) {
                 _.extend(data, this.getDefaultValues());
             }
@@ -58,7 +57,7 @@ define(function(require) {
         },
 
         getValue: function() {
-            var value = this.getDefaultValues();
+            const value = this.getDefaultValues();
             this.dataInputs().each(function() {
                 value[$(this).data('related-field')] = $(this).val() || null;
             });

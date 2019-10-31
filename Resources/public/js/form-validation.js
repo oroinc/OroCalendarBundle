@@ -22,7 +22,7 @@ define([
                 container = $(container);
             }
             this.removeErrors(container);
-            var errors = [];
+            const errors = [];
             if (tools.debug) {
                 error.showErrorInConsole(err);
             }
@@ -43,7 +43,7 @@ define([
                         errors.push(value);
                     });
                 } else if (_.isObject(err.errors)) {
-                    var validator = (container.is('form') ? container : container.find('form')).data('validator');
+                    const validator = (container.is('form') ? container : container.find('form')).data('validator');
                     if (validator) {
                         validator.showBackendErrors(err.errors);
                     }
@@ -59,7 +59,7 @@ define([
                 }
                 _.each(err.children,
                     _.bind(function(value, key) {
-                        var field = container.find('#' + formFieldPrefix + key);
+                        const field = container.find('#' + formFieldPrefix + key);
                         this.removeFieldErrors(field);
 
                         if (!_.isUndefined(value.errors) && _.isArray(value.errors)) {
@@ -77,8 +77,8 @@ define([
          *                                  It may be form element itself or any element contains the form
          */
         getFormFieldPrefix: function(container) {
-            var formFieldPrefix = '';
-            var form = null;
+            let formFieldPrefix = '';
+            let form = null;
             if (container.prop('tagName').toLowerCase() === 'form') {
                 form = container;
             } else {
@@ -101,8 +101,8 @@ define([
          * @param field {jQuery|string} The jQuery object or jQuery selector for a form field element.
          */
         removeFieldErrors: function(field) {
-            var $field = $(field);
-            var $container = $field.closest('.controls');
+            const $field = $(field);
+            const $container = $field.closest('.controls');
 
             $container
                 .removeClass('validation-error')
@@ -117,14 +117,14 @@ define([
          * @param errorMessages {string[]|string} The localized error string(s).
          */
         addFieldErrors: function(field, errorMessages) {
-            var $field = $(field);
-            var $container = $field.closest('div.controls');
+            let $field = $(field);
+            const $container = $field.closest('div.controls');
 
             if (!$field.is(':visible')) {
                 $field = $container.children(':input');
             }
 
-            var $errorContainer = $field.siblings('.validation-failed');
+            let $errorContainer = $field.siblings('.validation-failed');
 
             if (!$errorContainer.length) {
                 $errorContainer = $('<span class="validation-failed"></span>');
@@ -146,10 +146,10 @@ define([
             if (_.isString(container)) {
                 container = $(container);
             }
-            var errorContainer = container.find('.alert-error');
+            const errorContainer = container.find('.alert-error');
             if (errorContainer.length > 0) {
                 errorContainer.hide();
-                var errorList = errorContainer.find('ul');
+                const errorList = errorContainer.find('ul');
                 errorList.empty();
             }
         },
@@ -165,9 +165,9 @@ define([
             if (_.isString(container)) {
                 container = $(container);
             }
-            var errorContainer = container.find('.alert-error');
+            const errorContainer = container.find('.alert-error');
             if (errorContainer.length > 0) {
-                var errorList = errorContainer.find('ul');
+                let errorList = errorContainer.find('ul');
                 if (_.size(errorMessages) > 0) {
                     if (errorList.length === 0) {
                         errorList = $('<ul>');

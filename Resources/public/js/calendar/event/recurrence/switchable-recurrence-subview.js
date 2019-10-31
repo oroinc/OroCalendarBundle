@@ -1,12 +1,11 @@
 define(function(require) {
     'use strict';
 
-    var SwitchableRecurrenceSubview;
-    var _ = require('underscore');
-    var $ = require('jquery');
-    var AbstractRecurrenceSubview = require('orocalendar/js/calendar/event/recurrence/abstract-recurrence-subview');
+    const _ = require('underscore');
+    const $ = require('jquery');
+    const AbstractRecurrenceSubview = require('orocalendar/js/calendar/event/recurrence/abstract-recurrence-subview');
 
-    SwitchableRecurrenceSubview = AbstractRecurrenceSubview.extend({
+    const SwitchableRecurrenceSubview = AbstractRecurrenceSubview.extend({
         RADIOBUTTON_SELECTOR: '[data-role="control-section-switcher"] input[type="radio"]',
 
         SECTION_SELECTOR: '[data-role="control-section-switcher"]',
@@ -19,14 +18,14 @@ define(function(require) {
         /**
          * @inheritDoc
          */
-        constructor: function SwitchableRecurrenceSubview() {
-            SwitchableRecurrenceSubview.__super__.constructor.apply(this, arguments);
+        constructor: function SwitchableRecurrenceSubView(options) {
+            SwitchableRecurrenceSubview.__super__.constructor.call(this, options);
         },
 
         onSectionSwitchMousedown: function(e) {
             // switches radio buttons on mousedown to be ahead of blur event of other input
             // to disable them first before validation message is shown
-            var $radio = this.$(e.target).closest(this.SECTION_SELECTOR).find('input[type="radio"]');
+            const $radio = this.$(e.target).closest(this.SECTION_SELECTOR).find('input[type="radio"]');
             this.$('input[type=radio]').not($radio).prop('checked', false);
             $radio.prop('checked', true).trigger('change');
         },
@@ -39,8 +38,8 @@ define(function(require) {
 
         updateControlSectionsState: function() {
             this.$('[data-name="control-sections"]').children().each(_.bind(function(index, section) {
-                var $section = $(section);
-                var isDisabled = !$section.find(this.RADIOBUTTON_SELECTOR).prop('checked');
+                const $section = $(section);
+                const isDisabled = !$section.find(this.RADIOBUTTON_SELECTOR).prop('checked');
                 this.setInputsDisabled(this.findDataInputs($section), isDisabled);
             }, this));
         },
@@ -56,7 +55,7 @@ define(function(require) {
         },
 
         dataInputs: function() {
-            var $activeSection = this.$(this.RADIOBUTTON_SELECTOR + ':checked')
+            const $activeSection = this.$(this.RADIOBUTTON_SELECTOR + ':checked')
                 .closest('[data-name="control-sections"] > *');
             return this.findDataInputs($activeSection);
         }

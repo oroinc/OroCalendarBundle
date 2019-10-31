@@ -1,13 +1,13 @@
 define(function(require) {
     'use strict';
 
-    var _ = require('underscore');
-    var __ = require('orotranslation/js/translator');
-    var BaseView = require('oroui/js/app/views/base/view');
-    var Modal = require('oroui/js/modal');
-    var modalTemplate = require('tpl-loader!oroui/templates/three-buttons-modal.html');
+    const _ = require('underscore');
+    const __ = require('orotranslation/js/translator');
+    const BaseView = require('oroui/js/app/views/base/view');
+    const Modal = require('oroui/js/modal');
+    const modalTemplate = require('tpl-loader!oroui/templates/three-buttons-modal.html');
 
-    var AttendeeNotifierView = BaseView.extend({
+    const AttendeeNotifierView = BaseView.extend({
         /** @property {Array} */
         exclusions: [
             'input[name="input_action"]',
@@ -26,8 +26,8 @@ define(function(require) {
         /**
          * @inheritDoc
          */
-        constructor: function AttendeeNotifierView() {
-            AttendeeNotifierView.__super__.constructor.apply(this, arguments);
+        constructor: function AttendeeNotifierView(options) {
+            AttendeeNotifierView.__super__.constructor.call(this, options);
         },
 
         /**
@@ -78,7 +78,7 @@ define(function(require) {
         },
 
         getAttendeeValues: function() {
-            var value = this.$form.find('input[name*="[attendees]"]').val();
+            const value = this.$form.find('input[name*="[attendees]"]').val();
             return value.length > 0 ? value.split(this.options.separator) : [];
         },
 

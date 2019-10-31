@@ -1,16 +1,16 @@
 define(function(require) {
     'use strict';
 
-    var _ = require('underscore');
-    var BaseComponent = require('oroui/js/app/components/base/component');
-    var CalendarView = require('orocalendar/js/calendar-view');
-    var EventCollection = require('orocalendar/js/calendar/event/collection');
-    var ConnectionCollection = require('orocalendar/js/calendar/connection/collection');
+    const _ = require('underscore');
+    const BaseComponent = require('oroui/js/app/components/base/component');
+    const CalendarView = require('orocalendar/js/calendar-view');
+    const EventCollection = require('orocalendar/js/calendar/event/collection');
+    const ConnectionCollection = require('orocalendar/js/calendar/connection/collection');
 
     /**
      * Creates calendar
      */
-    var CalendarComponent = BaseComponent.extend({
+    const CalendarComponent = BaseComponent.extend({
 
         /**
          * @type {orocalendar.js.calendar}
@@ -30,8 +30,8 @@ define(function(require) {
         /**
          * @inheritDoc
          */
-        constructor: function CalendarComponent() {
-            CalendarComponent.__super__.constructor.apply(this, arguments);
+        constructor: function CalendarComponent(options) {
+            CalendarComponent.__super__.constructor.call(this, options);
         },
 
         /**
@@ -51,7 +51,7 @@ define(function(require) {
             this.renderCalendar();
         },
         prepareOptions: function() {
-            var options = this.options;
+            const options = this.options;
             options.collection = this.eventCollection;
             options.scrollToCurrentTime = true;
             options.connectionsOptions.collection = this.connectionCollection;

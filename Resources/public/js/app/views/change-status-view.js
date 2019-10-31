@@ -7,7 +7,7 @@ define([
 ], function($, _, __, mediator, BaseView) {
     'use strict';
 
-    var ChangeStatusView = BaseView.extend({
+    const ChangeStatusView = BaseView.extend({
 
         triggerEventName: '',
 
@@ -18,8 +18,8 @@ define([
         /**
          * @inheritDoc
          */
-        constructor: function ChangeStatusView() {
-            ChangeStatusView.__super__.constructor.apply(this, arguments);
+        constructor: function ChangeStatusView(options) {
+            ChangeStatusView.__super__.constructor.call(this, options);
         },
 
         /**
@@ -32,7 +32,7 @@ define([
 
         sendUpdate: function(e) {
             e.preventDefault();
-            var triggerEventName = this.triggerEventName;
+            const triggerEventName = this.triggerEventName;
             $.ajax({
                 url: this.$el.attr('href'),
                 type: 'POST',

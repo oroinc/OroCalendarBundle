@@ -1,13 +1,12 @@
 define(function(require) {
     'use strict';
 
-    var EventRecurrenceModel;
-    var _ = require('underscore');
-    var localeSettings = require('orolocale/js/locale-settings');
-    var DAYOFWEEK = localeSettings.getCalendarDayOfWeekNames('mnemonic', true);
-    var BaseModel = require('oroui/js/app/models/base/model');
+    const _ = require('underscore');
+    const localeSettings = require('orolocale/js/locale-settings');
+    const DAYOFWEEK = localeSettings.getCalendarDayOfWeekNames('mnemonic', true);
+    const BaseModel = require('oroui/js/app/models/base/model');
 
-    EventRecurrenceModel = BaseModel.extend({
+    const EventRecurrenceModel = BaseModel.extend({
         RECURRENCE_TYPES: ['daily', 'weekly', 'monthly', 'monthnth', 'yearly', 'yearnth'],
         RECURRENCE_INSTANCE: {1: 'first', 2: 'second', 3: 'third', 4: 'fourth', 5: 'last'},
         RECURRENCE_DAYOFWEEK: DAYOFWEEK,
@@ -31,8 +30,8 @@ define(function(require) {
         /**
          * @inheritDoc
          */
-        constructor: function EventRecurrenceModel() {
-            EventRecurrenceModel.__super__.constructor.apply(this, arguments);
+        constructor: function EventRecurrenceModel(...args) {
+            EventRecurrenceModel.__super__.constructor.apply(this, args);
         },
 
         isEmptyRecurrence: function() {
@@ -46,7 +45,7 @@ define(function(require) {
          */
         isEqual: function(values) {
             values = _.mapObject(values, this._fieldCast);
-            var attributes = _.mapObject(this.attributes, this._fieldCast);
+            const attributes = _.mapObject(this.attributes, this._fieldCast);
             return _.isEqual(values, attributes);
         },
 
