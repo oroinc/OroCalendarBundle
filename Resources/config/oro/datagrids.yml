@@ -306,7 +306,7 @@ datagrids:
                 enabled:
                     data_name: u.enabled
             default:
-                username: '%oro_datagrid.extension.orm_sorter.class%::DIRECTION_ASC'
+                username: ASC
         filters:
             columns:
                 username:
