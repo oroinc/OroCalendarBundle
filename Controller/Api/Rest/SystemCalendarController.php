@@ -2,6 +2,7 @@
 
 namespace Oro\Bundle\CalendarBundle\Controller\Api\Rest;
 
+use FOS\RestBundle\Controller\Annotations\Delete;
 use FOS\RestBundle\Controller\Annotations\NamePrefix;
 use FOS\RestBundle\Controller\Annotations\RouteResource;
 use FOS\RestBundle\Routing\ClassResourceInterface;
@@ -22,6 +23,8 @@ class SystemCalendarController extends RestController implements ClassResourceIn
      *
      * @param int $id System calendar id
      *
+     * @Delete(requirements={"id"="\d+"})
+     *
      * @ApiDoc(
      *      description="Remove system calendar",
      *      resource=true
@@ -29,7 +32,7 @@ class SystemCalendarController extends RestController implements ClassResourceIn
      *
      * @return Response
      */
-    public function deleteAction($id)
+    public function deleteAction(int $id)
     {
         return $this->handleDeleteRequest($id);
     }

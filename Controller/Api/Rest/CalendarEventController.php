@@ -2,9 +2,11 @@
 
 namespace Oro\Bundle\CalendarBundle\Controller\Api\Rest;
 
+use FOS\RestBundle\Controller\Annotations\Delete;
 use FOS\RestBundle\Controller\Annotations\Get;
 use FOS\RestBundle\Controller\Annotations\NamePrefix;
 use FOS\RestBundle\Controller\Annotations\Post;
+use FOS\RestBundle\Controller\Annotations\Put;
 use FOS\RestBundle\Controller\Annotations\QueryParam;
 use FOS\RestBundle\Controller\Annotations\RouteResource;
 use FOS\RestBundle\Routing\ClassResourceInterface;
@@ -178,6 +180,8 @@ class CalendarEventController extends RestController implements ClassResourceInt
      *
      * @param int $id Calendar event id
      *
+     * @Get(requirements={"id"="\d+"})
+     *
      * @ApiDoc(
      *      description="Get calendar event",
      *      resource=true
@@ -186,7 +190,7 @@ class CalendarEventController extends RestController implements ClassResourceInt
      *
      * @return Response
      */
-    public function getAction($id)
+    public function getAction(int $id)
     {
         /** @var CalendarEvent|null $entity */
         $entity = $this->getManager()->find($id);
@@ -245,6 +249,8 @@ class CalendarEventController extends RestController implements ClassResourceInt
      *
      * @param int $id Calendar event id
      *
+     * @Put(requirements={"id"="\d+"})
+     *
      * @ApiDoc(
      *      description="Update calendar event",
      *      resource=true
@@ -253,7 +259,7 @@ class CalendarEventController extends RestController implements ClassResourceInt
      *
      * @return Response
      */
-    public function putAction($id)
+    public function putAction(int $id)
     {
         return $this->handleUpdateRequest($id);
     }
@@ -280,6 +286,8 @@ class CalendarEventController extends RestController implements ClassResourceInt
      *
      * @param int $id Calendar event id
      *
+     * @Delete(requirements={"id"="\d+"})
+     *
      * @ApiDoc(
      *      description="Remove calendar event",
      *      resource=true
@@ -294,7 +302,7 @@ class CalendarEventController extends RestController implements ClassResourceInt
      *
      * @return Response
      */
-    public function deleteAction($id)
+    public function deleteAction(int $id)
     {
         $options = [];
         $request = $this->get('request_stack')->getCurrentRequest();
