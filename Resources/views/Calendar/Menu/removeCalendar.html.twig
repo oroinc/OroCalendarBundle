@@ -4,7 +4,7 @@
             <i class="{{- item.getExtra('icon') -}}"></i>
         {% endif -%}
         {% if options.allow_safe_labels and item.getExtra('safe_label', false) %}
-            {{- item.label|trans|raw -}}
+            {{- item.label|trans|oro_html_sanitize|raw -}}
         {% else %}
             {{- item.label|trans(item.getExtra('translateParams', {}), item.getExtra('translateDomain', 'messages')) -}}
         {% endif %}
