@@ -1,14 +1,14 @@
-define([
-    'jquery',
-    'underscore',
-    'backbone',
-    'orotranslation/js/translator',
-    'oroui/js/messenger',
-    'orocalendar/js/calendar/connection/collection',
-    'orocalendar/js/calendar/connection/model',
-    'oroui/js/tools'
-], function($, _, Backbone, __, messenger, ConnectionCollection, ConnectionModel, tools) {
+define(function(require) {
     'use strict';
+
+    const $ = require('jquery');
+    const _ = require('underscore');
+    const Backbone = require('backbone');
+    const __ = require('orotranslation/js/translator');
+    const messenger = require('oroui/js/messenger');
+    const loadModules = require('oroui/js/app/services/load-modules');
+    const ConnectionCollection = require('orocalendar/js/calendar/connection/collection');
+    const ConnectionModel = require('orocalendar/js/calendar/connection/model');
 
     /**
      * @export  orocalendar/js/calendar/connection/view
@@ -231,7 +231,7 @@ define([
                 $connection.one('hide.bs.dropdown', onDropdownHidden);
 
                 // load context menu
-                tools.loadModules(_.object(modules, modules), _.bind(function(modules) {
+                loadModules(_.object(modules, modules), function(modules) {
                     clearTimeout(showLoadingTimeout);
                     $connection.off('hide.bs.dropdown', onDropdownHidden);
 
@@ -260,7 +260,7 @@ define([
 
                     // Dropdown changed its size after content was inserted so it needs to correct its position
                     $dropdownToggle.dropdown('update');
-                }, this));
+                }, this);
             }
         },
 
