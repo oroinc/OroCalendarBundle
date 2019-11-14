@@ -2,9 +2,11 @@
 
 namespace Oro\Bundle\CalendarBundle\Controller\Api\Rest;
 
+use FOS\RestBundle\Controller\Annotations\Delete;
 use FOS\RestBundle\Controller\Annotations\Get;
 use FOS\RestBundle\Controller\Annotations\NamePrefix;
 use FOS\RestBundle\Controller\Annotations\Post;
+use FOS\RestBundle\Controller\Annotations\Put;
 use FOS\RestBundle\Controller\Annotations\QueryParam;
 use FOS\RestBundle\Controller\Annotations\RouteResource;
 use FOS\RestBundle\Routing\ClassResourceInterface;
@@ -30,6 +32,8 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 
 /**
+ * API CRUD controller for CalendarEvent entity.
+ *
  * @RouteResource("calendarevent")
  * @NamePrefix("oro_api_")
  */
@@ -177,6 +181,8 @@ class CalendarEventController extends RestController implements ClassResourceInt
      *
      * @param int $id Calendar event id
      *
+     * @Get(requirements={"id"="\d+"})
+     *
      * @ApiDoc(
      *      description="Get calendar event",
      *      resource=true
@@ -244,6 +250,8 @@ class CalendarEventController extends RestController implements ClassResourceInt
      *
      * @param int $id Calendar event id
      *
+     * @Put(requirements={"id"="\d+"})
+     *
      * @ApiDoc(
      *      description="Update calendar event",
      *      resource=true
@@ -278,6 +286,8 @@ class CalendarEventController extends RestController implements ClassResourceInt
      * Remove calendar event.
      *
      * @param int $id Calendar event id
+     *
+     * @Delete(requirements={"id"="\d+"})
      *
      * @ApiDoc(
      *      description="Remove calendar event",
