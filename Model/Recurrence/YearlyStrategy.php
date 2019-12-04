@@ -55,7 +55,6 @@ class YearlyStrategy extends MonthlyStrategy
         return $this->getFullRecurrencePattern(
             $recurrence,
             'oro.calendar.recurrence.patterns.yearly',
-            $interval,
             ['%count%' => $interval, '%day%' => $formattedDay]
         );
     }

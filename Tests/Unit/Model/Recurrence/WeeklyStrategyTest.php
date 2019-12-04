@@ -22,20 +22,11 @@ class WeeklyStrategyTest extends AbstractTestStrategy
         /** @var \PHPUnit\Framework\MockObject\MockObject|\Symfony\Component\Translation\Translator */
         $translator = $this->createMock('Symfony\Component\Translation\Translator');
         $translator->expects($this->any())
-            ->method('transChoice')
-            ->will(
-                $this->returnCallback(
-                    function ($id, $count, array $parameters = []) {
-                        return $id . implode($parameters);
-                    }
-                )
-            );
-        $translator->expects($this->any())
             ->method('trans')
             ->will(
                 $this->returnCallback(
-                    function ($id) {
-                        return $id;
+                    function ($id, array $parameters = []) {
+                        return $id . implode($parameters);
                     }
                 )
             );
@@ -91,7 +82,7 @@ class WeeklyStrategyTest extends AbstractTestStrategy
         $calendarEvent->setStart(new \DateTime($recurrenceData['startTime']));
         $recurrence->setCalendarEvent($calendarEvent);
 
-        $this->assertEquals($expected, $this->strategy->getTextValue($recurrence));
+        $this->assertStringStartsWith($expected, $this->strategy->getTextValue($recurrence));
     }
 
     /**
@@ -452,7 +443,7 @@ class WeeklyStrategyTest extends AbstractTestStrategy
                     'occurrences' => null,
                     'timeZone' => 'UTC'
                 ],
-                'expected' => 'oro.calendar.recurrence.patterns.weekdayoro.calendar.recurrence.patterns.end_date'
+                'expected' => 'oro.calendar.recurrence.patterns.weekday0oro.calendar.recurrence.patterns.end_date'
             ],
             'with_timezone' => [
                 'params' => [
