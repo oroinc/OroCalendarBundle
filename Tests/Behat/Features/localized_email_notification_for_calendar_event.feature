@@ -39,7 +39,6 @@ Feature: Localized email notification for calendar event
       | Content Fallback | false                                     |
       | Subject          | German Calendar Invitation Invite Subject |
       | Content          | German Calendar Invitation Invite Body    |
-    And I wait for action
     And I submit form
     Then I should see "Template saved" flash message
 
