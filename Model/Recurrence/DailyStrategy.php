@@ -70,7 +70,6 @@ class DailyStrategy extends AbstractStrategy
         return $this->getFullRecurrencePattern(
             $recurrence,
             'oro.calendar.recurrence.patterns.daily',
-            $interval,
             ['%count%' => $interval]
         );
     }

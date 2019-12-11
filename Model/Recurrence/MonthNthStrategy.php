@@ -90,7 +90,6 @@ class MonthNthStrategy extends AbstractStrategy
         return $this->getFullRecurrencePattern(
             $recurrence,
             'oro.calendar.recurrence.patterns.monthnth',
-            $interval,
             ['%count%' => $interval, '%day%' => $day, '%instance%' => strtolower($instance)]
         );
     }

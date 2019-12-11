@@ -23,20 +23,11 @@ class DailyStrategyTest extends AbstractTestStrategy
         /** @var \PHPUnit\Framework\MockObject\MockObject|Translator */
         $translator = $this->createMock('Symfony\Component\Translation\Translator');
         $translator->expects($this->any())
-            ->method('transChoice')
-            ->will(
-                $this->returnCallback(
-                    function ($id, $count, array $parameters = []) {
-                        return $id . implode($parameters);
-                    }
-                )
-            );
-        $translator->expects($this->any())
             ->method('trans')
             ->will(
                 $this->returnCallback(
-                    function ($id) {
-                        return $id;
+                    function ($id, array $parameters = []) {
+                        return $id . implode($parameters);
                     }
                 )
             );
@@ -92,7 +83,7 @@ class DailyStrategyTest extends AbstractTestStrategy
         $calendarEvent->setStart($startDate);
         $recurrence->setCalendarEvent($calendarEvent);
 
-        $this->assertEquals($expected, $this->strategy->getTextValue($recurrence));
+        $this->assertStringStartsWith($expected, $this->strategy->getTextValue($recurrence));
     }
 
     /**

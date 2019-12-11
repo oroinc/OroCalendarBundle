@@ -9,8 +9,8 @@ class CalendarEventApiTypeExtension extends CalendarEventTypeExtension
     /**
      * {@inheritdoc}
      */
-    public function getExtendedType()
+    public static function getExtendedTypes(): iterable
     {
-        return CalendarEventApiType::class;
+        return [CalendarEventApiType::class];
     }
 }

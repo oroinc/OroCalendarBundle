@@ -65,7 +65,6 @@ class MonthlyStrategy extends AbstractStrategy
         return $this->getFullRecurrencePattern(
             $recurrence,
             'oro.calendar.recurrence.patterns.monthly',
-            $interval,
             ['%count%' => $interval, '%day%' => $recurrence->getDayOfMonth()]
         );
     }

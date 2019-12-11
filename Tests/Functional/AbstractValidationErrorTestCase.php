@@ -104,7 +104,7 @@ abstract class AbstractValidationErrorTestCase extends AbstractTestCase
                 ],
                 'errors' => [
                     'occurrences' => [
-                        'This value should be 1 or more.'
+                        'This value should be between 1 and 999.'
                     ]
                 ]
             ],
@@ -118,7 +118,7 @@ abstract class AbstractValidationErrorTestCase extends AbstractTestCase
                 ],
                 'errors' => [
                     'occurrences' => [
-                        'This value should be 999 or less.'
+                        'This value should be between 1 and 999.'
                     ]
                 ]
             ],
@@ -337,7 +337,7 @@ abstract class AbstractValidationErrorTestCase extends AbstractTestCase
                 ],
                 'errors' => [
                     'dayOfMonth' => [
-                        'This value should be 1 or more.'
+                        'This value should be between 1 and 31.'
                     ]
                 ]
             ],
@@ -352,7 +352,7 @@ abstract class AbstractValidationErrorTestCase extends AbstractTestCase
                 ],
                 'errors' => [
                     'dayOfMonth' => [
-                        'This value should be 31 or less.'
+                        'This value should be between 1 and 31.'
                     ]
                 ]
             ],
@@ -383,7 +383,7 @@ abstract class AbstractValidationErrorTestCase extends AbstractTestCase
                 ],
                 'errors' => [
                     'monthOfYear' => [
-                        'This value should be 1 or more.'
+                        'This value should be between 1 and 12.'
                     ]
                 ]
             ],
@@ -398,7 +398,7 @@ abstract class AbstractValidationErrorTestCase extends AbstractTestCase
                 ],
                 'errors' => [
                     'monthOfYear' => [
-                        'This value should be 12 or less.'
+                        'This value should be between 1 and 12.'
                     ]
                 ]
             ],

@@ -38,7 +38,6 @@ services:
 
     oro_calendar.calendar_event.manager.api:
         class: Oro\Bundle\SoapBundle\Entity\Manager\ApiEntityManager
-        # This service marked as public for compatibility with Symfony 4. All dependencies must be refactored after BAP-17037
         public: true
         parent: oro_soap.manager.entity_manager.abstract
         arguments:
@@ -47,7 +46,6 @@ services:
 
     oro_calendar.calendar_property.manager.api:
         class: Oro\Bundle\CalendarBundle\Manager\CalendarPropertyApiEntityManager
-        # This service marked as public for compatibility with Symfony 4. All dependencies must be refactored after BAP-17037
         public: true
         parent: oro_soap.manager.entity_manager.abstract
         arguments:
@@ -57,7 +55,6 @@ services:
 
     oro_calendar.system_calendar.manager.api:
         class: Oro\Bundle\SoapBundle\Entity\Manager\ApiEntityManager
-        # This service marked as public for compatibility with Symfony 4. All dependencies must be refactored after BAP-17037
         public: true
         parent: oro_soap.manager.entity_manager.abstract
         arguments:
@@ -174,7 +171,6 @@ services:
 
     oro_calendar.calendar_manager:
         class: Oro\Bundle\CalendarBundle\Manager\CalendarManager
-        # This service marked as public for compatibility with Symfony 4. All dependencies must be refactored after BAP-17037
         public: true
         arguments:
             - '@oro_calendar.calendar_property_provider'
@@ -252,7 +248,6 @@ services:
 
     oro_calendar.calendar_event_normalizer.user:
         class: Oro\Bundle\CalendarBundle\Provider\UserCalendarEventNormalizer
-        # This service marked as public for compatibility with Symfony 4. All dependencies must be refactored after BAP-17037
         public: true
         parent: oro_calendar.calendar_event_normalizer.abstract
         calls:
@@ -320,7 +315,6 @@ services:
 
     oro_calendar.system_calendar_config:
         class: Oro\Bundle\CalendarBundle\Provider\SystemCalendarConfig
-        # This service marked as public for compatibility with Symfony 4. All dependencies must be refactored after BAP-17037
         public: true
         arguments:
             - '%oro_calendar.enabled_system_calendar%'

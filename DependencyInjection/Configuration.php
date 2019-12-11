@@ -13,8 +13,8 @@ class Configuration implements ConfigurationInterface
      */
     public function getConfigTreeBuilder()
     {
-        $treeBuilder = new TreeBuilder();
-        $rootNode    = $treeBuilder->root('oro_calendar');
+        $treeBuilder = new TreeBuilder('oro_calendar');
+        $rootNode    = $treeBuilder->getRootNode();
 
         $rootNode
             ->children()

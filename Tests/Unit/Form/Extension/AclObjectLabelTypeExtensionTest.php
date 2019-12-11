@@ -41,8 +41,8 @@ class AclObjectLabelTypeExtensionTest extends \PHPUnit\Framework\TestCase
         ];
     }
 
-    public function testGetExtendedType()
+    public function testGetExtendedTypes()
     {
-        $this->assertEquals(ObjectLabelType::class, $this->formExtension->getExtendedType());
+        $this->assertEquals([ObjectLabelType::class], AclObjectLabelTypeExtension::getExtendedTypes());
     }
 }

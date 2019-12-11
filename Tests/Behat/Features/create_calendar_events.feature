@@ -160,8 +160,6 @@ Feature: Create calendar events
       | All-day event | No                                                             |
       | Recurrence    | Monthly the first weekday of every 1 month, end by <Date:next year> |
 
-  # TODO: unskip in BAP-14438
-  @skip
   Scenario: Create yearly April Day 1, 5 recurrence ending Event
     When I go to Activities/ Calendar Events
     And click "Create Calendar event"

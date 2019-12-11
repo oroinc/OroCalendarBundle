@@ -61,9 +61,8 @@ abstract class AbstractStrategy implements StrategyInterface
         $occurrences = $recurrence->getOccurrences();
         $result = '';
         if ($occurrences > 0) {
-            $result = $this->translator->transChoice(
+            $result = $this->translator->trans(
                 'oro.calendar.recurrence.patterns.occurrences',
-                $occurrences,
                 ['%count%' => $occurrences]
             );
         }
@@ -98,7 +97,6 @@ abstract class AbstractStrategy implements StrategyInterface
      *
      * @param Entity\Recurrence $recurrence
      * @param string $translationId
-     * @param integer $count
      * @param array $translationParameters
      *
      * @return string
@@ -108,16 +106,14 @@ abstract class AbstractStrategy implements StrategyInterface
     protected function getFullRecurrencePattern(
         Entity\Recurrence $recurrence,
         $translationId,
-        $count,
         $translationParameters
     ) {
         $translationParameters['%occurrences%'] = $this->getOccurrencesPattern($recurrence);
         $translationParameters['%end_date%'] = $this->getEndDatePattern($recurrence);
         $translationParameters['%timezone_info%'] = $this->getTimezoneInfo($recurrence);
 
-        $result = $this->translator->transChoice(
+        $result = $this->translator->trans(
             $translationId,
-            $count,
             $translationParameters
         );
 
