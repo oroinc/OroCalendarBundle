@@ -12,8 +12,7 @@
         }
     ],
     "require": {
-        "oro/platform": "4.0.*",
-        "bower-asset/fullcalendar": "3.4.0"
+        "oro/platform": "4.0.*"
     },
     "autoload": {
         "psr-4": { "Oro\\Bundle\\CalendarBundle\\": "" },
@@ -23,15 +22,14 @@
         "oro": {
             "type": "composer",
             "url": "https://packagist.oroinc.com"
-        },
-        "asset-packagist": {
-            "type": "composer",
-            "url": "https://asset-packagist.oroinc.com"
         }
     },
     "minimum-stability": "dev",
     "prefer-stable": true,
     "extra": {
+        "npm": {
+            "fullcalendar": "3.4.0"
+        },
         "branch-alias": {
             "dev-master": "4.0-dev"
         }
