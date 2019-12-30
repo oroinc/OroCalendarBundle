@@ -3,35 +3,40 @@
 namespace Oro\Bundle\CalendarBundle\Tests\Unit\Manager;
 
 use Oro\Bundle\CalendarBundle\Manager\CalendarManager;
+use Oro\Bundle\CalendarBundle\Provider\CalendarPropertyProvider;
+use Oro\Bundle\CalendarBundle\Provider\CalendarProviderInterface;
+use Oro\Component\Testing\Unit\TestContainerBuilder;
 
 class CalendarManagerTest extends \PHPUnit\Framework\TestCase
 {
     /** @var \PHPUnit\Framework\MockObject\MockObject */
-    protected $calendarPropertyProvider;
+    private $calendarPropertyProvider;
 
     /** @var \PHPUnit\Framework\MockObject\MockObject */
-    protected $provider1;
+    private $provider1;
 
     /** @var \PHPUnit\Framework\MockObject\MockObject */
-    protected $provider2;
+    private $provider2;
 
     /** @var CalendarManager */
-    protected $manager;
+    private $manager;
 
     protected function setUp()
     {
-        $this->calendarPropertyProvider =
-            $this->getMockBuilder('Oro\Bundle\CalendarBundle\Provider\CalendarPropertyProvider')
-                ->disableOriginalConstructor()
-                ->getMock();
+        $this->calendarPropertyProvider =$this->createMock(CalendarPropertyProvider::class);
+        $this->provider1 = $this->createMock(CalendarProviderInterface::class);
+        $this->provider2 = $this->createMock(CalendarProviderInterface::class);
 
-        $this->manager = new CalendarManager($this->calendarPropertyProvider);
+        $providerContainer = TestContainerBuilder::create()
+            ->add('provider1', $this->provider1)
+            ->add('provider2', $this->provider2)
+            ->getContainer($this);
 
-        $this->provider1 = $this->createMock('Oro\Bundle\CalendarBundle\Provider\CalendarProviderInterface');
-        $this->provider2 = $this->createMock('Oro\Bundle\CalendarBundle\Provider\CalendarProviderInterface');
-
-        $this->manager->addProvider('provider1', $this->provider1);
-        $this->manager->addProvider('provider2', $this->provider2);
+        $this->manager = new CalendarManager(
+            ['provider1', 'provider2'],
+            $providerContainer,
+            $this->calendarPropertyProvider
+        );
     }
 
     public function testGetCalendarsEmpty()

@@ -5,35 +5,47 @@ namespace Oro\Bundle\CalendarBundle\Manager;
 use Oro\Bundle\CalendarBundle\Provider\CalendarPropertyProvider;
 use Oro\Bundle\CalendarBundle\Provider\CalendarProviderInterface;
 use Oro\Component\PhpUtils\ArrayUtil;
+use Psr\Container\ContainerInterface;
+use Symfony\Contracts\Service\ResetInterface;
 
 /**
  * Allows to get information about calendars.
  */
-class CalendarManager
+class CalendarManager implements ResetInterface
 {
+    /** @var string[] */
+    private $providerAliases;
+
+    /** @var ContainerInterface */
+    private $providerContainer;
+
+    /** @var CalendarProviderInterface[]|null */
+    private $providers;
+
     /** @var CalendarPropertyProvider */
     protected $calendarPropertyProvider;
 
-    /** @var CalendarProviderInterface[] */
-    protected $providers = [];
-
     /**
+     * @param string[]                 $providerAliases
+     * @param ContainerInterface       $providerContainer
      * @param CalendarPropertyProvider $calendarPropertyProvider
      */
-    public function __construct(CalendarPropertyProvider $calendarPropertyProvider)
-    {
+    public function __construct(
+        array $providerAliases,
+        ContainerInterface $providerContainer,
+        CalendarPropertyProvider $calendarPropertyProvider
+    ) {
+        $this->providerAliases = $providerAliases;
+        $this->providerContainer = $providerContainer;
         $this->calendarPropertyProvider = $calendarPropertyProvider;
     }
 
     /**
-     * Registers the given provider in the chain
-     *
-     * @param string                    $alias
-     * @param CalendarProviderInterface $provider
+     * {@inheritDoc}
      */
-    public function addProvider(string $alias, CalendarProviderInterface $provider)
+    public function reset()
     {
-        $this->providers[$alias] = $provider;
+        $this->providers = null;
     }
 
     /**
@@ -58,7 +70,8 @@ class CalendarManager
             $existing[$item['calendarAlias']][$item['calendar']] = $key;
         }
 
-        foreach ($this->providers as $alias => $provider) {
+        $providers = $this->getProviders();
+        foreach ($providers as $alias => $provider) {
             $calendarIds           = isset($existing[$alias]) ? array_keys($existing[$alias]) : [];
             $calendarDefaultValues = $provider->getCalendarDefaultValues(
                 $organizationId,
@@ -120,7 +133,8 @@ class CalendarManager
 
         $result = [];
 
-        foreach ($this->providers as $alias => $provider) {
+        $providers = $this->getProviders();
+        foreach ($providers as $alias => $provider) {
             $connections = [];
             foreach ($allConnections as $c) {
                 if ($c['calendarAlias'] === $alias) {
@@ -194,5 +208,20 @@ class CalendarManager
         $result['removable']    = true;
 
         return $result;
+    }
+
+    /**
+     * @return CalendarProviderInterface[] [alias => provider, ...]
+     */
+    protected function getProviders()
+    {
+        if (null === $this->providers) {
+            $this->providers = [];
+            foreach ($this->providerAliases as $alias) {
+                $this->providers[$alias] = $this->providerContainer->get($alias);
+            }
+        }
+
+        return $this->providers;
     }
 }

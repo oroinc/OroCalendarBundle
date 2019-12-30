@@ -3,24 +3,25 @@
 namespace Oro\Bundle\CalendarBundle\Model\Recurrence;
 
 use Oro\Bundle\CalendarBundle\Entity\Recurrence;
+use Symfony\Contracts\Service\ResetInterface;
 
-class DelegateStrategy implements StrategyInterface
+/**
+ * Delegates a work to child recurrence strategies.
+ */
+class DelegateStrategy implements StrategyInterface, ResetInterface
 {
+    /** @var iterable|StrategyInterface[] */
+    private $strategies;
+
     /** @var StrategyInterface[] */
-    protected $elements = [];
+    private $initializedStrategies;
 
     /**
-     * Adds recurrence strategy.
-     *
-     * @param StrategyInterface $strategy
-     *
-     * @return DelegateStrategy
+     * @param iterable|StrategyInterface[] $strategies
      */
-    public function add(StrategyInterface $strategy)
+    public function __construct(iterable $strategies)
     {
-        $this->elements[$strategy->getName()] = $strategy;
-
-        return $this;
+        $this->strategies = $strategies;
     }
 
     /**
@@ -28,36 +29,7 @@ class DelegateStrategy implements StrategyInterface
      */
     public function getOccurrences(Recurrence $recurrence, \DateTime $start, \DateTime $end)
     {
-        $delegate = $this->match($recurrence, true);
-
-        return $delegate->getOccurrences($recurrence, $start, $end);
-    }
-
-    /**
-     * Checks if strategy can be used and returns its instance.
-     *
-     * @param Recurrence $recurrence
-     * @param bool $required
-     *
-     * @return StrategyInterface|null
-     * @throws \InvalidArgumentException
-     */
-    protected function match(Recurrence $recurrence, $required = false)
-    {
-        foreach ($this->elements as $strategy) {
-            /** @var StrategyInterface $strategy */
-            if ($strategy->supports($recurrence)) {
-                return $strategy;
-            }
-        }
-
-        if ($required) {
-            throw new \InvalidArgumentException(
-                sprintf('Recurrence type "%s" is not supported.', $recurrence->getRecurrenceType())
-            );
-        }
-
-        return null;
+        return $this->getStrategy($recurrence)->getOccurrences($recurrence, $start, $end);
     }
 
     /**
@@ -65,7 +37,7 @@ class DelegateStrategy implements StrategyInterface
      */
     public function supports(Recurrence $recurrence)
     {
-        return $this->match($recurrence) !== null;
+        return null !== $this->findStrategy($recurrence);
     }
 
     /**
@@ -73,9 +45,7 @@ class DelegateStrategy implements StrategyInterface
      */
     public function getTextValue(Recurrence $recurrence)
     {
-        $delegate = $this->match($recurrence, true);
-
-        return $delegate->getTextValue($recurrence);
+        return $this->getStrategy($recurrence)->getTextValue($recurrence);
     }
 
     /**
@@ -83,9 +53,7 @@ class DelegateStrategy implements StrategyInterface
      */
     public function getCalculatedEndTime(Recurrence $recurrence)
     {
-        $delegate = $this->match($recurrence, true);
-
-        return $delegate->getCalculatedEndTime($recurrence);
+        return $this->getStrategy($recurrence)->getCalculatedEndTime($recurrence);
     }
 
     /**
@@ -93,9 +61,7 @@ class DelegateStrategy implements StrategyInterface
      */
     public function getMaxInterval(Recurrence $recurrence)
     {
-        $delegate = $this->match($recurrence, true);
-
-        return $delegate->getMaxInterval($recurrence);
+        return $this->getStrategy($recurrence)->getMaxInterval($recurrence);
     }
 
     /**
@@ -103,9 +69,7 @@ class DelegateStrategy implements StrategyInterface
      */
     public function getIntervalMultipleOf(Recurrence $recurrence)
     {
-        $delegate = $this->match($recurrence, true);
-
-        return $delegate->getIntervalMultipleOf($recurrence);
+        return $this->getStrategy($recurrence)->getIntervalMultipleOf($recurrence);
     }
 
     /**
@@ -113,9 +77,7 @@ class DelegateStrategy implements StrategyInterface
      */
     public function getRequiredProperties(Recurrence $recurrence)
     {
-        $delegate = $this->match($recurrence, true);
-
-        return $delegate->getRequiredProperties($recurrence);
+        return $this->getStrategy($recurrence)->getRequiredProperties($recurrence);
     }
 
     /**
@@ -124,5 +86,65 @@ class DelegateStrategy implements StrategyInterface
     public function getName()
     {
         return 'recurrence_delegate';
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public function reset()
+    {
+        $this->initializedStrategies = null;
+    }
+
+    /**
+     * @param Recurrence $recurrence
+     *
+     * @return StrategyInterface|null
+     */
+    private function findStrategy(Recurrence $recurrence): ?StrategyInterface
+    {
+        $strategies = $this->getStrategies();
+        foreach ($strategies as $strategy) {
+            if ($strategy->supports($recurrence)) {
+                return $strategy;
+            }
+        }
+
+        return null;
+    }
+
+    /**
+     * @param Recurrence $recurrence
+     *
+     * @return StrategyInterface
+     *
+     * @throws \InvalidArgumentException if a strategy was not found
+     */
+    private function getStrategy(Recurrence $recurrence): StrategyInterface
+    {
+        $strategy = $this->findStrategy($recurrence);
+        if (null === $strategy) {
+            throw new \InvalidArgumentException(sprintf(
+                'Recurrence type "%s" is not supported.',
+                $recurrence->getRecurrenceType()
+            ));
+        }
+
+        return $strategy;
+    }
+
+    /**
+     * @return StrategyInterface[] [name => strategy, ...]
+     */
+    private function getStrategies(): array
+    {
+        if (null === $this->initializedStrategies) {
+            $this->initializedStrategies = [];
+            foreach ($this->strategies as $strategy) {
+                $this->initializedStrategies[$strategy->getName()] = $strategy;
+            }
+        }
+
+        return $this->initializedStrategies;
     }
 }
