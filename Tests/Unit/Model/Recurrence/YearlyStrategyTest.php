@@ -257,13 +257,17 @@ class YearlyStrategyTest extends AbstractTestStrategy
                     'dayOfMonth' => 31,
                     'occurrences' => null,
                     'start' => '2015-01-01',
-                    'end' => '2018-01-01',
+                    'end' => '2022-01-01',
                     'startTime' => '2015-02-01',
                 ],
                 'expected' => [
                     '2015-02-28',
                     '2016-02-29',
                     '2017-02-28',
+                    '2018-02-28',
+                    '2019-02-28',
+                    '2020-02-29',
+                    '2021-02-28',
                 ],
             ],
         ];
