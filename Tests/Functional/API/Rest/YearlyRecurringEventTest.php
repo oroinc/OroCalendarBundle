@@ -25,6 +25,8 @@ class YearlyRecurringEventTest extends AbstractTestCase
     }
 
     /**
+     * @SuppressWarnings(PHPMD.ExcessiveMethodLength)
+     *
      * Test of expanding of event with pattern "Yearly every X year(s) on Y month Z day" in case
      * when Z is greater than count of days in Y month.
      *
