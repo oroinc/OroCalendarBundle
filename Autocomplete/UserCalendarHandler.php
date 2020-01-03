@@ -7,7 +7,7 @@ use Doctrine\ORM\QueryBuilder;
 use Oro\Bundle\AttachmentBundle\Manager\AttachmentManager;
 use Oro\Bundle\EntityBundle\Tools\EntityRoutingHelper;
 use Oro\Bundle\OrganizationBundle\Entity\Organization;
-use Oro\Bundle\SecurityBundle\Acl\Voter\AclVoter;
+use Oro\Bundle\SecurityBundle\Acl\Voter\AclVoterInterface;
 use Oro\Bundle\SecurityBundle\Authentication\TokenAccessorInterface;
 use Oro\Bundle\SecurityBundle\ORM\Walker\AclHelper;
 use Oro\Bundle\SecurityBundle\Owner\OwnerTreeProvider;
@@ -32,7 +32,7 @@ class UserCalendarHandler extends UserAclHandler
      * @param OwnerTreeProvider             $treeProvider
      * @param EntityRoutingHelper $entityRoutingHelper
      * @param AclHelper                     $aclHelper
-     * @param AclVoter                      $aclVoter
+     * @param AclVoterInterface             $aclVoter
      */
     public function __construct(
         EntityManager $em,
@@ -43,7 +43,7 @@ class UserCalendarHandler extends UserAclHandler
         OwnerTreeProvider $treeProvider,
         EntityRoutingHelper $entityRoutingHelper,
         AclHelper $aclHelper,
-        AclVoter $aclVoter = null
+        AclVoterInterface $aclVoter = null
     ) {
         parent::__construct(
             $em,
