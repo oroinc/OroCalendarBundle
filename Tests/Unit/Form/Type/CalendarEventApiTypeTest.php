@@ -22,6 +22,7 @@ use Oro\Bundle\ReminderBundle\Model\SendProcessorRegistry;
 use Oro\Bundle\UserBundle\Form\Type\UserMultiSelectType;
 use Oro\Component\Testing\Unit\FormIntegrationTestCase;
 use Oro\Component\Testing\Unit\PreloadedExtension;
+use Psr\Container\ContainerInterface;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Validator\ValidatorExtension;
 use Symfony\Component\Validator\Validation;
@@ -313,7 +314,7 @@ class CalendarEventApiTypeTest extends FormIntegrationTestCase
             new ReminderCollectionType($this->registry),
             new CollectionType($this->registry),
             new ReminderType($this->registry),
-            new MethodType(new SendProcessorRegistry([])),
+            new MethodType(new SendProcessorRegistry([], $this->createMock(ContainerInterface::class))),
             new ReminderIntervalType(),
             new UnitType(),
             new UserMultiSelectType($this->entityManager),
