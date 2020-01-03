@@ -19,7 +19,7 @@ class CalendarProviderPass implements CompilerPassInterface
      */
     public function process(ContainerBuilder $container)
     {
-        $services = $this->findAndSortTaggedServices('oro_calendar.calendar_provider', 'alias', $container, true);
+        $services = $this->findAndInverseSortTaggedServices('oro_calendar.calendar_provider', 'alias', $container);
 
         $container->getDefinition('oro_calendar.calendar_manager')
             ->setArgument(0, array_keys($services))
