@@ -23,7 +23,7 @@ class DashboardController extends AbstractController
      * @Route(
      *      "/my_calendar/{widget}",
      *      name="oro_calendar_dashboard_my_calendar",
-     *      requirements={"widget"="[\w-]+"}
+     *      requirements={"widget"="[\w\-]+"}
      * )
      * @Template("OroCalendarBundle:Dashboard:myCalendar.html.twig")
      * @param string $widget
