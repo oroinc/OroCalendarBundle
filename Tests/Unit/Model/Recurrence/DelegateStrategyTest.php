@@ -4,41 +4,23 @@ namespace Oro\Bundle\CalendarBundle\Tests\Unit\Model\Recurrence;
 
 use Oro\Bundle\CalendarBundle\Entity\Recurrence;
 use Oro\Bundle\CalendarBundle\Model\Recurrence\DelegateStrategy;
+use Oro\Bundle\CalendarBundle\Model\Recurrence\StrategyInterface;
 
 class DelegateStrategyTest extends \PHPUnit\Framework\TestCase
 {
-    /** @var DelegateStrategy $strategy */
-    protected $strategy;
-
-    protected function setUp()
-    {
-        $this->strategy = new DelegateStrategy();
-    }
-
     public function testGetName()
     {
-        $this->assertEquals($this->strategy->getName(), 'recurrence_delegate');
+        $strategy = new DelegateStrategy([]);
+        $this->assertEquals($strategy->getName(), 'recurrence_delegate');
     }
 
-    public function testAdd()
-    {
-        $foo = $this->createStrategy('foo');
-        $bar = $this->createStrategy('bar');
-        $this->strategy->add($foo);
-        $this->strategy->add($bar);
-
-        $this->assertAttributeEquals(['bar' => $bar,'foo' => $foo], 'elements', $this->strategy);
-    }
-
-    public function testSupportsReturnTrue()
+    public function testSupportsWhenExistsStrategyThatSupportRecurrence()
     {
         $recurrence = new Recurrence();
-        $this->assertFalse($this->strategy->supports($recurrence));
 
         $foo = $this->createStrategy('foo');
         $bar = $this->createStrategy('bar');
-        $this->strategy->add($foo);
-        $this->strategy->add($bar);
+        $strategy = new DelegateStrategy([$foo, $bar]);
 
         $foo->expects($this->once())
             ->method('supports')
@@ -50,18 +32,16 @@ class DelegateStrategyTest extends \PHPUnit\Framework\TestCase
             ->with($recurrence)
             ->will($this->returnValue(true));
 
-        $this->assertTrue($this->strategy->supports($recurrence));
+        $this->assertTrue($strategy->supports($recurrence));
     }
 
-    public function testSupportsReturnFalse()
+    public function testSupportsWhenNoStrategyThatSupportRecurrence()
     {
         $recurrence = new Recurrence();
-        $this->assertFalse($this->strategy->supports($recurrence));
 
         $foo = $this->createStrategy('foo');
         $bar = $this->createStrategy('bar');
-        $this->strategy->add($foo);
-        $this->strategy->add($bar);
+        $strategy = new DelegateStrategy([$foo, $bar]);
 
         $foo->expects($this->once())
             ->method('supports')
@@ -73,7 +53,7 @@ class DelegateStrategyTest extends \PHPUnit\Framework\TestCase
             ->with($recurrence)
             ->will($this->returnValue(false));
 
-        $this->assertFalse($this->strategy->supports($recurrence));
+        $this->assertFalse($strategy->supports($recurrence));
     }
 
     /**
@@ -89,8 +69,7 @@ class DelegateStrategyTest extends \PHPUnit\Framework\TestCase
 
         $foo = $this->createStrategy('foo');
         $bar = $this->createStrategy('bar');
-        $this->strategy->add($foo);
-        $this->strategy->add($bar);
+        $strategy = new DelegateStrategy([$foo, $bar]);
 
         $foo->expects($this->once())
             ->method('supports')
@@ -109,7 +88,7 @@ class DelegateStrategyTest extends \PHPUnit\Framework\TestCase
 
         $mocker->willReturn($returnValue);
 
-        $this->assertEquals($returnValue, call_user_func_array([$this->strategy, $method], $arguments));
+        $this->assertEquals($returnValue, call_user_func_array([$strategy, $method], $arguments));
     }
 
     /**
@@ -170,8 +149,7 @@ class DelegateStrategyTest extends \PHPUnit\Framework\TestCase
 
         $foo = $this->createStrategy('foo');
         $bar = $this->createStrategy('bar');
-        $this->strategy->add($foo);
-        $this->strategy->add($bar);
+        $strategy = new DelegateStrategy([$foo, $bar]);
 
         $foo->expects($this->once())
             ->method('supports')
@@ -183,22 +161,20 @@ class DelegateStrategyTest extends \PHPUnit\Framework\TestCase
             ->with($recurrence)
             ->will($this->returnValue(false));
 
-        call_user_func_array([$this->strategy, $method], $arguments);
+        call_user_func_array([$strategy, $method], $arguments);
     }
 
     /**
-     * Creates mock object for StrategyInterface.
-     *
      * @param string $name
      *
-     * @return \Oro\Bundle\CalendarBundle\Model\Recurrence\StrategyInterface|\PHPUnit\Framework\MockObject\MockObject
+     * @return StrategyInterface|\PHPUnit\Framework\MockObject\MockObject
      */
-    protected function createStrategy($name)
+    private function createStrategy($name)
     {
-        $result = $this->createMock('Oro\Bundle\CalendarBundle\Model\Recurrence\StrategyInterface');
+        $result = $this->createMock(StrategyInterface::class);
         $result->expects($this->once())
             ->method('getName')
-            ->will($this->returnValue($name));
+            ->willReturn($name);
 
         return $result;
     }

@@ -1,0 +1,6 @@
+CalendarBundle
+--------------
+* The `AttendeePreferredLanguageProvider`<sup>[[?]](https://github.com/oroinc/OroCalendarBundle/tree/4.1.0-beta/Provider/AttendeePreferredLanguageProvider.php#L12 "Oro\Bundle\CalendarBundle\Provider\AttendeePreferredLanguageProvider")</sup> class was removed.
+* The `CalendarEventController::getAction($id)`<sup>[[?]](https://github.com/oroinc/OroCalendarBundle/tree/4.1.0-beta/Controller/Api/Rest/CalendarEventController.php#L189 "Oro\Bundle\CalendarBundle\Controller\Api\Rest\CalendarEventController")</sup> method was changed to `CalendarEventController::getAction(int $id)`<sup>[[?]](https://github.com/oroinc/OroCalendarBundle/tree/4.1.0-rc/Controller/Api/Rest/CalendarEventController.php#L193 "Oro\Bundle\CalendarBundle\Controller\Api\Rest\CalendarEventController")</sup>
+* The `SystemCalendarController::deleteAction($id)`<sup>[[?]](https://github.com/oroinc/OroCalendarBundle/tree/4.1.0-beta/Controller/Api/Rest/SystemCalendarController.php#L32 "Oro\Bundle\CalendarBundle\Controller\Api\Rest\SystemCalendarController")</sup> method was changed to `SystemCalendarController::deleteAction(int $id)`<sup>[[?]](https://github.com/oroinc/OroCalendarBundle/tree/4.1.0-rc/Controller/Api/Rest/SystemCalendarController.php#L35 "Oro\Bundle\CalendarBundle\Controller\Api\Rest\SystemCalendarController")</sup>
+

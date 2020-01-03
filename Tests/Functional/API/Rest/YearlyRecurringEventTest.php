@@ -25,6 +25,8 @@ class YearlyRecurringEventTest extends AbstractTestCase
     }
 
     /**
+     * @SuppressWarnings(PHPMD.ExcessiveMethodLength)
+     *
      * Test of expanding of event with pattern "Yearly every X year(s) on Y month Z day" in case
      * when Z is greater than count of days in Y month.
      *
@@ -78,7 +80,7 @@ class YearlyRecurringEventTest extends AbstractTestCase
                     [
                         'calendar'    => $this->getReference('oro_calendar:calendar:foo_user_1')->getId(),
                         'start'       => '2015-01-01T00:00:00+00:00',
-                        'end'         => '2018-01-01T00:00:00+00:00',
+                        'end'         => '2022-01-01T00:00:00+00:00',
                         'subordinate' => true,
                     ]
                 ),
@@ -116,6 +118,46 @@ class YearlyRecurringEventTest extends AbstractTestCase
                 'calendar'    => $this->getReference('oro_calendar:calendar:foo_user_1')->getId(),
                 'start'       => '2017-02-28T09:00:00+00:00',
                 'end'         => '2017-02-28T09:30:00+00:00',
+                'attendees'   => [],
+            ],
+            [
+                'id'          => $recurringEvent->getId(),
+                'title'       => 'Test Yearly Recurring Event',
+                'description' => 'Test Yearly Recurring Event Description',
+                'allDay'      => false,
+                'calendar'    => $this->getReference('oro_calendar:calendar:foo_user_1')->getId(),
+                'start'       => '2018-02-28T09:00:00+00:00',
+                'end'         => '2018-02-28T09:30:00+00:00',
+                'attendees'   => [],
+            ],
+            [
+                'id'          => $recurringEvent->getId(),
+                'title'       => 'Test Yearly Recurring Event',
+                'description' => 'Test Yearly Recurring Event Description',
+                'allDay'      => false,
+                'calendar'    => $this->getReference('oro_calendar:calendar:foo_user_1')->getId(),
+                'start'       => '2019-02-28T09:00:00+00:00',
+                'end'         => '2019-02-28T09:30:00+00:00',
+                'attendees'   => [],
+            ],
+            [
+                'id'          => $recurringEvent->getId(),
+                'title'       => 'Test Yearly Recurring Event',
+                'description' => 'Test Yearly Recurring Event Description',
+                'allDay'      => false,
+                'calendar'    => $this->getReference('oro_calendar:calendar:foo_user_1')->getId(),
+                'start'       => '2020-02-29T09:00:00+00:00',
+                'end'         => '2020-02-29T09:30:00+00:00',
+                'attendees'   => [],
+            ],
+            [
+                'id'          => $recurringEvent->getId(),
+                'title'       => 'Test Yearly Recurring Event',
+                'description' => 'Test Yearly Recurring Event Description',
+                'allDay'      => false,
+                'calendar'    => $this->getReference('oro_calendar:calendar:foo_user_1')->getId(),
+                'start'       => '2021-02-28T09:00:00+00:00',
+                'end'         => '2021-02-28T09:30:00+00:00',
                 'attendees'   => [],
             ],
         ];

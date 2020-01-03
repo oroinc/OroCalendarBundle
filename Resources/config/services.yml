@@ -173,6 +173,8 @@ services:
         class: Oro\Bundle\CalendarBundle\Manager\CalendarManager
         public: true
         arguments:
+            - [] # provider aliases
+            - ~ # service locator
             - '@oro_calendar.calendar_property_provider'
 
     oro_calendar.attendee_manager:
@@ -389,11 +391,10 @@ services:
             - '@oro_locale.formatter.date_time'
             - '@oro_locale.settings'
 
-    oro_calendar.recurrence.strategy.delegate:
-        class: Oro\Bundle\CalendarBundle\Model\Recurrence\DelegateStrategy
-
     oro_calendar.recurrence.strategy:
-        alias: oro_calendar.recurrence.strategy.delegate
+        class: Oro\Bundle\CalendarBundle\Model\Recurrence\DelegateStrategy
+        arguments:
+            - !tagged_iterator oro_calendar.recurrence.strategy
 
     oro_calendar.recurrence.strategy.daily:
         class: Oro\Bundle\CalendarBundle\Model\Recurrence\DailyStrategy
@@ -441,7 +442,6 @@ services:
         class: Oro\Bundle\CalendarBundle\Model\Recurrence
         arguments:
             - '@oro_calendar.recurrence.strategy'
-        lazy: true
 
     oro_calendar.validator.recurrence:
         class: Oro\Bundle\CalendarBundle\Validator\RecurrenceValidator
