@@ -55,7 +55,7 @@ class CalendarEventActivityListProviderTest extends \PHPUnit\Framework\TestCase
 
         $this->activityAssociationHelper->expects($this->once())
             ->method('isActivityAssociationEnabled')
-            ->with($entityClass, CalendarEventActivityListProvider::ACTIVITY_CLASS, $accessible)
+            ->with($entityClass, CalendarEvent::class, $accessible)
             ->willReturn(true);
 
         $this->assertTrue($this->provider->isApplicableTarget($entityClass, $accessible));
@@ -99,14 +99,9 @@ class CalendarEventActivityListProviderTest extends \PHPUnit\Framework\TestCase
         ];
     }
 
-    public function testGetActivityClass()
-    {
-        $this->assertSame(CalendarEventActivityListProvider::ACTIVITY_CLASS, $this->provider->getActivityClass());
-    }
-
     public function testGetAclClass()
     {
-        $this->assertSame(CalendarEventActivityListProvider::ACL_CLASS, $this->provider->getAclClass());
+        $this->assertNull($this->provider->getAclClass());
     }
 
     public function testGetSubject()
@@ -215,16 +210,10 @@ class CalendarEventActivityListProviderTest extends \PHPUnit\Framework\TestCase
      * @dataProvider isApplicableDataProvider
      *
      * @param object|string $entity
-     * @param string $entityClass
      * @param bool $expected
      */
-    public function testIsApplicable($entity, $entityClass, bool $expected)
+    public function testIsApplicable($entity, bool $expected)
     {
-        $this->doctrineHelper->expects($this->any())
-            ->method('getEntityClass')
-            ->with($entity)
-            ->willReturn($entityClass);
-
         $this->assertEquals($expected, $this->provider->isApplicable($entity));
     }
 
@@ -236,27 +225,22 @@ class CalendarEventActivityListProviderTest extends \PHPUnit\Framework\TestCase
         return [
             'not applicable entity' => [
                 'entity' => new \stdClass(),
-                'entityClass' => \stdClass::class,
                 'expected' => false
             ],
             'not applicable CalendarEvent entity' => [
                 'entity' => $this->getEntity(CalendarEvent::class, ['recurringEvent' => new CalendarEvent()]),
-                'entityClass' => CalendarEvent::class,
                 'expected' => false
             ],
             'applicable CalendarEvent entity' => [
                 'entity' => new CalendarEvent(),
-                'entityClass' => CalendarEvent::class,
                 'expected' => true
             ],
             'not applicable entity class' => [
                 'entity' => \stdClass::class,
-                'entityClass' => \stdClass::class,
                 'expected' => false
             ],
             'applicable entity class' => [
                 'entity' => CalendarEvent::class,
-                'entityClass' => CalendarEvent::class,
                 'expected' => true
             ],
         ];

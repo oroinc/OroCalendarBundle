@@ -289,7 +289,7 @@ services:
            - '@oro_activity.association_helper'
            - '@oro_comment.association_helper'
         tags:
-           - {name: oro_activity_list.provider, priority: 50}
+           - { name: oro_activity_list.provider, class: Oro\Bundle\CalendarBundle\Entity\CalendarEvent, priority: 50 }
 
     oro_calendar.email.notification_sender:
         class: 'Oro\Bundle\CalendarBundle\Model\Email\EmailNotificationSender'

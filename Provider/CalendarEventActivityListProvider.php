@@ -14,14 +14,14 @@ use Oro\Bundle\CommentBundle\Tools\CommentAssociationHelper;
 use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
 use Oro\Bundle\UserBundle\Entity\User;
 
+/**
+ * Provides a way to use CalendarEvent entity in an activity list.
+ */
 class CalendarEventActivityListProvider implements
     ActivityListProviderInterface,
     CommentProviderInterface,
     ActivityListDateProviderInterface
 {
-    const ACTIVITY_CLASS = 'Oro\Bundle\CalendarBundle\Entity\CalendarEvent';
-    const ACL_CLASS = 'Oro\Bundle\CalendarBundle\Entity\CalendarEvent';
-
     /** @var DoctrineHelper */
     protected $doctrineHelper;
 
@@ -53,7 +53,7 @@ class CalendarEventActivityListProvider implements
     {
         return $this->activityAssociationHelper->isActivityAssociationEnabled(
             $entityClass,
-            self::ACTIVITY_CLASS,
+            CalendarEvent::class,
             $accessible
         );
     }
@@ -88,17 +88,9 @@ class CalendarEventActivityListProvider implements
     /**
      * {@inheritdoc}
      */
-    public function getActivityClass()
-    {
-        return self::ACTIVITY_CLASS;
-    }
-
-    /**
-     * {@inheritdoc}
-     */
     public function getAclClass()
     {
-        return self::ACL_CLASS;
+        return null;
     }
 
     /**
@@ -180,12 +172,11 @@ class CalendarEventActivityListProvider implements
      */
     public function isApplicable($entity)
     {
-        if (is_object($entity)) {
-            return $this->doctrineHelper->getEntityClass($entity) === self::ACTIVITY_CLASS
-                && !$entity->getRecurringEvent();
+        if (\is_object($entity)) {
+            return $entity instanceof CalendarEvent && !$entity->getRecurringEvent();
         }
 
-        return $entity === self::ACTIVITY_CLASS;
+        return $entity === CalendarEvent::class;
     }
 
     /**
