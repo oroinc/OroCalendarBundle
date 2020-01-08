@@ -38,7 +38,8 @@ class YearlyStrategy extends MonthlyStrategy
             0,
             0,
             $recurrence->getMonthOfYear(),
-            $this->getRecurrenceDay($recurrence->getMonthOfYear())
+            $this->getRecurrenceDay($recurrence->getMonthOfYear()),
+            $recurrence->getStartTime() ? $recurrence->getStartTime()->format('Y') : null
         ));
         // Some monthly patterns are equivalent to yearly patterns.
         // In these cases, day should be adjusted to fit last day of month.
@@ -70,7 +71,8 @@ class YearlyStrategy extends MonthlyStrategy
             0,
             0,
             $recurrence->getMonthOfYear(),
-            $this->getRecurrenceDay($recurrence->getMonthOfYear())
+            $this->getRecurrenceDay($recurrence->getMonthOfYear()),
+            $recurrence->getStartTime() ? $recurrence->getStartTime()->format('Y') : null
         ));
         $monthOfYear = $recurrence->getMonthOfYear();
         $interval = $recurrence->getInterval(); // a number of months, which is a multiple of 12
