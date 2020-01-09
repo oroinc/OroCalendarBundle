@@ -88,14 +88,6 @@ class CalendarEventActivityListProvider implements
     /**
      * {@inheritdoc}
      */
-    public function getAclClass()
-    {
-        return null;
-    }
-
-    /**
-     * {@inheritdoc}
-     */
     public function getSubject($entity)
     {
         /** @var $entity CalendarEvent */

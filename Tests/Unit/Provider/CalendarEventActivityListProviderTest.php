@@ -99,11 +99,6 @@ class CalendarEventActivityListProviderTest extends \PHPUnit\Framework\TestCase
         ];
     }
 
-    public function testGetAclClass()
-    {
-        $this->assertNull($this->provider->getAclClass());
-    }
-
     public function testGetSubject()
     {
         $calendarEvent = new CalendarEvent();
