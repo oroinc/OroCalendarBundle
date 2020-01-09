@@ -1,7 +1,7 @@
 {
     "name": "oro/calendar-bundle",
     "type": "symfony-bundle",
-    "description": "Calendar bundle for OroPlatform-based applications.\nSee https://oroinc.com/orocrm/doc/current/user-guide/activities/calendars-overview for more information.",
+    "description": "Calendar bundle for OroPlatform-based applications.\nSee https://doc.oroinc.com/user/back-office/activities/calendar-events/ for more information.",
     "homepage": "https://github.com/oroinc/OroCalendarBundle.git",
     "keywords": ["Oro","OroPlatform","OroCRM","Calendar"],
     "license": "MIT",
