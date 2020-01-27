@@ -268,7 +268,7 @@ services:
         arguments:
             - '@doctrine.orm.entity_manager'
             - '@oro_attachment.manager'
-            - '%oro_user.entity.class%'
+            - 'Oro\Bundle\UserBundle\Entity\User'
             - '@security.authorization_checker'
             - '@oro_security.token_accessor'
             - '@oro_security.ownership_tree_provider'
