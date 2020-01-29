@@ -12,7 +12,6 @@
         }
     ],
     "require": {
-        "php": "7.1.*",
         "oro/platform": "2.6.*",
         "bower-asset/fullcalendar": "3.4.0"
     },
