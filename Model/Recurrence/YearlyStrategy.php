@@ -31,6 +31,7 @@ class YearlyStrategy extends MonthlyStrategy
      */
     public function getTextValue(Entity\Recurrence $recurrence)
     {
+        $startYear = $recurrence->getStartTime() ? $recurrence->getStartTime()->format('Y') : null;
         $interval = (int)($recurrence->getInterval() / 12);
         $recurrenceStartDate = $recurrence->getStartTime();
         $anyDateWithMonthRecurrence = (new \DateTime())->setTimestamp(mktime(
@@ -38,8 +39,8 @@ class YearlyStrategy extends MonthlyStrategy
             0,
             0,
             $recurrence->getMonthOfYear(),
-            $this->getRecurrenceDay($recurrence->getMonthOfYear()),
-            $recurrence->getStartTime() ? $recurrence->getStartTime()->format('Y') : null
+            $this->getRecurrenceDay($recurrence->getMonthOfYear(), $startYear),
+            $startYear
         ));
         // Some monthly patterns are equivalent to yearly patterns.
         // In these cases, day should be adjusted to fit last day of month.
@@ -65,13 +66,14 @@ class YearlyStrategy extends MonthlyStrategy
      */
     protected function getFirstOccurrence(Entity\Recurrence $recurrence)
     {
+        $startYear = $recurrence->getStartTime() ? $recurrence->getStartTime()->format('Y') : null;
         $anyDateWithMonthRecurrence = (new \DateTime())->setTimestamp(mktime(
             0,
             0,
             0,
             $recurrence->getMonthOfYear(),
-            $this->getRecurrenceDay($recurrence->getMonthOfYear()),
-            $recurrence->getStartTime() ? $recurrence->getStartTime()->format('Y') : null
+            $this->getRecurrenceDay($recurrence->getMonthOfYear(), $startYear),
+            $startYear
         ));
         $monthOfYear = $recurrence->getMonthOfYear();
         $interval = $recurrence->getInterval(); // a number of months, which is a multiple of 12
@@ -91,11 +93,13 @@ class YearlyStrategy extends MonthlyStrategy
 
     /**
      * @param int $month
+     * @param int|null $year
+     *
      * @return int
      */
-    private function getRecurrenceDay(int $month): int
+    private function getRecurrenceDay(int $month, ?int $year): int
     {
-        $date = new \DateTime(sprintf('%d-%d-1', date('Y'), $month));
+        $date = new \DateTime(sprintf('%d-%d-1', $year ?: date('Y'), $month));
 
         $lastDay = date('t', $date->getTimestamp());
         $currentDay = date('d');
