@@ -6,16 +6,17 @@
 
 {% block activityDetails %}
     {{ entityName }}
-    <% var template = (verb == 'create')
-        ? {{ 'oro.calendar.calendarevent.added_by'|trans|json_encode|raw }}
-        : {{ 'oro.calendar.calendarevent.updated_by'|trans|json_encode|raw }};
-    %>
-    <%= _.template(template, { interpolate: /\{\{(.+?)\}\}/g })({
-        user: owner_url ? '<a class="user" href="' + owner_url + '">' +  _.escape(owner) + '</a>' :  '<span class="user">' + _.escape(owner) + '</span>',
-        date: '<i class="date">' + createdAt + '</i>',
-        editor: editor_url ? '<a class="user" href="' + editor_url + '">' +  _.escape(editor) + '</a>' : _.escape(editor),
-        editor_date: '<i class="date">' + updatedAt + '</i>'
-    }) %>
+    <% if (owner || owner_url) { %>
+        <% var template = (verb == 'create')
+            ? {{ 'oro.calendar.calendarevent.added_by'|trans|json_encode|raw }}
+            : {{ 'oro.calendar.calendarevent.updated_by'|trans|json_encode|raw }}; %>
+        <%= _.template(template, { interpolate: /\{\{(.+?)\}\}/g })({
+                user: owner_url ? '<a class="user" href="' + owner_url + '">' +  _.escape(owner) + '</a>' :  '<span class="user">' + _.escape(owner) + '</span>',
+                date: '<i class="date">' + createdAt + '</i>',
+                editor: editor_url ? '<a class="user" href="' + editor_url + '">' +  _.escape(editor) + '</a>' : _.escape(editor),
+                editor_date: '<i class="date">' + updatedAt + '</i>'
+            }) %>
+    <% } %>
 {% endblock %}
 
 {% block activityActions %}
