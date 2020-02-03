@@ -160,6 +160,7 @@ Feature: Create calendar events
       | All-day event | No                                                             |
       | Recurrence    | Monthly the first weekday of every 1 month, end by <Date:next year> |
 
+  @skip
   Scenario: Create yearly April Day 1, 5 recurrence ending Event
     When I go to Activities/ Calendar Events
     And click "Create Calendar event"
@@ -178,6 +179,7 @@ Feature: Create calendar events
       | All-day event | No                                                                   |
       | Recurrence    | Yearly every 1 year on the first day of Apr, end after 5 occurrences |
 
+  @skip
   Scenario: Edit yearly April Day 1, 5 recurrence ending Event
     When I click "Edit Calendar event"
     And I fill "Event Form" with:
