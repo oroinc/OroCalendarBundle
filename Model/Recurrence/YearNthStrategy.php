@@ -89,8 +89,8 @@ class YearNthStrategy extends AbstractStrategy
         $instance = $this->translator->trans('oro.calendar.recurrence.instances.' . $instanceValue);
         $day = $this->getDayOfWeekRelativeValue($recurrence->getDayOfWeek());
         $day = $this->translator->trans('oro.calendar.recurrence.days.' . $day);
-        $currentDate = new \DateTime('now', $recurrence->getStartTime()->getTimezone());
-        $currentDate->setDate($currentDate->format('Y'), $recurrence->getMonthOfYear(), $currentDate->format('d'));
+        $currentDate = new \DateTime('today', $recurrence->getStartTime()->getTimezone());
+        $currentDate->setDate($currentDate->format('Y'), $recurrence->getMonthOfYear(), 1);
         $month = $this->dateTimeFormatter->format($currentDate, null, \IntlDateFormatter::NONE, null, null, 'MMM');
 
         return $this->getFullRecurrencePattern(
