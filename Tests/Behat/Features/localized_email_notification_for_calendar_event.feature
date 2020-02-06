@@ -15,8 +15,8 @@ Feature: Localized email notification for calendar event
     And I go to System / Configuration
     And I follow "System Configuration/General Setup/Localization" on configuration sidebar
     And I fill form with:
-      | Enabled Localizations | [English, German Localization, French Localization] |
-      | Default Localization  | English                                             |
+      | Enabled Localizations | [English (United States), German Localization, French Localization] |
+      | Default Localization  | English (United States)                                             |
     And I submit form
     Then I should see "Configuration saved" flash message
 
