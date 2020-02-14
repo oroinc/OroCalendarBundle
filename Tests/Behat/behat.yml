@@ -37,6 +37,10 @@ oro_behat_extension:
     Event Form:
       class: Oro\Bundle\CalendarBundle\Tests\Behat\Element\EventForm
       selector: 'form[name="oro_calendar_event_form"]'
+      options:
+        mapping:
+          Start: 'oro_calendar_event_form[start]'
+          End: 'oro_calendar_event_form[end]'
     Start Datetime:
       selector: '[name="oro_calendar_event_form[start]"]'
     End Datetime:

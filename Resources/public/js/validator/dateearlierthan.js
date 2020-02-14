@@ -16,8 +16,8 @@ define([
         'Oro\\Bundle\\CalendarBundle\\Validator\\Constraints\\DateEarlierThan',
         function(value, element, options) {
             /**
-             * For example if elementId == date_selector_orocrm_campaign_form_startDate and options.field == endDate
-             * then comparedElId will be date_selector_orocrm_campaign_form_endDate
+             * For example if elementId == orocrm_campaign_form_startDate and options.field == endDate
+             * then comparedElId will be orocrm_campaign_form_endDate
              */
             const elementId = $(element).attr('id');
             const strToReplace = elementId.substr(elementId.lastIndexOf('_') + 1);
