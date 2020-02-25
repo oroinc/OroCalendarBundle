@@ -29,21 +29,22 @@ class EventForm extends OroForm
      */
     public function fill(TableNode $table)
     {
-        foreach ($table->getRows() as list($name, $value)) {
-            if ($name == self::REPEATS_DROP_DOWN) {
+        foreach ($table->getRows() as list($label, $value)) {
+            if ($label == self::REPEATS_DROP_DOWN) {
                 $this->fillField('Repeat', true);
                 $this->setRecurrenceType($value);
             }
 
-            if ($name == self::COLOR_FIELD_NAME) {
+            if ($label == self::COLOR_FIELD_NAME) {
                 $this->elementFactory->wrapElement('Simple Color Picker Field', $this)->setValue($value);
                 continue;
             }
 
+            $locator = isset($this->options['mapping'][$label]) ? $this->options['mapping'][$label] : $label;
             $value = self::normalizeValue($value);
 
-            $field = $this->findField($name);
-            self::assertNotNull($field, "Element $name not found");
+            $field = $this->findField($locator);
+            self::assertNotNull($field, "Element $label not found");
             $field->setValue($value);
         }
     }
