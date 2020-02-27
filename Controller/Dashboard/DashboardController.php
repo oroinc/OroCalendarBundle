@@ -9,13 +9,16 @@ use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 
+/**
+ * Calendar dashboard widget controller
+ */
 class DashboardController extends Controller
 {
     /**
      * @Route(
      *      "/my_calendar/{widget}",
      *      name="oro_calendar_dashboard_my_calendar",
-     *      requirements={"widget"="[\w-]+"}
+     *      requirements={"widget"="[\w\-]+"}
      * )
      * @Template("OroCalendarBundle:Dashboard:myCalendar.html.twig")
      */
