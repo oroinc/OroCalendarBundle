@@ -10,6 +10,7 @@ use Oro\Bundle\CalendarBundle\Form\Type\RecurrenceFormType;
 use Oro\Bundle\CalendarBundle\Manager\CalendarEvent\NotificationManager;
 use Oro\Bundle\CalendarBundle\Model\Recurrence;
 use Oro\Bundle\CalendarBundle\Tests\Unit\Fixtures\Entity\CalendarEvent as CalendarEventFixture;
+use Oro\Bundle\EntityExtendBundle\Form\Extension\DynamicFieldsOptionsExtension;
 use Oro\Bundle\FormBundle\Form\Type\CollectionType;
 use Oro\Bundle\FormBundle\Form\Type\EntityIdentifierType;
 use Oro\Bundle\FormBundle\Form\Type\OroJquerySelect2HiddenType;
@@ -24,6 +25,7 @@ use Oro\Component\Testing\Unit\FormIntegrationTestCase;
 use Oro\Component\Testing\Unit\PreloadedExtension;
 use Psr\Container\ContainerInterface;
 use Symfony\Component\Form\AbstractType;
+use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\Extension\Validator\ValidatorExtension;
 use Symfony\Component\Validator\Validation;
 
@@ -138,7 +140,9 @@ class CalendarEventApiTypeTest extends FormIntegrationTestCase
         return [
             new PreloadedExtension(
                 $this->loadTypes(),
-                []
+                [
+                    TextType::class => [new DynamicFieldsOptionsExtension()]
+                ]
             ),
             new ValidatorExtension(Validation::createValidator())
         ];
