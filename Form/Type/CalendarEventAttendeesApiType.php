@@ -9,6 +9,9 @@ use Symfony\Component\Form\FormEvent;
 use Symfony\Component\Form\FormEvents;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
+/**
+ * Attendees form of calendar event
+ */
 class CalendarEventAttendeesApiType extends AbstractType
 {
     /**
@@ -19,8 +22,8 @@ class CalendarEventAttendeesApiType extends AbstractType
         $builder
             ->add('displayName')
             ->add('email')
-            ->add('status')
-            ->add('type');
+            ->add('status', null, ['dynamic_fields_ignore_exception' => true])
+            ->add('type', null, ['dynamic_fields_ignore_exception' => true]);
 
         $builder->addEventListener(
             FormEvents::PRE_SUBMIT,
