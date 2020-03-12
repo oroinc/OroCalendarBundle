@@ -12,6 +12,9 @@ instead of `'%oro_email.email.entity.class%'` (in service definitions, datagrid 
 `\Oro\Bundle\EmailBundle\Entity\Email::class` instead of `$container->getParameter('oro_email.email.entity.class')`
 (in PHP code).
 
+## 4.1.1 (2020-02-25)
+[Show detailed list of changes](incompatibilities-4-1-1.md)
+
 ## 4.1.0-rc (2019-12-10)
 [Show detailed list of changes](incompatibilities-4-1-rc.md)
 
