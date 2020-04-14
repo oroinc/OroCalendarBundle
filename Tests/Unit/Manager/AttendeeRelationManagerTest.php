@@ -81,7 +81,7 @@ class AttendeeRelationManagerTest extends \PHPUnit\Framework\TestCase
 
     public function testSetRelatedEntityWithIncorrectTypeFails()
     {
-        $this->expectException('InvalidArgumentException');
+        $this->expectException(\InvalidArgumentException::class);
         $this->expectExceptionMessage(
             'Related entity must be an instance of "Oro\Bundle\UserBundle\Entity\User", "stdClass" is given.'
         );

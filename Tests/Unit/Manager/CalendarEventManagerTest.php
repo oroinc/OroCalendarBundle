@@ -167,12 +167,11 @@ class CalendarEventManagerTest extends \PHPUnit\Framework\TestCase
         );
     }
 
-    /**
-     * @expectedException \LogicException
-     * @expectedExceptionMessage Unexpected calendar alias: "unknown". CalendarId: 123.
-     */
     public function testSetCalendarUnknownAlias()
     {
+        $this->expectException(\LogicException::class);
+        $this->expectExceptionMessage('Unexpected calendar alias: "unknown". CalendarId: 123.');
+
         $event = new CalendarEvent();
 
         $this->manager->setCalendar($event, 'unknown', 123);
@@ -319,24 +318,22 @@ class CalendarEventManagerTest extends \PHPUnit\Framework\TestCase
         $this->assertEquals(Attendee::STATUS_ACCEPTED, $event->getInvitationStatus());
     }
 
-    /**
-     * @expectedException \Oro\Bundle\CalendarBundle\Exception\ChangeInvitationStatusException
-     * @expectedExceptionMessage Cannot change invitation status of the event with no related attendee.
-     */
     public function testChangeInvitationStatusWithEmptyRelatedAttendee()
     {
+        $this->expectException(\Oro\Bundle\CalendarBundle\Exception\ChangeInvitationStatusException::class);
+        $this->expectExceptionMessage('Cannot change invitation status of the event with no related attendee.');
+
         $user = new User();
         $user->setId(100);
         $event = new CalendarEvent();
         $this->manager->changeInvitationStatus($event, Attendee::STATUS_ACCEPTED, $user);
     }
 
-    /**
-     * @expectedException \Oro\Bundle\CalendarBundle\Exception\ChangeInvitationStatusException
-     * @expectedExceptionMessage Status "accepted" does not exists
-     */
     public function testChangeInvitationStatusWithNonExistingStatus()
     {
+        $this->expectException(\Oro\Bundle\CalendarBundle\Exception\ChangeInvitationStatusException::class);
+        $this->expectExceptionMessage('Status "accepted" does not exists');
+
         $user = new User();
         $user->setId(100);
 
@@ -359,12 +356,11 @@ class CalendarEventManagerTest extends \PHPUnit\Framework\TestCase
         $this->manager->changeInvitationStatus($event, Attendee::STATUS_ACCEPTED, $user);
     }
 
-    /**
-     * @expectedException \Oro\Bundle\CalendarBundle\Exception\ChangeInvitationStatusException
-     * @expectedExceptionMessage Cannot change invitation status of the event.
-     */
     public function testChangeInvitationStatusWithDifferentRelatedAttendeeUser()
     {
+        $this->expectException(\Oro\Bundle\CalendarBundle\Exception\ChangeInvitationStatusException::class);
+        $this->expectExceptionMessage('Cannot change invitation status of the event.');
+
         $user = new User();
         $user->setId(100);
 

@@ -123,11 +123,9 @@ class CalendarEventHandlerTest extends \PHPUnit\Framework\TestCase
         );
     }
 
-    /**
-     * @expectedException \Symfony\Component\Security\Core\Exception\AccessDeniedException
-     */
     public function testProcessWithExceptionWithParent()
     {
+        $this->expectException(\Symfony\Component\Security\Core\Exception\AccessDeniedException::class);
         $this->entity->setParent(new CalendarEvent());
         $this->handler->process($this->entity);
     }
@@ -274,11 +272,12 @@ class CalendarEventHandlerTest extends \PHPUnit\Framework\TestCase
     /**
      * @dataProvider supportedMethods
      *
-     * @expectedException \LogicException
-     * @expectedExceptionMessage Both logged in user and organization must be defined.
      */
     public function testProcessRequestWithoutCurrentUser($method)
     {
+        $this->expectException(\LogicException::class);
+        $this->expectExceptionMessage('Both logged in user and organization must be defined.');
+
         $this->request->setMethod($method);
 
         $this->form->expects($this->never())

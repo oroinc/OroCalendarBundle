@@ -67,12 +67,11 @@ class CalendarEventDeleteHandlerTest extends \PHPUnit\Framework\TestCase
         $this->handler->setExtensionRegistry($extensionRegistry);
     }
 
-    /**
-     * @expectedException \Symfony\Component\Security\Core\Exception\AccessDeniedException
-     * @expectedExceptionMessage The delete operation is forbidden. Reason: public calendars are disabled.
-     */
     public function testDeleteWhenPublicCalendarDisabled()
     {
+        $this->expectException(\Symfony\Component\Security\Core\Exception\AccessDeniedException::class);
+        $this->expectExceptionMessage('The delete operation is forbidden. Reason: public calendars are disabled.');
+
         $calendar = new SystemCalendar();
         $calendar->setPublic(true);
         $event = new CalendarEvent();
@@ -87,12 +86,11 @@ class CalendarEventDeleteHandlerTest extends \PHPUnit\Framework\TestCase
         $this->handler->delete($event);
     }
 
-    /**
-     * @expectedException \Symfony\Component\Security\Core\Exception\AccessDeniedException
-     * @expectedExceptionMessage The delete operation is forbidden. Reason: access denied.
-     */
     public function testDeleteWhenPublicCalendarEventManagementNotGranted()
     {
+        $this->expectException(\Symfony\Component\Security\Core\Exception\AccessDeniedException::class);
+        $this->expectExceptionMessage('The delete operation is forbidden. Reason: access denied.');
+
         $calendar = new SystemCalendar();
         $calendar->setPublic(true);
         $event = new CalendarEvent();
@@ -111,12 +109,11 @@ class CalendarEventDeleteHandlerTest extends \PHPUnit\Framework\TestCase
         $this->handler->delete($event);
     }
 
-    /**
-     * @expectedException \Symfony\Component\Security\Core\Exception\AccessDeniedException
-     * @expectedExceptionMessage The delete operation is forbidden. Reason: system calendars are disabled.
-     */
     public function testDeleteWhenSystemCalendarDisabled()
     {
+        $this->expectException(\Symfony\Component\Security\Core\Exception\AccessDeniedException::class);
+        $this->expectExceptionMessage('The delete operation is forbidden. Reason: system calendars are disabled.');
+
         $calendar = new SystemCalendar();
         $event = new CalendarEvent();
         $event->setSystemCalendar($calendar);
@@ -130,12 +127,11 @@ class CalendarEventDeleteHandlerTest extends \PHPUnit\Framework\TestCase
         $this->handler->delete($event);
     }
 
-    /**
-     * @expectedException \Symfony\Component\Security\Core\Exception\AccessDeniedException
-     * @expectedExceptionMessage The delete operation is forbidden. Reason: access denied.
-     */
     public function testDeleteWhenSystemCalendarEventManagementNotGranted()
     {
+        $this->expectException(\Symfony\Component\Security\Core\Exception\AccessDeniedException::class);
+        $this->expectExceptionMessage('The delete operation is forbidden. Reason: access denied.');
+
         $calendar = new SystemCalendar();
         $event = new CalendarEvent();
         $event->setSystemCalendar($calendar);
@@ -246,12 +242,11 @@ class CalendarEventDeleteHandlerTest extends \PHPUnit\Framework\TestCase
         $this->handler->delete($event);
     }
 
-    /**
-     * @expectedException \Symfony\Component\Security\Core\Exception\AccessDeniedException
-     * @expectedExceptionMessage The delete operation is forbidden. Reason: access denied.
-     */
     public function testDeleteInCaseIfUserHaveNoAccessToCalendar()
     {
+        $this->expectException(\Symfony\Component\Security\Core\Exception\AccessDeniedException::class);
+        $this->expectExceptionMessage('The delete operation is forbidden. Reason: access denied.');
+
         $calendar = new Calendar();
         $event = new CalendarEvent();
         $event->setCalendar($calendar);

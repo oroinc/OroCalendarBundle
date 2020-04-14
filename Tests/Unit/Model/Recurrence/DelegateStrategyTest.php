@@ -139,11 +139,12 @@ class DelegateStrategyTest extends \PHPUnit\Framework\TestCase
      * @param array $arguments
      *
      * @dataProvider delegateMethodsDataProvider
-     * @expectedException \InvalidArgumentException
-     * @expectedExceptionMessage Recurrence type "baz" is not supported.
      */
     public function testDelegateMethodRaiseExceptionWhenStrategyNotMatched($method, array $arguments)
     {
+        $this->expectException(\InvalidArgumentException::class);
+        $this->expectExceptionMessage('Recurrence type "baz" is not supported.');
+
         $recurrence = $arguments[0];
         $recurrence->setRecurrenceType('baz');
 

@@ -266,12 +266,11 @@ class CalendarEventTest extends \PHPUnit\Framework\TestCase
         $this->assertSame($reminderData->getRecipient(), $calendar->getOwner());
     }
 
-    /**
-     * @expectedException \LogicException
-     * @expectedExceptionMessage Only user's calendar events can have reminders. Event Id: 1.
-     */
     public function testGetReminderDataWithLogicException()
     {
+        $this->expectException(\LogicException::class);
+        $this->expectExceptionMessage("Only user's calendar events can have reminders. Event Id: 1.");
+
         $obj = new CalendarEvent();
         ReflectionUtil::setId($obj, 1);
         $obj->getReminderData();
@@ -395,12 +394,13 @@ class CalendarEventTest extends \PHPUnit\Framework\TestCase
         $this->assertCount(1, $calendarEvent->getAttendees());
     }
 
-    /**
-     * @expectedException \LogicException
-     * @expectedExceptionMessage Update of child Calendar Event (id=2) is restricted. Use parent Calendar Event instead.
-     */
     public function testAddAttendeeFailsWithChildEvent()
     {
+        $this->expectException(\LogicException::class);
+        $this->expectExceptionMessage(
+            'Update of child Calendar Event (id=2) is restricted. Use parent Calendar Event instead.'
+        );
+
         $parentEvent = new CalendarEvent(1);
         $parentEvent->setTitle('First calendar event');
         $childEvent = new CalendarEvent(2);
@@ -409,12 +409,13 @@ class CalendarEventTest extends \PHPUnit\Framework\TestCase
         $childEvent->addAttendee(new Attendee(1));
     }
 
-    /**
-     * @expectedException \LogicException
-     * @expectedExceptionMessage Update of child Calendar Event (id=2) is restricted. Use parent Calendar Event instead.
-     */
     public function testRemoveAttendeeFailsWithChildEvent()
     {
+        $this->expectException(\LogicException::class);
+        $this->expectExceptionMessage(
+            'Update of child Calendar Event (id=2) is restricted. Use parent Calendar Event instead.'
+        );
+
         $parentEvent = new CalendarEvent(1);
         $parentEvent->setTitle('First calendar event');
         $childEvent = new CalendarEvent(2);
@@ -440,12 +441,13 @@ class CalendarEventTest extends \PHPUnit\Framework\TestCase
         $this->assertCount(4, $childEvent->getAttendees());
     }
 
-    /**
-     * @expectedException \LogicException
-     * @expectedExceptionMessage Update of child Calendar Event (id=2) is restricted. Use parent Calendar Event instead.
-     */
     public function testSetAttendeesFailsWithChildEvent()
     {
+        $this->expectException(\LogicException::class);
+        $this->expectExceptionMessage(
+            'Update of child Calendar Event (id=2) is restricted. Use parent Calendar Event instead.'
+        );
+
         $parentEvent = new CalendarEvent(1);
         $parentEvent->setTitle('First calendar event');
         $childEvent = new CalendarEvent(2);
@@ -532,12 +534,13 @@ class CalendarEventTest extends \PHPUnit\Framework\TestCase
         ];
     }
 
-    /**
-     * @expectedException \LogicException
-     * @expectedExceptionMessage Update of child Calendar Event (id=2) is restricted. Use parent Calendar Event instead.
-     */
     public function testGetChildAttendeesFailsWithChildEvent()
     {
+        $this->expectException(\LogicException::class);
+        $this->expectExceptionMessage(
+            'Update of child Calendar Event (id=2) is restricted. Use parent Calendar Event instead.'
+        );
+
         $parentEvent = new CalendarEvent(1);
         $parentEvent->setTitle('First calendar event');
         $childEvent = new CalendarEvent(2);
