@@ -61,7 +61,7 @@ class SystemCalendarEventControllerTest extends WebTestCase
         $crawler = $this->client->submit($form);
 
         $this->assertHtmlResponseStatusCodeEquals($this->client->getResponse(), 200);
-        $this->assertContains('Calendar event saved', $crawler->html());
+        static::assertStringContainsString('Calendar event saved', $crawler->html());
         $this->assertCount(2, $this->registry->getRepository(Attendee::class)->findAll());
 
         $mainEvent = $this->getCalendarEvent();
@@ -81,10 +81,10 @@ class SystemCalendarEventControllerTest extends WebTestCase
         );
 
         $this->assertHtmlResponseStatusCodeEquals($this->client->getResponse(), 200);
-        $this->assertContains(self::TITLE, $crawler->html());
-        $this->assertContains(self::DESCRIPTION, $crawler->html());
-        $this->assertContains('Mar 8, 2018, 12:00 PM', $crawler->html());
-        $this->assertContains('Mar 8, 2018, 8:00 PM', $crawler->html());
+        static::assertStringContainsString(self::TITLE, $crawler->html());
+        static::assertStringContainsString(self::DESCRIPTION, $crawler->html());
+        static::assertStringContainsString('Mar 8, 2018, 12:00 PM', $crawler->html());
+        static::assertStringContainsString('Mar 8, 2018, 8:00 PM', $crawler->html());
     }
 
     /**
@@ -109,10 +109,10 @@ class SystemCalendarEventControllerTest extends WebTestCase
         );
 
         $this->assertHtmlResponseStatusCodeEquals($this->client->getResponse(), 200);
-        $this->assertContains(self::TITLE, $crawler->html());
-        $this->assertContains(self::DESCRIPTION, $crawler->html());
-        $this->assertContains('Mar 8, 2018, 12:00 PM', $crawler->html());
-        $this->assertContains('Mar 8, 2018, 8:00 PM', $crawler->html());
+        static::assertStringContainsString(self::TITLE, $crawler->html());
+        static::assertStringContainsString(self::DESCRIPTION, $crawler->html());
+        static::assertStringContainsString('Mar 8, 2018, 12:00 PM', $crawler->html());
+        static::assertStringContainsString('Mar 8, 2018, 8:00 PM', $crawler->html());
     }
 
     /**
@@ -142,9 +142,9 @@ class SystemCalendarEventControllerTest extends WebTestCase
         $crawler = $this->client->submit($form);
 
         $this->assertHtmlResponseStatusCodeEquals($this->client->getResponse(), 200);
-        $this->assertContains('Calendar event saved', $crawler->html());
-        $this->assertContains('Updated ' . self::TITLE, $crawler->html());
-        $this->assertContains('Updated ' . self::DESCRIPTION, $crawler->html());
+        static::assertStringContainsString('Calendar event saved', $crawler->html());
+        static::assertStringContainsString('Updated ' . self::TITLE, $crawler->html());
+        static::assertStringContainsString('Updated ' . self::DESCRIPTION, $crawler->html());
         $this->assertCount(2, $this->registry->getRepository(Attendee::class)->findAll());
     }
 

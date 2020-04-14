@@ -56,7 +56,7 @@ class CalendarEventControllerTest extends WebTestCase
 
         $result = $this->client->getResponse();
         $this->assertHtmlResponseStatusCodeEquals($result, 200);
-        $this->assertContains('Calendar event saved', $crawler->html());
+        static::assertStringContainsString('Calendar event saved', $crawler->html());
 
         $attendees = $this->getContainer()->get('doctrine')
             ->getRepository('OroCalendarBundle:Attendee')
@@ -136,7 +136,7 @@ class CalendarEventControllerTest extends WebTestCase
 
         $result = $this->client->getResponse();
         $this->assertHtmlResponseStatusCodeEquals($result, 200);
-        $this->assertContains('Calendar event saved', $crawler->html());
+        static::assertStringContainsString('Calendar event saved', $crawler->html());
 
         $attendees = $this->getContainer()->get('doctrine')
             ->getRepository('OroCalendarBundle:Attendee')

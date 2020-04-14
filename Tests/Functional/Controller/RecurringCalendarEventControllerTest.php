@@ -51,7 +51,7 @@ class RecurringCalendarEventControllerTest extends AbstractUseCaseTestCase
 
         $result = $this->client->getResponse();
         $this->assertHtmlResponseStatusCodeEquals($result, 200);
-        $this->assertContains('Calendar event saved', $crawler->html(), 'Calendar event not saved');
+        static::assertStringContainsString('Calendar event saved', $crawler->html(), 'Calendar event not saved');
 
         $calendarEvent = $this->getContainer()->get('doctrine')
             ->getRepository('OroCalendarBundle:CalendarEvent')
@@ -109,7 +109,7 @@ class RecurringCalendarEventControllerTest extends AbstractUseCaseTestCase
 
         $result = $this->client->getResponse();
         $this->assertHtmlResponseStatusCodeEquals($result, 200);
-        $this->assertContains('Calendar event saved', $crawler->html(), 'Calendar event not saved');
+        static::assertStringContainsString('Calendar event saved', $crawler->html(), 'Calendar event not saved');
 
         $calendarEvent = $this->getContainer()->get('doctrine')
             ->getRepository('OroCalendarBundle:CalendarEvent')
@@ -174,7 +174,7 @@ class RecurringCalendarEventControllerTest extends AbstractUseCaseTestCase
 
         $result = $this->client->getResponse();
         $this->assertHtmlResponseStatusCodeEquals($result, 200);
-        $this->assertContains('Calendar event saved', $crawler->html(), 'Calendar event not saved');
+        static::assertStringContainsString('Calendar event saved', $crawler->html(), 'Calendar event not saved');
 
         $this->initClient([], $this->generateWsseAuthHeader());
 
@@ -245,7 +245,7 @@ class RecurringCalendarEventControllerTest extends AbstractUseCaseTestCase
 
         $result = $this->client->getResponse();
         $this->assertHtmlResponseStatusCodeEquals($result, 200);
-        $this->assertContains('Calendar event saved', $crawler->html(), 'Calendar event not saved');
+        static::assertStringContainsString('Calendar event saved', $crawler->html(), 'Calendar event not saved');
 
         $this->initClient([], $this->generateWsseAuthHeader());
 
@@ -300,7 +300,7 @@ class RecurringCalendarEventControllerTest extends AbstractUseCaseTestCase
 
         $result = $this->client->getResponse();
         $this->assertHtmlResponseStatusCodeEquals($result, 200);
-        $this->assertContains('Calendar event saved', $crawler->html(), 'Calendar event not saved');
+        static::assertStringContainsString('Calendar event saved', $crawler->html(), 'Calendar event not saved');
 
         $calendarEvent = $this->getContainer()->get('doctrine')
             ->getRepository('OroCalendarBundle:CalendarEvent')
