@@ -25,7 +25,7 @@ class RecurrenceExtensionTest extends \PHPUnit\Framework\TestCase
     /** @var \PHPUnit\Framework\MockObject\MockObject */
     protected $recurrenceModel;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->translator = $this->createMock(TranslatorInterface::class);
         $this->strategy = $this->createMock(StrategyInterface::class);
@@ -55,7 +55,7 @@ class RecurrenceExtensionTest extends \PHPUnit\Framework\TestCase
             self::callTwigFunction($this->extension, 'get_recurrence_text_value', [new Entity\Recurrence()])
         );
     }
-    
+
     public function testGetRecurrenceTextValueWithNA()
     {
         $this->translator->expects($this->once())

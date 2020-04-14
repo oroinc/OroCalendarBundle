@@ -34,7 +34,7 @@ class EntityListenerTest extends \PHPUnit\Framework\TestCase
     /** @var EntityListener */
     protected $listener;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->em  = $this->getMockBuilder('Doctrine\ORM\EntityManager')
             ->disableOriginalConstructor()

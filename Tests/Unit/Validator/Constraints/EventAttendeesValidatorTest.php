@@ -23,7 +23,7 @@ class EventAttendeesValidatorTest extends ConstraintValidatorTestCase
     /** @var ObjectManager|\PHPUnit\Framework\MockObject\MockObject */
     private $manager;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->mockDoctrine();
         parent::setUp();

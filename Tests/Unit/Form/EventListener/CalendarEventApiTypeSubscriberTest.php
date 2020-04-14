@@ -20,7 +20,7 @@ class CalendarEventApiTypeSubscriberTest extends \PHPUnit\Framework\TestCase
     /** @var CalendarEventApiTypeSubscriber */
     protected $calendarEventApiTypeSubscriber;
 
-    public function setUp()
+    protected function setUp(): void
     {
         $this->calendarEventManager = $this->getMockBuilder('Oro\Bundle\CalendarBundle\Manager\CalendarEventManager')
             ->disableOriginalConstructor()

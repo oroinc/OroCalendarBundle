@@ -13,7 +13,7 @@ class CalendarPropertyRepositoryTest extends OrmTestCase
     /** @var EntityManagerMock */
     protected $em;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $metadataDriver = new AnnotationDriver(
             new AnnotationReader(),

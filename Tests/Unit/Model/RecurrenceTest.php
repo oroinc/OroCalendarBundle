@@ -13,7 +13,7 @@ class RecurrenceTest extends \PHPUnit\Framework\TestCase
     /** @var \PHPUnit\Framework\MockObject\MockObject */
     protected $strategy;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->strategy = $this->getMockBuilder('Oro\Bundle\CalendarBundle\Model\Recurrence\StrategyInterface')
             ->getMock();

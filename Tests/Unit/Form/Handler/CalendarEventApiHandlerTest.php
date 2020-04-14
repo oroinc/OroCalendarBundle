@@ -52,7 +52,7 @@ class CalendarEventApiHandlerTest extends \PHPUnit\Framework\TestCase
     /** @var CalendarEventApiHandler */
     protected $handler;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->entity  = new CalendarEvent();
 

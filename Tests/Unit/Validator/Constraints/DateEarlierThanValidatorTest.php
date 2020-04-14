@@ -40,7 +40,7 @@ class DateEarlierThanValidatorTest extends \PHPUnit\Framework\TestCase
      */
     protected $validator;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->dateTimeStart = new \DateTime('-1 day');
         $this->dateTimeEnd   = new \DateTime('+1 day');
@@ -108,7 +108,7 @@ class DateEarlierThanValidatorTest extends \PHPUnit\Framework\TestCase
         $data = new \stdClass();
         $data->start = new \DateTime();
         $data->end = new \DateTime();
-        
+
         $this->context = $this->createMock(ExecutionContextInterface::class);
         $this->context->expects($this->any())
             ->method('getRoot')

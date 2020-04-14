@@ -15,7 +15,7 @@ class MonthlyStrategyTest extends AbstractTestStrategy
     /** @var \PHPUnit\Framework\MockObject\MockObject */
     protected $validator;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->validator = $this->getMockBuilder('Symfony\Component\Validator\Validator\ValidatorInterface')
             ->getMock();

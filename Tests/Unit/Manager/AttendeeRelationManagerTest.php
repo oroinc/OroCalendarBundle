@@ -16,7 +16,7 @@ class AttendeeRelationManagerTest extends \PHPUnit\Framework\TestCase
     /** @var User[] */
     protected $users;
 
-    public function setUp()
+    protected function setUp(): void
     {
         $this->users = [
             'u1@example.com' => (new User())->setEmail('u1@example.com'),

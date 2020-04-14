@@ -19,7 +19,7 @@ class EventOrganizerResolverTest extends \PHPUnit\Framework\TestCase
     /** @var EventOrganizerResolver */
     private $resolver;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         parent::setUp();
         /** @var ManagerRegistry $registry */

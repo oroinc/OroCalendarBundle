@@ -17,7 +17,7 @@ class RecurrenceFormTypeTest extends \PHPUnit\Framework\TestCase
     /** @var  Recurrence */
     protected $model;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $strategy = $this->getMockBuilder('Oro\Bundle\CalendarBundle\Model\Recurrence\StrategyInterface')
             ->getMock();

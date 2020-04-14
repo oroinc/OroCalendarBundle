@@ -34,7 +34,7 @@ class CalendarEventManagerLegacyTest extends \PHPUnit\Framework\TestCase
     /** @var CalendarEventManager */
     protected $calendarEventManager;
 
-    public function setUp()
+    protected function setUp(): void
     {
         $repository = $this->getMockBuilder(EntityRepository::class)
             ->setMethods(['find', 'findDefaultCalendars'])

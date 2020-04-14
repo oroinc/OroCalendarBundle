@@ -46,7 +46,7 @@ class CalendarEventApiTypeTest extends FormIntegrationTestCase
     /** @var CalendarEventApiType */
     protected $calendarEventApiType;
 
-    public function setUp()
+    protected function setUp(): void
     {
         $this->registry     = $this->getMockBuilder('Doctrine\Common\Persistence\ManagerRegistry')
             ->disableOriginalConstructor()

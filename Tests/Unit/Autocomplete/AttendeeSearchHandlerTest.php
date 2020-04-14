@@ -31,7 +31,7 @@ class AttendeeSearchHandlerTest extends \PHPUnit\Framework\TestCase
     /** @var AttendeeSearchHandler */
     protected $attendeeSearchHandler;
 
-    public function setUp()
+    protected function setUp(): void
     {
         $translator = $this->createMock('Symfony\Contracts\Translation\TranslatorInterface');
         $translator->expects($this->any())

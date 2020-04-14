@@ -18,7 +18,7 @@ class AbstractTestCase extends WebTestCase
      */
     protected static $ignoredResponseFields = ['use_hangout'];
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->initClient([]);
     }

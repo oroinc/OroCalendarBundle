@@ -22,7 +22,7 @@ class CalendarSubscriberTest extends \PHPUnit\Framework\TestCase
     /** @var \PHPUnit\Framework\MockObject\MockObject|ManagerRegistry */
     protected $registry;
 
-    public function setUp()
+    protected function setUp(): void
     {
         $this->tokenAccessor = $this->createMock(TokenAccessorInterface::class);
         $this->registry = $this->getMockBuilder('Doctrine\Common\Persistence\ManagerRegistry')

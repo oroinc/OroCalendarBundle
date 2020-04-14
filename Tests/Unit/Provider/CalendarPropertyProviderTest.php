@@ -23,7 +23,7 @@ class CalendarPropertyProviderTest extends \PHPUnit\Framework\TestCase
     /** @var CalendarPropertyProvider */
     protected $provider;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->doctrineHelper = $this->createMock(DoctrineHelper::class);
         $this->configManager = $this->createMock(ConfigManager::class);

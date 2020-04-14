@@ -12,7 +12,7 @@ class CalendarRepositoryTest extends WebTestCase
      */
     protected $repository;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->initClient();
         $this->repository = $this->getContainer()->get('doctrine')->getRepository('OroCalendarBundle:Calendar');

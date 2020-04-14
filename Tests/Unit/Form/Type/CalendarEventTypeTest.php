@@ -36,7 +36,7 @@ class CalendarEventTypeTest extends \PHPUnit\Framework\TestCase
      */
     protected $type;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $repository = $this->createMock('Doctrine\Common\Persistence\ObjectRepository');
         $repository->expects($this->any())

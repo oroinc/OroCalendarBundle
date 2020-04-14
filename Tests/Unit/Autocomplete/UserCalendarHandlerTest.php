@@ -48,7 +48,7 @@ class UserCalendarHandlerTest extends \PHPUnit\Framework\TestCase
     /** @var UserCalendarHandler */
     protected $handler;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->em = $this->createMock(EntityManager::class);
         $this->attachmentManager = $this->createMock(AttachmentManager::class);

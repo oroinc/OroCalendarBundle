@@ -14,7 +14,7 @@ class CalendarOwnerAssignmentCheckerTest extends OrmTestCase
     /** @var EntityManagerMock */
     private $em;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $reader = new AnnotationReader();
         $metadataDriver = new AnnotationDriver(

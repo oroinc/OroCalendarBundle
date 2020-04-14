@@ -11,7 +11,7 @@ use Oro\Bundle\CalendarBundle\Tests\Functional\DataFixtures\LoadUserData;
  */
 class RecurringEventWithAttendeesAndExceptionTest extends AbstractUseCaseTestCase
 {
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->initClient([], $this->generateWsseAuthHeader());
         $this->loadFixtures([LoadUserData::class]);

@@ -9,7 +9,7 @@ class CalendarChoiceTemplateTypeTest extends \PHPUnit\Framework\TestCase
     /** @var CalendarChoiceTemplateType */
     protected $type;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->type = new CalendarChoiceTemplateType();
     }

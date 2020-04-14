@@ -10,7 +10,7 @@ class RecurrenceTest extends \PHPUnit\Framework\TestCase
     /** @var Recurrence */
     protected $constraint;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->constraint = new Recurrence();
     }

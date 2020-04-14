@@ -10,7 +10,7 @@ class RecurringCalendarEventExceptionConstraintTest extends \PHPUnit\Framework\T
     /** @var RecurringCalendarEventExceptionConstraint */
     protected $constraint;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->constraint = new RecurringCalendarEventExceptionConstraint();
     }

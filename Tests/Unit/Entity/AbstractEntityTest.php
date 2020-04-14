@@ -20,13 +20,13 @@ abstract class AbstractEntityTest extends \PHPUnit\Framework\TestCase
      */
     abstract public function getSetDataProvider();
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $name         = $this->getEntityFQCN();
         $this->entity = new $name();
     }
 
-    public function tearDown()
+    protected function tearDown(): void
     {
         unset($this->entity);
     }

@@ -16,7 +16,7 @@ class UpdateChildManagerTest extends \PHPUnit\Framework\TestCase
     /** @var UpdateChildManager */
     private $manager;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->doctrine = $this->getMockBuilder(ManagerRegistry::class)
             ->disableOriginalConstructor()

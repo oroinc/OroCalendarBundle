@@ -23,7 +23,7 @@ class SystemCalendarEventNormalizerTest extends \PHPUnit\Framework\TestCase
     /** @var SystemCalendarEventNormalizer */
     protected $normalizer;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->calendarEventManager = $this->getMockBuilder('Oro\Bundle\CalendarBundle\Manager\CalendarEventManager')
             ->disableOriginalConstructor()

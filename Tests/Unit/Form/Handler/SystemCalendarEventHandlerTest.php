@@ -51,7 +51,7 @@ class SystemCalendarEventHandlerTest extends \PHPUnit\Framework\TestCase
     /** @var \PHPUnit\Framework\MockObject\MockObject */
     protected $notificationManager;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->form = $this->createMock('Symfony\Component\Form\Form');
         $this->request = new Request();

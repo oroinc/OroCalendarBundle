@@ -21,7 +21,7 @@ class CalendarManagerTest extends \PHPUnit\Framework\TestCase
     /** @var CalendarManager */
     private $manager;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->calendarPropertyProvider =$this->createMock(CalendarPropertyProvider::class);
         $this->provider1 = $this->createMock(CalendarProviderInterface::class);

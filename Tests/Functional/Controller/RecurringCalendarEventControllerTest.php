@@ -10,7 +10,7 @@ class RecurringCalendarEventControllerTest extends AbstractUseCaseTestCase
 {
     const RECURRING_EVENT_TITLE = 'Test Creating/Updating Recurring Event';
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->markTestSkipped('CRM-7978');
 

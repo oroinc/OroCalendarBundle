@@ -15,7 +15,7 @@ class RestCalendarEventWithAttendeesTest extends WebTestCase
 {
     const DEFAULT_USER_CALENDAR_ID = 1;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->initClient([], $this->generateWsseAuthHeader());
         $this->loadFixtures([LoadUserData::class]);

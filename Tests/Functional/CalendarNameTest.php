@@ -17,7 +17,7 @@ class CalendarNameTest extends WebTestCase
     /**
      * {@inheritdoc}
      */
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->initClient([]);
 
@@ -33,7 +33,7 @@ class CalendarNameTest extends WebTestCase
     /**
      * {@inheritdoc}
      */
-    protected function tearDown()
+    protected function tearDown(): void
     {
         unset($this->nameResollver);
     }

@@ -15,7 +15,7 @@ use Oro\Bundle\TestFrameworkBundle\Tests\Functional\DataFixtures\LoadActivityTar
  */
 class RestCalendarEventWithRecurrentEventTest extends WebTestCase
 {
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->initClient([], $this->generateWsseAuthHeader());
         $this->loadFixtures([

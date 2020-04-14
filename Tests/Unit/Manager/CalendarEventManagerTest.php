@@ -33,7 +33,7 @@ class CalendarEventManagerTest extends \PHPUnit\Framework\TestCase
     /** @var CalendarEventManager */
     protected $manager;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->updateManager      = $this->getMockBuilder(
             'Oro\Bundle\CalendarBundle\Manager\CalendarEvent\UpdateManager'

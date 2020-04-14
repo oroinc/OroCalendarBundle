@@ -23,7 +23,7 @@ class UniqueUidValidatorTest extends ConstraintValidatorTestCase
     /** @var ObjectManager|\PHPUnit\Framework\MockObject\MockObject */
     private $manager;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->mockDoctrine();
         parent::setUp();
@@ -122,7 +122,7 @@ class UniqueUidValidatorTest extends ConstraintValidatorTestCase
     {
         return new UniqueUidValidator($this->registry);
     }
-    
+
     private function mockDoctrine()
     {
         $this->manager = $this->createMock(ObjectManager::class);

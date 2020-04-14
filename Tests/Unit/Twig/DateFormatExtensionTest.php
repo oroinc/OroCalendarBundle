@@ -25,7 +25,7 @@ class DateFormatExtensionTest extends \PHPUnit\Framework\TestCase
     /** @var LocalizationManager|\PHPUnit\Framework\MockObject\MockObject */
     private $localizationManager;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->configManager = $this->createMock(ConfigManager::class);
         $this->formatter = $this->createMock(DateTimeFormatterInterface::class);

@@ -9,7 +9,7 @@ class DateEarlierThanTest extends \PHPUnit\Framework\TestCase
     protected $field;
     protected $requiredOption;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->field = 'field';
         $this->requiredOption = array($this->field => 'field-value');

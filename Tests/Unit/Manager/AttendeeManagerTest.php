@@ -28,7 +28,7 @@ class AttendeeManagerTest extends \PHPUnit\Framework\TestCase
     /** @var AttendeeManager */
     protected $attendeeManager;
 
-    public function setUp()
+    protected function setUp(): void
     {
         $this->calendarEventRepository = $this
             ->getMockBuilder('Oro\Bundle\CalendarBundle\Entity\Repository\CalendarEventRepository')

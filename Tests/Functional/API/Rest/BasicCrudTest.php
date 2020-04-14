@@ -21,7 +21,7 @@ use Oro\Bundle\CalendarBundle\Tests\Functional\DataFixtures\LoadUserData;
  */
 class BasicCrudTest extends AbstractTestCase
 {
-    protected function setUp()
+    protected function setUp(): void
     {
         parent::setUp();
 

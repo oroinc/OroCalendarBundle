@@ -13,7 +13,7 @@ class CalendarEventRecurrenceSubscriberTest extends \PHPUnit\Framework\TestCase
      */
     protected $calendarEventRecurrenceSubscriber;
 
-    public function setUp()
+    protected function setUp(): void
     {
         $this->calendarEventRecurrenceSubscriber = new CalendarEventRecurrenceSubscriber();
     }

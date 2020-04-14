@@ -28,7 +28,7 @@ class MatchingEventsManagerTest extends \PHPUnit\Framework\TestCase
     /** @var MatchingEventsManager */
     private $manager;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->repository = $this->getMockBuilder(CalendarEventRepository::class)
             ->disableOriginalConstructor()
@@ -166,7 +166,7 @@ class MatchingEventsManagerTest extends \PHPUnit\Framework\TestCase
         $this->assertCount(2, $eventC->getAttendees());
         $this->assertEquals($eventB->getAttendees(), $eventC->getAttendees());
     }
-    
+
     public function testMergeOnlyEventsWithAssignedCalendar()
     {
         $ownerC = $this->getEntity(User::class, ['email' => 'third@oroinc.com']);

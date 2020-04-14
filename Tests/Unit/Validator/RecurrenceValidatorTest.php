@@ -56,7 +56,7 @@ class RecurrenceValidatorTest extends \PHPUnit\Framework\TestCase
      */
     protected $validator;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->constraint = new Recurrence();
         $this->context = $this->createMock(ExecutionContextInterface::class);

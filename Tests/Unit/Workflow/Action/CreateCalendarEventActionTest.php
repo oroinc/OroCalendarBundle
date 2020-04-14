@@ -23,7 +23,7 @@ class CreateCalendarEventActionTest extends \PHPUnit\Framework\TestCase
      */
     private $registry;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->contextAccessor = new ContextAccessor();
 
@@ -42,7 +42,7 @@ class CreateCalendarEventActionTest extends \PHPUnit\Framework\TestCase
         $this->registry->method('getRepository')->willReturn($calendarRepository);
     }
 
-    protected function tearDown()
+    protected function tearDown(): void
     {
         unset($this->contextAccessor);
         unset($this->registry);

@@ -26,7 +26,7 @@ class UpdateExceptionManagerTest extends \PHPUnit\Framework\TestCase
      */
     protected $updateExceptionManager;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->attendeeManager = $this
             ->getMockBuilder(AttendeeManager::class)

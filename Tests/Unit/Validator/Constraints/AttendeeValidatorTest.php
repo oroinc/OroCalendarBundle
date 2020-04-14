@@ -17,7 +17,7 @@ class AttendeeValidatorTest extends \PHPUnit\Framework\TestCase
     /** @var AttendeeValidator */
     protected $validator;
 
-    public function setUp()
+    protected function setUp(): void
     {
         $this->context = $this->createMock(ExecutionContextInterface::class);
 
