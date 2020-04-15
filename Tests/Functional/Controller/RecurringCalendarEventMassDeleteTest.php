@@ -194,7 +194,17 @@ class RecurringCalendarEventMassDeleteTest extends AbstractTestCase
                 'values'     => implode(',', [$regularEvent->getId(), $exceptionEvent->getId()])
             ]
         );
-        $this->ajaxRequest('DELETE', $url, [], [], $this->generateBasicAuthHeader('foo_user_1', 'password'));
+        $this->ajaxRequest(
+            'DELETE',
+            $url,
+            [],
+            [],
+            $this->generateBasicAuthHeader(
+                'foo_user_1',
+                'password',
+                $this->getReference('oro_calendar:user:foo_user_1')->getOrganization()->getId()
+            )
+        );
         $result = $this->client->getResponse();
         $data = json_decode($result->getContent(), true);
         $this->assertTrue($data['successful'] === true);
@@ -470,7 +480,17 @@ class RecurringCalendarEventMassDeleteTest extends AbstractTestCase
                 'values'     => implode(',', [$recurringEvent->getId()])
             ]
         );
-        $this->ajaxRequest('DELETE', $url, [], [], $this->generateBasicAuthHeader('foo_user_1', 'password'));
+        $this->ajaxRequest(
+            'DELETE',
+            $url,
+            [],
+            [],
+            $this->generateBasicAuthHeader(
+                'foo_user_1',
+                'password',
+                $this->getReference('oro_calendar:user:foo_user_1')->getOrganization()->getId()
+            )
+        );
         $result = $this->client->getResponse();
         $data = json_decode($result->getContent(), true);
         $this->assertTrue($data['successful'] === true);

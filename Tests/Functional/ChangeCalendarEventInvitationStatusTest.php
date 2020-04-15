@@ -257,7 +257,11 @@ class ChangeCalendarEventInvitationStatusTest extends AbstractTestCase
                 'method' => 'POST',
                 'url' => $this->getUrl('oro_calendar_event_accepted', ['id' => $newEvent->getId()]),
                 'server' => array_merge(
-                    $this->generateBasicAuthHeader('foo_user_1', 'password')
+                    $this->generateBasicAuthHeader(
+                        'foo_user_1',
+                        'password',
+                        $this->getReference('oro_calendar:user:foo_user_1')->getOrganization()->getId()
+                    )
                 )
             ]
         );
@@ -738,7 +742,11 @@ class ChangeCalendarEventInvitationStatusTest extends AbstractTestCase
                 'method' => 'POST',
                 'url' => $this->getUrl('oro_calendar_event_accepted', ['id' => $newChildEvent->getId()]),
                 'server' => array_merge(
-                    $this->generateBasicAuthHeader('foo_user_2', 'password')
+                    $this->generateBasicAuthHeader(
+                        'foo_user_2',
+                        'password',
+                        $this->getReference('oro_calendar:user:foo_user_2')->getOrganization()->getId()
+                    )
                 )
             ]
         );
