@@ -28,8 +28,8 @@ Feature: Create calendar events
       | Title | This value should not be blank. |
     When I fill "Event Form" with:
       | Title         | All day no repeat Event |
-      | Start         | 2017-01-24 12:00 AM     |
-      | End           | 2020-02-26 12:00 AM     |
+      | Start         | <DateTime:-1 year>      |
+      | End           | <DateTime:+1 year>      |
       | All-Day Event | true                    |
       | Description   | testfull desc           |
       | Guests        | John Doe                |
@@ -46,8 +46,8 @@ Feature: Create calendar events
       | Description   | testfull desc                |
       | Guests        | John Doe (admin@example.com) |
       | All-day event | Yes                          |
-      | Start         | 2017-01-24 12:00 AM          |
-      | End           | 2020-02-26 11:59 PM          |
+      | Start         | <DateTime:-1 year 12:00 AM>  |
+      | End           | <DateTime:+1 year 11:59 PM>  |
 
   Scenario: Create daily weekday never ending Event
     When I go to Activities/ Calendar Events
@@ -102,8 +102,8 @@ Feature: Create calendar events
     Then I should see "Calendar event saved" flash message
     When I click My Calendar in user menu
     Then I should see "Two days by month ending Event" in calendar with:
-      | Description   | every 5 days                            |
-      | All-day event | No                                      |
+      | Description   | every 5 days                                 |
+      | All-day event | No                                           |
       | Recurrence    | Daily every 5 days, end by <Date:next month> |
 
   Scenario: Create weekly, every 2 weeks on Monday, 2 occ ending Event
@@ -156,11 +156,10 @@ Feature: Create calendar events
     And I save and close form
     Then I should see "Calendar event saved" flash message
     And I should see Monthly First Weekday by ny ending Event with:
-      | Description   | every First Weekday of month                                   |
-      | All-day event | No                                                             |
+      | Description   | every First Weekday of month                                        |
+      | All-day event | No                                                                  |
       | Recurrence    | Monthly the first weekday of every 1 month, end by <Date:next year> |
 
-  # TODO: unskip in BAP-14438
   @skip
   Scenario: Create yearly April Day 1, 5 recurrence ending Event
     When I go to Activities/ Calendar Events
@@ -179,6 +178,7 @@ Feature: Create calendar events
       | Description   | Yearly April Day one recurrence five ending                          |
       | All-day event | No                                                                   |
       | Recurrence    | Yearly every 1 year on the first day of Apr, end after 5 occurrences |
+
 
   Scenario: Edit yearly April Day 1, 5 recurrence ending Event
     When I click "Edit Calendar event"
