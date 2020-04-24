@@ -28,7 +28,7 @@ Create Calendar Event Action
 **Configuration Example**
 
 ```yml
-- @create_calendar_event:
+- '@create_calendar_event':
     title: 'Interview with Brenda'
     description: 'Interview on HR position'
     initiator: $currentUser
