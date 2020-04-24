@@ -18,9 +18,9 @@ To add a calendar provider you need to create a class implements [CalendarProvid
 oro_calendar.calendar_provider.user:
     class: %oro_calendar.calendar_provider.user.class%
     arguments:
-        - @oro_entity.doctrine_helper
-        - @oro_entity.entity_name_resolver
-        - @oro_calendar.calendar_event_normalizer.user
+        - '@oro_entity.doctrine_helper'
+        - '@oro_entity.entity_name_resolver'
+        - '@oro_calendar.calendar_event_normalizer.user'
     tags:
         - { name: oro_calendar.calendar_provider, alias: user }
 ```

@@ -16,7 +16,7 @@ use Oro\Component\Action\Exception\InvalidParameterException;
 use Oro\Component\ConfigExpression\ContextAccessor;
 
 /**
- * - @create_calendar_event:
+ * - '@create_calendar_event':
  *     title: 'Interview'
  *     initiator: $currentUser
  *     guests: [$reviewer]
