@@ -3,6 +3,7 @@
 namespace Oro\Bundle\CalendarBundle\Entity\Repository;
 
 use Doctrine\Common\Collections\Criteria;
+use Doctrine\DBAL\Types\Type;
 use Doctrine\ORM\EntityRepository;
 use Doctrine\ORM\Query\Expr;
 use Doctrine\ORM\QueryBuilder;
@@ -11,6 +12,9 @@ use Oro\Bundle\CalendarBundle\Entity\Calendar;
 use Oro\Bundle\CalendarBundle\Entity\CalendarEvent;
 use Oro\Component\DoctrineUtils\ORM\QueryBuilderUtil;
 
+/**
+ * Doctrine repository for Calendar entity.
+ */
 class CalendarEventRepository extends EntityRepository
 {
     const RECURRENCE_FIELD_PREFIX = 'recurrence';
@@ -251,8 +255,8 @@ class CalendarEventRepository extends EntityRepository
                 'e.originalStart <= :end AND ' .
                 'e.originalStart >= :start'
             )
-            ->setParameter('start', $startDate)
-            ->setParameter('end', $endDate)
+            ->setParameter('start', $startDate, Type::DATETIME)
+            ->setParameter('end', $endDate, Type::DATETIME)
             ->orderBy('c.id, e.start');
     }
 
