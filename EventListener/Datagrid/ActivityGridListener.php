@@ -2,12 +2,18 @@
 
 namespace Oro\Bundle\CalendarBundle\EventListener\Datagrid;
 
+use Doctrine\DBAL\Types\Type;
 use Oro\Bundle\ActivityBundle\Manager\ActivityManager;
 use Oro\Bundle\DataGridBundle\Datasource\Orm\OrmDatasource;
 use Oro\Bundle\DataGridBundle\Event\BuildAfter;
 use Oro\Bundle\EntityBundle\Tools\EntityRoutingHelper;
 use Oro\Bundle\LocaleBundle\Model\LocaleSettings;
 
+/**
+ * Automatically applies a filter for the events that are:
+ * - related to the current entity
+ * - start or end after the current date
+ */
 class ActivityGridListener
 {
     /** @var ActivityManager */
@@ -55,7 +61,7 @@ class ActivityGridListener
             $start = new \DateTime('now', new \DateTimeZone($this->localeSettings->getTimeZone()));
             $start->setTime(0, 0, 0);
             $qb->andWhere('event.start >= :date OR event.end >= :date')
-                ->setParameter('date', $start);
+                ->setParameter('date', $start, Type::DATETIME);
         }
     }
 }
