@@ -2,7 +2,7 @@
 
 namespace Oro\Bundle\CalendarBundle\Migrations\Schema\v1_17;
 
-use Doctrine\DBAL\Types\Type;
+use Doctrine\DBAL\Types\Types;
 use Oro\Bundle\EntityConfigBundle\Entity\ConfigModel;
 use Oro\Bundle\MigrationBundle\Migration\ArrayLogger;
 use Oro\Bundle\MigrationBundle\Migration\ParametrizedMigrationQuery;
@@ -38,7 +38,7 @@ class UpdateAttendeeEntityConfig extends ParametrizedMigrationQuery
         $query  = 'SELECT c.id, c.data FROM oro_entity_config c'
             . ' WHERE c.class_name = :class_name AND c.mode = :mode';
         $params = ['class_name' => 'Oro\Bundle\CalendarBundle\Entity\Attendee', 'mode' => ConfigModel::MODE_DEFAULT];
-        $types  = ['class_name' => Type::STRING, 'mode' => Type::STRING];
+        $types  = ['class_name' => Types::STRING, 'mode' => Types::STRING];
         $this->logQuery($logger, $query, $params, $types);
 
         // prepare update query
@@ -52,7 +52,7 @@ class UpdateAttendeeEntityConfig extends ParametrizedMigrationQuery
                 $updateQuery = [
                     'UPDATE oro_entity_config SET data = :data WHERE id = :id',
                     ['id' => $id, 'data' => $data],
-                    ['id' => Type::INTEGER, 'data' => Type::TARRAY]
+                    ['id' => Types::INTEGER, 'data' => Types::ARRAY]
                 ];
                 $this->logQuery($logger, $updateQuery[0], $updateQuery[1], $updateQuery[2]);
                 if (!$dryRun) {

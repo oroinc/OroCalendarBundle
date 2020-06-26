@@ -2,6 +2,7 @@
 
 namespace Oro\Bundle\CalendarBundle\Tests\Functional\API\Rest;
 
+use Faker\Provider\Uuid;
 use Oro\Bundle\CalendarBundle\Entity\Attendee;
 use Oro\Bundle\CalendarBundle\Entity\CalendarEvent;
 use Oro\Bundle\CalendarBundle\Model\Recurrence;
@@ -142,9 +143,10 @@ class BasicCrudTest extends AbstractTestCase
     public function testCreateSimpleCalendarEventWithFormUrlEncodedContent()
     {
         $calendarId = $this->getReference('oro_calendar:calendar:foo_user_1')->getId();
+        $uid = Uuid::uuid();
         // @codingStandardsIgnoreStart
         $content = <<<CONTENT
-title=Regular%20event&uid=123123&description=&start=2016-10-14T22%3A00%3A00.000Z&end=2016-10-14T23%3A00%3A00.000Z&allDay=false&attendees=&recurrence=&calendar=$calendarId
+title=Regular%20event&uid=$uid&description=&start=2016-10-14T22%3A00%3A00.000Z&end=2016-10-14T23%3A00%3A00.000Z&allDay=false&attendees=&recurrence=&calendar=$calendarId
 CONTENT;
         // @codingStandardsIgnoreEnd
         parse_str($content, $parameters);

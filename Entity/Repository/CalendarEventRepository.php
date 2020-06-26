@@ -3,7 +3,7 @@
 namespace Oro\Bundle\CalendarBundle\Entity\Repository;
 
 use Doctrine\Common\Collections\Criteria;
-use Doctrine\DBAL\Types\Type;
+use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\EntityRepository;
 use Doctrine\ORM\Query\Expr;
 use Doctrine\ORM\QueryBuilder;
@@ -255,8 +255,8 @@ class CalendarEventRepository extends EntityRepository
                 'e.originalStart <= :end AND ' .
                 'e.originalStart >= :start'
             )
-            ->setParameter('start', $startDate, Type::DATETIME)
-            ->setParameter('end', $endDate, Type::DATETIME)
+            ->setParameter('start', $startDate, Types::DATETIME_MUTABLE)
+            ->setParameter('end', $endDate, Types::DATETIME_MUTABLE)
             ->orderBy('c.id, e.start');
     }
 
