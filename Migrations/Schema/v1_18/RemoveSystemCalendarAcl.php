@@ -2,7 +2,7 @@
 
 namespace Oro\Bundle\CalendarBundle\Migrations\Schema\v1_18;
 
-use Doctrine\DBAL\Types\Type;
+use Doctrine\DBAL\Types\Types;
 use Oro\Bundle\EntityConfigBundle\Entity\ConfigModel;
 use Oro\Bundle\MigrationBundle\Migration\ArrayLogger;
 use Oro\Bundle\MigrationBundle\Migration\ParametrizedMigrationQuery;
@@ -44,8 +44,8 @@ class RemoveSystemCalendarAcl extends ParametrizedMigrationQuery
             'mode'       => ConfigModel::MODE_DEFAULT
         ];
         $types  = [
-            'class_name' => Type::STRING,
-            'mode'       => Type::STRING
+            'class_name' => Types::STRING,
+            'mode'       => Types::STRING
         ];
         $this->logQuery($logger, $query, $params, $types);
 
@@ -60,7 +60,7 @@ class RemoveSystemCalendarAcl extends ParametrizedMigrationQuery
                 $updateQuery = [
                     'UPDATE oro_entity_config SET data = :data WHERE id = :id',
                     ['id' => $id, 'data' => $data],
-                    ['id' => Type::INTEGER, 'data' => Type::TARRAY]
+                    ['id' => Types::INTEGER, 'data' => Types::ARRAY]
                 ];
                 $this->logQuery($logger, $updateQuery[0], $updateQuery[1], $updateQuery[2]);
                 if (!$dryRun) {

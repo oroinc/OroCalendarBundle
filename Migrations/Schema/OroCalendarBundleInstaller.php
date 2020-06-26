@@ -87,7 +87,7 @@ class OroCalendarBundleInstaller implements
      */
     public function getMigrationVersion()
     {
-        return 'v1_20';
+        return 'v1_21';
     }
 
     /**
@@ -252,14 +252,14 @@ class OroCalendarBundleInstaller implements
     {
         $table = $schema->createTable('oro_calendar_event');
         $table->addColumn('id', 'integer', ['autoincrement' => true]);
-        $table->addColumn('uid', 'text', ['notnull' => false]);
+        $table->addColumn('uid', 'string', ['notnull' => false, 'length' => 36]);
         $table->addColumn('calendar_id', 'integer', ['notnull' => false]);
         $table->addColumn('system_calendar_id', 'integer', ['notnull' => false]);
         $table->addColumn('title', 'string', ['length' => 255]);
         $table->addColumn('description', 'text', ['notnull' => false]);
         $table->addColumn('start_at', 'datetime', ['comment' => '(DC2Type:datetime)']);
         $table->addColumn('end_at', 'datetime', ['comment' => '(DC2Type:datetime)']);
-        $table->addColumn('all_day', 'boolean', []);
+        $table->addColumn('all_day', 'boolean', ['notnull' => true, 'default' => false]);
         $table->addColumn('background_color', 'string', ['notnull' => false, 'length' => 7]);
         $table->addColumn('created_at', 'datetime', []);
         $table->addColumn('updated_at', 'datetime', []);
@@ -268,7 +268,7 @@ class OroCalendarBundleInstaller implements
         $table->addColumn('recurring_event_id', 'integer', ['notnull' => false]);
         $table->addColumn('recurrence_id', 'integer', ['notnull' => false]);
         $table->addColumn('original_start_at', 'datetime', ['notnull' => false]);
-        $table->addColumn('is_cancelled', 'boolean', ['default' => false]);
+        $table->addColumn('is_cancelled', 'boolean', ['notnull' => true, 'default' => false]);
         $table->addColumn('is_organizer', 'boolean', ['notnull' => false]);
         $table->addColumn('organizer_user_id', 'integer', ['notnull' => false]);
         $table->addColumn('organizer_email', 'string', ['notnull' => false, 'length' => 255]);
@@ -280,19 +280,11 @@ class OroCalendarBundleInstaller implements
         $table->addIndex(['system_calendar_id'], 'IDX_2DDC40DD55F0F9D0', []);
         $table->addIndex(['updated_at'], 'oro_calendar_event_up_idx', []);
         $table->addIndex(['original_start_at'], 'oro_calendar_event_osa_idx');
+        $table->addIndex(['calendar_id', 'uid'], 'oro_calendar_event_uid_idx');
 
         $table->addUniqueIndex(['recurrence_id'], 'UNIQ_2DDC40DD2C414CE8');
 
         $table->setPrimaryKey(['id']);
-        if ($this->isMysqlPlatform()) {
-            $queries->addPostQuery(
-                'ALTER TABLE `oro_calendar_event` ADD INDEX `oro_calendar_event_uid_idx` (calendar_id, uid(50))'
-            );
-        } else {
-            $queries->addPostQuery(
-                'CREATE INDEX oro_calendar_event_uid_idx ON oro_calendar_event(calendar_id, uid);'
-            );
-        }
     }
 
     /**
