@@ -6,6 +6,8 @@ Oro\Bundle\CalendarBundle\Entity\CalendarEvent:
     properties:
         uid:
             - Oro\Bundle\FormBundle\Validator\Constraints\UnchangeableField: ~
+            - Length:
+                  max: 36
         title:
             - NotBlank:     ~
             - Length:

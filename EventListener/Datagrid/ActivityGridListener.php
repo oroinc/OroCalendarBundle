@@ -2,7 +2,7 @@
 
 namespace Oro\Bundle\CalendarBundle\EventListener\Datagrid;
 
-use Doctrine\DBAL\Types\Type;
+use Doctrine\DBAL\Types\Types;
 use Oro\Bundle\ActivityBundle\Manager\ActivityManager;
 use Oro\Bundle\DataGridBundle\Datasource\Orm\OrmDatasource;
 use Oro\Bundle\DataGridBundle\Event\BuildAfter;
@@ -61,7 +61,7 @@ class ActivityGridListener
             $start = new \DateTime('now', new \DateTimeZone($this->localeSettings->getTimeZone()));
             $start->setTime(0, 0, 0);
             $qb->andWhere('event.start >= :date OR event.end >= :date')
-                ->setParameter('date', $start, Type::DATETIME);
+                ->setParameter('date', $start, Types::DATETIME_MUTABLE);
         }
     }
 }

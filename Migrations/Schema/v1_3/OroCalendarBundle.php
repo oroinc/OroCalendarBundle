@@ -6,6 +6,7 @@ use Doctrine\DBAL\Platforms\AbstractPlatform;
 use Doctrine\DBAL\Schema\Schema;
 use Doctrine\DBAL\Schema\Table;
 use Doctrine\DBAL\Types\Type;
+use Doctrine\DBAL\Types\Types;
 use Oro\Bundle\ActivityBundle\Migration\Extension\ActivityExtension;
 use Oro\Bundle\EntityExtendBundle\Migration\ExtendOptionsManager;
 use Oro\Bundle\EntityExtendBundle\Migration\Extension\ExtendExtension;
@@ -60,7 +61,7 @@ class OroCalendarBundle implements
             new ParametrizedSqlMigrationQuery(
                 'UPDATE oro_calendar_event SET created_at = :date, updated_at = :date',
                 ['date' => new \DateTime('now', new \DateTimeZone('UTC'))],
-                ['date' => Type::DATETIME]
+                ['date' => Types::DATETIME_MUTABLE]
             )
         );
 
@@ -72,7 +73,7 @@ class OroCalendarBundle implements
                     $this->platform->getLengthExpression('title')
                 ),
                 ['new_line' => '%\n%'],
-                ['new_line' => Type::STRING]
+                ['new_line' => Types::STRING]
             )
         );
         // trim title
@@ -92,7 +93,7 @@ class OroCalendarBundle implements
                     $locateExpr
                 ),
                 ['lf' => '\n', 'cr' => '\r', 'empty' => ''],
-                ['lf' => Type::STRING, 'cr' => Type::STRING, 'empty' => Type::STRING]
+                ['lf' => Types::STRING, 'cr' => Types::STRING, 'empty' => Types::STRING]
             )
         );
         $queries->addPreQuery(
@@ -104,7 +105,7 @@ class OroCalendarBundle implements
         );
 
         $table = $schema->getTable('oro_calendar_event');
-        $table->getColumn('title')->setType(Type::getType(Type::STRING))->setOptions(['length' => 255]);
+        $table->getColumn('title')->setType(Type::getType(Types::STRING))->setOptions(['length' => 255]);
         $table->getColumn('created_at')->setOptions(['notnull' => true]);
         $table->getColumn('updated_at')->setOptions(['notnull' => true]);
         $this->enableDataAudit($table);

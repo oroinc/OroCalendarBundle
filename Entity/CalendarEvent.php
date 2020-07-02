@@ -17,6 +17,8 @@ use Oro\Bundle\ReminderBundle\Model\ReminderData;
 use Oro\Bundle\UserBundle\Entity\User;
 
 /**
+ * Calendar Event ORM Entity.
+ *
  * @ORM\Entity(repositoryClass="Oro\Bundle\CalendarBundle\Entity\Repository\CalendarEventRepository")
  * @ORM\Table(
  *      name="oro_calendar_event",
@@ -93,7 +95,7 @@ class CalendarEvent extends ExtendCalendarEvent implements
     /**
      * @var string
      *
-     * @ORM\Column(name="uid", type="text", nullable=true)
+     * @ORM\Column(name="uid", type="string", nullable=true, length=36)
      * @ConfigField(
      *      defaultValues={
      *          "dataaudit"={
@@ -208,7 +210,7 @@ class CalendarEvent extends ExtendCalendarEvent implements
     /**
      * @var bool
      *
-     * @ORM\Column(name="all_day", type="boolean")
+     * @ORM\Column(name="all_day", type="boolean", nullable=false, options={"default"=false})
      * @ConfigField(
      *      defaultValues={
      *          "dataaudit"={
@@ -217,7 +219,7 @@ class CalendarEvent extends ExtendCalendarEvent implements
      *      }
      * )
      */
-    protected $allDay;
+    protected $allDay = false;
 
     /**
      * @var string|null
@@ -328,7 +330,7 @@ class CalendarEvent extends ExtendCalendarEvent implements
      *
      * @var bool
      *
-     * @ORM\Column(name="is_cancelled", type="boolean", options={"default"=false})
+     * @ORM\Column(name="is_cancelled", type="boolean", nullable=false, options={"default"=false})
      */
     protected $cancelled = false;
 
@@ -1292,7 +1294,7 @@ class CalendarEvent extends ExtendCalendarEvent implements
     }
 
     /**
-     * @todo: After implementation of BAP-13212 this logic should be moved to separate service
+     * Planned for refactoring and will be moved to separate service
      * or another approach should be used to get the previous state of the event
      *
      * The implementation should provides possibility to:
