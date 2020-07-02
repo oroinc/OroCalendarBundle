@@ -78,9 +78,12 @@ define([
             var container = this.$el.closest(this.selectors.container);
             container.find(this.selectors.newCalendarSelector).on('change', _.bind(function(e) {
                 var itemData = $(e.target).inputWidget('data');
-                this.addModel(e.val, itemData.fullName, itemData.userId);
-                // clear autocomplete
-                $(e.target).inputWidget('val', '');
+
+                if (itemData) {
+                    this.addModel(e.val, itemData.fullName, itemData.userId);
+                    // clear autocomplete
+                    $(e.target).inputWidget('val', '');
+                }
             }, this));
         },
 
