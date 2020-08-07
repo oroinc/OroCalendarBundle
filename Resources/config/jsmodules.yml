@@ -15,4 +15,5 @@ dynamic-imports:
         - orocalendar/js/calendar/menu/change-calendar-color
         - orocalendar/js/calendar/menu/remove-calendar
         - orocalendar/js/calendar/menu/toggle-calendar
+    oroform-validate:
         - orocalendar/js/validator/dateearlierthan
