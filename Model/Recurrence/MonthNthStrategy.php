@@ -5,6 +5,9 @@ namespace Oro\Bundle\CalendarBundle\Model\Recurrence;
 use Oro\Bundle\CalendarBundle\Entity;
 use Oro\Bundle\CalendarBundle\Model\Recurrence;
 
+/**
+ * Calendar strategy for events reocurring every Nth month.
+ */
 class MonthNthStrategy extends AbstractStrategy
 {
     /**
@@ -17,6 +20,7 @@ class MonthNthStrategy extends AbstractStrategy
 
     /**
      * {@inheritdoc}
+     * @SuppressWarnings(PHPMD.CyclomaticComplexity)
      */
     public function getOccurrences(Entity\Recurrence $recurrence, \DateTime $start, \DateTime $end)
     {

@@ -6,9 +6,6 @@ use Oro\Bundle\CalendarBundle\Entity;
 use Oro\Bundle\CalendarBundle\Model\Recurrence;
 
 /**
- * Class WeeklyStrategy
- * @package Oro\Bundle\CalendarBundle\Model\Recurrence
- *
  * The weekly strategy for the first week takes into account only that days that are later than start
  * of recurrence and then it selects next days according to its interval.
  * For example, the rule 'Weekly every 2 weeks on Monday, Friday every 2 weeks'
@@ -96,7 +93,7 @@ class WeeklyStrategy extends AbstractStrategy
                 ) {
                     $result[] = $next;
                 }
-                
+
                 $fromStartInterval = $next >= $recurrence->getStartTime() ? $fromStartInterval +1 : $fromStartInterval;
             }
             $fullWeeks += $interval;
@@ -186,6 +183,7 @@ class WeeklyStrategy extends AbstractStrategy
      * {@inheritdoc}
      *
      * @SuppressWarnings(PHPMD.NPathComplexity)
+     * @SuppressWarnings(PHPMD.CyclomaticComplexity)
      */
     public function getLastOccurrence(Entity\Recurrence $recurrence)
     {

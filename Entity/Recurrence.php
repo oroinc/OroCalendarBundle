@@ -487,6 +487,7 @@ class Recurrence
      *
      * @param Recurrence|null $other
      * @return bool
+     * @SuppressWarnings(PHPMD.CyclomaticComplexity)
      */
     public function isEqual($other)
     {

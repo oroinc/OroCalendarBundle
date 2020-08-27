@@ -83,6 +83,7 @@ class RecurringCalendarEventExceptionValidator extends ConstraintValidator
      *
      * @param CalendarEvent $value
      * @param RecurringCalendarEventExceptionConstraint $constraint
+     * @SuppressWarnings(PHPMD.CyclomaticComplexity)
      */
     protected function validateCalendarUid(
         CalendarEvent $value,
