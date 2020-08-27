@@ -12,6 +12,9 @@ use Oro\Bundle\EntityExtendBundle\Extend\RelationType;
 use Oro\Bundle\EntityExtendBundle\Tools\ExtendHelper;
 use Oro\Component\DoctrineUtils\ORM\QueryBuilderUtil;
 
+/**
+ * Provides utility methods for retrieval of calendar properties.
+ */
 class CalendarPropertyProvider
 {
     const CALENDAR_PROPERTY_CLASS = 'Oro\Bundle\CalendarBundle\Entity\CalendarProperty';
@@ -56,6 +59,7 @@ class CalendarPropertyProvider
      * @param int $calendarId
      *
      * @return array
+     * @SuppressWarnings(PHPMD.CyclomaticComplexity)
      */
     public function getItems($calendarId)
     {

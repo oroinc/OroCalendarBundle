@@ -32,6 +32,7 @@ use Oro\Bundle\CalendarBundle\Tests\Functional\DataFixtures\LoadUserData;
  * @dbIsolationPerTest
  *
  * @SuppressWarnings(PHPMD.ExcessiveClassLength)
+ * @SuppressWarnings(PHPMD.TooManyPublicMethods)
  */
 class RecurringEventUpdateExceptionTest extends AbstractTestCase
 {

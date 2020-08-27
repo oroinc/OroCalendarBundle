@@ -85,6 +85,7 @@ class SystemCalendarType extends AbstractType
      * PRE_SET_DATA event handler
      *
      * @param FormEvent $event
+     * @SuppressWarnings(PHPMD.CyclomaticComplexity)
      */
     public function preSetData(FormEvent $event)
     {
