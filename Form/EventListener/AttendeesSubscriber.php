@@ -8,6 +8,10 @@ use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\Form\FormEvent;
 use Symfony\Component\Form\FormEvents;
 
+/**
+ * Makes sure indexes of attendees from request are equal to indexes of the same
+ * attendees so that in the end we end up with correct data.
+ */
 class AttendeesSubscriber implements EventSubscriberInterface
 {
     /**
@@ -26,6 +30,7 @@ class AttendeesSubscriber implements EventSubscriberInterface
      * Makes sure indexes of attendees from request are equal to indexes of the same
      * attendees so that in the end we end up with correct data.
      *
+     * @SuppressWarnings(PHPMD.CyclomaticComplexity)
      * @param FormEvent $event
      */
     public function fixSubmittedData(FormEvent $event)

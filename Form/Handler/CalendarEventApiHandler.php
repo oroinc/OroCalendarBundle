@@ -5,6 +5,9 @@ namespace Oro\Bundle\CalendarBundle\Form\Handler;
 use Oro\Bundle\CalendarBundle\Entity\CalendarEvent;
 use Oro\Bundle\CalendarBundle\Manager\CalendarEvent\NotificationManager;
 
+/**
+ * Form handler for calendar event form, used in legacy REST API.
+ */
 class CalendarEventApiHandler extends AbstractCalendarEventHandler
 {
     /**
@@ -12,6 +15,7 @@ class CalendarEventApiHandler extends AbstractCalendarEventHandler
      *
      * @param  CalendarEvent $entity
      * @return bool  True on successful processing, false otherwise
+     * @SuppressWarnings(PHPMD.CyclomaticComplexity)
      */
     public function process(CalendarEvent $entity)
     {
@@ -26,7 +30,6 @@ class CalendarEventApiHandler extends AbstractCalendarEventHandler
             $this->form->submit($request->request->all());
 
             if ($this->form->isValid()) {
-                // TODO: should be refactored after finishing BAP-8722
                 // Contexts handling should be moved to common for activities form handler
                 if ($this->form->has('contexts') && $request->request->has('contexts')) {
                     $contexts = $this->form->get('contexts')->getData();
