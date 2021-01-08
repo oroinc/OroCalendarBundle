@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 namespace Oro\Bundle\CalendarBundle\Form\Handler;
 
@@ -11,34 +12,27 @@ use Oro\Bundle\UserBundle\Entity\User;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Security\Core\Exception\AccessDeniedException;
 
+/**
+ * Calendar event form handler.
+ */
 class CalendarEventHandler extends AbstractCalendarEventHandler
 {
     use RequestHandlerTrait;
 
-    /**
-     * @var EntityRoutingHelper
-     */
-    protected $entityRoutingHelper;
+    protected EntityRoutingHelper $entityRoutingHelper;
 
-    /**
-     * @param EntityRoutingHelper $entityRoutingHelper
-     */
-    public function setEntityRoutingHelper(EntityRoutingHelper $entityRoutingHelper)
+    public function setEntityRoutingHelper(EntityRoutingHelper $entityRoutingHelper): void
     {
         $this->entityRoutingHelper = $entityRoutingHelper;
     }
 
     /**
-     * Process form
-     *
-     * @param  CalendarEvent $entity
-     *
-     * @return bool True on successful processing, false otherwise
+     * Processes form and returns true on successful processing, false otherwise.
      *
      * @throws AccessDeniedException
      * @throws \LogicException
      */
-    public function process(CalendarEvent $entity)
+    public function process(CalendarEvent $entity): bool
     {
         $request = $this->getRequest();
 
@@ -55,8 +49,7 @@ class CalendarEventHandler extends AbstractCalendarEventHandler
             $this->submitPostPutRequest($this->form, $request);
 
             if ($this->form->isValid()) {
-                // TODO: should be refactored after finishing BAP-8722
-                // Contexts handling should be moved to common for activities form handler
+                // Contexts handling should be moved to common for activities form handler (BAP-8722)
                 if ($this->form->has('contexts')) {
                     $contexts = $this->form->get('contexts')->getData();
                     $owner = $entity->getCalendar() ? $entity->getCalendar()->getOwner() : null;
@@ -67,7 +60,7 @@ class CalendarEventHandler extends AbstractCalendarEventHandler
                 } elseif (!$entity->getId() && $entity->getRecurringEvent()) {
                     $this->activityManager->setActivityTargets(
                         $entity,
-                        $entity->getRecurringEvent()->getActivityTargetEntities()
+                        $entity->getRecurringEvent()->getActivityTargets()
                     );
                 }
 
@@ -83,23 +76,19 @@ class CalendarEventHandler extends AbstractCalendarEventHandler
     }
 
     /**
-     * @param CalendarEvent $entity
-     *
      * @throws AccessDeniedException
      */
-    protected function checkPermission(CalendarEvent $entity)
+    protected function checkPermission(CalendarEvent $entity): void
     {
-        if ($entity->getParent() !== null) {
+        if (null !== $entity->getParent()) {
             throw new AccessDeniedException();
         }
     }
 
     /**
-     * @param CalendarEvent $entity
-     *
      * @throws \LogicException
      */
-    protected function ensureCalendarSet(CalendarEvent $entity)
+    protected function ensureCalendarSet(CalendarEvent $entity): void
     {
         if ($entity->getCalendar() || $entity->getSystemCalendar()) {
             return;
@@ -118,13 +107,7 @@ class CalendarEventHandler extends AbstractCalendarEventHandler
         $entity->setCalendar($defaultCalendar);
     }
 
-    /**
-     * @param         $entity
-     * @param Request $request
-     *
-     * @return CalendarEventHandler
-     */
-    protected function processTargetEntity($entity, Request $request)
+    protected function processTargetEntity($entity, Request $request): self
     {
         $targetEntityClass = $this->entityRoutingHelper->getEntityClassName($request);
         if ($targetEntityClass) {
@@ -135,11 +118,11 @@ class CalendarEventHandler extends AbstractCalendarEventHandler
             );
 
             $action = $this->entityRoutingHelper->getAction($request);
-            if ($action === 'activity') {
+            if ('activity' === $action) {
                 $this->activityManager->addActivityTarget($entity, $targetEntity);
             }
 
-            if ($action === 'assign'
+            if ('assign' === $action
                 && $targetEntity instanceof User
                 && $targetEntityId !== $this->tokenAccessor->getUserId()
             ) {
@@ -154,10 +137,7 @@ class CalendarEventHandler extends AbstractCalendarEventHandler
         return $this;
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    protected function getSendNotificationsStrategy()
+    protected function getSendNotificationsStrategy(): string
     {
         if ($this->form->has('notifyAttendees') && $this->form->get('notifyAttendees')->getData()) {
             return $this->form->get('notifyAttendees')->getData();
@@ -166,10 +146,7 @@ class CalendarEventHandler extends AbstractCalendarEventHandler
         return NotificationManager::NONE_NOTIFICATIONS_STRATEGY;
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    protected function allowUpdateExceptions()
+    protected function allowUpdateExceptions(): bool
     {
         return true;
     }

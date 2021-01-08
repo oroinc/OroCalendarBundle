@@ -1,8 +1,14 @@
 <?php
+declare(strict_types=1);
 
 namespace Oro\Bundle\CalendarBundle\Tests\Unit\Form\Handler;
 
+use Doctrine\Common\Persistence\ManagerRegistry;
+use Doctrine\Common\Persistence\ObjectManager;
+use Doctrine\Common\Persistence\ObjectRepository;
 use Oro\Bundle\ActivityBundle\Manager\ActivityManager;
+use Oro\Bundle\CalendarBundle\Entity\Calendar;
+use Oro\Bundle\CalendarBundle\Entity\Repository\CalendarRepository;
 use Oro\Bundle\CalendarBundle\Form\Handler\CalendarEventHandler;
 use Oro\Bundle\CalendarBundle\Manager\CalendarEvent\NotificationManager;
 use Oro\Bundle\CalendarBundle\Manager\CalendarEventManager;
@@ -12,15 +18,20 @@ use Oro\Bundle\EntityBundle\Tools\EntityRoutingHelper;
 use Oro\Bundle\OrganizationBundle\Entity\Organization;
 use Oro\Bundle\SecurityBundle\Authentication\TokenAccessorInterface;
 use Oro\Bundle\UserBundle\Entity\User;
+use PHPUnit\Framework\MockObject\MockObject;
+use Symfony\Component\Form\Form;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\RequestStack;
 
 class CalendarEventHandlerTest extends \PHPUnit\Framework\TestCase
 {
-    const FORM_DATA = ['field' => 'value'];
+    private const FORM_DATA = ['field' => 'value'];
 
-    /** @var \PHPUnit\Framework\MockObject\MockObject */
+    /** @var MockObject|Form */
     protected $form;
+
+    /** @var MockObject|Form */
+    protected $notifyAttendeesForm;
 
     /** @var RequestStack */
     protected $requestStack;
@@ -28,19 +39,19 @@ class CalendarEventHandlerTest extends \PHPUnit\Framework\TestCase
     /** @var Request */
     protected $request;
 
-    /** @var \PHPUnit\Framework\MockObject\MockObject */
+    /** @var MockObject */
     protected $objectManager;
 
-    /** @var \PHPUnit\Framework\MockObject\MockObject */
+    /** @var MockObject */
     protected $activityManager;
 
-    /** @var \PHPUnit\Framework\MockObject\MockObject */
+    /** @var MockObject */
     protected $entityRoutingHelper;
 
-    /** @var \PHPUnit\Framework\MockObject\MockObject */
+    /** @var MockObject */
     protected $tokenAccessor;
 
-    /** @var \PHPUnit\Framework\MockObject\MockObject|CalendarEventManager */
+    /** @var MockObject|CalendarEventManager */
     protected $calendarEventManager;
 
     /** @var CalendarEventHandler */
@@ -52,46 +63,33 @@ class CalendarEventHandlerTest extends \PHPUnit\Framework\TestCase
     /** @var Organization */
     protected $organization;
 
-    /** @var \PHPUnit\Framework\MockObject\MockObject */
+    /** @var MockObject */
     protected $notificationManager;
 
     protected function setUp(): void
     {
-        $this->form                = $this->createMock('Symfony\Component\Form\Form');
+        $this->form = $this->createMock(Form::class);
+        $this->notifyAttendeesForm = $this->createMock(Form::class);
+        $this->notifyAttendeesForm->method('getData')->willReturn(NotificationManager::NONE_NOTIFICATIONS_STRATEGY);
         $this->request = new Request();
         $this->requestStack = new RequestStack();
         $this->requestStack->push($this->request);
 
-        $this->objectManager       = $this->createMock('Doctrine\Common\Persistence\ObjectManager');
+        $this->objectManager = $this->createMock(ObjectManager::class);
 
-        $doctrine = $this->createMock('Doctrine\Common\Persistence\ManagerRegistry');
+        $doctrine = $this->createMock(ManagerRegistry::class);
 
-        $doctrine->expects($this->any())
-            ->method('getManager')
-            ->will($this->returnValue($this->objectManager));
+        $doctrine->method('getManager')->willReturn($this->objectManager);
 
-        $this->activityManager     = $this->getMockBuilder(ActivityManager::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-
-        $this->entityRoutingHelper = $this->getMockBuilder(EntityRoutingHelper::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $this->activityManager = $this->createMock(ActivityManager::class);
+        $this->entityRoutingHelper = $this->createMock(EntityRoutingHelper::class);
 
         $this->organization = new Organization();
         $this->tokenAccessor = $this->createMock(TokenAccessorInterface::class);
-        $this->tokenAccessor->expects($this->any())
-            ->method('getOrganization')
-            ->willReturn($this->organization);
+        $this->tokenAccessor->method('getOrganization')->willReturn($this->organization);
 
-        $this->notificationManager = $this->getMockBuilder(NotificationManager::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-
-        $this->calendarEventManager = $this
-            ->getMockBuilder(CalendarEventManager::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $this->notificationManager = $this->createMock(NotificationManager::class);
+        $this->calendarEventManager = $this->createMock(CalendarEventManager::class);
 
         $this->entity = new CalendarEvent();
 
@@ -108,108 +106,67 @@ class CalendarEventHandlerTest extends \PHPUnit\Framework\TestCase
         $this->handler->setEntityRoutingHelper($this->entityRoutingHelper);
     }
 
-    public function testProcessGetRequestWithCalendar()
+    public function testProcessGetRequestWithCalendar(): void
     {
-        $calendar = $this->getMockBuilder('Oro\Bundle\CalendarBundle\Entity\Calendar')
-            ->disableOriginalConstructor()
-            ->getMock();
+        $calendar = $this->createMock(Calendar::class);
         $this->entity->setCalendar($calendar);
 
-        $this->form->expects($this->never())
-            ->method('submit');
+        $this->form->expects(static::never())->method('submit');
 
-        $this->assertFalse(
-            $this->handler->process($this->entity)
-        );
+        static::assertFalse($this->handler->process($this->entity));
     }
 
-    public function testProcessWithExceptionWithParent()
+    public function testProcessWithExceptionWithParent(): void
     {
         $this->expectException(\Symfony\Component\Security\Core\Exception\AccessDeniedException::class);
         $this->entity->setParent(new CalendarEvent());
         $this->handler->process($this->entity);
     }
 
-    /**
-     * @dataProvider supportedMethods
-     */
-    public function testProcessInvalidData($method)
+    /** @dataProvider supportedMethods */
+    public function testProcessInvalidData(string $method): void
     {
-        $calendar = $this->getMockBuilder('Oro\Bundle\CalendarBundle\Entity\Calendar')
-            ->disableOriginalConstructor()
-            ->getMock();
+        $calendar = $this->createMock(Calendar::class);
         $this->entity->setCalendar($calendar);
 
         $this->request->initialize([], self::FORM_DATA);
         $this->request->setMethod($method);
 
-        $this->form->expects($this->once())
-            ->method('setData')
-            ->with($this->identicalTo($this->entity));
-        $this->form->expects($this->once())
-            ->method('submit')
-            ->with($this->identicalTo(self::FORM_DATA));
-        $this->form->expects($this->once())
-            ->method('isValid')
-            ->will($this->returnValue(false));
-        $this->objectManager->expects($this->never())
-            ->method('persist');
-        $this->objectManager->expects($this->never())
-            ->method('flush');
-        $this->calendarEventManager->expects($this->never())
-            ->method('onEventUpdate');
+        $this->form->expects(static::once())->method('setData')->with(static::identicalTo($this->entity));
+        $this->form->expects(static::once())->method('submit')->with(static::identicalTo(self::FORM_DATA));
+        $this->form->expects(static::once())->method('isValid')->willReturn(false);
+        $this->objectManager->expects(static::never())->method('persist');
+        $this->objectManager->expects(static::never())->method('flush');
+        $this->calendarEventManager->expects(static::never())->method('onEventUpdate');
 
-        $this->assertFalse(
-            $this->handler->process($this->entity)
-        );
+        static::assertFalse($this->handler->process($this->entity));
     }
 
-    /**
-     * @dataProvider supportedMethods
-     */
-    public function testProcessValidDataWithoutTargetEntity($method)
+    /** @dataProvider supportedMethods */
+    public function testProcessValidDataWithoutTargetEntity(string $method): void
     {
-        $calendar = $this->getMockBuilder('Oro\Bundle\CalendarBundle\Entity\Calendar')
-            ->disableOriginalConstructor()
-            ->getMock();
+        $calendar = $this->createMock(Calendar::class);
         $this->entity->setCalendar($calendar);
 
         $this->request->initialize([], self::FORM_DATA);
         $this->request->setMethod($method);
 
-        $this->form->expects($this->once())
-            ->method('setData')
-            ->with($this->identicalTo($this->entity));
-        $this->form->expects($this->once())
-            ->method('submit')
-            ->with($this->identicalTo(self::FORM_DATA));
-        $this->form->expects($this->once())
-            ->method('isValid')
-            ->will($this->returnValue(true));
-        $this->form->expects($this->any())
-            ->method('has')
-            ->will($this->returnValue(false));
-        $this->entityRoutingHelper->expects($this->once())
-            ->method('getEntityClassName')
-            ->will($this->returnValue(null));
-        $this->calendarEventManager->expects($this->once())
+        $this->form->expects(static::once())->method('setData')->with(static::identicalTo($this->entity));
+        $this->form->expects(static::once())->method('submit')->with(static::identicalTo(self::FORM_DATA));
+        $this->form->expects(static::once())->method('isValid')->willReturn(true);
+        $this->form->method('has')->willReturn(false);
+        $this->entityRoutingHelper->expects(static::once())->method('getEntityClassName')->willReturn(null);
+        $this->calendarEventManager->expects(static::once())
             ->method('onEventUpdate')
             ->with($this->entity, clone $this->entity, $this->organization, true);
-        $this->objectManager->expects($this->once())
-            ->method('persist')
-            ->with($this->identicalTo($this->entity));
-        $this->objectManager->expects($this->once())
-            ->method('flush');
+        $this->objectManager->expects(static::once())->method('persist')->with(static::identicalTo($this->entity));
+        $this->objectManager->expects(static::once())->method('flush');
 
-        $this->assertTrue(
-            $this->handler->process($this->entity)
-        );
+        static::assertTrue($this->handler->process($this->entity));
     }
 
-    /**
-     * @dataProvider supportedMethods
-     */
-    public function testProcessWithContexts($method)
+    /** @dataProvider supportedMethods */
+    public function testProcessWithContexts(string $method): void
     {
         $context = new User();
         ReflectionUtil::setId($context, 123);
@@ -223,234 +180,165 @@ class CalendarEventHandlerTest extends \PHPUnit\Framework\TestCase
 
         $this->request->initialize([], self::FORM_DATA);
         $this->request->setMethod($method);
-        $this->form->expects($this->any())
-            ->method('get')
-            ->will($this->returnValue($this->form));
+        $this->form->method('get')->willReturnCallback(
+            fn ($p) => 'notifyAttendees' === $p ? $this->notifyAttendeesForm : $this->form
+        );
 
-        $defaultCalendar = $this->getMockBuilder('Oro\Bundle\CalendarBundle\Entity\Calendar')
-            ->disableOriginalConstructor()
-            ->getMock();
+        $defaultCalendar = $this->createMock(Calendar::class);
         $this->entity->setCalendar($defaultCalendar);
 
-        $this->form->expects($this->once())
-            ->method('isValid')
-            ->will($this->returnValue(true));
+        $this->form->expects(static::once())->method('isValid')->willReturn(true);
 
-        $this->form->expects($this->any())
+        $this->form->expects(static::any())
             ->method('has')
             ->withConsecutive(
                 ['contexts'],
                 ['notifyAttendees']
             )
-            ->will($this->returnValue(true));
+            ->willReturn(true);
 
-        $defaultCalendar->expects($this->once())
-            ->method('getOwner')
-            ->will($this->returnValue($owner));
+        $defaultCalendar->expects(static::once())->method('getOwner')->willReturn($owner);
 
-        $this->form->expects($this->any())
-            ->method('getData')
-            ->will($this->returnValue([$context]));
+        $this->form->method('getData')->willReturn([$context]);
 
-        $this->activityManager->expects($this->once())
+        $this->activityManager->expects(static::once())
             ->method('setActivityTargets')
             ->with(
-                $this->identicalTo($this->entity),
-                $this->identicalTo([$context, $owner])
+                static::identicalTo($this->entity),
+                static::identicalTo([$context, $owner])
             );
 
-        $this->activityManager->expects($this->never())
-            ->method('removeActivityTarget');
-        $this->assertTrue(
-            $this->handler->process($this->entity)
-        );
+        $this->activityManager->expects(static::never())->method('removeActivityTarget');
 
-        $this->assertSame($defaultCalendar, $this->entity->getCalendar());
+        static::assertTrue($this->handler->process($this->entity));
+        static::assertSame($defaultCalendar, $this->entity->getCalendar());
     }
 
 
-    /**
-     * @dataProvider supportedMethods
-     *
-     */
-    public function testProcessRequestWithoutCurrentUser($method)
+    /** @dataProvider supportedMethods */
+    public function testProcessRequestWithoutCurrentUser(string $method): void
     {
         $this->expectException(\LogicException::class);
         $this->expectExceptionMessage('Both logged in user and organization must be defined.');
 
         $this->request->setMethod($method);
 
-        $this->form->expects($this->never())
-            ->method('submit')
-            ->with($this->identicalTo(self::FORM_DATA));
+        $this->form->expects(static::never())->method('submit')->with(static::identicalTo(self::FORM_DATA));
 
-        $this->tokenAccessor->expects($this->once())
-            ->method('getUserId')
-            ->will($this->returnValue(null));
+        $this->tokenAccessor->expects(static::once())->method('getUserId')->willReturn(null);
 
         $this->handler->process($this->entity);
     }
 
-    /**
-     * @dataProvider supportedMethods
-     */
-    public function testProcessValidDataWithTargetEntityAssign($method)
+    /** @dataProvider supportedMethods */
+    public function testProcessValidDataWithTargetEntityAssign(string $method): void
     {
         $targetEntity = new User();
         ReflectionUtil::setId($targetEntity, 123);
         $organization = new Organization();
         ReflectionUtil::setId($organization, 1);
         $targetEntity->setOrganization($organization);
-        $defaultCalendar = $this->getMockBuilder('Oro\Bundle\CalendarBundle\Entity\Calendar')
-            ->disableOriginalConstructor()
-            ->getMock();
+        $defaultCalendar = $this->createMock(Calendar::class);
         $this->entity->setCalendar($defaultCalendar);
 
-        $this->entityRoutingHelper->expects($this->once())
+        $this->entityRoutingHelper->expects(static::once())
             ->method('getEntityClassName')
-            ->will($this->returnValue(get_class($targetEntity)));
-        $this->entityRoutingHelper->expects($this->once())
-            ->method('getEntityId')
-            ->will($this->returnValue($targetEntity->getId()));
-        $this->entityRoutingHelper->expects($this->once())
-            ->method('getAction')
-            ->will($this->returnValue('assign'));
+            ->willReturn(get_class($targetEntity));
+        $this->entityRoutingHelper->expects(static::once())->method('getEntityId')->willReturn($targetEntity->getId());
+        $this->entityRoutingHelper->expects(static::once())->method('getAction')->willReturn('assign');
 
         $this->request->initialize([], self::FORM_DATA);
         $this->request->setMethod($method);
 
-        $this->form->expects($this->once())
-            ->method('setData')
-            ->with($this->identicalTo($this->entity));
-        $this->form->expects($this->once())
-            ->method('submit')
-            ->with($this->identicalTo(self::FORM_DATA));
-        $this->form->expects($this->once())
-            ->method('isValid')
-            ->will($this->returnValue(true));
+        $this->form->expects(static::once())->method('setData')->with(static::identicalTo($this->entity));
+        $this->form->expects(static::once())->method('submit')->with(static::identicalTo(self::FORM_DATA));
+        $this->form->expects(static::once())->method('isValid')->willReturn(true);
 
-        $this->entityRoutingHelper->expects($this->once())
+        $this->entityRoutingHelper->expects(static::once())
             ->method('getEntityReference')
             ->with(get_class($targetEntity), $targetEntity->getId())
-            ->will($this->returnValue($targetEntity));
+            ->willReturn($targetEntity);
 
-        $this->activityManager->expects($this->never())
+        $this->activityManager->expects(static::never())
             ->method('addActivityTarget')
-            ->with($this->identicalTo($this->entity), $this->identicalTo($targetEntity));
+            ->with(static::identicalTo($this->entity), static::identicalTo($targetEntity));
 
-        $this->tokenAccessor->expects($this->once())
-            ->method('getUserId')
-            ->will($this->returnValue(100));
+        $this->tokenAccessor->expects(static::once())->method('getUserId')->willReturn(100);
 
-        $repository = $this->getMockBuilder('Doctrine\Common\Persistence\ObjectRepository')
+        /** @var CalendarRepository|MockObject $repository */
+        $repository = $this->getMockBuilder(ObjectRepository::class)
             ->disableOriginalConstructor()
-            ->setMethods(array('find', 'findAll', 'findBy', 'findOneBy', 'getClassName', 'findDefaultCalendar'))
+            ->onlyMethods(['find', 'findAll', 'findBy', 'findOneBy', 'getClassName'])
+            ->addMethods(['findDefaultCalendar'])
             ->getMock();
 
-        $calendar = $this->getMockBuilder('Oro\Bundle\CalendarBundle\Entity\Calendar')
-            ->disableOriginalConstructor()
-            ->getMock();
+        $calendar = $this->createMock(Calendar::class);
 
-        $repository ->expects($this->once())
+        $repository ->expects(static::once())
             ->method('findDefaultCalendar')
-            ->will($this->returnValue($calendar));
+            ->willReturn($calendar);
 
-        $this->objectManager->expects($this->once())
-            ->method('getRepository')
-            ->will($this->returnValue($repository));
+        $this->objectManager->expects(static::once())->method('getRepository')->willReturn($repository);
 
-        $this->form->expects($this->any())
-            ->method('has')
-            ->will($this->returnValue(false));
+        $this->form->method('has')->willReturn(false);
 
-        $this->calendarEventManager->expects($this->once())
+        $this->calendarEventManager->expects(static::once())
             ->method('onEventUpdate')
             ->with($this->entity, clone $this->entity, $this->organization, true);
 
-        $this->objectManager->expects($this->once())
-            ->method('persist')
-            ->with($this->identicalTo($this->entity));
-        $this->objectManager->expects($this->once())
-            ->method('flush');
+        $this->objectManager->expects(static::once())->method('persist')->with(static::identicalTo($this->entity));
+        $this->objectManager->expects(static::once())->method('flush');
 
-        $this->assertTrue(
-            $this->handler->process($this->entity)
-        );
-
-        $this->assertNotSame($defaultCalendar, $this->entity->getCalendar());
+        static::assertTrue($this->handler->process($this->entity));
+        static::assertNotSame($defaultCalendar, $this->entity->getCalendar());
     }
 
-    /**
-     * @dataProvider supportedMethods
-     */
-    public function testProcessValidDataWithTargetEntityActivity($method)
+    /** @dataProvider supportedMethods */
+    public function testProcessValidDataWithTargetEntityActivity(string $method): void
     {
         $targetEntity = new User();
         ReflectionUtil::setId($targetEntity, 123);
         $organization = new Organization();
         ReflectionUtil::setId($organization, 1);
         $targetEntity->setOrganization($organization);
-        $defaultCalendar = $this->getMockBuilder('Oro\Bundle\CalendarBundle\Entity\Calendar')
-            ->disableOriginalConstructor()
-            ->getMock();
+        $defaultCalendar = $this->createMock(Calendar::class);
         $this->entity->setCalendar($defaultCalendar);
 
-        $this->entityRoutingHelper->expects($this->once())
+        $this->entityRoutingHelper->expects(static::once())
             ->method('getEntityClassName')
-            ->will($this->returnValue(get_class($targetEntity)));
-        $this->entityRoutingHelper->expects($this->once())
-            ->method('getEntityId')
-            ->will($this->returnValue($targetEntity->getId()));
-        $this->entityRoutingHelper->expects($this->once())
-            ->method('getAction')
-            ->will($this->returnValue('activity'));
+            ->willReturn(get_class($targetEntity));
+        $this->entityRoutingHelper->expects(static::once())->method('getEntityId')->willReturn($targetEntity->getId());
+        $this->entityRoutingHelper->expects(static::once())->method('getAction')->willReturn('activity');
 
         $this->request->initialize([], self::FORM_DATA);
         $this->request->setMethod($method);
 
-        $this->form->expects($this->once())
-            ->method('setData')
-            ->with($this->identicalTo($this->entity));
-        $this->form->expects($this->once())
-            ->method('submit')
-            ->with($this->identicalTo(self::FORM_DATA));
-        $this->form->expects($this->once())
-            ->method('isValid')
-            ->will($this->returnValue(true));
+        $this->form->expects(static::once())->method('setData')->with(static::identicalTo($this->entity));
+        $this->form->expects(static::once())->method('submit')->with(static::identicalTo(self::FORM_DATA));
+        $this->form->expects(static::once())->method('isValid')->willReturn(true);
 
-        $this->entityRoutingHelper->expects($this->once())
+        $this->entityRoutingHelper->expects(static::once())
             ->method('getEntityReference')
             ->with(get_class($targetEntity), $targetEntity->getId())
-            ->will($this->returnValue($targetEntity));
+            ->willReturn($targetEntity);
 
-        $this->activityManager->expects($this->once())
+        $this->activityManager->expects(static::once())
             ->method('addActivityTarget')
-            ->with($this->identicalTo($this->entity), $this->identicalTo($targetEntity));
-        $this->form->expects($this->any())
-            ->method('has')
-            ->will($this->returnValue(false));
+            ->with(static::identicalTo($this->entity), static::identicalTo($targetEntity));
+        $this->form->method('has')->willReturn(false);
 
-        $this->calendarEventManager->expects($this->once())
+        $this->calendarEventManager->expects(static::once())
             ->method('onEventUpdate')
             ->with($this->entity, clone $this->entity, $this->organization, true);
 
-        $this->objectManager->expects($this->once())
-            ->method('persist')
-            ->with($this->identicalTo($this->entity));
-        $this->objectManager->expects($this->once())
-            ->method('flush');
+        $this->objectManager->expects(static::once())->method('persist')->with(static::identicalTo($this->entity));
+        $this->objectManager->expects(static::once())->method('flush');
 
-        $this->assertTrue(
-            $this->handler->process($this->entity)
-        );
-
-        $this->assertSame($defaultCalendar, $this->entity->getCalendar());
+        static::assertTrue($this->handler->process($this->entity));
+        static::assertSame($defaultCalendar, $this->entity->getCalendar());
     }
 
-    /**
-     * @return array
-     */
-    public function supportedMethods()
+    public function supportedMethods(): array
     {
         return [
             ['POST'],
