@@ -1,5 +1,5 @@
 define(function(require) {
-    const FC = require('npmassets/fullcalendar/dist/fullcalendar');
+    const FC = require('fullcalendar/dist/fullcalendar');
 
     const htmlEscape = FC.htmlEscape;
     const cssToStr = FC.cssToStr;
