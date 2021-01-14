@@ -2,8 +2,8 @@
 
 namespace Oro\Bundle\CalendarBundle\Tests\Unit\Model\Email;
 
-use Doctrine\Common\Persistence\ManagerRegistry;
-use Doctrine\Common\Persistence\ObjectManager;
+use Doctrine\Persistence\ManagerRegistry;
+use Doctrine\Persistence\ObjectManager;
 use Oro\Bundle\CalendarBundle\Entity\Attendee as AttendeeEntity;
 use Oro\Bundle\CalendarBundle\Model\Email\EmailNotificationSender;
 use Oro\Bundle\CalendarBundle\Tests\Unit\Fixtures\Entity\Attendee;

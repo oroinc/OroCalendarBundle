@@ -56,7 +56,7 @@ class CreateCalendarEventActionTest extends \PHPUnit\Framework\TestCase
      */
     public function testExecute(array $options, $expectedPersistCount, $exceptionMessage, $data = [])
     {
-        $em = $this->getMockBuilder('\Doctrine\Common\Persistence\ObjectManager')
+        $em = $this->getMockBuilder('\Doctrine\Persistence\ObjectManager')
             ->disableOriginalConstructor()
             ->getMock();
         $em

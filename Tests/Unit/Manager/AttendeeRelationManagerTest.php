@@ -34,7 +34,7 @@ class AttendeeRelationManagerTest extends \PHPUnit\Framework\TestCase
                 return array_values(array_intersect_key($this->users, array_flip($emails)));
             }));
 
-        $registry = $this->createMock('Doctrine\Common\Persistence\ManagerRegistry');
+        $registry = $this->createMock('Doctrine\Persistence\ManagerRegistry');
         $registry
             ->expects($this->any())
             ->method('getRepository')

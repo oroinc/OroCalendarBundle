@@ -38,14 +38,18 @@ class CalendarEventTypeTest extends \PHPUnit\Framework\TestCase
 
     protected function setUp(): void
     {
-        $repository = $this->createMock('Doctrine\Common\Persistence\ObjectRepository');
+        $repository = $this->createMock('Doctrine\Persistence\ObjectRepository');
         $repository->expects($this->any())
             ->method('find')
-            ->will($this->returnCallback(function ($id) {
-                return new TestEnumValue($id, $id);
-            }));
+            ->will(
+                $this->returnCallback(
+                    function ($id) {
+                        return new TestEnumValue($id, $id);
+                    }
+                )
+            );
 
-        $managerRegistry = $this->createMock('Doctrine\Common\Persistence\ManagerRegistry');
+        $managerRegistry = $this->createMock('Doctrine\Persistence\ManagerRegistry');
         $managerRegistry->expects($this->any())
             ->method('getRepository')
             ->with('Extend\Entity\EV_Ce_Attendee_Status')
@@ -57,7 +61,7 @@ class CalendarEventTypeTest extends \PHPUnit\Framework\TestCase
 
         $this->authorizationChecker = $this->createMock(AuthorizationCheckerInterface::class);
         $this->tokenAccessor = $this->createMock(TokenAccessorInterface::class);
-        $registry = $this->getMockBuilder('Doctrine\Common\Persistence\ManagerRegistry')
+        $registry = $this->getMockBuilder('Doctrine\Persistence\ManagerRegistry')
             ->disableOriginalConstructor()
             ->getMock();
 

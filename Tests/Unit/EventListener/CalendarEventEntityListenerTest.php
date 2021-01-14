@@ -2,11 +2,11 @@
 
 namespace Oro\Bundle\CalendarBundle\Tests\Unit\EventListener;
 
-use Doctrine\Common\Persistence\ObjectManager;
 use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\Event\LifecycleEventArgs;
 use Doctrine\ORM\Event\PreUpdateEventArgs;
 use Doctrine\ORM\UnitOfWork;
+use Doctrine\Persistence\ObjectManager;
 use Oro\Bundle\CalendarBundle\Entity\CalendarEvent;
 use Oro\Bundle\CalendarBundle\EventListener\CalendarEventEntityListener;
 use Oro\Bundle\CalendarBundle\Exception\UidAlreadySetException;

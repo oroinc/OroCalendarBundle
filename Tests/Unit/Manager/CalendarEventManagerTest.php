@@ -43,7 +43,7 @@ class CalendarEventManagerTest extends \PHPUnit\Framework\TestCase
         )
             ->disableOriginalConstructor()
             ->getMock();
-        $this->doctrine           = $this->createMock('Doctrine\Common\Persistence\ManagerRegistry');
+        $this->doctrine           = $this->createMock('Doctrine\Persistence\ManagerRegistry');
         $this->tokenAccessor = $this->createMock(TokenAccessorInterface::class);
         $this->entityNameResolver = $this->getMockBuilder('Oro\Bundle\EntityBundle\Provider\EntityNameResolver')
             ->disableOriginalConstructor()
@@ -287,7 +287,7 @@ class CalendarEventManagerTest extends \PHPUnit\Framework\TestCase
 
     public function testParseCalendarUid()
     {
-        list($alias, $id) = $this->manager->parseCalendarUid('some_alias_123');
+        [$alias, $id] = $this->manager->parseCalendarUid('some_alias_123');
         $this->assertSame('some_alias', $alias);
         $this->assertSame(123, $id);
     }
@@ -299,7 +299,7 @@ class CalendarEventManagerTest extends \PHPUnit\Framework\TestCase
 
         $status = new TestEnumValue(Attendee::STATUS_ACCEPTED, Attendee::STATUS_ACCEPTED);
 
-        $statusRepository = $this->createMock('Doctrine\Common\Persistence\ObjectRepository');
+        $statusRepository = $this->createMock('Doctrine\Persistence\ObjectRepository');
         $statusRepository->expects($this->any())
             ->method('find')
             ->with(Attendee::STATUS_ACCEPTED)
@@ -340,7 +340,7 @@ class CalendarEventManagerTest extends \PHPUnit\Framework\TestCase
         $user = new User();
         $user->setId(100);
 
-        $statusRepository = $this->createMock('Doctrine\Common\Persistence\ObjectRepository');
+        $statusRepository = $this->createMock('Doctrine\Persistence\ObjectRepository');
         $statusRepository->expects($this->any())
             ->method('find')
             ->with(Attendee::STATUS_ACCEPTED)
@@ -369,7 +369,7 @@ class CalendarEventManagerTest extends \PHPUnit\Framework\TestCase
 
         $status = new TestEnumValue(Attendee::STATUS_ACCEPTED, Attendee::STATUS_ACCEPTED);
 
-        $statusRepository = $this->createMock('Doctrine\Common\Persistence\ObjectRepository');
+        $statusRepository = $this->createMock('Doctrine\Persistence\ObjectRepository');
         $statusRepository->expects($this->any())
             ->method('find')
             ->with(Attendee::STATUS_ACCEPTED)

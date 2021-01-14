@@ -23,7 +23,7 @@ class CalendarPropertyApiTypeTest extends TypeTestCase
      */
     protected function getExtensions()
     {
-        $this->registry = $this->getMockBuilder('Doctrine\Common\Persistence\ManagerRegistry')
+        $this->registry = $this->getMockBuilder('Doctrine\Persistence\ManagerRegistry')
             ->disableOriginalConstructor()
             ->getMock();
         $em             = $this->getMockBuilder('Doctrine\ORM\EntityManager')

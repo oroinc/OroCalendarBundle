@@ -2,7 +2,7 @@
 
 namespace Oro\Bundle\CalendarBundle\Controller\Dashboard;
 
-use Doctrine\Common\Persistence\ManagerRegistry;
+use Doctrine\Persistence\ManagerRegistry;
 use Oro\Bundle\CalendarBundle\Entity\Calendar;
 use Oro\Bundle\CalendarBundle\Form\Type\CalendarEventType;
 use Oro\Bundle\CalendarBundle\Provider\CalendarDateTimeConfigProvider;

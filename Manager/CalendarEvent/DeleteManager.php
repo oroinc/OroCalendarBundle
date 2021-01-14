@@ -2,7 +2,7 @@
 
 namespace Oro\Bundle\CalendarBundle\Manager\CalendarEvent;
 
-use Doctrine\Common\Persistence\ManagerRegistry;
+use Doctrine\Persistence\ManagerRegistry;
 use Oro\Bundle\CalendarBundle\Entity\CalendarEvent;
 
 /**

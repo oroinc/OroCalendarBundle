@@ -80,9 +80,9 @@ class CalendarEventApiHandlerTest extends \PHPUnit\Framework\TestCase
             ->method('isValid')
             ->willReturn(true);
 
-        $doctrine = $this->createMock('Doctrine\Common\Persistence\ManagerRegistry');
+        $doctrine = $this->createMock('Doctrine\Persistence\ManagerRegistry');
 
-        $objectManager = $this->createMock('Doctrine\Common\Persistence\ObjectManager');
+        $objectManager = $this->createMock('Doctrine\Persistence\ObjectManager');
 
         $doctrine->expects($this->any())
             ->method('getManager')

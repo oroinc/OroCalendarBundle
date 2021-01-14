@@ -3,7 +3,7 @@
 namespace Oro\Bundle\CalendarBundle\Tests\Functional\DataFixtures;
 
 use Doctrine\Common\DataFixtures\DependentFixtureInterface;
-use Doctrine\Common\Persistence\ObjectManager;
+use Doctrine\Persistence\ObjectManager;
 use Oro\Bundle\CalendarBundle\Entity\SystemCalendar;
 use Oro\Bundle\TestFrameworkBundle\Test\DataFixtures\AbstractFixture;
 

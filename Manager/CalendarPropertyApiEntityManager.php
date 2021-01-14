@@ -2,7 +2,7 @@
 
 namespace Oro\Bundle\CalendarBundle\Manager;
 
-use Doctrine\Common\Persistence\ObjectManager;
+use Doctrine\Persistence\ObjectManager;
 use Oro\Bundle\SoapBundle\Entity\Manager\ApiEntityManager;
 
 class CalendarPropertyApiEntityManager extends ApiEntityManager

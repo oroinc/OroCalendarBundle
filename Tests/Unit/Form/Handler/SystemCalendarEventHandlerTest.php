@@ -58,9 +58,9 @@ class SystemCalendarEventHandlerTest extends \PHPUnit\Framework\TestCase
         $this->requestStack = new RequestStack();
         $this->requestStack->push($this->request);
 
-        $this->objectManager = $this->createMock('Doctrine\Common\Persistence\ObjectManager');
+        $this->objectManager = $this->createMock('Doctrine\Persistence\ObjectManager');
 
-        $doctrine = $this->createMock('Doctrine\Common\Persistence\ManagerRegistry');
+        $doctrine = $this->createMock('Doctrine\Persistence\ManagerRegistry');
 
         $doctrine->expects($this->any())
             ->method('getManager')
