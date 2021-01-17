@@ -45,12 +45,12 @@ class RemoveInvitationStatusFieldConfigQuery extends ParametrizedMigrationQuery
             'AND entity_id = (SELECT id FROM oro_entity_config WHERE class_name = ? LIMIT 1)';
 
         $parameters = ['invitationStatus', 'Oro\Bundle\CalendarBundle\Entity\CalendarEvent'];
-        $this->connection->executeUpdate($sql, $parameters);
+        $this->connection->executeStatement($sql, $parameters);
 
         $this->logQuery($logger, $sql, $parameters);
 
         if (!$dryRun) {
-            $this->connection->executeUpdate($sql, $parameters);
+            $this->connection->executeStatement($sql, $parameters);
         }
     }
 

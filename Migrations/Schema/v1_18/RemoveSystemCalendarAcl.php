@@ -64,7 +64,7 @@ class RemoveSystemCalendarAcl extends ParametrizedMigrationQuery
                 ];
                 $this->logQuery($logger, $updateQuery[0], $updateQuery[1], $updateQuery[2]);
                 if (!$dryRun) {
-                    $this->connection->executeUpdate($updateQuery[0], $updateQuery[1], $updateQuery[2]);
+                    $this->connection->executeStatement($updateQuery[0], $updateQuery[1], $updateQuery[2]);
                 }
             }
         }
