@@ -43,7 +43,7 @@
 
                     {% set leftColumn %}
                         {{ form_row(form.title) }}
-                        {{ form_row(form.description) }}
+                        {{ form_row(form.description, { 'attr': {'class': 'narrow-text-field'} }) }}
                         {{ form_row(form.backgroundColor) }}
                         {% if form.calendarUid is defined %}
                             {{ form_row(form.calendarUid) }}
