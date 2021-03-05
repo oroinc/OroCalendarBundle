@@ -37,7 +37,7 @@ class RemoveInvitationStatusFieldConfigQuery extends ParametrizedMigrationQuery
 
     /**
      * @param LoggerInterface $logger
-     * @param bool|false $dryRun
+     * @param bool            $dryRun
      */
     protected function doExecute(LoggerInterface $logger, $dryRun = false)
     {

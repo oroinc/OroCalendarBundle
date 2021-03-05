@@ -18,7 +18,6 @@ use Oro\Bundle\UserBundle\Entity\User;
  * @see \Oro\Bundle\CalendarBundle\Model\Email\EmailNotificationProcessor
  *
  * @SuppressWarnings(PHPMD.ExcessiveClassComplexity)
- * @todo Refactor and reduce class complexity in scope of BAP-13338.
  */
 class NotificationManager
 {
@@ -304,7 +303,6 @@ class NotificationManager
      * but possible if someone uses the API. Invite notification should be send.
      *
      * @param CalendarEvent $calendarEvent          Actual calendar event.
-     * @param CalendarEvent $originalCalendarEvent  Original calendar event.
      *
      * @throws \InvalidArgumentException If $calendarEvent is not exception of recurring event.
      */

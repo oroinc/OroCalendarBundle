@@ -6,9 +6,10 @@ use Oro\Bundle\CalendarBundle\Entity\Attendee;
 use Oro\Bundle\EntityExtendBundle\Entity\AbstractEnumValue;
 
 /**
- * @method AbstractEnumValue getType
+ * Model class which allows to extend the Attendee entity.
+ * @method AbstractEnumValue getType()
  * @method Attendee setType(AbstractEnumValue $value)
- * @method AbstractEnumValue getStatus
+ * @method AbstractEnumValue getStatus()
  * @method Attendee setStatus(AbstractEnumValue $value)
  */
 class ExtendAttendee
