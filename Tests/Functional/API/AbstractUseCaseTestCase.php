@@ -189,13 +189,7 @@ abstract class AbstractUseCaseTestCase extends WebTestCase
          */
         usort(
             $result,
-            function (array $first, array $second) {
-                if ($first['start'] == $second['start']) {
-                    return 0;
-                }
-
-                return  date_create($second['start']) > date_create($first['start']) ? 1 : -1;
-            }
+            static fn (array $first, array $second) => date_create($second['start']) <=> date_create($first['start'])
         );
 
         return $result;
