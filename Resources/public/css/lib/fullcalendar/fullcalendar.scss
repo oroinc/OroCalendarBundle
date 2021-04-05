@@ -18,7 +18,7 @@
 
 .fc {
     direction: ltr;
-    text-align: #{$start};
+    text-align: left;
 }
 
 body .fc { /* extra precedence to overcome jqui */
@@ -167,7 +167,7 @@ NOTE: use percentage font sizes or else old IE chokes
 .fc button .fc-icon { /* non-theme */
     position: $btn-icon-fa-position;
     top: $btn-icon-fa-top;
-    #{$start}: $btn-icon-fa-left;
+    left: $btn-icon-fa-left;
 
     font-size: $btn-fa-icon-font-size;
     font-weight: inherit;
@@ -224,12 +224,12 @@ NOTE: use percentage font sizes or else old IE chokes
 */
 
 .fc .fc-button-group > * { /* extra precedence b/c buttons have margin set to zero */
-    float: #{$start};
-    margin: side-values(0 0 0 1px);
+    float: left;
+    margin: 0 0 0 1px;
 }
 
 .fc .fc-button-group > :first-child { /* same */
-    margin-#{$start}: 0;
+    margin-left: 0;
 }
 
 /*
@@ -264,11 +264,11 @@ NOTE: use percentage font sizes or else old IE chokes
 }
 
 .fc-popover .fc-header .fc-title {
-    float: #{$start};
+    float: left;
 }
 
 .fc-popover .fc-header .fc-close {
-    float: #{$end};
+    float: right;
 }
 
 /* unthemed */
@@ -315,8 +315,8 @@ hr.fc-divider {
     /* these element should always cling to top-left/right corners */
     position: absolute;
     top: 0;
-    #{$start}: 0;
-    #{$end}: 0;
+    left: 0;
+    right: 0;
 }
 
 .fc-bg {
@@ -345,8 +345,8 @@ $fc-cell-offset: 8px !default;
 
 .fc th {
     height: $fc-cell-height;
-    padding-#{$start}: $fc-cell-offset;
-    padding-#{$end}: $fc-cell-offset;
+    padding-left: $fc-cell-offset;
+    padding-right: $fc-cell-offset;
 
     font-weight: normal;
     text-align: center;
@@ -367,7 +367,7 @@ $fc-cell-offset: 8px !default;
         &:after {
             position: absolute;
             top: -1px;
-            #{$start}: -1px;
+            left: -1px;
 
             width: $border-radius-size;
             height: $border-radius-size;
@@ -387,8 +387,8 @@ $fc-cell-offset: 8px !default;
         }
 
         &:after {
-            border-top-#{$start}-radius: $border-radius-size;
-            border-width: corner-values(1px 0 0 1px);
+            border-top-left-radius: $border-radius-size;
+            border-width: 1px 0 0 1px;
         }
     }
 
@@ -399,7 +399,7 @@ $fc-cell-offset: 8px !default;
         &:after {
             position: absolute;
             top: -1px;
-            #{$end}: -1px;
+            right: -1px;
 
             width: $border-radius-size;
             height: $border-radius-size;
@@ -419,8 +419,8 @@ $fc-cell-offset: 8px !default;
         }
 
         &:after {
-            border-top-#{$end}-radius: $border-radius-size;
-            border-width: corner-values(1px 1px 0 0);
+            border-top-right-radius: $border-radius-size;
+            border-width: 1px 1px 0 0;
         }
     }
 }
@@ -461,8 +461,8 @@ a[data-goto]:hover {
 .fc-row table {
     /* don't put left/right border on anything within a fake row.
        the outer tbody will worry about this */
-    border-#{$start}: 0 hidden transparent;
-    border-#{$end}: 0 hidden transparent;
+    border-left: 0 hidden transparent;
+    border-right: 0 hidden transparent;
 
     /* no bottom borders on rows */
     border-bottom: 0 hidden transparent;
@@ -612,19 +612,19 @@ temporary rendered events).
     position: relative;
     z-index: 2;
 
-    padding: side-values(5px 2px 4px 6px);
+    padding: 5px 2px 4px 6px;
 }
 
 .fc-event.fc-short .fc-content {
-    padding: side-values(7px 2px 4px 6px);
+    padding: 7px 2px 4px 6px;
 }
 
 .fc-time-grid-event {
     &:after {
         position: absolute;
-        #{$end}: 0;
+        right: 0;
         bottom: 0;
-        #{$start}: 0;
+        left: 0;
         z-index: 2;
 
         height: 2px;
@@ -636,7 +636,7 @@ temporary rendered events).
     }
 
     .fc-content {
-        padding: side-values(4px 2px 4px 6px);
+        padding: 4px 2px 4px 6px;
     }
 }
     /* resizer (cursor AND touch devices) */
@@ -670,10 +670,10 @@ temporary rendered events).
     position: absolute;
     z-index: 9999; /* user of this util can scope within a lower z-index */
     top: 50%;
-    #{$start}: 50%;
+    left: 50%;
     width: 40px;
     height: 40px;
-    margin-#{$start}: -20px;
+    margin-left: -20px;
     margin-top: -20px;
 }
 
@@ -701,8 +701,8 @@ temporary rendered events).
     z-index: 3; /* below resizers */
     top: -10px;
     bottom: -10px;
-    #{$start}: 0;
-    #{$end}: 0;
+    left: 0;
+    right: 0;
 }
 
 /* events that are continuing to/from another week. kill rounded corners and butt up against edge */
@@ -711,16 +711,26 @@ temporary rendered events).
 
 /* start resizer  */
 .fc-h-event .fc-start-resizer {
-    #{$start}: -1px; /* overcome border */
+    left: -1px; /* overcome border */
 
-    cursor: if-ltr(w-resize,  e-resize);
+    /*rtl:ignore*/
+    cursor: w-resize;
+    /*rtl:ignore*/
+    /*rtl:raw:
+    cursor: e-resize;
+    */
 }
 
 /* end resizer  */
 .fc-h-event .fc-end-resizer {
-    #{$end}: -1px; /* overcome border */
+    right: -1px; /* overcome border */
 
-    cursor: if-ltr(e-resize, w-resize);
+    /*rtl:ignore*/
+    cursor: e-resize;
+    /*rtl:ignore*/
+    /*rtl:raw:
+    cursor: w-resize;
+    */
 }
 
 /* resizer (mouse devices) */
@@ -751,12 +761,12 @@ temporary rendered events).
 /* start resizer  */
 
 .fc-h-event.fc-selected .fc-start-resizer {
-    margin-#{$start}: -4px; /* centers the 8x8 dot on the left edge */
+    margin-left: -4px; /* centers the 8x8 dot on the left edge */
 }
 
 /* end resizer */
 .fc-h-event.fc-selected .fc-end-resizer {
-    margin-#{$end}: -4px; /* centers the 8x8 dot on the left edge */
+    margin-right: -4px; /* centers the 8x8 dot on the left edge */
 }
 
 
@@ -776,9 +786,9 @@ be a descendant of the grid when it is being dragged.
     z-index: 1; /* same z-index as fc-bg, behind text */
     /* overcome the borders */
     top: -1px;
-    #{$end}: -1px;
+    right: -1px;
     bottom: -1px;
-    #{$start}: -1px;
+    left: -1px;
     /* darkening effect */
     background: $primary;
     opacity: .25;
@@ -798,12 +808,12 @@ be a descendant of the grid when it is being dragged.
 
 /* start resizer  */
 .fc-day-grid-event.fc-allow-mouse-resize .fc-start-resizer {
-    margin-#{$start}: -2px; /* to the day cell's edge */
+    margin-left: -2px; /* to the day cell's edge */
 }
 
 /* end resizer  */
 .fc-day-grid-event.fc-allow-mouse-resize .fc-end-resizer {
-    margin-#{$end}: -2px; /* to the day cell's edge */
+    margin-right: -2px; /* to the day cell's edge */
 }
 
 /* Event Limiting
@@ -876,11 +886,11 @@ a.fc-more:hover {
 }
 
 .fc-toolbar .fc-left {
-    float: #{$start};
+    float: left;
 }
 
 .fc-toolbar .fc-right {
-    float: #{$end};
+    float: right;
 }
 
 .fc-toolbar .fc-center {
@@ -889,13 +899,13 @@ a.fc-more:hover {
 
 /* the things within each left/right/center section */
 .fc .fc-toolbar > * > * { /* extra precedence to override button border margins */
-    float: #{$start};
-    margin-#{$start}: $content-padding-medium;
+    float: left;
+    margin-left: $content-padding-medium;
 }
 
 /* the first thing within each left/center/right section */
 .fc .fc-toolbar > * > :first-child { /* extra precedence to override button border margins */
-    margin-#{$start}: 0;
+    margin-left: 0;
 }
 
 /* title text */
@@ -979,8 +989,8 @@ a.fc-more:hover {
 .fc-row.fc-rigid .fc-content-skeleton {
     position: absolute;
     top: 0;
-    #{$start}: 0;
-    #{$end}: 0;
+    left: 0;
+    right: 0;
 }
 
 /* week and day number styling */
@@ -991,7 +1001,7 @@ a.fc-more:hover {
 
 .fc-basic-view .fc-week-number,
 .fc-basic-view .fc-day-number {
-    padding: side-values(4px 4px 2px 2px);
+    padding: 4px 4px 2px 2px;
 }
 
 .fc-basic-view th.fc-week-number,
@@ -999,9 +1009,14 @@ a.fc-more:hover {
     padding: 0 2px; /* column headers can't have as much v space */
 }
 
-.fc-basic-view .fc-day-top .fc-day-number { float: #{$end}; }
+.fc-basic-view .fc-day-top .fc-day-number {
+    float: right;
+}
 
-.fc-basic-view .fc-day-top .fc-week-number { float: #{$start}; border-radius: corner-values(0 0 3px 0); }
+.fc-basic-view .fc-day-top .fc-week-number {
+    float: left;
+    border-radius: 0 0 3px 0;
+}
 
 .fc-basic-view .fc-day-top .fc-week-number {
     min-width: 24px;
@@ -1052,7 +1067,7 @@ a.fc-more:hover {
 }
 
 .fc-axis {
-    text-align: #{$end};
+    text-align: right;
 }
 
 .ui-widget td.fc-axis {
@@ -1095,8 +1110,8 @@ a.fc-more:hover {
     position: absolute;
     z-index: 3;
     top: 0;
-    #{$start}: 0;
-    #{$end}: 0;
+    left: 0;
+    right: 0;
 }
 
 /* divs within a cell within the fc-content-skeleton */
@@ -1161,8 +1176,8 @@ a.fc-more:hover {
 
 .fc-time-grid .fc-highlight {
     position: absolute;
-    #{$start}: 0;
-    #{$end}: 0;
+    left: 0;
+    right: 0;
     /* top and bottom will be in by JS */
 }
 
@@ -1171,7 +1186,7 @@ a.fc-more:hover {
 --------------------------------------------------------------------------------------------------*/
 
 .fc-time-grid .fc-event-container { /* space on the sides of events for LTR (default) */
-    margin: side-values(0 2.5% 0 2px);
+    margin: 0 2.5% 0 2px;
 }
 
 .fc-time-grid .fc-event,
@@ -1182,8 +1197,8 @@ a.fc-more:hover {
 
 .fc-time-grid .fc-bgevent {
     /* background events always span full width */
-    #{$start}: 0;
-    #{$end}: 0;
+    left: 0;
+    right: 0;
 }
 
 
@@ -1196,8 +1211,8 @@ a.fc-more:hover {
     padding-top: 1px;
 
     /* remove top rounded corners */
-    border-top-#{$start}-radius: 0;
-    border-top-#{$end}-radius: 0;
+    border-top-left-radius: 0;
+    border-top-right-radius: 0;
 }
 
 .fc-v-event.fc-not-end {
@@ -1206,8 +1221,8 @@ a.fc-more:hover {
     padding-bottom: 1px;
 
     /* remove bottom rounded corners */
-    border-bottom-#{$start}-radius: 0;
-    border-bottom-#{$end}-radius: 0;
+    border-bottom-left-radius: 0;
+    border-bottom-right-radius: 0;
 }
 
 
@@ -1280,8 +1295,8 @@ be a descendant of the grid when it is being dragged.
 /* resizer (cursor device) */
 
 .fc-time-grid-event.fc-allow-mouse-resize .fc-resizer {
-    #{$start}: 0;
-    #{$end}: 0;
+    left: 0;
+    right: 0;
     bottom: 0;
     height: 8px;
     overflow: hidden;
@@ -1308,8 +1323,8 @@ be a descendant of the grid when it is being dragged.
     border-color: inherit;
     background: $primary-inverse;
     /* horizontally center */
-    #{$start}: 50%;
-    margin-#{$start}: -5px;
+    left: 50%;
+    margin-left: -5px;
     /* center on the bottom edge */
     bottom: -5px;
 }
@@ -1320,8 +1335,8 @@ be a descendant of the grid when it is being dragged.
 
 .fc-time-grid .fc-now-indicator-line {
     border-top-width: 1px;
-    #{$start}: 0;
-    #{$end}: 0;
+    left: 0;
+    right: 0;
 }
 
 /* arrow on axis */
@@ -1331,9 +1346,9 @@ be a descendant of the grid when it is being dragged.
 }
 
 .fc-time-grid .fc-now-indicator-arrow {
-    #{$start}: 0;
+    left: 0;
     /* triangle pointing right... */
-    border-width: corner-values(5px 0 5px 6px);
+    border-width: 5px 0 5px 6px;
     border-top-color: transparent;
     border-bottom-color: transparent;
 }
@@ -1387,8 +1402,8 @@ be a descendant of the grid when it is being dragged.
     font-weight: bold;
 }
 
-.fc-list-heading-main { float: #{$start}; }
-.fc-list-heading-alt { float: #{$end}; }
+.fc-list-heading-main { float: left; }
+.fc-list-heading-alt { float: right; }
 
 /* event list items */
 
@@ -1407,7 +1422,7 @@ be a descendant of the grid when it is being dragged.
 }
 
 /* make the dot closer to the event title */
-.fc-list-item-marker { padding-#{$end}: 0; }
+.fc-list-item-marker { padding-right: 0; }
 
 .fc-list-item-title a {
     /* every event title cell has an <a> tag */
@@ -1425,8 +1440,8 @@ be a descendant of the grid when it is being dragged.
 .fc-list-empty-wrap2 {
     position: absolute;
     top: 0;
-    #{$start}: 0;
-    #{$end}: 0;
+    left: 0;
+    right: 0;
     bottom: 0;
 }
 
