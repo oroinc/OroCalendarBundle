@@ -105,35 +105,35 @@ NOTE: use percentage font sizes or else old IE chokes
 */
 
 .fc-icon-left-single-arrow {
-    @include fa-icon($fa-var-chevron-left, after);
+    @include fa-icon(var(--fa-var-chevron-left), after, false, true);
 }
 
 .fc-icon-right-single-arrow {
-    @include fa-icon($fa-var-chevron-right, after);
+    @include fa-icon(var(--fa-var-chevron-right), after, false, true);
 }
 
 .fc-icon-left-double-arrow {
-    @include fa-icon($fa-var-angle-double-left, after);
+    @include fa-icon(var(--fa-var-angle-double-left), after, false, true);
 }
 
 .fc-icon-right-double-arrow {
-    @include fa-icon($fa-var-angle-double-right, after);
+    @include fa-icon(var(--fa-var-angle-double-right), after, false, true);
 }
 
 .fc-icon-left-triangle {
-    @include fa-icon($fa-var-caret-left, after);
+    @include fa-icon(var(fa-var-caret-left), after, false, true);
 }
 
 .fc-icon-right-triangle {
-    @include fa-icon($fa-var-caret-right, after);
+    @include fa-icon(var(--fa-var-caret-right), after, false, true);
 }
 
 .fc-icon-down-triangle {
-    @include fa-icon($fa-var-caret-down, after);
+    @include fa-icon(var(--fa-var-caret-down), after, after, true);
 }
 
 .fc-icon-x {
-    @include fa-icon($fa-var-times, after);
+    @include fa-icon(var(--fa-var-times), after, after, true);
 }
 
 
@@ -1285,7 +1285,7 @@ be a descendant of the grid when it is being dragged.
 }
 
 .fc-time-grid-event.fc-short .fc-time:after {
-    @include fa-icon($fa-var-minus, after)
+    @include fa-icon(var(--fa-var-minus), after, false, true)
 }
 
 .fc-time-grid-event.fc-short .fc-title {

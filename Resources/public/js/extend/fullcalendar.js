@@ -1,4 +1,5 @@
 define(function(require) {
+    const _ = require('underscore');
     const FC = require('fullcalendar/dist/fullcalendar');
 
     const htmlEscape = FC.htmlEscape;
@@ -120,6 +121,27 @@ define(function(require) {
                     <div class="fc-resizer fc-end-resizer"></div>
                 ` : ''}
             </a>`;
+        }
+    });
+
+    FC.Calendar.mixin({
+        renderHeader: function() {
+            const header = this.header;
+
+            header.setToolbarOptions(this.computeHeaderOptions());
+            header.render();
+
+            if (header.el) {
+                this.el.prepend(header.el);
+
+
+                if (_.isRTL()) {
+                    const $nextBtn = header.el.find('.fc-left .fc-button-group .fc-next-button');
+
+                    // Swap next and prev buttons
+                    $nextBtn.after($nextBtn.prev());
+                }
+            }
         }
     });
 
