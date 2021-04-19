@@ -774,6 +774,7 @@ define(function(require) {
             let scrollTime;
             // prepare options for jQuery FullCalendar control
             const options = {// prepare options for jQuery FullCalendar control
+                isRTL: _.isRTL(),
                 timezone: this.options.timezone,
                 selectLongPressDelay: 30,
                 displayEventEnd: {
