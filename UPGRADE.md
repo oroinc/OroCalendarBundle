@@ -2,6 +2,12 @@ This file includes only the most important items that should be addressed before
 
 Please refer to [CHANGELOG.md](CHANGELOG.md) for a list of significant changes in the code that may affect the upgrade of some customizations.
 
+## From 4.2 to 5.0
+
+ - As the link at the calendar events search items was changed,
+   please reindex calendar event items with command 
+   `php bin/console oro:search:reindex --class="Oro\Bundle\CalendarBundle\Entity\CalendarEvent"`
+
 ## FROM 2.5.0 to 2.6.0
 - Changed minimum required php version to 7.1
 
