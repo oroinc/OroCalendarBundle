@@ -22,17 +22,17 @@ Feature: Application search
       | Organizations   | 1 |            |
     And number of records should be 3
     And I should see following search results:
-      | Title                | Type          |
-      | Common Organization  | Organization  |
-      | Common Event         | Calendar      |
-      | Common Business Unit | Business Unit |
+      | Title                | Type           |
+      | Common Organization  | Organization   |
+      | Common Event         | Calendar event |
+      | Common Business Unit | Business Unit  |
 
   Scenario: Filter result by entity type
     Given I filter result by "Calendar" type
     Then number of records should be 1
     And I should see following search results:
-      | Title                | Type          |
-      | Common Event         | Calendar      |
+      | Title                | Type           |
+      | Common Event         | Calendar event |
     And should see following search entity types:
       | Type            | N | isSelected |
       | All             | 3 |            |
@@ -42,8 +42,8 @@ Feature: Application search
     When I filter result by "Calendar Events" type
     Then number of records should be 1
     And I should see following search results:
-      | Title        | Type     |
-      | Common Event | Calendar |
+      | Title        | Type           |
+      | Common Event | Calendar event |
     And should see following search entity types:
       | Type            | N | isSelected |
       | All             | 3 |            |
