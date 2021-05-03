@@ -8,6 +8,7 @@ use Oro\Bundle\CalendarBundle\Entity\Recurrence;
 use Oro\Bundle\CalendarBundle\Manager\CalendarEventManager;
 use Oro\Bundle\CalendarBundle\Validator\Constraints\RecurringCalendarEventExceptionConstraint;
 use Oro\Bundle\CalendarBundle\Validator\RecurringCalendarEventExceptionValidator;
+use Oro\Component\Testing\ReflectionUtil;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\Validator\Context\ExecutionContextInterface;
 
@@ -52,8 +53,8 @@ class RecurringCalendarEventExceptionValidatorTest extends \PHPUnit\Framework\Te
 
         $calendarEvent = new CalendarEvent();
         $recurringEvent = new CalendarEvent();
-        $this->setId($recurringEvent, 666);
-        $this->setId($calendarEvent, 666);
+        ReflectionUtil::setId($recurringEvent, 123);
+        ReflectionUtil::setId($calendarEvent, 123);
         $calendarEvent->setRecurringEvent($recurringEvent);
 
         $this->getValidator()->validate($calendarEvent, $this->constraint);
@@ -64,7 +65,7 @@ class RecurringCalendarEventExceptionValidatorTest extends \PHPUnit\Framework\Te
         $calendar = new Calendar();
         $expectedCalendarId = 42;
         $expectedCalendarAlias = 'alias';
-        $this->setId($calendar, $expectedCalendarId);
+        ReflectionUtil::setId($calendar, $expectedCalendarId);
 
         $calendarField = $this->prepareFormStub([], [], $calendar);
         $calendarAliasField = $this->prepareFormStub([], [], $expectedCalendarAlias);
@@ -96,7 +97,7 @@ class RecurringCalendarEventExceptionValidatorTest extends \PHPUnit\Framework\Te
         $calendarEvent = new CalendarEvent();
         $recurringEvent = new CalendarEvent();
         $recurringEvent->setRecurrence(new Recurrence());
-        $this->setId($calendarEvent, 666);
+        ReflectionUtil::setId($calendarEvent, 123);
         $calendarEvent->setRecurringEvent($recurringEvent);
 
         $this->getValidator()->validate($calendarEvent, $this->constraint);
@@ -134,7 +135,7 @@ class RecurringCalendarEventExceptionValidatorTest extends \PHPUnit\Framework\Te
         $calendarEvent = new CalendarEvent();
         $recurringEvent = new CalendarEvent();
         $recurringEvent->setRecurrence(new Recurrence());
-        $this->setId($calendarEvent, 666);
+        ReflectionUtil::setId($calendarEvent, 123);
         $calendarEvent->setRecurringEvent($recurringEvent);
 
         $this->getValidator()->validate($calendarEvent, $this->constraint);
@@ -175,18 +176,5 @@ class RecurringCalendarEventExceptionValidatorTest extends \PHPUnit\Framework\Te
         $validator->initialize($this->context);
 
         return $validator;
-    }
-
-    /**
-     * @param $object
-     * @param $value
-     */
-    protected function setId($object, $value)
-    {
-        $class = new \ReflectionClass($object);
-        $prop  = $class->getProperty('id');
-        $prop->setAccessible(true);
-
-        $prop->setValue($object, $value);
     }
 }

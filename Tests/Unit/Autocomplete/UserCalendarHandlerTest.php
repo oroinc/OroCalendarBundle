@@ -6,7 +6,6 @@ use Doctrine\ORM\EntityManager;
 use Oro\Bundle\AttachmentBundle\Manager\AttachmentManager;
 use Oro\Bundle\CalendarBundle\Autocomplete\UserCalendarHandler;
 use Oro\Bundle\CalendarBundle\Entity\Calendar;
-use Oro\Bundle\CalendarBundle\Tests\Unit\ReflectionUtil;
 use Oro\Bundle\EntityBundle\Provider\EntityNameResolver;
 use Oro\Bundle\EntityBundle\Tools\EntityRoutingHelper;
 use Oro\Bundle\SecurityBundle\Acl\Voter\AclVoter;
@@ -14,6 +13,7 @@ use Oro\Bundle\SecurityBundle\Authentication\TokenAccessorInterface;
 use Oro\Bundle\SecurityBundle\ORM\Walker\AclHelper;
 use Oro\Bundle\SecurityBundle\Owner\OwnerTreeProvider;
 use Oro\Bundle\UserBundle\Entity\User;
+use Oro\Component\Testing\ReflectionUtil;
 use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
 
 class UserCalendarHandlerTest extends \PHPUnit\Framework\TestCase

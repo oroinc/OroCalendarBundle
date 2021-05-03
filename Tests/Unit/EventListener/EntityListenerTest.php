@@ -12,10 +12,10 @@ use Oro\Bundle\CalendarBundle\Entity\Calendar;
 use Oro\Bundle\CalendarBundle\Entity\Recurrence;
 use Oro\Bundle\CalendarBundle\Entity\SystemCalendar;
 use Oro\Bundle\CalendarBundle\EventListener\EntityListener;
-use Oro\Bundle\CalendarBundle\Tests\Unit\ReflectionUtil;
 use Oro\Bundle\OrganizationBundle\Entity\Organization;
 use Oro\Bundle\SecurityBundle\Authentication\TokenAccessorInterface;
 use Oro\Bundle\UserBundle\Entity\User;
+use Oro\Component\Testing\ReflectionUtil;
 
 class EntityListenerTest extends \PHPUnit\Framework\TestCase
 {

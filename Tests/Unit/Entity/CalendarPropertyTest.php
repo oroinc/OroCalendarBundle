@@ -4,7 +4,7 @@ namespace Oro\Bundle\CalendarBundle\Tests\Unit\Entity;
 
 use Oro\Bundle\CalendarBundle\Entity\Calendar;
 use Oro\Bundle\CalendarBundle\Entity\CalendarProperty;
-use Oro\Bundle\CalendarBundle\Tests\Unit\ReflectionUtil;
+use Oro\Component\Testing\ReflectionUtil;
 
 class CalendarPropertyTest extends AbstractEntityTest
 {

@@ -13,6 +13,7 @@ use Oro\Bundle\EntityExtendBundle\Tests\Unit\Fixtures\TestEnumValue;
 use Oro\Bundle\ReminderBundle\Entity\Manager\ReminderManager;
 use Oro\Bundle\SecurityBundle\Authentication\TokenAccessorInterface;
 use Oro\Bundle\UIBundle\Tools\HtmlTagHelper;
+use Oro\Component\Testing\ReflectionUtil;
 use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
 
 class UserCalendarEventNormalizerTest extends \PHPUnit\Framework\TestCase
@@ -632,9 +633,7 @@ class UserCalendarEventNormalizerTest extends \PHPUnit\Framework\TestCase
         $event = new CalendarEvent();
 
         if (!empty($data['id'])) {
-            $reflection = new \ReflectionProperty(get_class($event), 'id');
-            $reflection->setAccessible(true);
-            $reflection->setValue($event, $data['id']);
+            ReflectionUtil::setId($event, $data['id']);
         }
         if (!empty($data['uid'])) {
             $event->setUid($data['uid']);
@@ -668,11 +667,9 @@ class UserCalendarEventNormalizerTest extends \PHPUnit\Framework\TestCase
         }
         if (!empty($data['calendar'])) {
             $calendar = new Calendar();
+            ReflectionUtil::setId($calendar, $data['calendar']);
             $calendar->setOwner(new User(1));
             $event->setCalendar($calendar);
-            $reflection = new \ReflectionProperty(get_class($calendar), 'id');
-            $reflection->setAccessible(true);
-            $reflection->setValue($calendar, $data['calendar']);
         }
 
         if (!empty($data['attendees'])) {

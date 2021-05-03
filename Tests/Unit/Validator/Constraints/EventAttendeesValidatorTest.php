@@ -9,6 +9,7 @@ use Oro\Bundle\CalendarBundle\Entity\CalendarEvent;
 use Oro\Bundle\CalendarBundle\Entity\Repository\AttendeeRepository;
 use Oro\Bundle\CalendarBundle\Validator\Constraints\EventAttendees;
 use Oro\Bundle\CalendarBundle\Validator\Constraints\EventAttendeesValidator;
+use Oro\Component\Testing\ReflectionUtil;
 use Symfony\Bridge\Doctrine\ManagerRegistry;
 use Symfony\Component\Validator\Test\ConstraintValidatorTestCase;
 
@@ -139,10 +140,7 @@ class EventAttendeesValidatorTest extends ConstraintValidatorTestCase
     private function getCalendarEventEntity(int $id): CalendarEvent
     {
         $calendarEvent = new CalendarEvent();
-        $reflectionClass = new \ReflectionClass(CalendarEvent::class);
-        $reflectionProperty = $reflectionClass->getProperty('id');
-        $reflectionProperty->setAccessible(true);
-        $reflectionProperty->setValue($calendarEvent, $id);
+        ReflectionUtil::setId($calendarEvent, $id);
 
         return $calendarEvent;
     }
@@ -156,10 +154,7 @@ class EventAttendeesValidatorTest extends ConstraintValidatorTestCase
     private function getCalendarEventAttendeeEntity(int $id, string $email): Attendee
     {
         $attendee = new Attendee();
-        $reflectionClass = new \ReflectionClass(Attendee::class);
-        $reflectionProperty = $reflectionClass->getProperty('id');
-        $reflectionProperty->setAccessible(true);
-        $reflectionProperty->setValue($attendee, $id);
+        ReflectionUtil::setId($attendee, $id);
         $attendee->setEmail($email);
 
         return $attendee;

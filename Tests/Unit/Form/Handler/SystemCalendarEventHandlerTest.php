@@ -7,10 +7,10 @@ use Oro\Bundle\CalendarBundle\Entity\CalendarEvent;
 use Oro\Bundle\CalendarBundle\Form\Handler\SystemCalendarEventHandler;
 use Oro\Bundle\CalendarBundle\Manager\CalendarEvent\NotificationManager;
 use Oro\Bundle\CalendarBundle\Manager\CalendarEventManager;
-use Oro\Bundle\CalendarBundle\Tests\Unit\ReflectionUtil;
 use Oro\Bundle\OrganizationBundle\Entity\Organization;
 use Oro\Bundle\SecurityBundle\Authentication\TokenAccessorInterface;
 use Oro\Bundle\UserBundle\Entity\User;
+use Oro\Component\Testing\ReflectionUtil;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\RequestStack;
 

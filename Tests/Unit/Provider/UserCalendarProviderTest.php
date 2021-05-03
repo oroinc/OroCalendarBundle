@@ -6,8 +6,8 @@ use Doctrine\ORM\Query\Expr;
 use Oro\Bundle\CalendarBundle\Entity\Calendar;
 use Oro\Bundle\CalendarBundle\Model\Recurrence;
 use Oro\Bundle\CalendarBundle\Provider\UserCalendarProvider;
-use Oro\Bundle\CalendarBundle\Tests\Unit\ReflectionUtil;
 use Oro\Bundle\UserBundle\Entity\User;
+use Oro\Component\Testing\ReflectionUtil;
 
 class UserCalendarProviderTest extends \PHPUnit\Framework\TestCase
 {

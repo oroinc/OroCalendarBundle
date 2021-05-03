@@ -4,8 +4,8 @@ namespace Oro\Bundle\CalendarBundle\Tests\Unit\Entity;
 
 use Oro\Bundle\CalendarBundle\Entity\CalendarEvent;
 use Oro\Bundle\CalendarBundle\Entity\SystemCalendar;
-use Oro\Bundle\CalendarBundle\Tests\Unit\ReflectionUtil;
 use Oro\Bundle\OrganizationBundle\Entity\Organization;
+use Oro\Component\Testing\ReflectionUtil;
 use Symfony\Component\PropertyAccess\PropertyAccess;
 
 class SystemCalendarTest extends \PHPUnit\Framework\TestCase

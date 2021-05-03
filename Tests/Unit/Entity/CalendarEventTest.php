@@ -9,9 +9,9 @@ use Oro\Bundle\CalendarBundle\Tests\Unit\Fixtures\Entity\Attendee;
 use Oro\Bundle\CalendarBundle\Tests\Unit\Fixtures\Entity\Calendar;
 use Oro\Bundle\CalendarBundle\Tests\Unit\Fixtures\Entity\CalendarEvent;
 use Oro\Bundle\CalendarBundle\Tests\Unit\Fixtures\Entity\User;
-use Oro\Bundle\CalendarBundle\Tests\Unit\ReflectionUtil;
 use Oro\Bundle\EntityExtendBundle\Tests\Unit\Fixtures\TestEnumValue;
 use Oro\Bundle\ReminderBundle\Model\ReminderData;
+use Oro\Component\Testing\ReflectionUtil;
 use Oro\Component\Testing\Unit\EntityTrait;
 use Symfony\Component\PropertyAccess\PropertyAccess;
 

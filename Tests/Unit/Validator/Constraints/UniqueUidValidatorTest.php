@@ -9,6 +9,7 @@ use Oro\Bundle\CalendarBundle\Entity\CalendarEvent;
 use Oro\Bundle\CalendarBundle\Entity\Repository\CalendarEventRepository;
 use Oro\Bundle\CalendarBundle\Validator\Constraints\UniqueUid;
 use Oro\Bundle\CalendarBundle\Validator\Constraints\UniqueUidValidator;
+use Oro\Component\Testing\ReflectionUtil;
 use Symfony\Bridge\Doctrine\ManagerRegistry;
 use Symfony\Component\Validator\Test\ConstraintValidatorTestCase;
 
@@ -145,10 +146,7 @@ class UniqueUidValidatorTest extends ConstraintValidatorTestCase
     private function getCalendarEntity(int $id): Calendar
     {
         $calendar = new Calendar();
-        $reflectionClass = new \ReflectionClass(Calendar::class);
-        $reflectionProperty = $reflectionClass->getProperty('id');
-        $reflectionProperty->setAccessible(true);
-        $reflectionProperty->setValue($calendar, $id);
+        ReflectionUtil::setId($calendar, $id);
 
         return $calendar;
     }
