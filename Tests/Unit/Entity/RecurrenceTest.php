@@ -2,35 +2,32 @@
 
 namespace Oro\Bundle\CalendarBundle\Tests\Unit\Entity;
 
+use Oro\Bundle\CalendarBundle\Entity\Recurrence;
 use Oro\Bundle\CalendarBundle\Tests\Unit\Fixtures\Entity\CalendarEvent;
+use Oro\Component\Testing\Unit\EntityTestCaseTrait;
 
-class RecurrenceTest extends AbstractEntityTest
+class RecurrenceTest extends \PHPUnit\Framework\TestCase
 {
-    /**
-     * {@inheritDoc}
-     */
-    public function getEntityFQCN()
-    {
-        return 'Oro\Bundle\CalendarBundle\Entity\Recurrence';
-    }
+    use EntityTestCaseTrait;
 
-    /**
-     * {@inheritDoc}
-     */
-    public function getSetDataProvider()
+    public function testProperties()
     {
-        return [
-            ['recurrence_type', 'daily', 'daily'],
-            ['interval', 99, 99],
-            ['instance', 3, 3],
-            ['day_of_week', ['monday', 'wednesday'], ['monday', 'wednesday']],
-            ['day_of_month', 28, 28],
-            ['month_of_year', 8, 8],
-            ['start_time', $start = new \DateTime(), $start],
-            ['end_time', $end = new \DateTime(), $end],
-            ['calculated_end_time', $cet = new \DateTime(), $cet],
-            ['calendar_event', new CalendarEvent(), new CalendarEvent()],
-            ['occurrences', 1, 1],
+        $properties = [
+            'id'                => ['id', 1],
+            'recurrenceType'    => ['recurrenceType', 'daily'],
+            'interval'          => ['interval', 99],
+            'instance'          => ['instance', 3],
+            'dayOfWeek'         => ['dayOfWeek', ['monday', 'wednesday']],
+            'dayOfMonth'        => ['dayOfMonth', 28],
+            'monthOfYear'       => ['monthOfYear', 8],
+            'startTime'         => ['startTime', new \DateTime()],
+            'endTime'           => ['endTime', new \DateTime()],
+            'calculatedEndTime' => ['calculatedEndTime', new \DateTime()],
+            'calendarEvent'     => ['calendarEvent', new CalendarEvent()],
+            'occurrences'       => ['occurrences', 1],
         ];
+
+        $entity = new Recurrence();
+        self::assertPropertyAccessors($entity, $properties);
     }
 }

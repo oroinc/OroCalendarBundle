@@ -5,50 +5,34 @@ namespace Oro\Bundle\CalendarBundle\Tests\Unit\Entity;
 use Oro\Bundle\CalendarBundle\Entity\Calendar;
 use Oro\Bundle\CalendarBundle\Entity\CalendarProperty;
 use Oro\Component\Testing\ReflectionUtil;
+use Oro\Component\Testing\Unit\EntityTestCaseTrait;
 
-class CalendarPropertyTest extends AbstractEntityTest
+class CalendarPropertyTest extends \PHPUnit\Framework\TestCase
 {
-    /**
-     * {@inheritDoc}
-     */
-    public function getEntityFQCN()
-    {
-        return 'Oro\Bundle\CalendarBundle\Entity\CalendarProperty';
-    }
+    use EntityTestCaseTrait;
 
-    public function testPositionDefault()
+    public function testProperties()
     {
-        $obj = new CalendarProperty();
-        $this->assertSame(0, $obj->getPosition());
-    }
+        $properties = [
+            'id'              => ['id', 1],
+            'targetCalendar'  => ['targetCalendar', $this->createMock(Calendar::class)],
+            'calendarAlias'   => ['calendarAlias', 'testAlias'],
+            'calendar'        => ['calendar', 123],
+            'position'        => ['position', 100],
+            'visible'         => ['visible', false],
+            'backgroundColor' => ['backgroundColor', '#FFFFFF'],
+        ];
 
-    public function testVisibleDefault()
-    {
-        $obj = new CalendarProperty();
-        $this->assertTrue($obj->getVisible());
+        $entity = new CalendarProperty();
+        self::assertPropertyAccessors($entity, $properties);
     }
 
     public function testToString()
     {
-        $calendarProperty = new CalendarProperty();
-        $this->assertEmpty((string) $calendarProperty);
-        ReflectionUtil::setId($calendarProperty, 1);
+        $entity = new CalendarProperty();
+        self::assertSame('', (string)$entity);
 
-        $this->assertEquals(1, (string) $calendarProperty);
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public function getSetDataProvider()
-    {
-        return [
-            ['targetCalendar', new Calendar(), new Calendar()],
-            ['calendarAlias', 'testAlias', 'testAlias'],
-            ['calendar', 123, 123],
-            ['position', 100, 100],
-            ['visible', false, false],
-            ['backgroundColor', '#FFFFFF', '#FFFFFF'],
-        ];
+        ReflectionUtil::setId($entity, 1);
+        self::assertSame('1', (string)$entity);
     }
 }

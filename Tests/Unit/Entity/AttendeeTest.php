@@ -2,53 +2,69 @@
 
 namespace Oro\Bundle\CalendarBundle\Tests\Unit\Entity;
 
-class AttendeeTest extends AbstractEntityTest
+use Oro\Bundle\CalendarBundle\Entity\Attendee;
+use Oro\Bundle\CalendarBundle\Entity\CalendarEvent;
+use Oro\Bundle\UserBundle\Entity\User;
+use Oro\Component\Testing\Unit\EntityTestCaseTrait;
+
+class AttendeeTest extends \PHPUnit\Framework\TestCase
 {
-    /**
-     * {@inheritDoc}
-     */
-    public function getEntityFQCN()
+    use EntityTestCaseTrait;
+
+    public function testProperties()
     {
-        return 'Oro\Bundle\CalendarBundle\Entity\Attendee';
+        $properties = [
+            'id'            => ['id', 1],
+            'user'          => ['user', $this->createMock(User::class)],
+            'calendarEvent' => ['calendarEvent', $this->createMock(CalendarEvent::class)],
+            'email'         => ['email', 'email@email.com'],
+            'displayName'   => ['displayName', 'Display Name'],
+            'createdAt'     => ['createdAt', new \DateTime()],
+            'updatedAt'     => ['updatedAt', new \DateTime()],
+        ];
+
+        $entity = new Attendee();
+        self::assertPropertyAccessors($entity, $properties);
     }
 
-    /**
-     * {@inheritDoc}
-     */
-    public function getSetDataProvider()
+    public function testPrePersist()
     {
-        $user          = $this->createMock('Oro\Bundle\UserBundle\Entity\User');
-        $calendarEvent = $this->createMock('Oro\Bundle\CalendarBundle\Entity\CalendarEvent');
-        $date          = new \DateTime('now');
+        $entity = new Attendee();
+        $entity->beforeSave();
 
-        return [
-            'user'          => ['user', $user, $user],
-            'calendarEvent' => ['calendarEvent', $calendarEvent, $calendarEvent],
-            'email'         => ['email', 'email@email.com', 'email@email.com'],
-            'displayName'   => ['displayName', 'Display Name', 'Display Name'],
-            'createdAt'     => ['createdAt', $date, $date],
-            'updatedAt'     => ['updatedAt', $date, $date]
-        ];
+        self::assertNotNull($entity->getCreatedAt());
+        self::assertNotNull($entity->getUpdatedAt());
+        self::assertEquals($entity->getCreatedAt(), $entity->getUpdatedAt());
+        self::assertNotSame($entity->getCreatedAt(), $entity->getUpdatedAt());
+
+        $existingCreatedAt = $entity->getCreatedAt();
+        $existingUpdatedAt = $entity->getUpdatedAt();
+        $entity->beforeSave();
+        self::assertNotSame($existingCreatedAt, $entity->getCreatedAt());
+        self::assertNotSame($existingUpdatedAt, $entity->getUpdatedAt());
+        self::assertEquals($entity->getCreatedAt(), $entity->getUpdatedAt());
+        self::assertNotSame($entity->getCreatedAt(), $entity->getUpdatedAt());
+    }
+
+    public function testPreUpdate()
+    {
+        $entity = new Attendee();
+        $entity->preUpdate();
+
+        self::assertNotNull($entity->getUpdatedAt());
+
+        $existingUpdatedAt = $entity->getUpdatedAt();
+        $entity->preUpdate();
+        self::assertNotSame($existingUpdatedAt, $entity->getUpdatedAt());
     }
 
     public function testToString()
     {
-        $this->entity->setDisplayName('display name');
-        $this->assertEquals('display name', (string) $this->entity);
-    }
+        $entity = new Attendee();
+        self::assertSame('', (string)$entity);
 
-    public function testLifecycleCallbacks()
-    {
-        // guards
-        $this->assertNull($this->entity->getCreatedAt());
-        $this->assertNull($this->entity->getUpdatedAt());
-
-        $this->entity->beforeSave();
-        $this->assertInstanceOf('DateTime', $this->entity->getCreatedAt());
-        $this->assertInstanceOf('DateTime', $this->entity->getUpdatedAt());
-
-        $originalUpdatedAt = $this->entity->getUpdatedAt();
-        $this->entity->preUpdate();
-        $this->assertNotSame($originalUpdatedAt, $this->entity->getUpdatedAt());
+        $displayName = 'display name';
+        $entity->setDisplayName($displayName);
+        self::assertSame($displayName, (string)$entity);
     }
 }
