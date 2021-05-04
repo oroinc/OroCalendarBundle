@@ -4,6 +4,7 @@ namespace Oro\Bundle\CalendarBundle\Tests\Unit\Form\Type;
 
 use Oro\Bundle\CalendarBundle\Form\Type\RecurrenceFormType;
 use Oro\Bundle\CalendarBundle\Model\Recurrence;
+use Oro\Bundle\CalendarBundle\Model\Recurrence\StrategyInterface;
 use Oro\Bundle\FormBundle\Form\Type\OroDateTimeType;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\Extension\Core\Type\DateTimeType;
@@ -14,13 +15,12 @@ class RecurrenceFormTypeTest extends \PHPUnit\Framework\TestCase
     /** @var RecurrenceFormType */
     protected $type;
 
-    /** @var  Recurrence */
+    /** @var Recurrence */
     protected $model;
 
     protected function setUp(): void
     {
-        $strategy = $this->getMockBuilder('Oro\Bundle\CalendarBundle\Model\Recurrence\StrategyInterface')
-            ->getMock();
+        $strategy = $this->createMock(StrategyInterface::class);
 
         $this->model = new Recurrence($strategy);
         $this->type = new RecurrenceFormType($this->model);

@@ -8,9 +8,7 @@ use Symfony\Component\Form\FormEvent;
 
 class CalendarEventRecurrenceSubscriberTest extends \PHPUnit\Framework\TestCase
 {
-    /**
-     * @var  CalendarEventRecurrenceSubscriber
-     */
+    /** @var CalendarEventRecurrenceSubscriber */
     protected $calendarEventRecurrenceSubscriber;
 
     protected function setUp(): void

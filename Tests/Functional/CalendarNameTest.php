@@ -47,9 +47,7 @@ class CalendarNameTest extends WebTestCase
      */
     public function testCalendarNameEqualsToExpected($withName, $expectedEventName, $withoutOwner)
     {
-        /**
-         * @var $calendar Calendar
-         */
+        /** @var Calendar $calendar */
         $calendar = $this->getReference('oro_calendar:calendar:system_user_1');
         if ($withName) {
             $calendar->setName($expectedEventName);
