@@ -2,6 +2,7 @@
 
 namespace Oro\Bundle\CalendarBundle\Tests\Unit\Form\Type;
 
+use Oro\Bundle\CalendarBundle\Entity\Recurrence as RecurrenceEntity;
 use Oro\Bundle\CalendarBundle\Form\Type\RecurrenceFormType;
 use Oro\Bundle\CalendarBundle\Model\Recurrence;
 use Oro\Bundle\CalendarBundle\Model\Recurrence\StrategyInterface;
@@ -9,14 +10,17 @@ use Oro\Bundle\FormBundle\Form\Type\OroDateTimeType;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\Extension\Core\Type\DateTimeType;
 use Symfony\Component\Form\Extension\Core\Type\IntegerType;
+use Symfony\Component\Form\Extension\Core\Type\TimezoneType;
+use Symfony\Component\Form\FormBuilder;
+use Symfony\Component\OptionsResolver\OptionsResolver;
 
 class RecurrenceFormTypeTest extends \PHPUnit\Framework\TestCase
 {
     /** @var RecurrenceFormType */
-    protected $type;
+    private $type;
 
     /** @var Recurrence */
-    protected $model;
+    private $model;
 
     protected function setUp(): void
     {
@@ -31,13 +35,10 @@ class RecurrenceFormTypeTest extends \PHPUnit\Framework\TestCase
      */
     public function testBuildForm()
     {
-        $builder = $this->getMockBuilder('Symfony\Component\Form\FormBuilder')
-            ->disableOriginalConstructor()
-            ->getMock();
+        $builder = $this->createMock(FormBuilder::class);
 
-        $builder->expects($this->at(0))
-            ->method('add')
-            ->with(
+        $formFields = [
+            [
                 'recurrenceType',
                 ChoiceType::class,
                 [
@@ -46,22 +47,16 @@ class RecurrenceFormTypeTest extends \PHPUnit\Framework\TestCase
                     'placeholder' => false,
                     'choices' => $this->model->getRecurrenceTypes(),
                 ]
-            )
-            ->will($this->returnSelf());
-        $builder->expects($this->at(1))
-            ->method('add')
-            ->with(
+            ],
+            [
                 'interval',
                 IntegerType::class,
                 [
                     'required' => true,
                     'label' => 'oro.calendar.recurrence.interval.label',
                 ]
-            )
-            ->will($this->returnSelf());
-        $builder->expects($this->at(2))
-            ->method('add')
-            ->with(
+            ],
+            [
                 'instance',
                 ChoiceType::class,
                 [
@@ -70,11 +65,8 @@ class RecurrenceFormTypeTest extends \PHPUnit\Framework\TestCase
                     'placeholder' => false,
                     'choices' => $this->model->getInstances(),
                 ]
-            )
-            ->will($this->returnSelf());
-        $builder->expects($this->at(3))
-            ->method('add')
-            ->with(
+            ],
+            [
                 'dayOfWeek',
                 ChoiceType::class,
                 [
@@ -83,33 +75,24 @@ class RecurrenceFormTypeTest extends \PHPUnit\Framework\TestCase
                     'multiple' => true,
                     'choices' => $this->model->getDaysOfWeek(),
                 ]
-            )
-            ->will($this->returnSelf());
-        $builder->expects($this->at(4))
-            ->method('add')
-            ->with(
+            ],
+            [
                 'dayOfMonth',
                 IntegerType::class,
                 [
                     'required' => false,
                     'label' => 'oro.calendar.recurrence.day_of_month.label',
                 ]
-            )
-            ->will($this->returnSelf());
-        $builder->expects($this->at(5))
-            ->method('add')
-            ->with(
+            ],
+            [
                 'monthOfYear',
                 IntegerType::class,
                 [
                     'required' => false,
                     'label' => 'oro.calendar.recurrence.month_of_year.label',
                 ]
-            )
-            ->will($this->returnSelf());
-        $builder->expects($this->at(6))
-            ->method('add')
-            ->with(
+            ],
+            [
                 'startTime',
                 OroDateTimeType::class,
                 [
@@ -120,11 +103,8 @@ class RecurrenceFormTypeTest extends \PHPUnit\Framework\TestCase
                     'widget' => 'single_text',
                     'format' => DateTimeType::HTML5_FORMAT,
                 ]
-            )
-            ->will($this->returnSelf());
-        $builder->expects($this->at(7))
-            ->method('add')
-            ->with(
+            ],
+            [
                 'endTime',
                 OroDateTimeType::class,
                 [
@@ -135,11 +115,8 @@ class RecurrenceFormTypeTest extends \PHPUnit\Framework\TestCase
                     'widget' => 'single_text',
                     'format' => DateTimeType::HTML5_FORMAT,
                 ]
-            )
-            ->will($this->returnSelf());
-        $builder->expects($this->at(8))
-            ->method('add')
-            ->with(
+            ],
+            [
                 'occurrences',
                 IntegerType::class,
                 [
@@ -147,7 +124,20 @@ class RecurrenceFormTypeTest extends \PHPUnit\Framework\TestCase
                     'label' => 'oro.calendar.recurrence.occurrences.label',
                     'property_path' => 'occurrences',
                 ]
-            )
+            ],
+            [
+                'timeZone',
+                TimezoneType::class,
+                [
+                    'required' => true,
+                    'label' => 'oro.calendar.recurrence.timezone.label',
+                ]
+            ],
+        ];
+
+        $builder->expects($this->exactly(count($formFields)))
+            ->method('add')
+            ->withConsecutive(...$formFields)
             ->will($this->returnSelf());
 
         $this->type->buildForm($builder, []);
@@ -155,14 +145,12 @@ class RecurrenceFormTypeTest extends \PHPUnit\Framework\TestCase
 
     public function testConfigureOptions()
     {
-        $resolver = $this->getMockBuilder('Symfony\Component\OptionsResolver\OptionsResolver')
-            ->disableOriginalConstructor()
-            ->getMock();
+        $resolver = $this->createMock(OptionsResolver::class);
         $resolver->expects($this->once())
             ->method('setDefaults')
             ->with([
                 'csrf_token_id' => 'oro_calendar_event_recurrence',
-                'data_class' => 'Oro\Bundle\CalendarBundle\Entity\Recurrence',
+                'data_class' => RecurrenceEntity::class
             ]);
 
         $this->type->configureOptions($resolver);

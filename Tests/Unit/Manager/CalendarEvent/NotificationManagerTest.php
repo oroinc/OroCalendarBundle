@@ -19,21 +19,15 @@ use Oro\Bundle\EntityExtendBundle\Entity\AbstractEnumValue;
  */
 class NotificationManagerTest extends \PHPUnit\Framework\TestCase
 {
-    /**
-     * @var \PHPUnit\Framework\MockObject\MockObject|EmailNotificationSender
-     */
-    protected $emailNotificationSender;
+    /** @var EmailNotificationSender|\PHPUnit\Framework\MockObject\MockObject */
+    private $emailNotificationSender;
 
-    /**
-     * @var NotificationManager
-     */
-    protected $notificationManager;
+    /** @var NotificationManager */
+    private $notificationManager;
 
     protected function setUp(): void
     {
-        $this->emailNotificationSender = $this->getMockBuilder(EmailNotificationSender::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $this->emailNotificationSender = $this->createMock(EmailNotificationSender::class);
 
         $this->notificationManager = new NotificationManager($this->emailNotificationSender);
     }
@@ -504,15 +498,11 @@ class NotificationManagerTest extends \PHPUnit\Framework\TestCase
         $calendarEvent->getRecurringEventExceptions()->clear();
 
         $this->emailNotificationSender->expects($this->exactly(2))
-            ->method('addCancelNotifications');
-
-        $this->emailNotificationSender->expects($this->at(0))
             ->method('addCancelNotifications')
-            ->with($calendarEventException1, [$extraAttendee1, $extraAttendee2]);
-
-        $this->emailNotificationSender->expects($this->at(1))
-            ->method('addCancelNotifications')
-            ->with($calendarEventException2, [$extraAttendee3]);
+            ->withConsecutive(
+                [$calendarEventException1, [$extraAttendee1, $extraAttendee2]],
+                [$calendarEventException2, [$extraAttendee3]]
+            );
 
         $this->emailNotificationSender->expects($this->once())
             ->method('sendAddedNotifications');
@@ -957,19 +947,12 @@ class NotificationManagerTest extends \PHPUnit\Framework\TestCase
             ->addRecurringEventException($calendarEventException2);
 
         $this->emailNotificationSender->expects($this->exactly(3))
-            ->method('addCancelNotifications');
-
-        $this->emailNotificationSender->expects($this->at(0))
             ->method('addCancelNotifications')
-            ->with($calendarEvent, [$attendee1, $attendee2]);
-
-        $this->emailNotificationSender->expects($this->at(1))
-            ->method('addCancelNotifications')
-            ->with($calendarEventException1, [$extraAttendee1, $extraAttendee2]);
-
-        $this->emailNotificationSender->expects($this->at(2))
-            ->method('addCancelNotifications')
-            ->with($calendarEventException2, [$extraAttendee3]);
+            ->withConsecutive(
+                [$calendarEvent, [$attendee1, $attendee2]],
+                [$calendarEventException1, [$extraAttendee1, $extraAttendee2]],
+                [$calendarEventException2, [$extraAttendee3]]
+            );
 
         $this->emailNotificationSender->expects($this->once())
             ->method('sendAddedNotifications');

@@ -11,15 +11,11 @@ use Oro\Bundle\CalendarBundle\Tests\Unit\Fixtures\Entity\CalendarEvent;
 
 class DeleteManagerTest extends \PHPUnit\Framework\TestCase
 {
-    /**
-     * @var \PHPUnit\Framework\MockObject\MockObject
-     */
-    protected $objectManager;
+    /** @var ManagerRegistry|\PHPUnit\Framework\MockObject\MockObject */
+    private $objectManager;
 
-    /**
-     * @var DeleteManager
-     */
-    protected $deleteManager;
+    /** @var DeleteManager */
+    private $deleteManager;
 
     protected function setUp(): void
     {
@@ -47,15 +43,11 @@ class DeleteManagerTest extends \PHPUnit\Framework\TestCase
         $childRecurringEvent->addRecurringEventException($childExceptionEvent);
 
         $this->objectManager->expects($this->exactly(2))
-            ->method('remove');
-
-        $this->objectManager->expects($this->at(0))
             ->method('remove')
-            ->with($exceptionEvent);
-
-        $this->objectManager->expects($this->at(1))
-            ->method('remove')
-            ->with($childExceptionEvent);
+            ->withConsecutive(
+                [$this->identicalTo($exceptionEvent)],
+                [$this->identicalTo($childExceptionEvent)]
+            );
 
         $this->deleteManager->deleteAndClearRecurringEventExceptions($recurringEvent);
 

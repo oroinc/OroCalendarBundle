@@ -2,6 +2,10 @@
 
 namespace Oro\Bundle\CalendarBundle\Tests\Unit\Provider;
 
+use Doctrine\ORM\AbstractQuery;
+use Doctrine\ORM\EntityRepository;
+use Doctrine\ORM\Mapping\ClassMetadata;
+use Doctrine\ORM\QueryBuilder;
 use Oro\Bundle\CalendarBundle\Entity\Calendar;
 use Oro\Bundle\CalendarBundle\Provider\CalendarPropertyProvider;
 use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
@@ -14,14 +18,14 @@ use Oro\Bundle\EntityExtendBundle\Extend\FieldTypeHelper;
 
 class CalendarPropertyProviderTest extends \PHPUnit\Framework\TestCase
 {
-    /** @var \PHPUnit\Framework\MockObject\MockObject */
-    protected $doctrineHelper;
+    /** @var DoctrineHelper|\PHPUnit\Framework\MockObject\MockObject */
+    private $doctrineHelper;
 
-    /** @var \PHPUnit\Framework\MockObject\MockObject */
-    protected $configManager;
+    /** @var ConfigManager|\PHPUnit\Framework\MockObject\MockObject */
+    private $configManager;
 
     /** @var CalendarPropertyProvider */
-    protected $provider;
+    private $provider;
 
     protected function setUp(): void
     {
@@ -37,6 +41,14 @@ class CalendarPropertyProviderTest extends \PHPUnit\Framework\TestCase
             $this->doctrineHelper,
             $this->configManager,
             new FieldTypeHelper($entityExtendConfigurationProvider)
+        );
+    }
+
+    private function getFieldConfig(string $fieldName, string $fieldType, array $values = []): Config
+    {
+        return new Config(
+            new FieldConfigId('extend', CalendarPropertyProvider::CALENDAR_PROPERTY_CLASS, $fieldName, $fieldType),
+            $values
         );
     }
 
@@ -63,7 +75,7 @@ class CalendarPropertyProviderTest extends \PHPUnit\Framework\TestCase
         $this->configManager->expects($this->once())
             ->method('getConfigs')
             ->with('extend', CalendarPropertyProvider::CALENDAR_PROPERTY_CLASS)
-            ->will($this->returnValue($fieldConfigs));
+            ->willReturn($fieldConfigs);
 
         $result = $this->provider->getFields();
         $this->assertEquals(
@@ -90,37 +102,31 @@ class CalendarPropertyProviderTest extends \PHPUnit\Framework\TestCase
         $this->configManager->expects($this->once())
             ->method('getConfigs')
             ->with('extend', CalendarPropertyProvider::CALENDAR_PROPERTY_CLASS)
-            ->will($this->returnValue($fieldConfigs));
+            ->willReturn($fieldConfigs);
 
-        $metadata = $this->getMockBuilder('Doctrine\ORM\Mapping\ClassMetadata')
-            ->disableOriginalConstructor()
-            ->getMock();
+        $metadata = $this->createMock(ClassMetadata::class);
         $this->doctrineHelper->expects($this->once())
             ->method('getEntityMetadata')
             ->with(CalendarPropertyProvider::CALENDAR_PROPERTY_CLASS)
-            ->will($this->returnValue($metadata));
+            ->willReturn($metadata);
 
         $metadata->expects($this->exactly(count($fieldConfigs)))
             ->method('hasField')
-            ->will(
-                $this->returnValueMap(
-                    [
-                        ['id', true],
-                        ['targetCalendar', false],
-                        ['visible', true],
-                        ['enum', false],
-                    ]
-                )
+            ->willReturnMap(
+                [
+                    ['id', true],
+                    ['targetCalendar', false],
+                    ['visible', true],
+                    ['enum', false],
+                ]
             );
         $metadata->expects($this->exactly(2))
             ->method('getFieldMapping')
-            ->will(
-                $this->returnValueMap(
-                    [
-                        ['id', []],
-                        ['visible', ['options' => ['default' => true]]],
-                    ]
-                )
+            ->willReturnMap(
+                [
+                    ['id', []],
+                    ['visible', ['options' => ['default' => true]]],
+                ]
             );
 
         $result = $this->provider->getDefaultValues();
@@ -146,40 +152,33 @@ class CalendarPropertyProviderTest extends \PHPUnit\Framework\TestCase
         $this->configManager->expects($this->once())
             ->method('getConfig')
             ->with($fieldConfig->getId())
-            ->will($this->returnValue($fieldConfig));
+            ->willReturn($fieldConfig);
 
-        $repo = $this->getMockBuilder('Doctrine\ORM\EntityRepository')
-            ->disableOriginalConstructor()
-            ->getMock();
+        $repo = $this->createMock(EntityRepository::class);
         $this->doctrineHelper->expects($this->once())
             ->method('getEntityRepository')
             ->with('Test\Enum')
-            ->will($this->returnValue($repo));
-        $qb = $this->getMockBuilder('Doctrine\ORM\QueryBuilder')
-            ->disableOriginalConstructor()
-            ->getMock();
+            ->willReturn($repo);
+        $qb = $this->createMock(QueryBuilder::class);
         $repo->expects($this->once())
             ->method('createQueryBuilder')
             ->with('e')
-            ->will($this->returnValue($qb));
+            ->willReturn($qb);
         $qb->expects($this->once())
             ->method('select')
             ->with('e.id')
-            ->will($this->returnSelf());
+            ->willReturnSelf();
         $qb->expects($this->once())
             ->method('where')
             ->with('e.default = true')
-            ->will($this->returnSelf());
-        $query = $this->getMockBuilder('Doctrine\ORM\AbstractQuery')
-            ->disableOriginalConstructor()
-            ->setMethods(['getArrayResult'])
-            ->getMockForAbstractClass();
+            ->willReturnSelf();
+        $query = $this->createMock(AbstractQuery::class);
         $qb->expects($this->once())
             ->method('getQuery')
-            ->will($this->returnValue($query));
+            ->willReturn($query);
         $query->expects($this->once())
             ->method('getArrayResult')
-            ->will($this->returnValue($defaults));
+            ->willReturn($defaults);
 
         $this->assertSame(
             $expected,
@@ -227,87 +226,72 @@ class CalendarPropertyProviderTest extends \PHPUnit\Framework\TestCase
         $this->configManager->expects($this->once())
             ->method('getConfigs')
             ->with('extend', CalendarPropertyProvider::CALENDAR_PROPERTY_CLASS)
-            ->will($this->returnValue($fieldConfigs));
+            ->willReturn($fieldConfigs);
 
-        $metadata = $this->getMockBuilder('Doctrine\ORM\Mapping\ClassMetadata')
-            ->disableOriginalConstructor()
-            ->getMock();
+        $metadata = $this->createMock(ClassMetadata::class);
         $this->doctrineHelper->expects($this->once())
             ->method('getEntityMetadata')
             ->with(CalendarPropertyProvider::CALENDAR_PROPERTY_CLASS)
-            ->will($this->returnValue($metadata));
+            ->willReturn($metadata);
 
         $metadata->expects($this->exactly(2))
             ->method('hasAssociation')
-            ->will(
-                $this->returnValueMap(
-                    [
-                        ['targetCalendar', true],
-                        ['enum', true],
-                    ]
-                )
+            ->willReturnMap(
+                [
+                    ['targetCalendar', true],
+                    ['enum', true],
+                ]
             );
         $metadata->expects($this->exactly(2))
             ->method('getAssociationTargetClass')
-            ->will(
-                $this->returnValueMap(
-                    [
-                        ['targetCalendar', 'Oro\Bundle\CalendarBundle\Entity\Calendar'],
-                        ['enum', 'Test\Enum'],
-                    ]
-                )
+            ->willReturnMap(
+                [
+                    ['targetCalendar', Calendar::class],
+                    ['enum', 'Test\Enum'],
+                ]
             );
         $this->doctrineHelper->expects($this->exactly(2))
             ->method('getSingleEntityIdentifierFieldType')
-            ->will(
-                $this->returnValueMap(
-                    [
-                        ['Oro\Bundle\CalendarBundle\Entity\Calendar', false, 'integer'],
-                        ['Test\Enum', false, 'string'],
-                    ]
-                )
+            ->willReturnMap(
+                [
+                    [Calendar::class, false, 'integer'],
+                    ['Test\Enum', false, 'string'],
+                ]
             );
 
-        $repo = $this->getMockBuilder('Doctrine\ORM\EntityRepository')
-            ->disableOriginalConstructor()
-            ->getMock();
+        $repo = $this->createMock(EntityRepository::class);
         $this->doctrineHelper->expects($this->once())
             ->method('getEntityRepository')
             ->with(CalendarPropertyProvider::CALENDAR_PROPERTY_CLASS)
-            ->will($this->returnValue($repo));
-        $qb = $this->getMockBuilder('Doctrine\ORM\QueryBuilder')
-            ->disableOriginalConstructor()
-            ->getMock();
+            ->willReturn($repo);
+        $qb = $this->createMock(QueryBuilder::class);
         $repo->expects($this->once())
             ->method('createQueryBuilder')
             ->with('o')
-            ->will($this->returnValue($qb));
+            ->willReturn($qb);
         $qb->expects($this->once())
             ->method('select')
             ->with('o.id,IDENTITY(o.targetCalendar) AS targetCalendar,o.visible,IDENTITY(o.enum) AS enum')
-            ->will($this->returnSelf());
+            ->willReturnSelf();
         $qb->expects($this->once())
             ->method('where')
             ->with('o.targetCalendar = :calendar_id')
-            ->will($this->returnSelf());
+            ->willReturnSelf();
         $qb->expects($this->once())
             ->method('setParameter')
             ->with('calendar_id', $calendarId)
-            ->will($this->returnSelf());
+            ->willReturnSelf();
         $qb->expects($this->once())
             ->method('orderBy')
             ->with('o.id')
-            ->will($this->returnSelf());
-        $query = $this->getMockBuilder('Doctrine\ORM\AbstractQuery')
-            ->disableOriginalConstructor()
-            ->setMethods(['getArrayResult'])
-            ->getMockForAbstractClass();
+            ->willReturnSelf();
+        $query = $this->createMock(AbstractQuery::class);
         $qb->expects($this->once())
             ->method('getQuery')
-            ->will($this->returnValue($query));
+            ->willReturn($query);
         $query->expects($this->once())
             ->method('getArrayResult')
-            ->will($this->returnValue($items));
+            ->willReturn($items);
 
         $result = $this->provider->getItems($calendarId);
         $this->assertSame(
@@ -329,42 +313,35 @@ class CalendarPropertyProviderTest extends \PHPUnit\Framework\TestCase
         $subordinate = true;
         $items       = [['calendarAlias' => 'test', 'calendar' => 1, 'visible' => true]];
 
-        $repo = $this->getMockBuilder('Doctrine\ORM\EntityRepository')
-            ->disableOriginalConstructor()
-            ->getMock();
+        $repo = $this->createMock(EntityRepository::class);
         $this->doctrineHelper->expects($this->once())
             ->method('getEntityRepository')
             ->with(CalendarPropertyProvider::CALENDAR_PROPERTY_CLASS)
-            ->will($this->returnValue($repo));
-        $qb = $this->getMockBuilder('Doctrine\ORM\QueryBuilder')
-            ->disableOriginalConstructor()
-            ->getMock();
+            ->willReturn($repo);
+        $qb = $this->createMock(QueryBuilder::class);
         $repo->expects($this->once())
             ->method('createQueryBuilder')
             ->with('o')
-            ->will($this->returnValue($qb));
+            ->willReturn($qb);
         $qb->expects($this->once())
             ->method('select')
             ->with('o.calendarAlias, o.calendar, o.visible')
-            ->will($this->returnSelf());
+            ->willReturnSelf();
         $qb->expects($this->once())
             ->method('where')
             ->with('o.targetCalendar = :calendar_id')
-            ->will($this->returnSelf());
+            ->willReturnSelf();
         $qb->expects($this->once())
             ->method('setParameter')
             ->with('calendar_id', $calendarId)
-            ->will($this->returnSelf());
-        $query = $this->getMockBuilder('Doctrine\ORM\AbstractQuery')
-            ->disableOriginalConstructor()
-            ->setMethods(['getArrayResult'])
-            ->getMockForAbstractClass();
+            ->willReturnSelf();
+        $query = $this->createMock(AbstractQuery::class);
         $qb->expects($this->once())
             ->method('getQuery')
-            ->will($this->returnValue($query));
+            ->willReturn($query);
         $query->expects($this->once())
             ->method('getArrayResult')
-            ->will($this->returnValue($items));
+            ->willReturn($items);
 
         $result = $this->provider->getItemsVisibility($calendarId, $subordinate);
         $this->assertSame($items, $result);
@@ -376,66 +353,44 @@ class CalendarPropertyProviderTest extends \PHPUnit\Framework\TestCase
         $subordinate = false;
         $items       = [['calendarAlias' => 'test', 'calendar' => 1, 'visible' => true]];
 
-        $repo = $this->getMockBuilder('Doctrine\ORM\EntityRepository')
-            ->disableOriginalConstructor()
-            ->getMock();
+        $repo = $this->createMock(EntityRepository::class);
         $this->doctrineHelper->expects($this->once())
             ->method('getEntityRepository')
             ->with(CalendarPropertyProvider::CALENDAR_PROPERTY_CLASS)
-            ->will($this->returnValue($repo));
-        $qb = $this->getMockBuilder('Doctrine\ORM\QueryBuilder')
-            ->disableOriginalConstructor()
-            ->getMock();
+            ->willReturn($repo);
+        $qb = $this->createMock(QueryBuilder::class);
         $repo->expects($this->once())
             ->method('createQueryBuilder')
             ->with('o')
-            ->will($this->returnValue($qb));
+            ->willReturn($qb);
         $qb->expects($this->once())
             ->method('select')
             ->with('o.calendarAlias, o.calendar, o.visible')
-            ->will($this->returnSelf());
+            ->willReturnSelf();
         $qb->expects($this->once())
             ->method('where')
             ->with('o.targetCalendar = :calendar_id')
-            ->will($this->returnSelf());
-        $qb->expects($this->at(2))
-            ->method('setParameter')
-            ->with('calendar_id', $calendarId)
-            ->will($this->returnSelf());
+            ->willReturnSelf();
         $qb->expects($this->once())
             ->method('andWhere')
             ->with('o.calendarAlias = :alias AND o.calendar = :calendar_id')
-            ->will($this->returnSelf());
-        $qb->expects($this->at(4))
+            ->willReturnSelf();
+        $qb->expects($this->exactly(2))
             ->method('setParameter')
-            ->with('alias', Calendar::CALENDAR_ALIAS)
-            ->will($this->returnSelf());
-        $query = $this->getMockBuilder('Doctrine\ORM\AbstractQuery')
-            ->disableOriginalConstructor()
-            ->setMethods(['getArrayResult'])
-            ->getMockForAbstractClass();
+            ->withConsecutive(
+                ['calendar_id', $calendarId],
+                ['alias', Calendar::CALENDAR_ALIAS]
+            )
+            ->willReturnSelf();
+        $query = $this->createMock(AbstractQuery::class);
         $qb->expects($this->once())
             ->method('getQuery')
-            ->will($this->returnValue($query));
+            ->willReturn($query);
         $query->expects($this->once())
             ->method('getArrayResult')
-            ->will($this->returnValue($items));
+            ->willReturn($items);
 
         $result = $this->provider->getItemsVisibility($calendarId, $subordinate);
         $this->assertSame($items, $result);
-    }
-
-    protected function getFieldConfig($fieldName, $fieldType, $values = [])
-    {
-        $fieldConfigId = new FieldConfigId(
-            'extend',
-            CalendarPropertyProvider::CALENDAR_PROPERTY_CLASS,
-            $fieldName,
-            $fieldType
-        );
-        $fieldConfig   = new Config($fieldConfigId);
-        $fieldConfig->setValues($values);
-
-        return $fieldConfig;
     }
 }

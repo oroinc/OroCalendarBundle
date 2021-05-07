@@ -3,15 +3,19 @@
 namespace Oro\Bundle\CalendarBundle\Tests\Unit\EventListener;
 
 use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\Event\LifecycleEventArgs;
 use Doctrine\ORM\Event\OnFlushEventArgs;
 use Doctrine\ORM\Event\PreUpdateEventArgs;
 use Doctrine\ORM\Mapping\ClassMetadata;
 use Doctrine\ORM\PersistentCollection;
+use Doctrine\ORM\UnitOfWork;
 use Oro\Bundle\CalendarBundle\Entity\Calendar;
 use Oro\Bundle\CalendarBundle\Entity\Recurrence;
+use Oro\Bundle\CalendarBundle\Entity\Repository\CalendarRepository;
 use Oro\Bundle\CalendarBundle\Entity\SystemCalendar;
 use Oro\Bundle\CalendarBundle\EventListener\EntityListener;
+use Oro\Bundle\CalendarBundle\Model\Recurrence as RecurrenceModel;
 use Oro\Bundle\OrganizationBundle\Entity\Organization;
 use Oro\Bundle\SecurityBundle\Authentication\TokenAccessorInterface;
 use Oro\Bundle\UserBundle\Entity\User;
@@ -20,36 +24,30 @@ use Oro\Component\Testing\ReflectionUtil;
 class EntityListenerTest extends \PHPUnit\Framework\TestCase
 {
     /** @var \PHPUnit\Framework\MockObject\MockObject */
-    protected $em;
+    private $em;
 
     /** @var \PHPUnit\Framework\MockObject\MockObject */
-    protected $uow;
+    private $uow;
 
     /** @var \PHPUnit\Framework\MockObject\MockObject */
-    protected $tokenAccessor;
+    private $tokenAccessor;
 
     /** @var \PHPUnit\Framework\MockObject\MockObject */
-    protected $recurrenceModel;
+    private $recurrenceModel;
 
     /** @var EntityListener */
-    protected $listener;
+    private $listener;
 
     protected function setUp(): void
     {
-        $this->em  = $this->getMockBuilder('Doctrine\ORM\EntityManager')
-            ->disableOriginalConstructor()
-            ->getMock();
-        $this->uow = $this->getMockBuilder('\Doctrine\ORM\UnitOfWork')
-            ->disableOriginalConstructor()
-            ->getMock();
+        $this->em  = $this->createMock(EntityManager::class);
+        $this->uow = $this->createMock(UnitOfWork::class);
         $this->em->expects($this->any())
             ->method('getUnitOfWork')
-            ->will($this->returnValue($this->uow));
+            ->willReturn($this->uow);
 
         $this->tokenAccessor = $this->createMock(TokenAccessorInterface::class);
-        $this->recurrenceModel = $this->getMockBuilder('Oro\Bundle\CalendarBundle\Model\Recurrence')
-            ->disableOriginalConstructor()
-            ->getMock();
+        $this->recurrenceModel = $this->createMock(RecurrenceModel::class);
 
         $this->listener = new EntityListener($this->tokenAccessor, $this->recurrenceModel);
     }
@@ -63,11 +61,10 @@ class EntityListenerTest extends \PHPUnit\Framework\TestCase
         $entity->setOrganization(new Organization());
         $this->assertNotNull($entity->getOrganization());
 
-        $changeSet = [];
-        $args      = new PreUpdateEventArgs($entity, $this->em, $changeSet);
-
         $entity->setPublic(true);
-        $this->listener->preUpdate($args);
+
+        $changeSet = [];
+        $this->listener->preUpdate(new PreUpdateEventArgs($entity, $this->em, $changeSet));
         $this->assertNull($entity->getOrganization());
     }
 
@@ -81,14 +78,12 @@ class EntityListenerTest extends \PHPUnit\Framework\TestCase
         $entity = new SystemCalendar();
         $this->assertNull($entity->getOrganization());
 
-        $changeSet = [];
-        $args      = new PreUpdateEventArgs($entity, $this->em, $changeSet);
-
         $this->tokenAccessor->expects($this->once())
             ->method('getOrganization')
-            ->will($this->returnValue($organization));
+            ->willReturn($organization);
 
-        $this->listener->preUpdate($args);
+        $changeSet = [];
+        $this->listener->preUpdate(new PreUpdateEventArgs($entity, $this->em, $changeSet));
         $this->assertSame($organization, $entity->getOrganization());
     }
 
@@ -97,8 +92,6 @@ class EntityListenerTest extends \PHPUnit\Framework\TestCase
      */
     public function testOnFlushCreateUser()
     {
-        $args = new OnFlushEventArgs($this->em);
-
         $user = new User();
         $org1 = new Organization();
         ReflectionUtil::setId($org1, 1);
@@ -117,30 +110,29 @@ class EntityListenerTest extends \PHPUnit\Framework\TestCase
 
         $this->uow->expects($this->once())
             ->method('getScheduledEntityInsertions')
-            ->will($this->returnValue([$user]));
+            ->willReturn([$user]);
         $this->uow->expects($this->once())
             ->method('getScheduledCollectionUpdates')
-            ->will($this->returnValue([]));
+            ->willReturn([]);
 
-        $this->em->expects($this->at(1))
-            ->method('persist')
-            ->with($this->equalTo($newCalendar1));
-        $this->em->expects($this->at(2))
+        $this->em->expects($this->once())
             ->method('getClassMetadata')
-            ->with('Oro\Bundle\CalendarBundle\Entity\Calendar')
-            ->will($this->returnValue($calendarMetadata));
-        $this->em->expects($this->at(3))
+            ->with(Calendar::class)
+            ->willReturn($calendarMetadata);
+        $this->em->expects($this->exactly(2))
             ->method('persist')
-            ->with($this->equalTo($newCalendar2));
-
-        $this->uow->expects($this->at(1))
+            ->withConsecutive(
+                [$this->equalTo($newCalendar1)],
+                [$this->equalTo($newCalendar2)]
+            );
+        $this->uow->expects($this->exactly(2))
             ->method('computeChangeSet')
-            ->with($calendarMetadata, $newCalendar1);
-        $this->uow->expects($this->at(2))
-            ->method('computeChangeSet')
-            ->with($calendarMetadata, $newCalendar2);
+            ->withConsecutive(
+                [$this->identicalTo($calendarMetadata), $this->equalTo($newCalendar1)],
+                [$this->identicalTo($calendarMetadata), $this->equalTo($newCalendar2)]
+            );
 
-        $this->listener->onFlush($args);
+        $this->listener->onFlush(new OnFlushEventArgs($this->em));
     }
 
     /**
@@ -148,8 +140,6 @@ class EntityListenerTest extends \PHPUnit\Framework\TestCase
      */
     public function testOnFlushUpdateUser()
     {
-        $args = new OnFlushEventArgs($this->em);
-
         $user = new User();
         ReflectionUtil::setId($user, 123);
         $org = new Organization();
@@ -163,38 +153,35 @@ class EntityListenerTest extends \PHPUnit\Framework\TestCase
 
         $calendarMetadata = new ClassMetadata(get_class($newCalendar));
 
-        $calendarRepo = $this->getMockBuilder('\Doctrine\ORM\EntityRepository')
-            ->setMethods(['findDefaultCalendar'])
-            ->disableOriginalConstructor()
-            ->getMock();
+        $calendarRepo = $this->createMock(CalendarRepository::class);
         $calendarRepo->expects($this->any())
             ->method('findDefaultCalendar')
-            ->will($this->returnValue(false));
+            ->willReturn(false);
 
         $this->uow->expects($this->once())
             ->method('getScheduledEntityInsertions')
-            ->will($this->returnValue([]));
+            ->willReturn([]);
         $this->uow->expects($this->once())
             ->method('getScheduledCollectionUpdates')
-            ->will($this->returnValue([$coll]));
+            ->willReturn([$coll]);
 
-        $this->em->expects($this->at(1))
+        $this->em->expects($this->once())
             ->method('getRepository')
             ->with('OroCalendarBundle:Calendar')
-            ->will($this->returnValue($calendarRepo));
-        $this->em->expects($this->at(2))
+            ->willReturn($calendarRepo);
+        $this->em->expects($this->once())
             ->method('persist')
             ->with($this->equalTo($newCalendar));
-        $this->em->expects($this->at(3))
+        $this->em->expects($this->once())
             ->method('getClassMetadata')
-            ->with('Oro\Bundle\CalendarBundle\Entity\Calendar')
-            ->will($this->returnValue($calendarMetadata));
+            ->with(Calendar::class)
+            ->willReturn($calendarMetadata);
 
         $this->uow->expects($this->once())
             ->method('computeChangeSet')
             ->with($calendarMetadata, $newCalendar);
 
-        $this->listener->onFlush($args);
+        $this->listener->onFlush(new OnFlushEventArgs($this->em));
     }
 
     public function testPrePersistShouldCalculateEndTimeForRecurrenceEntity()
@@ -208,7 +195,7 @@ class EntityListenerTest extends \PHPUnit\Framework\TestCase
         $this->recurrenceModel->expects($this->once())
             ->method('getCalculatedEndTime')
             ->with($recurrence)
-            ->will($this->returnValue($calculatedEndTime));
+            ->willReturn($calculatedEndTime);
 
         $this->listener->prePersist(new LifecycleEventArgs($recurrence, $this->em));
         $this->assertEquals($calculatedEndTime, $recurrence->getCalculatedEndTime());
@@ -222,19 +209,10 @@ class EntityListenerTest extends \PHPUnit\Framework\TestCase
         $this->listener->prePersist(new LifecycleEventArgs(new Organization(), $this->em));
     }
 
-    /**
-     * @param object $owner
-     * @param array  $mapping
-     * @param array  $items
-     *
-     * @return PersistentCollection
-     */
-    protected function getPersistentCollection($owner, array $mapping, array $items = [])
+    private function getPersistentCollection(object $owner, array $mapping, array $items = []): PersistentCollection
     {
-        $metadata = $this->getMockBuilder('Doctrine\ORM\Mapping\ClassMetadata')
-            ->disableOriginalConstructor()
-            ->getMock();
-        $coll     = new PersistentCollection(
+        $metadata = $this->createMock(ClassMetadata::class);
+        $coll = new PersistentCollection(
             $this->em,
             $metadata,
             new ArrayCollection($items)
@@ -252,10 +230,9 @@ class EntityListenerTest extends \PHPUnit\Framework\TestCase
         $entity->setOrganization(new Organization());
         $this->assertNotNull($entity->getOrganization());
 
-        $args      = new LifecycleEventArgs($entity, $this->em);
-
         $entity->setPublic(true);
-        $this->listener->prePersist($args);
+
+        $this->listener->prePersist(new LifecycleEventArgs($entity, $this->em));
         $this->assertNull($entity->getOrganization());
     }
 
@@ -266,13 +243,11 @@ class EntityListenerTest extends \PHPUnit\Framework\TestCase
         $entity = new SystemCalendar();
         $this->assertNull($entity->getOrganization());
 
-        $args      = new LifecycleEventArgs($entity, $this->em);
-
         $this->tokenAccessor->expects($this->once())
             ->method('getOrganization')
-            ->will($this->returnValue($organization));
+            ->willReturn($organization);
 
-        $this->listener->prePersist($args);
+        $this->listener->prePersist(new LifecycleEventArgs($entity, $this->em));
         $this->assertSame($organization, $entity->getOrganization());
     }
 }

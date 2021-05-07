@@ -2,7 +2,12 @@
 
 namespace Oro\Bundle\CalendarBundle\Tests\Unit\EventListener\Datagrid;
 
+use Doctrine\ORM\QueryBuilder;
 use Oro\Bundle\CalendarBundle\EventListener\Datagrid\SystemCalendarGridListener;
+use Oro\Bundle\CalendarBundle\Provider\SystemCalendarConfig;
+use Oro\Bundle\DataGridBundle\Datagrid\Common\DatagridConfiguration;
+use Oro\Bundle\DataGridBundle\Datagrid\DatagridInterface;
+use Oro\Bundle\DataGridBundle\Datasource\Orm\OrmDatasource;
 use Oro\Bundle\DataGridBundle\Datasource\ResultRecord;
 use Oro\Bundle\DataGridBundle\Event\BuildAfter;
 use Oro\Bundle\DataGridBundle\Event\BuildBefore;
@@ -15,28 +20,26 @@ use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
 class SystemCalendarGridListenerTest extends \PHPUnit\Framework\TestCase
 {
     /** @var SystemCalendarGridListener */
-    protected $listener;
+    private $listener;
 
-    /** @var \PHPUnit\Framework\MockObject\MockObject */
-    protected $authorizationChecker;
+    /** @var AuthorizationCheckerInterface|\PHPUnit\Framework\MockObject\MockObject */
+    private $authorizationChecker;
 
-    /** @var \PHPUnit\Framework\MockObject\MockObject */
-    protected $tokenAccessor;
+    /** @var TokenAccessorInterface|\PHPUnit\Framework\MockObject\MockObject */
+    private $tokenAccessor;
 
-    /** @var \PHPUnit\Framework\MockObject\MockObject */
-    protected $calendarConfig;
+    /** @var SystemCalendarConfig|\PHPUnit\Framework\MockObject\MockObject */
+    private $calendarConfig;
 
     protected function setUp(): void
     {
         $this->authorizationChecker = $this->createMock(AuthorizationCheckerInterface::class);
         $this->tokenAccessor = $this->createMock(TokenAccessorInterface::class);
+        $this->calendarConfig = $this->createMock(SystemCalendarConfig::class);
+
         $this->tokenAccessor->expects($this->any())
             ->method('getOrganizationId')
-            ->will($this->returnValue(1));
-        $this->calendarConfig =
-            $this->getMockBuilder('Oro\Bundle\CalendarBundle\Provider\SystemCalendarConfig')
-                ->disableOriginalConstructor()
-                ->getMock();
+            ->willReturn(1);
 
         $this->listener = new SystemCalendarGridListener(
             $this->authorizationChecker,
@@ -49,15 +52,13 @@ class SystemCalendarGridListenerTest extends \PHPUnit\Framework\TestCase
     {
         $this->calendarConfig->expects($this->once())
             ->method('isPublicCalendarEnabled')
-            ->will($this->returnValue(true));
+            ->willReturn(true);
         $this->calendarConfig->expects($this->once())
             ->method('isSystemCalendarEnabled')
-            ->will($this->returnValue(true));
+            ->willReturn(true);
 
-        $datagrid = $this->createMock('Oro\Bundle\DataGridBundle\Datagrid\DatagridInterface');
-        $config   = $this->getMockBuilder('Oro\Bundle\DataGridBundle\Datagrid\Common\DatagridConfiguration')
-            ->disableOriginalConstructor()
-            ->getMock();
+        $datagrid = $this->createMock(DatagridInterface::class);
+        $config = $this->createMock(DatagridConfiguration::class);
 
         $config->expects($this->never())
             ->method('offsetUnsetByPath');
@@ -73,31 +74,27 @@ class SystemCalendarGridListenerTest extends \PHPUnit\Framework\TestCase
     {
         $this->calendarConfig->expects($this->any())
             ->method('isPublicCalendarEnabled')
-            ->will($this->returnValue($isPublicSupported));
+            ->willReturn($isPublicSupported);
         $this->calendarConfig->expects($this->any())
             ->method('isSystemCalendarEnabled')
-            ->will($this->returnValue($isSystemSupported));
+            ->willReturn($isSystemSupported);
 
-        $datagrid = $this->createMock('Oro\Bundle\DataGridBundle\Datagrid\DatagridInterface');
-        $config   = $this->getMockBuilder('Oro\Bundle\DataGridBundle\Datagrid\Common\DatagridConfiguration')
-            ->disableOriginalConstructor()
-            ->getMock();
+        $datagrid = $this->createMock(DatagridInterface::class);
+        $config = $this->createMock(DatagridConfiguration::class);
 
-        $config->expects($this->at(0))
+        $config->expects($this->exactly(3))
             ->method('offsetUnsetByPath')
-            ->with('[columns][public]');
-        $config->expects($this->at(1))
-            ->method('offsetUnsetByPath')
-            ->with('[filters][columns][public]');
-        $config->expects($this->at(2))
-            ->method('offsetUnsetByPath')
-            ->with('[sorters][columns][public]');
+            ->withConsecutive(
+                ['[columns][public]'],
+                ['[filters][columns][public]'],
+                ['[sorters][columns][public]']
+            );
 
         $event = new BuildBefore($datagrid, $config);
         $this->listener->onBuildBefore($event);
     }
 
-    public function disableCalendarProvider()
+    public function disableCalendarProvider(): array
     {
         return [
             [true, false],
@@ -109,57 +106,49 @@ class SystemCalendarGridListenerTest extends \PHPUnit\Framework\TestCase
     {
         $this->calendarConfig->expects($this->once())
             ->method('isPublicCalendarEnabled')
-            ->will($this->returnValue(true));
+            ->willReturn(true);
         $this->calendarConfig->expects($this->once())
             ->method('isSystemCalendarEnabled')
-            ->will($this->returnValue(true));
+            ->willReturn(true);
 
         $this->authorizationChecker->expects($this->exactly(2))
             ->method('isGranted')
-            ->will(
-                $this->returnValueMap(
-                    [
-                        ['oro_public_calendar_management', null, true],
-                        ['oro_system_calendar_management', null, true],
-                    ]
-                )
+            ->willReturnMap(
+                [
+                    ['oro_public_calendar_management', null, true],
+                    ['oro_system_calendar_management', null, true],
+                ]
             );
 
-        $qb = $this->getMockBuilder('Doctrine\ORM\QueryBuilder')
-            ->disableOriginalConstructor()
-            ->getMock();
+        $qb = $this->createMock(QueryBuilder::class);
 
-        $datasource = $this->getMockBuilder('Oro\Bundle\DataGridBundle\Datasource\Orm\OrmDatasource')
-            ->disableOriginalConstructor()
-            ->getMock();
+        $datasource = $this->createMock(OrmDatasource::class);
         $datasource->expects($this->once())
             ->method('getQueryBuilder')
-            ->will($this->returnValue($qb));
+            ->willReturn($qb);
 
-        $datagrid = $this->createMock('Oro\Bundle\DataGridBundle\Datagrid\DatagridInterface');
+        $datagrid = $this->createMock(DatagridInterface::class);
         $datagrid->expects($this->once())
             ->method('getDatasource')
-            ->will($this->returnValue($datasource));
+            ->willReturn($datasource);
 
-        $qb->expects($this->at(0))
+        $qb->expects($this->once())
             ->method('andWhere')
             ->with('(sc.public = :public OR sc.organization = :organizationId)')
-            ->will($this->returnSelf());
-
-        $qb->expects($this->at(1))
+            ->willReturnSelf();
+        $qb->expects($this->exactly(2))
             ->method('setParameter')
-            ->with('public', true)
-            ->will($this->returnSelf());
-
-        $qb->expects($this->at(2))
-            ->method('setParameter')
-            ->with('organizationId', 1);
+            ->withConsecutive(
+                ['public', true],
+                ['organizationId', 1]
+            )
+            ->willReturnSelf();
 
         $event = new BuildAfter($datagrid);
         $this->listener->onBuildAfter($event);
     }
 
-    public function onBuildAfterBothPublicAndSystemGrantedDataProvider()
+    public function onBuildAfterBothPublicAndSystemGrantedDataProvider(): array
     {
         return [
             [true, false],
@@ -172,10 +161,10 @@ class SystemCalendarGridListenerTest extends \PHPUnit\Framework\TestCase
     {
         $this->calendarConfig->expects($this->once())
             ->method('isPublicCalendarEnabled')
-            ->will($this->returnValue(true));
+            ->willReturn(true);
         $this->calendarConfig->expects($this->once())
             ->method('isSystemCalendarEnabled')
-            ->will($this->returnValue(true));
+            ->willReturn(true);
 
         $this->authorizationChecker->expects($this->exactly(2))
             ->method('isGranted')
@@ -185,28 +174,23 @@ class SystemCalendarGridListenerTest extends \PHPUnit\Framework\TestCase
             )
             ->willReturnOnConsecutiveCalls(true, false);
 
-        $qb = $this->getMockBuilder('Doctrine\ORM\QueryBuilder')
-            ->disableOriginalConstructor()
-            ->getMock();
+        $qb = $this->createMock(QueryBuilder::class);
 
-        $datasource = $this->getMockBuilder('Oro\Bundle\DataGridBundle\Datasource\Orm\OrmDatasource')
-            ->disableOriginalConstructor()
-            ->getMock();
+        $datasource = $this->createMock(OrmDatasource::class);
         $datasource->expects($this->once())
             ->method('getQueryBuilder')
-            ->will($this->returnValue($qb));
+            ->willReturn($qb);
 
-        $datagrid = $this->createMock('Oro\Bundle\DataGridBundle\Datagrid\DatagridInterface');
+        $datagrid = $this->createMock(DatagridInterface::class);
         $datagrid->expects($this->once())
             ->method('getDatasource')
-            ->will($this->returnValue($datasource));
+            ->willReturn($datasource);
 
-        $qb->expects($this->at(0))
+        $qb->expects($this->once())
             ->method('andWhere')
             ->with('sc.public = :public')
-            ->will($this->returnSelf());
-
-        $qb->expects($this->at(1))
+            ->willReturnSelf();
+        $qb->expects($this->once(1))
             ->method('setParameter')
             ->with('public', true);
 
@@ -220,46 +204,39 @@ class SystemCalendarGridListenerTest extends \PHPUnit\Framework\TestCase
 
         $this->calendarConfig->expects($this->once())
             ->method('isPublicCalendarEnabled')
-            ->will($this->returnValue(false));
+            ->willReturn(false);
         $this->calendarConfig->expects($this->once())
             ->method('isSystemCalendarEnabled')
-            ->will($this->returnValue(true));
+            ->willReturn(true);
 
         $this->authorizationChecker->expects($this->any())
             ->method('isGranted')
-            ->will($this->returnValueMap(
-                [
-                    ['oro_public_calendar_management', null, true],
-                    ['oro_system_calendar_management', null, true],
-                ]
-            ));
+            ->willReturnMap([
+                ['oro_public_calendar_management', null, true],
+                ['oro_system_calendar_management', null, true],
+            ]);
 
         $this->tokenAccessor->expects($this->once())
             ->method('getOrganizationId')
-            ->will($this->returnValue($organizationId));
+            ->willReturn($organizationId);
 
-        $qb = $this->getMockBuilder('Doctrine\ORM\QueryBuilder')
-            ->disableOriginalConstructor()
-            ->getMock();
+        $qb = $this->createMock(QueryBuilder::class);
 
-        $datasource = $this->getMockBuilder('Oro\Bundle\DataGridBundle\Datasource\Orm\OrmDatasource')
-            ->disableOriginalConstructor()
-            ->getMock();
+        $datasource = $this->createMock(OrmDatasource::class);
         $datasource->expects($this->once())
             ->method('getQueryBuilder')
-            ->will($this->returnValue($qb));
+            ->willReturn($qb);
 
-        $datagrid = $this->createMock('Oro\Bundle\DataGridBundle\Datagrid\DatagridInterface');
+        $datagrid = $this->createMock(DatagridInterface::class);
         $datagrid->expects($this->once())
             ->method('getDatasource')
-            ->will($this->returnValue($datasource));
+            ->willReturn($datasource);
 
-        $qb->expects($this->at(0))
+        $qb->expects($this->once())
             ->method('andWhere')
             ->with('sc.organization = :organizationId')
-            ->will($this->returnSelf());
-
-        $qb->expects($this->at(1))
+            ->willReturnSelf();
+        $qb->expects($this->once())
             ->method('setParameter')
             ->with('organizationId', $organizationId);
 
@@ -271,39 +248,34 @@ class SystemCalendarGridListenerTest extends \PHPUnit\Framework\TestCase
     {
         $this->calendarConfig->expects($this->once())
             ->method('isPublicCalendarEnabled')
-            ->will($this->returnValue(true));
+            ->willReturn(true);
 
         $this->authorizationChecker->expects($this->any())
             ->method('isGranted')
             ->with('oro_public_calendar_management')
-            ->will($this->returnValue(true));
+            ->willReturn(true);
 
         $this->calendarConfig->expects($this->once())
             ->method('isSystemCalendarEnabled')
-            ->will($this->returnValue(false));
+            ->willReturn(false);
 
-        $qb = $this->getMockBuilder('Doctrine\ORM\QueryBuilder')
-            ->disableOriginalConstructor()
-            ->getMock();
+        $qb = $this->createMock(QueryBuilder::class);
 
-        $datasource = $this->getMockBuilder('Oro\Bundle\DataGridBundle\Datasource\Orm\OrmDatasource')
-            ->disableOriginalConstructor()
-            ->getMock();
+        $datasource = $this->createMock(OrmDatasource::class);
         $datasource->expects($this->once())
             ->method('getQueryBuilder')
-            ->will($this->returnValue($qb));
+            ->willReturn($qb);
 
-        $datagrid = $this->createMock('Oro\Bundle\DataGridBundle\Datagrid\DatagridInterface');
+        $datagrid = $this->createMock(DatagridInterface::class);
         $datagrid->expects($this->once())
             ->method('getDatasource')
-            ->will($this->returnValue($datasource));
+            ->willReturn($datasource);
 
-        $qb->expects($this->at(0))
+        $qb->expects($this->once())
             ->method('andWhere')
             ->with('sc.public = :public')
-            ->will($this->returnSelf());
-
-        $qb->expects($this->at(1))
+            ->willReturnSelf();
+        $qb->expects($this->once())
             ->method('setParameter')
             ->with('public', true);
 
@@ -315,31 +287,27 @@ class SystemCalendarGridListenerTest extends \PHPUnit\Framework\TestCase
     {
         $this->calendarConfig->expects($this->once())
             ->method('isPublicCalendarEnabled')
-            ->will($this->returnValue(false));
+            ->willReturn(false);
         $this->calendarConfig->expects($this->once())
             ->method('isSystemCalendarEnabled')
-            ->will($this->returnValue(false));
+            ->willReturn(false);
 
-        $qb = $this->getMockBuilder('Doctrine\ORM\QueryBuilder')
-            ->disableOriginalConstructor()
-            ->getMock();
+        $qb = $this->createMock(QueryBuilder::class);
 
-        $datasource = $this->getMockBuilder('Oro\Bundle\DataGridBundle\Datasource\Orm\OrmDatasource')
-            ->disableOriginalConstructor()
-            ->getMock();
+        $datasource = $this->createMock(OrmDatasource::class);
         $datasource->expects($this->once())
             ->method('getQueryBuilder')
-            ->will($this->returnValue($qb));
+            ->willReturn($qb);
 
-        $datagrid = $this->createMock('Oro\Bundle\DataGridBundle\Datagrid\DatagridInterface');
+        $datagrid = $this->createMock(DatagridInterface::class);
         $datagrid->expects($this->once())
             ->method('getDatasource')
-            ->will($this->returnValue($datasource));
+            ->willReturn($datasource);
 
-        $qb->expects($this->at(0))
+        $qb->expects($this->once())
             ->method('andWhere')
             ->with('1 = 0')
-            ->will($this->returnSelf());
+            ->willReturnSelf();
 
         $event = new BuildAfter($datagrid);
         $this->listener->onBuildAfter($event);
@@ -352,7 +320,7 @@ class SystemCalendarGridListenerTest extends \PHPUnit\Framework\TestCase
         $this->authorizationChecker->expects($this->once())
             ->method('isGranted')
             ->with('oro_public_calendar_management')
-            ->will($this->returnValue(true));
+            ->willReturn(true);
 
         $closure = $this->listener->getActionConfigurationClosure();
         $this->assertEquals(
@@ -368,7 +336,7 @@ class SystemCalendarGridListenerTest extends \PHPUnit\Framework\TestCase
         $this->authorizationChecker->expects($this->once())
             ->method('isGranted')
             ->with('oro_public_calendar_management')
-            ->will($this->returnValue(false));
+            ->willReturn(false);
 
         $closure = $this->listener->getActionConfigurationClosure();
         $this->assertEquals(
@@ -390,7 +358,7 @@ class SystemCalendarGridListenerTest extends \PHPUnit\Framework\TestCase
         $this->authorizationChecker->expects($this->once())
             ->method('isGranted')
             ->with('oro_system_calendar_management')
-            ->will($this->returnValue($allowed));
+            ->willReturn($allowed);
 
         $closure = $this->listener->getActionConfigurationClosure();
         $this->assertEquals(
@@ -399,7 +367,7 @@ class SystemCalendarGridListenerTest extends \PHPUnit\Framework\TestCase
         );
     }
 
-    public function getActionConfigurationClosureSystemProvider()
+    public function getActionConfigurationClosureSystemProvider(): array
     {
         return [
             [true, []],
