@@ -4,19 +4,19 @@ namespace Oro\Bundle\CalendarBundle\Tests\Unit\Model;
 
 use Oro\Bundle\CalendarBundle\Entity;
 use Oro\Bundle\CalendarBundle\Model\Recurrence;
+use Oro\Bundle\CalendarBundle\Model\Recurrence\StrategyInterface;
 
 class RecurrenceTest extends \PHPUnit\Framework\TestCase
 {
-    /** @var Recurrence */
-    protected $model;
+    /** @var StrategyInterface|\PHPUnit\Framework\MockObject\MockObject */
+    private $strategy;
 
-    /** @var \PHPUnit\Framework\MockObject\MockObject */
-    protected $strategy;
+    /** @var Recurrence */
+    private $model;
 
     protected function setUp(): void
     {
-        $this->strategy = $this->getMockBuilder('Oro\Bundle\CalendarBundle\Model\Recurrence\StrategyInterface')
-            ->getMock();
+        $this->strategy = $this->createMock(StrategyInterface::class);
 
         $this->model = new Recurrence($this->strategy);
     }
@@ -28,22 +28,17 @@ class RecurrenceTest extends \PHPUnit\Framework\TestCase
      *
      * @dataProvider delegateMethodsDataProvider
      */
-    public function testDelegateMethodWorks($method, array $arguments, $returnValue)
+    public function testDelegateMethodWorks(string $method, array $arguments, $returnValue)
     {
-        $mocker = $this->strategy->expects($this->once())
-            ->method($method);
-
-        call_user_func_array([$mocker, 'with'], $arguments);
-
-        $mocker->willReturn($returnValue);
+        $this->strategy->expects($this->once())
+            ->method($method)
+            ->with(...$arguments)
+            ->willReturn($returnValue);
 
         $this->assertEquals($returnValue, call_user_func_array([$this->model, $method], $arguments));
     }
 
-    /**
-     * @return array
-     */
-    public function delegateMethodsDataProvider()
+    public function delegateMethodsDataProvider(): array
     {
         $recurrence = new Entity\Recurrence();
         $start = new \DateTime('2016-10-10 10:00:00');

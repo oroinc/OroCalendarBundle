@@ -11,7 +11,7 @@ class DelegateStrategyTest extends \PHPUnit\Framework\TestCase
     public function testGetName()
     {
         $strategy = new DelegateStrategy([]);
-        $this->assertEquals($strategy->getName(), 'recurrence_delegate');
+        $this->assertEquals('recurrence_delegate', $strategy->getName());
     }
 
     public function testSupportsWhenExistsStrategyThatSupportRecurrence()
@@ -25,12 +25,12 @@ class DelegateStrategyTest extends \PHPUnit\Framework\TestCase
         $foo->expects($this->once())
             ->method('supports')
             ->with($recurrence)
-            ->will($this->returnValue(false));
+            ->willReturn(false);
 
         $bar->expects($this->once())
             ->method('supports')
             ->with($recurrence)
-            ->will($this->returnValue(true));
+            ->willReturn(true);
 
         $this->assertTrue($strategy->supports($recurrence));
     }
@@ -46,12 +46,12 @@ class DelegateStrategyTest extends \PHPUnit\Framework\TestCase
         $foo->expects($this->once())
             ->method('supports')
             ->with($recurrence)
-            ->will($this->returnValue(false));
+            ->willReturn(false);
 
         $bar->expects($this->once())
             ->method('supports')
             ->with($recurrence)
-            ->will($this->returnValue(false));
+            ->willReturn(false);
 
         $this->assertFalse($strategy->supports($recurrence));
     }
@@ -63,7 +63,7 @@ class DelegateStrategyTest extends \PHPUnit\Framework\TestCase
      *
      * @dataProvider delegateMethodsDataProvider
      */
-    public function testDelegateMethodWorks($method, array $arguments, $returnValue)
+    public function testDelegateMethodWorks(string $method, array $arguments, $returnValue)
     {
         $recurrence = $arguments[0];
 
@@ -74,27 +74,22 @@ class DelegateStrategyTest extends \PHPUnit\Framework\TestCase
         $foo->expects($this->once())
             ->method('supports')
             ->with($recurrence)
-            ->will($this->returnValue(false));
+            ->willReturn(false);
 
         $bar->expects($this->once())
             ->method('supports')
             ->with($recurrence)
-            ->will($this->returnValue(true));
+            ->willReturn(true);
 
-        $mocker = $bar->expects($this->once())
-            ->method($method);
-
-        call_user_func_array([$mocker, 'with'], $arguments);
-
-        $mocker->willReturn($returnValue);
+        $bar->expects($this->once())
+            ->method($method)
+            ->with(...$arguments)
+            ->willReturn($returnValue);
 
         $this->assertEquals($returnValue, call_user_func_array([$strategy, $method], $arguments));
     }
 
-    /**
-     * @return array
-     */
-    public function delegateMethodsDataProvider()
+    public function delegateMethodsDataProvider(): array
     {
         $recurrence = new Recurrence();
         $start = new \DateTime('2016-10-10 10:00:00');
@@ -135,12 +130,9 @@ class DelegateStrategyTest extends \PHPUnit\Framework\TestCase
     }
 
     /**
-     * @param string $method
-     * @param array $arguments
-     *
      * @dataProvider delegateMethodsDataProvider
      */
-    public function testDelegateMethodRaiseExceptionWhenStrategyNotMatched($method, array $arguments)
+    public function testDelegateMethodRaiseExceptionWhenStrategyNotMatched(string $method, array $arguments)
     {
         $this->expectException(\InvalidArgumentException::class);
         $this->expectExceptionMessage('Recurrence type "baz" is not supported.');
@@ -155,22 +147,20 @@ class DelegateStrategyTest extends \PHPUnit\Framework\TestCase
         $foo->expects($this->once())
             ->method('supports')
             ->with($recurrence)
-            ->will($this->returnValue(false));
+            ->willReturn(false);
 
         $bar->expects($this->once())
             ->method('supports')
             ->with($recurrence)
-            ->will($this->returnValue(false));
+            ->willReturn(false);
 
         call_user_func_array([$strategy, $method], $arguments);
     }
 
     /**
-     * @param string $name
-     *
      * @return StrategyInterface|\PHPUnit\Framework\MockObject\MockObject
      */
-    private function createStrategy($name)
+    private function createStrategy(string $name)
     {
         $result = $this->createMock(StrategyInterface::class);
         $result->expects($this->once())
