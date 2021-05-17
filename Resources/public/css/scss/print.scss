@@ -1,6 +1,8 @@
+/* stylelint-disable declaration-no-important */
+
 @media print {
     #calendar {
-        @import "../lib/fullcalendar/fullcalendar.print_2.2.3";
+        @import '../lib/fullcalendar/fullcalendar.print_2.2.3';
 
         border: none;
 
@@ -58,10 +60,11 @@
 
     .calendar-title-wrapper {
         .user-name {
-            font-weight: normal;
+            font-weight: font-weight('light');
             font-size: 28px;
 
-            color: #9a9997 !important;
+            color: $primary-600 !important;
         }
     }
 }
+/* stylelint-enable declaration-no-important */

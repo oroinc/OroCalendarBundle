@@ -30,12 +30,16 @@
         }
     }
 
+    .checkbox-view__icon {
+        visibility: visible;
+    }
+
     .checkbox-view__input {
         visibility: visible;
 
         &:hover,
         &:focus {
-            & ~ .checkbox-view__icon {
+            ~ .checkbox-view__icon {
                 border-color: inherit;
                 color: inherit;
             }
@@ -49,18 +53,14 @@
 
             &:hover,
             &:focus {
-                & ~ .checkbox-view__icon {
+                ~ .checkbox-view__icon {
                     border-color: inherit;
 
-                    &:before {
+                    &::before {
                         color: $checkbox-icon-color;
                     }
                 }
             }
         }
-    }
-
-    .checkbox-view__icon {
-        visibility: visible;
     }
 }

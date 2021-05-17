@@ -42,14 +42,14 @@
     &__item {
         margin-bottom: 10px;
 
-        [type="radio"] {
+        [type='radio'] {
             float: left;
         }
     }
 
     &__item-title {
         color: $body-color;
-        font-weight: bold;
+        font-weight: font-weight('bold');
         font-size: 14px;
         margin-left: 20px;
     }

@@ -1,12 +1,11 @@
 /* @theme: admin.oro; */
 
-@import "../lib/fullcalendar/fullcalendar";
-
-@import "calendar";
-@import "calendar-connections";
-@import "calendar-color";
-@import "dashboard";
-@import "recurrence";
+@import '../lib/fullcalendar/fullcalendar';
+@import 'calendar';
+@import 'calendar-connections';
+@import 'calendar-color';
+@import 'dashboard';
+@import 'recurrence';
 
 // mobile resolution
-@import "mobile/main";
+@import 'mobile/main';

@@ -1,5 +1,18 @@
 /* @theme: admin.oro; */
 
+.calendar-connections-header {
+    padding-bottom: 10px;
+    margin-bottom: 16px;
+
+    text-align: center;
+
+    border-bottom: 1px solid $primary-860;
+
+    .dropdown-menu {
+        padding: 12px;
+    }
+}
+
 .calendar-connections {
     margin-top: 0;
 
@@ -14,19 +27,6 @@
 
 .connection-item {
     align-items: center;
-}
-
-.calendar-connections-header {
-    padding-bottom: 10px;
-    margin-bottom: 16px;
-
-    text-align: center;
-
-    border-bottom: 1px solid $primary-860;
-
-    .dropdown-menu {
-        padding: 12px;
-    }
 }
 
 @media only screen and (max-width: $small-devices-media-breakpoint) {

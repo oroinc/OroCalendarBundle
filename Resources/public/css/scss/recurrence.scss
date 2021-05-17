@@ -1,3 +1,5 @@
+/* @theme: admin.oro; */
+
 .recurrence {
     &-subview-control {
         &__items {
@@ -26,7 +28,7 @@
             .ui-datepicker-dialog-is-below,
             .timepicker-dialog-is-below {
                 + span.validation-failed {
-                    &:after {
+                    &::after {
                         margin-top: -38px;
                     }
 
@@ -37,15 +39,15 @@
             }
         }
 
-        &__item:last-child label {
-            margin-bottom: 0;
-        }
-
         &__item-datetime {
             label {
                 vertical-align: top;
                 margin-top: 6px;
             }
+        }
+
+        &__item:last-child label {
+            margin-bottom: 0;
         }
 
         &__datetime-wrapper {
@@ -54,7 +56,7 @@
             max-width: 238px;
             margin-left: $content-padding-small;
 
-            input[type="text"] {
+            input[type='text'] {
                 &.datepicker-input {
                     width: 150px;
                 }

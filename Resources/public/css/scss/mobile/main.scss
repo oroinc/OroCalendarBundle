@@ -1,11 +1,10 @@
 /* @theme: admin.oro; */
 
 .mobile-version {
-    @import "oroui/css/scss/mobile/variables/layout";
-
-    @import "../../lib/fullcalendar/fullcalendar-mobile";
-    @import "./calendar";
-    @import "./recurrence";
-    @import "./calendar-connections";
-    @import "./dashboard";
+    @import 'oroui/css/scss/mobile/variables/layout';
+    @import '../../lib/fullcalendar/fullcalendar-mobile';
+    @import './calendar';
+    @import './recurrence';
+    @import './calendar-connections';
+    @import './dashboard';
 }

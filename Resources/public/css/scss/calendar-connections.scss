@@ -47,13 +47,14 @@
         visibility: visible;
     }
 }
+
 .context-menu-button {
     width: auto;
 
     padding: 0 8px;
     line-height: 16px;
 
-    [class*="fa-"] {
+    [class*='fa-'] {
         line-height: inherit;
     }
 }
