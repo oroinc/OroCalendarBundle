@@ -7,11 +7,14 @@ use Doctrine\ORM\UnitOfWork;
 use Oro\Bundle\CalendarBundle\Entity\Attendee;
 use Oro\Bundle\CalendarBundle\Entity\CalendarEvent;
 use Oro\Bundle\PlatformBundle\EventListener\OptionalListenerInterface;
+use Oro\Bundle\PlatformBundle\EventListener\OptionalListenerTrait;
 
+/**
+ * Update calendar event updatedAt when attendee changed
+ */
 class CalendarEventAttendeesListener implements OptionalListenerInterface
 {
-    /** @var bool */
-    protected $enabled = true;
+    use OptionalListenerTrait;
 
     /**
      * @param OnFlushEventArgs $args
@@ -72,13 +75,5 @@ class CalendarEventAttendeesListener implements OptionalListenerInterface
 
         $calendarEvent->setUpdatedAt($newUpdatedAt);
         $unitOfWork->propertyChanged($calendarEvent, 'updatedAt', $oldUpdatedAt, $newUpdatedAt);
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function setEnabled($enabled = true)
-    {
-        $this->enabled = $enabled;
     }
 }
