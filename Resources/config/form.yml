@@ -19,7 +19,7 @@ services:
 
     oro_calendar.calendar_event.form:
         class:    'Symfony\Component\Form\Form'
-        factory: 'form.factory:createNamed'
+        factory: ['@form.factory', 'createNamed']
         arguments:
             - "oro_calendar_event_form"
             - Oro\Bundle\CalendarBundle\Form\Type\CalendarEventType
@@ -27,7 +27,7 @@ services:
     oro_calendar.calendar_event.form.api:
         class:   'Symfony\Component\Form\Form'
         public: true
-        factory: 'form.factory:createNamed'
+        factory: ['@form.factory', 'createNamed']
         arguments:
             - ~
             - Oro\Bundle\CalendarBundle\Form\Type\CalendarEventApiType
@@ -96,14 +96,14 @@ services:
     oro_calendar.calendar_property.form.api:
         class:    'Symfony\Component\Form\Form'
         public: true
-        factory: 'form.factory:createNamed'
+        factory: ['@form.factory', 'createNamed']
         arguments:
             - ~
             - Oro\Bundle\CalendarBundle\Form\Type\CalendarPropertyApiType
 
     oro_calendar.calendar_property.form.soap.api:
         class:    'Symfony\Component\Form\Form'
-        factory: 'form.factory:createNamed'
+        factory: ['@form.factory', 'createNamed']
         arguments:
             - "calendarProperty"
             - Oro\Bundle\CalendarBundle\Form\Type\CalendarPropertyApiType
@@ -146,7 +146,7 @@ services:
 
     oro_calendar.system_calendar.form:
         class:   'Symfony\Component\Form\Form'
-        factory: 'form.factory:createNamed'
+        factory: ['@form.factory', 'createNamed']
         arguments:
             - "oro_system_calendar_form"
             - Oro\Bundle\CalendarBundle\Form\Type\SystemCalendarType
