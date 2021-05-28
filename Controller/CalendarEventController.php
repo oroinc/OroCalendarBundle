@@ -2,6 +2,7 @@
 
 namespace Oro\Bundle\CalendarBundle\Controller;
 
+use Oro\Bundle\CalendarBundle\Controller\Api\Rest\CalendarEventController as RestCalendarEventController;
 use Oro\Bundle\CalendarBundle\Entity\CalendarEvent;
 use Oro\Bundle\CalendarBundle\Form\Handler\CalendarEventHandler;
 use Oro\Bundle\CalendarBundle\Manager\CalendarEventManager;
@@ -192,7 +193,7 @@ class CalendarEventController extends AbstractController
     public function deleteAction(Request $request, $id)
     {
         return $this->forward(
-            'OroCalendarBundle:Api/Rest/CalendarEvent:delete',
+            RestCalendarEventController::class . '::deleteAction',
             ['id' => $id, '_format' => 'json'],
             array_merge($request->query->all(), ['isCancelInsteadDelete' => true])
         );
