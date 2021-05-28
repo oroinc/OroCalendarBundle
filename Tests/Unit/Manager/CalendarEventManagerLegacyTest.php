@@ -231,7 +231,9 @@ class CalendarEventManagerLegacyTest extends \PHPUnit\Framework\TestCase
         $event = (new CalendarEvent())
             ->setAttendees($attendees)
             ->setCalendar($calendar)
-            ->setIsOrganizer(true);
+            ->setIsOrganizer(true)
+            ->setStart(new \DateTime('now', new \DateTimeZone('UTC')))
+            ->setEnd(new \DateTime('now', new \DateTimeZone('UTC')));
 
         $originalEvent = clone $event;
         $originalEvent->setAttendees(new ArrayCollection());

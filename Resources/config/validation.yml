@@ -13,12 +13,16 @@ Oro\Bundle\CalendarBundle\Entity\CalendarEvent:
             - Length:
                 max: 255
         start:
-            - DateTime:     ~
+            - Type:
+                  type: \DateTimeInterface
+                  message: oro.calendar.calendar_event.start.type.message
             - NotBlank:     ~
             - Oro\Bundle\CalendarBundle\Validator\Constraints\DateEarlierThan: end
         end:
-            - DateTime:     ~
-            - NotBlank:     ~
+            - Type:
+                  type: \DateTimeInterface
+                  message: oro.calendar.calendar_event.end.type.message
+            - NotBlank: ~
         attendees:
             - Valid: ~
         recurrence:
@@ -99,9 +103,13 @@ Oro\Bundle\CalendarBundle\Entity\Recurrence:
                 min: 1
                 max: 12
         startTime:
-            - DateTime: ~
+            - Type:
+                type: \DateTimeInterface
+                message: oro.calendar.recurrence.start_time.type.message
         endTime:
-            - DateTime: ~
+            - Type:
+                  type: \DateTimeInterface
+                  message: oro.calendar.recurrence.end_time.type.message
         occurrences:
             - Type:
                 type: integer

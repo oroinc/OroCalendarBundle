@@ -369,11 +369,11 @@ class Recurrence
     /**
      * Sets startTime.
      *
-     * @param \DateTime $startTime
+     * @param \DateTime|null $startTime
      *
      * @return self
      */
-    public function setStartTime($startTime)
+    public function setStartTime(\DateTime $startTime = null)
     {
         $this->startTime = $startTime;
 
@@ -383,9 +383,9 @@ class Recurrence
     /**
      * Gets startTime.
      *
-     * @return \DateTime
+     * @return \DateTime|null
      */
-    public function getStartTime()
+    public function getStartTime(): ?\DateTime
     {
         return $this->startTime;
     }
@@ -397,7 +397,7 @@ class Recurrence
      *
      * @return self
      */
-    public function setEndTime($endTime)
+    public function setEndTime(\DateTime $endTime = null)
     {
         $this->endTime = $endTime;
 
@@ -409,7 +409,7 @@ class Recurrence
      *
      * @return \DateTime|null
      */
-    public function getEndTime()
+    public function getEndTime(): ?\DateTime
     {
         return $this->endTime;
     }

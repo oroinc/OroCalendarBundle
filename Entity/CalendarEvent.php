@@ -564,9 +564,9 @@ class CalendarEvent extends ExtendCalendarEvent implements
     /**
      * Gets date/time an event begins.
      *
-     * @return \DateTime
+     * @return \DateTime|null
      */
-    public function getStart()
+    public function getStart(): ?\DateTime
     {
         return $this->start;
     }
@@ -574,11 +574,11 @@ class CalendarEvent extends ExtendCalendarEvent implements
     /**
      * Sets date/time an event begins.
      *
-     * @param \DateTime $start
+     * @param \DateTime|null $start
      *
      * @return CalendarEvent
      */
-    public function setStart($start)
+    public function setStart(\DateTime $start = null)
     {
         $this->start = $start;
 
@@ -595,9 +595,9 @@ class CalendarEvent extends ExtendCalendarEvent implements
      * This is only a gotcha when your end has time 00:00. It means your event ends on midnight,
      * and it will not span through the next day.
      *
-     * @return \DateTime
+     * @return \DateTime|null
      */
-    public function getEnd()
+    public function getEnd(): ?\DateTime
     {
         return $this->end;
     }
@@ -605,11 +605,11 @@ class CalendarEvent extends ExtendCalendarEvent implements
     /**
      * Sets date/time an event ends.
      *
-     * @param \DateTime $end
+     * @param \DateTime|null $end
      *
      * @return CalendarEvent
      */
-    public function setEnd($end)
+    public function setEnd(\DateTime $end = null)
     {
         $this->end = $end;
 

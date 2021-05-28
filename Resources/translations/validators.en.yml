@@ -9,3 +9,20 @@
 "Parameter 'recurringEventId' can be set only for recurring calendar events.": "Parameter 'recurringEventId' can be set only for recurring calendar events."
 "Calendar of calendar event exception can not be changed.": "Calendar of calendar event exception can not be changed."
 "Unexpected error was occurred": "Unexpected error was occurred"
+
+oro:
+    calendar:
+        calendar_event:
+            start:
+                type:
+                    message: 'This value is not a valid date.'
+            end:
+                type:
+                    message: 'This value is not a valid date.'
+        recurrence:
+            start_time:
+                type:
+                    message: 'This value is not a valid date.'
+            end_time:
+                type:
+                    message: 'This value is not a valid date.'
