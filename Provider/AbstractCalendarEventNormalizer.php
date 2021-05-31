@@ -420,7 +420,7 @@ abstract class AbstractCalendarEventNormalizer
      *
      * This method will be called in the last moment when all other data was already prepared.
      *
-     * {@see Oro\Bundle\CalendarBundle\Provider\CalendarProviderInterface::getCalendarEvents}
+     * {@see \Oro\Bundle\CalendarBundle\Provider\CalendarProviderInterface::getCalendarEvents}
      *
      * @param array $item Calendar events data array.
      */
