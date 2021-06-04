@@ -1,5 +1,5 @@
 {% macro renderOrganizer(user) %}
-    {% import 'OroUIBundle::macros.html.twig' as UI %}
+    {% import '@OroUI/macros.html.twig' as UI %}
 
     <div class="calendar-event-organizer">
         {% if(user.organizerUser is not null and user.organizerDisplayName is not null) %}

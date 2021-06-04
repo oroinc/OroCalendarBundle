@@ -47,7 +47,7 @@
 {% endblock %}
 
 {% block oro_calendar_event_recurrence_row %}
-    {% import 'OroUIBundle::macros.html.twig' as UI %}
+    {% import '@OroUI/macros.html.twig' as UI %}
     {% set modelAttrs = {} %}
     {% set errors = [] %}
     {% for field in form.children %}
