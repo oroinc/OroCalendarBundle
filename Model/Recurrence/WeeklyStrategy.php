@@ -169,11 +169,7 @@ class WeeklyStrategy extends AbstractStrategy
             $date1 = new \DateTime($item1, $this->getTimeZone());
             $date2 = new \DateTime($item2, $this->getTimeZone());
 
-            if ($date1->format('w') === $date2->format('w')) {
-                return 0;
-            }
-
-            return $date1->format('w') > $date2->format('w');
+            return $date1->format('w') <=> $date2->format('w');
         });
 
         return $this;
