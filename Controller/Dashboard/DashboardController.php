@@ -25,7 +25,7 @@ class DashboardController extends AbstractController
      *      name="oro_calendar_dashboard_my_calendar",
      *      requirements={"widget"="[\w\-]+"}
      * )
-     * @Template("OroCalendarBundle:Dashboard:myCalendar.html.twig")
+     * @Template("@OroCalendar/Dashboard/myCalendar.html.twig")
      * @param string $widget
      * @return array
      */
