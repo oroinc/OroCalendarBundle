@@ -81,12 +81,12 @@ datagrids:
             recurrence:
                 label: oro.calendar.calendarevent.recurrence.label
                 type: twig
-                template: OroCalendarBundle:CalendarEvent:Datagrid/Property/recurrence.html.twig
+                template: '@OroCalendar/CalendarEvent/Datagrid/Property/recurrence.html.twig'
                 frontend_type: html
             invitationStatus:
                 label: oro.calendar.calendarevent.invitation_status.label
                 type: twig
-                template: OroCalendarBundle:CalendarEvent:Datagrid/Property/status.html.twig
+                template: '@OroCalendar/CalendarEvent/Datagrid/Property/status.html.twig'
                 frontend_type: html
         sorters:
             columns:
@@ -216,7 +216,7 @@ datagrids:
             title:
                 label: oro.calendar.calendarevent.title.label
                 type: twig
-                template: OroCalendarBundle:CalendarEvent:Datagrid/Property/title.html.twig
+                template: '@OroCalendar/CalendarEvent/Datagrid/Property/title.html.twig'
                 frontend_type: html
             start:
                 label: oro.calendar.calendarevent.start.label
@@ -369,7 +369,7 @@ datagrids:
             recurrence:
                 label: oro.calendar.calendarevent.recurrence.label
                 type: twig
-                template: OroCalendarBundle:CalendarEvent:Datagrid/Property/recurrence.html.twig
+                template: '@OroCalendar/CalendarEvent/Datagrid/Property/recurrence.html.twig'
                 frontend_type: html
         sorters:
             columns:
