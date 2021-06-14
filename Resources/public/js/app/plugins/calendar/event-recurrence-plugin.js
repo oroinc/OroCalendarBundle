@@ -44,7 +44,7 @@ define(function(require) {
                     dialogTitle: __('Edit Event')
                 };
 
-                onSelectCallback = _.bind(function(value) {
+                onSelectCallback = value => {
                     if (value === 'exception') {
                         _.extend(attrs, {
                             id: null,
@@ -68,7 +68,7 @@ define(function(require) {
                                 moment(attrs.recurrence.endTime).add(timeShift).tz('UTC').format();
                         }
                     }
-                }, this);
+                };
 
                 promise = this._selectActionTarget(onSelectCallback, options);
                 promises.push(promise);
