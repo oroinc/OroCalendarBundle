@@ -2,49 +2,46 @@
 
 namespace Oro\Bundle\CalendarBundle\Tests\Unit\Provider;
 
+use Doctrine\ORM\AbstractQuery;
+use Doctrine\ORM\QueryBuilder;
+use Oro\Bundle\CalendarBundle\Entity\Repository\CalendarEventRepository;
+use Oro\Bundle\CalendarBundle\Entity\Repository\SystemCalendarRepository;
 use Oro\Bundle\CalendarBundle\Entity\SystemCalendar;
+use Oro\Bundle\CalendarBundle\Model\Recurrence;
+use Oro\Bundle\CalendarBundle\Provider\PublicCalendarEventNormalizer;
 use Oro\Bundle\CalendarBundle\Provider\PublicCalendarProvider;
+use Oro\Bundle\CalendarBundle\Provider\SystemCalendarConfig;
+use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
 use Oro\Component\Testing\ReflectionUtil;
 use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
 
 class PublicCalendarProviderTest extends \PHPUnit\Framework\TestCase
 {
     /** @var \PHPUnit\Framework\MockObject\MockObject */
-    protected $doctrineHelper;
+    private $doctrineHelper;
 
     /** @var \PHPUnit\Framework\MockObject\MockObject */
-    protected $calendarEventNormalizer;
+    private $calendarEventNormalizer;
 
     /** @var \PHPUnit\Framework\MockObject\MockObject */
-    protected $calendarConfig;
+    private $calendarConfig;
 
     /** @var \PHPUnit\Framework\MockObject\MockObject */
-    protected $recurrenceModel;
+    private $recurrenceModel;
 
     /** @var \PHPUnit\Framework\MockObject\MockObject */
-    protected $authorizationChecker;
+    private $authorizationChecker;
 
     /** @var PublicCalendarProvider */
-    protected $provider;
+    private $provider;
 
     protected function setUp(): void
     {
-        $this->doctrineHelper          = $this->getMockBuilder('Oro\Bundle\EntityBundle\ORM\DoctrineHelper')
-            ->disableOriginalConstructor()
-            ->getMock();
-        $this->calendarEventNormalizer =
-            $this->getMockBuilder('Oro\Bundle\CalendarBundle\Provider\PublicCalendarEventNormalizer')
-                ->disableOriginalConstructor()
-                ->getMock();
-        $this->calendarConfig    =
-            $this->getMockBuilder('Oro\Bundle\CalendarBundle\Provider\SystemCalendarConfig')
-                ->disableOriginalConstructor()
-                ->getMock();
+        $this->doctrineHelper = $this->createMock(DoctrineHelper::class);
+        $this->calendarEventNormalizer = $this->createMock(PublicCalendarEventNormalizer::class);
+        $this->calendarConfig = $this->createMock(SystemCalendarConfig::class);
         $this->authorizationChecker = $this->createMock(AuthorizationCheckerInterface::class);
-        $this->recurrenceModel =
-            $this->getMockBuilder('Oro\Bundle\CalendarBundle\Model\Recurrence')
-                ->disableOriginalConstructor()
-                ->getMock();
+        $this->recurrenceModel = $this->createMock(Recurrence::class);
 
         $this->provider = new PublicCalendarProvider(
             $this->doctrineHelper,
@@ -64,7 +61,7 @@ class PublicCalendarProviderTest extends \PHPUnit\Framework\TestCase
 
         $this->calendarConfig->expects($this->once())
             ->method('isPublicCalendarEnabled')
-            ->will($this->returnValue(false));
+            ->willReturn(false);
 
         $result = $this->provider->getCalendarDefaultValues($organizationId, $userId, $calendarId, $calendarIds);
         $this->assertEquals(
@@ -91,32 +88,25 @@ class PublicCalendarProviderTest extends \PHPUnit\Framework\TestCase
 
         $this->calendarConfig->expects($this->once())
             ->method('isPublicCalendarEnabled')
-            ->will($this->returnValue(true));
+            ->willReturn(true);
 
-        $repo  = $this->getMockBuilder('Oro\Bundle\CalendarBundle\Entity\Repository\SystemCalendarRepository')
-            ->disableOriginalConstructor()
-            ->getMock();
-        $query = $this->getMockBuilder('Doctrine\ORM\AbstractQuery')
-            ->disableOriginalConstructor()
-            ->setMethods(['getResult'])
-            ->getMockForAbstractClass();
-        $qb    = $this->getMockBuilder('Doctrine\ORM\QueryBuilder')
-            ->disableOriginalConstructor()
-            ->getMock();
+        $repo = $this->createMock(SystemCalendarRepository::class);
+        $query = $this->createMock(AbstractQuery::class);
+        $qb = $this->createMock(QueryBuilder::class);
         $repo->expects($this->once())
             ->method('getPublicCalendarsQueryBuilder')
-            ->will($this->returnValue($qb));
+            ->willReturn($qb);
         $qb->expects($this->once())
             ->method('getQuery')
-            ->will($this->returnValue($query));
+            ->willReturn($query);
         $query->expects($this->once())
             ->method('getResult')
-            ->will($this->returnValue($calendars));
+            ->willReturn($calendars);
 
         $this->doctrineHelper->expects($this->once())
             ->method('getEntityRepository')
             ->with('OroCalendarBundle:SystemCalendar')
-            ->will($this->returnValue($repo));
+            ->willReturn($repo);
 
         $result = $this->provider->getCalendarDefaultValues($organizationId, $userId, $calendarId, $calendarIds);
         $this->assertEquals(
@@ -148,36 +138,29 @@ class PublicCalendarProviderTest extends \PHPUnit\Framework\TestCase
 
         $this->calendarConfig->expects($this->once())
             ->method('isPublicCalendarEnabled')
-            ->will($this->returnValue(true));
+            ->willReturn(true);
         $this->authorizationChecker->expects($this->once())
             ->method('isGranted')
             ->with('oro_public_calendar_management')
-            ->will($this->returnValue(true));
+            ->willReturn(true);
 
-        $repo  = $this->getMockBuilder('Oro\Bundle\CalendarBundle\Entity\Repository\SystemCalendarRepository')
-            ->disableOriginalConstructor()
-            ->getMock();
-        $query = $this->getMockBuilder('Doctrine\ORM\AbstractQuery')
-            ->disableOriginalConstructor()
-            ->setMethods(['getResult'])
-            ->getMockForAbstractClass();
-        $qb    = $this->getMockBuilder('Doctrine\ORM\QueryBuilder')
-            ->disableOriginalConstructor()
-            ->getMock();
+        $repo = $this->createMock(SystemCalendarRepository::class);
+        $query = $this->createMock(AbstractQuery::class);
+        $qb = $this->createMock(QueryBuilder::class);
         $repo->expects($this->once())
             ->method('getPublicCalendarsQueryBuilder')
-            ->will($this->returnValue($qb));
+            ->willReturn($qb);
         $qb->expects($this->once())
             ->method('getQuery')
-            ->will($this->returnValue($query));
+            ->willReturn($query);
         $query->expects($this->once())
             ->method('getResult')
-            ->will($this->returnValue($calendars));
+            ->willReturn($calendars);
 
         $this->doctrineHelper->expects($this->once())
             ->method('getEntityRepository')
             ->with('OroCalendarBundle:SystemCalendar')
-            ->will($this->returnValue($repo));
+            ->willReturn($repo);
 
         $result = $this->provider->getCalendarDefaultValues($organizationId, $userId, $calendarId, $calendarIds);
         $this->assertEquals(
@@ -207,7 +190,7 @@ class PublicCalendarProviderTest extends \PHPUnit\Framework\TestCase
 
         $this->calendarConfig->expects($this->once())
             ->method('isPublicCalendarEnabled')
-            ->will($this->returnValue(false));
+            ->willReturn(false);
 
         $result = $this->provider->getCalendarEvents($organizationId, $userId, $calendarId, $start, $end, $connections);
         $this->assertEquals([], $result);
@@ -225,40 +208,34 @@ class PublicCalendarProviderTest extends \PHPUnit\Framework\TestCase
 
         $this->calendarConfig->expects($this->once())
             ->method('isPublicCalendarEnabled')
-            ->will($this->returnValue(true));
-        $qb   = $this->getMockBuilder('Doctrine\ORM\QueryBuilder')
-            ->disableOriginalConstructor()
-            ->getMock();
-        $repo = $this->getMockBuilder('Oro\Bundle\CalendarBundle\Entity\Repository\CalendarEventRepository')
-            ->disableOriginalConstructor()
-            ->getMock();
+            ->willReturn(true);
+        $qb = $this->createMock(QueryBuilder::class);
+        $repo = $this->createMock(CalendarEventRepository::class);
         $this->doctrineHelper->expects($this->once())
             ->method('getEntityRepository')
             ->with('OroCalendarBundle:CalendarEvent')
-            ->will($this->returnValue($repo));
+            ->willReturn($repo);
         $repo->expects($this->once())
             ->method('getPublicEventListByTimeIntervalQueryBuilder')
             ->with($this->identicalTo($start), $this->identicalTo($end))
-            ->will($this->returnValue($qb));
-        $query = $this->getMockBuilder('Doctrine\ORM\AbstractQuery')
-            ->disableOriginalConstructor()
-            ->getMockForAbstractClass();
+            ->willReturn($qb);
+        $query = $this->createMock(AbstractQuery::class);
         $qb->expects($this->once())
             ->method('andWhere')
             ->with('c.id NOT IN (:invisibleIds)')
-            ->will($this->returnSelf());
+            ->willReturnSelf();
         $qb->expects($this->once())
             ->method('setParameter')
             ->with('invisibleIds', [20])
-            ->will($this->returnSelf());
+            ->willReturnSelf();
         $qb->expects($this->once())
             ->method('getQuery')
-            ->will($this->returnValue($query));
+            ->willReturn($query);
 
         $this->calendarEventNormalizer->expects($this->once())
             ->method('getCalendarEvents')
             ->with($calendarId, $this->identicalTo($query))
-            ->will($this->returnValue($events));
+            ->willReturn($events);
 
         $result = $this->provider->getCalendarEvents($organizationId, $userId, $calendarId, $start, $end, $connections);
         $this->assertEquals($events, $result);
