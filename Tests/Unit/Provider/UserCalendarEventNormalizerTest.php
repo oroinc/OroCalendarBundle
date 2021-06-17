@@ -2,12 +2,14 @@
 
 namespace Oro\Bundle\CalendarBundle\Tests\Unit\Provider;
 
+use Doctrine\ORM\AbstractQuery;
 use Oro\Bundle\CalendarBundle\Entity\Calendar;
+use Oro\Bundle\CalendarBundle\Entity\CalendarEvent;
 use Oro\Bundle\CalendarBundle\Manager\AttendeeManager;
 use Oro\Bundle\CalendarBundle\Manager\CalendarEventManager;
 use Oro\Bundle\CalendarBundle\Provider\UserCalendarEventNormalizer;
 use Oro\Bundle\CalendarBundle\Tests\Unit\Fixtures\Entity\Attendee;
-use Oro\Bundle\CalendarBundle\Tests\Unit\Fixtures\Entity\CalendarEvent;
+use Oro\Bundle\CalendarBundle\Tests\Unit\Fixtures\Entity\CalendarEvent as CalendarEventStub;
 use Oro\Bundle\CalendarBundle\Tests\Unit\Fixtures\Entity\User;
 use Oro\Bundle\EntityExtendBundle\Tests\Unit\Fixtures\TestEnumValue;
 use Oro\Bundle\ReminderBundle\Entity\Manager\ReminderManager;
@@ -19,22 +21,22 @@ use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
 class UserCalendarEventNormalizerTest extends \PHPUnit\Framework\TestCase
 {
     /** @var \PHPUnit\Framework\MockObject\MockObject */
-    protected $calendarEventManager;
+    private $calendarEventManager;
 
     /** @var \PHPUnit\Framework\MockObject\MockObject */
-    protected $attendeeManager;
+    private $attendeeManager;
 
     /** @var \PHPUnit\Framework\MockObject\MockObject */
-    protected $reminderManager;
+    private $reminderManager;
 
     /** @var \PHPUnit\Framework\MockObject\MockObject */
-    protected $authorizationChecker;
+    private $authorizationChecker;
 
     /** @var \PHPUnit\Framework\MockObject\MockObject */
-    protected $tokenAccessor;
+    private $tokenAccessor;
 
     /** @var UserCalendarEventNormalizer */
-    protected $normalizer;
+    private $normalizer;
 
     protected function setUp(): void
     {
@@ -44,15 +46,12 @@ class UserCalendarEventNormalizerTest extends \PHPUnit\Framework\TestCase
         $this->authorizationChecker = $this->createMock(AuthorizationCheckerInterface::class);
         $this->tokenAccessor = $this->createMock(TokenAccessorInterface::class);
 
-        /** @var HtmlTagHelper|\PHPUnit\Framework\MockObject\MockObject $htmlTagHelper */
         $htmlTagHelper = $this->createMock(HtmlTagHelper::class);
         $htmlTagHelper->expects($this->any())
             ->method('sanitize')
-            ->willReturnCallback(
-                function ($value) {
-                    return $value ? $value . 's' : $value;
-                }
-            );
+            ->willReturnCallback(function ($value) {
+                return $value ? $value . 's' : $value;
+            });
 
         $this->normalizer = new UserCalendarEventNormalizer(
             $this->calendarEventManager,
@@ -66,34 +65,27 @@ class UserCalendarEventNormalizerTest extends \PHPUnit\Framework\TestCase
 
     /**
      * @dataProvider getCalendarEventsProvider
-     * @param array $events
-     * @param array $attendees
-     * @param array $editableInvitationStatus
-     * @param array $expected
      */
-    public function testGetCalendarEvents(array $events, array $attendees, $editableInvitationStatus, array $expected)
-    {
+    public function testGetCalendarEvents(
+        array $events,
+        array $attendees,
+        ?bool $editableInvitationStatus,
+        array $expected
+    ) {
         $calendarId = 123;
 
-        $query = $this->getMockBuilder('Doctrine\ORM\AbstractQuery')
-            ->disableOriginalConstructor()
-            ->setMethods(['getArrayResult'])
-            ->getMockForAbstractClass();
+        $query = $this->createMock(AbstractQuery::class);
         $query->expects($this->once())
             ->method('getArrayResult')
-            ->will($this->returnValue($events));
+            ->willReturn($events);
 
         if (!empty($events)) {
             $this->authorizationChecker->expects($this->exactly(2))
                 ->method('isGranted')
-                ->will(
-                    $this->returnValueMap(
-                        [
-                            ['oro_calendar_event_update', null, true],
-                            ['oro_calendar_event_delete', null, true],
-                        ]
-                    )
-                );
+                ->willReturnMap([
+                    ['oro_calendar_event_update', null, true],
+                    ['oro_calendar_event_delete', null, true],
+                ]);
         }
 
         if ($events) {
@@ -110,18 +102,21 @@ class UserCalendarEventNormalizerTest extends \PHPUnit\Framework\TestCase
 
             $this->attendeeManager->expects($this->once())
                 ->method('getAttendeeListsByCalendarEventIds')
-                ->will($this->returnCallback(function ($calendarEventIds) use ($attendees) {
+                ->willReturnCallback(function ($calendarEventIds) use ($attendees) {
                     return array_intersect_key($attendees, array_flip($calendarEventIds));
-                }));
+                });
         } else {
-            $this->tokenAccessor->expects($this->never())->method($this->anything());
-            $this->calendarEventManager->expects($this->never())->method($this->anything());
-            $this->attendeeManager->expects($this->never())->method($this->anything());
+            $this->tokenAccessor->expects($this->never())
+                ->method($this->anything());
+            $this->calendarEventManager->expects($this->never())
+                ->method($this->anything());
+            $this->attendeeManager->expects($this->never())
+                ->method($this->anything());
         }
 
         $this->reminderManager->expects($this->once())
             ->method('applyReminders')
-            ->with($expected, 'Oro\Bundle\CalendarBundle\Entity\CalendarEvent');
+            ->with($expected, CalendarEvent::class);
 
         $result = $this->normalizer->getCalendarEvents($calendarId, $query);
         $this->assertEquals($expected, $result);
@@ -129,10 +124,8 @@ class UserCalendarEventNormalizerTest extends \PHPUnit\Framework\TestCase
 
     /**
      * @SuppressWarnings(PHPMD.ExcessiveMethodLength)
-     *
-     * @return array
      */
-    public function getCalendarEventsProvider()
+    public function getCalendarEventsProvider(): array
     {
         $startDate = new \DateTime();
         $endDate = $startDate->add(new \DateInterval('PT1H'));
@@ -395,13 +388,13 @@ class UserCalendarEventNormalizerTest extends \PHPUnit\Framework\TestCase
 
     /**
      * @dataProvider getCalendarEventProvider
-     * @param array $event
-     * @param int $calendarId
-     * @param boolean $editableInvitationStatus
-     * @param array $expected
      */
-    public function testGetCalendarEvent(array $event, $calendarId, $editableInvitationStatus, array $expected)
-    {
+    public function testGetCalendarEvent(
+        array $event,
+        ?int $calendarId,
+        bool $editableInvitationStatus,
+        array $expected
+    ) {
         $loggedUser = new User();
 
         $this->tokenAccessor->expects($this->once())
@@ -415,18 +408,14 @@ class UserCalendarEventNormalizerTest extends \PHPUnit\Framework\TestCase
 
         $this->authorizationChecker->expects($this->any())
             ->method('isGranted')
-            ->will(
-                $this->returnValueMap(
-                    [
-                        ['oro_calendar_event_update', null, true],
-                        ['oro_calendar_event_delete', null, true],
-                    ]
-                )
-            );
+            ->willReturnMap([
+                ['oro_calendar_event_update', null, true],
+                ['oro_calendar_event_delete', null, true],
+            ]);
 
         $this->reminderManager->expects($this->once())
             ->method('applyReminders')
-            ->with([$expected], 'Oro\Bundle\CalendarBundle\Entity\CalendarEvent');
+            ->with([$expected], CalendarEvent::class);
 
         $this->attendeeManager->expects($this->never())
             ->method('getAttendeeListsByCalendarEventIds');
@@ -440,10 +429,8 @@ class UserCalendarEventNormalizerTest extends \PHPUnit\Framework\TestCase
 
     /**
      * @SuppressWarnings(PHPMD.ExcessiveMethodLength)
-     *
-     * @return array
      */
-    public function getCalendarEventProvider()
+    public function getCalendarEventProvider(): array
     {
         $startDate = new \DateTime();
         $endDate = $startDate->add(new \DateInterval('PT1H'));
@@ -623,14 +610,10 @@ class UserCalendarEventNormalizerTest extends \PHPUnit\Framework\TestCase
      * @SuppressWarnings(PHPMD.ExcessiveMethodLength)
      * @SuppressWarnings(PHPMD.NPathComplexity)
      * @SuppressWarnings(PHPMD.CyclomaticComplexity)
-     *
-     * @param array $data
-     *
-     * @return CalendarEvent
      */
-    protected function buildCalendarEvent(array $data)
+    private function buildCalendarEvent(array $data): CalendarEvent
     {
-        $event = new CalendarEvent();
+        $event = new CalendarEventStub();
 
         if (!empty($data['id'])) {
             ReflectionUtil::setId($event, $data['id']);

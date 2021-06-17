@@ -58,14 +58,14 @@ define([
                     formFieldPrefix = this.getFormFieldPrefix(container);
                 }
                 _.each(err.children,
-                    _.bind(function(value, key) {
+                    (value, key) => {
                         const field = container.find('#' + formFieldPrefix + key);
                         this.removeFieldErrors(field);
 
                         if (!_.isUndefined(value.errors) && _.isArray(value.errors)) {
                             this.addFieldErrors(field, value.errors);
                         }
-                    }, this));
+                    });
                 this.setFocusOnFirstErrorField(container);
             }
         },

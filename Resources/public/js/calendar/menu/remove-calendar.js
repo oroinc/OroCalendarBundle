@@ -34,18 +34,18 @@ define([
                 $connection.hide();
                 model.destroy({
                     wait: true,
-                    success: _.bind(function() {
+                    success: () => {
                         removingMsg.close();
                         messenger.notificationFlashMessage('success',
                             __('oro.calendar.flash_message.calendar_removed'), {namespace: 'calendar-ns'});
                         actionSyncObject.resolve();
-                    }, this),
-                    error: _.bind(function(model, response) {
+                    },
+                    error: (model, response) => {
                         removingMsg.close();
                         this._showError(__('Sorry, the calendar removal has failed.'), response.responseJSON || {});
                         $connection.show();
                         actionSyncObject.reject();
-                    }, this)
+                    }
                 });
             } catch (err) {
                 removingMsg.close();
