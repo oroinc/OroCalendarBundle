@@ -76,13 +76,13 @@ define(function(require) {
             EventRecurrenceView.__super__.delegateEvents.call(this, events);
             const $from = this.$el.closest('form');
             this.$eventStart = $from.find('[data-name="field__start"]');
-            this.$eventStart.on('change' + this.eventNamespace(), _.bind(this.onEventStartChange, this));
+            this.$eventStart.on('change' + this.eventNamespace(), this.onEventStartChange.bind(this));
             this.$eventEnd = $from.find('[data-name="field__end"]');
-            this.$eventEnd.on('change' + this.eventNamespace(), _.bind(this.onEventEndChange, this));
+            this.$eventEnd.on('change' + this.eventNamespace(), this.onEventEndChange.bind(this));
             // listens events on parent element of form to make sure that form validation is passed
             this.$formParent = $from.parent();
-            this.$formParent.on('change' + this.eventNamespace(), _.bind(this.trigger, this, 'formChanged'));
-            this.$formParent.on('submit' + this.eventNamespace(), _.bind(this.trigger, this, 'formSubmit'));
+            this.$formParent.on('change' + this.eventNamespace(), this.trigger.bind(this, 'formChanged'));
+            this.$formParent.on('submit' + this.eventNamespace(), this.trigger.bind(this, 'formSubmit'));
             return this;
         },
 

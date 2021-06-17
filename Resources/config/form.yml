@@ -54,6 +54,9 @@ services:
     Oro\Bundle\CalendarBundle\Form\Handler\CalendarEventHandler:
         alias: 'oro_calendar.calendar_event.form.handler'
 
+    Oro\Bundle\CalendarBundle\Form\Handler\SystemCalendarEventHandler:
+        alias: oro_calendar.system_calendar_event.form.handler
+
     oro_calendar.system_calendar_event.form.handler:
         class: 'Oro\Bundle\CalendarBundle\Form\Handler\SystemCalendarEventHandler'
         public: true
@@ -150,6 +153,9 @@ services:
         arguments:
             - "oro_system_calendar_form"
             - Oro\Bundle\CalendarBundle\Form\Type\SystemCalendarType
+
+    Oro\Bundle\CalendarBundle\Form\Handler\SystemCalendarHandler:
+        alias: oro_calendar.system_calendar.form.handler
 
     oro_calendar.system_calendar.form.handler:
         class: Oro\Bundle\CalendarBundle\Form\Handler\SystemCalendarHandler

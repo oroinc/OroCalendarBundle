@@ -70,10 +70,10 @@ define([
                 control: 'wheel',
                 letterCase: 'uppercase',
                 defaultValue: this.model.get('backgroundColor'),
-                change: _.bind(function(hex, opacity) {
+                change: (hex, opacity) => {
                     this.$customColor.css('color', this.colorManager.getContrastColor(hex));
-                }, this),
-                show: _.bind(function() {
+                },
+                show: () => {
                     const color = this.customColor || this.model.get('backgroundColor');
                     const $panel = this.$customColorParent.find('.minicolors-panel');
                     $panel.css('top', 0);
@@ -83,7 +83,7 @@ define([
                     this.$customColor.minicolors('value', color);
                     this.$customColor.attr('data-selected', '');
                     this.$customColorParent.find('.minicolors-picker').show();
-                }, this)
+                }
             });
 
             this.$customColorParent.find('.minicolors-picker').hide();
@@ -141,20 +141,20 @@ define([
                 try {
                     this.model.save(saveAttributes, {
                         wait: true,
-                        success: _.bind(function() {
+                        success: () => {
                             savingMsg.close();
                             messenger.notificationFlashMessage('success',
                                 __('oro.calendar.flash_message.calendar_updated'), {namespace: 'calendar-ns'});
                             this.colorManager.setCalendarColors(this.model.get('calendarUid'), color);
                             this.connectionsView._actionSyncObject.resolve();
-                        }, this),
-                        error: _.bind(function(model, response) {
+                        },
+                        error: (model, response) => {
                             savingMsg.close();
                             this._showError(__('Sorry, the calendar update has failed.'), response.responseJSON || {});
                             this.connectionsView.setItemVisibility($connection,
                                 this.model.get('visible') ? this.model.get('backgroundColor') : '');
                             this.connectionsView._actionSyncObject.reject();
-                        }, this)
+                        }
                     });
                 } catch (err) {
                     savingMsg.close();

@@ -2,15 +2,26 @@
 
 namespace Oro\Bundle\CalendarBundle\Tests\Unit\Form\Type;
 
+use Doctrine\ORM\AbstractQuery;
+use Doctrine\ORM\EntityManager;
+use Doctrine\ORM\EntityRepository;
+use Doctrine\ORM\Mapping\ClassMetadata;
+use Doctrine\ORM\QueryBuilder;
+use Doctrine\Persistence\ManagerRegistry;
 use Oro\Bundle\CalendarBundle\Entity\Calendar;
 use Oro\Bundle\CalendarBundle\Entity\CalendarEvent;
 use Oro\Bundle\CalendarBundle\Form\Type\CalendarEventApiType;
 use Oro\Bundle\CalendarBundle\Form\Type\CalendarEventAttendeesApiType;
 use Oro\Bundle\CalendarBundle\Form\Type\RecurrenceFormType;
 use Oro\Bundle\CalendarBundle\Manager\CalendarEvent\NotificationManager;
+use Oro\Bundle\CalendarBundle\Manager\CalendarEventManager;
 use Oro\Bundle\CalendarBundle\Model\Recurrence;
+use Oro\Bundle\CalendarBundle\Model\Recurrence\StrategyInterface;
 use Oro\Bundle\CalendarBundle\Tests\Unit\Fixtures\Entity\CalendarEvent as CalendarEventFixture;
+use Oro\Bundle\EntityConfigBundle\Provider\ConfigProvider;
 use Oro\Bundle\EntityExtendBundle\Form\Extension\DynamicFieldsOptionsExtension;
+use Oro\Bundle\FormBundle\Autocomplete\SearchHandlerInterface;
+use Oro\Bundle\FormBundle\Autocomplete\SearchRegistry;
 use Oro\Bundle\FormBundle\Form\Type\CollectionType;
 use Oro\Bundle\FormBundle\Form\Type\EntityIdentifierType;
 use Oro\Bundle\FormBundle\Form\Type\OroJquerySelect2HiddenType;
@@ -27,102 +38,80 @@ use Psr\Container\ContainerInterface;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\Extension\Validator\ValidatorExtension;
+use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Validator\Validation;
 
 class CalendarEventApiTypeTest extends FormIntegrationTestCase
 {
     /** @var \PHPUnit\Framework\MockObject\MockObject */
-    protected $registry;
+    private $registry;
 
     /** @var \PHPUnit\Framework\MockObject\MockObject */
-    protected $entityManager;
+    private $entityManager;
 
     /** @var \PHPUnit\Framework\MockObject\MockObject */
-    protected $calendarEventManager;
+    private $calendarEventManager;
 
     /** @var \PHPUnit\Framework\MockObject\MockObject */
-    protected $notificationManager;
+    private $notificationManager;
 
     /** @var CalendarEventApiType */
-    protected $calendarEventApiType;
+    private $calendarEventApiType;
 
     protected function setUp(): void
     {
-        $this->registry = $this->getMockBuilder('Doctrine\Persistence\ManagerRegistry')
-            ->disableOriginalConstructor()
-            ->getMock();
-        $this->calendarEventManager =
-            $this->getMockBuilder('Oro\Bundle\CalendarBundle\Manager\CalendarEventManager')
-                ->disableOriginalConstructor()
-                ->getMock();
-
-        $userMeta = $this->getMockBuilder('Doctrine\ORM\Mapping\ClassMetadata')
-            ->disableOriginalConstructor()
-            ->getMock();
+        $this->registry = $this->createMock(ManagerRegistry::class);
+        $this->calendarEventManager = $this->createMock(CalendarEventManager::class);
+        $userMeta = $this->createMock(ClassMetadata::class);
         $userMeta->expects($this->any())
             ->method('getSingleIdentifierFieldName')
-            ->will($this->returnValue('id'));
-        $eventMeta = $this->getMockBuilder('Doctrine\ORM\Mapping\ClassMetadata')
-            ->disableOriginalConstructor()
-            ->getMock();
+            ->willReturn('id');
+        $eventMeta = $this->createMock(ClassMetadata::class);
         $eventMeta->expects($this->any())
             ->method('getSingleIdentifierFieldName')
-            ->will($this->returnValue('id'));
+            ->willReturn('id');
 
-        $query = $this->getMockBuilder('Doctrine\ORM\AbstractQuery')
-            ->disableOriginalConstructor()
-            ->setMethods(['execute'])
-            ->getMockForAbstractClass();
+        $query = $this->createMock(AbstractQuery::class);
         $query->expects($this->any())
             ->method('execute')
-            ->will($this->returnValue([]));
+            ->willReturn([]);
 
-        $qb = $this->getMockBuilder('Doctrine\ORM\QueryBuilder')
-            ->disableOriginalConstructor()
-            ->getMock();
+        $qb = $this->createMock(QueryBuilder::class);
         $qb->expects($this->any())
             ->method('where')
-            ->will($this->returnSelf());
+            ->willReturnSelf();
         $qb->expects($this->any())
             ->method('setParameter')
-            ->will($this->returnSelf());
+            ->willReturnSelf();
         $qb->expects($this->any())
             ->method('getQuery')
-            ->will($this->returnValue($query));
+            ->willReturn($query);
 
-        $userRepo = $this->getMockBuilder('Doctrine\ORM\EntityRepository')
-            ->disableOriginalConstructor()
-            ->getMock();
+        $userRepo = $this->createMock(EntityRepository::class);
         $userRepo->expects($this->any())
             ->method('createQueryBuilder')
             ->with('event')
-            ->will($this->returnValue($qb));
+            ->willReturn($qb);
 
-        $this->entityManager = $this->getMockBuilder('Doctrine\ORM\EntityManager')
-            ->disableOriginalConstructor()
-            ->getMock();
+        $this->entityManager = $this->createMock(EntityManager::class);
         $this->entityManager->expects($this->any())
             ->method('getRepository')
             ->with('OroUserBundle:User')
-            ->will($this->returnValue($userRepo));
+            ->willReturn($userRepo);
         $this->entityManager->expects($this->any())
             ->method('getClassMetadata')
             ->with('OroUserBundle:User')
-            ->will($this->returnValue($userMeta));
-        $emForEvent = $this->getMockBuilder('Doctrine\ORM\EntityManager')
-            ->disableOriginalConstructor()
-            ->getMock();
+            ->willReturn($userMeta);
+        $emForEvent = $this->createMock(EntityManager::class);
         $emForEvent->expects($this->any())
             ->method('getClassMetadata')
             ->with('OroCalendarBundle:CalendarEvent')
-            ->will($this->returnValue($eventMeta));
+            ->willReturn($eventMeta);
         $this->registry->expects($this->any())
             ->method('getManagerForClass')
             ->willReturn($emForEvent);
 
-        $this->notificationManager = $this->getMockBuilder(NotificationManager::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $this->notificationManager = $this->createMock(NotificationManager::class);
 
         $this->calendarEventApiType = new CalendarEventApiType(
             $this->calendarEventManager,
@@ -132,9 +121,6 @@ class CalendarEventApiTypeTest extends FormIntegrationTestCase
         parent::setUp();
     }
 
-    /**
-     * @return array
-     */
     protected function getExtensions()
     {
         return [
@@ -163,8 +149,7 @@ class CalendarEventApiTypeTest extends FormIntegrationTestCase
             'attendees'       => [],
         ];
 
-        $this->notificationManager
-            ->expects($this->any())
+        $this->notificationManager->expects($this->any())
             ->method('getSupportedStrategies')
             ->willReturn([]);
 
@@ -180,7 +165,7 @@ class CalendarEventApiTypeTest extends FormIntegrationTestCase
         $this->calendarEventManager->expects($this->once())
             ->method('setCalendar')
             ->with(
-                $this->isInstanceOf('Oro\Bundle\CalendarBundle\Entity\CalendarEvent'),
+                $this->isInstanceOf(CalendarEvent::class),
                 Calendar::CALENDAR_ALIAS,
                 1
             );
@@ -190,7 +175,7 @@ class CalendarEventApiTypeTest extends FormIntegrationTestCase
         $this->assertTrue($form->isSynchronized());
         /** @var CalendarEvent $result */
         $result = $form->getData();
-        $this->assertInstanceOf('Oro\Bundle\CalendarBundle\Entity\CalendarEvent', $result);
+        $this->assertInstanceOf(CalendarEvent::class, $result);
         $this->assertEquals('MOCK-UID-11111', $result->getUid());
         $this->assertEquals('testTitle', $result->getTitle());
         $this->assertEquals('testDescription', $result->getDescription());
@@ -223,8 +208,7 @@ class CalendarEventApiTypeTest extends FormIntegrationTestCase
             'reminders'       => [],
         ];
 
-        $this->notificationManager
-            ->expects($this->any())
+        $this->notificationManager->expects($this->any())
             ->method('getSupportedStrategies')
             ->willReturn([]);
 
@@ -240,7 +224,7 @@ class CalendarEventApiTypeTest extends FormIntegrationTestCase
         $this->calendarEventManager->expects($this->once())
             ->method('setCalendar')
             ->with(
-                $this->isInstanceOf('Oro\Bundle\CalendarBundle\Entity\CalendarEvent'),
+                $this->isInstanceOf(CalendarEvent::class),
                 'system',
                 1
             );
@@ -250,7 +234,7 @@ class CalendarEventApiTypeTest extends FormIntegrationTestCase
         $this->assertTrue($form->isSynchronized());
         /** @var CalendarEvent $result */
         $result = $form->getData();
-        $this->assertInstanceOf('Oro\Bundle\CalendarBundle\Entity\CalendarEvent', $result);
+        $this->assertInstanceOf(CalendarEvent::class, $result);
         $this->assertNull($result->getUid());
         $this->assertEquals('testTitle', $result->getTitle());
         $this->assertEquals('testDescription', $result->getDescription());
@@ -271,14 +255,12 @@ class CalendarEventApiTypeTest extends FormIntegrationTestCase
 
     public function testConfigureOptions()
     {
-        $resolver = $this->getMockBuilder('Symfony\Component\OptionsResolver\OptionsResolver')
-            ->disableOriginalConstructor()
-            ->getMock();
+        $resolver = $this->createMock(OptionsResolver::class);
         $resolver->expects($this->once())
             ->method('setDefaults')
             ->with(
                 [
-                    'data_class'           => 'Oro\Bundle\CalendarBundle\Entity\CalendarEvent',
+                    'data_class'           => CalendarEvent::class,
                     'csrf_token_id'        => 'calendar_event',
                     'csrf_protection'      => false,
                 ]
@@ -290,34 +272,29 @@ class CalendarEventApiTypeTest extends FormIntegrationTestCase
     /**
      * @return AbstractType[]
      */
-    protected function loadTypes()
+    private function loadTypes(): array
     {
-        $searchHandler = $this->createMock('Oro\Bundle\FormBundle\Autocomplete\SearchHandlerInterface');
+        $searchHandler = $this->createMock(SearchHandlerInterface::class);
         $searchHandler->expects($this->any())
             ->method('getEntityName')
-            ->will($this->returnValue('OroUserBundle:User'));
+            ->willReturn('OroUserBundle:User');
 
-        $searchRegistry = $this->getMockBuilder('Oro\Bundle\FormBundle\Autocomplete\SearchRegistry')
-            ->disableOriginalConstructor()
-            ->getMock();
+        $searchRegistry = $this->createMock(SearchRegistry::class);
         $searchRegistry->expects($this->any())
             ->method('getSearchHandler')
-            ->will($this->returnValue($searchHandler));
+            ->willReturn($searchHandler);
 
-        $configProvider = $this->getMockBuilder('Oro\Bundle\EntityConfigBundle\Provider\ConfigProvider')
-            ->disableOriginalConstructor()
-            ->getMock();
+        $configProvider = $this->createMock(ConfigProvider::class);
 
-        $strategy = $this->getMockBuilder('Oro\Bundle\CalendarBundle\Model\Recurrence\StrategyInterface')
-            ->getMock();
+        $strategy = $this->createMock(StrategyInterface::class);
 
         $recurrenceModel = new Recurrence($strategy);
 
         $types = [
             $this->calendarEventApiType,
-            new ReminderCollectionType($this->registry),
-            new CollectionType($this->registry),
-            new ReminderType($this->registry),
+            new ReminderCollectionType(),
+            new CollectionType(),
+            new ReminderType(),
             new MethodType(new SendProcessorRegistry([], $this->createMock(ContainerInterface::class))),
             new ReminderIntervalType(),
             new UnitType(),

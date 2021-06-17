@@ -94,7 +94,7 @@ define(function(require) {
             eventModel.set('editable', eventModel.get('editable') && !this.hasParentEvent(eventModel), {silent: true});
             if (this.hasLoadedAttendeeEvents(eventModel)) {
                 if (eventModel.hasChanged('attendees')) {
-                    this.listenToOnce(eventModel, 'sync', _.bind(this.main.refreshView, this.main));
+                    this.listenToOnce(eventModel, 'sync', this.main.refreshView.bind(this.main));
                     return;
                 }
                 // update linked events
@@ -145,28 +145,28 @@ define(function(require) {
                 promises.push(deferredConfirmation);
 
                 if (!this.modal) {
-                    cleanUp = _.bind(function() {
+                    cleanUp = () => {
                         this.modal.dispose();
                         delete this.modal;
-                    }, this);
+                    };
 
                     this.modal = AttendeeNotifierView.createConfirmNotificationDialog();
-                    this.modal.on('ok', _.bind(function() {
+                    this.modal.on('ok', () => {
                         attrs.notifyAttendees = 'all';
                         deferredConfirmation.resolve();
                         _.defer(cleanUp);
-                    }, this));
+                    });
 
-                    this.modal.on('cancel', _.bind(function() {
+                    this.modal.on('cancel', () => {
                         attrs.notifyAttendees = 'none';
                         deferredConfirmation.resolve();
                         _.defer(cleanUp);
-                    }, this));
+                    });
 
-                    this.modal.on('close', _.bind(function() {
+                    this.modal.on('close', () => {
                         deferredConfirmation.reject();
                         _.defer(cleanUp);
-                    }, this));
+                    });
                 }
 
                 this.modal.open();
