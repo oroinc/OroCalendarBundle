@@ -11,7 +11,7 @@ define(function(require) {
         commonEventBus: null,
 
         /**
-         * @inheritDoc
+         * @inheritdoc
          */
         constructor: function CalendarEventRecurrenceComponent(options) {
             CalendarEventRecurrenceComponent.__super__.constructor.call(this, options);

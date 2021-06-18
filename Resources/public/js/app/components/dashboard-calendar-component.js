@@ -7,7 +7,7 @@ define(function(require) {
 
     const DashboardCalendarComponent = CalendarComponent.extend({
         /**
-         * @inheritDoc
+         * @inheritdoc
          */
         constructor: function DashboardCalendarComponent(options) {
             DashboardCalendarComponent.__super__.constructor.call(this, options);

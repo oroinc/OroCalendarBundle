@@ -29,14 +29,14 @@ define([
         },
 
         /**
-         * @inheritDoc
+         * @inheritdoc
          */
         constructor: function ChangeCalendarColorView(options) {
             ChangeCalendarColorView.__super__.constructor.call(this, options);
         },
 
         /**
-         * @inheritDoc
+         * @inheritdoc
          */
         initialize: function(options) {
             this.colorManager = options.colorManager;

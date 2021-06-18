@@ -42,14 +42,14 @@ define([
         },
 
         /**
-         * @inheritDoc
+         * @inheritdoc
          */
         constructor: function CalendarConnectionModel(attrs, options) {
             CalendarConnectionModel.__super__.constructor.call(this, attrs, options);
         },
 
         /**
-         * @inheritDoc
+         * @inheritdoc
          */
         initialize: function() {
             this.urlRoot = routing.generate(this.route);

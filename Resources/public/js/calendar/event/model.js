@@ -45,14 +45,14 @@ define(function(require) {
         },
 
         /**
-         * @inheritDoc
+         * @inheritdoc
          */
         constructor: function CalendarEventModel(attrs, options) {
             CalendarEventModel.__super__.constructor.call(this, attrs, options);
         },
 
         /**
-         * @inheritDoc
+         * @inheritdoc
          */
         initialize: function() {
             this.urlRoot = routing.generate(this.route);

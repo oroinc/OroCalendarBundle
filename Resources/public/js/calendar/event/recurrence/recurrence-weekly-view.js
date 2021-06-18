@@ -10,14 +10,14 @@ define(function(require) {
         relatedFields: ['recurrenceType', 'interval', 'dayOfWeek'],
 
         /**
-         * @inheritDoc
+         * @inheritdoc
          */
         constructor: function RecurrenceWeeklyView(options) {
             RecurrenceWeeklyView.__super__.constructor.call(this, options);
         },
 
         /**
-         * @inheritDoc
+         * @inheritdoc
          */
         render: function() {
             const data = this.getTemplateData();

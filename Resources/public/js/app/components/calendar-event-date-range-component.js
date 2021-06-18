@@ -9,7 +9,7 @@ define(function(require) {
 
     const CalendarEventDateRangeComponent = BaseComponent.extend({
         /**
-         * @inheritDoc
+         * @inheritdoc
          */
         constructor: function CalendarEventDateRangeComponent(options) {
             CalendarEventDateRangeComponent.__super__.constructor.call(this, options);
