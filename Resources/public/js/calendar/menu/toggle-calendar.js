@@ -9,14 +9,14 @@ define(['oroui/js/app/views/base/view'
      */
     const ToggleCalendarView = BaseView.extend({
         /**
-         * @inheritDoc
+         * @inheritdoc
          */
         constructor: function ToggleCalendarView(options) {
             ToggleCalendarView.__super__.constructor.call(this, options);
         },
 
         /**
-         * @inheritDoc
+         * @inheritdoc
          */
         initialize: function(options) {
             this.connectionsView = options.connectionsView;

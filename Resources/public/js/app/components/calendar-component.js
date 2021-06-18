@@ -28,7 +28,7 @@ define(function(require) {
         connectionCollection: null,
 
         /**
-         * @inheritDoc
+         * @inheritdoc
          */
         constructor: function CalendarComponent(options) {
             CalendarComponent.__super__.constructor.call(this, options);

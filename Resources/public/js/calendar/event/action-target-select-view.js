@@ -16,14 +16,14 @@ define(function(require) {
         restrictOnlyThisEventAction: null,
 
         /**
-         * @inheritDoc
+         * @inheritdoc
          */
         constructor: function ActionTargetSelectView(options) {
             ActionTargetSelectView.__super__.constructor.call(this, options);
         },
 
         /**
-         * @inheritDoc
+         * @inheritdoc
          */
         initialize: function(options) {
             options = _.defaults(options, {restrictOnlyThisEventAction: false});

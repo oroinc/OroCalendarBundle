@@ -13,14 +13,14 @@ define([
      */
     const RemoveCalendarView = BaseView.extend({
         /**
-         * @inheritDoc
+         * @inheritdoc
          */
         constructor: function RemoveCalendarView(options) {
             RemoveCalendarView.__super__.constructor.call(this, options);
         },
 
         /**
-         * @inheritDoc
+         * @inheritdoc
          */
         initialize: function(options) {
             this.connectionsView = options.connectionsView;
