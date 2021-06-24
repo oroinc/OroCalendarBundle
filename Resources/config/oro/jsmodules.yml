@@ -4,6 +4,8 @@ aliases:
 app-modules:
     - orocalendar/js/app/modules/calendar-module
 dynamic-imports:
+    commons:
+        - orocalendar/js/validator/dateearlierthan
     orocalendar:
         - oro/select2-attendees-component
         - orocalendar/js/app/components/calendar-component
@@ -15,5 +17,3 @@ dynamic-imports:
         - orocalendar/js/calendar/menu/change-calendar-color
         - orocalendar/js/calendar/menu/remove-calendar
         - orocalendar/js/calendar/menu/toggle-calendar
-    oroform-validate:
-        - orocalendar/js/validator/dateearlierthan
