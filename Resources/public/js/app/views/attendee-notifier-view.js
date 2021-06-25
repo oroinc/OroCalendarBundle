@@ -39,7 +39,7 @@ define(function(require) {
             this.$form.on('select2-data-loaded', this.updateInitialState.bind(this));
             this.$notifyInput = this.$form.find('input[name*="[notifyAttendees]"]');
             this.updateInitialState();
-            this.$form.parent().on('submit.' + this.cid, _.bind(function(e) {
+            this.$form.parent().on('submit.' + this.cid, e => {
                 if (this.hasAttendees()) {
                     if (this.getFormState() !== this.formInitialState) {
                         this.$notifyInput.val('');
@@ -51,7 +51,7 @@ define(function(require) {
                         e.preventDefault();
                     }
                 }
-            }, this));
+            });
         },
 
         updateInitialState: function() {
@@ -89,18 +89,18 @@ define(function(require) {
         getConfirmDialog: function() {
             if (!this.confirmModal) {
                 this.confirmModal = AttendeeNotifierView.createConfirmNotificationDialog(this.notifyMessage);
-                this.listenTo(this.confirmModal, 'ok', _.bind(function() {
+                this.listenTo(this.confirmModal, 'ok', () => {
                     this.$notifyInput.val('all');
                     this.updateInitialState();
                     this.$form.submit();
-                }, this));
-                this.listenTo(this.confirmModal, 'buttonClick', _.bind(function(buttonId) {
+                });
+                this.listenTo(this.confirmModal, 'buttonClick', buttonId => {
                     if (buttonId === 'secondary') {
                         this.$notifyInput.val('none');
                         this.updateInitialState();
                         this.$form.submit();
                     }
-                }, this));
+                });
             }
             return this.confirmModal;
         },

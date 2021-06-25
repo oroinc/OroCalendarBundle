@@ -45,9 +45,9 @@ define(function(require) {
                     data.occurrences = Number(data.occurrences) || '...';
                 }
                 if (data.dayOfWeek.length !== 0) {
-                    data.day = _.map(data.dayOfWeek, _.bind(function(dayMnemonic) {
+                    data.day = _.map(data.dayOfWeek, dayMnemonic => {
                         return this._translateDayOfWeek(dayMnemonic, 'wide');
-                    }, this)).join(', ');
+                    }).join(', ');
                 }
                 const methodName = 'process' + _.capitalize(data.recurrenceType) + 'RecurrenceData';
                 if (methodName in this && _.isFunction(this[methodName])) {

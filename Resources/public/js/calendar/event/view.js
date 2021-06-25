@@ -110,13 +110,13 @@ define(function(require) {
                     resizable: false,
                     width: 475,
                     autoResize: true,
-                    close: _.bind(this.disposePageComponents, this)
+                    close: this.disposePageComponents.bind(this)
                 }),
                 initLayoutOptions: {
                     model: this.model,
                     commonEventBus: this.options.commonEventBus
                 },
-                submitHandler: _.bind(this.onEventFormSubmit, this)
+                submitHandler: this.onEventFormSubmit.bind(this)
             };
 
             if (this.options.widgetRoute) {
@@ -141,13 +141,13 @@ define(function(require) {
             this.eventDialog.render();
 
             // subscribe to 'delete event' event
-            this.eventDialog.getAction('delete', 'adopted', _.bind(function(deleteAction) {
-                deleteAction.on('click', _.bind(this._onClickDeleteDialogAction, this));
-            }, this));
+            this.eventDialog.getAction('delete', 'adopted', deleteAction => {
+                deleteAction.on('click', this._onClickDeleteDialogAction.bind(this));
+            });
             // subscribe to 'switch to edit' event
-            this.eventDialog.getAction('edit', 'adopted', _.bind(function(editAction) {
-                editAction.on('click', _.bind(this._onClickEditDialogAction, this));
-            }, this));
+            this.eventDialog.getAction('edit', 'adopted', editAction => {
+                editAction.on('click', this._onClickEditDialogAction.bind(this));
+            });
 
             // init loading mask control
             this.loadingMask = new LoadingMask({
@@ -174,7 +174,7 @@ define(function(require) {
 
         _onClickEditDialogAction: function(e) {
             this._executePreAction('beforeEdit')
-                .then(_.bind(this._onEditDialogAction, this, e));
+                .then(this._onEditDialogAction.bind(this, e));
         },
 
         _onEditDialogAction: function(e) {
@@ -185,19 +185,19 @@ define(function(require) {
             this.eventDialog.setContent($content);
             this.eventDialog.widget.dialog('option', 'width', 1000);
             // subscribe to 'delete event' event
-            this.eventDialog.getAction('delete', 'adopted', _.bind(function(deleteAction) {
-                deleteAction.on('click', _.bind(this._onClickDeleteDialogAction, this));
-            }, this));
+            this.eventDialog.getAction('delete', 'adopted', deleteAction => {
+                deleteAction.on('click', this._onClickDeleteDialogAction.bind(this));
+            });
             this.showLoadingMask();
             this.initLayout({
                 model: this.model,
                 commonEventBus: this.options.commonEventBus
-            }).always(_.bind(this._hideMask, this));
+            }).always(this._hideMask.bind(this));
         },
 
         _onClickDeleteDialogAction: function(e) {
             this._executePreAction('beforeDelete')
-                .then(_.bind(this._onDeleteDialogAction, this, e));
+                .then(this._onDeleteDialogAction.bind(this, e));
         },
 
         _onDeleteDialogAction: function(e) {
@@ -220,7 +220,7 @@ define(function(require) {
                     this.deleteModel(deleteUrl);
                 }
             } else {
-                this._confirmDeleteAction(deleteConfirmationMessage, _.bind(this.deleteModel, this, deleteUrl));
+                this._confirmDeleteAction(deleteConfirmationMessage, this.deleteModel.bind(this, deleteUrl));
                 e.preventDefault();
             }
         },
@@ -253,8 +253,8 @@ define(function(require) {
                     this.model.save(null, {
                         wait: true,
                         errorHandlerMessage: false,
-                        success: _.bind(this._onSaveEventSuccess, this, previousData),
-                        error: _.bind(this._handleResponseError, this)
+                        success: this._onSaveEventSuccess.bind(this, previousData),
+                        error: this._handleResponseError.bind(this)
                     });
                 } catch (err) {
                     this.showError(err);
@@ -279,7 +279,7 @@ define(function(require) {
                 const options = {
                     wait: true,
                     errorHandlerMessage: false,
-                    error: _.bind(this._handleResponseError, this)
+                    error: this._handleResponseError.bind(this)
                 };
                 if (deleteUrl) {
                     options.url = routing.generate(deleteUrl, {id: this.model.originalId});
@@ -446,7 +446,7 @@ define(function(require) {
             }
             this._toggleCalendarUidByInvitedUsers(form);
 
-            form.find(this.selectors.calendarUid).on('change', _.bind(function(e) {
+            form.find(this.selectors.calendarUid).on('change', e => {
                 const $emptyColor = form.find('.empty-color');
                 const $selector = $(e.currentTarget);
                 const tagName = $selector.prop('tagName').toUpperCase();
@@ -460,10 +460,10 @@ define(function(require) {
                 } else {
                     this._showUserCalendarOnlyFields(form, false);
                 }
-            }, this));
-            form.find(this.selectors.attendees).on('change', _.bind(function(e) {
+            });
+            form.find(this.selectors.attendees).on('change', e => {
                 this._toggleCalendarUidByInvitedUsers(form);
-            }, this));
+            });
 
             // Adds calendar event activity contexts items to the form
             if (this.model.originalId) {
@@ -473,7 +473,7 @@ define(function(require) {
                         activity: 'calendarevents', id: this.model.originalId
                     }),
                     type: 'GET',
-                    success: _.bind(function(targets) {
+                    success: targets => {
                         const targetsStrArray = [];
                         targets.forEach(function(target) {
                             const targetData = {
@@ -484,7 +484,7 @@ define(function(require) {
                         });
                         contexts.val(targetsStrArray.join(this.options.separator));
                         contexts.trigger('change');
-                    }, this)
+                    }
                 });
             }
 

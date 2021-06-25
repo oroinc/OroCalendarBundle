@@ -315,6 +315,9 @@ services:
         arguments:
             - '@router'
 
+    Oro\Bundle\CalendarBundle\Provider\SystemCalendarConfig:
+        alias: oro_calendar.system_calendar_config
+
     oro_calendar.system_calendar_config:
         class: Oro\Bundle\CalendarBundle\Provider\SystemCalendarConfig
         public: true

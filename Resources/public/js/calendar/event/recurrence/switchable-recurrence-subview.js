@@ -1,7 +1,6 @@
 define(function(require) {
     'use strict';
 
-    const _ = require('underscore');
     const $ = require('jquery');
     const AbstractRecurrenceSubview = require('orocalendar/js/calendar/event/recurrence/abstract-recurrence-subview');
 
@@ -37,11 +36,11 @@ define(function(require) {
         },
 
         updateControlSectionsState: function() {
-            this.$('[data-name="control-sections"]').children().each(_.bind(function(index, section) {
+            this.$('[data-name="control-sections"]').children().each((index, section) => {
                 const $section = $(section);
                 const isDisabled = !$section.find(this.RADIOBUTTON_SELECTOR).prop('checked');
                 this.setInputsDisabled(this.findDataInputs($section), isDisabled);
-            }, this));
+            });
         },
 
         setInputsDisabled: function($inputs, isDisabled) {

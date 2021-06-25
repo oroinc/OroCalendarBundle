@@ -51,9 +51,9 @@ define(function(require) {
         },
 
         findDataInputs: function($context) {
-            return $context.find(':input[data-related-field]').filter(_.bind(function(index, element) {
+            return $context.find(':input[data-related-field]').filter((index, element) => {
                 return _.contains(this.relatedFields, $(element).attr('data-related-field'));
-            }, this));
+            });
         },
 
         getValue: function() {

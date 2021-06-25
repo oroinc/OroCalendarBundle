@@ -1,7 +1,3 @@
-define(function(require) {
-    'use strict';
+import $ from 'jquery.validate';
 
-    const $ = require('jquery.validate');
-
-    $.validator.loadMethod('orocalendar/js/validator/dateearlierthan');
-});
+$.validator.loadMethod('orocalendar/js/validator/dateearlierthan');

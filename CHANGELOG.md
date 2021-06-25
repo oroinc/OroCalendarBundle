@@ -1,9 +1,13 @@
-Please refer first to [UPGRADE.md](UPGRADE.md) for the most important items that should be addressed before attempting to upgrade or during the upgrade of a vanilla Oro application.
+The upgrade instructions are available at [Oro documentation website](https://doc.oroinc.com/master/backend/setup/upgrade-to-new-version/).
 
 The current file describes significant changes in the code that may affect the upgrade of your customizations.
 
 ## 5.0.0-alpha.2 (2021-05-28)
 [Show detailed list of changes](incompatibilities-5-0-alpha-2.md)
+
+- The link at the calendar events search items was changed,
+  please reindex calendar event items with command
+  `php bin/console oro:search:reindex --class="Oro\Bundle\CalendarBundle\Entity\CalendarEvent"`
 
 ### Changed
 

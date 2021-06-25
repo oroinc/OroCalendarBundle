@@ -26,10 +26,10 @@ define(function(require) {
             opts.el = options._sourceElement;
 
             this._deferredInit();
-            $.when(..._.compact(subPromises)).then(_.bind(function() {
+            $.when(..._.compact(subPromises)).then(() => {
                 this.handleLayoutInit(opts);
                 this._resolveDeferredInit();
-            }, this));
+            });
         },
 
         handleLayoutInit: function(options) {

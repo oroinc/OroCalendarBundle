@@ -188,7 +188,7 @@ define(function(require) {
             this.listenTo(this.collection, 'destroy', this.onEventDeleted);
 
             // to refresh calendar only once when it is invoked repeatedly
-            this.refreshView = _.throttle(_.bind(this.refreshView, this), 10, {trailing: false});
+            this.refreshView = _.throttle(this.refreshView.bind(this), 10, {trailing: false});
 
             // create common event bus and subscribe to its events
             this.commonEventBus = Object.create(_.extend({}, Backbone.Events));
@@ -542,8 +542,8 @@ define(function(require) {
 
             // wait for promises execution before save
             $.when(...promises)
-                .done(_.bind(this._saveFcEvent, this, eventModel, attrs))
-                .fail(_.bind(this.updateEventsWithoutReload, this));
+                .done(this._saveFcEvent.bind(this, eventModel, attrs))
+                .fail(this.updateEventsWithoutReload.bind(this));
         },
 
         _saveFcEvent: function(eventModel, attrs) {
@@ -552,11 +552,11 @@ define(function(require) {
                 eventModel.save(
                     attrs,
                     {
-                        success: _.bind(this._hideMask, this),
-                        error: _.bind(function(model, response) {
+                        success: this._hideMask.bind(this),
+                        error: (model, response) => {
                             this.showSaveEventError(response.responseJSON || {});
                             this._hideMask();
-                        }, this),
+                        },
                         wait: true
                     }
                 );
@@ -571,14 +571,14 @@ define(function(require) {
                 // load events from a server
                 this.collection.fetch({
                     reset: true,
-                    success: _.bind(function() {
+                    success: () => {
                         this.updateEventsLoadedCache();
                         this.updateEventsWithoutReload();
-                    }, this),
-                    error: _.bind(function(collection, response) {
+                    },
+                    error: (collection, response) => {
                         this.showLoadEventsError(response.responseJSON || {});
                         this._hideMask();
-                    }, this)
+                    }
                 });
             } catch (err) {
                 this.showLoadEventsError(err);
@@ -602,7 +602,7 @@ define(function(require) {
         },
 
         loadEvents: function(start, end, timezone, callback) {
-            const onEventsLoad = _.bind(function() {
+            const onEventsLoad = () => {
                 if (this.enableEventLoading || _.size(this.eventsLoaded) === 0) {
                     this.updateEventsLoadedCache();
                 }
@@ -613,7 +613,7 @@ define(function(require) {
                 }, this);
                 this._hideMask();
                 callback(fcEvents);
-            }, this);
+            };
             start = start.tz(timezone, true).format(this.MOMENT_BACKEND_FORMAT);
             end = end.tz(timezone, true).format(this.MOMENT_BACKEND_FORMAT);
             try {
@@ -623,10 +623,10 @@ define(function(require) {
                     this.collection.fetch({
                         reset: true,
                         success: onEventsLoad,
-                        error: _.bind(function(collection, response) {
+                        error: (collection, response) => {
                             callback({});
                             this.showLoadEventsError(response.responseJSON || {});
-                        }, this)
+                        }
                     });
                 } else {
                     // use already loaded events
@@ -781,19 +781,19 @@ define(function(require) {
                     month: true
                 },
                 selectHelper: true,
-                events: _.bind(this.loadEvents, this),
-                select: _.bind(this.onFcSelect, this),
-                eventClick: _.bind(this.onFcEventClick, this),
-                eventDragStart: _.bind(this.onFcEventDragStart, this),
-                eventDrop: _.bind(this.onFcEventDrop, this),
-                eventResize: _.bind(this.onFcEventResize, this),
-                loading: _.bind(function(show) {
+                events: this.loadEvents.bind(this),
+                select: this.onFcSelect.bind(this),
+                eventClick: this.onFcEventClick.bind(this),
+                eventDragStart: this.onFcEventDragStart.bind(this),
+                eventDrop: this.onFcEventDrop.bind(this),
+                eventResize: this.onFcEventResize.bind(this),
+                loading: show => {
                     if (show) {
                         this.showLoadingMask();
                     } else {
                         this._hideMask();
                     }
-                }, this),
+                },
                 views: {}
             };
             const keys = [
@@ -845,20 +845,19 @@ define(function(require) {
             options.timeFormat = timeFormat;
             options.smallTimeFormat = timeFormat;
 
-            const self = this;
-            options.eventAfterAllRender = function() {
-                const setTimeline = _.bind(self.setTimeline, self);
+            options.eventAfterAllRender = () => {
+                const setTimeline = this.setTimeline.bind(this);
                 _.delay(setTimeline);
-                clearInterval(self.timelineUpdateIntervalId);
-                self.timelineUpdateIntervalId = setInterval(setTimeline, 60 * 1000);
+                clearInterval(this.timelineUpdateIntervalId);
+                this.timelineUpdateIntervalId = setInterval(setTimeline, 60 * 1000);
             };
 
-            options.eventAfterRender = _.bind(function(fcEvent, $el) {
+            options.eventAfterRender = (fcEvent, $el) => {
                 const event = this.collection.get(fcEvent.id);
                 if (event) {
                     eventDecorator.decorate(event, $el);
                 }
-            }, this);
+            };
 
             return options;
         },
@@ -964,7 +963,7 @@ define(function(require) {
 
         loadConnectionColors: function() {
             let lastBackgroundColor = null;
-            this.getConnectionCollection().each(_.bind(function(connection) {
+            this.getConnectionCollection().each(connection => {
                 const obj = connection.toJSON();
                 this.colorManager.applyColors(obj, function() {
                     return lastBackgroundColor;
@@ -973,7 +972,7 @@ define(function(require) {
                 if (['user', 'system', 'public'].indexOf(obj.calendarAlias) !== -1) {
                     lastBackgroundColor = obj.backgroundColor;
                 }
-            }, this));
+            });
         },
 
         render: function() {

@@ -3,8 +3,10 @@
 namespace Oro\Bundle\CalendarBundle\Controller;
 
 use Oro\Bundle\CalendarBundle\Entity\SystemCalendar;
+use Oro\Bundle\CalendarBundle\Form\Handler\SystemCalendarHandler;
 use Oro\Bundle\CalendarBundle\Provider\SystemCalendarConfig;
 use Oro\Bundle\SecurityBundle\Authentication\TokenAccessorInterface;
+use Oro\Bundle\UIBundle\Route\Router;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\RedirectResponse;
@@ -12,6 +14,7 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Security\Core\Exception\AccessDeniedException;
+use Symfony\Contracts\Translation\TranslatorInterface;
 
 /**
  * System calendar controller.
@@ -108,24 +111,26 @@ class SystemCalendarController extends AbstractController
     {
         $saved = false;
 
-        if ($this->get('oro_calendar.system_calendar.form.handler')->process($entity)) {
+        $systemCalendarFormHandler = $this->get(SystemCalendarHandler::class);
+        if ($systemCalendarFormHandler->process($entity)) {
             if (!$request->get('_widgetContainer')) {
+                $translator = $this->get(TranslatorInterface::class);
                 $this->get('session')->getFlashBag()->add(
                     'success',
-                    $this->get('translator')->trans('oro.calendar.controller.systemcalendar.saved.message')
+                    $translator->trans('oro.calendar.controller.systemcalendar.saved.message')
                 );
 
-                return $this->get('oro_ui.router')->redirect($entity);
+                return $this->get(Router::class)->redirect($entity);
             }
             $saved = true;
         }
 
-        return array(
+        return [
             'entity'     => $entity,
             'saved'      => $saved,
-            'form'       => $this->get('oro_calendar.system_calendar.form.handler')->getForm()->createView(),
+            'form'       => $systemCalendarFormHandler->getForm()->createView(),
             'formAction' => $formAction
-        );
+        ];
     }
 
     /**
@@ -174,35 +179,40 @@ class SystemCalendarController extends AbstractController
         }
     }
 
-    /**
-     * @return SystemCalendarConfig
-     */
-    private function getCalendarConfig()
+    private function getCalendarConfig(): SystemCalendarConfig
     {
-        return $this->get('oro_calendar.system_calendar_config');
+        return $this->get(SystemCalendarConfig::class);
     }
 
-    /**
-     * @return TokenAccessorInterface
-     */
-    private function getSecurityTokenAccessor()
+    private function getSecurityTokenAccessor(): TokenAccessorInterface
     {
-        return $this->get('oro_security.token_accessor');
+        return $this->get(TokenAccessorInterface::class);
     }
 
-    /**
-     * @return bool
-     */
-    private function isPublicCalendarManagementEnabled()
+    private function isPublicCalendarManagementEnabled(): bool
     {
         return $this->isGranted('oro_public_calendar_management');
     }
 
-    /**
-     * @return bool
-     */
-    private function isSystemCalendarManagementEnabled()
+    private function isSystemCalendarManagementEnabled(): bool
     {
         return $this->isGranted('oro_system_calendar_management');
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public static function getSubscribedServices()
+    {
+        return array_merge(
+            parent::getSubscribedServices(),
+            [
+                SystemCalendarHandler::class,
+                TranslatorInterface::class,
+                Router::class,
+                TokenAccessorInterface::class,
+                SystemCalendarConfig::class,
+            ]
+        );
     }
 }

@@ -65,7 +65,7 @@ define(function(require) {
             this.contextMenuTemplate = _.template($(this.selectors.contextMenuTemplate).html());
 
             // render connected calendars
-            this.collection.each(_.bind(this.onModelAdded, this));
+            this.collection.each(this.onModelAdded.bind(this));
 
             // subscribe to connection collection events
             this.listenTo(this.collection, 'add', this.onModelAdded);
@@ -74,7 +74,7 @@ define(function(require) {
 
             // subscribe to connect new calendar event
             const container = this.$el.closest(this.selectors.container);
-            container.find(this.selectors.newCalendarSelector).on('change', _.bind(function(e) {
+            container.find(this.selectors.newCalendarSelector).on('change', e => {
                 const itemData = $(e.target).inputWidget('data');
 
                 if (itemData) {
@@ -82,7 +82,7 @@ define(function(require) {
                     // clear autocomplete
                     $(e.target).inputWidget('val', '');
                 }
-            }, this));
+            });
         },
 
         /**
@@ -153,18 +153,18 @@ define(function(require) {
         onModelAdded: function(model) {
             const viewModel = model.toJSON();
             // init text/background colors
-            this.options.colorManager.applyColors(viewModel, _.bind(function() {
+            this.options.colorManager.applyColors(viewModel, () => {
                 const $last = this.$el.find(this.selectors.lastItem);
                 const calendarAlias = $last.attr(this.attrs.calendarAlias);
                 return ['user', 'system', 'public'].indexOf(calendarAlias) !== -1
                     ? $last.attr(this.attrs.backgroundColor) : null;
-            }, this));
+            });
             this.options.colorManager.setCalendarColors(viewModel.calendarUid, viewModel.backgroundColor);
             model.set('backgroundColor', viewModel.backgroundColor);
 
             const $el = $(this.template(viewModel));
             // set 'data-' attributes
-            _.each(this.attrs, function(value, key) {
+            _.each(this.attrs, (value, key) => {
                 $el.attr(value, viewModel[key]);
             });
             // subscribe to toggle context menu
@@ -221,9 +221,9 @@ define(function(require) {
 
             if (modules.length > 0) {
                 // show loading message, if loading takes more than 100ms
-                showLoadingTimeout = setTimeout(_.bind(function() {
+                showLoadingTimeout = setTimeout(() => {
                     $container.html('<span class="loading-indicator"></span>');
-                }, this), 100);
+                }, 100);
 
                 // If dropdown will be closed before module are loaded just remove prepared context menu
                 // to do nothing since used wont see result of menu rendering
@@ -242,8 +242,8 @@ define(function(require) {
                         return;
                     }
 
-                    _.each(modules, _.bind(function(ModuleConstructor, moduleName) {
-                        $contextMenu.find('li[data-module="' + moduleName + '"]').each(_.bind(function(index, el) {
+                    _.each(modules, (ModuleConstructor, moduleName) => {
+                        $contextMenu.find('li[data-module="' + moduleName + '"]').each((index, el) => {
                             const action = new ModuleConstructor({
                                 el: el,
                                 model: model,
@@ -251,13 +251,13 @@ define(function(require) {
                                 connectionsView: this.options.connectionsView,
                                 colorManager: this.options.colorManager
                             });
-                            action.$el.one('click', '.action', _.bind(function(e) {
+                            action.$el.one('click', '.action', () => {
                                 if (this._initActionSyncObject()) {
                                     action.execute(model, this._actionSyncObject);
                                 }
-                            }, this));
-                        }, this));
-                    }, this));
+                            });
+                        });
+                    });
 
                     $container.html($contextMenu);
 
@@ -289,15 +289,15 @@ define(function(require) {
                     });
                     this.collection.create(model, {
                         wait: true,
-                        success: _.bind(function() {
+                        success: () => {
                             savingMsg.close();
                             messenger.notificationFlashMessage('success',
                                 __('oro.calendar.flash_message.calendar_added'), {namespace: 'calendar-ns'});
-                        }, this),
-                        error: _.bind(function(collection, response) {
+                        },
+                        error: (collection, response) => {
                             savingMsg.close();
                             this.showAddError(response.responseJSON || {});
-                        }, this)
+                        }
                     });
                 } catch (err) {
                     savingMsg.close();
@@ -331,7 +331,7 @@ define(function(require) {
             try {
                 model.save('visible', visible, {
                     wait: true,
-                    success: _.bind(function() {
+                    success: () => {
                         savingMsg.close();
                         messenger.notificationFlashMessage('success',
                             __('oro.calendar.flash_message.calendar_updated'), {namespace: 'calendar-ns'});
@@ -339,8 +339,8 @@ define(function(require) {
                         if (this._actionSyncObject) {
                             this._actionSyncObject.resolve();
                         }
-                    }, this),
-                    error: _.bind(function(model, response) {
+                    },
+                    error: (model, response) => {
                         savingMsg.close();
                         this.showUpdateError(response.responseJSON || {});
                         this._addVisibilityButtonEventListener($connection, model);
@@ -348,7 +348,7 @@ define(function(require) {
                         if (this._actionSyncObject) {
                             this._actionSyncObject.reject();
                         }
-                    }, this)
+                    }
                 });
             } catch (err) {
                 savingMsg.close();
@@ -362,11 +362,11 @@ define(function(require) {
         },
 
         _addVisibilityButtonEventListener: function($connection, model) {
-            $connection.find('[data-role="connection-label"]').on('click.' + this.cid, _.bind(function(e) {
+            $connection.find('[data-role="connection-label"]').on('click.' + this.cid, () => {
                 if (this._initActionSyncObject()) {
                     this.toggleCalendar(model);
                 }
-            }, this));
+            });
         },
 
         _removeVisibilityButtonEventListener: function($connection, model) {
@@ -378,14 +378,9 @@ define(function(require) {
                 return false;
             }
             this._actionSyncObject = $.Deferred();
-            this._actionSyncObject.then(
-                _.bind(function() {
-                    delete this._actionSyncObject;
-                }, this),
-                _.bind(function() {
-                    delete this._actionSyncObject;
-                }, this)
-            );
+            this._actionSyncObject.always(() => {
+                delete this._actionSyncObject;
+            });
             return true;
         }
     });
