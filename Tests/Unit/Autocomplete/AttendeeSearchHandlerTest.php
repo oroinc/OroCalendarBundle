@@ -4,84 +4,65 @@ namespace Oro\Bundle\CalendarBundle\Tests\Unit\Autocomplete;
 
 use Doctrine\ORM\EntityRepository;
 use Doctrine\Persistence\ObjectManager;
+use Oro\Bundle\ActivityBundle\Manager\ActivityManager;
 use Oro\Bundle\CalendarBundle\Autocomplete\AttendeeSearchHandler;
 use Oro\Bundle\CalendarBundle\Manager\AttendeeManager;
 use Oro\Bundle\CalendarBundle\Tests\Unit\Fixtures\Entity\Attendee;
 use Oro\Bundle\CalendarBundle\Tests\Unit\Fixtures\Entity\User;
+use Oro\Bundle\EntityBundle\Provider\EntityNameResolver;
+use Oro\Bundle\EntityBundle\Tools\EntityClassNameHelper;
+use Oro\Bundle\EntityConfigBundle\Config\ConfigManager;
 use Oro\Bundle\EntityExtendBundle\Tests\Unit\Fixtures\TestEnumValue;
 use Oro\Bundle\SearchBundle\Engine\Indexer;
 use Oro\Bundle\SearchBundle\Query\Query;
 use Oro\Bundle\SearchBundle\Query\Result;
 use Oro\Bundle\SearchBundle\Query\Result\Item;
+use Symfony\Component\EventDispatcher\EventDispatcherInterface;
+use Symfony\Contracts\Translation\TranslatorInterface;
 
 class AttendeeSearchHandlerTest extends \PHPUnit\Framework\TestCase
 {
-    /** @var \PHPUnit\Framework\MockObject\MockObject|Indexer */
-    protected $indexer;
+    /** @var Indexer|\PHPUnit\Framework\MockObject\MockObject */
+    private $indexer;
 
-    /** @var \PHPUnit\Framework\MockObject\MockObject|ObjectManager */
-    protected $om;
+    /** @var EntityRepository|\PHPUnit\Framework\MockObject\MockObject */
+    private $entityRepository;
 
-    /** @var EntityRepository */
-    protected $entityRepository;
-
-    /** @var \PHPUnit\Framework\MockObject\MockObject|AttendeeManager */
-    protected $attendeeManager;
+    /** @var AttendeeManager|\PHPUnit\Framework\MockObject\MockObject */
+    private $attendeeManager;
 
     /** @var AttendeeSearchHandler */
-    protected $attendeeSearchHandler;
+    private $attendeeSearchHandler;
 
     protected function setUp(): void
     {
-        $translator = $this->createMock('Symfony\Contracts\Translation\TranslatorInterface');
+        $translator = $this->createMock(TranslatorInterface::class);
         $translator->expects($this->any())
             ->method('trans')
-            ->will(
-                $this->returnCallback(
-                    function ($id) {
-                        return $id;
-                    }
-                )
-            );
+            ->willReturnCallback(function ($id) {
+                return $id;
+            });
 
-        $this->indexer = $this->getMockBuilder('Oro\Bundle\SearchBundle\Engine\Indexer')
+        $this->indexer = $this->createMock(Indexer::class);
+        $activityManager = $this->createMock(ActivityManager::class);
+        $configManager = $this->createMock(ConfigManager::class);
+        $entityClassNameHelper = $this->createMock(EntityClassNameHelper::class);
+
+        $nameResolver = $this->createMock(EntityNameResolver::class);
+        $dispatcher = $this->createMock(EventDispatcherInterface::class);
+
+        $this->attendeeManager = $this->createMock(AttendeeManager::class);
+
+        $this->entityRepository = $this->getMockBuilder(EntityRepository::class)
+            ->addMethods(['findById'])
             ->disableOriginalConstructor()
             ->getMock();
 
-        $activityManager = $this->getMockBuilder('Oro\Bundle\ActivityBundle\Manager\ActivityManager')
-            ->disableOriginalConstructor()
-            ->getMock();
-
-        $configManager = $this->getMockBuilder('Oro\Bundle\EntityConfigBundle\Config\ConfigManager')
-            ->disableOriginalConstructor()
-            ->getMock();
-
-        $entityClassNameHelper = $this->getMockBuilder('Oro\Bundle\EntityBundle\Tools\EntityClassNameHelper')
-            ->disableOriginalConstructor()
-            ->getMock();
-
-        $this->om = $this->createMock('Doctrine\Persistence\ObjectManager');
-
-        $nameResolver = $this->getMockBuilder('Oro\Bundle\EntityBundle\Provider\EntityNameResolver')
-            ->disableOriginalConstructor()
-            ->getMock();
-
-        $dispatcher = $this->createMock('Symfony\Component\EventDispatcher\EventDispatcherInterface');
-
-        $this->attendeeManager = $this
-            ->getMockBuilder('Oro\Bundle\CalendarBundle\Manager\AttendeeManager')
-            ->disableOriginalConstructor()
-            ->getMock();
-
-        $this->entityRepository = $this->getMockBuilder('Doctrine\ORM\EntityRepository')
-            ->setMethods(['findById'])
-            ->disableOriginalConstructor()
-            ->getMock();
-
-        $this->om->expects($this->any())
+        $om = $this->createMock(ObjectManager::class);
+        $om->expects($this->any())
             ->method('getRepository')
             ->with('entity')
-            ->will($this->returnValue($this->entityRepository));
+            ->willReturn($this->entityRepository);
 
         $this->attendeeSearchHandler = new AttendeeSearchHandler(
             $translator,
@@ -89,7 +70,7 @@ class AttendeeSearchHandlerTest extends \PHPUnit\Framework\TestCase
             $activityManager,
             $configManager,
             $entityClassNameHelper,
-            $this->om,
+            $om,
             $nameResolver,
             $dispatcher
         );
@@ -116,12 +97,12 @@ class AttendeeSearchHandlerTest extends \PHPUnit\Framework\TestCase
         $this->indexer->expects($this->once())
             ->method('simpleSearch')
             ->with('query', 0, 101, ['oro_user'], 1)
-            ->will($this->returnValue(new Result(new Query(), $items)));
+            ->willReturn(new Result(new Query(), $items));
 
         $this->entityRepository->expects($this->once())
             ->method('findById')
             ->with([1, 2])
-            ->will($this->returnValue($users));
+            ->willReturn($users);
 
         $this->attendeeManager->expects($this->exactly(2))
             ->method('createAttendee')
@@ -129,18 +110,14 @@ class AttendeeSearchHandlerTest extends \PHPUnit\Framework\TestCase
                 [$users[0]],
                 [$users[1]]
             )
-            ->will(
-                $this->returnCallback(
-                    function (User $user) {
-                        return (new Attendee)
-                            ->setUser($user)
-                            ->setDisplayName($user->getFirstName())
-                            ->setEmail($user->getEmail())
-                            ->setStatus(new TestEnumValue('test', 'test'))
-                            ->setType(new TestEnumValue('test', 'test'));
-                    }
-                )
-            );
+            ->willReturnCallback(function (User $user) {
+                return (new Attendee())
+                    ->setUser($user)
+                    ->setDisplayName($user->getFirstName())
+                    ->setEmail($user->getEmail())
+                    ->setStatus(new TestEnumValue('test', 'test'))
+                    ->setType(new TestEnumValue('test', 'test'));
+            });
 
         $result = $this->attendeeSearchHandler->search('query', 1, 100);
 
@@ -150,7 +127,7 @@ class AttendeeSearchHandlerTest extends \PHPUnit\Framework\TestCase
                     [
                         'id'          => json_encode(
                             [
-                                'entityClass' => 'Oro\Bundle\CalendarBundle\Tests\Unit\Fixtures\Entity\User',
+                                'entityClass' => User::class,
                                 'entityId'    => 1,
                             ]
                         ),
@@ -164,7 +141,7 @@ class AttendeeSearchHandlerTest extends \PHPUnit\Framework\TestCase
                     [
                         'id'          => json_encode(
                             [
-                                'entityClass' => 'Oro\Bundle\CalendarBundle\Tests\Unit\Fixtures\Entity\User',
+                                'entityClass' => User::class,
                                 'entityId'    => 2,
                             ]
                         ),

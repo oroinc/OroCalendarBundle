@@ -3,6 +3,8 @@
 namespace Oro\Bundle\CalendarBundle\Tests\Unit\Manager;
 
 use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\ORM\AbstractQuery;
+use Doctrine\ORM\QueryBuilder;
 use Oro\Bundle\CalendarBundle\Entity\Repository\AttendeeRepository;
 use Oro\Bundle\CalendarBundle\Entity\Repository\CalendarEventRepository;
 use Oro\Bundle\CalendarBundle\Manager\AttendeeManager;
@@ -13,60 +15,45 @@ use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
 
 class AttendeeManagerTest extends \PHPUnit\Framework\TestCase
 {
-    /** @var \PHPUnit\Framework\MockObject\MockObject|DoctrineHelper */
-    protected $doctrineHelper;
-
     /** @var \PHPUnit\Framework\MockObject\MockObject|CalendarEventRepository */
-    protected $calendarEventRepository;
+    private $calendarEventRepository;
 
     /** @var \PHPUnit\Framework\MockObject\MockObject|AttendeeRepository */
-    protected $attendeeRepository;
+    private $attendeeRepository;
 
     /** @var \PHPUnit\Framework\MockObject\MockObject|AttendeeRelationManager */
-    protected $attendeeRelationManager;
+    private $attendeeRelationManager;
 
     /** @var AttendeeManager */
-    protected $attendeeManager;
+    private $attendeeManager;
 
     protected function setUp(): void
     {
-        $this->calendarEventRepository = $this
-            ->getMockBuilder('Oro\Bundle\CalendarBundle\Entity\Repository\CalendarEventRepository')
-            ->disableOriginalConstructor()
-            ->getMock();
+        $this->calendarEventRepository = $this->createMock(CalendarEventRepository::class);
+        $this->attendeeRepository = $this->createMock(AttendeeRepository::class);
 
-        $this->attendeeRepository = $this
-            ->getMockBuilder('Oro\Bundle\CalendarBundle\Entity\Repository\AttendeeRepository')
-            ->disableOriginalConstructor()
-            ->getMock();
-
-        $this->doctrineHelper = $this->getMockBuilder('Oro\Bundle\EntityBundle\ORM\DoctrineHelper')
-            ->disableOriginalConstructor()
-            ->getMock();
-        $this->doctrineHelper->expects($this->any())
+        $doctrineHelper = $this->createMock(DoctrineHelper::class);
+        $doctrineHelper->expects($this->any())
             ->method('getSingleEntityIdentifier')
-            ->will($this->returnCallback(function ($entity) {
+            ->willReturnCallback(function ($entity) {
                 return $entity->getId();
-            }));
-        $this->doctrineHelper->expects($this->any())
+            });
+        $doctrineHelper->expects($this->any())
             ->method('getEntityRepository')
-            ->will($this->returnValueMap([
+            ->willReturnMap([
                 ['OroCalendarBundle:CalendarEvent', $this->calendarEventRepository],
                 ['OroCalendarBundle:Attendee', $this->attendeeRepository],
-            ]));
+            ]);
 
-        $this->attendeeRelationManager = $this
-            ->getMockBuilder('Oro\Bundle\CalendarBundle\Manager\AttendeeRelationManager')
-            ->disableOriginalConstructor()
-            ->getMock();
+        $this->attendeeRelationManager = $this->createMock(AttendeeRelationManager::class);
         $this->attendeeRelationManager->expects($this->any())
             ->method('getRelatedEntity')
-            ->will($this->returnCallback(function ($attendee) {
+            ->willReturnCallback(function ($attendee) {
                 return $attendee->getUser();
-            }));
+            });
 
         $this->attendeeManager = new AttendeeManager(
-            $this->doctrineHelper,
+            $doctrineHelper,
             $this->attendeeRelationManager
         );
     }
@@ -76,7 +63,7 @@ class AttendeeManagerTest extends \PHPUnit\Framework\TestCase
         $this->attendeeRepository->expects($this->once())
             ->method('findBy')
             ->with(['calendarEvent' => 1])
-            ->will($this->returnValue(new Attendee(1)));
+            ->willReturn(new Attendee(1));
 
         $this->attendeeManager->loadAttendeesByCalendarEventId(1);
     }
@@ -84,7 +71,7 @@ class AttendeeManagerTest extends \PHPUnit\Framework\TestCase
     /**
      * @dataProvider createAttendeeExclusionsProvider
      */
-    public function testCreateAttendeeExclusions($attendees, $expectedResult)
+    public function testCreateAttendeeExclusions($attendees, array $expectedResult)
     {
         $this->assertEquals(
             $expectedResult,
@@ -92,7 +79,7 @@ class AttendeeManagerTest extends \PHPUnit\Framework\TestCase
         );
     }
 
-    public function createAttendeeExclusionsProvider()
+    public function createAttendeeExclusionsProvider(): array
     {
         $attendees = [
             (new Attendee(1))
@@ -101,11 +88,11 @@ class AttendeeManagerTest extends \PHPUnit\Framework\TestCase
         ];
 
         $key = json_encode([
-            'entityClass' => 'Oro\Bundle\CalendarBundle\Tests\Unit\Fixtures\Entity\User',
+            'entityClass' => User::class,
             'entityId' => 3,
         ]);
         $val = json_encode([
-            'entityClass' => 'Oro\Bundle\CalendarBundle\Entity\Attendee',
+            'entityClass' => \Oro\Bundle\CalendarBundle\Entity\Attendee::class,
             'entityId' => 1
         ]);
 
@@ -134,26 +121,24 @@ class AttendeeManagerTest extends \PHPUnit\Framework\TestCase
         array $queryResult,
         array $expectedResult
     ) {
-        $qb = $this->getMockBuilder('Doctrine\ORM\QueryBuilder')
-            ->disableOriginalConstructor()
-            ->setMethods(['getQuery', 'getArrayResult'])
-            ->getMock();
+        $query = $this->createMock(AbstractQuery::class);
+        $qb = $this->createMock(QueryBuilder::class);
         $qb->expects($this->once())
             ->method('getQuery')
-            ->will($this->returnSelf());
-        $qb->expects($this->once())
+            ->willReturn($query);
+        $query->expects($this->once())
             ->method('getArrayResult')
-            ->will($this->returnValue($queryResult));
+            ->willReturn($queryResult);
 
         $this->calendarEventRepository->expects($this->once())
             ->method('getParentEventIds')
             ->with($calendarEventIds)
-            ->will($this->returnValue($parentToChildren));
+            ->willReturn($parentToChildren);
 
         $this->attendeeRepository->expects($this->once())
             ->method('createAttendeeListsQb')
             ->with(array_keys($parentToChildren))
-            ->will($this->returnValue($qb));
+            ->willReturn($qb);
 
         $this->attendeeRelationManager->expects($this->once())
             ->method('addRelatedEntityInfo')
@@ -163,10 +148,7 @@ class AttendeeManagerTest extends \PHPUnit\Framework\TestCase
         $this->assertEquals($expectedResult, $result);
     }
 
-    /**
-     * @return array
-     */
-    public function getAttendeeListsByCalendarEventIdsDataProvider()
+    public function getAttendeeListsByCalendarEventIdsDataProvider(): array
     {
         return [
             [

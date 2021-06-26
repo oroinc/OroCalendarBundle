@@ -2,68 +2,56 @@
 
 namespace Oro\Bundle\CalendarBundle\Tests\Unit\Workflow\Action;
 
+use Doctrine\Bundle\DoctrineBundle\Registry;
+use Doctrine\Persistence\ObjectManager;
 use Oro\Bundle\CalendarBundle\Entity\Calendar;
+use Oro\Bundle\CalendarBundle\Entity\CalendarEvent;
+use Oro\Bundle\CalendarBundle\Entity\Repository\CalendarRepository;
 use Oro\Bundle\CalendarBundle\Workflow\Action\CreateCalendarEventAction;
 use Oro\Bundle\EntityBundle\Tests\Unit\ORM\Stub\ItemStub;
+use Oro\Bundle\OrganizationBundle\Entity\Organization;
+use Oro\Bundle\ReminderBundle\Entity\Reminder;
+use Oro\Bundle\UserBundle\Entity\User;
+use Oro\Component\Action\Exception\InvalidParameterException;
 use Oro\Component\ConfigExpression\ContextAccessor;
+use Symfony\Component\EventDispatcher\EventDispatcher;
 use Symfony\Component\PropertyAccess\PropertyPath;
 
 class CreateCalendarEventActionTest extends \PHPUnit\Framework\TestCase
 {
-    const CLASS_NAME_CALENDAR_EVENT = 'Oro\Bundle\CalendarBundle\Entity\CalendarEvent';
-    const CLASS_NAME_REMINDER       = 'Oro\Bundle\ReminderBundle\Entity\Reminder';
-
-    /**
-     * @var ContextAccessor
-     */
+    /** @var ContextAccessor */
     private $contextAccessor;
 
-    /**
-     * @var \PHPUnit\Framework\MockObject\MockObject
-     */
+    /** @var Registry|\PHPUnit\Framework\MockObject\MockObject */
     private $registry;
 
     protected function setUp(): void
     {
         $this->contextAccessor = new ContextAccessor();
 
-        $calendarRepository = $this->getMockBuilder('Oro\Bundle\CalendarBundle\Entity\Repository\CalendarRepository')
-            ->disableOriginalConstructor()
-            ->setMethods(['findDefaultCalendar'])
-            ->getMock();
+        $calendarRepository = $this->createMock(CalendarRepository::class);
 
         $calendar = new Calendar();
-        $calendar->setOwner($this->getUserMock());
-        $calendarRepository->method('findDefaultCalendar')->willReturn($calendar);
-        $this->registry = $this->getMockBuilder('Doctrine\Bundle\DoctrineBundle\Registry')
-            ->disableOriginalConstructor()
-            ->setMethods(['getManagerForClass', 'getManager', 'getRepository'])
-            ->getMock();
-        $this->registry->method('getRepository')->willReturn($calendarRepository);
-    }
-
-    protected function tearDown(): void
-    {
-        unset($this->contextAccessor);
-        unset($this->registry);
-        unset($this->action);
+        $calendar->setOwner($this->getUser());
+        $calendarRepository->expects($this->any())
+            ->method('findDefaultCalendar')
+            ->willReturn($calendar);
+        $this->registry = $this->createMock(Registry::class);
+        $this->registry->expects($this->any())
+            ->method('getRepository')
+            ->willReturn($calendarRepository);
     }
 
     /**
-     * @param array $options
-     * @param int $expectedPersistCount
      * @dataProvider executeDataProvider
      */
-    public function testExecute(array $options, $expectedPersistCount, $exceptionMessage, $data = [])
+    public function testExecute(array $options, int $expectedPersistCount, string $exceptionMessage, array $data = [])
     {
-        $em = $this->getMockBuilder('\Doctrine\Persistence\ObjectManager')
-            ->disableOriginalConstructor()
-            ->getMock();
-        $em
-            ->expects($this->exactly($expectedPersistCount))
+        $em = $this->createMock(ObjectManager::class);
+        $em->expects($this->exactly($expectedPersistCount))
             ->method('persist')
-            ->will($this->returnCallback(function ($object) use ($options) {
-                if ('Oro\Bundle\CalendarBundle\Entity\CalendarEvent' === get_class($object)) {
+            ->willReturnCallback(function ($object) use ($options) {
+                if (CalendarEvent::class === get_class($object)) {
                     $this->assertEquals($options[CreateCalendarEventAction::OPTION_KEY_TITLE], $object->getTitle());
                     $this->assertEquals($options[CreateCalendarEventAction::OPTION_KEY_START], $object->getStart());
                     if (isset($options[CreateCalendarEventAction::OPTION_KEY_END])) {
@@ -71,7 +59,7 @@ class CreateCalendarEventActionTest extends \PHPUnit\Framework\TestCase
                     } elseif (isset($options[CreateCalendarEventAction::OPTION_KEY_DURATION])) {
                         $this->assertEquals(
                             $options[CreateCalendarEventAction::OPTION_KEY_START]
-                                ->modify('+ '.$options[CreateCalendarEventAction::OPTION_KEY_DURATION]),
+                                ->modify('+ ' . $options[CreateCalendarEventAction::OPTION_KEY_DURATION]),
                             $object->getEnd()
                         );
                     } else {
@@ -80,23 +68,22 @@ class CreateCalendarEventActionTest extends \PHPUnit\Framework\TestCase
                             $object->getEnd()
                         );
                     }
-                } elseif ('Oro\Bundle\ReminderBundle\Entity\Reminder' === get_class($object)) {
+                } elseif (Reminder::class === get_class($object)) {
                     $this->assertEquals($options[CreateCalendarEventAction::OPTION_KEY_TITLE], $object->getSubject());
                 } else {
-                    throw new \InvalidArgumentException(
-                        sprintf(
-                            'Persistent object must be "%s" or "%s"',
-                            self::CLASS_NAME_CALENDAR_EVENT,
-                            self::CLASS_NAME_REMINDER
-                        )
-                    );
+                    throw new \InvalidArgumentException(sprintf(
+                        'Persistent object must be "%s" or "%s"',
+                        CalendarEvent::class,
+                        Reminder::class
+                    ));
                 }
-            }))
-        ;
-        $this->registry->method('getManagerForClass')->willReturn($em);
+            });
+        $this->registry->expects($this->any())
+            ->method('getManagerForClass')
+            ->willReturn($em);
 
         if ($exceptionMessage) {
-            $this->expectException(\Oro\Component\Action\Exception\InvalidParameterException::class);
+            $this->expectException(InvalidParameterException::class);
             $this->expectExceptionMessage($exceptionMessage);
         }
 
@@ -106,10 +93,7 @@ class CreateCalendarEventActionTest extends \PHPUnit\Framework\TestCase
         $action->execute($context);
     }
 
-    /**
-     * @return array
-     */
-    public function executeDataProvider()
+    public function executeDataProvider(): array
     {
         return [
             'without options' => [
@@ -127,7 +111,7 @@ class CreateCalendarEventActionTest extends \PHPUnit\Framework\TestCase
             'only required options' => [
                 'options' => [
                     CreateCalendarEventAction::OPTION_KEY_TITLE => 'Title',
-                    CreateCalendarEventAction::OPTION_KEY_INITIATOR => $this->getUserMock(),
+                    CreateCalendarEventAction::OPTION_KEY_INITIATOR => $this->getUser(),
                     CreateCalendarEventAction::OPTION_KEY_START => new \DateTime(),
                 ],
                 'expectedPersistCount' => 1,
@@ -136,7 +120,7 @@ class CreateCalendarEventActionTest extends \PHPUnit\Framework\TestCase
             'with end' => [
                 'options' => [
                     CreateCalendarEventAction::OPTION_KEY_TITLE => 'Title',
-                    CreateCalendarEventAction::OPTION_KEY_INITIATOR => $this->getUserMock(),
+                    CreateCalendarEventAction::OPTION_KEY_INITIATOR => $this->getUser(),
                     CreateCalendarEventAction::OPTION_KEY_START => new \DateTime(),
                     CreateCalendarEventAction::OPTION_KEY_END => new \DateTime(),
                 ],
@@ -146,7 +130,7 @@ class CreateCalendarEventActionTest extends \PHPUnit\Framework\TestCase
             'with duration' => [
                 'options' => [
                     CreateCalendarEventAction::OPTION_KEY_TITLE => 'Title',
-                    CreateCalendarEventAction::OPTION_KEY_INITIATOR => $this->getUserMock(),
+                    CreateCalendarEventAction::OPTION_KEY_INITIATOR => $this->getUser(),
                     CreateCalendarEventAction::OPTION_KEY_START => new \DateTime(),
                     CreateCalendarEventAction::OPTION_KEY_DURATION => '2 hour 30 minutes',
                 ],
@@ -156,7 +140,7 @@ class CreateCalendarEventActionTest extends \PHPUnit\Framework\TestCase
             'with guests' => [
                 'options' => [
                     CreateCalendarEventAction::OPTION_KEY_TITLE => 'Title',
-                    CreateCalendarEventAction::OPTION_KEY_INITIATOR => $this->getUserMock(),
+                    CreateCalendarEventAction::OPTION_KEY_INITIATOR => $this->getUser(),
                     CreateCalendarEventAction::OPTION_KEY_START => new \DateTime(),
                     CreateCalendarEventAction::OPTION_KEY_END => new \DateTime(),
                     CreateCalendarEventAction::OPTION_KEY_GUESTS => new PropertyPath('data[guests]'),
@@ -164,16 +148,16 @@ class CreateCalendarEventActionTest extends \PHPUnit\Framework\TestCase
                 'expectedPersistCount' => 1,
                 'exceptionMessage' => '',
                 'data' => [
-                    'guests' => [$this->getUserMock(), $this->getUserMock()],
+                    'guests' => [$this->getUser(), $this->getUser()],
                 ],
             ],
             'with attribute' => [
                 'options' => [
                     CreateCalendarEventAction::OPTION_KEY_TITLE => 'Title',
-                    CreateCalendarEventAction::OPTION_KEY_INITIATOR => $this->getUserMock(),
+                    CreateCalendarEventAction::OPTION_KEY_INITIATOR => $this->getUser(),
                     CreateCalendarEventAction::OPTION_KEY_START => new \DateTime(),
                     CreateCalendarEventAction::OPTION_KEY_END => new \DateTime(),
-                    CreateCalendarEventAction::OPTION_KEY_GUESTS => [$this->getUserMock(), $this->getUserMock()],
+                    CreateCalendarEventAction::OPTION_KEY_GUESTS => [$this->getUser(), $this->getUser()],
                     CreateCalendarEventAction::OPTION_KEY_ATTRIBUTE => 'attribute',
                 ],
                 'expectedPersistCount' => 1,
@@ -182,10 +166,10 @@ class CreateCalendarEventActionTest extends \PHPUnit\Framework\TestCase
             'with reminders' => [
                 'options' => [
                     CreateCalendarEventAction::OPTION_KEY_TITLE => 'Title',
-                    CreateCalendarEventAction::OPTION_KEY_INITIATOR => $this->getUserMock(),
+                    CreateCalendarEventAction::OPTION_KEY_INITIATOR => $this->getUser(),
                     CreateCalendarEventAction::OPTION_KEY_START => new \DateTime(),
                     CreateCalendarEventAction::OPTION_KEY_END => new \DateTime(),
-                    CreateCalendarEventAction::OPTION_KEY_GUESTS => [$this->getUserMock(), $this->getUserMock()],
+                    CreateCalendarEventAction::OPTION_KEY_GUESTS => [$this->getUser(), $this->getUser()],
                     CreateCalendarEventAction::OPTION_KEY_REMINDERS => [[
                         CreateCalendarEventAction::OPTION_REMINDER_KEY_METHOD => 'email',
                         CreateCalendarEventAction::OPTION_REMINDER_KEY_INTERVAL_UNIT => 'H',
@@ -203,36 +187,29 @@ class CreateCalendarEventActionTest extends \PHPUnit\Framework\TestCase
         ];
     }
 
-    /**
-     * @return CreateCalendarEventAction
-     */
-    protected function getAction()
+    private function getAction(): CreateCalendarEventAction
     {
         $action = new CreateCalendarEventAction($this->contextAccessor, $this->registry);
-        $dispatcher = $this->getMockBuilder('Symfony\Component\EventDispatcher\EventDispatcher')
-            ->disableOriginalConstructor()
-            ->getMock();
+        $dispatcher = $this->createMock(EventDispatcher::class);
         $action->setDispatcher($dispatcher);
 
         return $action;
     }
 
-    /**
-     * @return \PHPUnit\Framework\MockObject\MockObject
-     */
-    protected function getUserMock()
+    private function getUser(): User
     {
-        $organization = $this->getMockBuilder('Oro\Bundle\OrganizationBundle\Entity\Organization')
-            ->disableOriginalConstructor()
-            ->setMethods(['getId'])
-            ->getMock();
-        $organization->method('getId')->willReturn(1);
-        $user = $this->getMockBuilder('Oro\Bundle\UserBundle\Entity\User')
-            ->disableOriginalConstructor()
-            ->setMethods(['getId', 'getOrganization'])
-            ->getMock();
-        $user->method('getId')->willReturn(1);
-        $user->method('getOrganization')->willReturn($organization);
+        $organization = $this->createMock(Organization::class);
+        $organization->expects($this->any())
+            ->method('getId')
+            ->willReturn(1);
+
+        $user = $this->createMock(User::class);
+        $user->expects($this->any())
+            ->method('getId')
+            ->willReturn(1);
+        $user->expects($this->any())
+            ->method('getOrganization')
+            ->willReturn($organization);
 
         return $user;
     }
