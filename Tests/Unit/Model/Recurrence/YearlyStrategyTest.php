@@ -5,6 +5,7 @@ namespace Oro\Bundle\CalendarBundle\Tests\Unit\Model\Recurrence;
 use Oro\Bundle\CalendarBundle\Entity;
 use Oro\Bundle\CalendarBundle\Model\Recurrence;
 use Oro\Bundle\CalendarBundle\Model\Recurrence\YearlyStrategy;
+use Oro\Bundle\LocaleBundle\Formatter\DateTimeFormatterInterface;
 use Oro\Bundle\LocaleBundle\Model\LocaleSettings;
 use Symfony\Component\Translation\Translator;
 
@@ -13,25 +14,15 @@ class YearlyStrategyTest extends AbstractTestStrategy
     /** @var YearlyStrategy  */
     protected $strategy;
 
-    /** @var \PHPUnit\Framework\MockObject\MockObject */
-    protected $validator;
-
     protected function setUp(): void
     {
-        $this->validator = $this->getMockBuilder('Symfony\Component\Validator\Validator\ValidatorInterface')
-            ->getMock();
-        /** @var \PHPUnit\Framework\MockObject\MockObject|Translator */
-        $translator = $this->createMock('Symfony\Component\Translation\Translator');
+        $translator = $this->createMock(Translator::class);
         $translator->expects($this->any())
             ->method('trans')
-            ->will(
-                $this->returnCallback(
-                    function ($id, array $parameters = []) {
-                        return $id . implode($parameters);
-                    }
-                )
-            );
-        $dateTimeFormatter = $this->createMock('Oro\Bundle\LocaleBundle\Formatter\DateTimeFormatterInterface');
+            ->willReturnCallback(function ($id, array $parameters = []) {
+                return $id . implode($parameters);
+            });
+        $dateTimeFormatter = $this->createMock(DateTimeFormatterInterface::class);
 
         $dateTimeFormatter->expects($this->any())
             ->method('formatDay')
@@ -39,21 +30,17 @@ class YearlyStrategyTest extends AbstractTestStrategy
                 return $date->setTimezone(new \DateTimeZone('UTC'))->format('M d');
             });
 
-        /** @var LocaleSettings|\PHPUnit\Framework\MockObject\MockObject $localeSettings */
-        $localeSettings = $this->getMockBuilder('Oro\Bundle\LocaleBundle\Model\LocaleSettings')
-            ->disableOriginalConstructor()
-            ->setMethods(['getTimezone'])
-            ->getMock();
+        $localeSettings = $this->createMock(LocaleSettings::class);
         $localeSettings->expects($this->any())
             ->method('getTimezone')
-            ->will($this->returnValue('UTC'));
+            ->willReturn('UTC');
 
         $this->strategy = new YearlyStrategy($translator, $dateTimeFormatter, $localeSettings);
     }
 
     public function testGetName()
     {
-        $this->assertEquals($this->strategy->getName(), 'recurrence_yearly');
+        $this->assertEquals('recurrence_yearly', $this->strategy->getName());
     }
 
     public function testSupports()
@@ -67,12 +54,9 @@ class YearlyStrategyTest extends AbstractTestStrategy
     }
 
     /**
-     * @param $recurrenceData
-     * @param $expected
-     *
      * @dataProvider recurrencePatternsDataProvider
      */
-    public function testGetTextValue($recurrenceData, $expected)
+    public function testGetTextValue(array $recurrenceData, string $expected)
     {
         $recurrence = new Entity\Recurrence();
         $recurrence->setRecurrenceType(Recurrence::TYPE_YEARLY)
@@ -94,12 +78,9 @@ class YearlyStrategyTest extends AbstractTestStrategy
     }
 
     /**
-     * @param $recurrenceData
-     * @param $expected
-     *
      * @dataProvider recurrenceLastOccurrenceDataProvider
      */
-    public function testGetCalculatedEndTime($recurrenceData, $expected)
+    public function testGetCalculatedEndTime(array $recurrenceData, \DateTime $expected)
     {
         $recurrence = new Entity\Recurrence();
         $recurrence->setRecurrenceType(Recurrence::TYPE_YEARLY)
@@ -118,11 +99,9 @@ class YearlyStrategyTest extends AbstractTestStrategy
     }
 
     /**
-     * @return array
-     *
      * @SuppressWarnings(PHPMD.ExcessiveMethodLength)
      */
-    public function propertiesDataProvider()
+    public function propertiesDataProvider(): array
     {
         return [
             /**
@@ -273,10 +252,7 @@ class YearlyStrategyTest extends AbstractTestStrategy
         ];
     }
 
-    /**
-     * @return array
-     */
-    public function recurrencePatternsDataProvider()
+    public function recurrencePatternsDataProvider(): array
     {
         return [
             'without_occurrences_and_end_date' => [
@@ -343,10 +319,7 @@ class YearlyStrategyTest extends AbstractTestStrategy
         ];
     }
 
-    /**
-     * @return array
-     */
-    public function recurrenceLastOccurrenceDataProvider()
+    public function recurrenceLastOccurrenceDataProvider(): array
     {
         return [
             'without_end_date' => [
@@ -407,10 +380,7 @@ class YearlyStrategyTest extends AbstractTestStrategy
         ];
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    protected function getType()
+    protected function getType(): string
     {
         return Recurrence::TYPE_YEARLY;
     }
