@@ -61,8 +61,8 @@ class CalendarEventWithEmptyAttendeesSavedTest extends AbstractUseCaseTestCase
     {
         $request = [
             'calendar'    => $calendarId,
-            'start'       => '2016-06-26T00:00:00P',
-            'end'         => '2016-08-07T00:00:00P',
+            'start'       => '2016-06-26T00:00:00+00:00',
+            'end'         => '2016-08-07T00:00:00+00:00',
             'subordinate' => true,
         ];
 
