@@ -47,9 +47,9 @@ class RecurringEventNewAttendeeHasAllCancelledEventsTest extends AbstractUseCase
                 'recurrenceType' => Recurrence::TYPE_WEEKLY,
                 'interval'       => 1,
                 'dayOfWeek'      => ['saturday'],
-                'startTime'      => '2016-07-01T00:00:00P',
+                'startTime'      => '2016-07-01T00:00:00+00:00',
                 'occurrences'    => 5,
-                'endTime'        => '2016-07-30T00:00:00P',
+                'endTime'        => '2016-07-30T00:00:00+00:00',
             ],
             'attendees'   => [$attendee1],
         ];
@@ -260,8 +260,8 @@ class RecurringEventNewAttendeeHasAllCancelledEventsTest extends AbstractUseCase
     {
         $request = [
             'calendar'    => $calendarId,
-            'start'       => '2016-06-26T00:00:00P',
-            'end'         => '2016-08-07T00:00:00P',
+            'start'       => '2016-06-26T00:00:00+00:00',
+            'end'         => '2016-08-07T00:00:00+00:00',
             'subordinate' => true,
         ];
 
