@@ -8,7 +8,6 @@ use Oro\Bundle\CalendarBundle\Model\Recurrence;
 use Oro\Bundle\CalendarBundle\Model\Recurrence\StrategyInterface;
 use Oro\Bundle\FormBundle\Form\Type\OroDateTimeType;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
-use Symfony\Component\Form\Extension\Core\Type\DateTimeType;
 use Symfony\Component\Form\Extension\Core\Type\IntegerType;
 use Symfony\Component\Form\Extension\Core\Type\TimezoneType;
 use Symfony\Component\Form\FormBuilder;
@@ -100,8 +99,7 @@ class RecurrenceFormTypeTest extends \PHPUnit\Framework\TestCase
                     'label' => 'oro.calendar.recurrence.start_time.label',
                     'with_seconds' => true,
                     'model_timezone' => 'UTC',
-                    'widget' => 'single_text',
-                    'format' => DateTimeType::HTML5_FORMAT,
+                    'widget' => 'single_text'
                 ]
             ],
             [
@@ -112,8 +110,7 @@ class RecurrenceFormTypeTest extends \PHPUnit\Framework\TestCase
                     'label' => 'oro.calendar.recurrence.end_time.label',
                     'with_seconds' => true,
                     'model_timezone' => 'UTC',
-                    'widget' => 'single_text',
-                    'format' => DateTimeType::HTML5_FORMAT,
+                    'widget' => 'single_text'
                 ]
             ],
             [
