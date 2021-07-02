@@ -26,7 +26,7 @@ menu_config:
             extras:
                 position: 20
                 module: 'orocalendar/js/calendar/menu/remove-calendar'
-                template: 'OroCalendarBundle:Calendar:Menu/removeCalendar.html.twig'
+                template: '@OroCalendar/Calendar/Menu/removeCalendar.html.twig'
     tree:
         calendar_menu:
             type: calendar_menu
