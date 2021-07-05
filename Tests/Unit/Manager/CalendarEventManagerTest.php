@@ -2,12 +2,22 @@
 
 namespace Oro\Bundle\CalendarBundle\Tests\Unit\Manager;
 
+use Doctrine\ORM\AbstractQuery;
+use Doctrine\ORM\QueryBuilder;
+use Doctrine\Persistence\ManagerRegistry;
+use Doctrine\Persistence\ObjectRepository;
 use Oro\Bundle\CalendarBundle\Entity\Calendar;
 use Oro\Bundle\CalendarBundle\Entity\CalendarEvent;
+use Oro\Bundle\CalendarBundle\Entity\Repository\CalendarRepository;
+use Oro\Bundle\CalendarBundle\Entity\Repository\SystemCalendarRepository;
 use Oro\Bundle\CalendarBundle\Entity\SystemCalendar;
+use Oro\Bundle\CalendarBundle\Exception\ChangeInvitationStatusException;
+use Oro\Bundle\CalendarBundle\Manager\CalendarEvent\UpdateManager;
 use Oro\Bundle\CalendarBundle\Manager\CalendarEventManager;
+use Oro\Bundle\CalendarBundle\Provider\SystemCalendarConfig;
 use Oro\Bundle\CalendarBundle\Tests\Unit\Fixtures\Entity\Attendee;
 use Oro\Bundle\CalendarBundle\Tests\Unit\Fixtures\Entity\User;
+use Oro\Bundle\EntityBundle\Provider\EntityNameResolver;
 use Oro\Bundle\EntityExtendBundle\Tests\Unit\Fixtures\TestEnumValue;
 use Oro\Bundle\OrganizationBundle\Entity\Organization;
 use Oro\Bundle\SecurityBundle\Authentication\TokenAccessorInterface;
@@ -19,39 +29,30 @@ use Oro\Component\Testing\ReflectionUtil;
 class CalendarEventManagerTest extends \PHPUnit\Framework\TestCase
 {
     /** @var \PHPUnit\Framework\MockObject\MockObject */
-    protected $updateManager;
+    private $updateManager;
 
     /** @var \PHPUnit\Framework\MockObject\MockObject */
-    protected $doctrine;
+    private $doctrine;
 
     /** @var \PHPUnit\Framework\MockObject\MockObject */
-    protected $tokenAccessor;
+    private $tokenAccessor;
 
     /** @var \PHPUnit\Framework\MockObject\MockObject */
-    protected $entityNameResolver;
+    private $entityNameResolver;
 
     /** @var \PHPUnit\Framework\MockObject\MockObject */
-    protected $calendarConfig;
+    private $calendarConfig;
 
     /** @var CalendarEventManager */
-    protected $manager;
+    private $manager;
 
     protected function setUp(): void
     {
-        $this->updateManager      = $this->getMockBuilder(
-            'Oro\Bundle\CalendarBundle\Manager\CalendarEvent\UpdateManager'
-        )
-            ->disableOriginalConstructor()
-            ->getMock();
-        $this->doctrine           = $this->createMock('Doctrine\Persistence\ManagerRegistry');
+        $this->updateManager = $this->createMock(UpdateManager::class);
+        $this->doctrine = $this->createMock(ManagerRegistry::class);
         $this->tokenAccessor = $this->createMock(TokenAccessorInterface::class);
-        $this->entityNameResolver = $this->getMockBuilder('Oro\Bundle\EntityBundle\Provider\EntityNameResolver')
-            ->disableOriginalConstructor()
-            ->getMock();
-        $this->calendarConfig     =
-            $this->getMockBuilder('Oro\Bundle\CalendarBundle\Provider\SystemCalendarConfig')
-                ->disableOriginalConstructor()
-                ->getMock();
+        $this->entityNameResolver = $this->createMock(EntityNameResolver::class);
+        $this->calendarConfig = $this->createMock(SystemCalendarConfig::class);
 
         $this->manager = new CalendarEventManager(
             $this->updateManager,
@@ -71,36 +72,29 @@ class CalendarEventManagerTest extends \PHPUnit\Framework\TestCase
 
         $this->tokenAccessor->expects($this->once())
             ->method('getOrganizationId')
-            ->will($this->returnValue($organizationId));
+            ->willReturn($organizationId);
 
-        $repo = $this->getMockBuilder('Oro\Bundle\CalendarBundle\Entity\Repository\SystemCalendarRepository')
-            ->disableOriginalConstructor()
-            ->getMock();
+        $repo = $this->createMock(SystemCalendarRepository::class);
         $this->doctrine->expects($this->once())
             ->method('getRepository')
             ->with('OroCalendarBundle:SystemCalendar')
-            ->will($this->returnValue($repo));
-        $qb = $this->getMockBuilder('Doctrine\ORM\QueryBuilder')
-            ->disableOriginalConstructor()
-            ->getMock();
+            ->willReturn($repo);
+        $qb = $this->createMock(QueryBuilder::class);
         $repo->expects($this->once())
             ->method('getCalendarsQueryBuilder')
             ->with($organizationId)
-            ->will($this->returnValue($qb));
+            ->willReturn($qb);
         $qb->expects($this->once())
             ->method('select')
             ->with('sc.id, sc.name, sc.public')
-            ->will($this->returnSelf());
-        $query = $this->getMockBuilder('Doctrine\ORM\AbstractQuery')
-            ->disableOriginalConstructor()
-            ->setMethods(['getArrayResult'])
-            ->getMockForAbstractClass();
+            ->willReturnSelf();
+        $query = $this->createMock(AbstractQuery::class);
         $qb->expects($this->once())
             ->method('getQuery')
-            ->will($this->returnValue($query));
+            ->willReturn($query);
         $query->expects($this->once())
             ->method('getArrayResult')
-            ->will($this->returnValue($calendars));
+            ->willReturn($calendars);
 
         $result = $this->manager->getSystemCalendars();
         $this->assertEquals($calendars, $result);
@@ -109,56 +103,49 @@ class CalendarEventManagerTest extends \PHPUnit\Framework\TestCase
     public function testGetUserCalendars()
     {
         $organizationId = 1;
-        $userId         = 10;
-        $user           = new User();
-        $calendars      = [
+        $userId = 10;
+        $user = new User();
+        $calendars = [
             ['id' => 100, 'name' => null],
             ['id' => 200, 'name' => 'name2'],
         ];
 
         $this->tokenAccessor->expects($this->once())
             ->method('getOrganizationId')
-            ->will($this->returnValue($organizationId));
+            ->willReturn($organizationId);
         $this->tokenAccessor->expects($this->once())
             ->method('getUserId')
-            ->will($this->returnValue($userId));
+            ->willReturn($userId);
         $this->tokenAccessor->expects($this->once())
             ->method('getUser')
-            ->will($this->returnValue($user));
+            ->willReturn($user);
 
-        $repo = $this->getMockBuilder('Oro\Bundle\CalendarBundle\Entity\Repository\CalendarRepository')
-            ->disableOriginalConstructor()
-            ->getMock();
+        $repo = $this->createMock(CalendarRepository::class);
         $this->doctrine->expects($this->once())
             ->method('getRepository')
             ->with('OroCalendarBundle:Calendar')
-            ->will($this->returnValue($repo));
-        $qb = $this->getMockBuilder('Doctrine\ORM\QueryBuilder')
-            ->disableOriginalConstructor()
-            ->getMock();
+            ->willReturn($repo);
+        $qb = $this->createMock(QueryBuilder::class);
         $repo->expects($this->once())
             ->method('getUserCalendarsQueryBuilder')
             ->with($organizationId)
-            ->will($this->returnValue($qb));
+            ->willReturn($qb);
         $qb->expects($this->once())
             ->method('select')
             ->with('c.id, c.name')
-            ->will($this->returnSelf());
-        $query = $this->getMockBuilder('Doctrine\ORM\AbstractQuery')
-            ->disableOriginalConstructor()
-            ->setMethods(['getArrayResult'])
-            ->getMockForAbstractClass();
+            ->willReturnSelf();
+        $query = $this->createMock(AbstractQuery::class);
         $qb->expects($this->once())
             ->method('getQuery')
-            ->will($this->returnValue($query));
+            ->willReturn($query);
         $query->expects($this->once())
             ->method('getArrayResult')
-            ->will($this->returnValue($calendars));
+            ->willReturn($calendars);
 
         $this->entityNameResolver->expects($this->once())
             ->method('getName')
             ->with($this->identicalTo($user))
-            ->will($this->returnValue('name1'));
+            ->willReturn('name1');
 
         $result = $this->manager->getUserCalendars();
         $this->assertEquals(
@@ -183,22 +170,20 @@ class CalendarEventManagerTest extends \PHPUnit\Framework\TestCase
     public function testSetUserCalendar()
     {
         $calendarId = 123;
-        $calendar   = new Calendar();
+        $calendar = new Calendar();
         ReflectionUtil::setId($calendar, $calendarId);
 
         $event = new CalendarEvent();
 
-        $repo = $this->getMockBuilder('Oro\Bundle\CalendarBundle\Entity\Repository\CalendarRepository')
-            ->disableOriginalConstructor()
-            ->getMock();
+        $repo = $this->createMock(CalendarRepository::class);
         $this->doctrine->expects($this->once())
             ->method('getRepository')
             ->with('OroCalendarBundle:Calendar')
-            ->will($this->returnValue($repo));
+            ->willReturn($repo);
         $repo->expects($this->once())
             ->method('find')
             ->with($calendarId)
-            ->will($this->returnValue($calendar));
+            ->willReturn($calendar);
 
         $this->manager->setCalendar($event, Calendar::CALENDAR_ALIAS, $calendarId);
 
@@ -208,7 +193,7 @@ class CalendarEventManagerTest extends \PHPUnit\Framework\TestCase
     public function testSetSameUserCalendar()
     {
         $calendarId = 123;
-        $calendar   = new Calendar();
+        $calendar = new Calendar();
         ReflectionUtil::setId($calendar, $calendarId);
 
         $event = new CalendarEvent();
@@ -225,7 +210,7 @@ class CalendarEventManagerTest extends \PHPUnit\Framework\TestCase
     public function testSetSystemCalendar()
     {
         $calendarId = 123;
-        $calendar   = new SystemCalendar();
+        $calendar = new SystemCalendar();
         $calendar->setPublic(false);
         ReflectionUtil::setId($calendar, $calendarId);
 
@@ -233,18 +218,16 @@ class CalendarEventManagerTest extends \PHPUnit\Framework\TestCase
 
         $this->calendarConfig->expects($this->once())
             ->method('isSystemCalendarEnabled')
-            ->will($this->returnValue(true));
-        $repo = $this->getMockBuilder('Oro\Bundle\CalendarBundle\Entity\Repository\SystemCalendarRepository')
-            ->disableOriginalConstructor()
-            ->getMock();
+            ->willReturn(true);
+        $repo = $this->createMock(SystemCalendarRepository::class);
         $this->doctrine->expects($this->once())
             ->method('getRepository')
             ->with('OroCalendarBundle:SystemCalendar')
-            ->will($this->returnValue($repo));
+            ->willReturn($repo);
         $repo->expects($this->once())
             ->method('find')
             ->with($calendarId)
-            ->will($this->returnValue($calendar));
+            ->willReturn($calendar);
 
         $this->manager->setCalendar($event, SystemCalendar::CALENDAR_ALIAS, $calendarId);
 
@@ -254,7 +237,7 @@ class CalendarEventManagerTest extends \PHPUnit\Framework\TestCase
     public function testSetPublicCalendar()
     {
         $calendarId = 123;
-        $calendar   = new SystemCalendar();
+        $calendar = new SystemCalendar();
         $calendar->setPublic(true);
         ReflectionUtil::setId($calendar, $calendarId);
 
@@ -262,18 +245,16 @@ class CalendarEventManagerTest extends \PHPUnit\Framework\TestCase
 
         $this->calendarConfig->expects($this->once())
             ->method('isPublicCalendarEnabled')
-            ->will($this->returnValue(true));
-        $repo = $this->getMockBuilder('Oro\Bundle\CalendarBundle\Entity\Repository\SystemCalendarRepository')
-            ->disableOriginalConstructor()
-            ->getMock();
+            ->willReturn(true);
+        $repo = $this->createMock(SystemCalendarRepository::class);
         $this->doctrine->expects($this->once())
             ->method('getRepository')
             ->with('OroCalendarBundle:SystemCalendar')
-            ->will($this->returnValue($repo));
+            ->willReturn($repo);
         $repo->expects($this->once())
             ->method('find')
             ->with($calendarId)
-            ->will($this->returnValue($calendar));
+            ->willReturn($calendar);
 
         $this->manager->setCalendar($event, SystemCalendar::PUBLIC_CALENDAR_ALIAS, $calendarId);
 
@@ -299,16 +280,16 @@ class CalendarEventManagerTest extends \PHPUnit\Framework\TestCase
 
         $status = new TestEnumValue(Attendee::STATUS_ACCEPTED, Attendee::STATUS_ACCEPTED);
 
-        $statusRepository = $this->createMock('Doctrine\Persistence\ObjectRepository');
+        $statusRepository = $this->createMock(ObjectRepository::class);
         $statusRepository->expects($this->any())
             ->method('find')
             ->with(Attendee::STATUS_ACCEPTED)
-            ->will($this->returnValue($status));
+            ->willReturn($status);
 
         $this->doctrine->expects($this->any())
             ->method('getRepository')
             ->with('Extend\Entity\EV_Ce_Attendee_Status')
-            ->will($this->returnValue($statusRepository));
+            ->willReturn($statusRepository);
 
         $attendee = new Attendee();
         $attendee->setUser($user);
@@ -323,7 +304,7 @@ class CalendarEventManagerTest extends \PHPUnit\Framework\TestCase
 
     public function testChangeInvitationStatusWithEmptyRelatedAttendee()
     {
-        $this->expectException(\Oro\Bundle\CalendarBundle\Exception\ChangeInvitationStatusException::class);
+        $this->expectException(ChangeInvitationStatusException::class);
         $this->expectExceptionMessage('Cannot change invitation status of the event with no related attendee.');
 
         $user = new User();
@@ -334,22 +315,22 @@ class CalendarEventManagerTest extends \PHPUnit\Framework\TestCase
 
     public function testChangeInvitationStatusWithNonExistingStatus()
     {
-        $this->expectException(\Oro\Bundle\CalendarBundle\Exception\ChangeInvitationStatusException::class);
+        $this->expectException(ChangeInvitationStatusException::class);
         $this->expectExceptionMessage('Status "accepted" does not exists');
 
         $user = new User();
         $user->setId(100);
 
-        $statusRepository = $this->createMock('Doctrine\Persistence\ObjectRepository');
+        $statusRepository = $this->createMock(ObjectRepository::class);
         $statusRepository->expects($this->any())
             ->method('find')
             ->with(Attendee::STATUS_ACCEPTED)
-            ->will($this->returnValue(null));
+            ->willReturn(null);
 
         $this->doctrine->expects($this->any())
             ->method('getRepository')
             ->with('Extend\Entity\EV_Ce_Attendee_Status')
-            ->will($this->returnValue($statusRepository));
+            ->willReturn($statusRepository);
 
         $attendee = new Attendee();
         $attendee->setUser($user);
@@ -361,7 +342,7 @@ class CalendarEventManagerTest extends \PHPUnit\Framework\TestCase
 
     public function testChangeInvitationStatusWithDifferentRelatedAttendeeUser()
     {
-        $this->expectException(\Oro\Bundle\CalendarBundle\Exception\ChangeInvitationStatusException::class);
+        $this->expectException(ChangeInvitationStatusException::class);
         $this->expectExceptionMessage('Cannot change invitation status of the event.');
 
         $user = new User();
@@ -369,16 +350,16 @@ class CalendarEventManagerTest extends \PHPUnit\Framework\TestCase
 
         $status = new TestEnumValue(Attendee::STATUS_ACCEPTED, Attendee::STATUS_ACCEPTED);
 
-        $statusRepository = $this->createMock('Doctrine\Persistence\ObjectRepository');
+        $statusRepository = $this->createMock(ObjectRepository::class);
         $statusRepository->expects($this->any())
             ->method('find')
             ->with(Attendee::STATUS_ACCEPTED)
-            ->will($this->returnValue($status));
+            ->willReturn($status);
 
         $this->doctrine->expects($this->any())
             ->method('getRepository')
             ->with('Extend\Entity\EV_Ce_Attendee_Status')
-            ->will($this->returnValue($statusRepository));
+            ->willReturn($statusRepository);
 
         $attendee = new Attendee();
         $attendee->setUser(new User());
@@ -388,19 +369,14 @@ class CalendarEventManagerTest extends \PHPUnit\Framework\TestCase
         $this->manager->changeInvitationStatus($event, Attendee::STATUS_ACCEPTED, $user);
     }
 
-    /**
-     * @param Attendee $relatedAttendee
-     * @return CalendarEvent|\PHPUnit\Framework\MockObject\MockObject
-     */
-    protected function getCalendarEventWithExpectedRelatedAttendee(Attendee $relatedAttendee)
+    private function getCalendarEventWithExpectedRelatedAttendee(Attendee $relatedAttendee): CalendarEvent
     {
         $result = $this->getMockBuilder(CalendarEvent::class)
-            ->setMethods(['getRelatedAttendee'])
+            ->onlyMethods(['getRelatedAttendee'])
             ->getMock();
-
         $result->expects($this->any())
             ->method('getRelatedAttendee')
-            ->will($this->returnValue($relatedAttendee));
+            ->willReturn($relatedAttendee);
 
         $result->addAttendee($relatedAttendee);
 

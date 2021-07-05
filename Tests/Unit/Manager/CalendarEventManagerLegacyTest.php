@@ -3,11 +3,11 @@
 namespace Oro\Bundle\CalendarBundle\Tests\Unit\Manager;
 
 use Doctrine\Common\Collections\ArrayCollection;
-use Doctrine\ORM\EntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
 use Oro\Bundle\CalendarBundle\Entity\Calendar;
 use Oro\Bundle\CalendarBundle\Entity\CalendarEvent;
 use Oro\Bundle\CalendarBundle\Entity\Repository\CalendarEventRepository;
+use Oro\Bundle\CalendarBundle\Entity\Repository\CalendarRepository;
 use Oro\Bundle\CalendarBundle\Manager\AttendeeManager;
 use Oro\Bundle\CalendarBundle\Manager\AttendeeRelationManager;
 use Oro\Bundle\CalendarBundle\Manager\CalendarEvent\DeleteManager;
@@ -32,22 +32,19 @@ use Oro\Bundle\SecurityBundle\Authentication\TokenAccessorInterface;
 class CalendarEventManagerLegacyTest extends \PHPUnit\Framework\TestCase
 {
     /** @var CalendarEventManager */
-    protected $calendarEventManager;
+    private $calendarEventManager;
 
     protected function setUp(): void
     {
-        $repository = $this->getMockBuilder(EntityRepository::class)
-            ->setMethods(['find', 'findDefaultCalendars'])
-            ->disableOriginalConstructor()
-            ->getMock();
+        $repository = $this->createMock(CalendarRepository::class);
         $repository->expects($this->any())
             ->method('find')
-            ->will($this->returnCallback(function ($id) {
+            ->willReturnCallback(function ($id) {
                 return new TestEnumValue($id, $id);
-            }));
+            });
         $repository->expects($this->any())
             ->method('findDefaultCalendars')
-            ->will($this->returnCallback(function ($userIds) {
+            ->willReturnCallback(function ($userIds) {
                 return array_map(
                     function ($userId) {
                         return (new Calendar())
@@ -55,11 +52,9 @@ class CalendarEventManagerLegacyTest extends \PHPUnit\Framework\TestCase
                     },
                     $userIds
                 );
-            }));
+            });
 
-        $calendarEventRepository = $this->getMockBuilder(CalendarEventRepository::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $calendarEventRepository = $this->createMock(CalendarEventRepository::class);
         $calendarEventRepository->expects($this->any())
             ->method('findEventsWithMatchingUidAndOrganizer')
             ->willReturn([]);
@@ -67,43 +62,24 @@ class CalendarEventManagerLegacyTest extends \PHPUnit\Framework\TestCase
         $doctrine = $this->createMock(ManagerRegistry::class);
         $doctrine->expects($this->any())
             ->method('getRepository')
-            ->will($this->returnValueMap([
+            ->willReturnMap([
                 ['Extend\Entity\EV_Ce_Attendee_Status', null, $repository],
                 ['Extend\Entity\EV_Ce_Attendee_Type', null, $repository],
                 ['OroCalendarBundle:Calendar', null, $repository],
                 [CalendarEvent::class, null, $calendarEventRepository],
-            ]));
+            ]);
 
         $doctrineHelper = $this->createMock(DoctrineHelper::class);
         $doctrineHelper->expects($this->any())
             ->method('getEntityManagerForClass')
             ->willReturn($doctrine);
 
-        $attendeeRelationManager = $this
-            ->getMockBuilder(AttendeeRelationManager::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-
-
+        $attendeeRelationManager = $this->createMock(AttendeeRelationManager::class);
         $tokenAccessor = $this->createMock(TokenAccessorInterface::class);
-
-        $entityNameResolver = $this->getMockBuilder(EntityNameResolver::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-
-        $calendarConfig = $this->getMockBuilder(SystemCalendarConfig::class)
-                ->disableOriginalConstructor()
-                ->getMock();
-
-        $attendeeManager = $this
-            ->getMockBuilder(AttendeeManager::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-
-        $deleteManager = $this
-            ->getMockBuilder(DeleteManager::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $entityNameResolver = $this->createMock(EntityNameResolver::class);
+        $calendarConfig = $this->createMock(SystemCalendarConfig::class);
+        $attendeeManager = $this->createMock(AttendeeManager::class);
+        $deleteManager = $this->createMock(DeleteManager::class);
 
         $updateManager = new UpdateManager(
             new UpdateAttendeeManager($attendeeRelationManager, $doctrine),
@@ -272,11 +248,7 @@ class CalendarEventManagerLegacyTest extends \PHPUnit\Framework\TestCase
         $this->assertEquals('attendee2@example.com', $attendees->get(1)->getDisplayName());
     }
 
-    /**
-     * @param CalendarEvent $expected
-     * @param CalendarEvent $actual
-     */
-    protected function assertEventDataEquals(CalendarEvent $expected, CalendarEvent $actual)
+    private function assertEventDataEquals(CalendarEvent $expected, CalendarEvent $actual)
     {
         $this->assertEquals($expected->getTitle(), $actual->getTitle());
         $this->assertEquals($expected->getDescription(), $actual->getDescription());
@@ -285,20 +257,14 @@ class CalendarEventManagerLegacyTest extends \PHPUnit\Framework\TestCase
         $this->assertEquals($expected->getAllDay(), $actual->getAllDay());
     }
 
-
-    /**
-     * @param Attendee $relatedAttendee
-     * @return CalendarEvent|\PHPUnit\Framework\MockObject\MockObject
-     */
-    protected function getCalendarEventWithExpectedRelatedAttendee(Attendee $relatedAttendee)
+    private function getCalendarEventWithExpectedRelatedAttendee(Attendee $relatedAttendee): CalendarEvent
     {
         $result = $this->getMockBuilder(CalendarEvent::class)
-            ->setMethods(['findRelatedAttendee'])
+            ->onlyMethods(['findRelatedAttendee'])
             ->getMock();
-
         $result->expects($this->any())
             ->method('findRelatedAttendee')
-            ->will($this->returnValue($relatedAttendee));
+            ->willReturn($relatedAttendee);
 
         $result->setRelatedAttendee($relatedAttendee);
 

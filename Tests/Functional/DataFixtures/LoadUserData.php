@@ -134,7 +134,7 @@ class LoadUserData extends AbstractFixture implements DependentFixtureInterface
                 $role = $manager->getRepository(Role::class)->findOneBy(['role' => User::ROLE_ADMINISTRATOR]);
             }
             unset($data['isAdministrator']);
-            $user->addRole($role);
+            $user->addUserRole($role);
 
             $this->resolveReferences($data, ['organization']);
             $this->setEntityPropertyValues(

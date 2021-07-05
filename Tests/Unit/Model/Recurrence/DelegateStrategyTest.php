@@ -57,10 +57,6 @@ class DelegateStrategyTest extends \PHPUnit\Framework\TestCase
     }
 
     /**
-     * @param string $method
-     * @param array $arguments
-     * @param mixed $returnValue
-     *
      * @dataProvider delegateMethodsDataProvider
      */
     public function testDelegateMethodWorks(string $method, array $arguments, $returnValue)
@@ -160,7 +156,7 @@ class DelegateStrategyTest extends \PHPUnit\Framework\TestCase
     /**
      * @return StrategyInterface|\PHPUnit\Framework\MockObject\MockObject
      */
-    private function createStrategy(string $name)
+    private function createStrategy(string $name): StrategyInterface
     {
         $result = $this->createMock(StrategyInterface::class);
         $result->expects($this->once())

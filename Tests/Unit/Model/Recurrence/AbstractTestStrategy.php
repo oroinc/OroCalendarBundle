@@ -10,25 +10,15 @@ abstract class AbstractTestStrategy extends \PHPUnit\Framework\TestCase
     protected $strategy;
 
     /** @var \DateTimeZone */
-    protected $timeZone;
+    private $timeZone;
+
+    abstract public function propertiesDataProvider(): array;
+
+    abstract protected function getType(): string;
 
     /**
-     * @return array
-     */
-    abstract public function propertiesDataProvider();
-
-    /**
-     * @return string
-     */
-    abstract protected function getType();
-
-    /**
-     * @SuppressWarnings(PHPMD.NPathComplexity)
-     *
-     * @param array $params
-     * @param array $expected
-     *
      * @dataProvider propertiesDataProvider
+     * @SuppressWarnings(PHPMD.NPathComplexity)
      */
     public function testGetOccurrences(array $params, array $expected)
     {
@@ -76,10 +66,7 @@ abstract class AbstractTestStrategy extends \PHPUnit\Framework\TestCase
         $this->assertEquals($expected, $result);
     }
 
-    /**
-     * @return \DateTimeZone
-     */
-    protected function getTimeZone()
+    protected function getTimeZone(): \DateTimeZone
     {
         if ($this->timeZone === null) {
             $this->timeZone = new \DateTimeZone('UTC');
