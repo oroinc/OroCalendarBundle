@@ -7,36 +7,26 @@ use Oro\Bundle\CalendarBundle\Entity\SystemCalendar;
 use Oro\Bundle\CalendarBundle\Tests\Unit\Fixtures\Entity\CalendarEvent;
 use Oro\Bundle\CalendarBundle\Validator\Constraints\Attendee;
 use Oro\Bundle\CalendarBundle\Validator\Constraints\AttendeeValidator;
-use Symfony\Component\Validator\Context\ExecutionContextInterface;
+use Symfony\Component\Validator\Test\ConstraintValidatorTestCase;
 
-class AttendeeValidatorTest extends \PHPUnit\Framework\TestCase
+class AttendeeValidatorTest extends ConstraintValidatorTestCase
 {
-    /** @var ExecutionContextInterface */
-    protected $context;
-
-    /** @var AttendeeValidator */
-    protected $validator;
-
-    protected function setUp(): void
+    protected function createValidator()
     {
-        $this->context = $this->createMock(ExecutionContextInterface::class);
-
-        $this->validator = new AttendeeValidator();
-        $this->validator->initialize($this->context);
+        return new AttendeeValidator();
     }
 
     /**
      * @dataProvider validValuesProvider
      */
-    public function testValidValues($value)
+    public function testValidValues(AttendeeEntity $value)
     {
-        $this->context->expects($this->never())
-            ->method('addViolation');
-
         $this->validator->validate($value, new Attendee());
+
+        $this->assertNoViolation();
     }
 
-    public function validValuesProvider()
+    public function validValuesProvider(): array
     {
         return [
             [
@@ -62,22 +52,14 @@ class AttendeeValidatorTest extends \PHPUnit\Framework\TestCase
         ];
     }
 
-    /**
-     * @dataProvider testInvalidValuesProvider
-     */
-    public function testInvalidValues($value)
+    public function testInvalidValue()
     {
-        $this->context->expects($this->once())
-            ->method('addViolation')
-            ->with('Email or display name have to be specified.');
+        $value = (new AttendeeEntity())->setCalendarEvent(new CalendarEvent(1));
 
-        $this->validator->validate($value, new Attendee());
-    }
+        $constraint = new Attendee();
+        $this->validator->validate($value, $constraint);
 
-    public function testInvalidValuesProvider()
-    {
-        return [
-            [(new AttendeeEntity())->setCalendarEvent(new CalendarEvent(1))]
-        ];
+        $this->buildViolation($constraint->message)
+            ->assertRaised();
     }
 }
