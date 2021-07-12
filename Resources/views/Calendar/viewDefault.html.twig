@@ -1,8 +1,8 @@
-{% extends 'OroCalendarBundle:Calendar:view.html.twig' %}
+{% extends '@OroCalendar/Calendar/view.html.twig' %}
 
 {% block breadcrumb %}
     {% set breadcrumbs = [{'label': 'oro.calendar.my_calendar'|trans }] %}
-    {% include 'OroNavigationBundle:Menu:breadcrumbs.html.twig' %}
+    {% include '@OroNavigation/Menu/breadcrumbs.html.twig' %}
 {% endblock breadcrumb %}
 
 {% block pageHeader %}

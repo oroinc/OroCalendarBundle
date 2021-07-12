@@ -5,78 +5,50 @@ namespace Oro\Bundle\CalendarBundle\Tests\Unit\Validator\Constraints;
 use Oro\Bundle\CalendarBundle\Validator\Constraints\DateEarlierThan;
 use Oro\Bundle\CalendarBundle\Validator\Constraints\DateEarlierThanValidator;
 use Symfony\Component\Form\Form;
-use Symfony\Component\Validator\Context\ExecutionContext;
-use Symfony\Component\Validator\Context\ExecutionContextInterface;
+use Symfony\Component\Form\FormConfigInterface;
+use Symfony\Component\Validator\Test\ConstraintValidatorTestCase;
 
-class DateEarlierThanValidatorTest extends \PHPUnit\Framework\TestCase
+class DateEarlierThanValidatorTest extends ConstraintValidatorTestCase
 {
-    /**
-     * @var DateEarlierThan
-     */
-    protected $constraint;
+    /** @var \DateTime */
+    private $dateTimeStart;
 
-    /**
-     * @var ExecutionContext
-     */
-    protected $context;
+    /** @var \DateTime */
+    private $dateTimeEnd;
 
-    /**
-    * @var \DateTime
-    */
-    protected $dateTimeStart;
-
-    /**
-     * @var \DateTime
-     */
-    protected $dateTimeEnd;
-
-    /**
-     * @var \Symfony\Component\Form\Form
-     */
-    protected $formField;
-
-    /**
-     * @var DateEarlierThanValidator
-     */
-    protected $validator;
+    /** @var Form */
+    private $formField;
 
     protected function setUp(): void
     {
         $this->dateTimeStart = new \DateTime('-1 day');
-        $this->dateTimeEnd   = new \DateTime('+1 day');
-        $this->constraint    = new DateEarlierThan('end');
-        $this->validator     = new DateEarlierThanValidator();
+        $this->dateTimeEnd = new \DateTime('+1 day');
 
-        $this->formField = $this->getMockBuilder('Symfony\Component\Form\Form')
-            ->disableOriginalConstructor()
-            ->getMock();
+        $this->formField = $this->createMock(Form::class);
 
-        $form = $this->getMockBuilder('Symfony\Component\Form\Form')
-            ->disableOriginalConstructor()
-            ->getMock();
-
+        $form = $this->createMock(Form::class);
         $form->expects($this->any())
             ->method('get')
-            ->will($this->returnValue($this->formField));
-
+            ->willReturn($this->formField);
         $form->expects($this->any())
             ->method('has')
-            ->will($this->returnValue(true));
+            ->willReturn(true);
 
-        $this->context = $this->createMock(ExecutionContextInterface::class);
-        $this->context->expects($this->any())
-            ->method('getRoot')
-            ->will($this->returnValue($form));
+        parent::setUp();
+        $this->setRoot($form);
+    }
 
-        $this->validator->initialize($this->context);
+    protected function createValidator()
+    {
+        return new DateEarlierThanValidator();
     }
 
     public function testValidateWhenNotSetArgumentType()
     {
-        $this->context->expects($this->never())
-            ->method('addViolation');
+        $constraint = new DateEarlierThan('end');
+        $this->validator->validate(false, $constraint);
 
-        $this->validator->validate(false, $this->constraint);
+        $this->assertNoViolation();
     }
 
     public function testValidateExceptionWhenInvalidArgumentType()
@@ -86,8 +58,10 @@ class DateEarlierThanValidatorTest extends \PHPUnit\Framework\TestCase
 
         $this->formField->expects($this->any())
             ->method('getData')
-            ->will($this->returnValue('string'));
-        $this->validator->validate('string', $this->constraint);
+            ->willReturn('string');
+
+        $constraint = new DateEarlierThan('end');
+        $this->validator->validate('string', $constraint);
     }
 
     public function testValidateExceptionWhenInvalidConstraintType()
@@ -97,8 +71,10 @@ class DateEarlierThanValidatorTest extends \PHPUnit\Framework\TestCase
 
         $this->formField->expects($this->any())
             ->method('getData')
-            ->will($this->returnValue('string'));
-        $this->validator->validate($this->dateTimeStart, $this->constraint);
+            ->willReturn('string');
+
+        $constraint = new DateEarlierThan('end');
+        $this->validator->validate($this->dateTimeStart, $constraint);
     }
 
     public function testValidateExceptionWhenRootTypeIsNotForm()
@@ -107,61 +83,50 @@ class DateEarlierThanValidatorTest extends \PHPUnit\Framework\TestCase
         $data->start = new \DateTime();
         $data->end = new \DateTime();
 
-        $this->context = $this->createMock(ExecutionContextInterface::class);
-        $this->context->expects($this->any())
-            ->method('getRoot')
-            ->will($this->returnValue($data));
+        $this->setRoot($data);
 
-        $this->context->expects($this->never())
-            ->method('addViolation');
+        $constraint = new DateEarlierThan('end');
+        $this->validator->validate($this->dateTimeStart, $constraint);
 
-        $validator = new DateEarlierThanValidator();
-        $validator->initialize($this->context);
-
-        $validator->validate($this->dateTimeStart, $this->constraint);
+        $this->assertNoViolation();
     }
-
 
     public function testValidData()
     {
         $this->formField->expects($this->any())
             ->method('getData')
-            ->will($this->returnValue($this->dateTimeEnd));
+            ->willReturn($this->dateTimeEnd);
 
-        $this->context->expects($this->never())
-            ->method('addViolation');
+        $constraint = new DateEarlierThan('end');
+        $this->validator->validate($this->dateTimeStart, $constraint);
 
-        $this->validator->validate($this->dateTimeStart, $this->constraint);
+        $this->assertNoViolation();
     }
 
     public function testInvalidData()
     {
         $this->formField->expects($this->any())
             ->method('getData')
-            ->will($this->returnValue($this->dateTimeStart));
+            ->willReturn($this->dateTimeStart);
 
-        $this->context->expects($this->once())
-            ->method('addViolation')
-            ->with(
-                $this->equalTo($this->constraint->message),
-                $this->equalTo(array('{{ ' . $this->constraint->getDefaultOption() . ' }}' => $this->constraint->field))
-            );
+        $constraint = new DateEarlierThan('end');
+        $this->validator->validate($this->dateTimeEnd, $constraint);
 
-        $this->validator->validate($this->dateTimeEnd, $this->constraint);
+        $this->buildViolation($constraint->message)
+            ->setParameter('{{ ' . $constraint->getDefaultOption() . ' }}', $constraint->field)
+            ->assertRaised();
     }
 
     public function testNotExistingFormData()
     {
-        $formConfig = $this->createMock('\Symfony\Component\Form\FormConfigInterface');
+        $formConfig = $this->createMock(FormConfigInterface::class);
         $form = new Form($formConfig);
 
-        $this->context = $this->createMock(ExecutionContextInterface::class);
-        $this->context->expects($this->any())
-            ->method('getRoot')
-            ->will($this->returnValue($form));
+        $this->setRoot($form);
 
-        $this->validator->initialize($this->context);
+        $constraint = new DateEarlierThan('end');
+        $this->validator->validate(false, $constraint);
 
-        $this->assertNull($this->validator->validate(false, $this->constraint));
+        $this->assertNoViolation();
     }
 }

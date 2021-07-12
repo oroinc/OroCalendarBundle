@@ -20,8 +20,8 @@
 </script>
 
 <script type="text/html" id="{{ id }}">
-    {% import 'OroUIBundle::macros.html.twig' as UI %}
-    {% import 'OroCalendarBundle::invitations.html.twig' as invitations %}
+    {% import '@OroUI/macros.html.twig' as UI %}
+    {% import '@OroCalendar/invitations.html.twig' as invitations %}
     {% import _self as templates %}
     {% macro rawLink(parameters) %}
         {% spaceless %}
@@ -124,8 +124,8 @@
 
 {% macro calendar_event_form_template(id, form) %}
 <script type="text/html" id="{{ id }}">
-    {% import 'OroUIBundle::macros.html.twig' as UI %}
-    {% import 'OroCalendarBundle::invitations.html.twig' as invitations %}
+    {% import '@OroUI/macros.html.twig' as UI %}
+    {% import '@OroCalendar/invitations.html.twig' as invitations %}
     {% set calendarEventDateRange = {
         module: 'orocalendar/js/app/components/calendar-event-date-range-component',
         name: 'calendar-event-date-range',

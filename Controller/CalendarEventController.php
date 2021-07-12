@@ -122,7 +122,7 @@ class CalendarEventController extends AbstractController
 
     /**
      * @Route("/create", name="oro_calendar_event_create")
-     * @Template("OroCalendarBundle:CalendarEvent:update.html.twig")
+     * @Template("@OroCalendar/CalendarEvent/update.html.twig")
      * @Acl(
      *      id="oro_calendar_event_create",
      *      type="entity",

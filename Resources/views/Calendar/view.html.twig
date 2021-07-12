@@ -1,11 +1,11 @@
-{% extends 'OroUIBundle:actions:view.html.twig' %}
-{% import 'OroCalendarBundle::templates.html.twig' as calendarTemplates %}
+{% extends '@OroUI/actions/view.html.twig' %}
+{% import '@OroCalendar/templates.html.twig' as calendarTemplates %}
 
 {% set name = entity.owner|oro_format_name|default('N/A'|trans) %}
 {% oro_title_set({params : {"%username%": name, "%calendarname%": entity.name|default(name) }}) %}
 
 {% block navButtons %}
-    {% import 'OroUIBundle::macros.html.twig' as UI %}
+    {% import '@OroUI/macros.html.twig' as UI %}
 
     {% if is_granted('oro_calendar_event_view') %}
         <div class="btn-group">
@@ -26,7 +26,7 @@
             {% set breadcrumbs = breadcrumbs|merge([{'label': entity.name}]) %}
         {% endif %}
     {% endif %}
-    {% include 'OroNavigationBundle:Menu:breadcrumbs.html.twig' %}
+    {% include '@OroNavigation/Menu/breadcrumbs.html.twig' %}
 {% endblock breadcrumb %}
 
 {% block pageHeader %}

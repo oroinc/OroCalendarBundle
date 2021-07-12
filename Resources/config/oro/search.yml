@@ -6,7 +6,7 @@ search:
             name:                       oro_calendar_event_view
             parameters:
                 id:                     id
-        search_template:                OroCalendarBundle:Search:result.html.twig
+        search_template:                '@OroCalendar/Search/result.html.twig'
         fields:
             -
                 name:                   title

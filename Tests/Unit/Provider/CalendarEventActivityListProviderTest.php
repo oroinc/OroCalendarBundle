@@ -183,7 +183,7 @@ class CalendarEventActivityListProviderTest extends \PHPUnit\Framework\TestCase
     public function testGetTemplate()
     {
         $this->assertSame(
-            'OroCalendarBundle:CalendarEvent:js/activityItemTemplate.html.twig',
+            '@OroCalendar/CalendarEvent/js/activityItemTemplate.html.twig',
             $this->provider->getTemplate()
         );
     }

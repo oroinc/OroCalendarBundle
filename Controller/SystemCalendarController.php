@@ -55,7 +55,7 @@ class SystemCalendarController extends AbstractController
 
     /**
      * @Route("/create", name="oro_system_calendar_create")
-     * @Template("OroCalendarBundle:SystemCalendar:update.html.twig")
+     * @Template("@OroCalendar/SystemCalendar/update.html.twig")
      * @param Request $request
      * @return array|RedirectResponse
      */
@@ -72,7 +72,7 @@ class SystemCalendarController extends AbstractController
 
     /**
      * @Route("/update/{id}", name="oro_system_calendar_update", requirements={"id"="\d+"})
-     * @Template("OroCalendarBundle:SystemCalendar:update.html.twig")
+     * @Template("@OroCalendar/SystemCalendar/update.html.twig")
      * @param Request $request
      * @return array|RedirectResponse
      */

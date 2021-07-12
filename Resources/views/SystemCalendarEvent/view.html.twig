@@ -1,7 +1,7 @@
-{% extends 'OroUIBundle:actions:view.html.twig' %}
-{% import 'OroUIBundle::macros.html.twig' as UI %}
-{% import 'OroEntityConfigBundle::macros.html.twig' as entityConfig %}
-{% import 'OroActivityBundle::macros.html.twig' as AC %}
+{% extends '@OroUI/actions/view.html.twig' %}
+{% import '@OroUI/macros.html.twig' as UI %}
+{% import '@OroEntityConfig/macros.html.twig' as entityConfig %}
+{% import '@OroActivity/macros.html.twig' as AC %}
 
 {% oro_title_set({params : {
     "%entity.title%": entity.title|default('N/A'|trans),
@@ -9,8 +9,8 @@
 }}) %}
 
 {% block navButtons %}
-    {% import 'OroActivityBundle::macros.html.twig' as AC %}
-    {% import 'OroUIBundle::macros.html.twig' as UI %}
+    {% import '@OroActivity/macros.html.twig' as AC %}
+    {% import '@OroUI/macros.html.twig' as UI %}
 
     {% if editable %}
         {# Button for add context on the activity list item view page #}
@@ -32,7 +32,7 @@
 {% endblock navButtons %}
 
 {% block stats %}
-    {% import 'OroActivityBundle::macros.html.twig' as AC %}
+    {% import '@OroActivity/macros.html.twig' as AC %}
 
     {# Display contexts targets in the activity view page #}
     <li class="context-data activity-context-activity-block">
@@ -55,7 +55,7 @@
 {% endblock pageHeader %}
 
 {% block content_data %}
-    {% import 'OroUIBundle::macros.html.twig' as UI %}
+    {% import '@OroUI/macros.html.twig' as UI %}
 
     {%- set calendarEventInformation -%}
         <div class="row-fluid form-horizontal">

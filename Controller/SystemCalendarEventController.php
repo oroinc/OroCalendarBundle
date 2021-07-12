@@ -76,7 +76,7 @@ class SystemCalendarEventController extends AbstractController
 
     /**
      * @Route("/{id}/event/create", name="oro_system_calendar_event_create", requirements={"id"="\d+"})
-     * @Template("OroCalendarBundle:SystemCalendarEvent:update.html.twig")
+     * @Template("@OroCalendar/SystemCalendarEvent/update.html.twig")
      * @param Request $request
      * @param SystemCalendar $calendar
      * @return array|RedirectResponse

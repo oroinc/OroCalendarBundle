@@ -1,6 +1,6 @@
-{% extends 'OroDashboardBundle:Dashboard:widget.html.twig' %}
-{% import 'OroCalendarBundle::macros.html.twig' as calendarMacros %}
-{% import 'OroCalendarBundle::templates.html.twig' as calendarTemplates %}
+{% extends '@OroDashboard/Dashboard/widget.html.twig' %}
+{% import '@OroCalendar/macros.html.twig' as calendarMacros %}
+{% import '@OroCalendar/templates.html.twig' as calendarTemplates %}
 
 {% block content %}
     {%  set dashboardCalendarOptions = {

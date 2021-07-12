@@ -148,7 +148,7 @@ class CalendarEventActivityListProvider implements
      */
     public function getTemplate()
     {
-        return 'OroCalendarBundle:CalendarEvent:js/activityItemTemplate.html.twig';
+        return '@OroCalendar/CalendarEvent/js/activityItemTemplate.html.twig';
     }
 
     /**

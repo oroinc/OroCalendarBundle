@@ -89,8 +89,8 @@ class CalendarController extends AbstractController
                     'component'               => 'acl-user-autocomplete',
                     'permission'              => 'VIEW',
                     'placeholder'             => 'oro.calendar.form.choose_user_to_add_calendar',
-                    'result_template_twig'    => 'OroCalendarBundle:Calendar:Autocomplete/result.html.twig',
-                    'selection_template_twig' => 'OroCalendarBundle:Calendar:Autocomplete/selection.html.twig',
+                    'result_template_twig'    => '@OroCalendar/Calendar/Autocomplete/result.html.twig',
+                    'selection_template_twig' => '@OroCalendar/Calendar/Autocomplete/selection.html.twig',
                 ],
 
                 'grid_name' => 'users-calendar-select-grid-exclude-owner',

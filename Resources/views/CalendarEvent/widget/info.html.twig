@@ -1,5 +1,5 @@
-{% import 'OroUIBundle::macros.html.twig' as UI %}
-{% import 'OroActivityBundle::macros.html.twig' as AC %}
+{% import '@OroUI/macros.html.twig' as UI %}
+{% import '@OroActivity/macros.html.twig' as AC %}
 
 <div class="widget-content form-horizontal box-content row-fluid">
     <div class="responsive-block">
@@ -21,7 +21,7 @@
             {{ UI.renderProperty('oro.calendar.calendarevent.recurrence.exception.label'|trans, get_recurrence_text_value(entity.recurringEvent.recurrence)) }}
         {% endif %}
         {% if canChangeInvitationStatus  %}
-            {% include 'OroCalendarBundle:CalendarEvent:invitationControl.html.twig' with {'entity': entity, 'triggerEventName': 'widget:doRefresh:activity-list-widget'} %}
+            {% include '@OroCalendar/CalendarEvent/invitationControl.html.twig' with {'entity': entity, 'triggerEventName': 'widget:doRefresh:activity-list-widget'} %}
         {% endif %}
     </div>
 </div>
