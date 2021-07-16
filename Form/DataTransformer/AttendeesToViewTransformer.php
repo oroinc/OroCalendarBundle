@@ -12,10 +12,6 @@ class AttendeesToViewTransformer extends ContextsToViewTransformer
     /** @var AttendeeManager */
     protected $attendeeManager;
 
-    /**
-     * @param EntityManager $entityManager
-     * @param AttendeeManager $attendeeManager
-     */
     public function __construct(
         EntityManager $entityManager,
         AttendeeManager $attendeeManager

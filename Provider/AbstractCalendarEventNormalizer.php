@@ -57,13 +57,6 @@ abstract class AbstractCalendarEventNormalizer
      */
     protected $currentAttendeeLists;
 
-    /**
-     * @param CalendarEventManager          $calendarEventManager
-     * @param AttendeeManager               $attendeeManager
-     * @param ReminderManager               $reminderManager
-     * @param AuthorizationCheckerInterface $authorizationChecker
-     * @param HtmlTagHelper                 $htmlTagHelper
-     */
     public function __construct(
         CalendarEventManager $calendarEventManager,
         AttendeeManager $attendeeManager,
@@ -371,8 +364,6 @@ abstract class AbstractCalendarEventNormalizer
 
     /**
      * Attendees should be returned in a specific order sorting by displayName field.
-     *
-     * @param array $attendees
      */
     protected function sortAttendees(array &$attendees)
     {

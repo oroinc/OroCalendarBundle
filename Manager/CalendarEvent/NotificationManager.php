@@ -45,8 +45,6 @@ class NotificationManager
 
     /**
      * EmailNotificationHandler constructor.
-     *
-     * @param EmailNotificationSender $processor
      */
     public function __construct(EmailNotificationSender $processor)
     {
@@ -122,7 +120,6 @@ class NotificationManager
      * @return User
      *
      * @throws \LogicException When event has no owner user.
-     *
      */
     protected function getCalendarOwnerUser(CalendarEvent $calendarEvent)
     {
@@ -385,9 +382,6 @@ class NotificationManager
 
     /**
      * Adds notifications for attendees that are present in exception of recurrent event, but absent in recurring event.
-     *
-     * @param CalendarEvent $calendarEvent
-     * @param User $ownerUser
      */
     protected function addCancelNotificationsForRecurringEventExceptions(
         CalendarEvent $calendarEvent,

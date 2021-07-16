@@ -38,9 +38,6 @@ class AttendeePreferredLocalizationProviderTest extends \PHPUnit\Framework\TestC
         }
     }
 
-    /**
-     * @return array
-     */
     public function supportsDataProvider(): array
     {
         return [

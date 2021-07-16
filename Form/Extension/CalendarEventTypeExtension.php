@@ -22,9 +22,6 @@ class CalendarEventTypeExtension extends AbstractTypeExtension
      */
     private $organizerResolver;
 
-    /**
-     * @param EventOrganizerResolver $organizerResolver
-     */
     public function __construct(EventOrganizerResolver $organizerResolver)
     {
         $this->organizerResolver = $organizerResolver;
@@ -54,9 +51,6 @@ class CalendarEventTypeExtension extends AbstractTypeExtension
             ->addEventListener(FormEvents::POST_SUBMIT, [$this, 'setDefaultOrganizer']);
     }
 
-    /**
-     * @param FormEvent $event
-     */
     public function setDefaultOrganizer(FormEvent $event)
     {
         /** @var CalendarEvent $calendarEvent */

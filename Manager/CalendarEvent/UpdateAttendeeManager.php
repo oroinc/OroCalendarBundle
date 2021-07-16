@@ -30,10 +30,6 @@ class UpdateAttendeeManager
      */
     protected $doctrine;
 
-    /**
-     * @param AttendeeRelationManager $attendeeRelationManager
-     * @param ManagerRegistry $doctrine
-     */
     public function __construct(AttendeeRelationManager $attendeeRelationManager, ManagerRegistry $doctrine)
     {
         $this->attendeeRelationManager = $attendeeRelationManager;
@@ -42,9 +38,6 @@ class UpdateAttendeeManager
 
     /**
      * Actualize attendees state after the event was created/updated
-     *
-     * @param CalendarEvent $calendarEvent
-     * @param Organization $organization
      */
     public function onEventUpdate(CalendarEvent $calendarEvent, Organization $organization)
     {
@@ -77,9 +70,6 @@ class UpdateAttendeeManager
         }
     }
 
-    /**
-     * @param CalendarEvent $calendarEvent
-     */
     protected function setAttendeesType(CalendarEvent $calendarEvent)
     {
         foreach ($calendarEvent->getAttendees() as $attendee) {

@@ -37,10 +37,6 @@ class CalendarEventApiType extends AbstractType
      */
     protected $notificationManager;
 
-    /**
-     * @param CalendarEventManager $calendarEventManager
-     * @param NotificationManager  $notificationManager
-     */
     public function __construct(CalendarEventManager $calendarEventManager, NotificationManager $notificationManager)
     {
         $this->calendarEventManager = $calendarEventManager;

@@ -22,9 +22,6 @@ class UpdateAclRoles extends AbstractUpdatePermissions implements DependentFixtu
         return [LoadAclRoles::class];
     }
 
-    /**
-     * @param ObjectManager $manager
-     */
     public function load(ObjectManager $manager)
     {
         $aclManager = $this->getAclManager();

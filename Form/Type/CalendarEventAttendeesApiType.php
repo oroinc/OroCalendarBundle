@@ -34,8 +34,6 @@ class CalendarEventAttendeesApiType extends AbstractType
     /**
      * If attendee type is not supported set null.
      * If attendee type is not passed set "required".
-     *
-     * @param FormEvent $event
      */
     public function preSubmit(FormEvent $event)
     {

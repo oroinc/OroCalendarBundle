@@ -230,10 +230,6 @@ class CalendarEventRepository extends EntityRepository
      * Adds time condition to a query builder responsible to get calender events.
      *
      * For recurring events adds time conditions for getting recurrence events that could be out of filtering dates.
-     *
-     * @param QueryBuilder  $qb
-     * @param \DateTime     $startDate
-     * @param \DateTime     $endDate
      */
     protected function addTimeIntervalFilter(QueryBuilder $qb, \DateTime $startDate, \DateTime $endDate)
     {

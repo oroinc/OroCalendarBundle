@@ -47,7 +47,6 @@ class FixCalendarsQuery extends ParametrizedMigrationQuery
             }
         }
 
-
         // remove calendars
         // as long as calendar events are also duplicated in all calendars there is no need to take care about them
         $types = ['id' => Connection::PARAM_INT_ARRAY];

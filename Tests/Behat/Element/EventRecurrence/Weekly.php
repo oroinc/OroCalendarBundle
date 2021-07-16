@@ -4,7 +4,6 @@ namespace Oro\Bundle\CalendarBundle\Tests\Behat\Element\EventRecurrence;
 
 class Weekly extends AbstractEventRecurrence
 {
-
     /**
      * {@inheritdoc}
      */

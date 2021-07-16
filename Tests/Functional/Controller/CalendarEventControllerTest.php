@@ -80,8 +80,6 @@ class CalendarEventControllerTest extends WebTestCase
 
     /**
      * @depends testCreateAction
-     *
-     * @param array $param
      */
     public function testViewAction(array $param)
     {
@@ -95,8 +93,6 @@ class CalendarEventControllerTest extends WebTestCase
 
     /**
      * @depends testCreateAction
-     *
-     * @param array $param
      */
     public function testUpdateAction(array $param)
     {

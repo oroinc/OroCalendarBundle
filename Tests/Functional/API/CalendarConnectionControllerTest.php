@@ -288,9 +288,6 @@ class CalendarConnectionControllerTest extends WebTestCase
             ->findOneByEmail('admin@example.com');
     }
 
-    /**
-     * @param User $user
-     */
     public function findCalendar(User $user)
     {
         return $this->getContainer()->get('doctrine')

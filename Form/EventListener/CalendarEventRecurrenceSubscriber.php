@@ -20,9 +20,6 @@ class CalendarEventRecurrenceSubscriber implements EventSubscriberInterface
         ];
     }
 
-    /**
-     * @param FormEvent $event
-     */
     public function preSubmit(FormEvent $event)
     {
         $this->clearOldRecurrence($event);
@@ -30,8 +27,6 @@ class CalendarEventRecurrenceSubscriber implements EventSubscriberInterface
 
     /**
      * If "recurrence" form field is empty the old instance of recurrence should be removed.
-     *
-     * @param FormEvent $event
      */
     protected function clearOldRecurrence(FormEvent $event)
     {
@@ -50,9 +45,6 @@ class CalendarEventRecurrenceSubscriber implements EventSubscriberInterface
         }
     }
 
-    /**
-     * @param FormEvent $event
-     */
     public function preSetData(FormEvent $event)
     {
         $this->removeRecurrenceFormFieldForException($event);
@@ -62,8 +54,6 @@ class CalendarEventRecurrenceSubscriber implements EventSubscriberInterface
      * Removes recurrence field from the form if entity represents an exception of recurring event.
      *
      * Exception should not have its' own recurrence.
-     *
-     * @param FormEvent $event
      */
     protected function removeRecurrenceFormFieldForException(FormEvent $event)
     {

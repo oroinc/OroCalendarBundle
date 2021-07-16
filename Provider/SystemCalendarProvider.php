@@ -23,13 +23,6 @@ class SystemCalendarProvider extends AbstractRecurrenceAwareCalendarProvider
     /** @var AuthorizationCheckerInterface */
     protected $authorizationChecker;
 
-    /**
-     * @param DoctrineHelper                  $doctrineHelper
-     * @param Model\Recurrence                $recurrence
-     * @param AbstractCalendarEventNormalizer $calendarEventNormalizer
-     * @param SystemCalendarConfig            $calendarConfig
-     * @param AuthorizationCheckerInterface   $authorizationChecker
-     */
     public function __construct(
         DoctrineHelper $doctrineHelper,
         Model\Recurrence $recurrence,

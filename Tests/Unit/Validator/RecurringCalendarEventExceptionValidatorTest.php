@@ -109,7 +109,6 @@ class RecurringCalendarEventExceptionValidatorTest extends ConstraintValidatorTe
             ->assertRaised();
     }
 
-
     public function testValidateWithErrorsWorksCorrectlyIfCalendarFieldDataIsInteger()
     {
         $expectedCalendarId = 42;

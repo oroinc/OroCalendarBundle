@@ -104,25 +104,16 @@ class CalendarEventRepositoryTest extends WebTestCase
         $this->assertCount(0, $events);
     }
 
-    /**
-     * @return DoctrineHelper
-     */
     private function getDoctrineHelper(): DoctrineHelper
     {
         return $this->getContainer()->get('oro_entity.doctrine_helper');
     }
 
-    /**
-     * @return CalendarEventRepository
-     */
     private function getRepository(): CalendarEventRepository
     {
         return $this->getDoctrineHelper()->getEntityRepository(CalendarEvent::class);
     }
 
-    /**
-     * @return Calendar
-     */
     private function getCalendar(): Calendar
     {
         $doctrineHelper = $this->getDoctrineHelper();

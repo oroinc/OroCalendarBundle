@@ -291,9 +291,6 @@ class CalendarEventApiHandlerTest extends \PHPUnit\Framework\TestCase
         $this->handler->process($this->entity);
     }
 
-    /**
-     * @param array $values
-     */
     protected function setExpectedFormValues(array $values)
     {
         $fields = ['contexts', 'notifyAttendees', 'updateExceptions'];

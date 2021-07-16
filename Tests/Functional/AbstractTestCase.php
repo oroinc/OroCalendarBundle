@@ -46,8 +46,6 @@ class AbstractTestCase extends WebTestCase
      * </code>
      *
      * @see \Oro\Bundle\TestFrameworkBundle\Test\Client::request
-     *
-     * @param array $parameters
      */
     protected function restRequest(array $parameters)
     {
@@ -182,8 +180,6 @@ class AbstractTestCase extends WebTestCase
 
     /**
      * Remove ignored fields from the response to not take it into account during comparison.
-     *
-     * @param array $response
      */
     protected function filterIgnoredResponseFields(array &$response)
     {

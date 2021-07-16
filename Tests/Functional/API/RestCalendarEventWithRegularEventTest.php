@@ -52,8 +52,6 @@ class RestCalendarEventWithRegularEventTest extends WebTestCase
      * Reads regular event.
      *
      * @depends testPostRegularEvent
-     *
-     * @param array $data
      */
     public function testGetRegularEvent(array $data)
     {
@@ -82,8 +80,6 @@ class RestCalendarEventWithRegularEventTest extends WebTestCase
      * Updates regular event.
      *
      * @depends testPostRegularEvent
-     *
-     * @param array $data
      */
     public function testPutRegularEvent(array $data)
     {
@@ -106,8 +102,6 @@ class RestCalendarEventWithRegularEventTest extends WebTestCase
      * Deletes regular event.
      *
      * @depends testPostRegularEvent
-     *
-     * @param array $data
      */
     public function testDeleteRegularEvent(array $data)
     {
@@ -123,7 +117,6 @@ class RestCalendarEventWithRegularEventTest extends WebTestCase
             ->findOneBy(['id' => $id]); // do not use 'load' method to avoid proxy object loading.
         $this->assertNull($event);
     }
-
 
     public function testCgetByDateRangeFilter()
     {

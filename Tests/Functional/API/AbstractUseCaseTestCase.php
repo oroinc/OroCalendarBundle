@@ -23,10 +23,6 @@ abstract class AbstractUseCaseTestCase extends WebTestCase
         $this->loadFixtures([LoadUserData::class]);
     }
 
-    /**
-     * @param array $expectedCalendarEvents
-     * @param array $actualCalendarEvents
-     */
     protected function assertCalendarEvents(array $expectedCalendarEvents, array $actualCalendarEvents)
     {
         $this->assertCount(count($expectedCalendarEvents), $actualCalendarEvents, 'Calendar Events count mismatch');

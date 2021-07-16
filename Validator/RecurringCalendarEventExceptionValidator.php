@@ -18,9 +18,6 @@ class RecurringCalendarEventExceptionValidator extends ConstraintValidator
     /** @var CalendarEventManager */
     protected $calendarEventManager;
 
-    /**
-     * @param CalendarEventManager $calendarEventManager
-     */
     public function __construct(CalendarEventManager $calendarEventManager)
     {
         $this->calendarEventManager = $calendarEventManager;
@@ -35,10 +32,6 @@ class RecurringCalendarEventExceptionValidator extends ConstraintValidator
         $this->validateCalendarEvent($value, $constraint);
     }
 
-    /**
-     * @param CalendarEvent $value
-     * @param RecurringCalendarEventExceptionConstraint $constraint
-     */
     public function validateCalendarEvent(
         CalendarEvent $value,
         RecurringCalendarEventExceptionConstraint
@@ -49,10 +42,6 @@ class RecurringCalendarEventExceptionValidator extends ConstraintValidator
         $this->validateCalendarUid($value, $constraint);
     }
 
-    /**
-     * @param CalendarEvent $value
-     * @param RecurringCalendarEventExceptionConstraint $constraint
-     */
     protected function validateSelfRelation(
         CalendarEvent $value,
         RecurringCalendarEventExceptionConstraint $constraint
@@ -62,10 +51,6 @@ class RecurringCalendarEventExceptionValidator extends ConstraintValidator
         }
     }
 
-    /**
-     * @param CalendarEvent $value
-     * @param RecurringCalendarEventExceptionConstraint $constraint
-     */
     protected function validateRecurrence(
         CalendarEvent $value,
         RecurringCalendarEventExceptionConstraint $constraint
@@ -81,8 +66,6 @@ class RecurringCalendarEventExceptionValidator extends ConstraintValidator
      * For example if the exception event was created in user's calendar it is restricted to change the calendar type
      * to system or public.
      *
-     * @param CalendarEvent $value
-     * @param RecurringCalendarEventExceptionConstraint $constraint
      * @SuppressWarnings(PHPMD.CyclomaticComplexity)
      */
     protected function validateCalendarUid(

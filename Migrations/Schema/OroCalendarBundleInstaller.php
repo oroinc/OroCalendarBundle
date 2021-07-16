@@ -46,9 +46,6 @@ class OroCalendarBundleInstaller implements
         $this->extendExtension = $extendExtension;
     }
 
-    /**
-     * @param CommentExtension $commentExtension
-     */
     public function setCommentExtension(CommentExtension $commentExtension)
     {
         $this->commentExtension = $commentExtension;
@@ -97,9 +94,6 @@ class OroCalendarBundleInstaller implements
         $this->addCommentToCalendarEvent($schema);
     }
 
-    /**
-     * @param Schema $schema
-     */
     protected function createAttendeeEntity(Schema $schema)
     {
         $table = $schema->createTable('oro_calendar_event_attendee');
@@ -117,9 +111,6 @@ class OroCalendarBundleInstaller implements
         $table->addIndex(['calendar_event_id']);
     }
 
-    /**
-     * @param Schema $schema
-     */
     protected function addAttendeeForeignKeys(Schema $schema)
     {
         $table = $schema->getTable('oro_calendar_event_attendee');
@@ -139,9 +130,6 @@ class OroCalendarBundleInstaller implements
         );
     }
 
-    /**
-     * @param Schema $schema
-     */
     protected function addAttendeeEnums(Schema $schema)
     {
         $table = $schema->getTable('oro_calendar_event_attendee');
@@ -173,8 +161,6 @@ class OroCalendarBundleInstaller implements
 
     /**
      * Create oro_calendar table
-     *
-     * @param Schema $schema
      */
     protected function createOroCalendarTable(Schema $schema)
     {
@@ -190,8 +176,6 @@ class OroCalendarBundleInstaller implements
 
     /**
      * Create oro_system_calendar table
-     *
-     * @param Schema $schema
      */
     protected function createOroSystemCalendarTable(Schema $schema)
     {
@@ -224,9 +208,6 @@ class OroCalendarBundleInstaller implements
 
     /**
      * Create oro_calendar_event table
-     *
-     * @param Schema $schema
-     * @param QueryBag $queries
      */
     protected function createOroCalendarEventTable(Schema $schema, QueryBag $queries)
     {
@@ -269,8 +250,6 @@ class OroCalendarBundleInstaller implements
 
     /**
      * Add oro_calendar foreign keys.
-     *
-     * @param Schema $schema
      */
     protected function addOroCalendarForeignKeys(Schema $schema)
     {
@@ -291,8 +270,6 @@ class OroCalendarBundleInstaller implements
 
     /**
      * Add oro_system_calendar foreign keys
-     *
-     * @param Schema $schema
      */
     protected function addOroSystemCalendarForeignKeys(Schema $schema)
     {
@@ -307,8 +284,6 @@ class OroCalendarBundleInstaller implements
 
     /**
      * Add oro_calendar_event foreign keys.
-     *
-     * @param Schema $schema
      */
     protected function addOroCalendarEventForeignKeys(Schema $schema)
     {
@@ -359,8 +334,6 @@ class OroCalendarBundleInstaller implements
 
     /**
      * Create oro_calendar_property table
-     *
-     * @param Schema $schema
      */
     protected function createOroCalendarPropertyTable(Schema $schema)
     {
@@ -379,8 +352,6 @@ class OroCalendarBundleInstaller implements
 
     /**
      * Add oro_calendar_property foreign keys.
-     *
-     * @param Schema $schema
      */
     protected function addOroCalendarPropertyForeignKeys(Schema $schema)
     {
@@ -395,8 +366,6 @@ class OroCalendarBundleInstaller implements
 
     /**
      * Creates oro_calendar_recurrence table.
-     *
-     * @param Schema $schema
      */
     protected function createOroRecurrenceTable(Schema $schema)
     {
@@ -421,8 +390,6 @@ class OroCalendarBundleInstaller implements
 
     /**
      * Add association to comments
-     *
-     * @param Schema $schema
      */
     private function addCommentToCalendarEvent(Schema $schema)
     {

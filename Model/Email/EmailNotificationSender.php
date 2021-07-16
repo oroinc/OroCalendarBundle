@@ -63,10 +63,6 @@ class EmailNotificationSender
      */
     protected $emailNotifications = [];
 
-    /**
-     * @param EmailNotificationManager $emailNotificationManager
-     * @param ManagerRegistry          $managerRegistry
-     */
     public function __construct(EmailNotificationManager $emailNotificationManager, ManagerRegistry $managerRegistry)
     {
         $this->emailNotificationManager = $emailNotificationManager;
@@ -151,8 +147,6 @@ class EmailNotificationSender
 
     /**
      * Adds email notification for further processing with email notification manager..
-     *
-     * @param TemplateEmailNotification $emailNotification
      */
     protected function addEmailNotification(TemplateEmailNotification $emailNotification)
     {

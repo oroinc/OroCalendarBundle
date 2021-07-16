@@ -19,33 +19,21 @@ class NavigationListener
     /** @var TokenAccessorInterface */
     private $tokenAccessor;
 
-    /**
-     * @param SystemCalendarConfig $calendarConfig
-     */
     public function __construct(SystemCalendarConfig $calendarConfig)
     {
         $this->calendarConfig = $calendarConfig;
     }
 
-    /**
-     * @param AuthorizationCheckerInterface $authorizationChecker
-     */
     public function setAuthorizationChecker(AuthorizationCheckerInterface $authorizationChecker)
     {
         $this->authorizationChecker = $authorizationChecker;
     }
 
-    /**
-     * @param TokenAccessorInterface $tokenAccessor
-     */
     public function setTokenAccessor(TokenAccessorInterface $tokenAccessor)
     {
         $this->tokenAccessor = $tokenAccessor;
     }
 
-    /**
-     * @param ConfigureMenuEvent $event
-     */
     public function onNavigationConfigure(ConfigureMenuEvent $event)
     {
         if ($this->tokenAccessor->hasUser()) {

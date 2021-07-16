@@ -38,7 +38,6 @@ class CalendarEventSearchListenerTest extends \PHPUnit\Framework\TestCase
         $this->listener = new CalendarEventSearchListener($this->router, $this->doctrine);
     }
 
-
     public function testPrepareEntityMapEventWithNonCalendarEventEntity()
     {
         $event = new PrepareEntityMapEvent(new \stdClass(), \stdClass::class, [], []);

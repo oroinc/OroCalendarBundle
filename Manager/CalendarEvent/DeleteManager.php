@@ -18,9 +18,6 @@ class DeleteManager
      */
     protected $doctrine;
 
-    /**
-     * @param ManagerRegistry $doctrine
-     */
     public function __construct(ManagerRegistry $doctrine)
     {
         $this->doctrine = $doctrine;
@@ -45,8 +42,6 @@ class DeleteManager
 
     /**
      * If this is an exception of recurring event, cancel instead of remove.
-     *
-     * @param CalendarEvent $calendarEvent
      */
     protected function doCancel(CalendarEvent $calendarEvent)
     {
@@ -72,8 +67,6 @@ class DeleteManager
 
     /**
      * Delete calendar event from the persistence.
-     *
-     * @param CalendarEvent $calendarEvent
      */
     protected function doDelete(CalendarEvent $calendarEvent)
     {
@@ -86,8 +79,6 @@ class DeleteManager
     /**
      * Recurring event exceptions intentionally doesn't have cascade remove, so this method can be used
      * when collection of recurring event exceptions should be cleared and removed.
-     *
-     * @param CalendarEvent $event
      */
     public function deleteAndClearRecurringEventExceptions(CalendarEvent $event)
     {

@@ -111,9 +111,6 @@ class OroCalendarBundle implements
         $this->enableDataAudit($table);
     }
 
-    /**
-     * @param Table $table
-     */
     protected function enableDataAudit(Table $table)
     {
         $table->addOption(OroOptions::KEY, ['dataaudit' => ['auditable' => true]]);
