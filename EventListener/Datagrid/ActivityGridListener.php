@@ -25,11 +25,6 @@ class ActivityGridListener
     /** @var LocaleSettings */
     protected $localeSettings;
 
-    /**
-     * @param ActivityManager     $activityManager
-     * @param EntityRoutingHelper $entityRoutingHelper
-     * @param LocaleSettings      $localeSettings
-     */
     public function __construct(
         ActivityManager $activityManager,
         EntityRoutingHelper $entityRoutingHelper,
@@ -40,9 +35,6 @@ class ActivityGridListener
         $this->localeSettings      = $localeSettings;
     }
 
-    /**
-     * @param BuildAfter $event
-     */
     public function onBuildAfter(BuildAfter $event)
     {
         $datagrid   = $event->getDatagrid();

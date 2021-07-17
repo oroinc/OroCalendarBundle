@@ -39,13 +39,6 @@ class CalendarEventManager
     /** @var SystemCalendarConfig */
     protected $calendarConfig;
 
-    /**
-     * @param UpdateManager          $updateManager
-     * @param ManagerRegistry        $doctrine
-     * @param TokenAccessorInterface $tokenAccessor
-     * @param EntityNameResolver     $entityNameResolver
-     * @param SystemCalendarConfig   $calendarConfig
-     */
     public function __construct(
         UpdateManager $updateManager,
         ManagerRegistry $doctrine,
@@ -262,7 +255,6 @@ class CalendarEventManager
      * @param CalendarEvent $originalEvent  Original calendar event state before update.
      * @param Organization $organization    Organization is used to match users to attendees by their email.
      * @param bool $allowUpdateExceptions   If TRUE then exceptions data should be updated
-     *
      */
     public function onEventUpdate(
         CalendarEvent $actualEvent,

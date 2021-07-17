@@ -17,10 +17,6 @@ class AttendeeManager
     /** @var AttendeeRelationManager */
     protected $attendeeRelationManager;
 
-    /**
-     * @param DoctrineHelper $doctrineHelper
-     * @param AttendeeRelationManager $attendeeRelationManager
-     */
     public function __construct(DoctrineHelper $doctrineHelper, AttendeeRelationManager $attendeeRelationManager)
     {
         $this->doctrineHelper = $doctrineHelper;

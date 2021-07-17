@@ -13,17 +13,11 @@ class EventOrganizerResolver
      */
     private $registry;
 
-    /**
-     * @param ManagerRegistry $registry
-     */
     public function __construct(ManagerRegistry $registry)
     {
         $this->registry = $registry;
     }
 
-    /**
-     * @param CalendarEvent $calendarEvent
-     */
     public function updateOrganizerInfo(CalendarEvent $calendarEvent)
     {
         if ($calendarEvent->isSystemEvent()) {

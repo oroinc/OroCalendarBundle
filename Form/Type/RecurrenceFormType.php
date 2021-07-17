@@ -22,8 +22,6 @@ class RecurrenceFormType extends AbstractType
 
     /**
      * RecurrenceFormType constructor.
-     *
-     * @param Recurrence $recurrenceModel
      */
     public function __construct(Recurrence $recurrenceModel)
     {

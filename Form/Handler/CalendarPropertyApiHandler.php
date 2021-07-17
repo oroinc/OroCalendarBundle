@@ -27,11 +27,6 @@ class CalendarPropertyApiHandler
      */
     protected $manager;
 
-    /**
-     * @param FormInterface $form
-     * @param RequestStack  $requestStack
-     * @param ObjectManager $manager
-     */
     public function __construct(FormInterface $form, RequestStack $requestStack, ObjectManager $manager)
     {
         $this->form = $form;
@@ -66,8 +61,6 @@ class CalendarPropertyApiHandler
 
     /**
      * "Success" form handler
-     *
-     * @param CalendarProperty $entity
      */
     protected function onSuccess(CalendarProperty $entity)
     {

@@ -23,10 +23,6 @@ class CalendarChoiceType extends AbstractType
     /** @var TranslatorInterface */
     protected $translator;
 
-    /**
-     * @param CalendarEventManager $calendarEventManager
-     * @param TranslatorInterface  $translator
-     */
     public function __construct(CalendarEventManager $calendarEventManager, TranslatorInterface $translator)
     {
         $this->calendarEventManager = $calendarEventManager;
@@ -78,8 +74,6 @@ class CalendarChoiceType extends AbstractType
 
     /**
      * POST_SUBMIT event handler
-     *
-     * @param FormEvent $event
      */
     public function postSubmitData(FormEvent $event)
     {

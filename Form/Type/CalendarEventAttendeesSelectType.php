@@ -32,11 +32,6 @@ class CalendarEventAttendeesSelectType extends AbstractType
      */
     protected $attendeeRelationManager;
 
-    /**
-     * @param DataTransformerInterface $attendeesToViewTransformer
-     * @param AttendeeManager          $attendeeManager
-     * @param AttendeeRelationManager  $attendeeRelationManager
-     */
     public function __construct(
         DataTransformerInterface $attendeesToViewTransformer,
         AttendeeManager $attendeeManager,

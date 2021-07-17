@@ -214,7 +214,6 @@ class CalendarEventHandlerTest extends \PHPUnit\Framework\TestCase
         static::assertSame($defaultCalendar, $this->entity->getCalendar());
     }
 
-
     /** @dataProvider supportedMethods */
     public function testProcessRequestWithoutCurrentUser(string $method): void
     {

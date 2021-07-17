@@ -22,11 +22,6 @@ class SystemCalendarGridListener
     /** @var SystemCalendarConfig */
     protected $calendarConfig;
 
-    /**
-     * @param AuthorizationCheckerInterface $authorizationChecker
-     * @param TokenAccessorInterface        $tokenAccessor
-     * @param SystemCalendarConfig          $calendarConfig
-     */
     public function __construct(
         AuthorizationCheckerInterface $authorizationChecker,
         TokenAccessorInterface $tokenAccessor,
@@ -37,9 +32,6 @@ class SystemCalendarGridListener
         $this->calendarConfig = $calendarConfig;
     }
 
-    /**
-     * @param BuildBefore $event
-     */
     public function onBuildBefore(BuildBefore $event)
     {
         // show 'public' column only if both public and system calendars are enabled
@@ -49,9 +41,6 @@ class SystemCalendarGridListener
         }
     }
 
-    /**
-     * @param BuildAfter $event
-     */
     public function onBuildAfter(BuildAfter $event)
     {
         $datagrid   = $event->getDatagrid();

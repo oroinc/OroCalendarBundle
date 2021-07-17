@@ -40,11 +40,6 @@ class CalendarPropertyProvider
     /** @var array */
     private $computedDefaultValues = [];
 
-    /**
-     * @param DoctrineHelper  $doctrineHelper
-     * @param ConfigManager   $configManager
-     * @param FieldTypeHelper $fieldTypeHelper
-     */
     public function __construct(
         DoctrineHelper $doctrineHelper,
         ConfigManager $configManager,

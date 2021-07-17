@@ -22,11 +22,6 @@ class AttendeeRelationManager
     /** @var DQLNameFormatter */
     protected $dqlNameFormatter;
 
-    /**
-     * @param ManagerRegistry $registry
-     * @param NameFormatter   $nameFormatter
-     * @param DQLNameFormatter $dqlNameFormatter
-     */
     public function __construct(
         ManagerRegistry $registry,
         NameFormatter $nameFormatter,
@@ -90,8 +85,6 @@ class AttendeeRelationManager
 
     /**
      * Adds fullName column with text representation of attendee into the result
-     *
-     * @param QueryBuilder $qb
      */
     public function addRelatedEntityInfo(QueryBuilder $qb)
     {
@@ -143,10 +136,6 @@ class AttendeeRelationManager
         }
     }
 
-    /**
-     * @param User $user
-     * @param Attendee $attendee
-     */
     protected function bindUser(User $user, Attendee $attendee)
     {
         $attendee->setUser($user);

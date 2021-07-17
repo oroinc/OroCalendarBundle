@@ -15,17 +15,11 @@ class MatchingEventsManager
      */
     private $doctrineHelper;
 
-    /**
-     * @param DoctrineHelper $doctrineHelper
-     */
     public function __construct(DoctrineHelper $doctrineHelper)
     {
         $this->doctrineHelper = $doctrineHelper;
     }
 
-    /**
-     * @param CalendarEvent $event
-     */
     public function onEventUpdate(CalendarEvent $event)
     {
         if (!$this->eventIsNew($event) || $event->isOrganizer() !== true) {
@@ -51,10 +45,6 @@ class MatchingEventsManager
         }
     }
 
-    /**
-     * @param CalendarEvent $event
-     * @return bool
-     */
     private function eventIsNew(CalendarEvent $event): bool
     {
         return $event->getId() === null;
@@ -69,10 +59,6 @@ class MatchingEventsManager
             ->getRepository(CalendarEvent::class);
     }
 
-    /**
-     * @param Attendee $attendee
-     * @param CalendarEvent $matchingEvent
-     */
     private function mergeAttendeeToExistingCalendarEvent(Attendee $attendee, CalendarEvent $matchingEvent)
     {
         $event = $attendee->getCalendarEvent();

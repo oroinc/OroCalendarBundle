@@ -23,9 +23,6 @@ class RecurrenceExtension extends AbstractExtension implements ServiceSubscriber
     /** @var array */
     protected $patternsCache = [];
 
-    /**
-     * @param ContainerInterface $container
-     */
     public function __construct(ContainerInterface $container)
     {
         $this->container = $container;

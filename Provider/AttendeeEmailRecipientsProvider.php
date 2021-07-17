@@ -16,10 +16,6 @@ class AttendeeEmailRecipientsProvider implements EmailRecipientsProviderInterfac
     /** @var EmailRecipientsHelper */
     protected $emailRecipientsHelper;
 
-    /**
-     * @param ManagerRegistry $registry
-     * @param EmailRecipientsHelper $emailRecipientsHelper
-     */
     public function __construct(ManagerRegistry $registry, EmailRecipientsHelper $emailRecipientsHelper)
     {
         $this->registry = $registry;

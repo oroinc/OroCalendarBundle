@@ -25,9 +25,6 @@ abstract class AbstractTestStrategy extends \PHPUnit\Framework\TestCase
     /**
      * @SuppressWarnings(PHPMD.NPathComplexity)
      *
-     * @param array $params
-     * @param array $expected
-     *
      * @dataProvider propertiesDataProvider
      */
     public function testGetOccurrences(array $params, array $expected)

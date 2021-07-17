@@ -297,10 +297,6 @@ class MatchingEventsManagerTest extends \PHPUnit\Framework\TestCase
         $this->assertInstanceOf(User::class, $eventC->getOrganizerUser());
     }
 
-    /**
-     * @param array $params
-     * @return CalendarEvent
-     */
     private function getCalendarEvent(array $params): CalendarEvent
     {
         return $this->getEntity(CalendarEvent::class, $params);

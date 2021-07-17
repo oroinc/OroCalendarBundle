@@ -120,7 +120,6 @@ class RecurringCalendarEventControllerTest extends AbstractUseCaseTestCase
 
         $this->assertEquals($calendarEvent->getRecurrence()->getRecurrenceType(), Recurrence::TYPE_DAILY);
 
-
         return $calendarEvent;
     }
 
@@ -269,10 +268,6 @@ class RecurringCalendarEventControllerTest extends AbstractUseCaseTestCase
 
     /**
      * @dataProvider recurringEventCreationDataProvider
-     *
-     * @param $recurringEventParameters
-     * @param $apiRequestParams
-     * @param $expectedCalendarEvents
      */
     public function testCreateRecurringEvent($recurringEventParameters, $apiRequestParams, $expectedCalendarEvents)
     {
@@ -564,9 +559,6 @@ class RecurringCalendarEventControllerTest extends AbstractUseCaseTestCase
         ];
     }
 
-    /**
-     * @param $calendarEvent
-     */
     protected function addExceptions($calendarEvent)
     {
         foreach ($this->getExceptionsData($calendarEvent) as $exceptionData) {

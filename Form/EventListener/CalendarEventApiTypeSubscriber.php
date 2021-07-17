@@ -16,8 +16,6 @@ class CalendarEventApiTypeSubscriber implements EventSubscriberInterface
 
     /**
      * CalendarEventApiTypeSubscriber constructor.
-     *
-     * @param CalendarEventManager $calendarEventManager
      */
     public function __construct(CalendarEventManager $calendarEventManager)
     {
@@ -35,9 +33,6 @@ class CalendarEventApiTypeSubscriber implements EventSubscriberInterface
         ];
     }
 
-    /**
-     * @param FormEvent $formEvent
-     */
     public function preSubmitData(FormEvent $formEvent)
     {
         $data = $formEvent->getData();
@@ -56,9 +51,6 @@ class CalendarEventApiTypeSubscriber implements EventSubscriberInterface
 
     /**
      * Normalize boolean values of the form data.
-     *
-     * @param array $data
-     * @param array $booleanFields
      */
     protected function fixBooleanFields(array &$data, array $booleanFields)
     {
@@ -81,8 +73,6 @@ class CalendarEventApiTypeSubscriber implements EventSubscriberInterface
 
     /**
      * POST_SUBMIT event handler
-     *
-     * @param FormEvent $event
      */
     public function postSubmitData(FormEvent $event)
     {

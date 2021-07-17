@@ -16,9 +16,6 @@ class CalendarEventAttendeesListener implements OptionalListenerInterface
 {
     use OptionalListenerTrait;
 
-    /**
-     * @param OnFlushEventArgs $args
-     */
     public function onFlush(OnFlushEventArgs $args)
     {
         if (!$this->enabled) {
@@ -64,10 +61,6 @@ class CalendarEventAttendeesListener implements OptionalListenerInterface
             && count($unitOfWork->getEntityChangeSet($entity->getCalendarEvent())) == 0;
     }
 
-    /**
-     * @param CalendarEvent $calendarEvent
-     * @param UnitOfWork    $unitOfWork
-     */
     protected function updateCalendarEventUpdatedAt(CalendarEvent $calendarEvent, UnitOfWork $unitOfWork)
     {
         $oldUpdatedAt = $calendarEvent->getUpdatedAt();

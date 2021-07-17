@@ -73,10 +73,6 @@ class CreateCalendarEventAction extends AbstractAction
         self::OPTION_KEY_START,
     ];
 
-    /**
-     * @param ContextAccessor $contextAccessor
-     * @param Registry $registry
-     */
     public function __construct(ContextAccessor $contextAccessor, Registry $registry)
     {
         $this->calendarRepository = $registry->getRepository('OroCalendarBundle:Calendar');
@@ -155,9 +151,6 @@ class CreateCalendarEventAction extends AbstractAction
         return $end;
     }
 
-    /**
-     * @param CalendarEvent $calendarEvent
-     */
     protected function setReminders(CalendarEvent $calendarEvent)
     {
         if (false === isset($this->options[self::OPTION_KEY_REMINDERS])) {
@@ -228,10 +221,6 @@ class CreateCalendarEventAction extends AbstractAction
         );
     }
 
-    /**
-     * @param $context
-     * @param CalendarEvent $calendarEvent
-     */
     protected function addGuests($context, CalendarEvent $calendarEvent)
     {
         if (false === isset($this->options[self::OPTION_KEY_GUESTS])) {

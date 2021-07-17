@@ -11,9 +11,6 @@ abstract class AbstractCalendarProvider implements CalendarProviderInterface
      */
     protected $doctrineHelper;
 
-    /**
-     * @param DoctrineHelper $doctrineHelper
-     */
     public function __construct(DoctrineHelper $doctrineHelper)
     {
         $this->doctrineHelper = $doctrineHelper;

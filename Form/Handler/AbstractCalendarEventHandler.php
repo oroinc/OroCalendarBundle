@@ -33,14 +33,6 @@ abstract class AbstractCalendarEventHandler
     /** @var CalendarEventManager */
     protected $calendarEventManager;
 
-    /**
-     * @param RequestStack           $requestStack
-     * @param ManagerRegistry        $doctrine
-     * @param TokenAccessorInterface $tokenAccessor
-     * @param ActivityManager        $activityManager
-     * @param CalendarEventManager   $calendarEventManager
-     * @param NotificationManager    $notificationManager
-     */
     public function __construct(
         RequestStack $requestStack,
         ManagerRegistry $doctrine,
@@ -57,9 +49,6 @@ abstract class AbstractCalendarEventHandler
         $this->notificationManager = $notificationManager;
     }
 
-    /**
-     * @param FormInterface $form
-     */
     public function setForm(FormInterface $form)
     {
         $this->form = $form;
@@ -77,9 +66,6 @@ abstract class AbstractCalendarEventHandler
 
     /**
      * "Success" form handler
-     *
-     * @param CalendarEvent $entity
-     * @param CalendarEvent $originalEntity
      */
     protected function onSuccess(CalendarEvent $entity, CalendarEvent $originalEntity)
     {

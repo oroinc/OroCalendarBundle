@@ -17,9 +17,6 @@ class CalendarEventDeleteHandler extends AbstractEntityDeleteHandler
     /** @var DeleteManager */
     private $deleteManager;
 
-    /**
-     * @param DeleteManager $deleteManager
-     */
     public function __construct(DeleteManager $deleteManager)
     {
         $this->deleteManager = $deleteManager;

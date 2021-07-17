@@ -487,9 +487,6 @@ class CalendarEvent extends ExtendCalendarEvent implements
         return $this->systemCalendar;
     }
 
-    /**
-     * @return bool
-     */
     public function isSystemEvent(): bool
     {
         return $this->getSystemCalendar() !== null;
@@ -1225,7 +1222,6 @@ class CalendarEvent extends ExtendCalendarEvent implements
         return $this->getRelatedAttendee() && $this->getRelatedAttendee()->getUser() ?
             $this->getRelatedAttendee()->getUser()->getId() : null;
     }
-
 
     /**
      * Returns true if related attendee user is equal to passed instance of user.

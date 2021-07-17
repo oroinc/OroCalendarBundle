@@ -18,11 +18,6 @@ class UserCalendarProvider extends AbstractRecurrenceAwareCalendarProvider
 
     /**
      * UserCalendarProvider constructor.
-     *
-     * @param DoctrineHelper $doctrineHelper
-     * @param Model\Recurrence $recurrence
-     * @param EntityNameResolver $entityNameResolver
-     * @param AbstractCalendarEventNormalizer $calendarEventNormalizer
      */
     public function __construct(
         DoctrineHelper $doctrineHelper,

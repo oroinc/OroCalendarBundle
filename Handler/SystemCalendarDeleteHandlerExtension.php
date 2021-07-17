@@ -22,11 +22,6 @@ class SystemCalendarDeleteHandlerExtension extends AbstractEntityDeleteHandlerEx
     /** @var TokenAccessorInterface */
     private $tokenAccessor;
 
-    /**
-     * @param SystemCalendarConfig          $calendarConfig
-     * @param AuthorizationCheckerInterface $authorizationChecker
-     * @param TokenAccessorInterface        $tokenAccessor
-     */
     public function __construct(
         SystemCalendarConfig $calendarConfig,
         AuthorizationCheckerInterface $authorizationChecker,

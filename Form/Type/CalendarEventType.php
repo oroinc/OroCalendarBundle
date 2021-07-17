@@ -42,12 +42,6 @@ class CalendarEventType extends AbstractType
     /** @var ManagerRegistry */
     protected $registry;
 
-    /**
-     * @param NotificationManager           $notificationManager
-     * @param AuthorizationCheckerInterface $authorizationChecker
-     * @param TokenAccessorInterface        $tokenAccessor
-     * @param ManagerRegistry               $registry
-     */
     public function __construct(
         NotificationManager $notificationManager,
         AuthorizationCheckerInterface $authorizationChecker,
@@ -219,9 +213,6 @@ class CalendarEventType extends AbstractType
         return 'oro_calendar_event';
     }
 
-    /**
-     * @param FormBuilderInterface $builder
-     */
     protected function defineCalendar(FormBuilderInterface $builder)
     {
         if ($this->authorizationChecker->isGranted('oro_calendar_event_assign_management')) {

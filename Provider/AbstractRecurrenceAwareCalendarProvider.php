@@ -19,10 +19,6 @@ abstract class AbstractRecurrenceAwareCalendarProvider extends AbstractCalendarP
      */
     protected $propertyAccessor;
 
-    /**
-     * @param DoctrineHelper $doctrineHelper
-     * @param Model\Recurrence $recurrence
-     */
     public function __construct(DoctrineHelper $doctrineHelper, Model\Recurrence $recurrence)
     {
         parent::__construct($doctrineHelper);
@@ -213,10 +209,6 @@ abstract class AbstractRecurrenceAwareCalendarProvider extends AbstractCalendarP
 
     /**
      * Adjusts end date to +/- 1 hour if start and end date are in different daylight saving time
-     *
-     * @param \DateTime $endDate
-     * @param \DateTime $startDate
-     * @param \DateTimeZone $timeZone
      */
     protected function adjustEndDateWithDST(\DateTime $endDate, \DateTime $startDate, \DateTimeZone $timeZone)
     {

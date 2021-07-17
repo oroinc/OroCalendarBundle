@@ -132,9 +132,6 @@ class CalendarEventEntityListenerTest extends \PHPUnit\Framework\TestCase
         $this->listener->preUpdate(new CalendarEvent(), $this->getPreUpdateEvent(true, '123', '1234'));
     }
 
-    /**
-     * @return LifecycleEventArgs
-     */
     private function getLifecycleEvent(): LifecycleEventArgs
     {
         return new LifecycleEventArgs(new \stdClass(), $this->createMock(ObjectManager::class));
