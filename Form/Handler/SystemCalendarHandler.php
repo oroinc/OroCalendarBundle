@@ -21,11 +21,6 @@ class SystemCalendarHandler
     /** @var ObjectManager */
     protected $manager;
 
-    /**
-     * @param FormInterface $form
-     * @param RequestStack  $requestStack
-     * @param ObjectManager $manager
-     */
     public function __construct(
         FormInterface $form,
         RequestStack $requestStack,
@@ -73,8 +68,6 @@ class SystemCalendarHandler
 
     /**
      * "Success" form handler
-     *
-     * @param SystemCalendar $entity
      */
     protected function onSuccess(SystemCalendar $entity)
     {

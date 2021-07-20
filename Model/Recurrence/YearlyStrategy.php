@@ -91,12 +91,6 @@ class YearlyStrategy extends MonthlyStrategy
         return $occurrenceDate;
     }
 
-    /**
-     * @param int $month
-     * @param int|null $year
-     *
-     * @return int
-     */
     private function getRecurrenceDay(int $month, ?int $year): int
     {
         $date = new \DateTime(sprintf('%d-%d-1', $year ?: date('Y'), $month));

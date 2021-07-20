@@ -459,9 +459,6 @@ class CalendarEventTest extends \PHPUnit\Framework\TestCase
 
     /**
      * @dataProvider childAttendeesProvider
-     *
-     * @param CalendarEvent $event
-     * @param array         $expectedAttendees
      */
     public function testGetChildAttendees(CalendarEvent $event, array $expectedAttendees)
     {
@@ -864,8 +861,6 @@ class CalendarEventTest extends \PHPUnit\Framework\TestCase
 
     /**
      * @dataProvider additionalFieldsProvider
-     * @param array $eventFields
-     * @param array $expectedFields
      */
     public function testAdditionalFields(array $eventFields, array $expectedFields)
     {
@@ -875,9 +870,6 @@ class CalendarEventTest extends \PHPUnit\Framework\TestCase
         $this->assertSame($expectedFields, $calendarEvent->getAdditionalFields());
     }
 
-    /**
-     * @return array
-     */
     public function additionalFieldsProvider(): array
     {
         return [
@@ -901,9 +893,6 @@ class CalendarEventTest extends \PHPUnit\Framework\TestCase
         ];
     }
 
-    /**
-     * @return CalendarEvent
-     */
     public static function getCalendarEventWithOwner(): CalendarEvent
     {
         $calendarEvent = new CalendarEvent();

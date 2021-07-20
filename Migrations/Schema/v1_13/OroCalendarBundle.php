@@ -46,9 +46,6 @@ class OroCalendarBundle implements Migration, ExtendExtensionAwareInterface
         $queries->addQuery(new ConvertCalendarEventOwnerToAttendee());
     }
 
-    /**
-     * @param Schema $schema
-     */
     protected function createAttendee(Schema $schema)
     {
         $table = $schema->createTable('oro_calendar_event_attendee');
@@ -66,9 +63,6 @@ class OroCalendarBundle implements Migration, ExtendExtensionAwareInterface
         $table->addIndex(['calendar_event_id']);
     }
 
-    /**
-     * @param Schema $schema
-     */
     protected function createRecurrenceTable(Schema $schema)
     {
         $table = $schema->createTable('oro_calendar_recurrence');
@@ -90,9 +84,6 @@ class OroCalendarBundle implements Migration, ExtendExtensionAwareInterface
         $table->addIndex(['calculated_end_time'], 'oro_calendar_r_c_end_time_idx', []);
     }
 
-    /**
-     * @param Schema $schema
-     */
     protected function addForeignKeys(Schema $schema)
     {
         $table = $schema->getTable('oro_calendar_event_attendee');
@@ -112,9 +103,6 @@ class OroCalendarBundle implements Migration, ExtendExtensionAwareInterface
         );
     }
 
-    /**
-     * @param Schema $schema
-     */
     protected function addEnums(Schema $schema)
     {
         $table = $schema->getTable('oro_calendar_event_attendee');
@@ -144,9 +132,6 @@ class OroCalendarBundle implements Migration, ExtendExtensionAwareInterface
         );
     }
 
-    /**
-     * @param Schema $schema
-     */
     protected function updateCalendarEvent(Schema $schema)
     {
         $table = $schema->getTable('oro_calendar_event');

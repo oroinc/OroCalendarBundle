@@ -62,9 +62,6 @@ class CalendarEventEntityNameProviderTest extends TestCase
         }
     }
 
-    /**
-     * @return array
-     */
     private function getFormats(): array
     {
         return [

@@ -43,10 +43,6 @@ class UpdateExceptionManager
      */
     protected $propertyAccessor;
 
-    /**
-     * @param AttendeeManager $attendeeManager
-     * @param DeleteManager $deleteManager
-     */
     public function __construct(AttendeeManager $attendeeManager, DeleteManager $deleteManager)
     {
         $this->attendeeManager = $attendeeManager;
@@ -60,7 +56,6 @@ class UpdateExceptionManager
      *
      * @param CalendarEvent $actualEvent          Actual calendar event.
      * @param CalendarEvent $originalEvent  Original calendar event state before update.
-     *
      */
     public function onEventUpdate(CalendarEvent $actualEvent, CalendarEvent $originalEvent)
     {
@@ -117,8 +112,6 @@ class UpdateExceptionManager
 
     /**
      * Clears all exceptions of the event.
-     *
-     * @param CalendarEvent $event
      */
     protected function clearExceptions(CalendarEvent $event)
     {
@@ -296,9 +289,6 @@ class UpdateExceptionManager
 
     /**
      * Removes from calendar event the attendee and its' child event.
-     *
-     * @param CalendarEvent $calendarEvent
-     * @param Attendee $attendee
      */
     protected function removeAttendeeAndChildEvent(
         CalendarEvent $calendarEvent,
@@ -313,7 +303,6 @@ class UpdateExceptionManager
             $calendarEvent->removeChildEvent($childEvent);
         }
     }
-
 
     /**
      * Compares attendees of 2 events.

@@ -63,9 +63,6 @@ class CalendarEventActivityListProviderTest extends \PHPUnit\Framework\TestCase
 
     /**
      * @dataProvider getRoutesDataProvider
-     *
-     * @param CalendarEvent $calendarEvent
-     * @param array $expected
      */
     public function testGetRoutes(CalendarEvent $calendarEvent, array $expected)
     {
@@ -138,9 +135,6 @@ class CalendarEventActivityListProviderTest extends \PHPUnit\Framework\TestCase
 
     /**
      * @dataProvider getOrganizationDataProvider
-     *
-     * @param CalendarEvent $calendarEvent
-     * @param Organization|null $expected
      */
     public function testGetOrganization(CalendarEvent $calendarEvent, Organization $expected = null)
     {
@@ -265,10 +259,6 @@ class CalendarEventActivityListProviderTest extends \PHPUnit\Framework\TestCase
 
     /**
      * @dataProvider getActivityOwnersDataProvider
-     *
-     * @param CalendarEvent $entity
-     * @param ActivityList $activity
-     * @param array $expected
      */
     public function testGetActivityOwners(CalendarEvent $entity, ActivityList $activity, array $expected)
     {
@@ -345,9 +335,6 @@ class CalendarEventActivityListProviderTest extends \PHPUnit\Framework\TestCase
 
     /**
      * @dataProvider getOwnerDataProvider
-     *
-     * @param CalendarEvent $calendarEvent
-     * @param User|null $user
      */
     public function testGetOwner(CalendarEvent $calendarEvent, User $user = null)
     {

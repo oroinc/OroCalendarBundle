@@ -487,9 +487,6 @@ class CalendarEvent extends ExtendCalendarEvent implements
         return $this->systemCalendar;
     }
 
-    /**
-     * @return bool
-     */
     public function isSystemEvent(): bool
     {
         return $this->getSystemCalendar() !== null;
@@ -563,8 +560,6 @@ class CalendarEvent extends ExtendCalendarEvent implements
 
     /**
      * Gets date/time an event begins.
-     *
-     * @return \DateTime|null
      */
     public function getStart(): ?\DateTime
     {
@@ -594,8 +589,6 @@ class CalendarEvent extends ExtendCalendarEvent implements
      * If an event is NOT all-day the end date is exclusive.
      * This is only a gotcha when your end has time 00:00. It means your event ends on midnight,
      * and it will not span through the next day.
-     *
-     * @return \DateTime|null
      */
     public function getEnd(): ?\DateTime
     {
@@ -1225,7 +1218,6 @@ class CalendarEvent extends ExtendCalendarEvent implements
         return $this->getRelatedAttendee() && $this->getRelatedAttendee()->getUser() ?
             $this->getRelatedAttendee()->getUser()->getId() : null;
     }
-
 
     /**
      * Returns true if related attendee user is equal to passed instance of user.

@@ -31,9 +31,6 @@ class Calendar extends Element
         $nextButton->press();
     }
 
-    /**
-     * @return string
-     */
     public function getCurrentMonth(): string
     {
         return $this->find(

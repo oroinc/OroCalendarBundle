@@ -382,8 +382,6 @@ class Recurrence
 
     /**
      * Gets startTime.
-     *
-     * @return \DateTime|null
      */
     public function getStartTime(): ?\DateTime
     {
@@ -406,8 +404,6 @@ class Recurrence
 
     /**
      * Gets endTime.
-     *
-     * @return \DateTime|null
      */
     public function getEndTime(): ?\DateTime
     {

@@ -26,9 +26,6 @@ class UpdateAttendeeData extends AbstractFixture implements DependentFixtureInte
         $this->updateType($manager);
     }
 
-    /**
-     * @param EntityManager $em
-     */
     protected function updateStatus(EntityManager $em)
     {
         $connection = $em->getConnection();
@@ -63,9 +60,6 @@ SQL
         );
     }
 
-    /**
-     * @param EntityManager $em
-     */
     protected function updateType(EntityManager $em)
     {
         $connection = $em->getConnection();

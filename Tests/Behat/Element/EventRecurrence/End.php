@@ -37,9 +37,6 @@ class End extends AbstractEventRecurrence
 
     /**
      * Set event ending by specific date and time
-     *
-     * @param $fieldLabel
-     * @param $value
      */
     private function setEndByDate($fieldLabel, $value)
     {

@@ -26,10 +26,6 @@ class SystemCalendarType extends AbstractType
     /** @var SystemCalendarConfig */
     protected $calendarConfig;
 
-    /**
-     * @param AuthorizationCheckerInterface $authorizationChecker
-     * @param SystemCalendarConfig          $calendarConfig
-     */
     public function __construct(
         AuthorizationCheckerInterface $authorizationChecker,
         SystemCalendarConfig $calendarConfig
@@ -84,7 +80,6 @@ class SystemCalendarType extends AbstractType
     /**
      * PRE_SET_DATA event handler
      *
-     * @param FormEvent $event
      * @SuppressWarnings(PHPMD.CyclomaticComplexity)
      */
     public function preSetData(FormEvent $event)

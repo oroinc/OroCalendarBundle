@@ -36,7 +36,6 @@ class Recurrence
     const TYPE_YEAR_N_TH = 'yearnth';
     /**#@-*/
 
-
     /**#@+
      * It is used in monthnth and yearnth strategies, for creating recurring events like:
      * 'Yearly every 2 years on the first Saturday of April',
@@ -95,9 +94,6 @@ class Recurrence
         self::DAY_SUNDAY,
     ];
 
-    /**
-     * @param StrategyInterface $recurrenceStrategy
-     */
     public function __construct(StrategyInterface $recurrenceStrategy)
     {
         $this->recurrenceStrategy = $recurrenceStrategy;

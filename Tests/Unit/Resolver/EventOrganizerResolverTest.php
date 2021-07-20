@@ -149,9 +149,6 @@ class EventOrganizerResolverTest extends \PHPUnit\Framework\TestCase
         return $registry;
     }
 
-    /**
-     * @return User
-     */
     private function getExistingUser(): User
     {
         $existingUser = new User();

@@ -30,9 +30,6 @@ class ValidationFailedTest extends AbstractValidationErrorTestCase
      *
      * Verify expected validation errors of recurrence fields in the response.
      *
-     * @param array $recurrence
-     * @param array $errors
-     *
      * @dataProvider recurrenceValidationFailedDataProvider
      */
     public function testRecurrenceValidationFailed(array $recurrence, array $errors)

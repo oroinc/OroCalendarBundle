@@ -19,8 +19,6 @@ class RecurrenceValidator extends ConstraintValidator
 
     /**
      * RecurrenceValidator constructor.
-     *
-     * @param Model\Recurrence $recurrenceModel
      */
     public function __construct(Model\Recurrence $recurrenceModel)
     {
@@ -108,9 +106,6 @@ class RecurrenceValidator extends ConstraintValidator
 
     /**
      * Validates all required fields are not blank.
-     *
-     * @param Entity\Recurrence $recurrence
-     * @param Constraints\Recurrence $constraint
      */
     protected function validateRequiredProperties(Entity\Recurrence $recurrence, Constraints\Recurrence $constraint)
     {
@@ -125,9 +120,6 @@ class RecurrenceValidator extends ConstraintValidator
 
     /**
      * Validates interval property.
-     *
-     * @param Entity\Recurrence $recurrence
-     * @param Constraints\Recurrence $constraint
      */
     protected function validateInterval(Entity\Recurrence $recurrence, Constraints\Recurrence $constraint)
     {
@@ -190,9 +182,6 @@ class RecurrenceValidator extends ConstraintValidator
 
     /**
      * Validates recurrence type.
-     *
-     * @param Entity\Recurrence $value
-     * @param Constraints\Recurrence $constraint
      */
     protected function validateEndTime(Entity\Recurrence $value, Constraints\Recurrence $constraint)
     {
@@ -217,9 +206,6 @@ class RecurrenceValidator extends ConstraintValidator
 
     /**
      * Validates day of week type.
-     *
-     * @param Entity\Recurrence $value
-     * @param Constraints\Recurrence $constraint
      */
     protected function validateDayOfWeek(Entity\Recurrence $value, Constraints\Recurrence $constraint)
     {

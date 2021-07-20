@@ -32,10 +32,6 @@ abstract class AbstractStrategy implements StrategyInterface
 
     /**
      * AbstractStrategy constructor.
-     *
-     * @param TranslatorInterface $translator
-     * @param DateTimeFormatterInterface $formatter
-     * @param LocaleSettings $localeSettings
      */
     public function __construct(
         TranslatorInterface $translator,

@@ -24,9 +24,6 @@ class UpdateChildManager
      */
     protected $doctrine;
 
-    /**
-     * @param ManagerRegistry $doctrine
-     */
     public function __construct(ManagerRegistry $doctrine)
     {
         $this->doctrine = $doctrine;
@@ -65,7 +62,6 @@ class UpdateChildManager
             $organization,
             $removedAttendeeUserIds
         );
-
 
         $isExceptionalCalendarEvent = !is_null($calendarEvent->getRecurringEvent());
         if ($isExceptionalCalendarEvent) {
@@ -116,12 +112,6 @@ class UpdateChildManager
         return $result;
     }
 
-    /**
-     * @param CalendarEvent $calendarEvent
-     * @param CalendarEvent $originalEvent
-     * @param Organization  $organization
-     * @param array         $newAttendeeUserIds
-     */
     protected function createCalendarEventsCopiesForNewAttendees(
         CalendarEvent $calendarEvent,
         CalendarEvent $originalEvent,
@@ -214,11 +204,6 @@ class UpdateChildManager
         }
     }
 
-    /**
-     * @param CalendarEvent $calendarEvent
-     * @param Organization  $organization
-     * @param array         $removedAttendeeUserIds
-     */
     protected function createCalendarEventCopiesForRemovedAttendees(
         CalendarEvent $calendarEvent,
         Organization $organization,
@@ -272,8 +257,6 @@ class UpdateChildManager
 
     /**
      * Sync Attendee Events state with main event state
-     *
-     * @param CalendarEvent $calendarEvent
      */
     protected function updateAttendeesCalendarEvents(CalendarEvent $calendarEvent)
     {
@@ -284,9 +267,6 @@ class UpdateChildManager
 
     /**
      * Sync Single Attendee Event state with main event state
-     *
-     * @param CalendarEvent $parent
-     * @param CalendarEvent $child
      */
     protected function updateAttendeeCalendarEvent(CalendarEvent $parent, CalendarEvent $child)
     {
@@ -310,10 +290,6 @@ class UpdateChildManager
         }
     }
 
-    /**
-     * @param CalendarEvent $calendarEvent
-     * @param CalendarEvent $attendeeCalendarEvent
-     */
     private function copyOrganizerFields(CalendarEvent $calendarEvent, CalendarEvent $attendeeCalendarEvent)
     {
         $this->copyFieldIfNotNull($calendarEvent, 'getOrganizerEmail', $attendeeCalendarEvent, 'setOrganizerEmail');
@@ -326,12 +302,6 @@ class UpdateChildManager
         $this->copyFieldIfNotNull($calendarEvent, 'getOrganizerUser', $attendeeCalendarEvent, 'setOrganizerUser');
     }
 
-    /**
-     * @param CalendarEvent $from
-     * @param string $getter
-     * @param CalendarEvent $to
-     * @param string $setter
-     */
     private function copyFieldIfNotNull(CalendarEvent $from, string $getter, CalendarEvent $to, string $setter)
     {
         if (!is_callable([$from, $getter]) || !is_callable([$to, $setter])) {

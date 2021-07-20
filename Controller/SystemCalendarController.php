@@ -150,8 +150,6 @@ class SystemCalendarController extends AbstractController
     }
 
     /**
-     * @param SystemCalendar $entity
-     *
      * @throws NotFoundHttpException
      * @throws AccessDeniedException
      */

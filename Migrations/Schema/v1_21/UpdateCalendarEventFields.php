@@ -56,9 +56,6 @@ class UpdateCalendarEventFields implements Migration, DatabasePlatformAwareInter
     }
 
     /**
-     * @param QueryBag $queries
-     * @param string $field
-     * @param Schema $schema
      * @throws \Doctrine\DBAL\Schema\SchemaException
      */
     private function setDefaultValueForBoolean(string $field, Schema $schema, QueryBag $queries): void
@@ -100,8 +97,6 @@ class UpdateCalendarEventFields implements Migration, DatabasePlatformAwareInter
     }
 
     /**
-     * @param Schema $schema
-     * @param QueryBag $queries
      * @throws \Doctrine\DBAL\DBALException
      * @throws \Doctrine\DBAL\Schema\SchemaException
      */
