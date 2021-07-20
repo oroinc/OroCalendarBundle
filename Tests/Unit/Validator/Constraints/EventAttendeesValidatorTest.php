@@ -132,10 +132,6 @@ class EventAttendeesValidatorTest extends ConstraintValidatorTestCase
             ->willReturn($this->manager);
     }
 
-    /**
-     * @param int $id
-     * @return CalendarEvent
-     */
     private function getCalendarEventEntity(int $id): CalendarEvent
     {
         $calendarEvent = new CalendarEvent();
@@ -147,12 +143,6 @@ class EventAttendeesValidatorTest extends ConstraintValidatorTestCase
         return $calendarEvent;
     }
 
-    /**
-     * @param int $id
-     * @param string $email
-     *
-     * @return Attendee
-     */
     private function getCalendarEventAttendeeEntity(int $id, string $email): Attendee
     {
         $attendee = new Attendee();

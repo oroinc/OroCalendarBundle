@@ -23,8 +23,6 @@ class CalendarUidSubscriber implements EventSubscriberInterface
 
     /**
      * PRE_SET_DATA event handler
-     *
-     * @param FormEvent $event
      */
     public function preSetData(FormEvent $event)
     {

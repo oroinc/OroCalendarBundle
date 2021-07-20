@@ -38,35 +38,22 @@ class EntityListener
     /** @var Recurrence  */
     protected $recurrenceModel;
 
-    /**
-     * @param TokenAccessorInterface $tokenAccessor
-     * @param Recurrence             $recurrenceModel
-     */
     public function __construct(TokenAccessorInterface $tokenAccessor, Recurrence $recurrenceModel)
     {
         $this->tokenAccessor = $tokenAccessor;
         $this->recurrenceModel = $recurrenceModel;
     }
 
-    /**
-     * @param PreUpdateEventArgs $args
-     */
     public function preUpdate(PreUpdateEventArgs $args)
     {
         $this->processEntity($args->getEntity());
     }
 
-    /**
-     * @param LifecycleEventArgs $args
-     */
     public function prePersist(LifecycleEventArgs $args)
     {
         $this->processEntity($args->getEntity());
     }
 
-    /**
-     * @param OnFlushEventArgs $event
-     */
     public function onFlush(OnFlushEventArgs $event)
     {
         $em  = $event->getEntityManager();
@@ -93,9 +80,6 @@ class EntityListener
         }
     }
 
-    /**
-     * @param PostFlushEventArgs $event
-     */
     public function postFlush(PostFlushEventArgs $event)
     {
         if (!empty($this->insertedCalendars)) {

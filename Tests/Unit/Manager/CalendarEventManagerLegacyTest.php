@@ -84,7 +84,6 @@ class CalendarEventManagerLegacyTest extends \PHPUnit\Framework\TestCase
             ->disableOriginalConstructor()
             ->getMock();
 
-
         $tokenAccessor = $this->createMock(TokenAccessorInterface::class);
 
         $entityNameResolver = $this->getMockBuilder(EntityNameResolver::class)
@@ -270,10 +269,6 @@ class CalendarEventManagerLegacyTest extends \PHPUnit\Framework\TestCase
         $this->assertEquals('attendee2@example.com', $attendees->get(1)->getDisplayName());
     }
 
-    /**
-     * @param CalendarEvent $expected
-     * @param CalendarEvent $actual
-     */
     protected function assertEventDataEquals(CalendarEvent $expected, CalendarEvent $actual)
     {
         $this->assertEquals($expected->getTitle(), $actual->getTitle());
@@ -282,7 +277,6 @@ class CalendarEventManagerLegacyTest extends \PHPUnit\Framework\TestCase
         $this->assertEquals($expected->getEnd(), $actual->getEnd());
         $this->assertEquals($expected->getAllDay(), $actual->getAllDay());
     }
-
 
     /**
      * @param Attendee $relatedAttendee

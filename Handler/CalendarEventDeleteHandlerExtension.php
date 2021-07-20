@@ -22,11 +22,6 @@ class CalendarEventDeleteHandlerExtension extends AbstractEntityDeleteHandlerExt
     /** @var NotificationManager */
     private $notificationManager;
 
-    /**
-     * @param SystemCalendarConfig          $calendarConfig
-     * @param AuthorizationCheckerInterface $authorizationChecker
-     * @param NotificationManager           $notificationManager
-     */
     public function __construct(
         SystemCalendarConfig $calendarConfig,
         AuthorizationCheckerInterface $authorizationChecker,

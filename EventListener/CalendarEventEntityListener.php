@@ -53,10 +53,6 @@ class CalendarEventEntityListener
         $this->updateParentUid($calendarEvent, $event);
     }
 
-    /**
-     * @param CalendarEvent           $calendarEvent
-     * @param LifecycleEventArgs|null $event
-     */
     private function updateParentUid(CalendarEvent $calendarEvent, LifecycleEventArgs $event = null)
     {
         if ($calendarEvent->getParent() !== null && $calendarEvent->getParent()->getUid() === null) {
@@ -78,10 +74,6 @@ class CalendarEventEntityListener
         }
     }
 
-    /**
-     * @param CalendarEvent           $calendarEvent
-     * @param LifecycleEventArgs|null $event
-     */
     private function updateRecurrentUid(CalendarEvent $calendarEvent, LifecycleEventArgs $event = null)
     {
         // if calendar event is an recurring event exception and its base recurring event does not have UID,
@@ -97,10 +89,6 @@ class CalendarEventEntityListener
     /**
      * Schedule extra update is needed, because of we are using preUpdate event which is triggered after UoW
      *  calculate all change sets
-     *
-     * @param CalendarEvent      $calendarEvent
-     * @param string             $newUid
-     * @param LifecycleEventArgs $doctrineEvent
      */
     private function scheduleExtraUpdate(
         CalendarEvent $calendarEvent,

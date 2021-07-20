@@ -96,11 +96,6 @@ class DelegateStrategy implements StrategyInterface, ResetInterface
         $this->initializedStrategies = null;
     }
 
-    /**
-     * @param Recurrence $recurrence
-     *
-     * @return StrategyInterface|null
-     */
     private function findStrategy(Recurrence $recurrence): ?StrategyInterface
     {
         $strategies = $this->getStrategies();
@@ -114,10 +109,6 @@ class DelegateStrategy implements StrategyInterface, ResetInterface
     }
 
     /**
-     * @param Recurrence $recurrence
-     *
-     * @return StrategyInterface
-     *
      * @throws \InvalidArgumentException if a strategy was not found
      */
     private function getStrategy(Recurrence $recurrence): StrategyInterface

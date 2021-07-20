@@ -15,9 +15,6 @@ class AddCommentAssociation implements Migration, CommentExtensionAwareInterface
     /** @var CommentExtension */
     protected $commentExtension;
 
-    /**
-     * @param CommentExtension $commentExtension
-     */
     public function setCommentExtension(CommentExtension $commentExtension)
     {
         $this->commentExtension = $commentExtension;
@@ -33,9 +30,6 @@ class AddCommentAssociation implements Migration, CommentExtensionAwareInterface
 
     /**
      * Add calendar event to comment
-     *
-     * @param Schema           $schema
-     * @param CommentExtension $commentExtension
      */
     public static function addCalendarEventToComment(Schema $schema, CommentExtension $commentExtension)
     {

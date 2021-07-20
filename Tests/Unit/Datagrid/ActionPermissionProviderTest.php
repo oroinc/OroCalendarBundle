@@ -27,9 +27,6 @@ class ActionPermissionProviderTest extends \PHPUnit\Framework\TestCase
     }
 
     /**
-     * @param array $params
-     * @param array $expected
-     *
      * @dataProvider permissionsDataProvider
      */
     public function testGetInvitationPermissions(array $params, array $expected)

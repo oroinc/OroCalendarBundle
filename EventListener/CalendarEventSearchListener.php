@@ -21,10 +21,6 @@ class CalendarEventSearchListener
     /** @var ManagerRegistry */
     private $doctrine;
 
-    /**
-     * @param Router $router
-     * @param ManagerRegistry $doctrine
-     */
     public function __construct(Router $router, ManagerRegistry $doctrine)
     {
         $this->router = $router;
@@ -33,8 +29,6 @@ class CalendarEventSearchListener
 
     /**
      * Sets the organization data of the calendar event entity to the search item data.
-     *
-     * @param PrepareEntityMapEvent $event
      */
     public function prepareEntityMapEvent(PrepareEntityMapEvent $event)
     {
@@ -65,8 +59,6 @@ class CalendarEventSearchListener
 
     /**
      * Sets the record url if the calendar event belogs to the system calendar.
-     *
-     * @param PrepareResultItemEvent $event
      */
     public function prepareResultItemEvent(PrepareResultItemEvent $event)
     {

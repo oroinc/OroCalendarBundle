@@ -186,9 +186,6 @@ class SystemCalendarEventController extends AbstractController
         return $entityRoutingHelper->getEntity($targetEntityClass, $targetEntityId);
     }
 
-    /**
-     * @param SystemCalendar|null $systemCalendar
-     */
     private function checkPermissions(SystemCalendar $systemCalendar = null)
     {
         if (!$systemCalendar) {
@@ -205,8 +202,6 @@ class SystemCalendarEventController extends AbstractController
     }
 
     /**
-     * @param SystemCalendar $entity
-     *
      * @throws NotFoundHttpException
      */
     protected function checkPermissionByConfig(SystemCalendar $entity)

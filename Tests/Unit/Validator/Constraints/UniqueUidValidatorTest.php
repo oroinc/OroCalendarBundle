@@ -138,10 +138,6 @@ class UniqueUidValidatorTest extends ConstraintValidatorTestCase
             ->willReturn($this->manager);
     }
 
-    /**
-     * @param int $id
-     * @return Calendar
-     */
     private function getCalendarEntity(int $id): Calendar
     {
         $calendar = new Calendar();

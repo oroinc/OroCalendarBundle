@@ -24,8 +24,6 @@ class EventForm extends OroForm
 
     /**
      * Set recurrence parameters from TableNode
-     *
-     * @param TableNode $table
      */
     public function fill(TableNode $table)
     {

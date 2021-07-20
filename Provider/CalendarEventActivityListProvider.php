@@ -31,11 +31,6 @@ class CalendarEventActivityListProvider implements
     /** @var CommentAssociationHelper */
     protected $commentAssociationHelper;
 
-    /**
-     * @param DoctrineHelper            $doctrineHelper
-     * @param ActivityAssociationHelper $activityAssociationHelper
-     * @param CommentAssociationHelper  $commentAssociationHelper
-     */
     public function __construct(
         DoctrineHelper $doctrineHelper,
         ActivityAssociationHelper $activityAssociationHelper,

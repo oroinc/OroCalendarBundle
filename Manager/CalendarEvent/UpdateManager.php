@@ -28,12 +28,6 @@ class UpdateManager
      */
     protected $matchingEventsManager;
 
-    /**
-     * @param UpdateAttendeeManager $updateAttendeeManager
-     * @param UpdateChildManager $updateChildManager
-     * @param UpdateExceptionManager $updateExceptionManager
-     * @param MatchingEventsManager $matchingEventsManager
-     */
     public function __construct(
         UpdateAttendeeManager $updateAttendeeManager,
         UpdateChildManager $updateChildManager,
@@ -53,7 +47,6 @@ class UpdateManager
      * @param CalendarEvent $originalEvent  Original calendar event state before update.
      * @param Organization $organization    Organization is used to match users to attendees by their email.
      * @param bool $allowUpdateExceptions   If TRUE then exceptions data should be updated
-     *
      */
     public function onEventUpdate(
         CalendarEvent $actualEvent,
@@ -76,9 +69,6 @@ class UpdateManager
      * When only recurrence or attendees collection was updated calendar event is not
      * added to UoW as updated entity and we need to force update of "updateAt" field to have
      * API clients know about the updated happened.
-     *
-     * @param CalendarEvent $calendarEvent
-     * @param CalendarEvent $originalEvent
      */
     protected function setUpdatedAt(CalendarEvent $calendarEvent, CalendarEvent $originalEvent)
     {

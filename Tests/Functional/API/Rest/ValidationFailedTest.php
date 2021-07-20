@@ -27,9 +27,6 @@ class ValidationFailedTest extends AbstractValidationErrorTestCase
      * Steps:
      * 1. Create regular calendar event using minimal required data in the request.
      *
-     * @param array $recurrence
-     * @param array $errors
-     *
      * @dataProvider recurrenceValidationFailedDataProvider
      */
     public function testCreateRecurringCalendarEventWithInvalidFieldsOfRecurrenceArray(array $recurrence, array $errors)

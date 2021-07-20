@@ -15,9 +15,6 @@ class AttendeePreferredLocalizationProvider extends AbstractPreferredLocalizatio
     /** @var PreferredLocalizationProviderInterface */
     private $innerLocalizationProvider;
 
-    /**
-     * @param PreferredLocalizationProviderInterface $innerLocalizationProvider
-     */
     public function __construct(PreferredLocalizationProviderInterface $innerLocalizationProvider)
     {
         $this->innerLocalizationProvider = $innerLocalizationProvider;

@@ -102,7 +102,6 @@ class RecurringCalendarEventExceptionValidatorTest extends \PHPUnit\Framework\Te
         $this->getValidator()->validate($calendarEvent, $this->constraint);
     }
 
-
     public function testValidateWithErrorsWorksCorrectlyIfCalendarFieldDataIsInteger()
     {
         $expectedCalendarId = 42;
@@ -177,10 +176,6 @@ class RecurringCalendarEventExceptionValidatorTest extends \PHPUnit\Framework\Te
         return $validator;
     }
 
-    /**
-     * @param $object
-     * @param $value
-     */
     protected function setId($object, $value)
     {
         $class = new \ReflectionClass($object);

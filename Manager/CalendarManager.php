@@ -167,9 +167,6 @@ class CalendarManager implements ResetInterface
         return $result;
     }
 
-    /**
-     * @param array $calendars
-     */
     protected function normalizeCalendarData(array &$calendars)
     {
         // apply default values and remove redundant properties
@@ -181,10 +178,6 @@ class CalendarManager implements ResetInterface
         ArrayUtil::sortBy($calendars, false, 'position');
     }
 
-    /**
-     * @param array $calendar
-     * @param array $defaultValues
-     */
     protected function applyCalendarDefaultValues(array &$calendar, array $defaultValues)
     {
         foreach ($defaultValues as $fieldName => $val) {

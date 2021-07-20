@@ -61,9 +61,6 @@ class DailyStrategyTest extends AbstractTestStrategy
     }
 
     /**
-     * @param $recurrenceData
-     * @param $expected
-     *
      * @dataProvider recurrencePatternsDataProvider
      */
     public function testGetTextValue($recurrenceData, $expected)
@@ -87,9 +84,6 @@ class DailyStrategyTest extends AbstractTestStrategy
     }
 
     /**
-     * @param $recurrenceData
-     * @param $expected
-     *
      * @dataProvider recurrenceLastOccurrenceDataProvider
      */
     public function testGetCalculatedEndTime($recurrenceData, $expected)

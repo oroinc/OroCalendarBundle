@@ -121,7 +121,6 @@ class DateEarlierThanValidatorTest extends \PHPUnit\Framework\TestCase
         $validator->validate($this->dateTimeStart, $this->constraint);
     }
 
-
     public function testValidData()
     {
         $this->formField->expects($this->any())

@@ -11,9 +11,6 @@ class CalendarEventGridHelper
     /** @var Router */
     protected $router;
 
-    /**
-     * @param Router $router
-     */
     public function __construct(Router $router)
     {
         $this->router = $router;

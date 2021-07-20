@@ -1094,7 +1094,6 @@ class RecurringEventDeleteTest extends AbstractTestCase
         $this->assertResponseEquals($expectedResponse, $response, false);
     }
 
-
     /**
      * Delete recurring event in attendee calendar deletes this attendee from all events.
      *

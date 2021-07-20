@@ -18,10 +18,6 @@ class CalendarSubscriber implements EventSubscriberInterface
     /** @var ManagerRegistry */
     protected $registry;
 
-    /**
-     * @param TokenAccessorInterface $tokenAccessor
-     * @param ManagerRegistry        $registry
-     */
     public function __construct(TokenAccessorInterface $tokenAccessor, ManagerRegistry $registry)
     {
         $this->tokenAccessor = $tokenAccessor;
@@ -40,8 +36,6 @@ class CalendarSubscriber implements EventSubscriberInterface
 
     /**
      * PRE_SET_DATA event handler
-     *
-     * @param FormEvent $event
      */
     public function fillCalendar(FormEvent $event)
     {

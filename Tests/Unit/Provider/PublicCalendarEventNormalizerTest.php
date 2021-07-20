@@ -64,9 +64,6 @@ class PublicCalendarEventNormalizerTest extends \PHPUnit\Framework\TestCase
 
     /**
      * @dataProvider getCalendarEventsProvider
-     *
-     * @param array $events
-     * @param array $expected
      */
     public function testGetCalendarEvents(array $events, array $expected)
     {
@@ -90,9 +87,6 @@ class PublicCalendarEventNormalizerTest extends \PHPUnit\Framework\TestCase
 
     /**
      * @dataProvider getGrantedCalendarEventsProvider
-     *
-     * @param array $events
-     * @param array $expected
      */
     public function testGetCalendarEventsWithGrantedManagement(array $events, array $expected)
     {

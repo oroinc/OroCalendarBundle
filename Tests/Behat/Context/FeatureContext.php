@@ -57,7 +57,6 @@ class FeatureContext extends OroFeatureContext implements OroPageObjectAware
 
     /**
      * @Given /^(?:|I )go to month page by name "(?P<monthName>.*)"$/
-     * @param string $monthName
      */
     public function iGoToMonthPageByName(string $monthName)
     {
@@ -162,10 +161,6 @@ class FeatureContext extends OroFeatureContext implements OroPageObjectAware
         );
     }
 
-    /**
-     * @param string $format
-     * @return bool
-     */
     private function isStartEndDateTimesEqualForCalendarEvent(string $format): bool
     {
         $startField = $this->elementFactory->createElement('Start Datetime');
@@ -180,12 +175,6 @@ class FeatureContext extends OroFeatureContext implements OroPageObjectAware
         return $this->isDateTimesEqual($format, $startDateTime, $endDateTime);
     }
 
-    /**
-     * @param string $format
-     * @param string $inputDateTime1
-     * @param string $inputDateTime2
-     * @return bool
-     */
     private function isDateTimesEqual(string $format, string $inputDateTime1, string $inputDateTime2): bool
     {
         $dateTime1 = new \DateTime();
