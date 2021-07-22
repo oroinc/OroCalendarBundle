@@ -13,17 +13,17 @@ class RecurrenceExtensionTest extends \PHPUnit\Framework\TestCase
 {
     use TwigExtensionTestCaseTrait;
 
+    /** @var \PHPUnit\Framework\MockObject\MockObject */
+    private $translator;
+
+    /** @var \PHPUnit\Framework\MockObject\MockObject */
+    private $strategy;
+
+    /** @var \PHPUnit\Framework\MockObject\MockObject */
+    private $recurrenceModel;
+
     /** @var RecurrenceExtension */
-    protected $extension;
-
-    /** @var \PHPUnit\Framework\MockObject\MockObject */
-    protected $translator;
-
-    /** @var \PHPUnit\Framework\MockObject\MockObject */
-    protected $strategy;
-
-    /** @var \PHPUnit\Framework\MockObject\MockObject */
-    protected $recurrenceModel;
+    private $extension;
 
     protected function setUp(): void
     {
@@ -32,7 +32,7 @@ class RecurrenceExtensionTest extends \PHPUnit\Framework\TestCase
         $this->recurrenceModel = new Recurrence($this->strategy);
 
         $container = self::getContainerBuilder()
-            ->add('translator', $this->translator)
+            ->add(TranslatorInterface::class, $this->translator)
             ->add('oro_calendar.model.recurrence', $this->recurrenceModel)
             ->getContainer($this);
 

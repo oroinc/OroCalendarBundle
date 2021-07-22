@@ -13,9 +13,6 @@ class DateFormatExtensionTest extends \PHPUnit\Framework\TestCase
 {
     use TwigExtensionTestCaseTrait;
 
-    /** @var DateFormatExtension */
-    private $extension;
-
     /** @var DateTimeFormatterInterface|\PHPUnit\Framework\MockObject\MockObject */
     private $formatter;
 
@@ -24,6 +21,9 @@ class DateFormatExtensionTest extends \PHPUnit\Framework\TestCase
 
     /** @var LocalizationManager|\PHPUnit\Framework\MockObject\MockObject */
     private $localizationManager;
+
+    /** @var DateFormatExtension */
+    private $extension;
 
     protected function setUp(): void
     {
@@ -55,13 +55,13 @@ class DateFormatExtensionTest extends \PHPUnit\Framework\TestCase
 
         $this->formatter->expects($this->any())
             ->method('format')
-            ->will($this->returnValue('DateTime'));
+            ->willReturn('DateTime');
         $this->formatter->expects($this->any())
             ->method('formatDate')
-            ->will($this->returnValue('Date'));
+            ->willReturn('Date');
         $this->formatter->expects($this->any())
             ->method('formatTime')
-            ->will($this->returnValue('Time'));
+            ->willReturn('Time');
 
         $this->assertEquals(
             $expected,
@@ -69,10 +69,7 @@ class DateFormatExtensionTest extends \PHPUnit\Framework\TestCase
         );
     }
 
-    /**
-     * @return array
-     */
-    public function formatCalendarDateRangeProvider()
+    public function formatCalendarDateRangeProvider(): array
     {
         return [
             ['2010-05-01T10:30:15+00:00', null, false, 'DateTime'],
@@ -154,10 +151,7 @@ class DateFormatExtensionTest extends \PHPUnit\Framework\TestCase
         );
     }
 
-    /**
-     * @return array
-     */
-    public function formatCalendarDateRangeOrganizationProvider()
+    public function formatCalendarDateRangeOrganizationProvider(): array
     {
         $organization = new Organization();
         return [
