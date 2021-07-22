@@ -39,11 +39,6 @@ class RecurrenceExtensionTest extends \PHPUnit\Framework\TestCase
         $this->extension = new RecurrenceExtension($container);
     }
 
-    public function testGetName()
-    {
-        $this->assertEquals('oro_recurrence', $this->extension->getName());
-    }
-
     public function testGetRecurrenceTextValue()
     {
         $this->strategy->expects($this->once())

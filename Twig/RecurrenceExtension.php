@@ -99,14 +99,6 @@ class RecurrenceExtension extends AbstractExtension implements ServiceSubscriber
     /**
      * {@inheritdoc}
      */
-    public function getName()
-    {
-        return 'oro_recurrence';
-    }
-
-    /**
-     * {@inheritdoc}
-     */
     public static function getSubscribedServices()
     {
         return [
