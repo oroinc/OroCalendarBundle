@@ -33,7 +33,7 @@ class RecurrenceExtension extends AbstractExtension implements ServiceSubscriber
      */
     protected function getTranslator()
     {
-        return $this->container->get('translator');
+        return $this->container->get(TranslatorInterface::class);
     }
 
     /**
@@ -99,18 +99,10 @@ class RecurrenceExtension extends AbstractExtension implements ServiceSubscriber
     /**
      * {@inheritdoc}
      */
-    public function getName()
-    {
-        return 'oro_recurrence';
-    }
-
-    /**
-     * {@inheritdoc}
-     */
     public static function getSubscribedServices()
     {
         return [
-            'translator' => TranslatorInterface::class,
+            TranslatorInterface::class,
             'oro_calendar.model.recurrence' => Recurrence::class,
         ];
     }

@@ -99,7 +99,7 @@ class DateFormatExtension extends AbstractExtension implements ServiceSubscriber
     ) {
         // Get localization settings from user scope
         if ($organization instanceof OrganizationInterface) {
-            list($locale, $timeZone) = $this->getOrganizationLocaleSettings($organization);
+            [$locale, $timeZone] = $this->getOrganizationLocaleSettings($organization);
         }
 
         return $this->formatCalendarDateRange(
@@ -220,14 +220,6 @@ class DateFormatExtension extends AbstractExtension implements ServiceSubscriber
             ->getLocalizationData($localizationId);
 
         return $localizationData['formattingCode'] ?? Configuration::DEFAULT_LOCALE;
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function getName()
-    {
-        return 'oro_calendar';
     }
 
     /**
