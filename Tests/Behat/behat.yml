@@ -8,7 +8,7 @@ oro_behat_extension:
         - Oro\Bundle\EmailBundle\Tests\Behat\Context\EmailContext
         - Oro\Bundle\FormBundle\Tests\Behat\Context\FormContext
         - Oro\Bundle\TestFrameworkBundle\Tests\Behat\Context\OroMainContext
-        - OroSearchBundle::SearchContext
+        - Oro\Bundle\SearchBundle\Tests\Behat\Context\SearchContext
       paths:
       - '@OroCalendarBundle/Tests/Behat/Features'
   pages:
