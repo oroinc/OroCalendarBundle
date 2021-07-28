@@ -84,8 +84,8 @@ abstract class AbstractEventRecurrence extends Element
         foreach ($items as $item) {
             $item = trim($item);
 
-            if (strpos($item, $delimiter) !== false) {
-                list($key, $value) = explode($delimiter, $item, 2);
+            if (str_contains($item, $delimiter)) {
+                [$key, $value] = explode($delimiter, $item, 2);
             } else {
                 $value = null;
                 $key = $item;
