@@ -18,7 +18,7 @@ define([
         model: ConnectionModel,
 
         /**
-         * @inheritDoc
+         * @inheritdoc
          */
         constructor: function CalendarConnectionCollection(...args) {
             CalendarConnectionCollection.__super__.constructor.apply(this, args);

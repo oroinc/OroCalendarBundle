@@ -24,7 +24,7 @@ define([
         oldEndAtValue: null,
 
         /**
-         * @inheritDoc
+         * @inheritdoc
          */
         constructor: function CalendarEventAllDayView(options) {
             CalendarEventAllDayView.__super__.constructor.call(this, options);

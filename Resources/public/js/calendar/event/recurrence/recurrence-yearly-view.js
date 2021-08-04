@@ -10,14 +10,14 @@ define(function(require) {
         relatedFields: ['recurrenceType', 'interval', 'instance', 'dayOfWeek', 'dayOfMonth', 'monthOfYear'],
 
         /**
-         * @inheritDoc
+         * @inheritdoc
          */
         constructor: function RecurrenceYearlyView(options) {
             RecurrenceYearlyView.__super__.constructor.call(this, options);
         },
 
         /**
-         * @inheritDoc
+         * @inheritdoc
          */
         getTemplateData: function() {
             const data = RecurrenceYearlyView.__super__.getTemplateData.call(this);

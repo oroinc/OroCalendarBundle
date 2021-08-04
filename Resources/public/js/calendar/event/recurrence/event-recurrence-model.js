@@ -28,7 +28,7 @@ define(function(require) {
         },
 
         /**
-         * @inheritDoc
+         * @inheritdoc
          */
         constructor: function EventRecurrenceModel(...args) {
             EventRecurrenceModel.__super__.constructor.apply(this, args);

@@ -28,7 +28,7 @@ define([
         subordinate: false,
 
         /**
-         * @inheritDoc
+         * @inheritdoc
          */
         constructor: function CalendarEventCollection(...args) {
             CalendarEventCollection.__super__.constructor.apply(this, args);

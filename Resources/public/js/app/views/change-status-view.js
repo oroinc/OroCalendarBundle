@@ -16,14 +16,14 @@ define([
         },
 
         /**
-         * @inheritDoc
+         * @inheritdoc
          */
         constructor: function ChangeStatusView(options) {
             ChangeStatusView.__super__.constructor.call(this, options);
         },
 
         /**
-         * @inheritDoc
+         * @inheritdoc
          */
         initialize: function(options) {
             ChangeStatusView.__super__.initialize.call(this, options);

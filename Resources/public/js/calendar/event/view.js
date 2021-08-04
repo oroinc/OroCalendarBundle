@@ -48,14 +48,14 @@ define(function(require) {
         ],
 
         /**
-         * @inheritDoc
+         * @inheritdoc
          */
         constructor: function CalendarEventView(options) {
             CalendarEventView.__super__.constructor.call(this, options);
         },
 
         /**
-         * @inheritDoc
+         * @inheritdoc
          */
         initialize: function(options) {
             this.options = _.defaults(_.pick(options || {}, _.keys(this.options)), this.options);

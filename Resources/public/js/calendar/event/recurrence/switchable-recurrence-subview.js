@@ -15,7 +15,7 @@ define(function(require) {
         },
 
         /**
-         * @inheritDoc
+         * @inheritdoc
          */
         constructor: function SwitchableRecurrenceSubView(options) {
             SwitchableRecurrenceSubview.__super__.constructor.call(this, options);

@@ -134,14 +134,14 @@ define(function(require) {
         layout: undefined,
 
         /**
-         * @inheritDoc
+         * @inheritdoc
          */
         constructor: function CalendarView(options) {
             CalendarView.__super__.constructor.call(this, options);
         },
 
         /**
-         * @inheritDoc
+         * @inheritdoc
          */
         initialize: function(options) {
             if (!options) {
@@ -218,7 +218,7 @@ define(function(require) {
         },
 
         /**
-         * @inheritDoc
+         * @inheritdoc
          */
         dispose: function() {
             if (this.disposed) {

@@ -21,14 +21,14 @@ define(function(require) {
         },
 
         /**
-         * @inheritDoc
+         * @inheritdoc
          */
         constructor: function RecurrenceMonthlyView(options) {
             RecurrenceMonthlyView.__super__.constructor.call(this, options);
         },
 
         /**
-         * @inheritDoc
+         * @inheritdoc
          */
         getTemplateData: function() {
             const data = RecurrenceMonthlyView.__super__.getTemplateData.call(this);

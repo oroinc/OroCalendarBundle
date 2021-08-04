@@ -18,14 +18,14 @@ define(function(require) {
         },
 
         /**
-         * @inheritDoc
+         * @inheritdoc
          */
         constructor: function RecurrenceSummaryView(options) {
             RecurrenceSummaryView.__super__.constructor.call(this, options);
         },
 
         /**
-         * @inheritDoc
+         * @inheritdoc
          */
         getTemplateData: function() {
             let data = RecurrenceSummaryView.__super__.getTemplateData.call(this);

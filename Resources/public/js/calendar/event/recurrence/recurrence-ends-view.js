@@ -16,14 +16,14 @@ define(function(require) {
         minDatetime: null,
 
         /**
-         * @inheritDoc
+         * @inheritdoc
          */
         constructor: function RecurrenceEndsView(options) {
             RecurrenceEndsView.__super__.constructor.call(this, options);
         },
 
         /**
-         * @inheritDoc
+         * @inheritdoc
          */
         initialize: function(options) {
             _.extend(this, _.pick(options, 'minDatetime'));

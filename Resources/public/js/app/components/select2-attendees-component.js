@@ -8,14 +8,14 @@ define(function(require) {
 
     const Select2AttendeesComponent = Select2AutocompleteComponent.extend({
         /**
-         * @inheritDoc
+         * @inheritdoc
          */
         constructor: function Select2AttendeesComponent(options) {
             Select2AttendeesComponent.__super__.constructor.call(this, options);
         },
 
         /**
-         * @inheritDoc
+         * @inheritdoc
          */
         initialize: function(options) {
             Select2AttendeesComponent.__super__.initialize.call(this, options);
