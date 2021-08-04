@@ -29,30 +29,29 @@ class RecurrenceValidatorTest extends ConstraintValidatorTestCase
         Model\Recurrence::DAY_SATURDAY,
     ];
 
-    /** @var Model\Recurrence|\PHPUnit\Framework\MockObject\MockObject */
-    private $model;
+    private Model\Recurrence|\PHPUnit\Framework\MockObject\MockObject $model;
 
     protected function setUp(): void
     {
         $this->model = $this->createMock(Model\Recurrence::class);
-        $this->model->expects($this->any())
+        $this->model->expects(self::any())
             ->method('getRecurrenceTypesValues')
             ->willReturn(self::$expectedRecurrenceTypesValues);
-        $this->model->expects($this->any())
+        $this->model->expects(self::any())
             ->method('getDaysOfWeekValues')
             ->willReturn(self::$expectedDaysOfWeekValues);
 
         parent::setUp();
 
-        $this->setPropertyPath(null);
+        $this->setPropertyPath('');
     }
 
-    protected function createValidator()
+    protected function createValidator(): RecurrenceValidator
     {
         return new RecurrenceValidator($this->model);
     }
 
-    public function testRecurrenceHasNoErrors()
+    public function testRecurrenceHasNoErrors(): void
     {
         $recurrence = new Entity\Recurrence();
         $recurrence->setRecurrenceType(Model\Recurrence::TYPE_DAILY);
@@ -60,11 +59,11 @@ class RecurrenceValidatorTest extends ConstraintValidatorTestCase
         $recurrence->setInterval(1);
         $recurrence->setTimeZone('UTC');
 
-        $this->model->expects($this->once())
+        $this->model->expects(self::once())
             ->method('getRequiredProperties')
             ->with($recurrence)
             ->willReturn(['recurrenceType', 'interval', 'timeZone', 'startTime']);
-        $this->model->expects($this->once())
+        $this->model->expects(self::once())
             ->method('getIntervalMultipleOf')
             ->with($recurrence)
             ->willReturn(0);
@@ -74,7 +73,7 @@ class RecurrenceValidatorTest extends ConstraintValidatorTestCase
         $this->assertNoViolation();
     }
 
-    public function testRecurrenceHasBlankRecurrenceType()
+    public function testRecurrenceHasBlankRecurrenceType(): void
     {
         $recurrence =  new Entity\Recurrence();
 
@@ -87,7 +86,7 @@ class RecurrenceValidatorTest extends ConstraintValidatorTestCase
             ->assertRaised();
     }
 
-    public function testRecurrenceHasWrongRecurrenceType()
+    public function testRecurrenceHasWrongRecurrenceType(): void
     {
         $recurrence =  new Entity\Recurrence();
         $recurrence->setInterval(1);
@@ -103,16 +102,16 @@ class RecurrenceValidatorTest extends ConstraintValidatorTestCase
             ->assertRaised();
     }
 
-    public function testRecurrenceHasRequiredFieldsBlank()
+    public function testRecurrenceHasRequiredFieldsBlank(): void
     {
         $recurrence =  new Entity\Recurrence();
         $recurrence->setRecurrenceType(Model\Recurrence::TYPE_DAILY);
 
-        $this->model->expects($this->once())
+        $this->model->expects(self::once())
             ->method('getRequiredProperties')
             ->with($recurrence)
             ->willReturn(['recurrenceType', 'interval', 'timeZone', 'startTime']);
-        $this->model->expects($this->once())
+        $this->model->expects(self::once())
             ->method('getIntervalMultipleOf')
             ->with($recurrence)
             ->willReturn(0);
@@ -127,7 +126,7 @@ class RecurrenceValidatorTest extends ConstraintValidatorTestCase
             ->assertRaised();
     }
 
-    public function testRecurrenceHasTooBigInterval()
+    public function testRecurrenceHasTooBigInterval(): void
     {
         $actualInterval = 100;
         $maxInterval = 99;
@@ -135,15 +134,15 @@ class RecurrenceValidatorTest extends ConstraintValidatorTestCase
         $recurrence->setRecurrenceType(Model\Recurrence::TYPE_DAILY);
         $recurrence->setInterval($actualInterval);
 
-        $this->model->expects($this->once())
+        $this->model->expects(self::once())
             ->method('getRequiredProperties')
             ->with($recurrence)
             ->willReturn([]);
-        $this->model->expects($this->once())
+        $this->model->expects(self::once())
             ->method('getMaxInterval')
             ->with($recurrence)
             ->willReturn($maxInterval);
-        $this->model->expects($this->once())
+        $this->model->expects(self::once())
             ->method('getIntervalMultipleOf')
             ->with($recurrence)
             ->willReturn(0);
@@ -158,7 +157,7 @@ class RecurrenceValidatorTest extends ConstraintValidatorTestCase
             ->assertRaised();
     }
 
-    public function testRecurrenceHasTooSmallInterval()
+    public function testRecurrenceHasTooSmallInterval(): void
     {
         $actualInterval = -1;
         $minInterval = RecurrenceValidator::MIN_INTERVAL;
@@ -166,15 +165,15 @@ class RecurrenceValidatorTest extends ConstraintValidatorTestCase
         $recurrence->setRecurrenceType(Model\Recurrence::TYPE_DAILY);
         $recurrence->setInterval($actualInterval);
 
-        $this->model->expects($this->once())
+        $this->model->expects(self::once())
             ->method('getRequiredProperties')
             ->with($recurrence)
             ->willReturn([]);
-        $this->model->expects($this->once())
+        $this->model->expects(self::once())
             ->method('getMaxInterval')
             ->with($recurrence)
             ->willReturn($minInterval);
-        $this->model->expects($this->once())
+        $this->model->expects(self::once())
             ->method('getIntervalMultipleOf')
             ->with($recurrence)
             ->willReturn(0);
@@ -189,7 +188,7 @@ class RecurrenceValidatorTest extends ConstraintValidatorTestCase
             ->assertRaised();
     }
 
-    public function testRecurrenceHasWrongMultipleOfInterval()
+    public function testRecurrenceHasWrongMultipleOfInterval(): void
     {
         $actualInterval = 13;
         $intervalMultipleOf = 12;
@@ -197,15 +196,15 @@ class RecurrenceValidatorTest extends ConstraintValidatorTestCase
         $recurrence->setRecurrenceType(Model\Recurrence::TYPE_YEARLY);
         $recurrence->setInterval($actualInterval);
 
-        $this->model->expects($this->once())
+        $this->model->expects(self::once())
             ->method('getRequiredProperties')
             ->with($recurrence)
             ->willReturn([]);
-        $this->model->expects($this->once())
+        $this->model->expects(self::once())
             ->method('getMaxInterval')
             ->with($recurrence)
             ->willReturn(999);
-        $this->model->expects($this->once())
+        $this->model->expects(self::once())
             ->method('getIntervalMultipleOf')
             ->with($recurrence)
             ->willReturn($intervalMultipleOf);
@@ -220,7 +219,7 @@ class RecurrenceValidatorTest extends ConstraintValidatorTestCase
             ->assertRaised();
     }
 
-    public function testRecurrenceHasWrongEndTime()
+    public function testRecurrenceHasWrongEndTime(): void
     {
         $recurrence =  new Entity\Recurrence();
         $recurrence->setInterval(1);
@@ -230,15 +229,15 @@ class RecurrenceValidatorTest extends ConstraintValidatorTestCase
 
         $formattedStartTime = '2016-11-01T00:00:00+00:00';
 
-        $this->model->expects($this->once())
+        $this->model->expects(self::once())
             ->method('getRequiredProperties')
             ->with($recurrence)
             ->willReturn([]);
-        $this->model->expects($this->once())
+        $this->model->expects(self::once())
             ->method('getMaxInterval')
             ->with($recurrence)
             ->willReturn(99);
-        $this->model->expects($this->once())
+        $this->model->expects(self::once())
             ->method('getIntervalMultipleOf')
             ->with($recurrence)
             ->willReturn(1);
@@ -253,22 +252,22 @@ class RecurrenceValidatorTest extends ConstraintValidatorTestCase
             ->assertRaised();
     }
 
-    public function testRecurrenceHasWrongDayOfWeek()
+    public function testRecurrenceHasWrongDayOfWeek(): void
     {
         $recurrence =  new Entity\Recurrence();
         $recurrence->setInterval(1);
         $recurrence->setRecurrenceType(Model\Recurrence::TYPE_WEEKLY);
         $recurrence->setDayOfWeek(['unknown']);
 
-        $this->model->expects($this->once())
+        $this->model->expects(self::once())
             ->method('getRequiredProperties')
             ->with($recurrence)
             ->willReturn([]);
-        $this->model->expects($this->once())
+        $this->model->expects(self::once())
             ->method('getMaxInterval')
             ->with($recurrence)
             ->willReturn(99);
-        $this->model->expects($this->once())
+        $this->model->expects(self::once())
             ->method('getIntervalMultipleOf')
             ->with($recurrence)
             ->willReturn(1);
