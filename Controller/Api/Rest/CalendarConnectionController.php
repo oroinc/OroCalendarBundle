@@ -2,12 +2,6 @@
 
 namespace Oro\Bundle\CalendarBundle\Controller\Api\Rest;
 
-use FOS\RestBundle\Controller\Annotations\Delete;
-use FOS\RestBundle\Controller\Annotations\Get;
-use FOS\RestBundle\Controller\Annotations\NamePrefix;
-use FOS\RestBundle\Controller\Annotations\Post;
-use FOS\RestBundle\Controller\Annotations\Put;
-use FOS\RestBundle\Routing\ClassResourceInterface;
 use Nelmio\ApiDocBundle\Annotation\ApiDoc;
 use Oro\Bundle\CalendarBundle\Manager\CalendarPropertyApiEntityManager;
 use Oro\Bundle\SecurityBundle\Annotation\AclAncestor;
@@ -17,16 +11,15 @@ use Symfony\Component\Form\Form;
 use Symfony\Component\HttpFoundation\Response;
 
 /**
- * @NamePrefix("oro_api_")
+ * REST API CRUD controller for calendar connections.
  */
-class CalendarConnectionController extends RestController implements ClassResourceInterface
+class CalendarConnectionController extends RestController
 {
     /**
      * Get calendar connections.
      *
      * @param int $id User's calendar id
      *
-     * @Get("/calendars/{id}/connections", requirements={"id"="\d+"})
      * @ApiDoc(
      *      description="Get calendar connections",
      *      resource=true
@@ -53,7 +46,6 @@ class CalendarConnectionController extends RestController implements ClassResour
      *
      * @param int $id Calendar connection id
      *
-     * @Put("/calendarconnections/{id}", requirements={"id"="\d+"})
      * @ApiDoc(
      *      description="Update calendar connection",
      *      resource=true
@@ -70,7 +62,6 @@ class CalendarConnectionController extends RestController implements ClassResour
     /**
      * Create new calendar connection.
      *
-     * @Post("/calendarconnections")
      * @ApiDoc(
      *      description="Create new calendar connection",
      *      resource=true
@@ -89,7 +80,6 @@ class CalendarConnectionController extends RestController implements ClassResour
      *
      * @param int $id Calendar connection id
      *
-     * @Delete("/calendarconnections/{id}", requirements={"id"="\d+"})
      * @ApiDoc(
      *      description="Remove calendar connection",
      *      resource=true

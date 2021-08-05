@@ -18,12 +18,181 @@ oro_calendar_dashboard:
     type:         annotation
     prefix:       /dashboard
 
-oro_calendar_api:
-    resource: "@OroCalendarBundle/Resources/config/oro/routing_api.yml"
-    type: rest
-    prefix: api/rest/{version}
-    requirements:
-        version:  latest|v1
-        _format: json
+
+#
+# OLD REST API ROUTES
+#
+
+oro_api_get_calendar_connections:
+    path: '/api/rest/{version}/calendars/{id}/connections.{_format}'
+    methods: [GET]
     defaults:
-        version:  latest
+        _controller: 'Oro\Bundle\CalendarBundle\Controller\Api\Rest\CalendarConnectionController::cgetAction'
+        _format: json
+        version: latest
+    requirements:
+        id: \d+
+        _format: json
+        version: latest|v1
+
+oro_api_put_calendar_connection:
+    path: '/api/rest/{version}/calendarconnections/{id}.{_format}'
+    methods: [PUT]
+    defaults:
+        _controller: 'Oro\Bundle\CalendarBundle\Controller\Api\Rest\CalendarConnectionController::putAction'
+        _format: json
+        version: latest
+    requirements:
+        id: \d+
+        _format: json
+        version: latest|v1
+
+oro_api_post_calendar_connection:
+    path: '/api/rest/{version}/calendarconnections.{_format}'
+    methods: [POST]
+    defaults:
+        _controller: 'Oro\Bundle\CalendarBundle\Controller\Api\Rest\CalendarConnectionController::postAction'
+        _format: json
+        version: latest
+    requirements:
+        _format: json
+        version: latest|v1
+
+oro_api_delete_calendar_connection:
+    path: '/api/rest/{version}/calendarconnections/{id}.{_format}'
+    methods: [DELETE]
+    defaults:
+        _controller: 'Oro\Bundle\CalendarBundle\Controller\Api\Rest\CalendarConnectionController::deleteAction'
+        _format: json
+        version: latest
+    requirements:
+        id: \d+
+        _format: json
+        version: latest|v1
+
+oro_api_options_calendar_connections:
+    path: '/api/rest/{version}/calendar/connections.{_format}'
+    methods: [OPTIONS]
+    defaults:
+        _controller: 'Oro\Bundle\CalendarBundle\Controller\Api\Rest\CalendarConnectionController::optionsAction'
+        _format: json
+        version: latest
+    requirements:
+        _format: json
+        version: latest|v1
+
+oro_api_get_calendarevents:
+    path: '/api/rest/{version}/calendarevents.{_format}'
+    methods: [GET]
+    defaults:
+        _controller: 'Oro\Bundle\CalendarBundle\Controller\Api\Rest\CalendarEventController::cgetAction'
+        _format: json
+        version: latest
+    requirements:
+        _format: json
+        version: latest|v1
+
+oro_api_get_calendarevent:
+    path: '/api/rest/{version}/calendarevents/{id}.{_format}'
+    methods: [GET]
+    defaults:
+        _controller: 'Oro\Bundle\CalendarBundle\Controller\Api\Rest\CalendarEventController::getAction'
+        _format: json
+        version: latest
+    requirements:
+        id: \d+
+        _format: json
+        version: latest|v1
+
+oro_api_get_calendarevent_by_calendar:
+    path: '/api/rest/{version}/calendars/{id}/events/{eventId}.{_format}'
+    methods: [GET]
+    defaults:
+        _controller: 'Oro\Bundle\CalendarBundle\Controller\Api\Rest\CalendarEventController::getByCalendarAction'
+        _format: json
+        version: latest
+    requirements:
+        id: \d+
+        eventId: \d+
+        _format: json
+        version: latest|v1
+
+oro_api_put_calendarevent:
+    path: '/api/rest/{version}/calendarevents/{id}.{_format}'
+    methods: [PUT]
+    defaults:
+        _controller: 'Oro\Bundle\CalendarBundle\Controller\Api\Rest\CalendarEventController::putAction'
+        _format: json
+        version: latest
+    requirements:
+        id: \d+
+        _format: json
+        version: latest|v1
+
+oro_api_post_calendarevent:
+    path: '/api/rest/{version}/calendarevents.{_format}'
+    methods: [POST]
+    defaults:
+        _controller: 'Oro\Bundle\CalendarBundle\Controller\Api\Rest\CalendarEventController::postAction'
+        _format: json
+        version: latest
+    requirements:
+        _format: json
+        version: latest|v1
+
+oro_api_delete_calendarevent:
+    path: '/api/rest/{version}/calendarevents/{id}.{_format}'
+    methods: [DELETE]
+    defaults:
+        _controller: 'Oro\Bundle\CalendarBundle\Controller\Api\Rest\CalendarEventController::deleteAction'
+        _format: json
+        version: latest
+    requirements:
+        id: \d+
+        _format: json
+        version: latest|v1
+
+oro_api_options_calendarevents:
+    path: '/api/rest/{version}/calendarevents.{_format}'
+    methods: [OPTIONS]
+    defaults:
+        _controller: 'Oro\Bundle\CalendarBundle\Controller\Api\Rest\CalendarEventController::optionsAction'
+        _format: json
+        version: latest
+    requirements:
+        _format: json
+        version: latest|v1
+
+oro_api_get_calendar_default:
+    path: '/api/rest/{version}/calendars/default.{_format}'
+    methods: [GET]
+    defaults:
+        _controller: 'Oro\Bundle\CalendarBundle\Controller\Api\Rest\CalendarController::getDefaultAction'
+        _format: json
+        version: latest
+    requirements:
+        _format: json
+        version: latest|v1
+
+oro_api_delete_systemcalendar:
+    path: '/api/rest/{version}/systemcalendars/{id}.{_format}'
+    methods: [DELETE]
+    defaults:
+        _controller: 'Oro\Bundle\CalendarBundle\Controller\Api\Rest\SystemCalendarController::deleteAction'
+        _format: json
+        version: latest
+    requirements:
+        id: \d+
+        _format: json
+        version: latest|v1
+
+oro_api_options_systemcalendars:
+    path: '/api/rest/{version}/systemcalendars.{_format}'
+    methods: [OPTIONS]
+    defaults:
+        _controller: 'Oro\Bundle\CalendarBundle\Controller\Api\Rest\SystemCalendarController::optionsAction'
+        _format: json
+        version: latest
+    requirements:
+        _format: json
+        version: latest|v1

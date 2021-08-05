@@ -104,25 +104,11 @@ services:
             - ~
             - Oro\Bundle\CalendarBundle\Form\Type\CalendarPropertyApiType
 
-    oro_calendar.calendar_property.form.soap.api:
-        class:    'Symfony\Component\Form\Form'
-        factory: ['@form.factory', 'createNamed']
-        arguments:
-            - "calendarProperty"
-            - Oro\Bundle\CalendarBundle\Form\Type\CalendarPropertyApiType
-
     oro_calendar.calendar_property.form.handler.api:
         class: Oro\Bundle\CalendarBundle\Form\Handler\CalendarPropertyApiHandler
         public: true
         arguments:
             - '@oro_calendar.calendar_property.form.api'
-            - '@request_stack'
-            - '@doctrine.orm.entity_manager'
-
-    oro_calendar.calendar_property.form.handler.soap.api:
-        class: Oro\Bundle\CalendarBundle\Form\Handler\CalendarPropertyApiHandler
-        arguments:
-            - '@oro_calendar.calendar_property.form.soap.api'
             - '@request_stack'
             - '@doctrine.orm.entity_manager'
 

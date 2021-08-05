@@ -2,14 +2,7 @@
 
 namespace Oro\Bundle\CalendarBundle\Controller\Api\Rest;
 
-use FOS\RestBundle\Controller\Annotations\Delete;
-use FOS\RestBundle\Controller\Annotations\Get;
-use FOS\RestBundle\Controller\Annotations\NamePrefix;
-use FOS\RestBundle\Controller\Annotations\Post;
-use FOS\RestBundle\Controller\Annotations\Put;
 use FOS\RestBundle\Controller\Annotations\QueryParam;
-use FOS\RestBundle\Controller\Annotations\RouteResource;
-use FOS\RestBundle\Routing\ClassResourceInterface;
 use Nelmio\ApiDocBundle\Annotation\ApiDoc;
 use Oro\Bundle\CalendarBundle\Entity\CalendarEvent;
 use Oro\Bundle\CalendarBundle\Entity\Repository\CalendarEventRepository;
@@ -31,16 +24,13 @@ use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 use Symfony\Component\Security\Core\Exception\AccessDeniedException;
 
 /**
- * API CRUD controller for CalendarEvent entity.
- *
- * @RouteResource("calendarevent")
- * @NamePrefix("oro_api_")
+ * REST API CRUD controller for CalendarEvent entity.
  */
-class CalendarEventController extends RestController implements ClassResourceInterface
+class CalendarEventController extends RestController
 {
     // @codingStandardsIgnoreStart
     /**
-     * Get calendar events.
+     * Get calendar events. To get data, use either page/limit or start/end filters.
      *
      * @QueryParam(
      *      name="calendar", requirements="\d+",
@@ -106,7 +96,7 @@ class CalendarEventController extends RestController implements ClassResourceInt
      *      description="iCalendar UID field (RFC5545). In most cases UUID format is used (RFC4122). Does't work with start/end filters."
      * )
      * @ApiDoc(
-     *      description="Get calendar events. To get data, use either page/limit or start/end filters.",
+     *      description="Get calendar events",
      *      resource=true
      * )
      * @AclAncestor("oro_calendar_event_view")
@@ -121,7 +111,6 @@ class CalendarEventController extends RestController implements ClassResourceInt
         $calendarId   = (int)$request->get('calendar');
         $subordinate  = (true == $request->get('subordinate'));
         $extendFields = $this->getExtendFieldNames('Oro\Bundle\CalendarBundle\Entity\CalendarEvent');
-        $qb           = null;
         if ($request->get('start') && $request->get('end')) {
             $result = $this->get('oro_calendar.calendar_manager')->getCalendarEvents(
                 $this->get('oro_security.token_accessor')->getOrganization()->getId(),
@@ -180,8 +169,6 @@ class CalendarEventController extends RestController implements ClassResourceInt
      *
      * @param int $id Calendar event id
      *
-     * @Get(requirements={"id"="\d+"})
-     *
      * @ApiDoc(
      *      description="Get calendar event",
      *      resource=true
@@ -216,10 +203,6 @@ class CalendarEventController extends RestController implements ClassResourceInt
      * @param int $id      The id of a calendar where an event is displayed
      * @param int $eventId Calendar event id
      *
-     * @Get(
-     *      "/calendars/{id}/events/{eventId}",
-     *      requirements={"id"="\d+", "eventId"="\d+"}
-     * )
      * @ApiDoc(
      *      description="Get calendar event supposing it is displayed in the specified calendar",
      *      resource=true
@@ -249,8 +232,6 @@ class CalendarEventController extends RestController implements ClassResourceInt
      *
      * @param int $id Calendar event id
      *
-     * @Put(requirements={"id"="\d+"})
-     *
      * @ApiDoc(
      *      description="Update calendar event",
      *      resource=true
@@ -267,7 +248,6 @@ class CalendarEventController extends RestController implements ClassResourceInt
     /**
      * Create new calendar event.
      *
-     * @Post("calendarevents")
      * @ApiDoc(
      *      description="Create new calendar event",
      *      resource=true
@@ -285,8 +265,6 @@ class CalendarEventController extends RestController implements ClassResourceInt
      * Remove calendar event.
      *
      * @param int $id Calendar event id
-     *
-     * @Delete(requirements={"id"="\d+"})
      *
      * @ApiDoc(
      *      description="Remove calendar event",

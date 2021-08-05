@@ -2,28 +2,19 @@
 
 namespace Oro\Bundle\CalendarBundle\Controller\Api\Rest;
 
-use FOS\RestBundle\Controller\Annotations\Delete;
-use FOS\RestBundle\Controller\Annotations\NamePrefix;
-use FOS\RestBundle\Controller\Annotations\RouteResource;
-use FOS\RestBundle\Routing\ClassResourceInterface;
 use Nelmio\ApiDocBundle\Annotation\ApiDoc;
 use Oro\Bundle\SoapBundle\Controller\Api\Rest\RestController;
 use Symfony\Component\HttpFoundation\Response;
 
 /**
- * API CRUD controller for SystemCalendar entity.
- *
- * @RouteResource("systemcalendar")
- * @NamePrefix("oro_api_")
+ * REST API CRUD controller for SystemCalendar entity.
  */
-class SystemCalendarController extends RestController implements ClassResourceInterface
+class SystemCalendarController extends RestController
 {
     /**
      * Remove system calendar.
      *
      * @param int $id System calendar id
-     *
-     * @Delete(requirements={"id"="\d+"})
      *
      * @ApiDoc(
      *      description="Remove system calendar",

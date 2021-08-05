@@ -2,10 +2,7 @@
 
 namespace Oro\Bundle\CalendarBundle\Controller\Api\Rest;
 
-use FOS\RestBundle\Controller\Annotations\Get;
-use FOS\RestBundle\Controller\Annotations\NamePrefix;
-use FOS\RestBundle\Controller\Annotations\RouteResource;
-use FOS\RestBundle\Controller\FOSRestController;
+use FOS\RestBundle\Controller\AbstractFOSRestController;
 use Nelmio\ApiDocBundle\Annotation\ApiDoc;
 use Oro\Bundle\CalendarBundle\Entity\Repository\CalendarRepository;
 use Oro\Bundle\OrganizationBundle\Entity\Organization;
@@ -14,15 +11,12 @@ use Oro\Bundle\UserBundle\Entity\User;
 use Symfony\Component\HttpFoundation\Response;
 
 /**
- * @RouteResource("calendar")
- * @NamePrefix("oro_api_")
+ * REST API controller to get default calendar.
  */
-class CalendarController extends FOSRestController
+class CalendarController extends AbstractFOSRestController
 {
     /**
      * Get Default Calendar of User
-     *
-     * @Get("/calendars/default")
      *
      * @ApiDoc(
      *      description="Get default calendar of user",
