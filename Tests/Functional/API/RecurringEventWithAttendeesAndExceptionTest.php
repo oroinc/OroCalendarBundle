@@ -410,7 +410,7 @@ class RecurringEventWithAttendeesAndExceptionTest extends AbstractUseCaseTestCas
         $actualEvents = $this->getCalendarEventsByCalendarViaAPI($simpleUserCalendar->getId());
         $this->assertCalendarEvents($expectedSimpleUserEventsData, $actualEvents);
 
-        $outlookCancelRequest = [
+        $cancelRequest = [
             'isCancelled'      => true,
             'title'            => $exceptionData['title'],
             'description'      => $exceptionData['description'],
@@ -421,7 +421,7 @@ class RecurringEventWithAttendeesAndExceptionTest extends AbstractUseCaseTestCas
             'originalStart'    => $exceptionData['originalStart'],
             'end'              => $exceptionData['end'],
         ];
-        $this->updateCalendarEventViaAPI($mainExceptionEvent->getId(), $outlookCancelRequest);
+        $this->updateCalendarEventViaAPI($mainExceptionEvent->getId(), $cancelRequest);
         unset($expectedEventsData[4]);
         unset($expectedSimpleUserEventsData[4]);
 

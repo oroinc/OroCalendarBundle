@@ -224,7 +224,7 @@ class MatchingEventsManagerTest extends \PHPUnit\Framework\TestCase
      * User B - registered user in oro "email": "second@oroinc.com",
      * User C - registered user in oro "email": "third@oroinc.com"
      *
-     * 1. User A create an event in Outlook and add as attendees User B and User C
+     * 1. User A create an event in an external system and add as attendees User B and User C
      * 2. User B sync an event into the ORO (no organizerUser set at this point)
      * 3. User C sync an event with ORO (no organizerUser set at this point)
      * 4. User A creates an account in ORO

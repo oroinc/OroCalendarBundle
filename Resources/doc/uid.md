@@ -9,7 +9,7 @@ Table of Content
 ## Overview
 
 UID is a unique identifier withing the [calendar](./systemCalendars.md). It is used to easily identify the same events
-within different systems and applications (e.g. OroPlatform and MS Outlook). Please, find more information in the 
+within different systems and applications (e.g. OroPlatform and Microsoft 365). Please, find more information in the 
 official documentation: [specification](https://icalendar.org/iCalendar-RFC-5545/3-8-4-7-unique-identifier.html)
 and [update](https://icalendar.org/New-Properties-for-iCalendar-RFC-7986/5-3-uid-property.html)
 
