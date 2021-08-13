@@ -8,30 +8,24 @@ use Oro\Bundle\ActivityBundle\Manager\ActivityManager;
 use Oro\Bundle\CalendarBundle\Entity\CalendarEvent;
 use Oro\Bundle\CalendarBundle\Manager\CalendarEvent\NotificationManager;
 use Oro\Bundle\CalendarBundle\Manager\CalendarEventManager;
+use Oro\Bundle\CalendarBundle\Provider\AttendeesInvitationEnabledProvider;
 use Oro\Bundle\SecurityBundle\Authentication\TokenAccessorInterface;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\RequestStack;
 
+/**
+ * Abstract form handler for calendar event form.
+ */
 abstract class AbstractCalendarEventHandler
 {
-    /** @var FormInterface */
-    protected $form;
-
-    /** @var RequestStack */
-    protected $requestStack;
-
-    /** @var ManagerRegistry */
-    protected $doctrine;
-
-    /** @var TokenAccessorInterface */
-    protected $tokenAccessor;
-
-    /** @var NotificationManager */
-    protected $notificationManager;
-
-    /** @var CalendarEventManager */
-    protected $calendarEventManager;
+    protected FormInterface $form;
+    protected RequestStack $requestStack;
+    protected ManagerRegistry $doctrine;
+    protected TokenAccessorInterface $tokenAccessor;
+    protected NotificationManager $notificationManager;
+    protected CalendarEventManager $calendarEventManager;
+    protected AttendeesInvitationEnabledProvider $attendeesInvitationEnabledProvider;
 
     public function __construct(
         RequestStack $requestStack,
@@ -39,7 +33,8 @@ abstract class AbstractCalendarEventHandler
         TokenAccessorInterface $tokenAccessor,
         ActivityManager $activityManager,
         CalendarEventManager $calendarEventManager,
-        NotificationManager $notificationManager
+        NotificationManager $notificationManager,
+        AttendeesInvitationEnabledProvider $attendeesInvitationEnabledProvider
     ) {
         $this->requestStack = $requestStack;
         $this->doctrine = $doctrine;
@@ -47,6 +42,7 @@ abstract class AbstractCalendarEventHandler
         $this->activityManager = $activityManager;
         $this->calendarEventManager = $calendarEventManager;
         $this->notificationManager = $notificationManager;
+        $this->attendeesInvitationEnabledProvider = $attendeesInvitationEnabledProvider;
     }
 
     public function setForm(FormInterface $form)
@@ -80,7 +76,9 @@ abstract class AbstractCalendarEventHandler
         $this->getEntityManager()->persist($entity);
         $this->getEntityManager()->flush();
 
-        $this->sendNotifications($entity, $originalEntity, $isNew);
+        if (true === $this->attendeesInvitationEnabledProvider->isAttendeesInvitationEnabled()) {
+            $this->sendNotifications($entity, $originalEntity, $isNew);
+        }
     }
 
     /**

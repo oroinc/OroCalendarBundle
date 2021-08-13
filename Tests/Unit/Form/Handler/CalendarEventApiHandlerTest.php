@@ -9,6 +9,7 @@ use Oro\Bundle\CalendarBundle\Entity\CalendarEvent;
 use Oro\Bundle\CalendarBundle\Form\Handler\CalendarEventApiHandler;
 use Oro\Bundle\CalendarBundle\Manager\CalendarEvent\NotificationManager;
 use Oro\Bundle\CalendarBundle\Manager\CalendarEventManager;
+use Oro\Bundle\CalendarBundle\Provider\AttendeesInvitationEnabledProvider;
 use Oro\Bundle\OrganizationBundle\Entity\Organization;
 use Oro\Bundle\SecurityBundle\Authentication\TokenAccessorInterface;
 use Oro\Bundle\UserBundle\Entity\User;
@@ -23,34 +24,34 @@ use Symfony\Component\HttpFoundation\RequestStack;
 class CalendarEventApiHandlerTest extends \PHPUnit\Framework\TestCase
 {
     /** @var \PHPUnit\Framework\MockObject\MockObject */
-    protected $form;
+    private $form;
 
     /** @var \PHPUnit\Framework\MockObject\MockObject */
-    protected $request;
+    private $request;
 
     /** @var RequestStack */
-    protected $requestStack;
+    private $requestStack;
 
     /** @var \PHPUnit\Framework\MockObject\MockObject */
-    protected $tokenAccessor;
-
-    /** @var \PHPUnit\Framework\MockObject\MockObject */
-    protected $notificationManager;
+    private $notificationManager;
 
     /** @var CalendarEvent */
-    protected $entity;
+    private $entity;
 
     /** @var Organization */
-    protected $organization;
+    private $organization;
 
     /** @var ActivityManager */
-    protected $activityManager;
+    private $activityManager;
 
     /** @var \PHPUnit\Framework\MockObject\MockObject|CalendarEventManager */
-    protected $calendarEventManager;
+    private $calendarEventManager;
+
+    /** @var AttendeesInvitationEnabledProvider|\PHPUnit\Framework\MockObject\MockObject */
+    private $attendeesInvitationEnabledProvider;
 
     /** @var CalendarEventApiHandler */
-    protected $handler;
+    private $handler;
 
     protected function setUp(): void
     {
@@ -114,13 +115,16 @@ class CalendarEventApiHandlerTest extends \PHPUnit\Framework\TestCase
         $objectManager->expects($this->once())
             ->method('flush');
 
+        $this->attendeesInvitationEnabledProvider = $this->createMock(AttendeesInvitationEnabledProvider::class);
+
         $this->handler = new CalendarEventApiHandler(
             $this->requestStack,
             $doctrine,
             $tokenAccessor,
             $this->activityManager,
             $this->calendarEventManager,
-            $this->notificationManager
+            $this->notificationManager,
+            $this->attendeesInvitationEnabledProvider
         );
 
         $this->handler->setForm($this->form);
@@ -187,6 +191,35 @@ class CalendarEventApiHandlerTest extends \PHPUnit\Framework\TestCase
             ->method('onUpdate')
             ->with($this->entity, clone $this->entity, NotificationManager::ALL_NOTIFICATIONS_STRATEGY);
 
+        $this->attendeesInvitationEnabledProvider->expects(self::once())
+            ->method('isAttendeesInvitationEnabled')
+            ->willReturn(true);
+
+        $this->handler->process($this->entity);
+    }
+
+    public function testProcessPutWithNotifyAttendeesAllWorksAndDisabledInvitations()
+    {
+        $this->request->setMethod('PUT');
+
+        ReflectionUtil::setId($this->entity, 123);
+        $this->entity->addAttendee(new Attendee());
+
+        $this->setExpectedFormValues(['notifyAttendees' => NotificationManager::ALL_NOTIFICATIONS_STRATEGY]);
+
+        $this->calendarEventManager
+            ->expects($this->once())
+            ->method('onEventUpdate')
+            ->with($this->entity, clone $this->entity, $this->organization, false);
+
+        $this->notificationManager
+            ->expects($this->never())
+            ->method('onUpdate');
+
+        $this->attendeesInvitationEnabledProvider->expects(self::once())
+            ->method('isAttendeesInvitationEnabled')
+            ->willReturn(false);
+
         $this->handler->process($this->entity);
     }
 
@@ -213,6 +246,10 @@ class CalendarEventApiHandlerTest extends \PHPUnit\Framework\TestCase
             ->method('onUpdate')
             ->with($this->entity, clone $this->entity, NotificationManager::ADDED_OR_DELETED_NOTIFICATIONS_STRATEGY);
 
+        $this->attendeesInvitationEnabledProvider->expects(self::once())
+            ->method('isAttendeesInvitationEnabled')
+            ->willReturn(true);
+
         $this->handler->process($this->entity);
     }
 
@@ -235,6 +272,10 @@ class CalendarEventApiHandlerTest extends \PHPUnit\Framework\TestCase
             ->method('onUpdate')
             ->with($this->entity, clone $this->entity, NotificationManager::NONE_NOTIFICATIONS_STRATEGY);
 
+        $this->attendeesInvitationEnabledProvider->expects(self::once())
+            ->method('isAttendeesInvitationEnabled')
+            ->willReturn(true);
+
         $this->handler->process($this->entity);
     }
 
@@ -255,6 +296,10 @@ class CalendarEventApiHandlerTest extends \PHPUnit\Framework\TestCase
             ->method('onUpdate')
             ->with($this->entity, clone $this->entity, NotificationManager::NONE_NOTIFICATIONS_STRATEGY);
 
+        $this->attendeesInvitationEnabledProvider->expects(self::once())
+            ->method('isAttendeesInvitationEnabled')
+            ->willReturn(true);
+
         $this->handler->process($this->entity);
     }
 
@@ -273,6 +318,32 @@ class CalendarEventApiHandlerTest extends \PHPUnit\Framework\TestCase
             ->expects($this->once())
             ->method('onCreate')
             ->with($this->entity, NotificationManager::NONE_NOTIFICATIONS_STRATEGY);
+
+        $this->attendeesInvitationEnabledProvider->expects(self::once())
+            ->method('isAttendeesInvitationEnabled')
+            ->willReturn(true);
+
+        $this->handler->process($this->entity);
+    }
+
+    public function testProcessPostWithNotifyAttendeesNoneWorksAndDisabledInvitations()
+    {
+        $this->request->setMethod('POST');
+
+        $this->setExpectedFormValues(['notifyAttendees' => NotificationManager::NONE_NOTIFICATIONS_STRATEGY]);
+
+        $this->calendarEventManager
+            ->expects($this->once())
+            ->method('onEventUpdate')
+            ->with($this->entity, clone $this->entity, $this->organization, false);
+
+        $this->notificationManager
+            ->expects($this->never())
+            ->method('onCreate');
+
+        $this->attendeesInvitationEnabledProvider->expects(self::once())
+            ->method('isAttendeesInvitationEnabled')
+            ->willReturn(false);
 
         $this->handler->process($this->entity);
     }

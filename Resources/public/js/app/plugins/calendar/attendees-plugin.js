@@ -11,7 +11,10 @@ define(function(require) {
             this.listenTo(this.main, 'event:added', this.onEventAdded);
             this.listenTo(this.main, 'event:changed', this.onEventChanged);
             this.listenTo(this.main, 'event:deleted', this.onEventDeleted);
-            this.listenTo(this.main, 'event:beforeSave', this.onEventBeforeSave);
+
+            if (!this.options || this.options.enableAttendeesInvitations) {
+                this.listenTo(this.main, 'event:beforeSave', this.onEventBeforeSave);
+            }
             AttendeesPlugin.__super__.enable.call(this);
         },
 

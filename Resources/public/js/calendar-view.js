@@ -85,7 +85,8 @@ define(function(require) {
                 dayNames: localeSettings.getCalendarDayOfWeekNames('wide', true),
                 dayNamesShort: localeSettings.getCalendarDayOfWeekNames('abbreviated', true),
                 recoverView: true,
-                eventOrder: ['title', 'calendarUid']
+                eventOrder: ['title', 'calendarUid'],
+                enableAttendeesInvitations: true
             },
             connectionsOptions: {
                 collection: null,
@@ -205,6 +206,10 @@ define(function(require) {
             this.colorManager = new ColorManager(this.options.colorManagerOptions);
 
             this.pluginManager = new PluginManager(this);
+            this.pluginManager.create(
+                AttendeesPlugin,
+                {enableAttendeesInvitations: options.eventsOptions.enableAttendeesInvitations}
+            );
             this.pluginManager.enable(AttendeesPlugin);
             this.pluginManager.enable(EventRecurrencePlugin);
         },
