@@ -77,6 +77,14 @@ services:
         tags:
             - { name: twig.extension }
 
+    oro_calendar.twig.attendie:
+        class: Oro\Bundle\CalendarBundle\Twig\AttendeesExtension
+        public: false
+        arguments:
+            - '@oro_platform.twig.service_locator'
+        tags:
+            - { name: twig.extension }
+
     oro_calendar.provider.calendar_config:
         class: 'Oro\Bundle\CalendarBundle\Provider\CalendarDateTimeConfigProvider'
         arguments:
@@ -513,3 +521,8 @@ services:
         tags:
             - { name: kernel.event_listener, event: oro_search.prepare_entity_map, method: prepareEntityMapEvent, priority: 10 }
             - { name: kernel.event_listener, event: oro_search.prepare_result_item, method: prepareResultItemEvent, priority: 100 }
+
+    oro_calendar.provider.attendees_invitations_enabled_provider:
+        class: Oro\Bundle\CalendarBundle\Provider\AttendeesInvitationEnabledProvider
+        arguments:
+            - !tagged_iterator oro_calendar.attendees_invitations_enabled_provider

@@ -7,6 +7,7 @@ use Oro\Bundle\CalendarBundle\Entity\CalendarEvent;
 use Oro\Bundle\CalendarBundle\Form\Handler\SystemCalendarEventHandler;
 use Oro\Bundle\CalendarBundle\Manager\CalendarEvent\NotificationManager;
 use Oro\Bundle\CalendarBundle\Manager\CalendarEventManager;
+use Oro\Bundle\CalendarBundle\Provider\AttendeesInvitationEnabledProvider;
 use Oro\Bundle\CalendarBundle\Tests\Unit\ReflectionUtil;
 use Oro\Bundle\OrganizationBundle\Entity\Organization;
 use Oro\Bundle\SecurityBundle\Authentication\TokenAccessorInterface;
@@ -51,6 +52,9 @@ class SystemCalendarEventHandlerTest extends \PHPUnit\Framework\TestCase
     /** @var \PHPUnit\Framework\MockObject\MockObject */
     protected $notificationManager;
 
+    /** @var AttendeesInvitationEnabledProvider|\PHPUnit\Framework\MockObject\MockObject */
+    private $attendeesInvitationEnabledProvider;
+
     protected function setUp(): void
     {
         $this->form = $this->createMock('Symfony\Component\Form\Form');
@@ -86,6 +90,8 @@ class SystemCalendarEventHandlerTest extends \PHPUnit\Framework\TestCase
             ->disableOriginalConstructor()
             ->getMock();
 
+        $this->attendeesInvitationEnabledProvider = $this->createMock(AttendeesInvitationEnabledProvider::class);
+
         $this->entity  = new CalendarEvent();
         $this->handler = new SystemCalendarEventHandler(
             $this->requestStack,
@@ -95,6 +101,7 @@ class SystemCalendarEventHandlerTest extends \PHPUnit\Framework\TestCase
             $this->calendarEventManager,
             $this->notificationManager
         );
+        $this->handler->setAttendeesInvitationEnabledProvider($this->attendeesInvitationEnabledProvider);
         $this->handler->setForm($this->form);
     }
 

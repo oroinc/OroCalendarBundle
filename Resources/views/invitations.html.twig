@@ -74,10 +74,12 @@
 {%- endmacro -%}
 
 {% macro notify_attendees_component() %}
+    {% if is_attendees_invitation_enabled() %}
     <div style="display: none"
          data-page-component-module="oroui/js/app/components/view-component"
          data-page-component-options="{{ {'view': 'orocalendar/js/app/views/attendee-notifier-view'}|json_encode }}">
     </div>
+    {% endif %}
 {% endmacro %}
 
 {% macro get_attendee_type(typeId) %}

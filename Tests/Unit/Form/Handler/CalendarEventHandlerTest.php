@@ -12,6 +12,7 @@ use Oro\Bundle\CalendarBundle\Entity\Repository\CalendarRepository;
 use Oro\Bundle\CalendarBundle\Form\Handler\CalendarEventHandler;
 use Oro\Bundle\CalendarBundle\Manager\CalendarEvent\NotificationManager;
 use Oro\Bundle\CalendarBundle\Manager\CalendarEventManager;
+use Oro\Bundle\CalendarBundle\Provider\AttendeesInvitationEnabledProvider;
 use Oro\Bundle\CalendarBundle\Tests\Unit\Fixtures\Entity\CalendarEvent;
 use Oro\Bundle\CalendarBundle\Tests\Unit\ReflectionUtil;
 use Oro\Bundle\EntityBundle\Tools\EntityRoutingHelper;
@@ -28,43 +29,46 @@ class CalendarEventHandlerTest extends \PHPUnit\Framework\TestCase
     private const FORM_DATA = ['field' => 'value'];
 
     /** @var MockObject|Form */
-    protected $form;
+    private $form;
 
     /** @var MockObject|Form */
-    protected $notifyAttendeesForm;
+    private $notifyAttendeesForm;
 
     /** @var RequestStack */
-    protected $requestStack;
+    private $requestStack;
 
     /** @var Request */
-    protected $request;
+    private $request;
 
     /** @var MockObject */
-    protected $objectManager;
+    private $objectManager;
 
     /** @var MockObject */
-    protected $activityManager;
+    private $activityManager;
 
     /** @var MockObject */
-    protected $entityRoutingHelper;
+    private $entityRoutingHelper;
 
     /** @var MockObject */
-    protected $tokenAccessor;
+    private $tokenAccessor;
 
     /** @var MockObject|CalendarEventManager */
-    protected $calendarEventManager;
+    private $calendarEventManager;
 
     /** @var CalendarEventHandler */
-    protected $handler;
+    private $handler;
 
     /** @var CalendarEvent */
-    protected $entity;
+    private $entity;
 
     /** @var Organization */
-    protected $organization;
+    private $organization;
 
     /** @var MockObject */
-    protected $notificationManager;
+    private $notificationManager;
+
+    /** @var AttendeesInvitationEnabledProvider|\PHPUnit\Framework\MockObject\MockObject */
+    private $attendeesInvitationEnabledProvider;
 
     protected function setUp(): void
     {
@@ -91,8 +95,9 @@ class CalendarEventHandlerTest extends \PHPUnit\Framework\TestCase
         $this->notificationManager = $this->createMock(NotificationManager::class);
         $this->calendarEventManager = $this->createMock(CalendarEventManager::class);
 
-        $this->entity = new CalendarEvent();
+        $this->attendeesInvitationEnabledProvider = $this->createMock(AttendeesInvitationEnabledProvider::class);
 
+        $this->entity = new CalendarEvent();
         $this->handler = new CalendarEventHandler(
             $this->requestStack,
             $doctrine,
@@ -101,6 +106,7 @@ class CalendarEventHandlerTest extends \PHPUnit\Framework\TestCase
             $this->calendarEventManager,
             $this->notificationManager
         );
+        $this->handler->setAttendeesInvitationEnabledProvider($this->attendeesInvitationEnabledProvider);
 
         $this->handler->setForm($this->form);
         $this->handler->setEntityRoutingHelper($this->entityRoutingHelper);
