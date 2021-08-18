@@ -4,36 +4,34 @@ namespace Oro\Bundle\CalendarBundle\Datagrid;
 
 use Oro\Bundle\CalendarBundle\Manager\CalendarEvent\NotificationManager;
 use Oro\Bundle\DataGridBundle\Datasource\ResultRecord;
-use Symfony\Bundle\FrameworkBundle\Routing\Router;
+use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 
+/**
+ * Provides a method to build URL to be used to delete calendar event.
+ */
 class CalendarEventGridHelper
 {
-    /** @var Router */
-    protected $router;
+    /** @var UrlGeneratorInterface */
+    private $urlGenerator;
 
-    public function __construct(Router $router)
+    public function __construct(UrlGeneratorInterface $urlGenerator)
     {
-        $this->router = $router;
+        $this->urlGenerator = $urlGenerator;
     }
 
-    /**
-     * @param string $gridName
-     * @param string $keyName
-     * @param array  $node
-     *
-     * @return callable
-     */
-    public function getDeleteLinkProperty($gridName, $keyName, $node)
+    public function getDeleteLinkProperty(string $gridName, string $keyName, array $node): callable
     {
         if (!isset($node['route'])) {
-            return false;
+            throw new \InvalidArgumentException(sprintf(
+                'Cannot build callable fo grid "%s" because the "route" option is mandatory.',
+                $gridName
+            ));
         }
 
-        $router = $this->router;
-        $route  = $node['route'];
+        $route = $node['route'];
 
-        return function (ResultRecord $record) use ($gridName, $router, $route) {
-            return $router->generate(
+        return function (ResultRecord $record) use ($route) {
+            return $this->urlGenerator->generate(
                 $route,
                 [
                     'id'              => $record->getValue('id'),

@@ -13,18 +13,15 @@ use Oro\Bundle\OrganizationBundle\Entity\Organization;
 use Oro\Bundle\SearchBundle\Event\PrepareEntityMapEvent;
 use Oro\Bundle\SearchBundle\Event\PrepareResultItemEvent;
 use Oro\Bundle\SearchBundle\Query\Result\Item;
-use Oro\Component\Testing\Unit\EntityTrait;
+use Oro\Component\Testing\ReflectionUtil;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
-use Symfony\Component\Routing\Router;
 
 class CalendarEventSearchListenerTest extends \PHPUnit\Framework\TestCase
 {
-    use EntityTrait;
+    /** @var UrlGeneratorInterface|\PHPUnit\Framework\MockObject\MockObject */
+    private $urlGenerator;
 
-    /** @var \PHPUnit\Framework\MockObject\MockObject|Router */
-    private $router;
-
-    /** @var \PHPUnit\Framework\MockObject\MockObject|ManagerRegistry */
+    /** @var ManagerRegistry|\PHPUnit\Framework\MockObject\MockObject */
     private $doctrine;
 
     /** @var CalendarEventSearchListener */
@@ -32,10 +29,26 @@ class CalendarEventSearchListenerTest extends \PHPUnit\Framework\TestCase
 
     protected function setUp(): void
     {
-        $this->router = $this->createMock(Router::class);
+        $this->urlGenerator = $this->createMock(UrlGeneratorInterface::class);
         $this->doctrine = $this->createMock(ManagerRegistry::class);
 
-        $this->listener = new CalendarEventSearchListener($this->router, $this->doctrine);
+        $this->listener = new CalendarEventSearchListener($this->urlGenerator, $this->doctrine);
+    }
+
+    private function getOrganization(int $id): Organization
+    {
+        $organization = new Organization();
+        $organization->setId($id);
+
+        return $organization;
+    }
+
+    private function getSystemCalendar(int $id): SystemCalendar
+    {
+        $systemCalendar = new SystemCalendar();
+        ReflectionUtil::setId($systemCalendar, $id);
+
+        return $systemCalendar;
     }
 
     public function testPrepareEntityMapEventWithNonCalendarEventEntity()
@@ -49,9 +62,8 @@ class CalendarEventSearchListenerTest extends \PHPUnit\Framework\TestCase
 
     public function testPrepareEntityMapEventWithCommonCalendarEventEntity()
     {
-        $organization = $this->getEntity(Organization::class, ['id' => 12]);
         $calendar = new Calendar();
-        $calendar->setOrganization($organization);
+        $calendar->setOrganization($this->getOrganization(12));
         $entity = new CalendarEvent();
         $entity->setCalendar($calendar);
 
@@ -84,10 +96,9 @@ class CalendarEventSearchListenerTest extends \PHPUnit\Framework\TestCase
 
     public function testPrepareEntityMapEventWithOrganizationCalendarEventEntity()
     {
-        $organization = $this->getEntity(Organization::class, ['id' => 10]);
         $calendar = new SystemCalendar();
         $calendar->setPublic(false);
-        $calendar->setOrganization($organization);
+        $calendar->setOrganization($this->getOrganization(10));
         $entity = new CalendarEvent();
         $entity->setSystemCalendar($calendar);
 
@@ -106,7 +117,7 @@ class CalendarEventSearchListenerTest extends \PHPUnit\Framework\TestCase
         $item = new Item(\stdClass::class, 1);
         $event = new PrepareResultItemEvent($item);
 
-        $this->router->expects(self::never())
+        $this->urlGenerator->expects(self::never())
             ->method('generate');
 
         $this->listener->prepareResultItemEvent($event);
@@ -119,7 +130,7 @@ class CalendarEventSearchListenerTest extends \PHPUnit\Framework\TestCase
         $item = new Item(CalendarEvent::class, 1);
         $event = new PrepareResultItemEvent($item, $entity);
 
-        $this->router->expects(self::never())
+        $this->urlGenerator->expects(self::never())
             ->method('generate');
 
         $this->listener->prepareResultItemEvent($event);
@@ -128,14 +139,12 @@ class CalendarEventSearchListenerTest extends \PHPUnit\Framework\TestCase
 
     public function testPrepareResultItemEventWithSystemCalendarEventEntity()
     {
-        $calendar = $this->getEntity(SystemCalendar::class, ['id' => 10]);
-        $calendar->setPublic(false);
         $entity = new CalendarEvent();
-        $entity->setSystemCalendar($calendar);
+        $entity->setSystemCalendar($this->getSystemCalendar(10));
         $item = new Item(CalendarEvent::class, 5);
         $event = new PrepareResultItemEvent($item, $entity);
 
-        $this->router->expects(self::once())
+        $this->urlGenerator->expects(self::once())
             ->method('generate')
             ->with(
                 'oro_system_calendar_event_view',
@@ -150,9 +159,8 @@ class CalendarEventSearchListenerTest extends \PHPUnit\Framework\TestCase
 
     public function testPrepareResultItemEventWithSystemCalendarEventEntityNotInEvent()
     {
-        $calendar = $this->getEntity(SystemCalendar::class, ['id' => 20]);
         $entity = new CalendarEvent();
-        $entity->setSystemCalendar($calendar);
+        $entity->setSystemCalendar($this->getSystemCalendar(20));
         $item = new Item(CalendarEvent::class, 10);
         $event = new PrepareResultItemEvent($item);
 
@@ -174,7 +182,7 @@ class CalendarEventSearchListenerTest extends \PHPUnit\Framework\TestCase
             ->with(10)
             ->willReturn($entity);
 
-        $this->router->expects(self::once())
+        $this->urlGenerator->expects(self::once())
             ->method('generate')
             ->with(
                 'oro_system_calendar_event_view',

@@ -7,7 +7,6 @@ use Oro\Bundle\CalendarBundle\Entity\CalendarEvent;
 use Oro\Bundle\SearchBundle\Event\PrepareEntityMapEvent;
 use Oro\Bundle\SearchBundle\Event\PrepareResultItemEvent;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
-use Symfony\Component\Routing\Router;
 
 /**
  * Listener that add organization information for the calendar event entity to the search index
@@ -15,15 +14,15 @@ use Symfony\Component\Routing\Router;
  */
 class CalendarEventSearchListener
 {
-    /** @var Router */
-    private $router;
+    /** @var UrlGeneratorInterface */
+    private $urlGenerator;
 
     /** @var ManagerRegistry */
     private $doctrine;
 
-    public function __construct(Router $router, ManagerRegistry $doctrine)
+    public function __construct(UrlGeneratorInterface $urlGenerator, ManagerRegistry $doctrine)
     {
-        $this->router = $router;
+        $this->urlGenerator = $urlGenerator;
         $this->doctrine = $doctrine;
     }
 
@@ -80,7 +79,7 @@ class CalendarEventSearchListener
         }
 
         $event->getResultItem()->setRecordUrl(
-            $this->router->generate(
+            $this->urlGenerator->generate(
                 'oro_system_calendar_event_view',
                 ['id' =>  $resultItem->getId()],
                 UrlGeneratorInterface::ABSOLUTE_URL
