@@ -15,18 +15,14 @@ class CalendarPropertyRepositoryTest extends OrmTestCase
 
     protected function setUp(): void
     {
-        $metadataDriver = new AnnotationDriver(
+        $this->em = $this->getTestEntityManager();
+        $this->em->getConfiguration()->setMetadataDriverImpl(new AnnotationDriver(
             new AnnotationReader(),
             'Oro\Bundle\CalendarBundle\Entity'
-        );
-
-        $this->em = $this->getTestEntityManager();
-        $this->em->getConfiguration()->setMetadataDriverImpl($metadataDriver);
-        $this->em->getConfiguration()->setEntityNamespaces(
-            [
-                'OroCalendarBundle' => 'Oro\Bundle\CalendarBundle\Entity'
-            ]
-        );
+        ));
+        $this->em->getConfiguration()->setEntityNamespaces([
+            'OroCalendarBundle' => 'Oro\Bundle\CalendarBundle\Entity'
+        ]);
     }
 
     public function testGetTaskListByTimeIntervalQueryBuilder()

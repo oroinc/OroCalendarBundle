@@ -16,23 +16,15 @@ class CalendarOwnerAssignmentCheckerTest extends OrmTestCase
 
     protected function setUp(): void
     {
-        $reader = new AnnotationReader();
-        $metadataDriver = new AnnotationDriver(
-            $reader,
-            [
-                'Oro\Bundle\CalendarBundle\Entity',
-                'Oro\Bundle\UserBundle\Entity'
-            ]
-        );
-
         $this->em = $this->getTestEntityManager();
-        $this->em->getConfiguration()->setMetadataDriverImpl($metadataDriver);
-        $this->em->getConfiguration()->setEntityNamespaces(
-            [
-                'OroCalendarBundle' => 'Oro\Bundle\CalendarBundle\Entity',
-                'OroUserBundle'     => 'Oro\Bundle\UserBundle\Entity'
-            ]
-        );
+        $this->em->getConfiguration()->setMetadataDriverImpl(new AnnotationDriver(
+            new AnnotationReader(),
+            ['Oro\Bundle\CalendarBundle\Entity', 'Oro\Bundle\UserBundle\Entity']
+        ));
+        $this->em->getConfiguration()->setEntityNamespaces([
+            'OroCalendarBundle' => 'Oro\Bundle\CalendarBundle\Entity',
+            'OroUserBundle'     => 'Oro\Bundle\UserBundle\Entity'
+        ]);
     }
 
     /**

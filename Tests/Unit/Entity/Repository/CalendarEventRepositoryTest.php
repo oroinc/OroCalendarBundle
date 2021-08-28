@@ -21,19 +21,14 @@ class CalendarEventRepositoryTest extends OrmTestCase
 
     protected function setUp(): void
     {
-        $reader         = new AnnotationReader();
-        $metadataDriver = new AnnotationDriver(
-            $reader,
-            'Oro\Bundle\CalendarBundle\Entity'
-        );
-
         $this->em = $this->getTestEntityManager();
-        $this->em->getConfiguration()->setMetadataDriverImpl($metadataDriver);
-        $this->em->getConfiguration()->setEntityNamespaces(
-            array(
-                'OroCalendarBundle' => 'Oro\Bundle\CalendarBundle\Entity'
-            )
-        );
+        $this->em->getConfiguration()->setMetadataDriverImpl(new AnnotationDriver(
+            new AnnotationReader(),
+            'Oro\Bundle\CalendarBundle\Entity'
+        ));
+        $this->em->getConfiguration()->setEntityNamespaces([
+            'OroCalendarBundle' => 'Oro\Bundle\CalendarBundle\Entity'
+        ]);
     }
 
     public function testGetUserEventListByTimeIntervalQueryBuilder()
