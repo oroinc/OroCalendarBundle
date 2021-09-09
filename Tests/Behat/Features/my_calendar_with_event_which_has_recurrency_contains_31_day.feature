@@ -10,13 +10,13 @@ Feature: My calendar with event which has recurrency contains 31 day
     And I go to Activities / Calendar Events
     And I click "Create Calendar event"
     When I fill "Event Form" with:
-      | Start                | 2019-02-02                    |
-      | Title                | All-Day event with repeats 31 |
-      | Description          | testfull desc                 |
-      | All-Day Event        | true                          |
-      | Repeat               | true                          |
-      | Repeats              | Yearly                        |
-      | YearlyRecurrence     | Repeat on:March Day 31        |
+      | Start            | <DateTime:2019-02-02>         |
+      | Title            | All-Day event with repeats 31 |
+      | Description      | testfull desc                 |
+      | All-Day Event    | true                          |
+      | Repeat           | true                          |
+      | Repeats          | Yearly                        |
+      | YearlyRecurrence | Repeat on:March Day 31        |
     When I save and close form
     Then I should see "Calendar event saved" flash message
     And I should see "Recurrence Yearly every 1 year on Mar 31"

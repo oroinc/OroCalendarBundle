@@ -63,10 +63,10 @@ Feature: Localized email notification for calendar event
     Given go to Activities/ Calendar Events
     When click "Create Calendar event"
     And I fill "Event Form" with:
-      | Title  | Some Calendar event       |
-      | Start  | 2018-09-01 18:00          |
-      | End    | 2020-02-26 18:00          |
-      | Guests | [Charlie Sheen, Megan Fox |
+      | Title  | Some Calendar event         |
+      | Start  | <DateTime:2018-09-01 18:00> |
+      | End    | <DateTime:2020-02-26 18:00> |
+      | Guests | [Charlie Sheen, Megan Fox   |
     And I save and close form
     And click "Notify"
     Then I should see "Calendar event saved" flash message

@@ -308,7 +308,8 @@ abstract class AbstractValidationErrorTestCase extends AbstractTestCase
                 ],
                 'errors' => [
                     'dayOfWeek' => [
-                        'This value is not valid.'
+                        'This value is not valid.',
+                        'This value should not be blank.',
                     ]
                 ]
             ],

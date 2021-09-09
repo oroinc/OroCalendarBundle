@@ -19,17 +19,17 @@ Feature: Calendar event yearly recurrence
     And I go to Activities / Calendar Events
     And I click "Create Calendar event"
     When I fill "Event Form" with:
-      | Start                | 2018-04-02                 |
-      | Title                | All-Day event with repeats |
-      | All-Day Event        | true                       |
-      | Repeat               | true                       |
-      | Repeats              | Yearly                     |
-      | YearlyRecurrence     | Repeat on:January Day 8    |
+      | Start            | <DateTime:2018-04-02>      |
+      | Title            | All-Day event with repeats |
+      | All-Day Event    | true                       |
+      | Repeat           | true                       |
+      | Repeats          | Yearly                     |
+      | YearlyRecurrence | Repeat on:January Day 8    |
     # Check that start date don't affect on the summary text
     Then I should see "Summary: Yearly every 1 year on Jan 8"
     When I fill "Event Form" with:
-      | All-Day Event | false      |
-      | Start         | 2018-04-01 |
+      | All-Day Event | false                 |
+      | Start         | <DateTime:2018-04-01> |
     Then I should see "Summary: Yearly every 1 year on Jan 8"
     When I fill "Event Form" with:
       | All-Day Event | true |
@@ -73,12 +73,12 @@ Feature: Calendar event yearly recurrence
     And I go to Activities / Calendar Events
     And I click "Create Calendar event"
     When I fill "Event Form" with:
-      | Start                | 2018-04-02                    |
-      | Title                | All-Day event with repeats 31 |
-      | All-Day Event        | true                          |
-      | Repeat               | true                          |
-      | Repeats              | Yearly                        |
-      | YearlyRecurrence     | Repeat on:January Day 31      |
+      | Start            | <DateTime:2018-04-02>         |
+      | Title            | All-Day event with repeats 31 |
+      | All-Day Event    | true                          |
+      | Repeat           | true                          |
+      | Repeats          | Yearly                        |
+      | YearlyRecurrence | Repeat on:January Day 31      |
 
     When I save and close form
     Then I should see "Calendar event saved" flash message

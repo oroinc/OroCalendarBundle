@@ -41,7 +41,11 @@ class FeatureContext extends OroFeatureContext implements OroPageObjectAware
 
         foreach ($table->getRows() as list($label, $value)) {
             $value = Form::normalizeValue($value);
-            self::assertEquals($value, $itemInfo->get($label));
+            $itemInfoValue = $itemInfo->get($label);
+            if ($itemInfoValue instanceof \DateTimeInterface) {
+                $itemInfoValue = $itemInfoValue->format(\DateTimeInterface::ATOM);
+            }
+            self::assertEquals($value, $itemInfoValue);
         }
 
         $itemInfo->close();
