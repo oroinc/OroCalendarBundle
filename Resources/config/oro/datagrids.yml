@@ -48,6 +48,7 @@ datagrids:
                     and:
                         - targetCalendar.owner = @oro_security.token_accessor->getUserId
                         - event.cancelled = false
+                        - event.recurringEvent is null
                 groupBy: >
                     event.id,
                     calendar.name,

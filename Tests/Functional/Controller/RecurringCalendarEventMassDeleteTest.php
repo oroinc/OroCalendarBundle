@@ -38,8 +38,7 @@ class RecurringCalendarEventMassDeleteTest extends AbstractTestCase
      * 3. Create new regular calendar event with same attendees.
      * 4. Execute delete mass action for regular event and exception event.
      * 5. Get events via API and check the removed events are not exist.
-     * 6. Get exception event via API and verify it is cancelled.
-     * 7. Check number of calendar events and attendees in the system after all manipulations.
+     * 6. Check number of calendar events and attendees in the system after all manipulations.
      *
      * @SuppressWarnings(PHPMD.ExcessiveMethodLength)
      */
@@ -183,7 +182,7 @@ class RecurringCalendarEventMassDeleteTest extends AbstractTestCase
         /** @var CalendarEvent $recurringEvent */
         $regularEvent = $this->getEntity(CalendarEvent::class, $response['id']);
 
-        // Step 4. Execute delete mass action for regular event and exception event.
+        // Step 4. Execute delete mass action for regular event.
         $this->client->disableReboot();
         $url = $this->getUrl(
             'oro_datagrid_mass_action',
@@ -191,7 +190,7 @@ class RecurringCalendarEventMassDeleteTest extends AbstractTestCase
                 'gridName'   => 'calendar-event-grid',
                 'actionName' => 'delete',
                 'inset'      => 1,
-                'values'     => implode(',', [$regularEvent->getId(), $exceptionEvent->getId()])
+                'values'     => implode(',', [$regularEvent->getId()])
             ]
         );
         $this->ajaxRequest(
@@ -208,7 +207,7 @@ class RecurringCalendarEventMassDeleteTest extends AbstractTestCase
         $result = $this->client->getResponse();
         $data = json_decode($result->getContent(), true);
         $this->assertTrue($data['successful'] === true);
-        $this->assertTrue($data['count'] === 2);
+        $this->assertTrue($data['count'] === 1);
 
         // Step 5. Get events via API and check the removed events are not exist.
         $this->restRequest(
@@ -276,42 +275,21 @@ class RecurringCalendarEventMassDeleteTest extends AbstractTestCase
                 'end'         => "2016-05-09T02:00:00+00:00",
                 'allDay'      => false,
                 'attendees'   => $expectedAttendees,
+            ],
+            [
+                'id'          => $exceptionEvent->getId(),
+                'title'       => "Test Recurring Event Changed",
+                'description' => "Test Recurring Event Description",
+                'start'       => "2016-05-22T03:00:00+00:00",
+                'end'         => "2016-05-22T05:00:00+00:00",
+                'allDay'      => false,
+                'attendees'   => $expectedAttendees,
             ]
         ];
 
         $this->assertResponseEquals($expectedResponse, $response, false);
 
-        // Step 6. Get exception event via API and verify it is cancelled.
-        $this->restRequest(
-            [
-                'method' => 'GET',
-                'url'    => $this->getUrl('oro_api_get_calendarevent', ['id' => $exceptionEvent->getId()]),
-                'server' => $this->generateWsseAuthHeader('foo_user_1', 'foo_user_1_api_key')
-            ]
-        );
-
-        $response = $this->getRestResponseContent(
-            [
-                'statusCode'  => 200,
-                'contentType' => 'application/json'
-            ]
-        );
-
-        $expectedResponse = [
-            'id'               => $exceptionEvent->getId(),
-            'title'            => "Test Recurring Event Changed",
-            'description'      => "Test Recurring Event Description",
-            'start'            => "2016-05-22T03:00:00+00:00",
-            'end'              => "2016-05-22T05:00:00+00:00",
-            'allDay'           => false,
-            'attendees'        => $expectedAttendees,
-            'recurringEventId' => $recurringEvent->getId(),
-            'isCancelled'      => true,
-        ];
-
-        $this->assertResponseEquals($expectedResponse, $response, false);
-
-        // Step 7. Check number of calendar events and attendees in the system after all manipulations.
+        // Step 6. Check number of calendar events and attendees in the system after all manipulations.
         $this->getEntityManager()->clear();
 
         $this->assertCount(
