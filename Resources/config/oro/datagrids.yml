@@ -12,7 +12,6 @@ datagrids:
                     - event.title
                     - event.start
                     - event.end
-                    - COALESCE(status.id, 'Oro\Bundle\CalendarBundle\Entity\Attendee::STATUS_NONE') as invitationStatus
                     - parent.id as parentId
                     - owner.id as ownerId
                     - relatedAttendeeUser.id as relatedAttendeeUserId
@@ -84,11 +83,6 @@ datagrids:
                 type: twig
                 template: OroCalendarBundle:CalendarEvent:Datagrid/Property/recurrence.html.twig
                 frontend_type: html
-            invitationStatus:
-                label: oro.calendar.calendarevent.invitation_status.label
-                type: twig
-                template: OroCalendarBundle:CalendarEvent:Datagrid/Property/status.html.twig
-                frontend_type: html
         sorters:
             columns:
                 title:
@@ -99,8 +93,6 @@ datagrids:
                     data_name: event.start
                 end:
                     data_name: event.end
-                invitationStatus:
-                    data_name: invitationStatus
             default:
                 start: ASC
         filters:
@@ -120,10 +112,6 @@ datagrids:
                 is_recurrent:
                     type: boolean
                     data_name: is_recurrent
-                invitationStatus:
-                    type: enum
-                    enum_code: ce_attendee_status
-                    data_name: invitationStatus
         properties:
             id: ~
             view_link:
