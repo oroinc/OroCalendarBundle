@@ -101,19 +101,17 @@ abstract class AbstractStrategy implements StrategyInterface
      */
     protected function getFullRecurrencePattern(
         Entity\Recurrence $recurrence,
-        $translationId,
-        $translationParameters
+        string $translationId,
+        array $translationParameters
     ) {
         $translationParameters['%occurrences%'] = $this->getOccurrencesPattern($recurrence);
         $translationParameters['%end_date%'] = $this->getEndDatePattern($recurrence);
         $translationParameters['%timezone_info%'] = $this->getTimezoneInfo($recurrence);
 
-        $result = $this->translator->trans(
+        return $this->translator->trans(
             $translationId,
             $translationParameters
         );
-
-        return $result;
     }
 
     /**

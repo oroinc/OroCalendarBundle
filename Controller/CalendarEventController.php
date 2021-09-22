@@ -213,7 +213,7 @@ class CalendarEventController extends AbstractController
         $formHandler = $this->get(CalendarEventHandler::class);
         if ($formHandler->process($entity)) {
             if (!$request->get('_widgetContainer')) {
-                $this->get('session')->getFlashBag()->add(
+                $request->getSession()->getFlashBag()->add(
                     'success',
                     $this->get(TranslatorInterface::class)->trans('oro.calendar.controller.event.saved.message')
                 );

@@ -735,7 +735,7 @@ class ChangeCalendarEventInvitationStatusTest extends AbstractTestCase
         // Step 10. Update invitation status of the child event to "accepted".
 
         // Clear session to to login with foo_user_2
-        $this->getContainer()->get('session')->clear();
+        $this->getSession()->clear();
 
         $this->restRequest(
             [
@@ -766,7 +766,7 @@ class ChangeCalendarEventInvitationStatusTest extends AbstractTestCase
         );
 
         // Clear session after login with foo_user_2
-        $this->getContainer()->get('session')->clear();
+        $this->getSession()->clear();
 
         // Step 11. Get the events and verify the invitation status is set to "declined" in the main event
         // and "accepted" in the child event.

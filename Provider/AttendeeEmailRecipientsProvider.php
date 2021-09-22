@@ -8,6 +8,9 @@ use Oro\Bundle\EmailBundle\Model\EmailRecipientsProviderArgs;
 use Oro\Bundle\EmailBundle\Provider\EmailRecipientsHelper;
 use Oro\Bundle\EmailBundle\Provider\EmailRecipientsProviderInterface;
 
+/**
+ * Provider for email recipient list based on Attendee.
+ */
 class AttendeeEmailRecipientsProvider implements EmailRecipientsProviderInterface
 {
     /** @var ManagerRegistry */
@@ -39,7 +42,7 @@ class AttendeeEmailRecipientsProvider implements EmailRecipientsProviderInterfac
     /**
      * {@inheritdoc}
      */
-    public function getSection()
+    public function getSection(): string
     {
         return 'oro.calendar.autocomplete.attendees';
     }

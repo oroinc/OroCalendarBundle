@@ -30,7 +30,7 @@ abstract class AbstractValidationErrorTestCase extends AbstractTestCase
                 ],
                 'errors' => [
                     'recurrenceType' => [
-                        'This value is not valid.'
+                        'The selected choice is invalid.'
                     ]
                 ]
             ],
@@ -43,7 +43,7 @@ abstract class AbstractValidationErrorTestCase extends AbstractTestCase
                 ],
                 'errors' => [
                     'recurrenceType' => [
-                        'This value is not valid.'
+                        'The selected choice is invalid.'
                     ]
                 ]
             ],
@@ -75,7 +75,7 @@ abstract class AbstractValidationErrorTestCase extends AbstractTestCase
                 ],
                 'errors' => [
                     'endTime' => [
-                        'This value is not valid.'
+                        'Please enter a valid date and time.'
                     ]
                 ]
             ],
@@ -90,7 +90,7 @@ abstract class AbstractValidationErrorTestCase extends AbstractTestCase
                 ],
                 'errors' => [
                     'occurrences' => [
-                        'This value is not valid.'
+                        'Please enter an integer.'
                     ]
                 ]
             ],
@@ -132,7 +132,7 @@ abstract class AbstractValidationErrorTestCase extends AbstractTestCase
                 ],
                 'errors' => [
                     'interval' => [
-                        'This value is not valid.'
+                        'Please enter an integer.'
                     ]
                 ]
             ],
@@ -218,7 +218,7 @@ abstract class AbstractValidationErrorTestCase extends AbstractTestCase
                 ],
                 'errors' => [
                     'timeZone' => [
-                        'This value is not valid.'
+                        'Please select a valid timezone.'
                     ]
                 ]
             ],
@@ -231,7 +231,7 @@ abstract class AbstractValidationErrorTestCase extends AbstractTestCase
                 ],
                 'errors' => [
                     'timeZone' => [
-                        'This value is not valid.'
+                        'Please select a valid timezone.'
                     ]
                 ]
             ],
@@ -247,7 +247,7 @@ abstract class AbstractValidationErrorTestCase extends AbstractTestCase
                 ],
                 'errors' => [
                     'instance' => [
-                        'This value is not valid.'
+                        'The selected choice is invalid.'
                     ]
                 ]
             ],
@@ -262,7 +262,8 @@ abstract class AbstractValidationErrorTestCase extends AbstractTestCase
                 ],
                 'errors' => [
                     'instance' => [
-                        'This value is not valid.' // Choice field of "instance" doesn't accept values out of the list.
+                        // Choice field of "instance" doesn't accept values out of the list.
+                        'The selected choice is invalid.',
                     ]
                 ]
             ],
@@ -277,7 +278,8 @@ abstract class AbstractValidationErrorTestCase extends AbstractTestCase
                 ],
                 'errors' => [
                     'instance' => [
-                        'This value is not valid.' // Choice field of "instance" doesn't accept values out of the list.
+                        // Choice field of "instance" doesn't accept values out of the list.
+                        'The selected choice is invalid.',
                     ]
                 ]
             ],
@@ -293,7 +295,7 @@ abstract class AbstractValidationErrorTestCase extends AbstractTestCase
                 ],
                 'errors' => [
                     'dayOfWeek' => [
-                        'This value is not valid.'
+                        'The selected choice is invalid.'
                     ]
                 ]
             ],
@@ -308,7 +310,7 @@ abstract class AbstractValidationErrorTestCase extends AbstractTestCase
                 ],
                 'errors' => [
                     'dayOfWeek' => [
-                        'This value is not valid.',
+                        'The selected choice is invalid.',
                         'This value should not be blank.',
                     ]
                 ]
@@ -324,7 +326,7 @@ abstract class AbstractValidationErrorTestCase extends AbstractTestCase
                 ],
                 'errors' => [
                     'dayOfMonth' => [
-                        'This value is not valid.'
+                        'Please enter an integer.'
                     ]
                 ]
             ],
@@ -369,7 +371,7 @@ abstract class AbstractValidationErrorTestCase extends AbstractTestCase
                 ],
                 'errors' => [
                     'monthOfYear' => [
-                        'This value is not valid.'
+                        'Please enter an integer.'
                     ]
                 ]
             ],

@@ -115,7 +115,7 @@ class SystemCalendarController extends AbstractController
         if ($systemCalendarFormHandler->process($entity)) {
             if (!$request->get('_widgetContainer')) {
                 $translator = $this->get(TranslatorInterface::class);
-                $this->get('session')->getFlashBag()->add(
+                $request->getSession()->getFlashBag()->add(
                     'success',
                     $translator->trans('oro.calendar.controller.systemcalendar.saved.message')
                 );
