@@ -23,6 +23,7 @@ use Oro\Bundle\CalendarBundle\Tests\Unit\Fixtures\Entity\User;
 use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
 use Oro\Bundle\EntityBundle\Provider\EntityNameResolver;
 use Oro\Bundle\EntityExtendBundle\Tests\Unit\Fixtures\TestEnumValue;
+use Oro\Bundle\FeatureToggleBundle\Checker\FeatureChecker;
 use Oro\Bundle\OrganizationBundle\Entity\Organization;
 use Oro\Bundle\SecurityBundle\Authentication\TokenAccessorInterface;
 
@@ -33,6 +34,9 @@ class CalendarEventManagerLegacyTest extends \PHPUnit\Framework\TestCase
 {
     /** @var CalendarEventManager */
     private $calendarEventManager;
+
+    /** @var FeatureChecker|\PHPUnit\Framework\MockObject\MockObject */
+    private $featureChecker;
 
     protected function setUp(): void
     {
@@ -81,11 +85,14 @@ class CalendarEventManagerLegacyTest extends \PHPUnit\Framework\TestCase
         $attendeeManager = $this->createMock(AttendeeManager::class);
         $deleteManager = $this->createMock(DeleteManager::class);
 
+        $this->featureChecker = $this->createMock(FeatureChecker::class);
+
         $updateManager = new UpdateManager(
             new UpdateAttendeeManager($attendeeRelationManager, $doctrine),
             new UpdateChildManager($doctrine),
             new UpdateExceptionManager($attendeeManager, $deleteManager),
-            new MatchingEventsManager($doctrineHelper)
+            new MatchingEventsManager($doctrineHelper),
+            $this->featureChecker
         );
 
         $this->calendarEventManager = new CalendarEventManager(
@@ -126,6 +133,11 @@ class CalendarEventManagerLegacyTest extends \PHPUnit\Framework\TestCase
             ->addChildEvent($secondEvent)
             ->addAttendee($secondEventAttendee)
             ->addChildEvent($eventWithoutRelatedAttendee);
+
+        $this->featureChecker->expects(self::exactly(2))
+            ->method('isFeatureEnabled')
+            ->with('calendar_events_attendee_duplications')
+            ->willReturn(true);
 
         // assert default data with default status
         $this->calendarEventManager->onEventUpdate($parentEvent, clone $parentEvent, new Organization(), false);
@@ -214,10 +226,48 @@ class CalendarEventManagerLegacyTest extends \PHPUnit\Framework\TestCase
         $originalEvent = clone $event;
         $originalEvent->setAttendees(new ArrayCollection());
 
+        $this->featureChecker->expects(self::once())
+            ->method('isFeatureEnabled')
+            ->with('calendar_events_attendee_duplications')
+            ->willReturn(true);
+
         $this->calendarEventManager->onEventUpdate($event, $originalEvent, new Organization(), false);
 
         $this->assertCount(1, $event->getChildEvents());
         $this->assertSame($attendees->get(1), $event->getChildEvents()->first()->findRelatedAttendee());
+    }
+
+    public function testAddEventsWithDisabledMasterFeatures()
+    {
+        $user = new User(1);
+        $user2 = new User(2);
+
+        $calendar = (new Calendar())
+            ->setOwner($user);
+
+        $attendees = new ArrayCollection([
+            (new Attendee())->setUser($user),
+            (new Attendee())->setUser($user2)
+        ]);
+
+        $event = (new CalendarEvent())
+            ->setAttendees($attendees)
+            ->setCalendar($calendar)
+            ->setIsOrganizer(true)
+            ->setStart(new \DateTime('now', new \DateTimeZone('UTC')))
+            ->setEnd(new \DateTime('now', new \DateTimeZone('UTC')));
+
+        $originalEvent = clone $event;
+        $originalEvent->setAttendees(new ArrayCollection());
+
+        $this->featureChecker->expects(self::once())
+            ->method('isFeatureEnabled')
+            ->with('calendar_events_attendee_duplications')
+            ->willReturn(false);
+
+        $this->calendarEventManager->onEventUpdate($event, $originalEvent, new Organization(), false);
+
+        $this->assertCount(0, $event->getChildEvents());
     }
 
     public function testUpdateAttendees()

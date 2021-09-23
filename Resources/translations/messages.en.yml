@@ -256,3 +256,11 @@ oro:
                 weekday:            weekday
                 weekend:            weekend
                 day:                day
+
+        feature:
+            calendar_events_attendee_notifications:
+                label: Send attendee notifications
+                description: Determines whether the attendee notifications should be send by Oro
+            calendar_events_attendee_duplications:
+                label: Create duplication event in attendee calendar
+                description: Determines whether the duplication event should be created in attendee' calendar

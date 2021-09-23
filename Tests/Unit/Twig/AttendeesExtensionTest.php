@@ -2,47 +2,49 @@
 
 namespace Oro\Bundle\CalendarBundle\Tests\Unit\Twig;
 
-use Oro\Bundle\CalendarBundle\Provider\AttendeesInvitationEnabledProvider;
 use Oro\Bundle\CalendarBundle\Twig\AttendeesExtension;
+use Oro\Bundle\FeatureToggleBundle\Checker\FeatureChecker;
 use Oro\Component\Testing\Unit\TwigExtensionTestCaseTrait;
 
 class AttendeesExtensionTest extends \PHPUnit\Framework\TestCase
 {
     use TwigExtensionTestCaseTrait;
 
-    /** @var AttendeesInvitationEnabledProvider|\PHPUnit\Framework\MockObject\MockObject */
-    private $attendeesInvitationEnabledProvider;
+    /** @var FeatureChecker|\PHPUnit\Framework\MockObject\MockObject */
+    private $featureChecker;
 
     /** @var AttendeesExtension */
     private $extension;
 
     protected function setUp(): void
     {
-        $this->attendeesInvitationEnabledProvider = $this->createMock(AttendeesInvitationEnabledProvider::class);
+        $this->featureChecker = $this->createMock(FeatureChecker::class);
 
         $container = self::getContainerBuilder()
             ->add(
-                'oro_calendar.provider.attendees_invitations_enabled_provider',
-                $this->attendeesInvitationEnabledProvider
+                'oro_featuretoggle.checker.feature_checker',
+                $this->featureChecker
             )
             ->getContainer($this);
 
         $this->extension = new AttendeesExtension($container);
     }
 
-    public function testIsAttendeesInvitationEnabledWithEnabledInvitations(): void
+    public function testIsCalendarMasterFeaturesEnabledWithEnabledInvitations(): void
     {
-        $this->attendeesInvitationEnabledProvider->expects(self::once())
-            ->method('isAttendeesInvitationEnabled')
+        $this->featureChecker->expects(self::once())
+            ->method('isFeatureEnabled')
+            ->with('calendar_events_attendee_notifications')
             ->willReturn(true);
 
         self::assertTrue(self::callTwigFunction($this->extension, 'is_attendees_invitation_enabled', []));
     }
 
-    public function testIsAttendeesInvitationEnabledWithDisabledInvitations(): void
+    public function testIsCalendarMasterFeaturesEnabledWithDisabledInvitations(): void
     {
-        $this->attendeesInvitationEnabledProvider->expects(self::once())
-            ->method('isAttendeesInvitationEnabled')
+        $this->featureChecker->expects(self::once())
+            ->method('isFeatureEnabled')
+            ->with('calendar_events_attendee_notifications')
             ->willReturn(false);
 
         self::assertFalse(self::callTwigFunction($this->extension, 'is_attendees_invitation_enabled', []));

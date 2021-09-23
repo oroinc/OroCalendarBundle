@@ -8,7 +8,7 @@ use Oro\Bundle\ActivityBundle\Manager\ActivityManager;
 use Oro\Bundle\CalendarBundle\Entity\CalendarEvent;
 use Oro\Bundle\CalendarBundle\Manager\CalendarEvent\NotificationManager;
 use Oro\Bundle\CalendarBundle\Manager\CalendarEventManager;
-use Oro\Bundle\CalendarBundle\Provider\AttendeesInvitationEnabledProvider;
+use Oro\Bundle\FeatureToggleBundle\Checker\FeatureChecker;
 use Oro\Bundle\SecurityBundle\Authentication\TokenAccessorInterface;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\HttpFoundation\Request;
@@ -25,7 +25,7 @@ abstract class AbstractCalendarEventHandler
     protected TokenAccessorInterface $tokenAccessor;
     protected NotificationManager $notificationManager;
     protected CalendarEventManager $calendarEventManager;
-    protected AttendeesInvitationEnabledProvider $attendeesInvitationEnabledProvider;
+    protected FeatureChecker $featureChecker;
 
     public function __construct(
         RequestStack $requestStack,
@@ -34,7 +34,7 @@ abstract class AbstractCalendarEventHandler
         ActivityManager $activityManager,
         CalendarEventManager $calendarEventManager,
         NotificationManager $notificationManager,
-        AttendeesInvitationEnabledProvider $attendeesInvitationEnabledProvider
+        FeatureChecker $featureChecker
     ) {
         $this->requestStack = $requestStack;
         $this->doctrine = $doctrine;
@@ -42,7 +42,7 @@ abstract class AbstractCalendarEventHandler
         $this->activityManager = $activityManager;
         $this->calendarEventManager = $calendarEventManager;
         $this->notificationManager = $notificationManager;
-        $this->attendeesInvitationEnabledProvider = $attendeesInvitationEnabledProvider;
+        $this->featureChecker = $featureChecker;
     }
 
     public function setForm(FormInterface $form)
@@ -76,7 +76,7 @@ abstract class AbstractCalendarEventHandler
         $this->getEntityManager()->persist($entity);
         $this->getEntityManager()->flush();
 
-        if (true === $this->attendeesInvitationEnabledProvider->isAttendeesInvitationEnabled()) {
+        if (true === $this->featureChecker->isFeatureEnabled('calendar_events_attendee_notifications')) {
             $this->sendNotifications($entity, $originalEntity, $isNew);
         }
     }

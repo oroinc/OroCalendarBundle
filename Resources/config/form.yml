@@ -42,7 +42,7 @@ services:
             - '@oro_activity.manager'
             - '@oro_calendar.calendar_event_manager'
             - '@oro_calendar.calendar_event.notification_manager'
-            - '@oro_calendar.provider.attendees_invitations_enabled_provider'
+            - '@oro_featuretoggle.checker.feature_checker'
 
     oro_calendar.calendar_event.form.handler:
         class: 'Oro\Bundle\CalendarBundle\Form\Handler\CalendarEventHandler'

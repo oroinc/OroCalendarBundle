@@ -9,7 +9,7 @@ use Oro\Bundle\CalendarBundle\Entity\CalendarEvent;
 use Oro\Bundle\CalendarBundle\Form\Handler\CalendarEventApiHandler;
 use Oro\Bundle\CalendarBundle\Manager\CalendarEvent\NotificationManager;
 use Oro\Bundle\CalendarBundle\Manager\CalendarEventManager;
-use Oro\Bundle\CalendarBundle\Provider\AttendeesInvitationEnabledProvider;
+use Oro\Bundle\FeatureToggleBundle\Checker\FeatureChecker;
 use Oro\Bundle\OrganizationBundle\Entity\Organization;
 use Oro\Bundle\SecurityBundle\Authentication\TokenAccessorInterface;
 use Oro\Bundle\UserBundle\Entity\User;
@@ -47,8 +47,8 @@ class CalendarEventApiHandlerTest extends \PHPUnit\Framework\TestCase
     /** @var \PHPUnit\Framework\MockObject\MockObject|CalendarEventManager */
     private $calendarEventManager;
 
-    /** @var AttendeesInvitationEnabledProvider|\PHPUnit\Framework\MockObject\MockObject */
-    private $attendeesInvitationEnabledProvider;
+    /** @var FeatureChecker|\PHPUnit\Framework\MockObject\MockObject */
+    private $featureChecker;
 
     /** @var CalendarEventApiHandler */
     private $handler;
@@ -115,7 +115,7 @@ class CalendarEventApiHandlerTest extends \PHPUnit\Framework\TestCase
         $objectManager->expects($this->once())
             ->method('flush');
 
-        $this->attendeesInvitationEnabledProvider = $this->createMock(AttendeesInvitationEnabledProvider::class);
+        $this->featureChecker = $this->createMock(FeatureChecker::class);
 
         $this->handler = new CalendarEventApiHandler(
             $this->requestStack,
@@ -124,7 +124,7 @@ class CalendarEventApiHandlerTest extends \PHPUnit\Framework\TestCase
             $this->activityManager,
             $this->calendarEventManager,
             $this->notificationManager,
-            $this->attendeesInvitationEnabledProvider
+            $this->featureChecker
         );
 
         $this->handler->setForm($this->form);
@@ -191,8 +191,9 @@ class CalendarEventApiHandlerTest extends \PHPUnit\Framework\TestCase
             ->method('onUpdate')
             ->with($this->entity, clone $this->entity, NotificationManager::ALL_NOTIFICATIONS_STRATEGY);
 
-        $this->attendeesInvitationEnabledProvider->expects(self::once())
-            ->method('isAttendeesInvitationEnabled')
+        $this->featureChecker->expects(self::once())
+            ->method('isFeatureEnabled')
+            ->with('calendar_events_attendee_notifications')
             ->willReturn(true);
 
         $this->handler->process($this->entity);
@@ -216,8 +217,9 @@ class CalendarEventApiHandlerTest extends \PHPUnit\Framework\TestCase
             ->expects($this->never())
             ->method('onUpdate');
 
-        $this->attendeesInvitationEnabledProvider->expects(self::once())
-            ->method('isAttendeesInvitationEnabled')
+        $this->featureChecker->expects(self::once())
+            ->method('isFeatureEnabled')
+            ->with('calendar_events_attendee_notifications')
             ->willReturn(false);
 
         $this->handler->process($this->entity);
@@ -246,8 +248,9 @@ class CalendarEventApiHandlerTest extends \PHPUnit\Framework\TestCase
             ->method('onUpdate')
             ->with($this->entity, clone $this->entity, NotificationManager::ADDED_OR_DELETED_NOTIFICATIONS_STRATEGY);
 
-        $this->attendeesInvitationEnabledProvider->expects(self::once())
-            ->method('isAttendeesInvitationEnabled')
+        $this->featureChecker->expects(self::once())
+            ->method('isFeatureEnabled')
+            ->with('calendar_events_attendee_notifications')
             ->willReturn(true);
 
         $this->handler->process($this->entity);
@@ -272,8 +275,9 @@ class CalendarEventApiHandlerTest extends \PHPUnit\Framework\TestCase
             ->method('onUpdate')
             ->with($this->entity, clone $this->entity, NotificationManager::NONE_NOTIFICATIONS_STRATEGY);
 
-        $this->attendeesInvitationEnabledProvider->expects(self::once())
-            ->method('isAttendeesInvitationEnabled')
+        $this->featureChecker->expects(self::once())
+            ->method('isFeatureEnabled')
+            ->with('calendar_events_attendee_notifications')
             ->willReturn(true);
 
         $this->handler->process($this->entity);
@@ -296,8 +300,9 @@ class CalendarEventApiHandlerTest extends \PHPUnit\Framework\TestCase
             ->method('onUpdate')
             ->with($this->entity, clone $this->entity, NotificationManager::NONE_NOTIFICATIONS_STRATEGY);
 
-        $this->attendeesInvitationEnabledProvider->expects(self::once())
-            ->method('isAttendeesInvitationEnabled')
+        $this->featureChecker->expects(self::once())
+            ->method('isFeatureEnabled')
+            ->with('calendar_events_attendee_notifications')
             ->willReturn(true);
 
         $this->handler->process($this->entity);
@@ -319,8 +324,9 @@ class CalendarEventApiHandlerTest extends \PHPUnit\Framework\TestCase
             ->method('onCreate')
             ->with($this->entity, NotificationManager::NONE_NOTIFICATIONS_STRATEGY);
 
-        $this->attendeesInvitationEnabledProvider->expects(self::once())
-            ->method('isAttendeesInvitationEnabled')
+        $this->featureChecker->expects(self::once())
+            ->method('isFeatureEnabled')
+            ->with('calendar_events_attendee_notifications')
             ->willReturn(true);
 
         $this->handler->process($this->entity);
@@ -341,8 +347,9 @@ class CalendarEventApiHandlerTest extends \PHPUnit\Framework\TestCase
             ->expects($this->never())
             ->method('onCreate');
 
-        $this->attendeesInvitationEnabledProvider->expects(self::once())
-            ->method('isAttendeesInvitationEnabled')
+        $this->featureChecker->expects(self::once())
+            ->method('isFeatureEnabled')
+            ->with('calendar_events_attendee_notifications')
             ->willReturn(false);
 
         $this->handler->process($this->entity);
