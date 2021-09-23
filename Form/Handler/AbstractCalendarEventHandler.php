@@ -9,6 +9,7 @@ use Oro\Bundle\CalendarBundle\Entity\CalendarEvent;
 use Oro\Bundle\CalendarBundle\Manager\CalendarEvent\NotificationManager;
 use Oro\Bundle\CalendarBundle\Manager\CalendarEventManager;
 use Oro\Bundle\CalendarBundle\Provider\AttendeesInvitationEnabledProvider;
+use Oro\Bundle\FeatureToggleBundle\Checker\FeatureChecker;
 use Oro\Bundle\SecurityBundle\Authentication\TokenAccessorInterface;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\HttpFoundation\Request;
@@ -25,6 +26,12 @@ abstract class AbstractCalendarEventHandler
     protected TokenAccessorInterface $tokenAccessor;
     protected NotificationManager $notificationManager;
     protected CalendarEventManager $calendarEventManager;
+    protected FeatureChecker $featureChecker;
+
+    /**
+     * @var AttendeesInvitationEnabledProvider
+     * @deprecated
+     */
     protected AttendeesInvitationEnabledProvider $attendeesInvitationEnabledProvider;
 
     public function __construct(
@@ -41,6 +48,14 @@ abstract class AbstractCalendarEventHandler
         $this->activityManager = $activityManager;
         $this->calendarEventManager = $calendarEventManager;
         $this->notificationManager = $notificationManager;
+    }
+
+    /**
+     * @deprecated
+     */
+    public function setFeatureChecker(FeatureChecker $featureChecker):void
+    {
+        $this->featureChecker = $featureChecker;
     }
 
     /**
@@ -83,7 +98,7 @@ abstract class AbstractCalendarEventHandler
         $this->getEntityManager()->persist($entity);
         $this->getEntityManager()->flush();
 
-        if (true === $this->attendeesInvitationEnabledProvider->isAttendeesInvitationEnabled()) {
+        if (true === $this->featureChecker->isFeatureEnabled('calendar_events_attendee_notifications')) {
             $this->sendNotifications($entity, $originalEntity, $isNew);
         }
     }

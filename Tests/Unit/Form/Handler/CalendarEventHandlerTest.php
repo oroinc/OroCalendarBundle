@@ -12,10 +12,10 @@ use Oro\Bundle\CalendarBundle\Entity\Repository\CalendarRepository;
 use Oro\Bundle\CalendarBundle\Form\Handler\CalendarEventHandler;
 use Oro\Bundle\CalendarBundle\Manager\CalendarEvent\NotificationManager;
 use Oro\Bundle\CalendarBundle\Manager\CalendarEventManager;
-use Oro\Bundle\CalendarBundle\Provider\AttendeesInvitationEnabledProvider;
 use Oro\Bundle\CalendarBundle\Tests\Unit\Fixtures\Entity\CalendarEvent;
 use Oro\Bundle\CalendarBundle\Tests\Unit\ReflectionUtil;
 use Oro\Bundle\EntityBundle\Tools\EntityRoutingHelper;
+use Oro\Bundle\FeatureToggleBundle\Checker\FeatureChecker;
 use Oro\Bundle\OrganizationBundle\Entity\Organization;
 use Oro\Bundle\SecurityBundle\Authentication\TokenAccessorInterface;
 use Oro\Bundle\UserBundle\Entity\User;
@@ -67,8 +67,8 @@ class CalendarEventHandlerTest extends \PHPUnit\Framework\TestCase
     /** @var MockObject */
     private $notificationManager;
 
-    /** @var AttendeesInvitationEnabledProvider|\PHPUnit\Framework\MockObject\MockObject */
-    private $attendeesInvitationEnabledProvider;
+    /** @var FeatureChecker|\PHPUnit\Framework\MockObject\MockObject */
+    private $featureChecker;
 
     protected function setUp(): void
     {
@@ -95,7 +95,7 @@ class CalendarEventHandlerTest extends \PHPUnit\Framework\TestCase
         $this->notificationManager = $this->createMock(NotificationManager::class);
         $this->calendarEventManager = $this->createMock(CalendarEventManager::class);
 
-        $this->attendeesInvitationEnabledProvider = $this->createMock(AttendeesInvitationEnabledProvider::class);
+        $this->featureChecker = $this->createMock(FeatureChecker::class);
 
         $this->entity = new CalendarEvent();
         $this->handler = new CalendarEventHandler(
@@ -106,7 +106,7 @@ class CalendarEventHandlerTest extends \PHPUnit\Framework\TestCase
             $this->calendarEventManager,
             $this->notificationManager
         );
-        $this->handler->setAttendeesInvitationEnabledProvider($this->attendeesInvitationEnabledProvider);
+        $this->handler->setFeatureChecker($this->featureChecker);
 
         $this->handler->setForm($this->form);
         $this->handler->setEntityRoutingHelper($this->entityRoutingHelper);

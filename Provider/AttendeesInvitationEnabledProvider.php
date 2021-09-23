@@ -4,6 +4,9 @@ namespace Oro\Bundle\CalendarBundle\Provider;
 
 /**
  * Provider that returns whether the attendees invitations are enabled.
+ *
+ * @deprecated Feature checker will be used instead,
+ * (@see ../Resources/config/oro/features.yml)
  */
 class AttendeesInvitationEnabledProvider
 {

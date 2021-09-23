@@ -2,7 +2,6 @@
 
 namespace Oro\Bundle\CalendarBundle\Twig;
 
-use Oro\Bundle\CalendarBundle\Provider\AttendeesInvitationEnabledProvider;
 use Psr\Container\ContainerInterface;
 use Symfony\Contracts\Service\ServiceSubscriberInterface;
 use Twig\Extension\AbstractExtension;
@@ -27,7 +26,7 @@ class AttendeesExtension extends AbstractExtension implements ServiceSubscriberI
      */
     public static function getSubscribedServices()
     {
-        return ['oro_calendar.provider.attendees_invitations_enabled_provider'];
+        return ['oro_featuretoggle.checker.feature_checker'];
     }
 
     /**
@@ -42,9 +41,13 @@ class AttendeesExtension extends AbstractExtension implements ServiceSubscriberI
 
     public function isAttendeesInvitationEnabled(): bool
     {
-        return $this->getAttendeesInvitationEnabledProvider()->isAttendeesInvitationEnabled();
+        return $this->container->get('oro_featuretoggle.checker.feature_checker')
+            ->isFeatureEnabled('calendar_events_attendee_notifications');
     }
 
+    /**
+     * @deprecated
+     */
     protected function getAttendeesInvitationEnabledProvider(): AttendeesInvitationEnabledProvider
     {
         return $this->container->get('oro_calendar.provider.attendees_invitations_enabled_provider');

@@ -1,0 +1,11 @@
+features:
+    calendar_events_attendee_notifications:
+        label: oro.calendar.feature.calendar_events_attendee_notifications.label
+        description: oro.calendar.feature.calendar_events_attendee_notifications.description
+        strategy: unanimous
+        allow_if_all_abstain: true
+    calendar_events_attendee_duplications:
+        label: oro.calendar.feature.calendar_events_attendee_duplications.label
+        description: oro.calendar.feature.calendar_events_attendee_duplications.description
+        strategy: unanimous
+        allow_if_all_abstain: true

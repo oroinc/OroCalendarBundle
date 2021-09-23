@@ -3,6 +3,7 @@
 namespace Oro\Bundle\CalendarBundle\Manager\CalendarEvent;
 
 use Oro\Bundle\CalendarBundle\Entity\CalendarEvent;
+use Oro\Bundle\FeatureToggleBundle\Checker\FeatureChecker;
 use Oro\Bundle\OrganizationBundle\Entity\Organization;
 
 /**
@@ -13,20 +14,11 @@ use Oro\Bundle\OrganizationBundle\Entity\Organization;
  */
 class UpdateManager
 {
-    /**
-     * @var UpdateAttendeeManager
-     */
-    protected $updateAttendeeManager;
-
-    /**
-     * @var UpdateChildManager
-     */
-    protected $updateChildManager;
-
-    /**
-     * @var MatchingEventsManager
-     */
-    protected $matchingEventsManager;
+    protected UpdateAttendeeManager $updateAttendeeManager;
+    protected UpdateChildManager $updateChildManager;
+    protected UpdateExceptionManager $updateExceptionManager;
+    protected MatchingEventsManager $matchingEventsManager;
+    protected FeatureChecker $featureChecker;
 
     public function __construct(
         UpdateAttendeeManager $updateAttendeeManager,
@@ -38,6 +30,14 @@ class UpdateManager
         $this->updateChildManager = $updateChildManager;
         $this->updateExceptionManager = $updateExceptionManager;
         $this->matchingEventsManager = $matchingEventsManager;
+    }
+
+    /**
+     * @deprecated
+     */
+    public function setFeatureChecker(FeatureChecker $featureChecker):void
+    {
+        $this->featureChecker = $featureChecker;
     }
 
     /**
@@ -56,7 +56,10 @@ class UpdateManager
     ) {
         $this->updateAttendeeManager->onEventUpdate($actualEvent, $organization);
         $this->matchingEventsManager->onEventUpdate($actualEvent);
-        $this->updateChildManager->onEventUpdate($actualEvent, $originalEvent, $organization);
+
+        if ($this->featureChecker->isFeatureEnabled('calendar_events_attendee_duplications')) {
+            $this->updateChildManager->onEventUpdate($actualEvent, $originalEvent, $organization);
+        }
 
         if ($allowUpdateExceptions) {
             $this->updateExceptionManager->onEventUpdate($actualEvent, $originalEvent);
