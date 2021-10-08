@@ -1,5 +1,7 @@
 /* @theme: admin.oro; */
 
+@use "sass:math";
+
 /*
  * FullCalendar v3.4.0 Stylesheet
  * Docs & License: https://fullcalendar.io/
@@ -89,7 +91,7 @@ body .fc { /* extra precedence to overcome jqui */
 
 .fc-icon {
     display: inline-block;
-    font: normal normal normal $base-font-size/1 $fa-font-family;
+    font: normal normal normal math.div($base-font-size, 1) $fa-font-family;
     font-size: inherit;
     text-rendering: auto;
     -webkit-font-smoothing: antialiased;
@@ -1051,7 +1053,7 @@ a.fc-more:hover {
 }
 
 .fc-agenda-view .fc-day-grid .fc-row .fc-content-skeleton {
-    padding-bottom: $fc-cell-offset / 2; /* give space underneath events for clicking/selecting days */
+    padding-bottom: $fc-cell-offset * 0.5; /* give space underneath events for clicking/selecting days */
 }
 
 
@@ -1060,7 +1062,7 @@ a.fc-more:hover {
 
 .fc .fc-axis { /* .fc to overcome default cell styles */
     padding: 0 $fc-cell-offset;
-    height: $fc-cell-height - ($fc-cell-offset / 2);
+    height: $fc-cell-height - ($fc-cell-offset * .5);
 
     vertical-align: middle;
     white-space: nowrap;
