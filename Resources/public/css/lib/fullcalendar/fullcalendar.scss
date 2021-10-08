@@ -1,6 +1,6 @@
 /* @theme: admin.oro; */
 
-@use "sass:math";
+@use "sass:list";
 
 /*
  * FullCalendar v3.4.0 Stylesheet
@@ -91,7 +91,7 @@ body .fc { /* extra precedence to overcome jqui */
 
 .fc-icon {
     display: inline-block;
-    font: normal normal normal math.div($base-font-size, 1) $fa-font-family;
+    font: normal normal normal list.slash($base-font-size, 1) $fa-font-family;
     font-size: inherit;
     text-rendering: auto;
     -webkit-font-smoothing: antialiased;
