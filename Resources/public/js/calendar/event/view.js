@@ -699,8 +699,8 @@ define(function(require) {
             return orginizerTemplate({
                 routing: routing,
                 organizerUserId: model.get('organizerUserId'),
-                organizerDisplayName: model.get('organizerDisplayName'),
-                organizerEmail: model.get('organizerEmail')
+                organizerDisplayName: _.escape(model.get('organizerDisplayName')),
+                organizerEmail: _.escape(model.get('organizerEmail'))
             });
         }
     });
