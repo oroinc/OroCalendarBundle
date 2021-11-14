@@ -4,42 +4,44 @@ namespace Oro\Bundle\CalendarBundle\Tests\Unit\Form\Type;
 
 use Oro\Bundle\CalendarBundle\Entity\SystemCalendar;
 use Oro\Bundle\CalendarBundle\Form\Type\SystemCalendarType;
+use Oro\Bundle\CalendarBundle\Provider\SystemCalendarConfig;
+use Oro\Bundle\ConfigBundle\Config\ConfigManager;
 use Oro\Bundle\FormBundle\Form\Type\OroSimpleColorPickerType;
 use Oro\Component\Testing\Unit\PreloadedExtension;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Test\TypeTestCase;
+use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
+use Symfony\Contracts\Translation\TranslatorInterface;
 
 class SystemCalendarTypeTest extends TypeTestCase
 {
-    /** @var \PHPUnit\Framework\MockObject\MockObject */
-    protected $authorizationChecker;
+    /** @var AuthorizationCheckerInterface|\PHPUnit\Framework\MockObject\MockObject */
+    private $authorizationChecker;
 
-    /** @var \PHPUnit\Framework\MockObject\MockObject */
-    protected $calendarConfig;
+    /** @var SystemCalendarConfig|\PHPUnit\Framework\MockObject\MockObject */
+    private $calendarConfig;
 
-    /** @var \PHPUnit\Framework\MockObject\MockObject */
-    protected $configManager;
+    /** @var ConfigManager|\PHPUnit\Framework\MockObject\MockObject */
+    private $configManager;
 
-    /** @var \PHPUnit\Framework\MockObject\MockObject */
-    protected $translator;
+    /** @var TranslatorInterface|\PHPUnit\Framework\MockObject\MockObject */
+    private $translator;
 
+    /**
+     * {@inheritDoc}
+     */
     protected function getExtensions()
     {
         $this->authorizationChecker = $this->createMock(AuthorizationCheckerInterface::class);
-        $this->calendarConfig =
-            $this->getMockBuilder('Oro\Bundle\CalendarBundle\Provider\SystemCalendarConfig')
-                ->disableOriginalConstructor()
-                ->getMock();
+        $this->calendarConfig = $this->createMock(SystemCalendarConfig::class);
+        $this->configManager = $this->createMock(ConfigManager::class);
+        $this->translator = $this->createMock(TranslatorInterface::class);
 
-        $this->configManager = $this->getMockBuilder('Oro\Bundle\ConfigBundle\Config\ConfigManager')
-            ->disableOriginalConstructor()
-            ->getMock();
-        $this->translator    = $this->createMock('Symfony\Contracts\Translation\TranslatorInterface');
         $this->configManager->expects($this->any())
             ->method('get')
             ->with('oro_calendar.calendar_colors')
-            ->will($this->returnValue(['#FF0000']));
+            ->willReturn(['#FF0000']);
 
         return [
             new PreloadedExtension(
@@ -52,7 +54,7 @@ class SystemCalendarTypeTest extends TypeTestCase
     /**
      * @return AbstractType[]
      */
-    protected function loadTypes()
+    private function loadTypes(): array
     {
         $types = [
             SystemCalendarType::class => new SystemCalendarType($this->authorizationChecker, $this->calendarConfig),
@@ -60,8 +62,7 @@ class SystemCalendarTypeTest extends TypeTestCase
         ];
 
         $keys = array_map(
-            function ($type) {
-                /* @var AbstractType $type */
+            function (AbstractType $type) {
                 return $type->getName();
             },
             $types
@@ -80,20 +81,16 @@ class SystemCalendarTypeTest extends TypeTestCase
 
         $this->calendarConfig->expects($this->any())
             ->method('isPublicCalendarEnabled')
-            ->will($this->returnValue(true));
+            ->willReturn(true);
         $this->calendarConfig->expects($this->any())
             ->method('isSystemCalendarEnabled')
-            ->will($this->returnValue(true));
+            ->willReturn(true);
         $this->authorizationChecker->expects($this->any())
             ->method('isGranted')
-            ->will(
-                $this->returnValueMap(
-                    [
-                        ['oro_public_calendar_management', null, true],
-                        ['oro_system_calendar_management', null, true],
-                    ]
-                )
-            );
+            ->willReturnMap([
+                ['oro_public_calendar_management', null, true],
+                ['oro_system_calendar_management', null, true],
+            ]);
 
         $form = $this->factory->create(SystemCalendarType::class);
         $form->submit($formData);
@@ -101,7 +98,7 @@ class SystemCalendarTypeTest extends TypeTestCase
         $this->assertTrue($form->isSynchronized());
         /** @var SystemCalendar $result */
         $result = $form->getData();
-        $this->assertInstanceOf('Oro\Bundle\CalendarBundle\Entity\SystemCalendar', $result);
+        $this->assertInstanceOf(SystemCalendar::class, $result);
         $this->assertEquals('test', $result->getName());
         $this->assertEquals('#FF0000', $result->getBackgroundColor());
         $this->assertTrue($result->isPublic());
@@ -117,10 +114,10 @@ class SystemCalendarTypeTest extends TypeTestCase
 
         $this->calendarConfig->expects($this->any())
             ->method('isPublicCalendarEnabled')
-            ->will($this->returnValue(true));
+            ->willReturn(true);
         $this->calendarConfig->expects($this->any())
             ->method('isSystemCalendarEnabled')
-            ->will($this->returnValue(false));
+            ->willReturn(false);
 
         $form = $this->factory->create(SystemCalendarType::class);
         $form->submit($formData);
@@ -128,7 +125,7 @@ class SystemCalendarTypeTest extends TypeTestCase
         $this->assertTrue($form->isSynchronized());
         /** @var SystemCalendar $result */
         $result = $form->getData();
-        $this->assertInstanceOf('Oro\Bundle\CalendarBundle\Entity\SystemCalendar', $result);
+        $this->assertInstanceOf(SystemCalendar::class, $result);
         $this->assertEquals('test', $result->getName());
         $this->assertEquals('#FF0000', $result->getBackgroundColor());
         $this->assertTrue($result->isPublic());
@@ -144,10 +141,10 @@ class SystemCalendarTypeTest extends TypeTestCase
 
         $this->calendarConfig->expects($this->any())
             ->method('isPublicCalendarEnabled')
-            ->will($this->returnValue(false));
+            ->willReturn(false);
         $this->calendarConfig->expects($this->any())
             ->method('isSystemCalendarEnabled')
-            ->will($this->returnValue(true));
+            ->willReturn(true);
 
         $form = $this->factory->create(SystemCalendarType::class);
         $form->submit($formData);
@@ -155,7 +152,7 @@ class SystemCalendarTypeTest extends TypeTestCase
         $this->assertTrue($form->isSynchronized());
         /** @var SystemCalendar $result */
         $result = $form->getData();
-        $this->assertInstanceOf('Oro\Bundle\CalendarBundle\Entity\SystemCalendar', $result);
+        $this->assertInstanceOf(SystemCalendar::class, $result);
         $this->assertEquals('test', $result->getName());
         $this->assertEquals('#FF0000', $result->getBackgroundColor());
         $this->assertFalse($result->isPublic());
@@ -163,16 +160,14 @@ class SystemCalendarTypeTest extends TypeTestCase
 
     public function testConfigureOptions()
     {
-        $resolver = $this->getMockBuilder('Symfony\Component\OptionsResolver\OptionsResolver')
-            ->disableOriginalConstructor()
-            ->getMock();
+        $resolver = $this->createMock(OptionsResolver::class);
         $resolver->expects($this->once())
             ->method('setDefaults')
             ->with(
-                array(
-                    'data_class' => 'Oro\Bundle\CalendarBundle\Entity\SystemCalendar',
+                [
+                    'data_class' => SystemCalendar::class,
                     'csrf_token_id' => 'system_calendar',
-                )
+                ]
             );
 
         $type = new SystemCalendarType($this->authorizationChecker, $this->calendarConfig);

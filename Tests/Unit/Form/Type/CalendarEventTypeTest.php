@@ -27,7 +27,7 @@ use Symfony\Component\Validator\Constraints\Choice;
 
 class CalendarEventTypeTest extends \PHPUnit\Framework\TestCase
 {
-    /** @var \PHPUnit\Framework\MockObject\MockObject */
+    /** @var AuthorizationCheckerInterface|\PHPUnit\Framework\MockObject\MockObject */
     private $authorizationChecker;
 
     /** @var CalendarEventType */
@@ -186,7 +186,7 @@ class CalendarEventTypeTest extends \PHPUnit\Framework\TestCase
         $builder->expects($this->exactly(count($formFields)))
             ->method('add')
             ->withConsecutive(...$formFields)
-            ->will($this->returnSelf());
+            ->willReturnSelf();
 
         $this->type->buildForm($builder, ['layout_template' => false]);
     }

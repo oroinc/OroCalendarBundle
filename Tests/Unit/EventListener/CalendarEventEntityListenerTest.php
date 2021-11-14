@@ -13,7 +13,7 @@ use Oro\Bundle\CalendarBundle\Exception\UidAlreadySetException;
 
 class CalendarEventEntityListenerTest extends \PHPUnit\Framework\TestCase
 {
-    const UID = 'MOCK-UUID-123456';
+    private const UID = 'MOCK-UUID-123456';
 
     /** @var CalendarEventEntityListener */
     private $listener;
@@ -77,6 +77,7 @@ class CalendarEventEntityListenerTest extends \PHPUnit\Framework\TestCase
     public function testPreUpdateSetChildUidToParent()
     {
         $eventMock = $this->getPreUpdateEvent(true, null, '123');
+        /** @var UnitOfWork|\PHPUnit\Framework\MockObject\MockObject $unitOfWork */
         $unitOfWork = $eventMock->getEntityManager()->getUnitOfWork();
         $unitOfWork->expects($this->atLeastOnce())
             ->method('scheduleExtraUpdate');
@@ -96,6 +97,7 @@ class CalendarEventEntityListenerTest extends \PHPUnit\Framework\TestCase
     public function testPreUpdateSetChildUidToParentAndAllItsChildren()
     {
         $eventMock = $this->getPreUpdateEvent(true, null, '123');
+        /** @var UnitOfWork|\PHPUnit\Framework\MockObject\MockObject $unitOfWork */
         $unitOfWork = $eventMock->getEntityManager()->getUnitOfWork();
         $unitOfWork->expects($this->atLeastOnce())
             ->method('scheduleExtraUpdate');
@@ -137,37 +139,30 @@ class CalendarEventEntityListenerTest extends \PHPUnit\Framework\TestCase
         return new LifecycleEventArgs(new \stdClass(), $this->createMock(ObjectManager::class));
     }
 
-    /**
-     * @param bool        $hasUidFieldChanged
-     * @param string|null $oldValue
-     * @param string|null $newValue
-     * @return PreUpdateEventArgs
-     */
-    private function getPreUpdateEvent(bool $hasUidFieldChanged, $oldValue = null, $newValue = null): PreUpdateEventArgs
-    {
-        $mock = $this->createMock(PreUpdateEventArgs::class);
-
+    private function getPreUpdateEvent(
+        bool $hasUidFieldChanged,
+        string $oldValue = null,
+        string $newValue = null
+    ): PreUpdateEventArgs {
         $em = $this->createMock(EntityManager::class);
         $em->expects($this->any())
             ->method('getUnitOfWork')
             ->willReturn($this->createMock(UnitOfWork::class));
 
-        $mock->expects($this->any())
+        $event = $this->createMock(PreUpdateEventArgs::class);
+        $event->expects($this->any())
             ->method('getEntityManager')
             ->willReturn($em);
-
-        $mock->expects($this->any())
+        $event->expects($this->any())
             ->method('hasChangedField')
             ->willReturn($hasUidFieldChanged);
-
-        $mock->expects($this->any())
+        $event->expects($this->any())
             ->method('getOldValue')
             ->willReturn($oldValue);
-
-        $mock->expects($this->any())
+        $event->expects($this->any())
             ->method('getNewValue')
             ->willReturn($newValue);
 
-        return $mock;
+        return $event;
     }
 }

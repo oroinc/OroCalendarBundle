@@ -22,13 +22,9 @@ class RecurrenceTest extends \PHPUnit\Framework\TestCase
     }
 
     /**
-     * @param string $method
-     * @param array $arguments
-     * @param mixed $returnValue
-     *
      * @dataProvider delegateMethodsDataProvider
      */
-    public function testDelegateMethodWorks(string $method, array $arguments, $returnValue)
+    public function testDelegateMethodWorks(string $method, array $arguments, mixed $returnValue)
     {
         $this->strategy->expects($this->once())
             ->method($method)

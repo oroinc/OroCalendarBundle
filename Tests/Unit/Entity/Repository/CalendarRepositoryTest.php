@@ -10,10 +10,8 @@ use Oro\Component\TestUtils\ORM\OrmTestCase;
 
 class CalendarRepositoryTest extends OrmTestCase
 {
-    /**
-     * @var EntityManagerMock
-     */
-    protected $em;
+    /** @var EntityManagerMock */
+    private $em;
 
     protected function setUp(): void
     {
@@ -30,7 +28,7 @@ class CalendarRepositoryTest extends OrmTestCase
     public function testGetUserCalendarsQueryBuilder()
     {
         $organizationId = 1;
-        $userId         = 123;
+        $userId = 123;
 
         /** @var CalendarRepository $repo */
         $repo = $this->em->getRepository('OroCalendarBundle:Calendar');

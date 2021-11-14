@@ -8,7 +8,7 @@ use Symfony\Component\Validator\Constraint;
 class RecurrenceTest extends \PHPUnit\Framework\TestCase
 {
     /** @var Recurrence */
-    protected $constraint;
+    private $constraint;
 
     protected function setUp(): void
     {

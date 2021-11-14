@@ -59,7 +59,7 @@ class DelegateStrategyTest extends \PHPUnit\Framework\TestCase
     /**
      * @dataProvider delegateMethodsDataProvider
      */
-    public function testDelegateMethodWorks(string $method, array $arguments, $returnValue)
+    public function testDelegateMethodWorks(string $method, array $arguments, mixed $returnValue)
     {
         $recurrence = $arguments[0];
 

@@ -3,33 +3,24 @@
 namespace Oro\Bundle\CalendarBundle\Tests\Unit\Provider;
 
 use Oro\Bundle\CalendarBundle\Provider\CalendarDateTimeConfigProvider;
+use Oro\Bundle\LocaleBundle\Model\Calendar;
+use Oro\Bundle\LocaleBundle\Model\LocaleSettings;
 
 class CalendarDateTimeConfigProviderTest extends \PHPUnit\Framework\TestCase
 {
-    /**
-     * @var \PHPUnit\Framework\MockObject\MockObject
-     */
-    protected $localeSettings;
+    /** @var LocaleSettings|\PHPUnit\Framework\MockObject\MockObject */
+    private $localeSettings;
 
-    /**
-     * @var \PHPUnit\Framework\MockObject\MockObject
-     */
-    protected $calendar;
+    /** @var Calendar|\PHPUnit\Framework\MockObject\MockObject */
+    private $calendar;
 
-    /**
-     * @var CalendarDateTimeConfigProvider
-     */
-    protected $provider;
+    /** @var CalendarDateTimeConfigProvider */
+    private $provider;
 
     protected function setUp(): void
     {
-        $this->localeSettings = $this->getMockBuilder('Oro\Bundle\LocaleBundle\Model\LocaleSettings')
-            ->disableOriginalConstructor()
-            ->getMock();
-
-        $this->calendar = $this->getMockBuilder('Oro\Bundle\LocaleBundle\Model\Calendar')
-            ->disableOriginalConstructor()
-            ->getMock();
+        $this->localeSettings = $this->createMock(LocaleSettings::class);
+        $this->calendar = $this->createMock(Calendar::class);
 
         $this->provider = new CalendarDateTimeConfigProvider($this->localeSettings);
     }
@@ -37,49 +28,50 @@ class CalendarDateTimeConfigProviderTest extends \PHPUnit\Framework\TestCase
     /**
      * @dataProvider getDateRangeProvider
      */
-    public function testGetDateRange($current, $start, $end)
+    public function testGetDateRange(string $current, string $start, string $end)
     {
         $this->localeSettings->expects($this->once())
             ->method('getTimeZone')
-            ->will($this->returnValue('America/New_York'));
+            ->willReturn('America/New_York');
 
         $this->localeSettings->expects($this->once())
             ->method('getCalendar')
-            ->will($this->returnValue($this->calendar));
+            ->willReturn($this->calendar);
 
-        $this->calendar->expects($this->once())->method('getFirstDayOfWeek')
-            ->will($this->returnValue(1));
+        $this->calendar->expects($this->once())
+            ->method('getFirstDayOfWeek')
+            ->willReturn(1);
 
-        $date   = new \DateTime($current, new \DateTimeZone('UTC'));
+        $date = new \DateTime($current, new \DateTimeZone('UTC'));
         $result = $this->provider->getDateRange($date);
 
         $this->assertCount(2, $result);
-        $this->assertInstanceOf('\DateTime', $result['startDate']);
+        $this->assertInstanceOf(\DateTime::class, $result['startDate']);
         $result['startDate']->setTimezone(new \DateTimeZone('UTC'));
         $this->assertEquals($start, $result['startDate']->format('c'));
-        $this->assertInstanceOf('\DateTime', $result['endDate']);
+        $this->assertInstanceOf(\DateTime::class, $result['endDate']);
         $result['endDate']->setTimezone(new \DateTimeZone('UTC'));
         $this->assertEquals($end, $result['endDate']->format('c'));
     }
 
-    public function getDateRangeProvider()
+    public function getDateRangeProvider(): array
     {
-        return array(
-            array('2015-05-01T10:30:15+00:00', '2015-04-26T04:00:00+00:00', '2015-06-07T04:00:00+00:00'),
-            array('2015-05-15T10:30:15+00:00', '2015-04-26T04:00:00+00:00', '2015-06-07T04:00:00+00:00'),
-            array('2015-05-31T10:30:15+00:00', '2015-04-26T04:00:00+00:00', '2015-06-07T04:00:00+00:00'),
-            array('2014-06-01T10:30:15+00:00', '2014-06-01T04:00:00+00:00', '2014-07-13T04:00:00+00:00'),
-            array('2014-01-01T10:30:15+00:00', '2013-12-29T05:00:00+00:00', '2014-02-09T05:00:00+00:00'),
-            array('2014-01-20T10:30:15+00:00', '2013-12-29T05:00:00+00:00', '2014-02-09T05:00:00+00:00'),
-            array('2014-01-31T10:30:15+00:00', '2013-12-29T05:00:00+00:00', '2014-02-09T05:00:00+00:00'),
-        );
+        return [
+            ['2015-05-01T10:30:15+00:00', '2015-04-26T04:00:00+00:00', '2015-06-07T04:00:00+00:00'],
+            ['2015-05-15T10:30:15+00:00', '2015-04-26T04:00:00+00:00', '2015-06-07T04:00:00+00:00'],
+            ['2015-05-31T10:30:15+00:00', '2015-04-26T04:00:00+00:00', '2015-06-07T04:00:00+00:00'],
+            ['2014-06-01T10:30:15+00:00', '2014-06-01T04:00:00+00:00', '2014-07-13T04:00:00+00:00'],
+            ['2014-01-01T10:30:15+00:00', '2013-12-29T05:00:00+00:00', '2014-02-09T05:00:00+00:00'],
+            ['2014-01-20T10:30:15+00:00', '2013-12-29T05:00:00+00:00', '2014-02-09T05:00:00+00:00'],
+            ['2014-01-31T10:30:15+00:00', '2013-12-29T05:00:00+00:00', '2014-02-09T05:00:00+00:00'],
+        ];
     }
 
     public function testGetTimezoneOffset()
     {
         $this->localeSettings->expects($this->once())
             ->method('getTimeZone')
-            ->will($this->returnValue('America/New_York'));
+            ->willReturn('America/New_York');
 
         $date = new \DateTime('2014-01-20T10:30:15+00:00', new \DateTimeZone('UTC'));
 

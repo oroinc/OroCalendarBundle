@@ -5,11 +5,12 @@ namespace Oro\Bundle\CalendarBundle\Tests\Unit\Form\EventListener;
 use Oro\Bundle\CalendarBundle\Entity\Recurrence;
 use Oro\Bundle\CalendarBundle\Form\EventListener\CalendarEventRecurrenceSubscriber;
 use Symfony\Component\Form\FormEvent;
+use Symfony\Component\Form\FormInterface;
 
 class CalendarEventRecurrenceSubscriberTest extends \PHPUnit\Framework\TestCase
 {
     /** @var CalendarEventRecurrenceSubscriber */
-    protected $calendarEventRecurrenceSubscriber;
+    private $calendarEventRecurrenceSubscriber;
 
     protected function setUp(): void
     {
@@ -18,24 +19,22 @@ class CalendarEventRecurrenceSubscriberTest extends \PHPUnit\Framework\TestCase
 
     public function testPreSubmitShouldRemoveRecurrence()
     {
-        $form = $this->createMock('Symfony\Component\Form\FormInterface');
-        $recurrenceForm = $this->createMock('Symfony\Component\Form\FormInterface');
+        $form = $this->createMock(FormInterface::class);
+        $recurrenceForm = $this->createMock(FormInterface::class);
         $recurrence = new Recurrence();
 
         $event = new FormEvent($form, ['id' => 1, 'recurrence' => []]);
         $form->expects($this->any())
             ->method('has')
-            ->withConsecutive(
-                ['recurrence']
-            )
+            ->with('recurrence')
             ->willReturn(true);
         $form->expects($this->any())
             ->method('get')
             ->with('recurrence')
-            ->will($this->returnValue($recurrenceForm));
+            ->willReturn($recurrenceForm);
         $recurrenceForm->expects($this->once())
             ->method('getData')
-            ->will($this->returnValue($recurrence));
+            ->willReturn($recurrence);
         $recurrenceForm->expects($this->once())
             ->method('setData')
             ->with(null);

@@ -4,13 +4,11 @@ namespace Oro\Bundle\CalendarBundle\Tests\Unit\Provider;
 
 use Oro\Bundle\CalendarBundle\Entity\CalendarEvent;
 use Oro\Bundle\CalendarBundle\Provider\CalendarEventEntityNameProvider;
-use PHPUnit\Framework\TestCase;
+use Oro\Bundle\EntityBundle\Provider\EntityNameProviderInterface;
 
-class CalendarEventEntityNameProviderTest extends TestCase
+class CalendarEventEntityNameProviderTest extends \PHPUnit\Framework\TestCase
 {
-    /**
-     * @var CalendarEventEntityNameProvider
-     */
+    /** @var CalendarEventEntityNameProvider */
     private $provider;
 
     protected function setUp(): void
@@ -20,53 +18,47 @@ class CalendarEventEntityNameProviderTest extends TestCase
 
     /**
      * @dataProvider nameDataProvider
-     * @param string $format
-     * @param object $entity
-     * @param string $expected
      */
-    public function testGetName($format, $entity, $expected)
+    public function testGetName(string $format, object $entity, string|false $expected)
     {
-        $this->assertEquals($expected, $this->provider->getName($format, 'en', $entity));
+        $this->assertSame($expected, $this->provider->getName($format, 'en', $entity));
     }
 
-    /**
-     * @return \Generator
-     */
-    public function nameDataProvider(): ?\Generator
+    public function nameDataProvider(): array
     {
+        $result = [];
         foreach ($this->getFormats() as $format) {
-            yield [$format, new \stdClass(), false];
-            yield [$format, (new CalendarEvent())->setTitle('My Event'), 'My Event'];
+            $result[] = [$format, new \stdClass(), false];
+            $result[] = [$format, (new CalendarEvent())->setTitle('My Event'), 'My Event'];
         }
+
+        return $result;
     }
 
     /**
      * @dataProvider dqlNameDataProvider
-     * @param string $format
-     * @param string $entityClass
-     * @param string $expected
      */
-    public function testGetNameDQL($format, $entityClass, $expected)
+    public function testGetNameDQL(string $format, string $entityClass, string|false $expected)
     {
-        $this->assertEquals($expected, $this->provider->getNameDQL($format, 'en', $entityClass, 'alias'));
+        $this->assertSame($expected, $this->provider->getNameDQL($format, 'en', $entityClass, 'alias'));
     }
 
-    /**
-     * @return \Generator
-     */
-    public function dqlNameDataProvider(): ?\Generator
+    public function dqlNameDataProvider(): array
     {
+        $result = [];
         foreach ($this->getFormats() as $format) {
-            yield [$format, \stdClass::class, false];
-            yield [$format, CalendarEvent::class, 'alias.title'];
+            $result[] = [$format, \stdClass::class, false];
+            $result[] = [$format, CalendarEvent::class, 'alias.title'];
         }
+
+        return $result;
     }
 
     private function getFormats(): array
     {
         return [
-            CalendarEventEntityNameProvider::FULL,
-            CalendarEventEntityNameProvider::SHORT
+            EntityNameProviderInterface::FULL,
+            EntityNameProviderInterface::SHORT
         ];
     }
 }

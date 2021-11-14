@@ -2,19 +2,23 @@
 
 namespace Oro\Bundle\CalendarBundle\Tests\Unit\Manager;
 
+use Doctrine\Persistence\ManagerRegistry;
 use Oro\Bundle\CalendarBundle\Entity\Attendee as AttendeeEntity;
 use Oro\Bundle\CalendarBundle\Manager\AttendeeRelationManager;
 use Oro\Bundle\CalendarBundle\Tests\Unit\Fixtures\Entity\Attendee;
 use Oro\Bundle\CalendarBundle\Tests\Unit\Fixtures\Entity\User;
+use Oro\Bundle\LocaleBundle\DQL\DQLNameFormatter;
+use Oro\Bundle\LocaleBundle\Formatter\NameFormatter;
 use Oro\Bundle\UserBundle\Entity\Email;
+use Oro\Bundle\UserBundle\Entity\Repository\UserRepository;
 
 class AttendeeRelationManagerTest extends \PHPUnit\Framework\TestCase
 {
-    /** @var AttendeeRelationManager */
-    protected $attendeeRelationManager;
-
     /** @var User[] */
-    protected $users;
+    private $users;
+
+    /** @var AttendeeRelationManager */
+    private $attendeeRelationManager;
 
     protected function setUp(): void
     {
@@ -25,35 +29,27 @@ class AttendeeRelationManagerTest extends \PHPUnit\Framework\TestCase
             'u4@example.com' => (new User())->setEmail('u4@example.com'),
         ];
 
-        $userRepository = $this->getMockBuilder('Oro\Bundle\UserBundle\Entity\Repository\UserRepository')
-            ->disableOriginalConstructor()
-            ->getMock();
+        $userRepository = $this->createMock(UserRepository::class);
         $userRepository->expects($this->any())
             ->method('findUsersByEmailsAndOrganization')
-            ->will($this->returnCallback(function (array $emails) {
+            ->willReturnCallback(function (array $emails) {
                 return array_values(array_intersect_key($this->users, array_flip($emails)));
-            }));
+            });
 
-        $registry = $this->createMock('Doctrine\Persistence\ManagerRegistry');
-        $registry
-            ->expects($this->any())
+        $registry = $this->createMock(ManagerRegistry::class);
+        $registry->expects($this->any())
             ->method('getRepository')
             ->with('OroUserBundle:User')
-            ->will($this->returnValue($userRepository));
+            ->willReturn($userRepository);
 
-        $nameFormatter = $this->getMockBuilder('Oro\Bundle\LocaleBundle\Formatter\NameFormatter')
-            ->disableOriginalConstructor()
-            ->getMock();
-
+        $nameFormatter = $this->createMock(NameFormatter::class);
         $nameFormatter->expects($this->any())
             ->method('format')
-            ->will($this->returnCallback(function ($person) {
+            ->willReturnCallback(function ($person) {
                 return $person->getFullName();
-            }));
+            });
 
-        $dqlNameFormatter = $this->getMockBuilder('Oro\Bundle\LocaleBundle\DQL\DQLNameFormatter')
-            ->disableOriginalConstructor()
-            ->getMock();
+        $dqlNameFormatter = $this->createMock(DQLNameFormatter::class);
 
         $this->attendeeRelationManager = new AttendeeRelationManager(
             $registry,
@@ -93,7 +89,7 @@ class AttendeeRelationManagerTest extends \PHPUnit\Framework\TestCase
         $this->attendeeRelationManager->setRelatedEntity($attendee, $entity);
     }
 
-    public function setRelatedEntityDataProvider()
+    public function setRelatedEntityDataProvider(): array
     {
         $attendee = new Attendee();
         $user = (new User())
@@ -129,12 +125,12 @@ class AttendeeRelationManagerTest extends \PHPUnit\Framework\TestCase
     /**
      * @dataProvider getDisplayNameProvider
      */
-    public function testGetDisplayName($attendee, $expectedDisplayName)
+    public function testGetDisplayName(Attendee $attendee, string $expectedDisplayName)
     {
         $this->assertEquals($expectedDisplayName, $this->attendeeRelationManager->getDisplayName($attendee));
     }
 
-    public function getDisplayNameProvider()
+    public function getDisplayNameProvider(): array
     {
         return [
             [
@@ -172,7 +168,7 @@ class AttendeeRelationManagerTest extends \PHPUnit\Framework\TestCase
         $this->assertEquals($this->getExpectedAttendees(), $attendees);
     }
 
-    protected function getInitialAttendees()
+    private function getInitialAttendees(): array
     {
         return [
             (new Attendee(1))
@@ -189,7 +185,7 @@ class AttendeeRelationManagerTest extends \PHPUnit\Framework\TestCase
         ];
     }
 
-    protected function getExpectedAttendees()
+    private function getExpectedAttendees(): array
     {
         return [
             (new Attendee(1))

@@ -52,9 +52,9 @@ class SystemCalendarProviderTest extends \PHPUnit\Framework\TestCase
     public function testGetCalendarDefaultValuesDisabled()
     {
         $organizationId = 1;
-        $userId         = 123;
-        $calendarId     = 10;
-        $calendarIds    = [10];
+        $userId = 123;
+        $calendarId = 10;
+        $calendarIds = [10];
 
         $this->calendarConfig->expects($this->once())
             ->method('isSystemCalendarEnabled')
@@ -72,9 +72,9 @@ class SystemCalendarProviderTest extends \PHPUnit\Framework\TestCase
     public function testGetCalendarDefaultValuesCannotAddEvents()
     {
         $organizationId = 1;
-        $userId         = 123;
-        $calendarId     = 10;
-        $calendarIds    = [10, 20];
+        $userId = 123;
+        $calendarId = 10;
+        $calendarIds = [10, 20];
 
         $calendar1 = new SystemCalendar();
         ReflectionUtil::setId($calendar1, 1);
@@ -141,9 +141,9 @@ class SystemCalendarProviderTest extends \PHPUnit\Framework\TestCase
     public function testGetCalendarDefaultValuesCanAddEvents()
     {
         $organizationId = 1;
-        $userId         = 123;
-        $calendarId     = 10;
-        $calendarIds    = [10];
+        $userId = 123;
+        $calendarId = 10;
+        $calendarIds = [10];
 
         $calendar1 = new SystemCalendar();
         ReflectionUtil::setId($calendar1, 1);
@@ -202,11 +202,11 @@ class SystemCalendarProviderTest extends \PHPUnit\Framework\TestCase
     public function testGetCalendarEventsDisabled()
     {
         $organizationId = 1;
-        $userId         = 123;
-        $calendarId     = 10;
-        $start          = new \DateTime();
-        $end            = new \DateTime();
-        $connections    = [10 => true, 20 => false];
+        $userId = 123;
+        $calendarId = 10;
+        $start = new \DateTime();
+        $end = new \DateTime();
+        $connections = [10 => true, 20 => false];
 
         $this->calendarConfig->expects($this->once())
             ->method('isSystemCalendarEnabled')
@@ -219,11 +219,11 @@ class SystemCalendarProviderTest extends \PHPUnit\Framework\TestCase
     public function testGetCalendarEventsDenied()
     {
         $organizationId = 1;
-        $userId         = 123;
-        $calendarId     = 10;
-        $start          = new \DateTime();
-        $end            = new \DateTime();
-        $connections    = [10 => true, 20 => false];
+        $userId = 123;
+        $calendarId = 10;
+        $start = new \DateTime();
+        $end = new \DateTime();
+        $connections = [10 => true, 20 => false];
 
         $this->calendarConfig->expects($this->once())
             ->method('isSystemCalendarEnabled')
@@ -240,12 +240,12 @@ class SystemCalendarProviderTest extends \PHPUnit\Framework\TestCase
     public function testGetCalendarEvents()
     {
         $organizationId = 1;
-        $userId         = 123;
-        $calendarId     = 10;
-        $start          = new \DateTime();
-        $end            = new \DateTime();
-        $connections    = [10 => true, 20 => false];
-        $events         = [['id' => 1]];
+        $userId = 123;
+        $calendarId = 10;
+        $start = new \DateTime();
+        $end = new \DateTime();
+        $connections = [10 => true, 20 => false];
+        $events = [['id' => 1]];
 
         $this->calendarConfig->expects($this->once())
             ->method('isSystemCalendarEnabled')

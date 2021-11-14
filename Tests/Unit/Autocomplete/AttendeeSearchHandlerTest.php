@@ -36,27 +36,25 @@ class AttendeeSearchHandlerTest extends \PHPUnit\Framework\TestCase
 
     protected function setUp(): void
     {
+        $this->indexer = $this->createMock(Indexer::class);
+        $this->entityRepository = $this->getMockBuilder(EntityRepository::class)
+            ->addMethods(['findById'])
+            ->disableOriginalConstructor()
+            ->getMock();
+        $this->attendeeManager = $this->createMock(AttendeeManager::class);
+
+        $activityManager = $this->createMock(ActivityManager::class);
+        $configManager = $this->createMock(ConfigManager::class);
+        $entityClassNameHelper = $this->createMock(EntityClassNameHelper::class);
+        $nameResolver = $this->createMock(EntityNameResolver::class);
+        $dispatcher = $this->createMock(EventDispatcherInterface::class);
+
         $translator = $this->createMock(TranslatorInterface::class);
         $translator->expects($this->any())
             ->method('trans')
             ->willReturnCallback(function ($id) {
                 return $id;
             });
-
-        $this->indexer = $this->createMock(Indexer::class);
-        $activityManager = $this->createMock(ActivityManager::class);
-        $configManager = $this->createMock(ConfigManager::class);
-        $entityClassNameHelper = $this->createMock(EntityClassNameHelper::class);
-
-        $nameResolver = $this->createMock(EntityNameResolver::class);
-        $dispatcher = $this->createMock(EventDispatcherInterface::class);
-
-        $this->attendeeManager = $this->createMock(AttendeeManager::class);
-
-        $this->entityRepository = $this->getMockBuilder(EntityRepository::class)
-            ->addMethods(['findById'])
-            ->disableOriginalConstructor()
-            ->getMock();
 
         $om = $this->createMock(ObjectManager::class);
         $om->expects($this->any())
@@ -74,7 +72,6 @@ class AttendeeSearchHandlerTest extends \PHPUnit\Framework\TestCase
             $nameResolver,
             $dispatcher
         );
-
         $this->attendeeSearchHandler->setAttendeeManager($this->attendeeManager);
     }
 
@@ -126,10 +123,8 @@ class AttendeeSearchHandlerTest extends \PHPUnit\Framework\TestCase
                 'results' => [
                     [
                         'id'          => json_encode(
-                            [
-                                'entityClass' => User::class,
-                                'entityId'    => 1,
-                            ]
+                            ['entityClass' => User::class, 'entityId' => 1],
+                            JSON_THROW_ON_ERROR
                         ),
                         'text'        => 'user1',
                         'displayName' => 'user1',
@@ -140,10 +135,8 @@ class AttendeeSearchHandlerTest extends \PHPUnit\Framework\TestCase
                     ],
                     [
                         'id'          => json_encode(
-                            [
-                                'entityClass' => User::class,
-                                'entityId'    => 2,
-                            ]
+                            ['entityClass' => User::class, 'entityId' => 2],
+                            JSON_THROW_ON_ERROR
                         ),
                         'text'        => 'user2',
                         'displayName' => 'user2',

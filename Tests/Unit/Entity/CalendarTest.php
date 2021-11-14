@@ -20,10 +20,8 @@ class CalendarTest extends \PHPUnit\Framework\TestCase
 
     /**
      * @dataProvider propertiesDataProvider
-     * @param string $property
-     * @param mixed  $value
      */
-    public function testSettersAndGetters($property, $value)
+    public function testSettersAndGetters(string $property, mixed $value)
     {
         $obj = new Calendar();
 
@@ -39,8 +37,8 @@ class CalendarTest extends \PHPUnit\Framework\TestCase
         $obj->addEvent($event);
         $this->assertCount(1, $obj->getEvents());
         $events = $obj->getEvents();
-        $this->assertTrue($event === $events[0]);
-        $this->assertTrue($obj === $events[0]->getCalendar());
+        $this->assertSame($event, $events[0]);
+        $this->assertSame($obj, $events[0]->getCalendar());
     }
 
     public function testToString()
@@ -66,7 +64,7 @@ class CalendarTest extends \PHPUnit\Framework\TestCase
         $this->assertEquals($owner->getUsername(), (string)$obj);
     }
 
-    public function propertiesDataProvider()
+    public function propertiesDataProvider(): array
     {
         return [
             ['name', 'testName'],

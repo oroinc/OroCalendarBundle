@@ -24,16 +24,16 @@ class CalendarEventActivityListProviderTest extends \PHPUnit\Framework\TestCase
     use EntityTrait;
 
     /** @var DoctrineHelper|\PHPUnit\Framework\MockObject\MockObject */
-    protected $doctrineHelper;
+    private $doctrineHelper;
 
     /** @var ActivityAssociationHelper|\PHPUnit\Framework\MockObject\MockObject */
-    protected $activityAssociationHelper;
+    private $activityAssociationHelper;
 
     /** @var CommentAssociationHelper|\PHPUnit\Framework\MockObject\MockObject */
-    protected $commentAssociationHelper;
+    private $commentAssociationHelper;
 
     /** @var CalendarEventActivityListProvider */
-    protected $provider;
+    private $provider;
 
     protected function setUp(): void
     {
@@ -69,10 +69,7 @@ class CalendarEventActivityListProviderTest extends \PHPUnit\Framework\TestCase
         $this->assertEquals($expected, $this->provider->getRoutes($calendarEvent));
     }
 
-    /**
-     * @return array
-     */
-    public function getRoutesDataProvider()
+    public function getRoutesDataProvider(): array
     {
         return [
             'for calendar event' => [
@@ -141,10 +138,7 @@ class CalendarEventActivityListProviderTest extends \PHPUnit\Framework\TestCase
         $this->assertSame($expected, $this->provider->getOrganization($calendarEvent));
     }
 
-    /**
-     * @return array
-     */
-    public function getOrganizationDataProvider()
+    public function getOrganizationDataProvider(): array
     {
         $organization = new Organization();
 
@@ -197,19 +191,13 @@ class CalendarEventActivityListProviderTest extends \PHPUnit\Framework\TestCase
 
     /**
      * @dataProvider isApplicableDataProvider
-     *
-     * @param object|string $entity
-     * @param bool $expected
      */
-    public function testIsApplicable($entity, bool $expected)
+    public function testIsApplicable(object|string $entity, bool $expected)
     {
         $this->assertEquals($expected, $this->provider->isApplicable($entity));
     }
 
-    /**
-     * @return array
-     */
-    public function isApplicableDataProvider()
+    public function isApplicableDataProvider(): array
     {
         return [
             'not applicable entity' => [
@@ -265,10 +253,7 @@ class CalendarEventActivityListProviderTest extends \PHPUnit\Framework\TestCase
         $this->assertEquals($expected, $this->provider->getActivityOwners($entity, $activity));
     }
 
-    /**
-     * @return array
-     */
-    public function getActivityOwnersDataProvider()
+    public function getActivityOwnersDataProvider(): array
     {
         $organization = new Organization();
         $user = new User();
@@ -336,15 +321,12 @@ class CalendarEventActivityListProviderTest extends \PHPUnit\Framework\TestCase
     /**
      * @dataProvider getOwnerDataProvider
      */
-    public function testGetOwner(CalendarEvent $calendarEvent, User $user = null)
+    public function testGetOwner(CalendarEvent $calendarEvent, ?User $user)
     {
         $this->assertSame($user, $this->provider->getOwner($calendarEvent));
     }
 
-    /**
-     * @return array
-     */
-    public function getOwnerDataProvider()
+    public function getOwnerDataProvider(): array
     {
         $user = new User();
 

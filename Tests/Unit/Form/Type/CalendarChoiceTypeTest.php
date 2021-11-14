@@ -4,25 +4,28 @@ namespace Oro\Bundle\CalendarBundle\Tests\Unit\Form\Type;
 
 use Oro\Bundle\CalendarBundle\Entity\CalendarEvent;
 use Oro\Bundle\CalendarBundle\Form\Type\CalendarChoiceType;
+use Oro\Bundle\CalendarBundle\Manager\CalendarEventManager;
 use Oro\Component\Testing\Unit\PreloadedExtension;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\Extension\Core\Type\FormType;
 use Symfony\Component\Form\Test\TypeTestCase;
+use Symfony\Contracts\Translation\TranslatorInterface;
 
 class CalendarChoiceTypeTest extends TypeTestCase
 {
-    /** @var \PHPUnit\Framework\MockObject\MockObject */
-    protected $calendarEventManager;
+    /** @var CalendarEventManager|\PHPUnit\Framework\MockObject\MockObject */
+    private $calendarEventManager;
 
-    /** @var \PHPUnit\Framework\MockObject\MockObject */
-    protected $translator;
+    /** @var TranslatorInterface|\PHPUnit\Framework\MockObject\MockObject */
+    private $translator;
 
+    /**
+     * {@inheritDoc}
+     */
     protected function getExtensions()
     {
-        $this->calendarEventManager = $this->getMockBuilder('Oro\Bundle\CalendarBundle\Manager\CalendarEventManager')
-            ->disableOriginalConstructor()
-            ->getMock();
-        $this->translator = $this->createMock('Symfony\Contracts\Translation\TranslatorInterface');
+        $this->calendarEventManager = $this->createMock(CalendarEventManager::class);
+        $this->translator = $this->createMock(TranslatorInterface::class);
 
         return [
             new PreloadedExtension([
@@ -33,56 +36,42 @@ class CalendarChoiceTypeTest extends TypeTestCase
 
     public function testSubmitValidData()
     {
-        $entity   = new CalendarEvent();
+        $entity = new CalendarEvent();
         $formData = [
             'calendarUid' => 'system_123',
         ];
 
         $this->calendarEventManager->expects($this->any())
             ->method('getCalendarUid')
-            ->will(
-                $this->returnCallback(
-                    function ($alias, $id) {
-                        return sprintf('%s_%d', $alias, $id);
-                    }
-                )
-            );
+            ->willReturnCallback(function ($alias, $id) {
+                return sprintf('%s_%d', $alias, $id);
+            });
         $this->calendarEventManager->expects($this->once())
             ->method('getSystemCalendars')
-            ->will(
-                $this->returnValue(
-                    [
-                        ['id' => 123, 'name' => 'System1', 'public' => false]
-                    ]
-                )
+            ->willReturn(
+                [
+                    ['id' => 123, 'name' => 'System1', 'public' => false]
+                ]
             );
         $this->calendarEventManager->expects($this->once())
             ->method('getUserCalendars')
-            ->will(
-                $this->returnValue(
-                    [
-                        ['id' => 123, 'name' => 'User1']
-                    ]
-                )
+            ->willReturn(
+                [
+                    ['id' => 123, 'name' => 'User1']
+                ]
             );
         $this->calendarEventManager->expects($this->once())
             ->method('parseCalendarUid')
-            ->will(
-                $this->returnCallback(
-                    function ($uid) {
-                        return explode('_', $uid);
-                    }
-                )
-            );
+            ->willReturnCallback(function ($uid) {
+                return explode('_', $uid);
+            });
         $this->calendarEventManager->expects($this->once())
             ->method('setCalendar')
             ->with($this->identicalTo($entity), 'system', 123)
-            ->will(
-                $this->returnValue(
-                    [
-                        ['id' => 123, 'name' => 'User1']
-                    ]
-                )
+            ->willReturn(
+                [
+                    ['id' => 123, 'name' => 'User1']
+                ]
             );
 
         $form = $this->factory->createNamed(
@@ -105,49 +94,37 @@ class CalendarChoiceTypeTest extends TypeTestCase
 
     public function testSubmitValidDataForExpanded()
     {
-        $entity   = new CalendarEvent();
+        $entity = new CalendarEvent();
         $formData = [
             'calendarUid' => ['system_123'],
         ];
 
         $this->calendarEventManager->expects($this->any())
             ->method('getCalendarUid')
-            ->will(
-                $this->returnCallback(
-                    function ($alias, $id) {
-                        return sprintf('%s_%d', $alias, $id);
-                    }
-                )
-            );
+            ->willReturnCallback(function ($alias, $id) {
+                return sprintf('%s_%d', $alias, $id);
+            });
         $this->calendarEventManager->expects($this->once())
             ->method('getSystemCalendars')
-            ->will(
-                $this->returnValue(
-                    [
-                        ['id' => 123, 'name' => 'System1', 'public' => false]
-                    ]
-                )
+            ->willReturn(
+                [
+                    ['id' => 123, 'name' => 'System1', 'public' => false]
+                ]
             );
         $this->calendarEventManager->expects($this->never())
             ->method('getUserCalendars');
         $this->calendarEventManager->expects($this->once())
             ->method('parseCalendarUid')
-            ->will(
-                $this->returnCallback(
-                    function ($uid) {
-                        return explode('_', $uid);
-                    }
-                )
-            );
+            ->willReturnCallback(function ($uid) {
+                return explode('_', $uid);
+            });
         $this->calendarEventManager->expects($this->once())
             ->method('setCalendar')
             ->with($this->identicalTo($entity), 'system', 123)
-            ->will(
-                $this->returnValue(
-                    [
-                        ['id' => 123, 'name' => 'User1']
-                    ]
-                )
+            ->willReturn(
+                [
+                    ['id' => 123, 'name' => 'User1']
+                ]
             );
 
         $form = $this->factory->createNamed(

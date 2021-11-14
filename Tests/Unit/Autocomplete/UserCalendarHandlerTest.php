@@ -8,7 +8,6 @@ use Oro\Bundle\CalendarBundle\Autocomplete\UserCalendarHandler;
 use Oro\Bundle\CalendarBundle\Entity\Calendar;
 use Oro\Bundle\EntityBundle\Provider\EntityNameResolver;
 use Oro\Bundle\EntityBundle\Tools\EntityRoutingHelper;
-use Oro\Bundle\SecurityBundle\Acl\Voter\AclVoter;
 use Oro\Bundle\SecurityBundle\Authentication\TokenAccessorInterface;
 use Oro\Bundle\SecurityBundle\ORM\Walker\AclHelper;
 use Oro\Bundle\SecurityBundle\Owner\OwnerTreeProvider;
@@ -19,34 +18,31 @@ use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
 class UserCalendarHandlerTest extends \PHPUnit\Framework\TestCase
 {
     /** @var EntityManager|\PHPUnit\Framework\MockObject\MockObject */
-    protected $em;
+    private $em;
 
     /** @var AttachmentManager|\PHPUnit\Framework\MockObject\MockObject */
-    protected $attachmentManager;
+    private $attachmentManager;
 
     /** @var AuthorizationCheckerInterface|\PHPUnit\Framework\MockObject\MockObject */
-    protected $authorizationChecker;
+    private $authorizationChecker;
 
     /** @var TokenAccessorInterface|\PHPUnit\Framework\MockObject\MockObject */
-    protected $tokenAccessor;
+    private $tokenAccessor;
 
     /** @var OwnerTreeProvider|\PHPUnit\Framework\MockObject\MockObject */
-    protected $treeProvider;
-
-    /** @var AclVoter|\PHPUnit\Framework\MockObject\MockObject */
-    protected $aclVoter;
+    private $treeProvider;
 
     /** @var AclHelper|\PHPUnit\Framework\MockObject\MockObject */
-    protected $aclHelper;
+    private $aclHelper;
 
     /** @var EntityRoutingHelper|\PHPUnit\Framework\MockObject\MockObject */
-    protected $entityNameResolver;
+    private $entityNameResolver;
 
     /** @var EntityRoutingHelper|\PHPUnit\Framework\MockObject\MockObject */
-    protected $entityRoutingHelper;
+    private $entityRoutingHelper;
 
     /** @var UserCalendarHandler */
-    protected $handler;
+    private $handler;
 
     protected function setUp(): void
     {
@@ -55,8 +51,8 @@ class UserCalendarHandlerTest extends \PHPUnit\Framework\TestCase
         $this->authorizationChecker = $this->createMock(AuthorizationCheckerInterface::class);
         $this->tokenAccessor = $this->createMock(TokenAccessorInterface::class);
         $this->treeProvider = $this->createMock(OwnerTreeProvider::class);
-        $this->aclVoter = $this->createMock(AclVoter::class);
         $this->aclHelper = $this->createMock(AclHelper::class);
+        $this->entityNameResolver = $this->createMock(EntityNameResolver::class);
         $this->entityRoutingHelper = $this->createMock(EntityRoutingHelper::class);
 
         $this->handler = new UserCalendarHandler(
@@ -69,8 +65,6 @@ class UserCalendarHandlerTest extends \PHPUnit\Framework\TestCase
             $this->entityRoutingHelper,
             $this->aclHelper
         );
-        $this->entityNameResolver = $this->createMock(EntityNameResolver::class);
-
         $this->handler->setEntityNameResolver($this->entityNameResolver);
         $this->handler->setProperties([
             'avatar',

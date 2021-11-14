@@ -6,6 +6,7 @@ use Oro\Bundle\CalendarBundle\Validator\Constraints\DateEarlierThan;
 use Oro\Bundle\CalendarBundle\Validator\Constraints\DateEarlierThanValidator;
 use Symfony\Component\Form\Form;
 use Symfony\Component\Form\FormConfigInterface;
+use Symfony\Component\Validator\Exception\UnexpectedTypeException;
 use Symfony\Component\Validator\Test\ConstraintValidatorTestCase;
 
 class DateEarlierThanValidatorTest extends ConstraintValidatorTestCase
@@ -53,7 +54,7 @@ class DateEarlierThanValidatorTest extends ConstraintValidatorTestCase
 
     public function testValidateExceptionWhenInvalidArgumentType()
     {
-        $this->expectException(\Symfony\Component\Validator\Exception\UnexpectedTypeException::class);
+        $this->expectException(UnexpectedTypeException::class);
         $this->expectExceptionMessage('Expected argument of type "DateTime", "string" given');
 
         $this->formField->expects($this->any())
@@ -66,7 +67,7 @@ class DateEarlierThanValidatorTest extends ConstraintValidatorTestCase
 
     public function testValidateExceptionWhenInvalidConstraintType()
     {
-        $this->expectException(\Symfony\Component\Validator\Exception\UnexpectedTypeException::class);
+        $this->expectException(UnexpectedTypeException::class);
         $this->expectExceptionMessage('Expected argument of type "DateTime", "string" given');
 
         $this->formField->expects($this->any())

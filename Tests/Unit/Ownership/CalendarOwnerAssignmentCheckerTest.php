@@ -30,7 +30,7 @@ class CalendarOwnerAssignmentCheckerTest extends OrmTestCase
     /**
      * @dataProvider hasAssignmentsProvider
      */
-    public function testHasAssignments($records, $expectedResult)
+    public function testHasAssignments(array $records, bool $expectedResult)
     {
         $actualSql = '';
         $statement = $this->createFetchStatementMock($records);
@@ -64,7 +64,7 @@ class CalendarOwnerAssignmentCheckerTest extends OrmTestCase
         $this->assertEquals($expectedResult, $actualResult);
     }
 
-    public function hasAssignmentsProvider()
+    public function hasAssignmentsProvider(): array
     {
         return [
             [[], false],

@@ -112,22 +112,18 @@ class CalendarPropertyProviderTest extends \PHPUnit\Framework\TestCase
 
         $metadata->expects($this->exactly(count($fieldConfigs)))
             ->method('hasField')
-            ->willReturnMap(
-                [
-                    ['id', true],
-                    ['targetCalendar', false],
-                    ['visible', true],
-                    ['enum', false],
-                ]
-            );
+            ->willReturnMap([
+                ['id', true],
+                ['targetCalendar', false],
+                ['visible', true],
+                ['enum', false],
+            ]);
         $metadata->expects($this->exactly(2))
             ->method('getFieldMapping')
-            ->willReturnMap(
-                [
-                    ['id', []],
-                    ['visible', ['options' => ['default' => true]]],
-                ]
-            );
+            ->willReturnMap([
+                ['id', []],
+                ['visible', ['options' => ['default' => true]]],
+            ]);
 
         $result = $this->provider->getDefaultValues();
         $this->assertEquals(
@@ -144,9 +140,9 @@ class CalendarPropertyProviderTest extends \PHPUnit\Framework\TestCase
     /**
      * @dataProvider getEnumDefaultValueProvider
      */
-    public function testGetEnumDefaultValue($defaults, $expected)
+    public function testGetEnumDefaultValue(array $defaults, ?string $expected)
     {
-        $fieldName   = 'test_enum';
+        $fieldName = 'test_enum';
         $fieldConfig = $this->getFieldConfig($fieldName, 'enum', ['target_entity' => 'Test\Enum']);
 
         $this->configManager->expects($this->once())
@@ -186,7 +182,7 @@ class CalendarPropertyProviderTest extends \PHPUnit\Framework\TestCase
         );
     }
 
-    public function getEnumDefaultValueProvider()
+    public function getEnumDefaultValueProvider(): array
     {
         return [
             [
@@ -236,28 +232,22 @@ class CalendarPropertyProviderTest extends \PHPUnit\Framework\TestCase
 
         $metadata->expects($this->exactly(2))
             ->method('hasAssociation')
-            ->willReturnMap(
-                [
-                    ['targetCalendar', true],
-                    ['enum', true],
-                ]
-            );
+            ->willReturnMap([
+                ['targetCalendar', true],
+                ['enum', true],
+            ]);
         $metadata->expects($this->exactly(2))
             ->method('getAssociationTargetClass')
-            ->willReturnMap(
-                [
-                    ['targetCalendar', Calendar::class],
-                    ['enum', 'Test\Enum'],
-                ]
-            );
+            ->willReturnMap([
+                ['targetCalendar', Calendar::class],
+                ['enum', 'Test\Enum'],
+            ]);
         $this->doctrineHelper->expects($this->exactly(2))
             ->method('getSingleEntityIdentifierFieldType')
-            ->willReturnMap(
-                [
-                    [Calendar::class, false, 'integer'],
-                    ['Test\Enum', false, 'string'],
-                ]
-            );
+            ->willReturnMap([
+                [Calendar::class, false, 'integer'],
+                ['Test\Enum', false, 'string'],
+            ]);
 
         $repo = $this->createMock(EntityRepository::class);
         $this->doctrineHelper->expects($this->once())
@@ -309,9 +299,9 @@ class CalendarPropertyProviderTest extends \PHPUnit\Framework\TestCase
 
     public function testGetItemsVisibility()
     {
-        $calendarId  = 123;
+        $calendarId = 123;
         $subordinate = true;
-        $items       = [['calendarAlias' => 'test', 'calendar' => 1, 'visible' => true]];
+        $items = [['calendarAlias' => 'test', 'calendar' => 1, 'visible' => true]];
 
         $repo = $this->createMock(EntityRepository::class);
         $this->doctrineHelper->expects($this->once())
@@ -349,9 +339,9 @@ class CalendarPropertyProviderTest extends \PHPUnit\Framework\TestCase
 
     public function testGetItemsVisibilityCurrentCalendarOnly()
     {
-        $calendarId  = 123;
+        $calendarId = 123;
         $subordinate = false;
-        $items       = [['calendarAlias' => 'test', 'calendar' => 1, 'visible' => true]];
+        $items = [['calendarAlias' => 'test', 'calendar' => 1, 'visible' => true]];
 
         $repo = $this->createMock(EntityRepository::class);
         $this->doctrineHelper->expects($this->once())

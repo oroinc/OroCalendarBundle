@@ -2,6 +2,8 @@
 
 namespace Oro\Bundle\CalendarBundle\Tests\Unit\Provider;
 
+use Doctrine\Persistence\ManagerRegistry;
+use Oro\Bundle\CalendarBundle\Entity\Attendee;
 use Oro\Bundle\CalendarBundle\Entity\Repository\AttendeeRepository;
 use Oro\Bundle\CalendarBundle\Provider\AttendeeEmailRecipientsProvider;
 use Oro\Bundle\EmailBundle\Model\EmailRecipientsProviderArgs;
@@ -9,34 +11,28 @@ use Oro\Bundle\EmailBundle\Provider\EmailRecipientsHelper;
 
 class AttendeeEmailRecipientsProviderTest extends \PHPUnit\Framework\TestCase
 {
+    /** @var AttendeeRepository|\PHPUnit\Framework\MockObject\MockObject */
+    private $attendeeRepository;
+
+    /** @var EmailRecipientsHelper|\PHPUnit\Framework\MockObject\MockObject */
+    private $emailRecipientsHelper;
+
     /** @var AttendeeEmailRecipientsProvider */
-    protected $provider;
-
-    /** @var AttendeeRepository */
-    protected $attendeeRepository;
-
-    /** @var EmailRecipientsHelper */
-    protected $emailRecipientsHelper;
+    private $provider;
 
     protected function setUp(): void
     {
-        $this->attendeeRepository = $this
-            ->getMockBuilder('Oro\Bundle\CalendarBundle\Entity\Repository\AttendeeRepository')
-            ->disableOriginalConstructor()
-            ->getMock();
+        $this->attendeeRepository = $this->createMock(AttendeeRepository::class);
+        $this->emailRecipientsHelper = $this->createMock(EmailRecipientsHelper::class);
 
-        $registry = $this->createMock('Doctrine\Persistence\ManagerRegistry');
-        $registry->expects($this->any())
+        $doctrine = $this->createMock(ManagerRegistry::class);
+        $doctrine->expects($this->any())
             ->method('getRepository')
-            ->with('Oro\Bundle\CalendarBundle\Entity\Attendee')
-            ->will($this->returnValue($this->attendeeRepository));
-
-        $this->emailRecipientsHelper = $this->getMockBuilder('Oro\Bundle\EmailBundle\Provider\EmailRecipientsHelper')
-            ->disableOriginalConstructor()
-            ->getMock();
+            ->with(Attendee::class)
+            ->willReturn($this->attendeeRepository);
 
         $this->provider = new AttendeeEmailRecipientsProvider(
-            $registry,
+            $doctrine,
             $this->emailRecipientsHelper
         );
     }
@@ -53,12 +49,12 @@ class AttendeeEmailRecipientsProviderTest extends \PHPUnit\Framework\TestCase
         $this->attendeeRepository->expects($this->once())
             ->method('getEmailRecipients')
             ->with(null, 'query', 100)
-            ->will($this->returnValue([]));
+            ->willReturn([]);
 
         $this->emailRecipientsHelper->expects($this->once())
             ->method('plainRecipientsFromResult')
             ->with([])
-            ->will($this->returnValue([]));
+            ->willReturn([]);
 
         $this->assertEquals([], $this->provider->getRecipients($args));
     }

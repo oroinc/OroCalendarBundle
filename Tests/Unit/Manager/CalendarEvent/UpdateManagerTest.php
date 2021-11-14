@@ -4,54 +4,39 @@ namespace Oro\Bundle\CalendarBundle\Tests\Unit\Manager;
 
 use Oro\Bundle\CalendarBundle\Entity\CalendarEvent;
 use Oro\Bundle\CalendarBundle\Manager\CalendarEvent\MatchingEventsManager;
+use Oro\Bundle\CalendarBundle\Manager\CalendarEvent\UpdateAttendeeManager;
+use Oro\Bundle\CalendarBundle\Manager\CalendarEvent\UpdateChildManager;
+use Oro\Bundle\CalendarBundle\Manager\CalendarEvent\UpdateExceptionManager;
 use Oro\Bundle\CalendarBundle\Manager\CalendarEvent\UpdateManager;
 use Oro\Bundle\FeatureToggleBundle\Checker\FeatureChecker;
 use Oro\Bundle\OrganizationBundle\Entity\Organization;
 
 class UpdateManagerTest extends \PHPUnit\Framework\TestCase
 {
-    /** @var \PHPUnit\Framework\MockObject\MockObject */
-    protected $updateAttendeeManager;
+    /** @var UpdateAttendeeManager|\PHPUnit\Framework\MockObject\MockObject */
+    private $updateAttendeeManager;
 
-    /** @var \PHPUnit\Framework\MockObject\MockObject */
-    protected $updateChildManager;
+    /** @var UpdateChildManager|\PHPUnit\Framework\MockObject\MockObject */
+    private $updateChildManager;
 
-    /** @var \PHPUnit\Framework\MockObject\MockObject */
-    protected $updateExceptionManager;
+    /** @var UpdateExceptionManager|\PHPUnit\Framework\MockObject\MockObject */
+    private $updateExceptionManager;
 
     /** @var MatchingEventsManager|\PHPUnit\Framework\MockObject\MockObject */
-    protected $matchingEventsManager;
+    private $matchingEventsManager;
 
     /** @var FeatureChecker|\PHPUnit\Framework\MockObject\MockObject */
     private $featureChecker;
 
     /** @var UpdateManager */
-    protected $updateManager;
+    private $updateManager;
 
     protected function setUp(): void
     {
-        $this->updateAttendeeManager = $this->getMockBuilder(
-            'Oro\Bundle\CalendarBundle\Manager\CalendarEvent\UpdateAttendeeManager'
-        )
-            ->disableOriginalConstructor()
-            ->getMock();
-
-        $this->updateChildManager = $this->getMockBuilder(
-            'Oro\Bundle\CalendarBundle\Manager\CalendarEvent\UpdateChildManager'
-        )
-            ->disableOriginalConstructor()
-            ->getMock();
-
-        $this->updateExceptionManager = $this->getMockBuilder(
-            'Oro\Bundle\CalendarBundle\Manager\CalendarEvent\UpdateExceptionManager'
-        )
-            ->disableOriginalConstructor()
-            ->getMock();
-
-        $this->matchingEventsManager = $this->getMockBuilder(MatchingEventsManager::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-
+        $this->updateAttendeeManager = $this->createMock(UpdateAttendeeManager::class);
+        $this->updateChildManager = $this->createMock(UpdateChildManager::class);
+        $this->updateExceptionManager = $this->createMock(UpdateExceptionManager::class);
+        $this->matchingEventsManager = $this->createMock(MatchingEventsManager::class);
         $this->featureChecker = $this->createMock(FeatureChecker::class);
 
         $this->updateManager = new UpdateManager(

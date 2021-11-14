@@ -11,7 +11,7 @@ use Oro\Component\TestUtils\ORM\OrmTestCase;
 class CalendarPropertyRepositoryTest extends OrmTestCase
 {
     /** @var EntityManagerMock */
-    protected $em;
+    private $em;
 
     protected function setUp(): void
     {
@@ -31,7 +31,7 @@ class CalendarPropertyRepositoryTest extends OrmTestCase
 
         /** @var CalendarPropertyRepository $repo */
         $repo = $this->em->getRepository('OroCalendarBundle:CalendarProperty');
-        $qb   = $repo->getConnectionsByTargetCalendarQueryBuilder($targetCalendarId);
+        $qb = $repo->getConnectionsByTargetCalendarQueryBuilder($targetCalendarId);
 
         $this->assertEquals(
             'SELECT connection'
@@ -45,11 +45,11 @@ class CalendarPropertyRepositoryTest extends OrmTestCase
     public function testGetTaskListByTimeIntervalQueryBuilderWithAlias()
     {
         $targetCalendarId = 123;
-        $alias            = 'test';
+        $alias = 'test';
 
         /** @var CalendarPropertyRepository $repo */
         $repo = $this->em->getRepository('OroCalendarBundle:CalendarProperty');
-        $qb   = $repo->getConnectionsByTargetCalendarQueryBuilder($targetCalendarId, $alias);
+        $qb = $repo->getConnectionsByTargetCalendarQueryBuilder($targetCalendarId, $alias);
 
         $this->assertEquals(
             'SELECT connection'

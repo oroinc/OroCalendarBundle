@@ -20,19 +20,19 @@ use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
 
 class UserCalendarEventNormalizerTest extends \PHPUnit\Framework\TestCase
 {
-    /** @var \PHPUnit\Framework\MockObject\MockObject */
+    /** @var CalendarEventManager|\PHPUnit\Framework\MockObject\MockObject */
     private $calendarEventManager;
 
-    /** @var \PHPUnit\Framework\MockObject\MockObject */
+    /** @var AttendeeManager|\PHPUnit\Framework\MockObject\MockObject */
     private $attendeeManager;
 
-    /** @var \PHPUnit\Framework\MockObject\MockObject */
+    /** @var ReminderManager|\PHPUnit\Framework\MockObject\MockObject */
     private $reminderManager;
 
-    /** @var \PHPUnit\Framework\MockObject\MockObject */
+    /** @var AuthorizationCheckerInterface|\PHPUnit\Framework\MockObject\MockObject */
     private $authorizationChecker;
 
-    /** @var \PHPUnit\Framework\MockObject\MockObject */
+    /** @var TokenAccessorInterface|\PHPUnit\Framework\MockObject\MockObject */
     private $tokenAccessor;
 
     /** @var UserCalendarEventNormalizer */

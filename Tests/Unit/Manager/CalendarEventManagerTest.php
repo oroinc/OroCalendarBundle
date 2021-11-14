@@ -28,19 +28,19 @@ use Oro\Component\Testing\ReflectionUtil;
  */
 class CalendarEventManagerTest extends \PHPUnit\Framework\TestCase
 {
-    /** @var \PHPUnit\Framework\MockObject\MockObject */
+    /** @var UpdateManager|\PHPUnit\Framework\MockObject\MockObject */
     private $updateManager;
 
-    /** @var \PHPUnit\Framework\MockObject\MockObject */
+    /** @var ManagerRegistry|\PHPUnit\Framework\MockObject\MockObject */
     private $doctrine;
 
-    /** @var \PHPUnit\Framework\MockObject\MockObject */
+    /** @var TokenAccessorInterface|\PHPUnit\Framework\MockObject\MockObject */
     private $tokenAccessor;
 
-    /** @var \PHPUnit\Framework\MockObject\MockObject */
+    /** @var EntityNameResolver|\PHPUnit\Framework\MockObject\MockObject */
     private $entityNameResolver;
 
-    /** @var \PHPUnit\Framework\MockObject\MockObject */
+    /** @var SystemCalendarConfig|\PHPUnit\Framework\MockObject\MockObject */
     private $calendarConfig;
 
     /** @var CalendarEventManager */
@@ -66,7 +66,7 @@ class CalendarEventManagerTest extends \PHPUnit\Framework\TestCase
     public function testGetSystemCalendars()
     {
         $organizationId = 1;
-        $calendars      = [
+        $calendars = [
             ['id' => 123, 'name' => 'test', 'public' => true]
         ];
 

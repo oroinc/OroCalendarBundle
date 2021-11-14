@@ -11,32 +11,33 @@ use Symfony\Component\HttpFoundation\RequestStack;
 
 class SystemCalendarHandlerTest extends \PHPUnit\Framework\TestCase
 {
-    const FORM_DATA = ['field' => 'value'];
+    private const FORM_DATA = ['field' => 'value'];
 
-    /** @var \PHPUnit\Framework\MockObject\MockObject */
-    protected $form;
+    /** @var Form|\PHPUnit\Framework\MockObject\MockObject */
+    private $form;
 
     /** @var Request */
-    protected $request;
+    private $request;
 
-    /** @var \PHPUnit\Framework\MockObject\MockObject */
-    protected $om;
-
-    /** @var SystemCalendarHandler */
-    protected $handler;
+    /** @var ObjectManager|\PHPUnit\Framework\MockObject\MockObject */
+    private $om;
 
     /** @var SystemCalendar */
-    protected $entity;
+    private $entity;
+
+    /** @var SystemCalendarHandler */
+    private $handler;
 
     protected function setUp(): void
     {
         $this->form = $this->createMock(Form::class);
         $this->request = new Request();
+        $this->om = $this->createMock(ObjectManager::class);
+        $this->entity = new SystemCalendar();
+
         $requestStack = new RequestStack();
         $requestStack->push($this->request);
-        $this->om = $this->createMock(ObjectManager::class);
 
-        $this->entity  = new SystemCalendar();
         $this->handler = new SystemCalendarHandler(
             $this->form,
             $requestStack,
@@ -46,10 +47,8 @@ class SystemCalendarHandlerTest extends \PHPUnit\Framework\TestCase
 
     /**
      * @dataProvider supportedMethods
-     *
-     * @param string $method
      */
-    public function testProcessInvalidData($method)
+    public function testProcessInvalidData(string $method)
     {
         $this->request->initialize([], self::FORM_DATA);
         $this->request->setMethod($method);
@@ -62,7 +61,7 @@ class SystemCalendarHandlerTest extends \PHPUnit\Framework\TestCase
             ->with($this->identicalTo(self::FORM_DATA));
         $this->form->expects($this->once())
             ->method('isValid')
-            ->will($this->returnValue(false));
+            ->willReturn(false);
         $this->om->expects($this->never())
             ->method('persist');
         $this->om->expects($this->never())
@@ -75,10 +74,8 @@ class SystemCalendarHandlerTest extends \PHPUnit\Framework\TestCase
 
     /**
      * @dataProvider supportedMethods
-     *
-     * @param string $method
      */
-    public function testProcessValidData($method)
+    public function testProcessValidData(string $method)
     {
         $this->request->initialize([], self::FORM_DATA);
         $this->request->setMethod($method);
@@ -91,7 +88,7 @@ class SystemCalendarHandlerTest extends \PHPUnit\Framework\TestCase
             ->with($this->identicalTo(self::FORM_DATA));
         $this->form->expects($this->once())
             ->method('isValid')
-            ->will($this->returnValue(true));
+            ->willReturn(true);
         $this->om->expects($this->once())
             ->method('persist');
         $this->om->expects($this->once())
@@ -102,10 +99,7 @@ class SystemCalendarHandlerTest extends \PHPUnit\Framework\TestCase
         );
     }
 
-    /**
-     * @return array
-     */
-    public function supportedMethods()
+    public function supportedMethods(): array
     {
         return [
             ['POST'],

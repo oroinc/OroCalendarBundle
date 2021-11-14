@@ -11,31 +11,19 @@ use Oro\Component\PropertyAccess\PropertyAccessor;
 
 class UpdateExceptionManagerTest extends \PHPUnit\Framework\TestCase
 {
-    /**
-     * @var \PHPUnit\Framework\MockObject\MockObject|AttendeeManager
-     */
-    protected $attendeeManager;
+    /** @var AttendeeManager|\PHPUnit\Framework\MockObject\MockObject */
+    private $attendeeManager;
 
-    /**
-     * @var \PHPUnit\Framework\MockObject\MockObject
-     */
-    protected $deleteManager;
+    /** @var DeleteManager|\PHPUnit\Framework\MockObject\MockObject */
+    private $deleteManager;
 
-    /**
-     * @var UpdateExceptionManager
-     */
-    protected $updateExceptionManager;
+    /** @var UpdateExceptionManager */
+    private $updateExceptionManager;
 
     protected function setUp(): void
     {
-        $this->attendeeManager = $this
-            ->getMockBuilder(AttendeeManager::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-
-        $this->deleteManager = $this->getMockBuilder(DeleteManager::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $this->attendeeManager = $this->createMock(AttendeeManager::class);
+        $this->deleteManager = $this->createMock(DeleteManager::class);
 
         $this->updateExceptionManager = new UpdateExceptionManager($this->attendeeManager, $this->deleteManager);
     }
@@ -63,10 +51,7 @@ class UpdateExceptionManagerTest extends \PHPUnit\Framework\TestCase
         $this->updateExceptionManager->onEventUpdate($actualEvent, $originalEvent);
     }
 
-    /**
-     * @return array
-     */
-    public function recurrenceFieldsValues()
+    public function recurrenceFieldsValues(): array
     {
         return [
             'Test recurrenceType changed' => ['recurrenceType', 'test_type'],

@@ -11,14 +11,12 @@ use Symfony\Component\HttpFoundation\RequestStack;
 
 class CalendarPropertyApiHandlerTest extends \PHPUnit\Framework\TestCase
 {
-    const FORM_DATA = ['field' => 'value'];
+    private const FORM_DATA = ['field' => 'value'];
 
     /**
      * @dataProvider supportedMethods
-     *
-     * @param string $method
      */
-    public function testProcess($method)
+    public function testProcess(string $method)
     {
         $form = $this->createMock(Form::class);
         $om = $this->createMock(ObjectManager::class);
@@ -41,7 +39,7 @@ class CalendarPropertyApiHandlerTest extends \PHPUnit\Framework\TestCase
             ->with($this->identicalTo(self::FORM_DATA));
         $form->expects($this->once())
             ->method('isValid')
-            ->will($this->returnValue(true));
+            ->willReturn(true);
         $om->expects($this->once())
             ->method('persist')
             ->with($this->identicalTo($obj));
@@ -52,7 +50,7 @@ class CalendarPropertyApiHandlerTest extends \PHPUnit\Framework\TestCase
         $handler->process($obj);
     }
 
-    public function supportedMethods()
+    public function supportedMethods(): array
     {
         return [
             ['POST'],

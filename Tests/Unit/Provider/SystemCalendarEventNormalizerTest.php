@@ -13,16 +13,13 @@ use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
 
 class SystemCalendarEventNormalizerTest extends \PHPUnit\Framework\TestCase
 {
-    /** @var \PHPUnit\Framework\MockObject\MockObject */
+    /** @var CalendarEventManager|\PHPUnit\Framework\MockObject\MockObject */
     private $calendarEventManager;
 
-    /** @var \PHPUnit\Framework\MockObject\MockObject */
-    private $attendeeManager;
-
-    /** @var \PHPUnit\Framework\MockObject\MockObject */
+    /** @var ReminderManager|\PHPUnit\Framework\MockObject\MockObject */
     private $reminderManager;
 
-    /** @var \PHPUnit\Framework\MockObject\MockObject */
+    /** @var AuthorizationCheckerInterface|\PHPUnit\Framework\MockObject\MockObject */
     private $authorizationChecker;
 
     /** @var SystemCalendarEventNormalizer */
@@ -31,15 +28,15 @@ class SystemCalendarEventNormalizerTest extends \PHPUnit\Framework\TestCase
     protected function setUp(): void
     {
         $this->calendarEventManager = $this->createMock(CalendarEventManager::class);
-        $this->attendeeManager = $this->createMock(AttendeeManager::class);
-        $this->attendeeManager->expects($this->any())
+        $this->reminderManager = $this->createMock(ReminderManager::class);
+        $this->authorizationChecker = $this->createMock(AuthorizationCheckerInterface::class);
+
+        $attendeeManager = $this->createMock(AttendeeManager::class);
+        $attendeeManager->expects($this->any())
             ->method('getAttendeeListsByCalendarEventIds')
             ->willReturnCallback(function (array $calendarEventIds) {
                 return array_fill_keys($calendarEventIds, []);
             });
-
-        $this->reminderManager = $this->createMock(ReminderManager::class);
-        $this->authorizationChecker = $this->createMock(AuthorizationCheckerInterface::class);
 
         $htmlTagHelper = $this->createMock(HtmlTagHelper::class);
         $htmlTagHelper->expects($this->any())
@@ -50,7 +47,7 @@ class SystemCalendarEventNormalizerTest extends \PHPUnit\Framework\TestCase
 
         $this->normalizer = new SystemCalendarEventNormalizer(
             $this->calendarEventManager,
-            $this->attendeeManager,
+            $attendeeManager,
             $this->reminderManager,
             $this->authorizationChecker,
             $htmlTagHelper
@@ -103,7 +100,7 @@ class SystemCalendarEventNormalizerTest extends \PHPUnit\Framework\TestCase
     public function getCalendarEventsProvider(): array
     {
         $startDate = new \DateTime();
-        $endDate   = $startDate->add(new \DateInterval('PT1H'));
+        $endDate = $startDate->add(new \DateInterval('PT1H'));
 
         return [
             [
@@ -166,7 +163,7 @@ class SystemCalendarEventNormalizerTest extends \PHPUnit\Framework\TestCase
     public function getGrantedCalendarEventsProvider(): array
     {
         $startDate = new \DateTime();
-        $endDate   = $startDate->add(new \DateInterval('PT1H'));
+        $endDate = $startDate->add(new \DateInterval('PT1H'));
 
         return [
             [

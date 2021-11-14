@@ -19,20 +19,17 @@ class SystemCalendarTest extends \PHPUnit\Framework\TestCase
 
     /**
      * @dataProvider propertiesDataProvider
-     *
-     * @param string $property
-     * @param mixed  $value
      */
-    public function testSettersAndGetters($property, $value)
+    public function testSettersAndGetters(string $property, mixed $value)
     {
-        $obj      = new SystemCalendar();
+        $obj = new SystemCalendar();
         $accessor = PropertyAccess::createPropertyAccessor();
         $accessor->setValue($obj, $property, $value);
 
         $this->assertEquals($value, $accessor->getValue($obj, $property));
     }
 
-    public function propertiesDataProvider()
+    public function propertiesDataProvider(): array
     {
         return [
             ['name', 'testName'],
@@ -51,8 +48,8 @@ class SystemCalendarTest extends \PHPUnit\Framework\TestCase
         $this->assertNull($obj->getUpdatedAt());
 
         $obj->prePersist();
-        $this->assertInstanceOf('\DateTime', $obj->getCreatedAt());
-        $this->assertInstanceOf('\DateTime', $obj->getUpdatedAt());
+        $this->assertInstanceOf(\DateTime::class, $obj->getCreatedAt());
+        $this->assertInstanceOf(\DateTime::class, $obj->getUpdatedAt());
     }
 
     public function testPreUpdate()
@@ -62,12 +59,12 @@ class SystemCalendarTest extends \PHPUnit\Framework\TestCase
         $this->assertNull($obj->getUpdatedAt());
 
         $obj->preUpdate();
-        $this->assertInstanceOf('\DateTime', $obj->getUpdatedAt());
+        $this->assertInstanceOf(\DateTime::class, $obj->getUpdatedAt());
     }
 
     public function testEvents()
     {
-        $obj   = new SystemCalendar();
+        $obj = new SystemCalendar();
         $event = new CalendarEvent();
         $obj->addEvent($event);
         $this->assertCount(1, $obj->getEvents());

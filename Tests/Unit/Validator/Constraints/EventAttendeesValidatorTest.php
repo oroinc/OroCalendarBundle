@@ -15,18 +15,12 @@ use Symfony\Component\Validator\Test\ConstraintValidatorTestCase;
 
 class EventAttendeesValidatorTest extends ConstraintValidatorTestCase
 {
-    /** @var ManagerRegistry|\PHPUnit\Framework\MockObject\MockObject */
-    private $registry;
-
     /** @var ObjectRepository|\PHPUnit\Framework\MockObject\MockObject */
     private $repository;
 
-    /** @var ObjectManager|\PHPUnit\Framework\MockObject\MockObject */
-    private $manager;
-
     protected function setUp(): void
     {
-        $this->mockDoctrine();
+        $this->repository = $this->createMock(AttendeeRepository::class);
         parent::setUp();
     }
 
@@ -66,8 +60,8 @@ class EventAttendeesValidatorTest extends ConstraintValidatorTestCase
 
     public function testNoViolationIfAttendeeListIsEqualDespiteAttendeesOrder()
     {
-        $attendee1 = $this->getCalendarEventAttendeeEntity(1, "test1@oroinc.com");
-        $attendee2 = $this->getCalendarEventAttendeeEntity(2, "test2@oroinc.com");
+        $attendee1 = $this->getCalendarEventAttendeeEntity(1, 'test1@oroinc.com');
+        $attendee2 = $this->getCalendarEventAttendeeEntity(2, 'test2@oroinc.com');
         $constraint = new EventAttendees();
         $calendarEvent = $this->getCalendarEventEntity(1);
         $calendarEvent->addAttendee($attendee1)->addAttendee($attendee2);
@@ -80,8 +74,8 @@ class EventAttendeesValidatorTest extends ConstraintValidatorTestCase
 
     public function testNoViolationWhenTryingToChangeAttendeesOnOrganizerEvent()
     {
-        $attendee1 = $this->getCalendarEventAttendeeEntity(1, "test1@oroinc.com");
-        $attendee2 = $this->getCalendarEventAttendeeEntity(2, "test2@oroinc.com");
+        $attendee1 = $this->getCalendarEventAttendeeEntity(1, 'test1@oroinc.com');
+        $attendee2 = $this->getCalendarEventAttendeeEntity(2, 'test2@oroinc.com');
         $constraint = new EventAttendees();
         $calendarEvent = $this->getCalendarEventEntity(1);
         $calendarEvent->setIsOrganizer(true);
@@ -95,8 +89,8 @@ class EventAttendeesValidatorTest extends ConstraintValidatorTestCase
 
     public function testViolationWhenTryingToChangeAttendeesOnNonOrganizerEvent()
     {
-        $attendee1 = $this->getCalendarEventAttendeeEntity(1, "test1@oroinc.com");
-        $attendee2 = $this->getCalendarEventAttendeeEntity(2, "test2@oroinc.com");
+        $attendee1 = $this->getCalendarEventAttendeeEntity(1, 'test1@oroinc.com');
+        $attendee2 = $this->getCalendarEventAttendeeEntity(2, 'test2@oroinc.com');
         $constraint = new EventAttendees();
         $calendarEvent = $this->getCalendarEventEntity(1);
         $calendarEvent->setIsOrganizer(false);
@@ -115,22 +109,17 @@ class EventAttendeesValidatorTest extends ConstraintValidatorTestCase
      */
     protected function createValidator()
     {
-        return new EventAttendeesValidator($this->registry);
-    }
-
-    private function mockDoctrine()
-    {
-        $this->manager = $this->createMock(ObjectManager::class);
-        $this->repository = $this->createMock(AttendeeRepository::class);
-        $this->registry = $this->createMock(ManagerRegistry::class);
-
-        $this->manager->expects($this->any())
+        $em = $this->createMock(ObjectManager::class);
+        $em->expects($this->any())
             ->method('getRepository')
             ->willReturn($this->repository);
 
-        $this->registry->expects($this->any())
+        $doctrine = $this->createMock(ManagerRegistry::class);
+        $doctrine->expects($this->any())
             ->method('getManagerForClass')
-            ->willReturn($this->manager);
+            ->willReturn($em);
+
+        return new EventAttendeesValidator($doctrine);
     }
 
     private function getCalendarEventEntity(int $id): CalendarEvent

@@ -2,6 +2,10 @@
 
 namespace Oro\Bundle\CalendarBundle\Tests\Unit\Form\Type;
 
+use Doctrine\ORM\EntityManager;
+use Doctrine\ORM\EntityRepository;
+use Doctrine\ORM\Mapping\ClassMetadata;
+use Doctrine\Persistence\ManagerRegistry;
 use Oro\Bundle\CalendarBundle\Entity\Calendar;
 use Oro\Bundle\CalendarBundle\Entity\CalendarProperty;
 use Oro\Bundle\CalendarBundle\Form\Type\CalendarPropertyApiType;
@@ -10,53 +14,44 @@ use Oro\Component\Testing\ReflectionUtil;
 use Oro\Component\Testing\Unit\PreloadedExtension;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Test\TypeTestCase;
+use Symfony\Component\OptionsResolver\OptionsResolver;
 
 class CalendarPropertyApiTypeTest extends TypeTestCase
 {
-    /**
-     * @var \PHPUnit\Framework\MockObject\MockObject
-     */
-    protected $registry;
+    /** @var ManagerRegistry|\PHPUnit\Framework\MockObject\MockObject */
+    private $registry;
 
     /**
-     * @return array
+     * {@inheritDoc}
      */
     protected function getExtensions()
     {
-        $this->registry = $this->getMockBuilder('Doctrine\Persistence\ManagerRegistry')
-            ->disableOriginalConstructor()
-            ->getMock();
-        $em             = $this->getMockBuilder('Doctrine\ORM\EntityManager')
-            ->disableOriginalConstructor()
-            ->getMock();
-        $meta           = $this->getMockBuilder('Doctrine\ORM\Mapping\ClassMetadata')
-            ->disableOriginalConstructor()
-            ->getMock();
-        $repo           = $this->getMockBuilder('Doctrine\ORM\EntityRepository')
-            ->disableOriginalConstructor()
-            ->getMock();
-        $calendar       = new Calendar();
+        $this->registry = $this->createMock(ManagerRegistry::class);
+        $em = $this->createMock(EntityManager::class);
+        $meta = $this->createMock(ClassMetadata::class);
+        $repo = $this->createMock(EntityRepository::class);
+        $calendar = new Calendar();
         ReflectionUtil::setId($calendar, 1);
 
         $this->registry->expects($this->any())
             ->method('getManagerForClass')
             ->with('OroCalendarBundle:Calendar')
-            ->will($this->returnValue($em));
+            ->willReturn($em);
         $em->expects($this->any())
             ->method('getClassMetadata')
             ->with('OroCalendarBundle:Calendar')
-            ->will($this->returnValue($meta));
+            ->willReturn($meta);
         $em->expects($this->any())
             ->method('getRepository')
             ->with('OroCalendarBundle:Calendar')
-            ->will($this->returnValue($repo));
+            ->willReturn($repo);
         $meta->expects($this->any())
             ->method('getSingleIdentifierFieldName')
-            ->will($this->returnValue('id'));
+            ->willReturn('id');
         $repo->expects($this->any())
             ->method('find')
             ->with($calendar->getId())
-            ->will($this->returnValue($calendar));
+            ->willReturn($calendar);
 
         return [
             new PreloadedExtension(
@@ -69,15 +64,14 @@ class CalendarPropertyApiTypeTest extends TypeTestCase
     /**
      * @return AbstractType[]
      */
-    protected function loadTypes()
+    private function loadTypes(): array
     {
         $types = [
             new EntityIdentifierType($this->registry),
         ];
 
         $keys = array_map(
-            function ($type) {
-                /* @var AbstractType $type */
+            function (AbstractType $type) {
                 return $type->getName();
             },
             $types
@@ -104,7 +98,7 @@ class CalendarPropertyApiTypeTest extends TypeTestCase
         $this->assertTrue($form->isSynchronized());
         /** @var CalendarProperty $result */
         $result = $form->getData();
-        $this->assertInstanceOf('Oro\Bundle\CalendarBundle\Entity\CalendarProperty', $result);
+        $this->assertInstanceOf(CalendarProperty::class, $result);
         $calendar = new Calendar();
         ReflectionUtil::setId($calendar, 1);
         $this->assertEquals($calendar, $result->getTargetCalendar());
@@ -114,7 +108,7 @@ class CalendarPropertyApiTypeTest extends TypeTestCase
         $this->assertTrue($result->getVisible());
         $this->assertEquals('#00FF00', $result->getBackgroundColor());
 
-        $view     = $form->createView();
+        $view = $form->createView();
         $children = $view->children;
 
         foreach (array_keys($formData) as $key) {
@@ -124,14 +118,12 @@ class CalendarPropertyApiTypeTest extends TypeTestCase
 
     public function testConfigureOptions()
     {
-        $resolver = $this->getMockBuilder('Symfony\Component\OptionsResolver\OptionsResolver')
-            ->disableOriginalConstructor()
-            ->getMock();
+        $resolver = $this->createMock(OptionsResolver::class);
         $resolver->expects($this->once())
             ->method('setDefaults')
             ->with(
                 [
-                    'data_class'           => 'Oro\Bundle\CalendarBundle\Entity\CalendarProperty',
+                    'data_class'           => CalendarProperty::class,
                     'csrf_protection'      => false,
                 ]
             );

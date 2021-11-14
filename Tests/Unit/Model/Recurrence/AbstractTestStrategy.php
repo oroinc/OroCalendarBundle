@@ -3,10 +3,11 @@
 namespace Oro\Bundle\CalendarBundle\Tests\Unit\Model\Recurrence;
 
 use Oro\Bundle\CalendarBundle\Entity;
+use Oro\Bundle\CalendarBundle\Model\Recurrence\StrategyInterface;
 
 abstract class AbstractTestStrategy extends \PHPUnit\Framework\TestCase
 {
-    /** @var \Oro\Bundle\CalendarBundle\Model\Recurrence\StrategyInterface */
+    /** @var StrategyInterface */
     protected $strategy;
 
     /** @var \DateTimeZone */

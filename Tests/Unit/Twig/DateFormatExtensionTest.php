@@ -41,14 +41,9 @@ class DateFormatExtensionTest extends \PHPUnit\Framework\TestCase
     }
 
     /**
-     * @param string $start
-     * @param string|bool $end
-     * @param string|bool $skipTime
-     * @param string $expected
-     *
      * @dataProvider formatCalendarDateRangeProvider
      */
-    public function testFormatCalendarDateRange($start, $end, $skipTime, $expected)
+    public function testFormatCalendarDateRange(string $start, ?string $end, bool $skipTime, string $expected)
     {
         $startDate = new \DateTime($start);
         $endDate = $end === null ? null : new \DateTime($end);
@@ -84,34 +79,25 @@ class DateFormatExtensionTest extends \PHPUnit\Framework\TestCase
     }
 
     /**
-     * @param string $start
-     * @param string $end
-     * @param array $config
-     * @param string|null $locale
-     * @param string|null $timeZone
-     * @param Organization $organization
-     *
      * @dataProvider formatCalendarDateRangeOrganizationProvider
      */
     public function testFormatCalendarDateRangeOrganization(
-        $start,
-        $end,
+        string $start,
+        string $end,
         array $config,
-        $locale,
-        $timeZone,
-        $organization
+        ?string $locale,
+        ?string $timeZone,
+        ?Organization $organization
     ) {
         $startDate = new \DateTime($start);
-        $endDate = $end === null ? null : new \DateTime($end);
+        $endDate = new \DateTime($end);
 
         $this->configManager->expects($this->any())
             ->method('get')
-            ->willReturnMap(
-                [
-                    ['oro_locale.default_localization', false, false, null, 42],
-                    ['oro_locale.timezone', false, false, null, $config['timeZone']],
-                ]
-            );
+            ->willReturnMap([
+                ['oro_locale.default_localization', false, false, null, 42],
+                ['oro_locale.timezone', false, false, null, $config['timeZone']],
+            ]);
 
         $this->localizationManager->expects($this->any())
             ->method('getLocalizationData')

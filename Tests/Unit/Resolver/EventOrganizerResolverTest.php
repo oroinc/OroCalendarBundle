@@ -8,11 +8,20 @@ use Doctrine\Persistence\ObjectRepository;
 use Oro\Bundle\CalendarBundle\Entity\CalendarEvent;
 use Oro\Bundle\CalendarBundle\Entity\SystemCalendar;
 use Oro\Bundle\CalendarBundle\Resolver\EventOrganizerResolver;
-use Oro\Bundle\CalendarBundle\Tests\Unit\Entity\CalendarEventTest;
+use Oro\Bundle\CalendarBundle\Tests\Unit\Fixtures\Entity\Calendar;
 use Oro\Bundle\UserBundle\Entity\User;
 
 class EventOrganizerResolverTest extends \PHPUnit\Framework\TestCase
 {
+    private const OWNER_EMAIL = 'owner@example.com';
+    private const OWNER_FIRST_NAME = 'Owner';
+    private const OWNER_LAST_NAME = 'Name';
+
+    private const PROVIDED_EMAIL = 'provided@example.com';
+    private const PROVIDED_FIRST_NAME = 'Provided';
+    private const PROVIDED_LAST_NAME = 'Name';
+    private const PROVIDED_DISPLAY_NAME = 'Provided Name';
+
     /** @var ObjectRepository|\PHPUnit\Framework\MockObject\MockObject */
     private $repository;
 
@@ -22,9 +31,20 @@ class EventOrganizerResolverTest extends \PHPUnit\Framework\TestCase
     protected function setUp(): void
     {
         parent::setUp();
-        /** @var ManagerRegistry $registry */
-        $registry = $this->mockManagerRegistry();
-        $this->resolver = new EventOrganizerResolver($registry);
+
+        $this->repository = $this->createMock(ObjectRepository::class);
+
+        $em = $this->createMock(ObjectManager::class);
+        $em->expects($this->any())
+            ->method('getRepository')
+            ->willReturn($this->repository);
+
+        $doctrine = $this->createMock(ManagerRegistry::class);
+        $doctrine->expects($this->any())
+            ->method('getManagerForClass')
+            ->willReturn($em);
+
+        $this->resolver = new EventOrganizerResolver($doctrine);
     }
 
     public function testResolverDoesNotWorkForSystemCalendarEvents()
@@ -33,7 +53,7 @@ class EventOrganizerResolverTest extends \PHPUnit\Framework\TestCase
         $calendarEvent = new CalendarEvent();
         $calendarEvent
             ->setSystemCalendar($calendar)
-            ->setOrganizerEmail(CalendarEventTest::OWNER_EMAIL);
+            ->setOrganizerEmail(self::OWNER_EMAIL);
 
         $this->resolver->updateOrganizerInfo($calendarEvent);
         $this->assertNull($calendarEvent->isOrganizer());
@@ -51,15 +71,13 @@ class EventOrganizerResolverTest extends \PHPUnit\Framework\TestCase
 
     /**
      * @dataProvider organizerFetchedUserDisplayNameDataProvider
-     * @param string|null $displayName
-     * @param string      $expectedDisplayName
      */
     public function testOrganizerIsFetchedFromDBInCaseProvidedOrganizerEmailExistsInSystem(
-        $displayName,
-        $expectedDisplayName
+        ?string $displayName,
+        string $expectedDisplayName
     ) {
-        $calendarEvent = CalendarEventTest::getCalendarEventWithOwner();
-        $calendarEvent->setOrganizerEmail(CalendarEventTest::PROVIDED_EMAIL);
+        $calendarEvent = $this->getCalendarEventWithOwner();
+        $calendarEvent->setOrganizerEmail(self::PROVIDED_EMAIL);
         if ($displayName) {
             $calendarEvent->setOrganizerDisplayName($displayName);
         }
@@ -75,22 +93,20 @@ class EventOrganizerResolverTest extends \PHPUnit\Framework\TestCase
 
         $this->assertFalse($calendarEvent->isOrganizer());
         $this->assertNotNull($calendarEvent->getOrganizerUser());
-        $this->assertEquals(CalendarEventTest::PROVIDED_EMAIL, $calendarEvent->getOrganizerUser()->getEmail());
-        $this->assertEquals(CalendarEventTest::PROVIDED_EMAIL, $calendarEvent->getOrganizerEmail());
+        $this->assertEquals(self::PROVIDED_EMAIL, $calendarEvent->getOrganizerUser()->getEmail());
+        $this->assertEquals(self::PROVIDED_EMAIL, $calendarEvent->getOrganizerEmail());
         $this->assertEquals($expectedDisplayName, $calendarEvent->getOrganizerDisplayName());
     }
 
     /**
      * @dataProvider organizerEmailDisplayNameDataProvider
-     * @param string|null $displayName
-     * @param string      $expectedDisplayName
      */
     public function testOrganizerIsNullInCaseProvidedOrganizerEmailDoesNotExistsInSystem(
-        $displayName,
-        $expectedDisplayName
+        ?string $displayName,
+        string $expectedDisplayName
     ) {
-        $calendarEvent = CalendarEventTest::getCalendarEventWithOwner();
-        $calendarEvent->setOrganizerEmail(CalendarEventTest::PROVIDED_EMAIL);
+        $calendarEvent = $this->getCalendarEventWithOwner();
+        $calendarEvent->setOrganizerEmail(self::PROVIDED_EMAIL);
         if ($displayName) {
             $calendarEvent->setOrganizerDisplayName($displayName);
         }
@@ -104,59 +120,50 @@ class EventOrganizerResolverTest extends \PHPUnit\Framework\TestCase
 
         $this->assertFalse($calendarEvent->isOrganizer());
         $this->assertNull($calendarEvent->getOrganizerUser());
-        $this->assertEquals(CalendarEventTest::PROVIDED_EMAIL, $calendarEvent->getOrganizerEmail());
+        $this->assertEquals(self::PROVIDED_EMAIL, $calendarEvent->getOrganizerEmail());
         $this->assertEquals($expectedDisplayName, $calendarEvent->getOrganizerDisplayName());
     }
 
-    /**
-     * @return array
-     */
-    public function organizerFetchedUserDisplayNameDataProvider()
+    public function organizerFetchedUserDisplayNameDataProvider(): array
     {
         return [
-            [null, CalendarEventTest::PROVIDED_DISPLAY_NAME],
+            [null, self::PROVIDED_DISPLAY_NAME],
             ['custom name', 'custom name']
         ];
     }
 
-    /**
-     * @return array
-     */
-    public function organizerEmailDisplayNameDataProvider()
+    public function organizerEmailDisplayNameDataProvider(): array
     {
         return [
-            [null, CalendarEventTest::PROVIDED_EMAIL],
+            [null, self::PROVIDED_EMAIL],
             ['custom name', 'custom name']
         ];
-    }
-
-    private function mockManagerRegistry()
-    {
-        $this->repository = $this->createMock(ObjectRepository::class);
-
-        $manager = $this->createMock(ObjectManager::class);
-
-        $manager->expects($this->any())
-            ->method('getRepository')
-            ->willReturn($this->repository);
-
-        $registry = $this->createMock(ManagerRegistry::class);
-
-        $registry->expects($this->any())
-            ->method('getManagerForClass')
-            ->willReturn($manager);
-
-        return $registry;
     }
 
     private function getExistingUser(): User
     {
         $existingUser = new User();
         $existingUser
-            ->setEmail(CalendarEventTest::PROVIDED_EMAIL)
-            ->setFirstName(CalendarEventTest::PROVIDED_FIRST_NAME)
-            ->setLastName(CalendarEventTest::PROVIDED_LAST_NAME);
+            ->setEmail(self::PROVIDED_EMAIL)
+            ->setFirstName(self::PROVIDED_FIRST_NAME)
+            ->setLastName(self::PROVIDED_LAST_NAME);
 
         return $existingUser;
+    }
+
+    private function getCalendarEventWithOwner(): CalendarEvent
+    {
+        $calendarEvent = new CalendarEvent();
+        $calendar = new Calendar();
+        $calendarOwner = new User();
+        $calendarOwner
+            ->setEmail(self::OWNER_EMAIL)
+            ->setFirstName(self::OWNER_FIRST_NAME)
+            ->setLastName(self::OWNER_LAST_NAME);
+
+        $calendar->setOwner($calendarOwner);
+        $calendarEvent->setCalendar($calendar);
+
+        return $calendarEvent;
     }
 }

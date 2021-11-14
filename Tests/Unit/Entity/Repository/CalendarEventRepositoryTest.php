@@ -14,10 +14,8 @@ use Oro\Component\TestUtils\ORM\OrmTestCase;
  */
 class CalendarEventRepositoryTest extends OrmTestCase
 {
-    /**
-     * @var EntityManagerMock
-     */
-    protected $em;
+    /** @var EntityManagerMock */
+    private $em;
 
     protected function setUp(): void
     {
@@ -423,10 +421,7 @@ class CalendarEventRepositoryTest extends OrmTestCase
         $this->assertTrue($qb->getQuery()->getParameter('allDay')->getValue());
     }
 
-    /**
-     * @return string
-     */
-    protected function getBaseSelectString()
+    private function getBaseSelectString(): string
     {
         $baseFields = [
             'e.id',

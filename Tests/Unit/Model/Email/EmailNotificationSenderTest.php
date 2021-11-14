@@ -14,54 +14,40 @@ use Oro\Bundle\EmailBundle\Model\EmailTemplateCriteria;
 use Oro\Bundle\NotificationBundle\Manager\EmailNotificationManager;
 use Oro\Bundle\NotificationBundle\Model\TemplateEmailNotification;
 use Oro\Component\Testing\Unit\EntityTrait;
-use PHPUnit\Framework\MockObject\MockObject;
 
 class EmailNotificationSenderTest extends \PHPUnit\Framework\TestCase
 {
     use EntityTrait;
 
-    /**
-     * @var \PHPUnit\Framework\MockObject\MockObject
-     */
-    protected $entityManager;
+    /** @var EmailNotificationManager|\PHPUnit\Framework\MockObject\MockObject */
+    private $emailNotificationManager;
 
-    /**
-     * @var \PHPUnit\Framework\MockObject\MockObject|EmailNotificationManager
-     */
-    protected $emailNotificationManager;
+    /** @var ObjectManager|\PHPUnit\Framework\MockObject\MockObject */
+    private $entityManager;
 
-    /**
-     * @var EmailNotificationSender
-     */
-    protected $emailNotificationSender;
+    /** @var EmailNotificationSender */
+    private $emailNotificationSender;
 
     protected function setUp(): void
     {
-        $this->emailNotificationManager = $this
-            ->getMockBuilder(EmailNotificationManager::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-
+        $this->emailNotificationManager = $this->createMock(EmailNotificationManager::class);
         $this->entityManager = $this->createMock(ObjectManager::class);
-        /** @var ManagerRegistry|MockObject $managerRegistry */
-        $managerRegistry = $this->createMock(ManagerRegistry::class);
-        $managerRegistry->expects($this->any())
+
+        $doctrine = $this->createMock(ManagerRegistry::class);
+        $doctrine->expects($this->any())
             ->method('getManager')
-            ->will($this->returnValue($this->entityManager));
+            ->willReturn($this->entityManager);
 
         $this->emailNotificationSender = new EmailNotificationSender(
             $this->emailNotificationManager,
-            $managerRegistry
+            $doctrine
         );
     }
 
     /**
-     * @param string $addNotificationMethod
-     * @param string $expectedTemplateName
-     *
      * @dataProvider sendAttendeesNotificationsDataProvider
      */
-    public function testSendAttendeesNotifications($addNotificationMethod, $expectedTemplateName)
+    public function testSendAttendeesNotifications(string $addNotificationMethod, string $expectedTemplateName)
     {
         $attendeeWithUser = $this->getEntity(
             AttendeeEntity::class,
@@ -70,13 +56,11 @@ class EmailNotificationSenderTest extends \PHPUnit\Framework\TestCase
         $attendeeWithoutUser1 = $this->getEntity(AttendeeEntity::class, ['email' => 'bar@example.com']);
         $attendeeWithoutUser2 = $this->getEntity(AttendeeEntity::class);
 
-        $calendarEvent = $this->createCalendarEventWithAttendees(
-            [
-                $attendeeWithUser,
-                $attendeeWithoutUser1,
-                $attendeeWithoutUser2
-            ]
-        );
+        $calendarEvent = $this->createCalendarEventWithAttendees([
+            $attendeeWithUser,
+            $attendeeWithoutUser1,
+            $attendeeWithoutUser2
+        ]);
 
         $this->emailNotificationSender->$addNotificationMethod(
             $calendarEvent,
@@ -106,10 +90,7 @@ class EmailNotificationSenderTest extends \PHPUnit\Framework\TestCase
         $this->emailNotificationSender->sendAddedNotifications();
     }
 
-    /**
-     * @return array
-     */
-    public function sendAttendeesNotificationsDataProvider()
+    public function sendAttendeesNotificationsDataProvider(): array
     {
         return [
             'invite' => [
@@ -132,12 +113,9 @@ class EmailNotificationSenderTest extends \PHPUnit\Framework\TestCase
     }
 
     /**
-     * @param string $statusCode
-     * @param string $expectedTemplateName
-     *
      * @dataProvider sendSendInvitationStatusChangeNotificationsDataProvider
      */
-    public function testSendInvitationStatusChangeNotifications($statusCode, $expectedTemplateName)
+    public function testSendInvitationStatusChangeNotifications(string $statusCode, string $expectedTemplateName)
     {
         $attendeeWithUser = $this->getEntity(
             AttendeeEntity::class,
@@ -146,13 +124,11 @@ class EmailNotificationSenderTest extends \PHPUnit\Framework\TestCase
         $attendeeWithoutUser1 = $this->getEntity(AttendeeEntity::class, ['email' => 'bar@example.com']);
         $attendeeWithoutUser2 = $this->getEntity(AttendeeEntity::class);
 
-        $calendarEvent = $this->createCalendarEventWithAttendees(
-            [
-                $attendeeWithUser,
-                $attendeeWithoutUser1,
-                $attendeeWithoutUser2
-            ]
-        );
+        $calendarEvent = $this->createCalendarEventWithAttendees([
+            $attendeeWithUser,
+            $attendeeWithoutUser1,
+            $attendeeWithoutUser2
+        ]);
 
         $ownerUser = $calendarEvent->getCalendar()->getOwner();
         $ownerUser->setEmail('owner@example.com');
@@ -192,13 +168,11 @@ class EmailNotificationSenderTest extends \PHPUnit\Framework\TestCase
         $attendeeWithoutUser1 = $this->getEntity(AttendeeEntity::class, ['email' => 'bar@example.com']);
         $attendeeWithoutUser2 = $this->getEntity(AttendeeEntity::class);
 
-        $calendarEvent = $this->createCalendarEventWithAttendees(
-            [
-                $attendeeWithUser,
-                $attendeeWithoutUser1,
-                $attendeeWithoutUser2
-            ]
-        );
+        $calendarEvent = $this->createCalendarEventWithAttendees([
+            $attendeeWithUser,
+            $attendeeWithoutUser1,
+            $attendeeWithoutUser2
+        ]);
 
         $ownerUser = $calendarEvent->getCalendar()->getOwner();
         $ownerUser->setEmail('owner@example.com');
@@ -228,10 +202,7 @@ class EmailNotificationSenderTest extends \PHPUnit\Framework\TestCase
         $this->emailNotificationSender->sendAddedNotifications();
     }
 
-    /**
-     * @return array
-     */
-    public function sendSendInvitationStatusChangeNotificationsDataProvider()
+    public function sendSendInvitationStatusChangeNotificationsDataProvider(): array
     {
         return [
             'accepted' => [
@@ -249,13 +220,7 @@ class EmailNotificationSenderTest extends \PHPUnit\Framework\TestCase
         ];
     }
 
-    /**
-     * Creates calendar event with attendees.
-     *
-     * @param array $attendeesData Data for attendees.
-     * @return CalendarEvent Main calendar event
-     */
-    public function createCalendarEventWithAttendees(array $attendeesData)
+    private function createCalendarEventWithAttendees(array $attendeesData): CalendarEvent
     {
         $ownerUser = new User();
         $ownerCalendar = new Calendar();
@@ -281,12 +246,7 @@ class EmailNotificationSenderTest extends \PHPUnit\Framework\TestCase
         return $ownerCalendarEvent;
     }
 
-    /**
-     * @param CalendarEvent $calendarEvent
-     * @param string $email
-     * @return CalendarEvent
-     */
-    protected function getChildEventByEmail(CalendarEvent $calendarEvent, $email)
+    private function getChildEventByEmail(CalendarEvent $calendarEvent, string $email): CalendarEvent
     {
         foreach ($calendarEvent->getChildEvents() as $child) {
             if ($child->getCalendar()->getOwner()->getEmail() === $email) {

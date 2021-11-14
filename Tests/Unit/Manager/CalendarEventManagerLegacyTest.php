@@ -32,11 +32,11 @@ use Oro\Bundle\SecurityBundle\Authentication\TokenAccessorInterface;
  */
 class CalendarEventManagerLegacyTest extends \PHPUnit\Framework\TestCase
 {
-    /** @var CalendarEventManager */
-    private $calendarEventManager;
-
     /** @var FeatureChecker|\PHPUnit\Framework\MockObject\MockObject */
     private $featureChecker;
+
+    /** @var CalendarEventManager */
+    private $calendarEventManager;
 
     protected function setUp(): void
     {

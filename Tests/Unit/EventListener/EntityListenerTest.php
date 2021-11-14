@@ -23,16 +23,16 @@ use Oro\Component\Testing\ReflectionUtil;
 
 class EntityListenerTest extends \PHPUnit\Framework\TestCase
 {
-    /** @var \PHPUnit\Framework\MockObject\MockObject */
+    /** @var EntityManager|\PHPUnit\Framework\MockObject\MockObject */
     private $em;
 
-    /** @var \PHPUnit\Framework\MockObject\MockObject */
+    /** @var UnitOfWork|\PHPUnit\Framework\MockObject\MockObject */
     private $uow;
 
-    /** @var \PHPUnit\Framework\MockObject\MockObject */
+    /** @var TokenAccessorInterface|\PHPUnit\Framework\MockObject\MockObject */
     private $tokenAccessor;
 
-    /** @var \PHPUnit\Framework\MockObject\MockObject */
+    /** @var RecurrenceModel|\PHPUnit\Framework\MockObject\MockObject */
     private $recurrenceModel;
 
     /** @var EntityListener */
@@ -40,14 +40,14 @@ class EntityListenerTest extends \PHPUnit\Framework\TestCase
 
     protected function setUp(): void
     {
-        $this->em  = $this->createMock(EntityManager::class);
+        $this->em = $this->createMock(EntityManager::class);
         $this->uow = $this->createMock(UnitOfWork::class);
+        $this->tokenAccessor = $this->createMock(TokenAccessorInterface::class);
+        $this->recurrenceModel = $this->createMock(RecurrenceModel::class);
+
         $this->em->expects($this->any())
             ->method('getUnitOfWork')
             ->willReturn($this->uow);
-
-        $this->tokenAccessor = $this->createMock(TokenAccessorInterface::class);
-        $this->recurrenceModel = $this->createMock(RecurrenceModel::class);
 
         $this->listener = new EntityListener($this->tokenAccessor, $this->recurrenceModel);
     }

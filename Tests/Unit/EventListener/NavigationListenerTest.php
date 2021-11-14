@@ -16,14 +16,14 @@ class NavigationListenerTest extends \PHPUnit\Framework\TestCase
      * @dataProvider dataProviderWithToken
      */
     public function testOnNavigationConfigureWithUserInToken(
-        $isPublicCalendarEnabled,
-        $publicCalendarManagementAcl,
-        $isSystemCalendarEnabled,
-        $systemCalendarManagementAcl,
-        $expectedVisibility
+        bool $isPublicCalendarEnabled,
+        bool $publicCalendarManagementAcl,
+        bool $isSystemCalendarEnabled,
+        bool $systemCalendarManagementAcl,
+        bool $expectedVisibility
     ) {
-        $factory     = new MenuFactory();
-        $menu  = new MenuItem('parent_item', $factory);
+        $factory = new MenuFactory();
+        $menu = new MenuItem('parent_item', $factory);
         $menuItem = new MenuItem('oro_system_calendar_list', $factory);
         $menu->addChild($menuItem);
 
@@ -38,12 +38,10 @@ class NavigationListenerTest extends \PHPUnit\Framework\TestCase
         $authorizationChecker = $this->createMock(AuthorizationCheckerInterface::class);
         $authorizationChecker->expects($this->any())
             ->method('isGranted')
-            ->willReturnMap(
-                [
-                    ['oro_public_calendar_management', null, $publicCalendarManagementAcl],
-                    ['oro_system_calendar_management', null, $systemCalendarManagementAcl]
-                ]
-            );
+            ->willReturnMap([
+                ['oro_public_calendar_management', null, $publicCalendarManagementAcl],
+                ['oro_system_calendar_management', null, $systemCalendarManagementAcl]
+            ]);
 
         $tokenAccessor = $this->createMock(TokenAccessorInterface::class);
         $tokenAccessor->expects($this->once())
@@ -59,7 +57,7 @@ class NavigationListenerTest extends \PHPUnit\Framework\TestCase
         $this->assertEquals($expectedVisibility, $menuItem->isDisplayed());
     }
 
-    public function dataProviderWithToken()
+    public function dataProviderWithToken(): array
     {
         return [
             [false, false, false, false, false],
@@ -76,12 +74,12 @@ class NavigationListenerTest extends \PHPUnit\Framework\TestCase
      * @dataProvider dataProviderWithoutToken
      */
     public function testOnNavigationConfigureWithoutUserInToken(
-        $isPublicCalendarEnabled,
-        $isSystemCalendarEnabled,
-        $expectedVisibility
+        bool $isPublicCalendarEnabled,
+        bool $isSystemCalendarEnabled,
+        bool $expectedVisibility
     ) {
-        $factory     = new MenuFactory();
-        $menu  = new MenuItem('parent_item', $factory);
+        $factory = new MenuFactory();
+        $menu = new MenuItem('parent_item', $factory);
         $menuItem = new MenuItem('oro_system_calendar_list', $factory);
         $menu->addChild($menuItem);
 
@@ -111,7 +109,7 @@ class NavigationListenerTest extends \PHPUnit\Framework\TestCase
         $this->assertEquals($expectedVisibility, $menuItem->isDisplayed());
     }
 
-    public function dataProviderWithoutToken()
+    public function dataProviderWithoutToken(): array
     {
         return [
             [false, false, false],

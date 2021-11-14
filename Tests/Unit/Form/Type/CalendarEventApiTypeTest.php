@@ -43,16 +43,16 @@ use Symfony\Component\Validator\Validation;
 
 class CalendarEventApiTypeTest extends FormIntegrationTestCase
 {
-    /** @var \PHPUnit\Framework\MockObject\MockObject */
+    /** @var ManagerRegistry|\PHPUnit\Framework\MockObject\MockObject */
     private $registry;
 
-    /** @var \PHPUnit\Framework\MockObject\MockObject */
+    /** @var EntityManager|\PHPUnit\Framework\MockObject\MockObject */
     private $entityManager;
 
-    /** @var \PHPUnit\Framework\MockObject\MockObject */
+    /** @var CalendarEventManager|\PHPUnit\Framework\MockObject\MockObject */
     private $calendarEventManager;
 
-    /** @var \PHPUnit\Framework\MockObject\MockObject */
+    /** @var NotificationManager|\PHPUnit\Framework\MockObject\MockObject */
     private $notificationManager;
 
     /** @var CalendarEventApiType */
@@ -61,7 +61,10 @@ class CalendarEventApiTypeTest extends FormIntegrationTestCase
     protected function setUp(): void
     {
         $this->registry = $this->createMock(ManagerRegistry::class);
+        $this->entityManager = $this->createMock(EntityManager::class);
         $this->calendarEventManager = $this->createMock(CalendarEventManager::class);
+        $this->notificationManager = $this->createMock(NotificationManager::class);
+
         $userMeta = $this->createMock(ClassMetadata::class);
         $userMeta->expects($this->any())
             ->method('getSingleIdentifierFieldName')
@@ -93,7 +96,6 @@ class CalendarEventApiTypeTest extends FormIntegrationTestCase
             ->with('event')
             ->willReturn($qb);
 
-        $this->entityManager = $this->createMock(EntityManager::class);
         $this->entityManager->expects($this->any())
             ->method('getRepository')
             ->with('OroUserBundle:User')
@@ -102,6 +104,7 @@ class CalendarEventApiTypeTest extends FormIntegrationTestCase
             ->method('getClassMetadata')
             ->with('OroUserBundle:User')
             ->willReturn($userMeta);
+
         $emForEvent = $this->createMock(EntityManager::class);
         $emForEvent->expects($this->any())
             ->method('getClassMetadata')
@@ -111,8 +114,6 @@ class CalendarEventApiTypeTest extends FormIntegrationTestCase
             ->method('getManagerForClass')
             ->willReturn($emForEvent);
 
-        $this->notificationManager = $this->createMock(NotificationManager::class);
-
         $this->calendarEventApiType = new CalendarEventApiType(
             $this->calendarEventManager,
             $this->notificationManager
@@ -121,6 +122,9 @@ class CalendarEventApiTypeTest extends FormIntegrationTestCase
         parent::setUp();
     }
 
+    /**
+     * {@inheritDoc}
+     */
     protected function getExtensions()
     {
         return [
@@ -184,7 +188,7 @@ class CalendarEventApiTypeTest extends FormIntegrationTestCase
         $this->assertTrue($result->getAllDay());
         $this->assertEquals('#FF0000', $result->getBackgroundColor());
 
-        $view     = $form->createView();
+        $view = $form->createView();
         $children = $view->children;
 
         foreach (array_keys($formData) as $key) {
@@ -243,7 +247,7 @@ class CalendarEventApiTypeTest extends FormIntegrationTestCase
         $this->assertTrue($result->getAllDay());
         $this->assertEquals('#FF0000', $result->getBackgroundColor());
 
-        $view     = $form->createView();
+        $view = $form->createView();
         $children = $view->children;
 
         foreach (array_keys($formData) as $key) {
@@ -306,8 +310,7 @@ class CalendarEventApiTypeTest extends FormIntegrationTestCase
         ];
 
         $keys = array_map(
-            function ($type) {
-                /* @var AbstractType $type */
+            function (AbstractType $type) {
                 return $type->getName();
             },
             $types

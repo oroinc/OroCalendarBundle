@@ -29,7 +29,8 @@ class RecurrenceValidatorTest extends ConstraintValidatorTestCase
         Model\Recurrence::DAY_SATURDAY,
     ];
 
-    private Model\Recurrence|\PHPUnit\Framework\MockObject\MockObject $model;
+    /** @var Model\Recurrence|\PHPUnit\Framework\MockObject\MockObject */
+    private $model;
 
     protected function setUp(): void
     {
@@ -75,7 +76,7 @@ class RecurrenceValidatorTest extends ConstraintValidatorTestCase
 
     public function testRecurrenceHasBlankRecurrenceType(): void
     {
-        $recurrence =  new Entity\Recurrence();
+        $recurrence = new Entity\Recurrence();
 
         $constraint = new Recurrence();
         $this->validator->validate($recurrence, $constraint);
@@ -88,7 +89,7 @@ class RecurrenceValidatorTest extends ConstraintValidatorTestCase
 
     public function testRecurrenceHasWrongRecurrenceType(): void
     {
-        $recurrence =  new Entity\Recurrence();
+        $recurrence = new Entity\Recurrence();
         $recurrence->setInterval(1);
         $recurrence->setRecurrenceType('unknown');
 
@@ -104,7 +105,7 @@ class RecurrenceValidatorTest extends ConstraintValidatorTestCase
 
     public function testRecurrenceHasRequiredFieldsBlank(): void
     {
-        $recurrence =  new Entity\Recurrence();
+        $recurrence = new Entity\Recurrence();
         $recurrence->setRecurrenceType(Model\Recurrence::TYPE_DAILY);
 
         $this->model->expects(self::once())
@@ -130,7 +131,7 @@ class RecurrenceValidatorTest extends ConstraintValidatorTestCase
     {
         $actualInterval = 100;
         $maxInterval = 99;
-        $recurrence =  new Entity\Recurrence();
+        $recurrence = new Entity\Recurrence();
         $recurrence->setRecurrenceType(Model\Recurrence::TYPE_DAILY);
         $recurrence->setInterval($actualInterval);
 
@@ -161,7 +162,7 @@ class RecurrenceValidatorTest extends ConstraintValidatorTestCase
     {
         $actualInterval = -1;
         $minInterval = RecurrenceValidator::MIN_INTERVAL;
-        $recurrence =  new Entity\Recurrence();
+        $recurrence = new Entity\Recurrence();
         $recurrence->setRecurrenceType(Model\Recurrence::TYPE_DAILY);
         $recurrence->setInterval($actualInterval);
 
@@ -192,7 +193,7 @@ class RecurrenceValidatorTest extends ConstraintValidatorTestCase
     {
         $actualInterval = 13;
         $intervalMultipleOf = 12;
-        $recurrence =  new Entity\Recurrence();
+        $recurrence = new Entity\Recurrence();
         $recurrence->setRecurrenceType(Model\Recurrence::TYPE_YEARLY);
         $recurrence->setInterval($actualInterval);
 
@@ -221,7 +222,7 @@ class RecurrenceValidatorTest extends ConstraintValidatorTestCase
 
     public function testRecurrenceHasWrongEndTime(): void
     {
-        $recurrence =  new Entity\Recurrence();
+        $recurrence = new Entity\Recurrence();
         $recurrence->setInterval(1);
         $recurrence->setRecurrenceType(Model\Recurrence::TYPE_DAILY);
         $recurrence->setStartTime(new \DateTime('2016-11-01 00:00:00', new \DateTimeZone('UTC')));
@@ -254,7 +255,7 @@ class RecurrenceValidatorTest extends ConstraintValidatorTestCase
 
     public function testRecurrenceHasWrongDayOfWeek(): void
     {
-        $recurrence =  new Entity\Recurrence();
+        $recurrence = new Entity\Recurrence();
         $recurrence->setInterval(1);
         $recurrence->setRecurrenceType(Model\Recurrence::TYPE_WEEKLY);
         $recurrence->setDayOfWeek(['unknown']);

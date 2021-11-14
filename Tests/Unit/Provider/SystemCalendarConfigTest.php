@@ -10,16 +10,16 @@ class SystemCalendarConfigTest extends \PHPUnit\Framework\TestCase
      * @dataProvider configProvider
      */
     public function testConfig(
-        $enabledSystemCalendar,
-        $expectedIsPublicCalendarEnabled,
-        $expectedIsSystemCalendarEnabled
+        string|bool $enabledSystemCalendar,
+        bool $expectedIsPublicCalendarEnabled,
+        bool $expectedIsSystemCalendarEnabled
     ) {
         $config = new SystemCalendarConfig($enabledSystemCalendar);
         $this->assertSame($expectedIsPublicCalendarEnabled, $config->isPublicCalendarEnabled());
         $this->assertSame($expectedIsSystemCalendarEnabled, $config->isSystemCalendarEnabled());
     }
 
-    public function configProvider()
+    public function configProvider(): array
     {
         return [
             [false, false, false],

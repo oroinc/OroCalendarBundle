@@ -3,15 +3,16 @@
 namespace Oro\Bundle\CalendarBundle\Tests\Unit\Datagrid;
 
 use Oro\Bundle\CalendarBundle\Datagrid\SystemCalendarEventGridHelper;
+use Oro\Bundle\DataGridBundle\Datasource\ResultRecordInterface;
 use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
 
 class SystemCalendarEventGridHelperTest extends \PHPUnit\Framework\TestCase
 {
-    /** @var \PHPUnit\Framework\MockObject\MockObject */
-    protected $authorizationChecker;
+    /** @var AuthorizationCheckerInterface|\PHPUnit\Framework\MockObject\MockObject */
+    private $authorizationChecker;
 
     /** @var SystemCalendarEventGridHelper */
-    protected $helper;
+    private $helper;
 
     protected function setUp(): void
     {
@@ -23,21 +24,21 @@ class SystemCalendarEventGridHelperTest extends \PHPUnit\Framework\TestCase
     /**
      * @dataProvider getPublicActionConfigurationClosureProvider
      */
-    public function testGetPublicActionConfigurationClosure($isGranted, $expected)
+    public function testGetPublicActionConfigurationClosure(bool $isGranted, array $expected)
     {
-        $record = $this->createMock('Oro\Bundle\DataGridBundle\Datasource\ResultRecordInterface');
+        $record = $this->createMock(ResultRecordInterface::class);
 
         $this->authorizationChecker->expects($this->once())
             ->method('isGranted')
             ->with('oro_public_calendar_management')
-            ->will($this->returnValue($isGranted));
+            ->willReturn($isGranted);
 
         $closure = $this->helper->getPublicActionConfigurationClosure();
-        $result  = call_user_func($closure, $record);
+        $result = $closure($record);
         $this->assertEquals($expected, $result);
     }
 
-    public function getPublicActionConfigurationClosureProvider()
+    public function getPublicActionConfigurationClosureProvider(): array
     {
         return [
             [
@@ -54,21 +55,21 @@ class SystemCalendarEventGridHelperTest extends \PHPUnit\Framework\TestCase
     /**
      * @dataProvider getSystemActionConfigurationClosureProvider
      */
-    public function testGetSystemActionConfigurationClosure($isGranted, $expected)
+    public function testGetSystemActionConfigurationClosure(bool $isGranted, array $expected)
     {
-        $record = $this->createMock('Oro\Bundle\DataGridBundle\Datasource\ResultRecordInterface');
+        $record = $this->createMock(ResultRecordInterface::class);
 
         $this->authorizationChecker->expects($this->once())
             ->method('isGranted')
             ->with('oro_system_calendar_management')
-            ->will($this->returnValue($isGranted));
+            ->willReturn($isGranted);
 
         $closure = $this->helper->getSystemActionConfigurationClosure();
-        $result  = call_user_func($closure, $record);
+        $result = $closure($record);
         $this->assertEquals($expected, $result);
     }
 
-    public function getSystemActionConfigurationClosureProvider()
+    public function getSystemActionConfigurationClosureProvider(): array
     {
         return [
             [

@@ -19,9 +19,6 @@ use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
  */
 class SystemCalendarGridListenerTest extends \PHPUnit\Framework\TestCase
 {
-    /** @var SystemCalendarGridListener */
-    private $listener;
-
     /** @var AuthorizationCheckerInterface|\PHPUnit\Framework\MockObject\MockObject */
     private $authorizationChecker;
 
@@ -30,6 +27,9 @@ class SystemCalendarGridListenerTest extends \PHPUnit\Framework\TestCase
 
     /** @var SystemCalendarConfig|\PHPUnit\Framework\MockObject\MockObject */
     private $calendarConfig;
+
+    /** @var SystemCalendarGridListener */
+    private $listener;
 
     protected function setUp(): void
     {
@@ -70,8 +70,10 @@ class SystemCalendarGridListenerTest extends \PHPUnit\Framework\TestCase
     /**
      * @dataProvider disableCalendarProvider
      */
-    public function testOnBuildBeforeAnyPublicOrSystemCalendarDisabled($isPublicSupported, $isSystemSupported)
-    {
+    public function testOnBuildBeforeAnyPublicOrSystemCalendarDisabled(
+        bool $isPublicSupported,
+        bool $isSystemSupported
+    ) {
         $this->calendarConfig->expects($this->any())
             ->method('isPublicCalendarEnabled')
             ->willReturn($isPublicSupported);
@@ -113,12 +115,10 @@ class SystemCalendarGridListenerTest extends \PHPUnit\Framework\TestCase
 
         $this->authorizationChecker->expects($this->exactly(2))
             ->method('isGranted')
-            ->willReturnMap(
-                [
-                    ['oro_public_calendar_management', null, true],
-                    ['oro_system_calendar_management', null, true],
-                ]
-            );
+            ->willReturnMap([
+                ['oro_public_calendar_management', null, true],
+                ['oro_system_calendar_management', null, true],
+            ]);
 
         $qb = $this->createMock(QueryBuilder::class);
 
@@ -146,15 +146,6 @@ class SystemCalendarGridListenerTest extends \PHPUnit\Framework\TestCase
 
         $event = new BuildAfter($datagrid);
         $this->listener->onBuildAfter($event);
-    }
-
-    public function onBuildAfterBothPublicAndSystemGrantedDataProvider(): array
-    {
-        return [
-            [true, false],
-            [false, true],
-            [true, true]
-        ];
     }
 
     public function testOnBuildAfterBothPublicAndSystemEnabledButSystemNotGranted()
@@ -190,7 +181,7 @@ class SystemCalendarGridListenerTest extends \PHPUnit\Framework\TestCase
             ->method('andWhere')
             ->with('sc.public = :public')
             ->willReturnSelf();
-        $qb->expects($this->once(1))
+        $qb->expects($this->once())
             ->method('setParameter')
             ->with('public', true);
 
@@ -351,7 +342,7 @@ class SystemCalendarGridListenerTest extends \PHPUnit\Framework\TestCase
     /**
      * @dataProvider getActionConfigurationClosureSystemProvider
      */
-    public function testGetActionConfigurationClosureSystem($allowed, $expected)
+    public function testGetActionConfigurationClosureSystem(bool $allowed, array $expected)
     {
         $resultRecord = new ResultRecord(['public' => false]);
 

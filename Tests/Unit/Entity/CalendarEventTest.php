@@ -25,15 +25,15 @@ class CalendarEventTest extends \PHPUnit\Framework\TestCase
 {
     use EntityTrait;
 
-    const OWNER_EMAIL = 'owner@example.com';
-    const OWNER_FIRST_NAME = 'Owner';
-    const OWNER_LAST_NAME = 'Name';
-    const OWNER_DISPLAY_NAME = 'Owner Name';
+    private const OWNER_EMAIL = 'owner@example.com';
+    private const OWNER_FIRST_NAME = 'Owner';
+    private const OWNER_LAST_NAME = 'Name';
+    private const OWNER_DISPLAY_NAME = 'Owner Name';
 
-    const PROVIDED_EMAIL = 'provided@example.com';
-    const PROVIDED_FIRST_NAME = 'Provided';
-    const PROVIDED_LAST_NAME = 'Name';
-    const PROVIDED_DISPLAY_NAME = 'Provided Name';
+    private const PROVIDED_EMAIL = 'provided@example.com';
+    private const PROVIDED_FIRST_NAME = 'Provided';
+    private const PROVIDED_LAST_NAME = 'Name';
+    private const PROVIDED_DISPLAY_NAME = 'Provided Name';
 
     public function testIdGetter()
     {
@@ -44,11 +44,8 @@ class CalendarEventTest extends \PHPUnit\Framework\TestCase
 
     /**
      * @dataProvider propertiesDataProvider
-     *
-     * @param string $property
-     * @param mixed  $value
      */
-    public function testSettersAndGetters($property, $value)
+    public function testSettersAndGetters(string $property, mixed $value)
     {
         $obj = new CalendarEvent();
 
@@ -57,10 +54,7 @@ class CalendarEventTest extends \PHPUnit\Framework\TestCase
         $this->assertSame($value, $accessor->getValue($obj, $property));
     }
 
-    /**
-     * @return array
-     */
-    public function propertiesDataProvider()
+    public function propertiesDataProvider(): array
     {
         return [
             ['calendar', new Calendar()],
@@ -200,7 +194,7 @@ class CalendarEventTest extends \PHPUnit\Framework\TestCase
         // reset children calendar events
         $this->assertSame($calendarEvent, $calendarEvent->resetChildEvents($children));
         $actual = $calendarEvent->getChildEvents();
-        $this->assertInstanceOf('Doctrine\Common\Collections\ArrayCollection', $actual);
+        $this->assertInstanceOf(ArrayCollection::class, $actual);
         $this->assertEquals($children, $actual->toArray());
         /** @var CalendarEvent $child */
         foreach ($children as $child) {
@@ -210,12 +204,12 @@ class CalendarEventTest extends \PHPUnit\Framework\TestCase
         // add children calendar events
         $this->assertSame($calendarEvent, $calendarEvent->addChildEvent($calendarEventTwo));
         $actual = $calendarEvent->getChildEvents();
-        $this->assertInstanceOf('Doctrine\Common\Collections\ArrayCollection', $actual);
+        $this->assertInstanceOf(ArrayCollection::class, $actual);
         $this->assertEquals($children, $actual->toArray());
 
         $this->assertSame($calendarEvent, $calendarEvent->addChildEvent($calendarEventThree));
         $actual = $calendarEvent->getChildEvents();
-        $this->assertInstanceOf('Doctrine\Common\Collections\ArrayCollection', $actual);
+        $this->assertInstanceOf(ArrayCollection::class, $actual);
         $this->assertEquals([$calendarEventOne, $calendarEventTwo, $calendarEventThree], $actual->toArray());
         /** @var CalendarEvent $child */
         foreach ($children as $child) {
@@ -225,7 +219,7 @@ class CalendarEventTest extends \PHPUnit\Framework\TestCase
         // remove child calender event
         $this->assertSame($calendarEvent, $calendarEvent->removeChildEvent($calendarEventOne));
         $actual = $calendarEvent->getChildEvents();
-        $this->assertInstanceOf('Doctrine\Common\Collections\ArrayCollection', $actual);
+        $this->assertInstanceOf(ArrayCollection::class, $actual);
         $this->assertEquals([1 => $calendarEventTwo, 2 => $calendarEventThree], $actual->toArray());
     }
 
@@ -322,7 +316,7 @@ class CalendarEventTest extends \PHPUnit\Framework\TestCase
 
     public function testSetCalendar()
     {
-        $calendar       = new Calendar();
+        $calendar = new Calendar();
         $systemCalendar = new SystemCalendar();
 
         $obj = new CalendarEvent();
@@ -356,7 +350,7 @@ class CalendarEventTest extends \PHPUnit\Framework\TestCase
 
     public function testIsUpdatedFlags()
     {
-        $date          = new \DateTime('2012-12-12 12:12:12');
+        $date = new \DateTime('2012-12-12 12:12:12');
         $calendarEvent = new CalendarEvent();
         $calendarEvent->setUpdatedAt($date);
 
@@ -373,7 +367,7 @@ class CalendarEventTest extends \PHPUnit\Framework\TestCase
 
     public function testAttendees()
     {
-        $attendee  = $this->createMock('Oro\Bundle\CalendarBundle\Entity\Attendee');
+        $attendee = $this->createMock(\Oro\Bundle\CalendarBundle\Entity\Attendee::class);
         $attendees = new ArrayCollection([$attendee]);
 
         $calendarEvent = new CalendarEvent();
@@ -386,7 +380,7 @@ class CalendarEventTest extends \PHPUnit\Framework\TestCase
         $this->assertCount(2, $calendarEvent->getAttendees());
 
         foreach ($calendarEvent->getAttendees() as $item) {
-            $this->assertInstanceOf('Oro\Bundle\CalendarBundle\Entity\Attendee', $item);
+            $this->assertInstanceOf(\Oro\Bundle\CalendarBundle\Entity\Attendee::class, $item);
         }
 
         $calendarEvent->removeAttendee($attendee);
@@ -465,10 +459,7 @@ class CalendarEventTest extends \PHPUnit\Framework\TestCase
         $this->assertEquals($expectedAttendees, array_values($event->getChildAttendees()->toArray()));
     }
 
-    /**
-     * @return array
-     */
-    public function childAttendeesProvider()
+    public function childAttendeesProvider(): array
     {
         $userCalendarOwnerEmail = 'owner@example.com';
         $calendarOwner = new User();
@@ -563,7 +554,7 @@ class CalendarEventTest extends \PHPUnit\Framework\TestCase
         // reset exceptions
         $this->assertSame($calendarEvent, $calendarEvent->resetRecurringEventExceptions($exceptions));
         $actual = $calendarEvent->getRecurringEventExceptions();
-        $this->assertInstanceOf('Doctrine\Common\Collections\ArrayCollection', $actual);
+        $this->assertInstanceOf(ArrayCollection::class, $actual);
         $this->assertEquals($exceptions, $actual->toArray());
         /** @var CalendarEvent $exception */
         foreach ($exceptions as $exception) {
@@ -573,12 +564,12 @@ class CalendarEventTest extends \PHPUnit\Framework\TestCase
         // add exception calendar events
         $this->assertSame($calendarEvent, $calendarEvent->addRecurringEventException($exceptionTwo));
         $actual = $calendarEvent->getRecurringEventExceptions();
-        $this->assertInstanceOf('Doctrine\Common\Collections\ArrayCollection', $actual);
+        $this->assertInstanceOf(ArrayCollection::class, $actual);
         $this->assertEquals($exceptions, $actual->toArray());
 
         $this->assertSame($calendarEvent, $calendarEvent->addRecurringEventException($exceptionThree));
         $actual = $calendarEvent->getRecurringEventExceptions();
-        $this->assertInstanceOf('Doctrine\Common\Collections\ArrayCollection', $actual);
+        $this->assertInstanceOf(ArrayCollection::class, $actual);
         $this->assertEquals([$exceptionOne, $exceptionTwo, $exceptionThree], $actual->toArray());
         /** @var CalendarEvent $exception */
         foreach ($exceptions as $exception) {
@@ -588,7 +579,7 @@ class CalendarEventTest extends \PHPUnit\Framework\TestCase
         // remove exception from calender event
         $this->assertSame($calendarEvent, $calendarEvent->removeRecurringEventException($exceptionOne));
         $actual = $calendarEvent->getRecurringEventExceptions();
-        $this->assertInstanceOf('Doctrine\Common\Collections\ArrayCollection', $actual);
+        $this->assertInstanceOf(ArrayCollection::class, $actual);
         $this->assertEquals([1 => $exceptionTwo, 2 => $exceptionThree], $actual->toArray());
     }
 
@@ -606,12 +597,12 @@ class CalendarEventTest extends \PHPUnit\Framework\TestCase
         $attendee1->expects($this->once())
             ->method('isEmailEqual')
             ->with($email)
-            ->will($this->returnValue(false));
+            ->willReturn(false);
 
         $attendee2->expects($this->once())
             ->method('isEmailEqual')
             ->with($email)
-            ->will($this->returnValue(true));
+            ->willReturn(true);
 
         $this->assertSame($attendee2, $event->getAttendeeByEmail($email));
     }
@@ -638,12 +629,12 @@ class CalendarEventTest extends \PHPUnit\Framework\TestCase
         $attendee1->expects($this->once())
             ->method('isEmailEqual')
             ->with($email)
-            ->will($this->returnValue(false));
+            ->willReturn(false);
 
         $attendee2->expects($this->once())
             ->method('isEmailEqual')
             ->with($email)
-            ->will($this->returnValue(false));
+            ->willReturn(false);
 
         $this->assertNull($event->getAttendeeByEmail($email));
     }
@@ -662,12 +653,12 @@ class CalendarEventTest extends \PHPUnit\Framework\TestCase
         $attendee1->expects($this->once())
             ->method('isUserEqual')
             ->with($user)
-            ->will($this->returnValue(false));
+            ->willReturn(false);
 
         $attendee2->expects($this->once())
             ->method('isUserEqual')
             ->with($user)
-            ->will($this->returnValue(true));
+            ->willReturn(true);
 
         $this->assertSame($attendee2, $event->getAttendeeByUser($user));
     }
@@ -694,12 +685,12 @@ class CalendarEventTest extends \PHPUnit\Framework\TestCase
         $attendee1->expects($this->once())
             ->method('isUserEqual')
             ->with($user)
-            ->will($this->returnValue(false));
+            ->willReturn(false);
 
         $attendee2->expects($this->once())
             ->method('isUserEqual')
             ->with($user)
-            ->will($this->returnValue(false));
+            ->willReturn(false);
 
         $this->assertNull($event->getAttendeeByUser($user));
     }
@@ -720,12 +711,12 @@ class CalendarEventTest extends \PHPUnit\Framework\TestCase
         $attendee1->expects($this->once())
             ->method('isUserEqual')
             ->with($user)
-            ->will($this->returnValue(false));
+            ->willReturn(false);
 
         $attendee2->expects($this->once())
             ->method('isUserEqual')
             ->with($user)
-            ->will($this->returnValue(true));
+            ->willReturn(true);
 
         $this->assertSame($attendee2, $event->getAttendeeByCalendar($calendar));
     }
@@ -756,12 +747,12 @@ class CalendarEventTest extends \PHPUnit\Framework\TestCase
         $attendee1->expects($this->once())
             ->method('isUserEqual')
             ->with($user)
-            ->will($this->returnValue(false));
+            ->willReturn(false);
 
         $attendee2->expects($this->once())
             ->method('isUserEqual')
             ->with($user)
-            ->will($this->returnValue(false));
+            ->willReturn(false);
 
         $this->assertNull($event->getAttendeeByCalendar($calendar));
     }
@@ -788,11 +779,11 @@ class CalendarEventTest extends \PHPUnit\Framework\TestCase
 
     /**
      * @dataProvider organizerOwnerDisplayNameDataProvider
-     * @param string|null $displayName
-     * @param string      $expectedDisplayName
      */
-    public function testOrganizerIsFetchedFromOwnerInCaseOrganizerEmailIsNotProvided($displayName, $expectedDisplayName)
-    {
+    public function testOrganizerIsFetchedFromOwnerInCaseOrganizerEmailIsNotProvided(
+        ?string $displayName,
+        string  $expectedDisplayName
+    ) {
         $calendarEvent = $this->getCalendarEventWithOwner();
         if ($displayName) {
             $calendarEvent->setOrganizerDisplayName($displayName);
@@ -810,15 +801,13 @@ class CalendarEventTest extends \PHPUnit\Framework\TestCase
 
     /**
      * @dataProvider organizerOwnerDisplayNameDataProvider
-     * @param string|null $displayName
-     * @param string      $expectedDisplayName
      */
     public function testOrganizerIsSameAsOwnerInCaseProvidedEmailIsTheSameAsOwnerEmail(
-        $displayName,
-        $expectedDisplayName
+        ?string $displayName,
+        string $expectedDisplayName
     ) {
         $calendarEvent = $this->getCalendarEventWithOwner();
-        $calendarEvent->setOrganizerEmail(static::OWNER_EMAIL);
+        $calendarEvent->setOrganizerEmail(self::OWNER_EMAIL);
         if ($displayName) {
             $calendarEvent->setOrganizerDisplayName($displayName);
         }
@@ -839,7 +828,7 @@ class CalendarEventTest extends \PHPUnit\Framework\TestCase
         $calendarEvent = new CalendarEvent();
         $calendarEvent
             ->setSystemCalendar($calendar)
-            ->setOrganizerEmail(static::OWNER_EMAIL);
+            ->setOrganizerEmail(self::OWNER_EMAIL);
 
         $calendarEvent->calculateIsOrganizer();
 
@@ -851,7 +840,7 @@ class CalendarEventTest extends \PHPUnit\Framework\TestCase
     {
         $calendarEvent = new CalendarEvent();
         $calendarEvent
-            ->setOrganizerEmail(static::OWNER_EMAIL);
+            ->setOrganizerEmail(self::OWNER_EMAIL);
 
         $calendarEvent->calculateIsOrganizer();
 
@@ -882,26 +871,23 @@ class CalendarEventTest extends \PHPUnit\Framework\TestCase
         ];
     }
 
-    /**
-     * @return array
-     */
-    public function organizerOwnerDisplayNameDataProvider()
+    public function organizerOwnerDisplayNameDataProvider(): array
     {
         return [
-            [null, static::OWNER_DISPLAY_NAME],
+            [null, self::OWNER_DISPLAY_NAME],
             ['custom name', 'custom name']
         ];
     }
 
-    public static function getCalendarEventWithOwner(): CalendarEvent
+    private function getCalendarEventWithOwner(): CalendarEvent
     {
         $calendarEvent = new CalendarEvent();
         $calendar = new Calendar();
         $calendarOwner = new User();
         $calendarOwner
-            ->setEmail(static::OWNER_EMAIL)
-            ->setFirstName(static::OWNER_FIRST_NAME)
-            ->setLastName(static::OWNER_LAST_NAME);
+            ->setEmail(self::OWNER_EMAIL)
+            ->setFirstName(self::OWNER_FIRST_NAME)
+            ->setLastName(self::OWNER_LAST_NAME);
 
         $calendar->setOwner($calendarOwner);
         $calendarEvent->setCalendar($calendar);

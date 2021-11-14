@@ -7,7 +7,7 @@ use Oro\Bundle\CalendarBundle\Form\Type\CalendarChoiceTemplateType;
 class CalendarChoiceTemplateTypeTest extends \PHPUnit\Framework\TestCase
 {
     /** @var CalendarChoiceTemplateType */
-    protected $type;
+    private $type;
 
     protected function setUp(): void
     {

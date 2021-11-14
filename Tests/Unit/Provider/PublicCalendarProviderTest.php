@@ -17,19 +17,19 @@ use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
 
 class PublicCalendarProviderTest extends \PHPUnit\Framework\TestCase
 {
-    /** @var \PHPUnit\Framework\MockObject\MockObject */
+    /** @var DoctrineHelper|\PHPUnit\Framework\MockObject\MockObject */
     private $doctrineHelper;
 
-    /** @var \PHPUnit\Framework\MockObject\MockObject */
-    private $calendarEventNormalizer;
-
-    /** @var \PHPUnit\Framework\MockObject\MockObject */
-    private $calendarConfig;
-
-    /** @var \PHPUnit\Framework\MockObject\MockObject */
+    /** @var Recurrence|\PHPUnit\Framework\MockObject\MockObject */
     private $recurrenceModel;
 
-    /** @var \PHPUnit\Framework\MockObject\MockObject */
+    /** @var PublicCalendarEventNormalizer|\PHPUnit\Framework\MockObject\MockObject */
+    private $calendarEventNormalizer;
+
+    /** @var SystemCalendarConfig|\PHPUnit\Framework\MockObject\MockObject */
+    private $calendarConfig;
+
+    /** @var AuthorizationCheckerInterface|\PHPUnit\Framework\MockObject\MockObject */
     private $authorizationChecker;
 
     /** @var PublicCalendarProvider */
@@ -38,10 +38,10 @@ class PublicCalendarProviderTest extends \PHPUnit\Framework\TestCase
     protected function setUp(): void
     {
         $this->doctrineHelper = $this->createMock(DoctrineHelper::class);
+        $this->recurrenceModel = $this->createMock(Recurrence::class);
         $this->calendarEventNormalizer = $this->createMock(PublicCalendarEventNormalizer::class);
         $this->calendarConfig = $this->createMock(SystemCalendarConfig::class);
         $this->authorizationChecker = $this->createMock(AuthorizationCheckerInterface::class);
-        $this->recurrenceModel = $this->createMock(Recurrence::class);
 
         $this->provider = new PublicCalendarProvider(
             $this->doctrineHelper,
@@ -55,9 +55,9 @@ class PublicCalendarProviderTest extends \PHPUnit\Framework\TestCase
     public function testGetCalendarDefaultValuesDisabled()
     {
         $organizationId = 1;
-        $userId         = 123;
-        $calendarId     = 10;
-        $calendarIds    = [10];
+        $userId = 123;
+        $calendarId = 10;
+        $calendarIds = [10];
 
         $this->calendarConfig->expects($this->once())
             ->method('isPublicCalendarEnabled')
@@ -75,9 +75,9 @@ class PublicCalendarProviderTest extends \PHPUnit\Framework\TestCase
     public function testGetCalendarDefaultValuesCannotAddEvents()
     {
         $organizationId = 1;
-        $userId         = 123;
-        $calendarId     = 10;
-        $calendarIds    = [10];
+        $userId = 123;
+        $calendarId = 10;
+        $calendarIds = [10];
 
         $calendar1 = new SystemCalendar();
         ReflectionUtil::setId($calendar1, 1);
@@ -125,9 +125,9 @@ class PublicCalendarProviderTest extends \PHPUnit\Framework\TestCase
     public function testGetCalendarDefaultValuesCanAddEvents()
     {
         $organizationId = 1;
-        $userId         = 123;
-        $calendarId     = 10;
-        $calendarIds    = [10];
+        $userId = 123;
+        $calendarId = 10;
+        $calendarIds = [10];
 
         $calendar1 = new SystemCalendar();
         ReflectionUtil::setId($calendar1, 1);
@@ -182,11 +182,11 @@ class PublicCalendarProviderTest extends \PHPUnit\Framework\TestCase
     public function testGetCalendarEventsPublicNotSupport()
     {
         $organizationId = 1;
-        $userId         = 123;
-        $calendarId     = 10;
-        $start          = new \DateTime();
-        $end            = new \DateTime();
-        $connections    = [10 => true, 20 => false];
+        $userId = 123;
+        $calendarId = 10;
+        $start = new \DateTime();
+        $end = new \DateTime();
+        $connections = [10 => true, 20 => false];
 
         $this->calendarConfig->expects($this->once())
             ->method('isPublicCalendarEnabled')
@@ -199,12 +199,12 @@ class PublicCalendarProviderTest extends \PHPUnit\Framework\TestCase
     public function testGetCalendarEvents()
     {
         $organizationId = 1;
-        $userId         = 123;
-        $calendarId     = 10;
-        $start          = new \DateTime();
-        $end            = new \DateTime();
-        $connections    = [10 => true, 20 => false];
-        $events         = [['id' => 1]];
+        $userId = 123;
+        $calendarId = 10;
+        $start = new \DateTime();
+        $end = new \DateTime();
+        $connections = [10 => true, 20 => false];
+        $events = [['id' => 1]];
 
         $this->calendarConfig->expects($this->once())
             ->method('isPublicCalendarEnabled')

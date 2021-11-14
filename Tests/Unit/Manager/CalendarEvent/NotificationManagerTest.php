@@ -375,10 +375,10 @@ class NotificationManagerTest extends \PHPUnit\Framework\TestCase
         $calendar->setOwner($ownerUser);
         $notChangedAttendee1 = (new Attendee(1))->setDisplayName('Not Attendee Changed 1');
         $notChangedAttendee2 = (new Attendee(2))->setDisplayName('Not Attendee Changed 2');
-        $addedAttendee1      = (new Attendee(3))->setDisplayName('Added Attendee 1');
-        $addedAttendee2      = (new Attendee(4))->setDisplayName('Added Attendee 2');
-        $removedAttendee1    = (new Attendee(5))->setDisplayName('Removed Attendee 1');
-        $removedAttendee2    = (new Attendee(6))->setDisplayName('Removed Attendee 2');
+        $addedAttendee1 = (new Attendee(3))->setDisplayName('Added Attendee 1');
+        $addedAttendee2 = (new Attendee(4))->setDisplayName('Added Attendee 2');
+        $removedAttendee1 = (new Attendee(5))->setDisplayName('Removed Attendee 1');
+        $removedAttendee2 = (new Attendee(6))->setDisplayName('Removed Attendee 2');
 
         $originalCalendarEvent = new CalendarEvent();
         $originalCalendarEvent
@@ -521,10 +521,10 @@ class NotificationManagerTest extends \PHPUnit\Framework\TestCase
         $calendar->setOwner($ownerUser);
         $notChangedAttendee1 = (new Attendee(1))->setDisplayName('Not Attendee Changed 1');
         $notChangedAttendee2 = (new Attendee(2))->setDisplayName('Not Attendee Changed 2');
-        $addedAttendee1      = (new Attendee(3))->setDisplayName('Added Attendee 1');
-        $addedAttendee2      = (new Attendee(4))->setDisplayName('Added Attendee 2');
-        $removedAttendee1    = (new Attendee(5))->setDisplayName('Removed Attendee 1');
-        $removedAttendee2    = (new Attendee(6))->setDisplayName('Removed Attendee 2');
+        $addedAttendee1 = (new Attendee(3))->setDisplayName('Added Attendee 1');
+        $addedAttendee2 = (new Attendee(4))->setDisplayName('Added Attendee 2');
+        $removedAttendee1 = (new Attendee(5))->setDisplayName('Removed Attendee 1');
+        $removedAttendee2 = (new Attendee(6))->setDisplayName('Removed Attendee 2');
 
         $originalCalendarEvent = new CalendarEvent();
         $originalCalendarEvent
@@ -570,10 +570,10 @@ class NotificationManagerTest extends \PHPUnit\Framework\TestCase
         $calendar->setOwner($ownerUser);
         $notChangedAttendee1 = (new Attendee(1))->setDisplayName('Not Attendee Changed 1');
         $notChangedAttendee2 = (new Attendee(2))->setDisplayName('Not Attendee Changed 2');
-        $addedAttendee1      = (new Attendee(3))->setDisplayName('Added Attendee 1');
-        $addedAttendee2      = (new Attendee(4))->setDisplayName('Added Attendee 2');
-        $removedAttendee1    = (new Attendee(5))->setDisplayName('Removed Attendee 1');
-        $removedAttendee2    = (new Attendee(6))->setDisplayName('Removed Attendee 2');
+        $addedAttendee1 = (new Attendee(3))->setDisplayName('Added Attendee 1');
+        $addedAttendee2 = (new Attendee(4))->setDisplayName('Added Attendee 2');
+        $removedAttendee1 = (new Attendee(5))->setDisplayName('Removed Attendee 1');
+        $removedAttendee2 = (new Attendee(6))->setDisplayName('Removed Attendee 2');
 
         $originalCalendarEvent = new CalendarEvent();
         $originalCalendarEvent
@@ -726,7 +726,7 @@ class NotificationManagerTest extends \PHPUnit\Framework\TestCase
         $status = $this->createMock(AbstractEnumValue::class);
         $status->expects($this->once())
             ->method('getId')
-            ->will($this->returnValue($statusCode));
+            ->willReturn($statusCode);
 
         $attendee = new Attendee();
         $attendee->setUser($ownerUser);

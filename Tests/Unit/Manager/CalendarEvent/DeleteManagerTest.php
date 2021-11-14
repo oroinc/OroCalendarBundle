@@ -19,8 +19,9 @@ class DeleteManagerTest extends \PHPUnit\Framework\TestCase
 
     protected function setUp(): void
     {
-        $doctrine = $this->createMock(ManagerRegistry::class);
         $this->objectManager = $this->createMock(ObjectManager::class);
+
+        $doctrine = $this->createMock(ManagerRegistry::class);
         $doctrine->expects($this->any())
             ->method('getManager')
             ->willReturn($this->objectManager);

@@ -15,18 +15,12 @@ use Symfony\Component\Validator\Test\ConstraintValidatorTestCase;
 
 class UniqueUidValidatorTest extends ConstraintValidatorTestCase
 {
-    /** @var ManagerRegistry|\PHPUnit\Framework\MockObject\MockObject */
-    private $registry;
-
     /** @var ObjectRepository|\PHPUnit\Framework\MockObject\MockObject */
     private $repository;
 
-    /** @var ObjectManager|\PHPUnit\Framework\MockObject\MockObject */
-    private $manager;
-
     protected function setUp(): void
     {
-        $this->mockDoctrine();
+        $this->repository = $this->createMock(CalendarEventRepository::class);
         parent::setUp();
     }
 
@@ -121,22 +115,17 @@ class UniqueUidValidatorTest extends ConstraintValidatorTestCase
      */
     protected function createValidator()
     {
-        return new UniqueUidValidator($this->registry);
-    }
-
-    private function mockDoctrine()
-    {
-        $this->manager = $this->createMock(ObjectManager::class);
-        $this->repository = $this->createMock(CalendarEventRepository::class);
-        $this->registry = $this->createMock(ManagerRegistry::class);
-
-        $this->manager->expects($this->any())
+        $em = $this->createMock(ObjectManager::class);
+        $em->expects($this->any())
             ->method('getRepository')
             ->willReturn($this->repository);
 
-        $this->registry->expects($this->any())
+        $doctrine = $this->createMock(ManagerRegistry::class);
+        $doctrine->expects($this->any())
             ->method('getManagerForClass')
-            ->willReturn($this->manager);
+            ->willReturn($em);
+
+        return new UniqueUidValidator($doctrine);
     }
 
     private function getCalendarEntity(int $id): Calendar

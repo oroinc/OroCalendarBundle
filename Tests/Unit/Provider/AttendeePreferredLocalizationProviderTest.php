@@ -19,16 +19,14 @@ class AttendeePreferredLocalizationProviderTest extends \PHPUnit\Framework\TestC
     protected function setUp(): void
     {
         $this->innerProvider = $this->createMock(PreferredLocalizationProviderInterface::class);
+
         $this->provider = new AttendeePreferredLocalizationProvider($this->innerProvider);
     }
 
     /**
      * @dataProvider supportsDataProvider
-     *
-     * @param object $entity
-     * @param bool $isSupported
      */
-    public function testSupports($entity, bool $isSupported): void
+    public function testSupports(object $entity, bool $isSupported): void
     {
         $this->assertSame($isSupported, $this->provider->supports($entity));
 

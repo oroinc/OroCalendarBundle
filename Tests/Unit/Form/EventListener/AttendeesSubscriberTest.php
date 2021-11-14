@@ -7,11 +7,12 @@ use Oro\Bundle\CalendarBundle\Form\EventListener\AttendeesSubscriber;
 use Oro\Bundle\CalendarBundle\Tests\Unit\Fixtures\Entity\Attendee;
 use Symfony\Component\Form\FormEvent;
 use Symfony\Component\Form\FormEvents;
+use Symfony\Component\Form\FormInterface;
 
 class AttendeesSubscriberTest extends \PHPUnit\Framework\TestCase
 {
     /** @var AttendeesSubscriber */
-    protected $attendeesSubscriber;
+    private $attendeesSubscriber;
 
     protected function setUp(): void
     {
@@ -31,12 +32,12 @@ class AttendeesSubscriberTest extends \PHPUnit\Framework\TestCase
     /**
      * @dataProvider preSubmitProvider
      */
-    public function testPreSubmit($eventData, $formData, $expectedData)
+    public function testPreSubmit(array $eventData, array|ArrayCollection $formData, array $expectedData)
     {
-        $form = $this->createMock('Symfony\Component\Form\FormInterface');
+        $form = $this->createMock(FormInterface::class);
         $form->expects($this->any())
             ->method('getData')
-            ->will($this->returnValue($formData));
+            ->willReturn($formData);
 
         $event = new FormEvent($form, $eventData);
         $this->attendeesSubscriber->fixSubmittedData($event);
@@ -45,10 +46,8 @@ class AttendeesSubscriberTest extends \PHPUnit\Framework\TestCase
 
     /**
      * @SuppressWarnings(PHPMD.ExcessiveMethodLength)
-     *
-     * @return array
      */
-    public function preSubmitProvider()
+    public function preSubmitProvider(): array
     {
         return [
             'empty attendees' => [

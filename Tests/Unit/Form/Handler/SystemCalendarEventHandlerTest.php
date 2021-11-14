@@ -2,7 +2,10 @@
 
 namespace Oro\Bundle\CalendarBundle\Tests\Unit\Form\Handler;
 
+use Doctrine\Persistence\ManagerRegistry;
+use Doctrine\Persistence\ObjectManager;
 use Oro\Bundle\ActivityBundle\Manager\ActivityManager;
+use Oro\Bundle\CalendarBundle\Entity\Calendar;
 use Oro\Bundle\CalendarBundle\Entity\CalendarEvent;
 use Oro\Bundle\CalendarBundle\Form\Handler\SystemCalendarEventHandler;
 use Oro\Bundle\CalendarBundle\Manager\CalendarEvent\NotificationManager;
@@ -12,30 +15,34 @@ use Oro\Bundle\OrganizationBundle\Entity\Organization;
 use Oro\Bundle\SecurityBundle\Authentication\TokenAccessorInterface;
 use Oro\Bundle\UserBundle\Entity\User;
 use Oro\Component\Testing\ReflectionUtil;
+use Symfony\Component\Form\Form;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\RequestStack;
 
 class SystemCalendarEventHandlerTest extends \PHPUnit\Framework\TestCase
 {
-    const FORM_DATA = ['field' => 'value'];
+    private const FORM_DATA = ['field' => 'value'];
 
-    /** @var \PHPUnit\Framework\MockObject\MockObject */
+    /** @var Form|\PHPUnit\Framework\MockObject\MockObject */
     private $form;
 
     /** @var Request */
     private $request;
 
-    /** @var RequestStack */
-    private $requestStack;
-
-    /** @var \PHPUnit\Framework\MockObject\MockObject */
+    /** @var ObjectManager|\PHPUnit\Framework\MockObject\MockObject */
     private $objectManager;
 
-    /** @var \PHPUnit\Framework\MockObject\MockObject */
-    private $tokenAccessor;
+    /** @var ActivityManager|\PHPUnit\Framework\MockObject\MockObject */
+    private $activityManager;
 
-    /** @var SystemCalendarEventHandler */
-    private $handler;
+    /** @var CalendarEventManager|\PHPUnit\Framework\MockObject\MockObject */
+    private $calendarEventManager;
+
+    /** @var NotificationManager|\PHPUnit\Framework\MockObject\MockObject */
+    private $notificationManager;
+
+    /** @var FeatureChecker|\PHPUnit\Framework\MockObject\MockObject */
+    private $featureChecker;
 
     /** @var CalendarEvent */
     private $entity;
@@ -43,60 +50,38 @@ class SystemCalendarEventHandlerTest extends \PHPUnit\Framework\TestCase
     /** @var Organization */
     private $organization;
 
-    /** @var \PHPUnit\Framework\MockObject\MockObject */
-    private $activityManager;
-
-    /** @var \PHPUnit\Framework\MockObject\MockObject|CalendarEventManager */
-    private $calendarEventManager;
-
-    /** @var \PHPUnit\Framework\MockObject\MockObject */
-    private $notificationManager;
-
-    /** @var FeatureChecker|\PHPUnit\Framework\MockObject\MockObject */
-    private $featureChecker;
+    /** @var SystemCalendarEventHandler */
+    private $handler;
 
     protected function setUp(): void
     {
-        $this->form = $this->createMock('Symfony\Component\Form\Form');
+        $this->form = $this->createMock(Form::class);
         $this->request = new Request();
-        $this->requestStack = new RequestStack();
-        $this->requestStack->push($this->request);
-
-        $this->objectManager = $this->createMock('Doctrine\Persistence\ObjectManager');
-
-        $doctrine = $this->createMock('Doctrine\Persistence\ManagerRegistry');
-
-        $doctrine->expects($this->any())
-            ->method('getManager')
-            ->will($this->returnValue($this->objectManager));
-
+        $this->objectManager = $this->createMock(ObjectManager::class);
+        $this->activityManager = $this->createMock(ActivityManager::class);
+        $this->calendarEventManager = $this->createMock(CalendarEventManager::class);
+        $this->notificationManager = $this->createMock(NotificationManager::class);
+        $this->featureChecker = $this->createMock(FeatureChecker::class);
+        $this->entity = new CalendarEvent();
         $this->organization = new Organization();
-        $this->tokenAccessor = $this->createMock(TokenAccessorInterface::class);
-        $this->tokenAccessor->expects($this->any())
+
+        $requestStack = new RequestStack();
+        $requestStack->push($this->request);
+
+        $tokenAccessor = $this->createMock(TokenAccessorInterface::class);
+        $tokenAccessor->expects($this->any())
             ->method('getOrganization')
             ->willReturn($this->organization);
 
-        $this->activityManager     = $this->getMockBuilder(ActivityManager::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $doctrine = $this->createMock(ManagerRegistry::class);
+        $doctrine->expects($this->any())
+            ->method('getManager')
+            ->willReturn($this->objectManager);
 
-        $this->calendarEventManager = $this
-            ->getMockBuilder(CalendarEventManager::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-
-        $this->notificationManager = $this
-            ->getMockBuilder(NotificationManager::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-
-        $this->featureChecker = $this->createMock(FeatureChecker::class);
-
-        $this->entity  = new CalendarEvent();
         $this->handler = new SystemCalendarEventHandler(
-            $this->requestStack,
+            $requestStack,
             $doctrine,
-            $this->tokenAccessor,
+            $tokenAccessor,
             $this->activityManager,
             $this->calendarEventManager,
             $this->notificationManager,
@@ -114,31 +99,29 @@ class SystemCalendarEventHandlerTest extends \PHPUnit\Framework\TestCase
         ReflectionUtil::setId($owner, 321);
 
         $this->request->setMethod('POST');
-        $defaultCalendar = $this->getMockBuilder('Oro\Bundle\CalendarBundle\Entity\Calendar')
-            ->disableOriginalConstructor()
-            ->getMock();
+        $defaultCalendar = $this->createMock(Calendar::class);
         $this->entity->setCalendar($defaultCalendar);
 
         $this->form->expects($this->any())
             ->method('get')
-            ->will($this->returnValue($this->form));
+            ->willReturn($this->form);
 
         $this->form->expects($this->once())
             ->method('has')
             ->with('contexts')
-            ->will($this->returnValue(true));
+            ->willReturn(true);
 
         $this->form->expects($this->once())
             ->method('isValid')
-            ->will($this->returnValue(true));
+            ->willReturn(true);
 
         $defaultCalendar->expects($this->once())
             ->method('getOwner')
-            ->will($this->returnValue($owner));
+            ->willReturn($owner);
 
         $this->form->expects($this->any())
             ->method('getData')
-            ->will($this->returnValue([$context]));
+            ->willReturn([$context]);
 
         $this->activityManager->expects($this->once())
             ->method('setActivityTargets')
@@ -157,7 +140,7 @@ class SystemCalendarEventHandlerTest extends \PHPUnit\Framework\TestCase
     /**
      * @dataProvider supportedMethods
      */
-    public function testProcessInvalidData($method)
+    public function testProcessInvalidData(string $method)
     {
         $this->request->initialize([], self::FORM_DATA);
         $this->request->setMethod($method);
@@ -170,7 +153,7 @@ class SystemCalendarEventHandlerTest extends \PHPUnit\Framework\TestCase
             ->with($this->identicalTo(self::FORM_DATA));
         $this->form->expects($this->once())
             ->method('isValid')
-            ->will($this->returnValue(false));
+            ->willReturn(false);
         $this->calendarEventManager->expects($this->never())
             ->method($this->anything());
         $this->objectManager->expects($this->never())
@@ -184,7 +167,7 @@ class SystemCalendarEventHandlerTest extends \PHPUnit\Framework\TestCase
     /**
      * @dataProvider supportedMethods
      */
-    public function testProcessValidData($method)
+    public function testProcessValidData(string $method)
     {
         $this->request->initialize([], self::FORM_DATA);
         $this->request->setMethod($method);
@@ -197,7 +180,7 @@ class SystemCalendarEventHandlerTest extends \PHPUnit\Framework\TestCase
             ->with($this->identicalTo(self::FORM_DATA));
         $this->form->expects($this->once())
             ->method('isValid')
-            ->will($this->returnValue(true));
+            ->willReturn(true);
         $this->calendarEventManager->expects($this->once())
             ->method('onEventUpdate')
             ->with($this->entity, clone $this->entity, $this->organization, true);
@@ -211,7 +194,7 @@ class SystemCalendarEventHandlerTest extends \PHPUnit\Framework\TestCase
         );
     }
 
-    public function supportedMethods()
+    public function supportedMethods(): array
     {
         return [
             ['POST'],

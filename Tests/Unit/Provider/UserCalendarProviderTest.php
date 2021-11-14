@@ -18,16 +18,16 @@ use Oro\Component\Testing\ReflectionUtil;
 
 class UserCalendarProviderTest extends \PHPUnit\Framework\TestCase
 {
-    /** @var \PHPUnit\Framework\MockObject\MockObject */
+    /** @var DoctrineHelper|\PHPUnit\Framework\MockObject\MockObject */
     private $doctrineHelper;
 
-    /** @var \PHPUnit\Framework\MockObject\MockObject */
+    /** @var EntityNameResolver|\PHPUnit\Framework\MockObject\MockObject */
     private $entityNameResolver;
 
-    /** @var \PHPUnit\Framework\MockObject\MockObject */
+    /** @var UserCalendarEventNormalizer|\PHPUnit\Framework\MockObject\MockObject */
     private $calendarEventNormalizer;
 
-    /** @var \PHPUnit\Framework\MockObject\MockObject */
+    /** @var Recurrence|\PHPUnit\Framework\MockObject\MockObject */
     private $recurrenceModel;
 
     /** @var UserCalendarProvider */
@@ -51,9 +51,9 @@ class UserCalendarProviderTest extends \PHPUnit\Framework\TestCase
     public function testGetCalendarDefaultValues()
     {
         $organizationId = 1;
-        $userId         = 123;
-        $calendarId     = 20;
-        $calendarIds    = [10, 20];
+        $userId = 123;
+        $calendarId = 20;
+        $calendarIds = [10, 20];
 
         $calendar1 = new Calendar();
         ReflectionUtil::setId($calendar1, $calendarIds[0]);
@@ -82,18 +82,18 @@ class UserCalendarProviderTest extends \PHPUnit\Framework\TestCase
         $qb->expects($this->once())
             ->method('select')
             ->with('o, owner')
-            ->will($this->returnSelf());
+            ->willReturnSelf();
         $qb->expects($this->once())
             ->method('innerJoin')
             ->with('o.owner', 'owner')
-            ->will($this->returnSelf());
+            ->willReturnSelf();
         $qb->expects($this->once())
             ->method('expr')
             ->willReturn(new Expr());
         $qb->expects($this->once())
             ->method('where')
             ->with(new Expr\Func('o.id IN', [':calendarIds']))
-            ->will($this->returnSelf());
+            ->willReturnSelf();
 
         $query = $this->createMock(AbstractQuery::class);
         $qb->expects($this->once())
@@ -140,12 +140,12 @@ class UserCalendarProviderTest extends \PHPUnit\Framework\TestCase
     public function testGetCalendarEvents()
     {
         $organizationId = 1;
-        $userId         = 123;
-        $calendarId     = 10;
-        $start          = new \DateTime();
-        $end            = new \DateTime();
-        $connections    = [10 => true, 20 => false];
-        $events         = [
+        $userId = 123;
+        $calendarId = 10;
+        $start = new \DateTime();
+        $end = new \DateTime();
+        $connections = [10 => true, 20 => false];
+        $events = [
             [
                 'id'    => 1,
                 'start' => '2016-05-04T11:29:46+00:00',
@@ -222,10 +222,10 @@ class UserCalendarProviderTest extends \PHPUnit\Framework\TestCase
         $qb->expects($this->once())
             ->method('andWhere')
             ->with('c.id IN (:visibleIds)')
-            ->will($this->returnSelf());
+            ->willReturnSelf();
         $qb->expects($this->once())
             ->method('setParameter')
-            ->will($this->returnSelf());
+            ->willReturnSelf();
         $qb->expects($this->once())
             ->method('getQuery')
             ->willReturn($query);
@@ -248,12 +248,12 @@ class UserCalendarProviderTest extends \PHPUnit\Framework\TestCase
     public function testGetCalendarEventsAllInvisible()
     {
         $organizationId = 1;
-        $userId         = 123;
-        $calendarId     = 10;
-        $start          = new \DateTime();
-        $end            = new \DateTime();
-        $connections    = [10 => false, 20 => false];
-        $events         = [['id' => 1]];
+        $userId = 123;
+        $calendarId = 10;
+        $start = new \DateTime();
+        $end = new \DateTime();
+        $connections = [10 => false, 20 => false];
+        $events = [['id' => 1]];
 
         $qb = $this->createMock(QueryBuilder::class);
         $repo = $this->createMock(CalendarEventRepository::class);
@@ -269,7 +269,7 @@ class UserCalendarProviderTest extends \PHPUnit\Framework\TestCase
         $qb->expects($this->once())
             ->method('andWhere')
             ->with('1 = 0')
-            ->will($this->returnSelf());
+            ->willReturnSelf();
         $qb->expects($this->once())
             ->method('getQuery')
             ->willReturn($query);

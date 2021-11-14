@@ -3,8 +3,11 @@
 namespace Oro\Bundle\CalendarBundle\Tests\Unit\Form\Handler;
 
 use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Persistence\ManagerRegistry;
+use Doctrine\Persistence\ObjectManager;
 use Oro\Bundle\ActivityBundle\Manager\ActivityManager;
 use Oro\Bundle\CalendarBundle\Entity\Attendee;
+use Oro\Bundle\CalendarBundle\Entity\Calendar;
 use Oro\Bundle\CalendarBundle\Entity\CalendarEvent;
 use Oro\Bundle\CalendarBundle\Form\Handler\CalendarEventApiHandler;
 use Oro\Bundle\CalendarBundle\Manager\CalendarEvent\NotificationManager;
@@ -14,6 +17,7 @@ use Oro\Bundle\OrganizationBundle\Entity\Organization;
 use Oro\Bundle\SecurityBundle\Authentication\TokenAccessorInterface;
 use Oro\Bundle\UserBundle\Entity\User;
 use Oro\Component\Testing\ReflectionUtil;
+use Symfony\Component\Form\FormInterface;
 use Symfony\Component\HttpFoundation\ParameterBag;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\RequestStack;
@@ -23,17 +27,23 @@ use Symfony\Component\HttpFoundation\RequestStack;
  */
 class CalendarEventApiHandlerTest extends \PHPUnit\Framework\TestCase
 {
-    /** @var \PHPUnit\Framework\MockObject\MockObject */
+    /** @var FormInterface|\PHPUnit\Framework\MockObject\MockObject */
     private $form;
 
-    /** @var \PHPUnit\Framework\MockObject\MockObject */
+    /** @var Request */
     private $request;
 
-    /** @var RequestStack */
-    private $requestStack;
+    /** @var ActivityManager|\PHPUnit\Framework\MockObject\MockObject */
+    private $activityManager;
 
-    /** @var \PHPUnit\Framework\MockObject\MockObject */
+    /** @var CalendarEventManager|\PHPUnit\Framework\MockObject\MockObject */
+    private $calendarEventManager;
+
+    /** @var NotificationManager|\PHPUnit\Framework\MockObject\MockObject */
     private $notificationManager;
+
+    /** @var FeatureChecker|\PHPUnit\Framework\MockObject\MockObject */
+    private $featureChecker;
 
     /** @var CalendarEvent */
     private $entity;
@@ -41,84 +51,57 @@ class CalendarEventApiHandlerTest extends \PHPUnit\Framework\TestCase
     /** @var Organization */
     private $organization;
 
-    /** @var ActivityManager */
-    private $activityManager;
-
-    /** @var \PHPUnit\Framework\MockObject\MockObject|CalendarEventManager */
-    private $calendarEventManager;
-
-    /** @var FeatureChecker|\PHPUnit\Framework\MockObject\MockObject */
-    private $featureChecker;
-
     /** @var CalendarEventApiHandler */
     private $handler;
 
     protected function setUp(): void
     {
-        $this->entity  = new CalendarEvent();
+        $this->form = $this->createMock(FormInterface::class);
+        $this->request = new Request();
+        $this->activityManager = $this->createMock(ActivityManager::class);
+        $this->calendarEventManager = $this->createMock(CalendarEventManager::class);
+        $this->notificationManager = $this->createMock(NotificationManager::class);
+        $this->featureChecker = $this->createMock(FeatureChecker::class);
+        $this->entity = new CalendarEvent();
+        $this->organization = new Organization();
 
         $formData = [
             'contexts' => [],
             'attendees' => new ArrayCollection()
         ];
-
-        $this->request = new Request();
         $this->request->request = new ParameterBag($formData);
-        $this->requestStack = new RequestStack();
-        $this->requestStack->push($this->request);
-
-        $this->form = $this->createMock('Symfony\Component\Form\FormInterface');
-
         $this->form->expects($this->once())
             ->method('setData')
             ->with($this->identicalTo($this->entity));
-
         $this->form->expects($this->once())
             ->method('submit')
             ->with($this->identicalTo($formData));
-
         $this->form->expects($this->once())
             ->method('isValid')
             ->willReturn(true);
 
-        $doctrine = $this->createMock('Doctrine\Persistence\ManagerRegistry');
+        $objectManager = $this->createMock(ObjectManager::class);
+        $objectManager->expects($this->once())
+            ->method('persist')
+            ->with($this->identicalTo($this->entity));
+        $objectManager->expects($this->once())
+            ->method('flush');
 
-        $objectManager = $this->createMock('Doctrine\Persistence\ObjectManager');
-
+        $doctrine = $this->createMock(ManagerRegistry::class);
         $doctrine->expects($this->any())
             ->method('getManager')
-            ->will($this->returnValue($objectManager));
+            ->willReturn($objectManager);
 
-        $this->organization = new Organization();
         $tokenAccessor = $this->createMock(TokenAccessorInterface::class);
         $tokenAccessor->expects($this->any())
             ->method('getOrganization')
             ->willReturn($this->organization);
 
-        $this->notificationManager = $this->getMockBuilder(NotificationManager::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-
-        $this->activityManager = $this->getMockBuilder(ActivityManager::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-
-        $this->calendarEventManager = $this
-            ->getMockBuilder(CalendarEventManager::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-
-        $objectManager->expects($this->once())
-            ->method('persist')
-            ->with($this->identicalTo($this->entity));
-
-        $objectManager->expects($this->once())
-            ->method('flush');
-
-        $this->featureChecker = $this->createMock(FeatureChecker::class);
+        $requestStack = new RequestStack();
+        $requestStack->push($this->request);
 
         $this->handler = new CalendarEventApiHandler(
-            $this->requestStack,
+            $requestStack,
             $doctrine,
             $tokenAccessor,
             $this->activityManager,
@@ -140,15 +123,13 @@ class CalendarEventApiHandlerTest extends \PHPUnit\Framework\TestCase
 
         $this->request->setMethod('POST');
 
-        $defaultCalendar = $this->getMockBuilder('Oro\Bundle\CalendarBundle\Entity\Calendar')
-            ->disableOriginalConstructor()
-            ->getMock();
+        $defaultCalendar = $this->createMock(Calendar::class);
 
         $this->entity->setCalendar($defaultCalendar);
 
         $defaultCalendar->expects($this->once())
             ->method('getOwner')
-            ->will($this->returnValue($owner));
+            ->willReturn($owner);
 
         $this->setExpectedFormValues(['contexts' => [$context]]);
 
@@ -162,8 +143,7 @@ class CalendarEventApiHandlerTest extends \PHPUnit\Framework\TestCase
         $this->activityManager->expects($this->never())
             ->method('removeActivityTarget');
 
-        $this->calendarEventManager
-            ->expects($this->once())
+        $this->calendarEventManager->expects($this->once())
             ->method('onEventUpdate')
             ->with($this->entity, clone $this->entity, $this->organization, false);
 
@@ -181,13 +161,11 @@ class CalendarEventApiHandlerTest extends \PHPUnit\Framework\TestCase
 
         $this->setExpectedFormValues(['notifyAttendees' => NotificationManager::ALL_NOTIFICATIONS_STRATEGY]);
 
-        $this->calendarEventManager
-            ->expects($this->once())
+        $this->calendarEventManager->expects($this->once())
             ->method('onEventUpdate')
             ->with($this->entity, clone $this->entity, $this->organization, false);
 
-        $this->notificationManager
-            ->expects($this->once())
+        $this->notificationManager->expects($this->once())
             ->method('onUpdate')
             ->with($this->entity, clone $this->entity, NotificationManager::ALL_NOTIFICATIONS_STRATEGY);
 
@@ -208,13 +186,11 @@ class CalendarEventApiHandlerTest extends \PHPUnit\Framework\TestCase
 
         $this->setExpectedFormValues(['notifyAttendees' => NotificationManager::ALL_NOTIFICATIONS_STRATEGY]);
 
-        $this->calendarEventManager
-            ->expects($this->once())
+        $this->calendarEventManager->expects($this->once())
             ->method('onEventUpdate')
             ->with($this->entity, clone $this->entity, $this->organization, false);
 
-        $this->notificationManager
-            ->expects($this->never())
+        $this->notificationManager->expects($this->never())
             ->method('onUpdate');
 
         $this->featureChecker->expects(self::once())
@@ -238,13 +214,11 @@ class CalendarEventApiHandlerTest extends \PHPUnit\Framework\TestCase
             ]
         );
 
-        $this->calendarEventManager
-            ->expects($this->once())
+        $this->calendarEventManager->expects($this->once())
             ->method('onEventUpdate')
             ->with($this->entity, clone $this->entity, $this->organization, false);
 
-        $this->notificationManager
-            ->expects($this->once())
+        $this->notificationManager->expects($this->once())
             ->method('onUpdate')
             ->with($this->entity, clone $this->entity, NotificationManager::ADDED_OR_DELETED_NOTIFICATIONS_STRATEGY);
 
@@ -265,13 +239,11 @@ class CalendarEventApiHandlerTest extends \PHPUnit\Framework\TestCase
             'notifyAttendees' => NotificationManager::NONE_NOTIFICATIONS_STRATEGY
         ]);
 
-        $this->calendarEventManager
-            ->expects($this->once())
+        $this->calendarEventManager->expects($this->once())
             ->method('onEventUpdate')
             ->with($this->entity, clone $this->entity, $this->organization, false);
 
-        $this->notificationManager
-            ->expects($this->once())
+        $this->notificationManager->expects($this->once())
             ->method('onUpdate')
             ->with($this->entity, clone $this->entity, NotificationManager::NONE_NOTIFICATIONS_STRATEGY);
 
@@ -290,13 +262,11 @@ class CalendarEventApiHandlerTest extends \PHPUnit\Framework\TestCase
 
         $this->setExpectedFormValues([]);
 
-        $this->calendarEventManager
-            ->expects($this->once())
+        $this->calendarEventManager->expects($this->once())
             ->method('onEventUpdate')
             ->with($this->entity, clone $this->entity, $this->organization, false);
 
-        $this->notificationManager
-            ->expects($this->once())
+        $this->notificationManager->expects($this->once())
             ->method('onUpdate')
             ->with($this->entity, clone $this->entity, NotificationManager::NONE_NOTIFICATIONS_STRATEGY);
 
@@ -314,13 +284,11 @@ class CalendarEventApiHandlerTest extends \PHPUnit\Framework\TestCase
 
         $this->setExpectedFormValues(['notifyAttendees' => NotificationManager::NONE_NOTIFICATIONS_STRATEGY]);
 
-        $this->calendarEventManager
-            ->expects($this->once())
+        $this->calendarEventManager->expects($this->once())
             ->method('onEventUpdate')
             ->with($this->entity, clone $this->entity, $this->organization, false);
 
-        $this->notificationManager
-            ->expects($this->once())
+        $this->notificationManager->expects($this->once())
             ->method('onCreate')
             ->with($this->entity, NotificationManager::NONE_NOTIFICATIONS_STRATEGY);
 
@@ -338,13 +306,11 @@ class CalendarEventApiHandlerTest extends \PHPUnit\Framework\TestCase
 
         $this->setExpectedFormValues(['notifyAttendees' => NotificationManager::NONE_NOTIFICATIONS_STRATEGY]);
 
-        $this->calendarEventManager
-            ->expects($this->once())
+        $this->calendarEventManager->expects($this->once())
             ->method('onEventUpdate')
             ->with($this->entity, clone $this->entity, $this->organization, false);
 
-        $this->notificationManager
-            ->expects($this->never())
+        $this->notificationManager->expects($this->never())
             ->method('onCreate');
 
         $this->featureChecker->expects(self::once())
@@ -361,15 +327,14 @@ class CalendarEventApiHandlerTest extends \PHPUnit\Framework\TestCase
 
         $this->setExpectedFormValues(['updateExceptions' => true]);
 
-        $this->calendarEventManager
-            ->expects($this->once())
+        $this->calendarEventManager->expects($this->once())
             ->method('onEventUpdate')
             ->with($this->entity, clone $this->entity, $this->organization, true);
 
         $this->handler->process($this->entity);
     }
 
-    protected function setExpectedFormValues(array $values)
+    private function setExpectedFormValues(array $values): void
     {
         $fields = ['contexts', 'notifyAttendees', 'updateExceptions'];
 
@@ -386,7 +351,7 @@ class CalendarEventApiHandlerTest extends \PHPUnit\Framework\TestCase
         $valueMapGet = [];
 
         foreach ($values as $name => $value) {
-            $field = $this->createMock('Symfony\Component\Form\FormInterface');
+            $field = $this->createMock(FormInterface::class);
             $field->expects($this->any())
                 ->method('getData')
                 ->willReturn($value);

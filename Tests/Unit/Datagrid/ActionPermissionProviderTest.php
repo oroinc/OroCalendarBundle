@@ -10,7 +10,7 @@ use Oro\Bundle\UserBundle\Entity\User;
 class ActionPermissionProviderTest extends \PHPUnit\Framework\TestCase
 {
     private const ADMIN = 1;
-    private const USER  = 2;
+    private const USER = 2;
 
     /** @var TokenAccessorInterface|\PHPUnit\Framework\MockObject\MockObject */
     private $tokenAccessor;

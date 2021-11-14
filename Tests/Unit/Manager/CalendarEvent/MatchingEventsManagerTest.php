@@ -16,8 +16,8 @@ class MatchingEventsManagerTest extends \PHPUnit\Framework\TestCase
 {
     use EntityTrait;
 
-    const UID = '17f409b2-7393-42b1-9976-3394d9f5302e';
-    const EMAIL = 'email@oroinc.com';
+    private const UID = '17f409b2-7393-42b1-9976-3394d9f5302e';
+    private const EMAIL = 'email@oroinc.com';
 
     /** @var EntityManager|\PHPUnit\Framework\MockObject\MockObject */
     private $entityManager;
@@ -30,22 +30,15 @@ class MatchingEventsManagerTest extends \PHPUnit\Framework\TestCase
 
     protected function setUp(): void
     {
-        $this->repository = $this->getMockBuilder(CalendarEventRepository::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $this->repository = $this->createMock(CalendarEventRepository::class);
+        $this->entityManager = $this->createMock(EntityManager::class);
 
-        $this->entityManager = $this->getMockBuilder(EntityManager::class)
-            ->disableOriginalConstructor()
-            ->getMock();
         $this->entityManager->expects($this->any())
             ->method('getRepository')
             ->with(CalendarEvent::class)
             ->willReturn($this->repository);
 
-        /** @var DoctrineHelper|\PHPUnit\Framework\MockObject\MockObject $doctrineHelper */
-        $doctrineHelper = $this->getMockBuilder(DoctrineHelper::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $doctrineHelper = $this->createMock(DoctrineHelper::class);
         $doctrineHelper->expects($this->any())
             ->method('getEntityManagerForClass')
             ->with(CalendarEvent::class)

@@ -8,7 +8,7 @@ use Symfony\Component\Validator\Constraint;
 class RecurringCalendarEventExceptionConstraintTest extends \PHPUnit\Framework\TestCase
 {
     /** @var RecurringCalendarEventExceptionConstraint */
-    protected $constraint;
+    private $constraint;
 
     protected function setUp(): void
     {

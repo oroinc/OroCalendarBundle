@@ -15,17 +15,16 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 
 class RecurrenceFormTypeTest extends \PHPUnit\Framework\TestCase
 {
-    /** @var RecurrenceFormType */
-    private $type;
-
     /** @var Recurrence */
     private $model;
 
+    /** @var RecurrenceFormType */
+    private $type;
+
     protected function setUp(): void
     {
-        $strategy = $this->createMock(StrategyInterface::class);
+        $this->model = new Recurrence($this->createMock(StrategyInterface::class));
 
-        $this->model = new Recurrence($strategy);
         $this->type = new RecurrenceFormType($this->model);
     }
 
@@ -135,7 +134,7 @@ class RecurrenceFormTypeTest extends \PHPUnit\Framework\TestCase
         $builder->expects($this->exactly(count($formFields)))
             ->method('add')
             ->withConsecutive(...$formFields)
-            ->will($this->returnSelf());
+            ->willReturnSelf();
 
         $this->type->buildForm($builder, []);
     }
