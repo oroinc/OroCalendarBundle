@@ -16,14 +16,14 @@ class UpdateEmailTemplates extends AbstractHashEmailMigration implements Version
     protected function getEmailHashesToUpdate(): array
     {
         return [
-            'calendar_invitation_accepted' => ['ded063280f6463f1f30093c00e58b380'],
-            'calendar_invitation_declined' => ['2699723490ba63ffdf8cd76292bd820c'],
-            'calendar_invitation_delete_child_event' => ['740d3535b2e4041de1d4f1a274e4e2a1'],
+            'calendar_invitation_accepted' => ['5813143a791f57fb3158d7b4960122ec'],
+            'calendar_invitation_declined' => ['c91fcd2ebe0d4e4b9e4fa2df963cc3ba'],
+            'calendar_invitation_delete_child_event' => ['1c10bdd969f45db6d0a94622a24b59af'],
             'calendar_invitation_delete_parent_event' => ['b68f76873d6b3943fad494a8bb67509f'],
-            'calendar_invitation_invite' => ['0abf7c7a3fc7e8157b9e1bd689dae9ec'],
-            'calendar_invitation_tentative' => ['4e6dc61a75709a675ad6c1bb66f2e215'],
-            'calendar_invitation_uninvite' => ['473e922ff0996f0b70b76c6f0f134810'],
-            'calendar_invitation_update' => ['f07c69062bd6f51b698946a94fc98bdc'],
+            'calendar_invitation_invite' => ['7c13cd69c7c8c3339228d3543b75772f'],
+            'calendar_invitation_tentative' => ['e6e60b036ac99e839d4f8174132b7361'],
+            'calendar_invitation_uninvite' => ['1c0974b516ec547ed5e8fd25d7075572'],
+            'calendar_invitation_update' => ['20f589fcdc7f97fe8b0b4977ba1585a7'],
         ];
     }
 

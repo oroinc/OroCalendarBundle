@@ -12,7 +12,7 @@
     <% var {{ name }}Template = '';
     if ({{ name }}TemplateType === 'single') {
         {{ name }}Template = '
-        {%- spaceless %}
+        {%- apply spaceless %}
         <div class="control-group">
             <div class="controls">
                 <div id="{{ id }}" class="horizontal validate-group">
@@ -23,11 +23,11 @@
                 </div>
             </div>
         </div>
-        {% endspaceless -%}
+        {% endapply -%}
         ';
     } else if ({{ name }}TemplateType === 'multiple') {
         {{ name }}Template = '
-        {%- spaceless %}
+        {%- apply spaceless %}
         <div class="control-group">
             <label data-required="1" class="control-label required" for="{{ id }}">{{ label|trans }}<em>*</em></label>
             <div class="controls">
@@ -38,7 +38,7 @@
                 </select>
             </div>
         </div>
-        {% endspaceless -%}
+        {% endapply -%}
         ';
     } %>
     <% if ({{ name }}Template) { %>

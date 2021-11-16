@@ -16,7 +16,7 @@ class UpdateEventsEmailTemplates extends AbstractHashEmailMigration implements V
     protected function getEmailHashesToUpdate(): array
     {
         return [
-            'calendar_reminder' => ['c6c1fda896750b5897aa1c1e39131fe7']
+            'calendar_reminder' => ['315c7086a0249bc981ff250a8c93f7f3']
         ];
     }
 

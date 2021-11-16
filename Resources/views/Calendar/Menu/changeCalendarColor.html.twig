@@ -1,6 +1,6 @@
 {% import '@OroNavigation/Menu/menu.html.twig' as oro_menu %}
 
-{% spaceless %}
+{% apply spaceless %}
 <li {{ oro_menu.attributes(itemAttributes) }}>
     <div class="color-picker"></div>
     <div class="dropdown-divider context-menu-divider"></div>
@@ -12,4 +12,4 @@
             <span class="custom-color-name">{{ 'oro.calendar.context.edit_color'|trans }}</span>
         </a>
 </li>
-{% endspaceless %}
+{% endapply %}

@@ -126,7 +126,7 @@
     </script>
 
     <script type="text/template" id="template-calendar-connection-item">
-        {% spaceless %}
+        {% apply spaceless %}
         <li class="connection-item<% if (visible) { %> active<% } %>">
             <span class="connection-item-label" data-role="connection-label">
                 <span class="calendar-color">
@@ -157,7 +157,7 @@
                 </div>
             </div>
         </li>
-        {% endspaceless %}
+        {% endapply %}
     </script>
 
     {{ calendarTemplates.calendar_event_view_template('template-view-calendar-event') }}

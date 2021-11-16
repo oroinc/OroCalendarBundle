@@ -1,6 +1,6 @@
 {% import '@OroNavigation/Menu/menu.html.twig' as oro_menu %}
 
-{% spaceless %}
+{% apply spaceless %}
 <li{{ oro_menu.attributes(itemAttributes) }}>
     {%- set linkAttributes = item.linkAttributes %}
     <a href="#" role="button" {{ oro_menu.attributes(linkAttributes) }}>
@@ -11,4 +11,4 @@
     <% } %>
     </a>
 </li>
-{% endspaceless %}
+{% endapply %}

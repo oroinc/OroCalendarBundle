@@ -24,9 +24,9 @@
     {% import '@OroCalendar/invitations.html.twig' as invitations %}
     {% import _self as templates %}
     {% macro rawLink(parameters) %}
-        {% spaceless %}
+        {% apply spaceless %}
             <a href="{{ parameters.path }}" {% for dataItemName,dataItemValue in parameters.data %} data-{{ dataItemName }}="{{ dataItemValue|e('html_attr')|raw }}"{% endfor %} title="{{ parameters.title }}">{{ parameters.label|trim }}</a>
-        {% endspaceless %}
+        {% endapply %}
     {% endmacro %}
     <div class="widget-content">
         <div class="row-fluid form-horizontal">
@@ -172,8 +172,10 @@
             {{ form_row(form.reminders) }}
         <% } %>
         {{ form_row(form.notifyAttendees) }}
-        {% for child in form.children if child.vars.extra_field is defined and child.vars.extra_field %}
-            {{ form_row(child) }}
+        {% for child in form.children %}
+            {% if child.vars.extra_field is defined and child.vars.extra_field %}
+                {{ form_row(child) }}
+            {% endif %}
         {% endfor %}
         {{ invitations.notify_attendees_component() }}
     {% endset %}
