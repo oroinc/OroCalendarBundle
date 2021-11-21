@@ -1,15 +1,17 @@
 <?php
 
-namespace Oro\Bundle\CalendarBundle\Tests\Unit\Validator;
+namespace Oro\Bundle\CalendarBundle\Tests\Unit\Validator\Constraints;
 
 use Oro\Bundle\CalendarBundle\Entity\Calendar;
 use Oro\Bundle\CalendarBundle\Entity\CalendarEvent;
 use Oro\Bundle\CalendarBundle\Entity\Recurrence;
 use Oro\Bundle\CalendarBundle\Manager\CalendarEventManager;
-use Oro\Bundle\CalendarBundle\Validator\Constraints\RecurringCalendarEventExceptionConstraint;
-use Oro\Bundle\CalendarBundle\Validator\RecurringCalendarEventExceptionValidator;
+use Oro\Bundle\CalendarBundle\Validator\Constraints\RecurringCalendarEventException;
+use Oro\Bundle\CalendarBundle\Validator\Constraints\RecurringCalendarEventExceptionValidator;
 use Oro\Component\Testing\ReflectionUtil;
 use Symfony\Component\Form\FormInterface;
+use Symfony\Component\Validator\Constraint;
+use Symfony\Component\Validator\Exception\UnexpectedTypeException;
 use Symfony\Component\Validator\Test\ConstraintValidatorTestCase;
 
 class RecurringCalendarEventExceptionValidatorTest extends ConstraintValidatorTestCase
@@ -45,9 +47,23 @@ class RecurringCalendarEventExceptionValidatorTest extends ConstraintValidatorTe
         return $form;
     }
 
+    public function testUnexpectedConstraint()
+    {
+        $this->expectException(UnexpectedTypeException::class);
+
+        $this->validator->validate($this->createMock(CalendarEvent::class), $this->createMock(Constraint::class));
+    }
+
+    public function testValueIsNotCalendarEvent()
+    {
+        $this->expectException(UnexpectedTypeException::class);
+
+        $this->validator->validate('test', new RecurringCalendarEventException());
+    }
+
     public function testValidateNoErrors()
     {
-        $this->validator->validate(new CalendarEvent(), new RecurringCalendarEventExceptionConstraint());
+        $this->validator->validate(new CalendarEvent(), new RecurringCalendarEventException());
 
         $this->assertNoViolation();
     }
@@ -60,7 +76,7 @@ class RecurringCalendarEventExceptionValidatorTest extends ConstraintValidatorTe
         ReflectionUtil::setId($calendarEvent, 123);
         $calendarEvent->setRecurringEvent($recurringEvent);
 
-        $constraint = new RecurringCalendarEventExceptionConstraint();
+        $constraint = new RecurringCalendarEventException();
         $this->validator->validate($calendarEvent, $constraint);
 
         $this
@@ -97,7 +113,7 @@ class RecurringCalendarEventExceptionValidatorTest extends ConstraintValidatorTe
         ReflectionUtil::setId($calendarEvent, 123);
         $calendarEvent->setRecurringEvent($recurringEvent);
 
-        $constraint = new RecurringCalendarEventExceptionConstraint();
+        $constraint = new RecurringCalendarEventException();
         $this->setRoot($form);
         $this->validator->validate($calendarEvent, $constraint);
 
@@ -131,7 +147,7 @@ class RecurringCalendarEventExceptionValidatorTest extends ConstraintValidatorTe
         ReflectionUtil::setId($calendarEvent, 123);
         $calendarEvent->setRecurringEvent($recurringEvent);
 
-        $constraint = new RecurringCalendarEventExceptionConstraint();
+        $constraint = new RecurringCalendarEventException();
         $this->setRoot($form);
         $this->validator->validate($calendarEvent, $constraint);
 

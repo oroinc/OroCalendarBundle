@@ -1,13 +1,18 @@
 <?php
 
-namespace Oro\Bundle\CalendarBundle\Tests\Unit\Validator;
+namespace Oro\Bundle\CalendarBundle\Tests\Unit\Validator\Constraints;
 
 use Oro\Bundle\CalendarBundle\Entity;
 use Oro\Bundle\CalendarBundle\Model;
 use Oro\Bundle\CalendarBundle\Validator\Constraints\Recurrence;
-use Oro\Bundle\CalendarBundle\Validator\RecurrenceValidator;
+use Oro\Bundle\CalendarBundle\Validator\Constraints\RecurrenceValidator;
+use Symfony\Component\Validator\Constraint;
+use Symfony\Component\Validator\Exception\UnexpectedTypeException;
 use Symfony\Component\Validator\Test\ConstraintValidatorTestCase;
 
+/**
+ * @SuppressWarnings(PHPMD.TooManyPublicMethods)
+ */
 class RecurrenceValidatorTest extends ConstraintValidatorTestCase
 {
     private static $expectedRecurrenceTypesValues = [
@@ -50,6 +55,20 @@ class RecurrenceValidatorTest extends ConstraintValidatorTestCase
     protected function createValidator(): RecurrenceValidator
     {
         return new RecurrenceValidator($this->model);
+    }
+
+    public function testUnexpectedConstraint()
+    {
+        $this->expectException(UnexpectedTypeException::class);
+
+        $this->validator->validate($this->createMock(Entity\Recurrence::class), $this->createMock(Constraint::class));
+    }
+
+    public function testValueIsNotRecurrenceEntity()
+    {
+        $this->expectException(UnexpectedTypeException::class);
+
+        $this->validator->validate('test', new Recurrence());
     }
 
     public function testRecurrenceHasNoErrors(): void
@@ -161,7 +180,7 @@ class RecurrenceValidatorTest extends ConstraintValidatorTestCase
     public function testRecurrenceHasTooSmallInterval(): void
     {
         $actualInterval = -1;
-        $minInterval = RecurrenceValidator::MIN_INTERVAL;
+        $minInterval = 1;
         $recurrence = new Entity\Recurrence();
         $recurrence->setRecurrenceType(Model\Recurrence::TYPE_DAILY);
         $recurrence->setInterval($actualInterval);

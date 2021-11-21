@@ -1,40 +1,42 @@
 <?php
 
-namespace Oro\Bundle\CalendarBundle\Validator;
+namespace Oro\Bundle\CalendarBundle\Validator\Constraints;
 
 use Oro\Bundle\CalendarBundle\Entity;
 use Oro\Bundle\CalendarBundle\Model;
 use Symfony\Component\Validator\Constraint;
 use Symfony\Component\Validator\ConstraintValidator;
 use Symfony\Component\Validator\Context\ExecutionContextInterface;
+use Symfony\Component\Validator\Exception\UnexpectedTypeException;
 
+/**
+ * Validates that the calendar event recurrence is valid.
+ */
 class RecurrenceValidator extends ConstraintValidator
 {
     const MIN_INTERVAL = 1;
 
-    /**
-     * @var Model\Recurrence
-     */
+    /** @var Model\Recurrence */
     protected $model;
 
-    /**
-     * RecurrenceValidator constructor.
-     */
     public function __construct(Model\Recurrence $recurrenceModel)
     {
         $this->model = $recurrenceModel;
     }
 
     /**
-     * Validates recurrence according to its recurrenceType.
-     *
-     * @param Entity\Recurrence $value
-     * @param Constraints\Recurrence $constraint
+     * {@inheritdoc}
      */
     public function validate($value, Constraint $constraint)
     {
-        $hasValidRecurrenceType = $this->validateRecurrenceType($value, $constraint);
+        if (!$constraint instanceof Recurrence) {
+            throw new UnexpectedTypeException($constraint, Recurrence::class);
+        }
+        if (!$value instanceof Entity\Recurrence) {
+            throw new UnexpectedTypeException($value, Entity\Recurrence::class);
+        }
 
+        $hasValidRecurrenceType = $this->validateRecurrenceType($value, $constraint);
         if (!$hasValidRecurrenceType) {
             return;
         }
@@ -49,9 +51,10 @@ class RecurrenceValidator extends ConstraintValidator
      * Validates recurrence type.
      *
      * @param Entity\Recurrence $value
+     * @param Recurrence $constraint
      * @return bool
      */
-    protected function validateRecurrenceType(Entity\Recurrence $value, Constraints\Recurrence $constraint)
+    protected function validateRecurrenceType(Entity\Recurrence $value, Recurrence $constraint)
     {
         $recurrenceType = $value->getRecurrenceType();
 
@@ -66,10 +69,10 @@ class RecurrenceValidator extends ConstraintValidator
      *
      * @param mixed $value
      * @param array $allowedValues
-     * @param Constraints\Recurrence $constraint
+     * @param Recurrence $constraint
      * @param string $path
      */
-    protected function validateChoice($value, array $allowedValues, Constraints\Recurrence $constraint, $path)
+    protected function validateChoice($value, array $allowedValues, Recurrence $constraint, $path)
     {
         if ($value === null) {
             return;
@@ -89,10 +92,10 @@ class RecurrenceValidator extends ConstraintValidator
      * Validates value is not blank.
      *
      * @param mixed $value
-     * @param Constraints\Recurrence $constraint
+     * @param Recurrence $constraint
      * @param string $path
      */
-    protected function validateNotBlank($value, Constraints\Recurrence $constraint, $path)
+    protected function validateNotBlank($value, Recurrence $constraint, $path)
     {
         if ($value === null || (is_array($value) && empty($value))) {
             $this->addViolation(
@@ -107,7 +110,7 @@ class RecurrenceValidator extends ConstraintValidator
     /**
      * Validates all required fields are not blank.
      */
-    protected function validateRequiredProperties(Entity\Recurrence $recurrence, Constraints\Recurrence $constraint)
+    protected function validateRequiredProperties(Entity\Recurrence $recurrence, Recurrence $constraint)
     {
         $requiredProperties = $this->model->getRequiredProperties($recurrence);
 
@@ -121,7 +124,7 @@ class RecurrenceValidator extends ConstraintValidator
     /**
      * Validates interval property.
      */
-    protected function validateInterval(Entity\Recurrence $recurrence, Constraints\Recurrence $constraint)
+    protected function validateInterval(Entity\Recurrence $recurrence, Recurrence $constraint)
     {
         $interval = $recurrence->getInterval();
 
@@ -152,10 +155,10 @@ class RecurrenceValidator extends ConstraintValidator
      * @param float|integer $value
      * @param float|integer|null $min
      * @param float|integer|null $max
-     * @param Constraints\Recurrence $constraint
+     * @param Recurrence $constraint
      * @param string $path
      */
-    protected function validateRange($value, $min, $max, Constraints\Recurrence $constraint, $path)
+    protected function validateRange($value, $min, $max, Recurrence $constraint, $path)
     {
         if ($value === null || !is_numeric($value)) {
             return;
@@ -183,7 +186,7 @@ class RecurrenceValidator extends ConstraintValidator
     /**
      * Validates recurrence type.
      */
-    protected function validateEndTime(Entity\Recurrence $value, Constraints\Recurrence $constraint)
+    protected function validateEndTime(Entity\Recurrence $value, Recurrence $constraint)
     {
         $endTime = $value->getEndTime();
         $startTime = $value->getStartTime();
@@ -207,7 +210,7 @@ class RecurrenceValidator extends ConstraintValidator
     /**
      * Validates day of week type.
      */
-    protected function validateDayOfWeek(Entity\Recurrence $value, Constraints\Recurrence $constraint)
+    protected function validateDayOfWeek(Entity\Recurrence $value, Recurrence $constraint)
     {
         $dayOfWeek = $value->getDayOfWeek();
 
@@ -224,10 +227,10 @@ class RecurrenceValidator extends ConstraintValidator
      *
      * @param mixed $value
      * @param array $allowedValues
-     * @param Constraints\Recurrence $constraint
+     * @param Recurrence $constraint
      * @param string $path
      */
-    protected function validateMultipleChoices($value, array $allowedValues, Constraints\Recurrence $constraint, $path)
+    protected function validateMultipleChoices($value, array $allowedValues, Recurrence $constraint, $path)
     {
         if ($value === null || !is_array($value)) {
             return;

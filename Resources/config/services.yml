@@ -456,18 +456,18 @@ services:
             - '@oro_calendar.recurrence.strategy'
 
     oro_calendar.validator.recurrence:
-        class: Oro\Bundle\CalendarBundle\Validator\RecurrenceValidator
+        class: Oro\Bundle\CalendarBundle\Validator\Constraints\RecurrenceValidator
         arguments:
             - '@oro_calendar.model.recurrence'
         tags:
-            - { name: validator.constraint_validator, alias: oro_calendar.recurrence_validator }
+            - { name: validator.constraint_validator }
 
     oro_calendar.validator.recurring_calendar_event_exception:
-        class: Oro\Bundle\CalendarBundle\Validator\RecurringCalendarEventExceptionValidator
+        class: Oro\Bundle\CalendarBundle\Validator\Constraints\RecurringCalendarEventExceptionValidator
         arguments:
             - '@oro_calendar.calendar_event_manager'
         tags:
-            - { name: validator.constraint_validator, alias: oro_calendar.recurring_calendar_event_exception_validator }
+            - { name: validator.constraint_validator }
 
     oro_calendar.validator.unique_uid:
         class: Oro\Bundle\CalendarBundle\Validator\Constraints\UniqueUidValidator

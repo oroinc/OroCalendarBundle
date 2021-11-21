@@ -1,22 +1,21 @@
 <?php
 
-namespace Oro\Bundle\CalendarBundle\Validator;
+namespace Oro\Bundle\CalendarBundle\Validator\Constraints;
 
 use Oro\Bundle\CalendarBundle\Entity\Calendar;
 use Oro\Bundle\CalendarBundle\Entity\CalendarEvent;
 use Oro\Bundle\CalendarBundle\Manager\CalendarEventManager;
-use Oro\Bundle\CalendarBundle\Validator\Constraints\RecurringCalendarEventExceptionConstraint;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\Validator\Constraint;
 use Symfony\Component\Validator\ConstraintValidator;
+use Symfony\Component\Validator\Exception\UnexpectedTypeException;
 
 /**
- * Responsible to validate cases related to exception of recurring calendar event.
+ * Validates cases related to exception of recurring calendar event.
  */
 class RecurringCalendarEventExceptionValidator extends ConstraintValidator
 {
-    /** @var CalendarEventManager */
-    protected $calendarEventManager;
+    private CalendarEventManager $calendarEventManager;
 
     public function __construct(CalendarEventManager $calendarEventManager)
     {
@@ -24,36 +23,34 @@ class RecurringCalendarEventExceptionValidator extends ConstraintValidator
     }
 
     /**
-     * @param CalendarEvent $value
-     * @param RecurringCalendarEventExceptionConstraint $constraint
+     * {@inheritdoc}
      */
     public function validate($value, Constraint $constraint)
     {
-        $this->validateCalendarEvent($value, $constraint);
-    }
+        if (!$constraint instanceof RecurringCalendarEventException) {
+            throw new UnexpectedTypeException($constraint, RecurringCalendarEventException::class);
+        }
+        if (!$value instanceof CalendarEvent) {
+            throw new UnexpectedTypeException($value, CalendarEvent::class);
+        }
 
-    public function validateCalendarEvent(
-        CalendarEvent $value,
-        RecurringCalendarEventExceptionConstraint
-        $constraint
-    ) {
         $this->validateSelfRelation($value, $constraint);
         $this->validateRecurrence($value, $constraint);
         $this->validateCalendarUid($value, $constraint);
     }
 
-    protected function validateSelfRelation(
+    private function validateSelfRelation(
         CalendarEvent $value,
-        RecurringCalendarEventExceptionConstraint $constraint
+        RecurringCalendarEventException $constraint
     ) {
         if ($value->getRecurringEvent() && $value->getRecurringEvent()->getId() === $value->getId()) {
             $this->context->addViolation($constraint->selfRelationMessage);
         }
     }
 
-    protected function validateRecurrence(
+    private function validateRecurrence(
         CalendarEvent $value,
-        RecurringCalendarEventExceptionConstraint $constraint
+        RecurringCalendarEventException $constraint
     ) {
         if ($value->getRecurringEvent() && $value->getRecurringEvent()->getRecurrence() === null
             && $value->getRecurringEvent()->getParent() === null) {
@@ -68,9 +65,9 @@ class RecurringCalendarEventExceptionValidator extends ConstraintValidator
      *
      * @SuppressWarnings(PHPMD.CyclomaticComplexity)
      */
-    protected function validateCalendarUid(
+    private function validateCalendarUid(
         CalendarEvent $value,
-        RecurringCalendarEventExceptionConstraint $constraint
+        RecurringCalendarEventException $constraint
     ) {
         $recurringEvent = $value->getRecurringEvent();
         $rootContext = $this->context->getRoot();
