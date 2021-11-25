@@ -1,12 +1,12 @@
 <div class="control-group control-group-checkbox">
     <div class="control-label wrap">
-        <label for="recurrence-repeat-<%= cid %>">
+        <label for="recurrence-repeat-<%- cid %>">
             <%- _.__('oro.calendar.event.recurrence.control-label.repeat') %>
         </label>
     </div>
     <div class="controls">
         <input type="checkbox"
-               id="recurrence-repeat-<%= cid %>"
+               id="recurrence-repeat-<%- cid %>"
                data-name="recurrence-repeat"
                <% if (recurrenceType) { %> checked<% } %>>
     </div>
@@ -25,12 +25,12 @@
     <% } %>
     <div class="control-group control-group-choice">
         <div class="control-label wrap">
-            <label for="recurrence-repeats-<%= cid %>">
+            <label for="recurrence-repeats-<%- cid %>">
             <%- _.__('oro.calendar.event.recurrence.control-label.repeats') %>
             </label>
         </div>
         <div class="controls">
-            <select id="recurrence-repeats-<%= cid %>"
+            <select id="recurrence-repeats-<%- cid %>"
                     data-name="recurrence-repeats"
                     class="recurrence-repeats__select">
             <% _.each(repeatsOptions, function(option) { %>
@@ -45,7 +45,7 @@
     <div class="control-group-container" data-name="recurrence-ends"></div>
     <div class="control-group recurrence-summary alert-info">
         <div class="control-label wrap">
-            <label><%= _.__('oro.calendar.event.recurrence.control-label.summary') %>:</label>
+            <label><%- _.__('oro.calendar.event.recurrence.control-label.summary') %>:</label>
         </div>
         <div class="controls" data-name="recurrence-summary"></div>
     </div>
