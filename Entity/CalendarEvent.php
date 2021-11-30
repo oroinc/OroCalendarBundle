@@ -53,9 +53,6 @@ use Oro\Bundle\UserBundle\Entity\User;
  *              "reminder_template_name"="calendar_reminder",
  *              "reminder_flash_template_identifier"="calendar_event_template"
  *          },
- *          "note"={
- *              "immutable"=true
- *          },
  *          "activity"={
  *              "route"="oro_calendar_event_activity_view",
  *              "acl"="oro_calendar_view",

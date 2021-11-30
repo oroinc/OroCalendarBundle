@@ -10,6 +10,7 @@ use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\ConfigField;
 use Oro\Bundle\OrganizationBundle\Entity\Organization;
 
 /**
+ * System calendar entity
  * @ORM\Entity(repositoryClass="Oro\Bundle\CalendarBundle\Entity\Repository\SystemCalendarRepository")
  * @ORM\Table(
  *      name="oro_system_calendar",
@@ -22,9 +23,6 @@ use Oro\Bundle\OrganizationBundle\Entity\Organization;
  *      defaultValues={
  *          "entity"={
  *              "icon"="fa-calendar"
- *          },
- *          "note"={
- *              "immutable"=true
  *          },
  *          "activity"={
  *              "immutable"=true

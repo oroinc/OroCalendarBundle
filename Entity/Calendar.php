@@ -10,6 +10,7 @@ use Oro\Bundle\OrganizationBundle\Entity\Organization;
 use Oro\Bundle\UserBundle\Entity\User;
 
 /**
+ * Calendar entity
  * @ORM\Entity(repositoryClass="Oro\Bundle\CalendarBundle\Entity\Repository\CalendarRepository")
  * @ORM\Table(name="oro_calendar")
  * @Config(
@@ -28,9 +29,6 @@ use Oro\Bundle\UserBundle\Entity\User;
  *              "type"="ACL",
  *              "group_name"="",
  *              "category"="account_management"
- *          },
- *          "note"={
- *              "immutable"=true
  *          },
  *          "activity"={
  *              "immutable"=true

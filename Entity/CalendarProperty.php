@@ -25,9 +25,6 @@ use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\Config;
  *          "entity"={
  *              "icon"="fa-cog"
  *          },
- *          "note"={
- *              "immutable"=true
- *          },
  *          "comment"={
  *              "immutable"=true
  *          },
