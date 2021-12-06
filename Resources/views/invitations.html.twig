@@ -22,7 +22,9 @@
             <i {% if invitationClass %}class="{{ invitationClass }}" title="{{ attendee.status.name }}"{% endif %}></i>
             <span class="list-group-item-text">
                 {% set avatar = attendee.user ? attendee.user.avatar %}
-                <img src="{{ avatar ? filtered_image_url(avatar, 'avatar_xsmall') : asset('bundles/oroui/img/avatar-xsmall.png') }}" />
+                {% include '@OroAttachment/Twig/picture.html.twig' with {
+                    sources: oro_filtered_picture_sources(avatar, 'avatar_xsmall') ?: asset('bundles/oroui/img/avatar-xsmall.png'),
+                } %}
                 {% if (is_granted('oro_user_user_view') and attendee.user) %}
                     {{ UI.link({
                         'label' : attendee.user|oro_format_name|default('N/A'|trans),
