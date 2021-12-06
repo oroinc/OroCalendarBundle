@@ -194,34 +194,23 @@ class RecurringEventWithAttendeesAndAttendeesCleanTest extends AbstractUseCaseTe
         $this->assertCount(1, $canceledCalendarEvents);
     }
 
-    /**
-     * @return array
-     */
-    protected function checkPreconditions()
+    private function checkPreconditions(): void
     {
         $result = $this->getAllCalendarEvents(self::DEFAULT_USER_CALENDAR_ID);
 
         $this->assertEmpty($result);
     }
 
-    /**
-     * @param int $number
-     */
-    protected function assertEventQuantityInDB($number)
+    private function assertEventQuantityInDB(int $number): void
     {
         $allEvents = $this->getContainer()->get('doctrine')
-            ->getRepository('OroCalendarBundle:CalendarEvent')
+            ->getRepository(CalendarEvent::class)
             ->findAll();
 
         $this->assertCount($number, $allEvents);
     }
 
-    /**
-     * @param int $calendarId
-     *
-     * @return array
-     */
-    protected function getAllCalendarEvents($calendarId)
+    private function getAllCalendarEvents(int $calendarId): array
     {
         $request = [
             'calendar'    => $calendarId,
@@ -234,26 +223,12 @@ class RecurringEventWithAttendeesAndAttendeesCleanTest extends AbstractUseCaseTe
     }
 
     /**
-     * @return array|CalendarEvent[]
+     * @return CalendarEvent[]
      */
-    protected function getCanceledCalendarEvents()
+    private function getCanceledCalendarEvents(): array
     {
-        $allEvents = $this->getEntityManager()
-            ->getRepository('OroCalendarBundle:CalendarEvent')
+        return $this->getEntityManager()
+            ->getRepository(CalendarEvent::class)
             ->findBy(['cancelled' => true]);
-
-        return $allEvents;
-    }
-
-    /**
-     * @return array|CalendarEvent[]
-     */
-    protected function getAllCalendarEventsFromDB()
-    {
-        $allEvents = $this->getEntityManager()
-            ->getRepository('OroCalendarBundle:CalendarEvent')
-            ->findAll();
-
-        return $allEvents;
     }
 }

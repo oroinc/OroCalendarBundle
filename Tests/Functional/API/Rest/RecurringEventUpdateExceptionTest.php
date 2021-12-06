@@ -131,7 +131,7 @@ class RecurringEventUpdateExceptionTest extends AbstractTestCase
                 'method'  => 'POST',
                 'url'     => $this->getUrl('oro_api_post_calendarevent'),
                 'server'  => $this->generateWsseAuthHeader('foo_user_1', 'foo_user_1_api_key'),
-                'content' => json_encode($eventData)
+                'content' => json_encode($eventData, JSON_THROW_ON_ERROR)
             ]
         );
         $response = $this->getRestResponseContent(['statusCode' => 201, 'contentType' => 'application/json']);
@@ -172,7 +172,7 @@ class RecurringEventUpdateExceptionTest extends AbstractTestCase
                 'method'  => 'POST',
                 'url'     => $this->getUrl('oro_api_post_calendarevent'),
                 'server'  => $this->generateWsseAuthHeader('foo_user_1', 'foo_user_1_api_key'),
-                'content' => json_encode($exceptionData)
+                'content' => json_encode($exceptionData, JSON_THROW_ON_ERROR)
             ]
         );
         $response = $this->getRestResponseContent(['statusCode' => 201, 'contentType' => 'application/json']);
@@ -186,12 +186,7 @@ class RecurringEventUpdateExceptionTest extends AbstractTestCase
                 'method'  => 'PUT',
                 'url'     => $this->getUrl('oro_api_put_calendarevent', ['id' => $recurringEvent->getId()]),
                 'server'  => $this->generateWsseAuthHeader('foo_user_1', 'foo_user_1_api_key'),
-                'content' => json_encode(
-                    array_replace_recursive(
-                        $eventData,
-                        $changedEventData
-                    )
-                )
+                'content' => json_encode(array_replace_recursive($eventData, $changedEventData), JSON_THROW_ON_ERROR)
             ]
         );
         $response = $this->getRestResponseContent(['statusCode' => 200, 'contentType' => 'application/json']);
@@ -382,7 +377,7 @@ class RecurringEventUpdateExceptionTest extends AbstractTestCase
                 'method'  => 'POST',
                 'url'     => $this->getUrl('oro_api_post_calendarevent'),
                 'server'  => $this->generateWsseAuthHeader('foo_user_1', 'foo_user_1_api_key'),
-                'content' => json_encode($eventData)
+                'content' => json_encode($eventData, JSON_THROW_ON_ERROR)
             ]
         );
         $response = $this->getRestResponseContent(['statusCode' => 201, 'contentType' => 'application/json']);
@@ -427,7 +422,7 @@ class RecurringEventUpdateExceptionTest extends AbstractTestCase
                 'method'  => 'POST',
                 'url'     => $this->getUrl('oro_api_post_calendarevent'),
                 'server'  => $this->generateWsseAuthHeader('foo_user_1', 'foo_user_1_api_key'),
-                'content' => json_encode($exceptionData)
+                'content' => json_encode($exceptionData, JSON_THROW_ON_ERROR)
             ]
         );
         $response = $this->getRestResponseContent(['statusCode' => 201, 'contentType' => 'application/json']);
@@ -443,7 +438,7 @@ class RecurringEventUpdateExceptionTest extends AbstractTestCase
                 'method'  => 'PUT',
                 'url'     => $this->getUrl('oro_api_put_calendarevent', ['id' => $recurringEvent->getId()]),
                 'server'  => $this->generateWsseAuthHeader('foo_user_1', 'foo_user_1_api_key'),
-                'content' => json_encode($eventData)
+                'content' => json_encode($eventData, JSON_THROW_ON_ERROR)
             ]
         );
         $response = $this->getRestResponseContent(['statusCode' => 200, 'contentType' => 'application/json']);
@@ -554,7 +549,7 @@ class RecurringEventUpdateExceptionTest extends AbstractTestCase
                 'method'  => 'POST',
                 'url'     => $this->getUrl('oro_api_post_calendarevent'),
                 'server'  => $this->generateWsseAuthHeader('foo_user_1', 'foo_user_1_api_key'),
-                'content' => json_encode($eventData)
+                'content' => json_encode($eventData, JSON_THROW_ON_ERROR)
             ]
         );
         $response = $this->getRestResponseContent(['statusCode' => 201, 'contentType' => 'application/json']);
@@ -593,7 +588,7 @@ class RecurringEventUpdateExceptionTest extends AbstractTestCase
                 'method'  => 'POST',
                 'url'     => $this->getUrl('oro_api_post_calendarevent'),
                 'server'  => $this->generateWsseAuthHeader('foo_user_1', 'foo_user_1_api_key'),
-                'content' => json_encode($exceptionData)
+                'content' => json_encode($exceptionData, JSON_THROW_ON_ERROR)
             ]
         );
         $response = $this->getRestResponseContent(['statusCode' => 201, 'contentType' => 'application/json']);
@@ -621,7 +616,7 @@ class RecurringEventUpdateExceptionTest extends AbstractTestCase
                 'method'  => 'PUT',
                 'url'     => $this->getUrl('oro_api_put_calendarevent', ['id' => $recurringEvent->getId()]),
                 'server'  => $this->generateWsseAuthHeader('foo_user_1', 'foo_user_1_api_key'),
-                'content' => json_encode($eventData)
+                'content' => json_encode($eventData, JSON_THROW_ON_ERROR)
             ]
         );
         $response = $this->getRestResponseContent(['statusCode' => 200, 'contentType' => 'application/json']);
@@ -818,7 +813,7 @@ class RecurringEventUpdateExceptionTest extends AbstractTestCase
                 'method'  => 'POST',
                 'url'     => $this->getUrl('oro_api_post_calendarevent'),
                 'server'  => $this->generateWsseAuthHeader('foo_user_1', 'foo_user_1_api_key'),
-                'content' => json_encode($eventData)
+                'content' => json_encode($eventData, JSON_THROW_ON_ERROR)
             ]
         );
         $response = $this->getRestResponseContent(['statusCode' => 201, 'contentType' => 'application/json']);
@@ -844,7 +839,7 @@ class RecurringEventUpdateExceptionTest extends AbstractTestCase
                 'method'  => 'POST',
                 'url'     => $this->getUrl('oro_api_post_calendarevent'),
                 'server'  => $this->generateWsseAuthHeader('foo_user_1', 'foo_user_1_api_key'),
-                'content' => json_encode($exceptionData)
+                'content' => json_encode($exceptionData, JSON_THROW_ON_ERROR)
             ]
         );
         $response = $this->getRestResponseContent(['statusCode' => 201, 'contentType' => 'application/json']);
@@ -1026,7 +1021,7 @@ class RecurringEventUpdateExceptionTest extends AbstractTestCase
                 'method'  => 'POST',
                 'url'     => $this->getUrl('oro_api_post_calendarevent'),
                 'server'  => $this->generateWsseAuthHeader('foo_user_1', 'foo_user_1_api_key'),
-                'content' => json_encode($eventData)
+                'content' => json_encode($eventData, JSON_THROW_ON_ERROR)
             ]
         );
         $response = $this->getRestResponseContent(['statusCode' => 201, 'contentType' => 'application/json']);
@@ -1065,7 +1060,7 @@ class RecurringEventUpdateExceptionTest extends AbstractTestCase
                 'method'  => 'POST',
                 'url'     => $this->getUrl('oro_api_post_calendarevent'),
                 'server'  => $this->generateWsseAuthHeader('foo_user_1', 'foo_user_1_api_key'),
-                'content' => json_encode($exceptionData)
+                'content' => json_encode($exceptionData, JSON_THROW_ON_ERROR)
             ]
         );
         $response = $this->getRestResponseContent(['statusCode' => 201, 'contentType' => 'application/json']);
@@ -1099,7 +1094,7 @@ class RecurringEventUpdateExceptionTest extends AbstractTestCase
                 'method'  => 'PUT',
                 'url'     => $this->getUrl('oro_api_put_calendarevent', ['id' => $recurringEvent->getId()]),
                 'server'  => $this->generateWsseAuthHeader('foo_user_1', 'foo_user_1_api_key'),
-                'content' => json_encode($eventData)
+                'content' => json_encode($eventData, JSON_THROW_ON_ERROR)
             ]
         );
         $response = $this->getRestResponseContent(['statusCode' => 200, 'contentType' => 'application/json']);
@@ -1326,7 +1321,7 @@ class RecurringEventUpdateExceptionTest extends AbstractTestCase
                 'method'  => 'POST',
                 'url'     => $this->getUrl('oro_api_post_calendarevent'),
                 'server'  => $this->generateWsseAuthHeader('foo_user_1', 'foo_user_1_api_key'),
-                'content' => json_encode($eventData)
+                'content' => json_encode($eventData, JSON_THROW_ON_ERROR)
             ]
         );
         $response = $this->getRestResponseContent(['statusCode' => 201, 'contentType' => 'application/json']);
@@ -1365,7 +1360,7 @@ class RecurringEventUpdateExceptionTest extends AbstractTestCase
                 'method'  => 'POST',
                 'url'     => $this->getUrl('oro_api_post_calendarevent'),
                 'server'  => $this->generateWsseAuthHeader('foo_user_1', 'foo_user_1_api_key'),
-                'content' => json_encode($exceptionData)
+                'content' => json_encode($exceptionData, JSON_THROW_ON_ERROR)
             ]
         );
         $response = $this->getRestResponseContent(['statusCode' => 201, 'contentType' => 'application/json']);
@@ -1399,7 +1394,7 @@ class RecurringEventUpdateExceptionTest extends AbstractTestCase
                 'method'  => 'PUT',
                 'url'     => $this->getUrl('oro_api_put_calendarevent', ['id' => $recurringEvent->getId()]),
                 'server'  => $this->generateWsseAuthHeader('foo_user_1', 'foo_user_1_api_key'),
-                'content' => json_encode($eventData)
+                'content' => json_encode($eventData, JSON_THROW_ON_ERROR)
             ]
         );
         $response = $this->getRestResponseContent(['statusCode' => 200, 'contentType' => 'application/json']);
@@ -1681,7 +1676,7 @@ class RecurringEventUpdateExceptionTest extends AbstractTestCase
                 'method'  => 'POST',
                 'url'     => $this->getUrl('oro_api_post_calendarevent'),
                 'server'  => $this->generateWsseAuthHeader('foo_user_1', 'foo_user_1_api_key'),
-                'content' => json_encode($eventData)
+                'content' => json_encode($eventData, JSON_THROW_ON_ERROR)
             ]
         );
         $response = $this->getRestResponseContent(['statusCode' => 201, 'contentType' => 'application/json']);
@@ -1707,7 +1702,7 @@ class RecurringEventUpdateExceptionTest extends AbstractTestCase
                 'method'  => 'POST',
                 'url'     => $this->getUrl('oro_api_post_calendarevent'),
                 'server'  => $this->generateWsseAuthHeader('foo_user_1', 'foo_user_1_api_key'),
-                'content' => json_encode($exceptionData)
+                'content' => json_encode($exceptionData, JSON_THROW_ON_ERROR)
             ]
         );
         $response = $this->getRestResponseContent(['statusCode' => 201, 'contentType' => 'application/json']);
@@ -1735,7 +1730,7 @@ class RecurringEventUpdateExceptionTest extends AbstractTestCase
                 'method'  => 'PUT',
                 'url'     => $this->getUrl('oro_api_put_calendarevent', ['id' => $recurringEvent->getId()]),
                 'server'  => $this->generateWsseAuthHeader('foo_user_1', 'foo_user_1_api_key'),
-                'content' => json_encode($eventData)
+                'content' => json_encode($eventData, JSON_THROW_ON_ERROR)
             ]
         );
         $response = $this->getRestResponseContent(['statusCode' => 200, 'contentType' => 'application/json']);
@@ -1936,7 +1931,7 @@ class RecurringEventUpdateExceptionTest extends AbstractTestCase
                 'method'  => 'POST',
                 'url'     => $this->getUrl('oro_api_post_calendarevent'),
                 'server'  => $this->generateWsseAuthHeader('foo_user_1', 'foo_user_1_api_key'),
-                'content' => json_encode($eventData)
+                'content' => json_encode($eventData, JSON_THROW_ON_ERROR)
             ]
         );
         $response = $this->getRestResponseContent(['statusCode' => 201, 'contentType' => 'application/json']);
@@ -1974,7 +1969,7 @@ class RecurringEventUpdateExceptionTest extends AbstractTestCase
                 'method'  => 'POST',
                 'url'     => $this->getUrl('oro_api_post_calendarevent'),
                 'server'  => $this->generateWsseAuthHeader('foo_user_1', 'foo_user_1_api_key'),
-                'content' => json_encode($exceptionData)
+                'content' => json_encode($exceptionData, JSON_THROW_ON_ERROR)
             ]
         );
         $response = $this->getRestResponseContent(['statusCode' => 201, 'contentType' => 'application/json']);
@@ -1989,7 +1984,7 @@ class RecurringEventUpdateExceptionTest extends AbstractTestCase
                 'method'  => 'PUT',
                 'url'     => $this->getUrl('oro_api_put_calendarevent', ['id' => $exceptionEvent->getId()]),
                 'server'  => $this->generateWsseAuthHeader('foo_user_1', 'foo_user_1_api_key'),
-                'content' => json_encode($exceptionData)
+                'content' => json_encode($exceptionData, JSON_THROW_ON_ERROR)
             ]
         );
         $response = $this->getRestResponseContent(['statusCode' => 200, 'contentType' => 'application/json']);
@@ -2018,7 +2013,7 @@ class RecurringEventUpdateExceptionTest extends AbstractTestCase
                 'method'  => 'PUT',
                 'url'     => $this->getUrl('oro_api_put_calendarevent', ['id' => $recurringEvent->getId()]),
                 'server'  => $this->generateWsseAuthHeader('foo_user_1', 'foo_user_1_api_key'),
-                'content' => json_encode($eventData)
+                'content' => json_encode($eventData, JSON_THROW_ON_ERROR)
             ]
         );
         $response = $this->getRestResponseContent(['statusCode' => 200, 'contentType' => 'application/json']);
@@ -2252,7 +2247,7 @@ class RecurringEventUpdateExceptionTest extends AbstractTestCase
                 'method'  => 'POST',
                 'url'     => $this->getUrl('oro_api_post_calendarevent'),
                 'server'  => $this->generateWsseAuthHeader('foo_user_1', 'foo_user_1_api_key'),
-                'content' => json_encode($eventData)
+                'content' => json_encode($eventData, JSON_THROW_ON_ERROR)
             ]
         );
         $response = $this->getRestResponseContent(['statusCode' => 201, 'contentType' => 'application/json']);
@@ -2277,7 +2272,7 @@ class RecurringEventUpdateExceptionTest extends AbstractTestCase
                 'method'  => 'POST',
                 'url'     => $this->getUrl('oro_api_post_calendarevent'),
                 'server'  => $this->generateWsseAuthHeader('foo_user_1', 'foo_user_1_api_key'),
-                'content' => json_encode($exceptionData)
+                'content' => json_encode($exceptionData, JSON_THROW_ON_ERROR)
             ]
         );
         $response = $this->getRestResponseContent(['statusCode' => 201, 'contentType' => 'application/json']);
@@ -2380,7 +2375,7 @@ class RecurringEventUpdateExceptionTest extends AbstractTestCase
                 'method'  => 'PUT',
                 'url'     => $this->getUrl('oro_api_put_calendarevent', ['id' => $exceptionEvent->getId()]),
                 'server'  => $this->generateWsseAuthHeader('foo_user_1', 'foo_user_1_api_key'),
-                'content' => json_encode($exceptionData)
+                'content' => json_encode($exceptionData, JSON_THROW_ON_ERROR)
             ]
         );
         $response = $this->getRestResponseContent(['statusCode' => 200, 'contentType' => 'application/json']);
@@ -2592,7 +2587,7 @@ class RecurringEventUpdateExceptionTest extends AbstractTestCase
                 'method'  => 'POST',
                 'url'     => $this->getUrl('oro_api_post_calendarevent'),
                 'server'  => $this->generateWsseAuthHeader('foo_user_1', 'foo_user_1_api_key'),
-                'content' => json_encode($eventData)
+                'content' => json_encode($eventData, JSON_THROW_ON_ERROR)
             ]
         );
         $response = $this->getRestResponseContent(['statusCode' => 201, 'contentType' => 'application/json']);
@@ -2631,7 +2626,7 @@ class RecurringEventUpdateExceptionTest extends AbstractTestCase
                 'method'  => 'POST',
                 'url'     => $this->getUrl('oro_api_post_calendarevent'),
                 'server'  => $this->generateWsseAuthHeader('foo_user_1', 'foo_user_1_api_key'),
-                'content' => json_encode($exceptionData)
+                'content' => json_encode($exceptionData, JSON_THROW_ON_ERROR)
             ]
         );
         $response = $this->getRestResponseContent(['statusCode' => 201, 'contentType' => 'application/json']);
@@ -2659,7 +2654,7 @@ class RecurringEventUpdateExceptionTest extends AbstractTestCase
                 'method'  => 'PUT',
                 'url'     => $this->getUrl('oro_api_put_calendarevent', ['id' => $recurringEvent->getId()]),
                 'server'  => $this->generateWsseAuthHeader('foo_user_1', 'foo_user_1_api_key'),
-                'content' => json_encode($eventData)
+                'content' => json_encode($eventData, JSON_THROW_ON_ERROR)
             ]
         );
         $response = $this->getRestResponseContent(['statusCode' => 200, 'contentType' => 'application/json']);
@@ -2876,7 +2871,7 @@ class RecurringEventUpdateExceptionTest extends AbstractTestCase
                 'method'  => 'POST',
                 'url'     => $this->getUrl('oro_api_post_calendarevent'),
                 'server'  => $this->generateWsseAuthHeader('foo_user_1', 'foo_user_1_api_key'),
-                'content' => json_encode($eventData)
+                'content' => json_encode($eventData, JSON_THROW_ON_ERROR)
             ]
         );
         $response = $this->getRestResponseContent(['statusCode' => 201, 'contentType' => 'application/json']);
@@ -2915,7 +2910,7 @@ class RecurringEventUpdateExceptionTest extends AbstractTestCase
                 'method'  => 'POST',
                 'url'     => $this->getUrl('oro_api_post_calendarevent'),
                 'server'  => $this->generateWsseAuthHeader('foo_user_1', 'foo_user_1_api_key'),
-                'content' => json_encode($exceptionData)
+                'content' => json_encode($exceptionData, JSON_THROW_ON_ERROR)
             ]
         );
         $response = $this->getRestResponseContent(['statusCode' => 201, 'contentType' => 'application/json']);
@@ -2937,7 +2932,7 @@ class RecurringEventUpdateExceptionTest extends AbstractTestCase
                 'method'  => 'PUT',
                 'url'     => $this->getUrl('oro_api_put_calendarevent', ['id' => $recurringEvent->getId()]),
                 'server'  => $this->generateWsseAuthHeader('foo_user_1', 'foo_user_1_api_key'),
-                'content' => json_encode($eventData)
+                'content' => json_encode($eventData, JSON_THROW_ON_ERROR)
             ]
         );
         $response = $this->getRestResponseContent(['statusCode' => 200, 'contentType' => 'application/json']);
@@ -3128,7 +3123,7 @@ class RecurringEventUpdateExceptionTest extends AbstractTestCase
                 'method'  => 'POST',
                 'url'     => $this->getUrl('oro_api_post_calendarevent'),
                 'server'  => $this->generateWsseAuthHeader('foo_user_1', 'foo_user_1_api_key'),
-                'content' => json_encode($eventData)
+                'content' => json_encode($eventData, JSON_THROW_ON_ERROR)
             ]
         );
         $response = $this->getRestResponseContent(['statusCode' => 201, 'contentType' => 'application/json']);
@@ -3167,7 +3162,7 @@ class RecurringEventUpdateExceptionTest extends AbstractTestCase
                 'method'  => 'POST',
                 'url'     => $this->getUrl('oro_api_post_calendarevent'),
                 'server'  => $this->generateWsseAuthHeader('foo_user_1', 'foo_user_1_api_key'),
-                'content' => json_encode($exceptionData)
+                'content' => json_encode($exceptionData, JSON_THROW_ON_ERROR)
             ]
         );
         $response = $this->getRestResponseContent(['statusCode' => 201, 'contentType' => 'application/json']);
@@ -3190,7 +3185,7 @@ class RecurringEventUpdateExceptionTest extends AbstractTestCase
                 'method'  => 'PUT',
                 'url'     => $this->getUrl('oro_api_put_calendarevent', ['id' => $recurringEvent->getId()]),
                 'server'  => $this->generateWsseAuthHeader('foo_user_1', 'foo_user_1_api_key'),
-                'content' => json_encode($eventData)
+                'content' => json_encode($eventData, JSON_THROW_ON_ERROR)
             ]
         );
         $response = $this->getRestResponseContent(['statusCode' => 200, 'contentType' => 'application/json']);
@@ -3347,7 +3342,7 @@ class RecurringEventUpdateExceptionTest extends AbstractTestCase
                 'method'  => 'POST',
                 'url'     => $this->getUrl('oro_api_post_calendarevent'),
                 'server'  => $this->generateWsseAuthHeader('foo_user_1', 'foo_user_1_api_key'),
-                'content' => json_encode($eventData)
+                'content' => json_encode($eventData, JSON_THROW_ON_ERROR)
             ]
         );
         $response = $this->getRestResponseContent(['statusCode' => 201, 'contentType' => 'application/json']);
@@ -3380,7 +3375,7 @@ class RecurringEventUpdateExceptionTest extends AbstractTestCase
                 'method'  => 'POST',
                 'url'     => $this->getUrl('oro_api_post_calendarevent'),
                 'server'  => $this->generateWsseAuthHeader('foo_user_1', 'foo_user_1_api_key'),
-                'content' => json_encode($exceptionData)
+                'content' => json_encode($exceptionData, JSON_THROW_ON_ERROR)
             ]
         );
         $response = $this->getRestResponseContent(['statusCode' => 201, 'contentType' => 'application/json']);
@@ -3403,7 +3398,7 @@ class RecurringEventUpdateExceptionTest extends AbstractTestCase
                 'method'  => 'PUT',
                 'url'     => $this->getUrl('oro_api_put_calendarevent', ['id' => $recurringEvent->getId()]),
                 'server'  => $this->generateWsseAuthHeader('foo_user_1', 'foo_user_1_api_key'),
-                'content' => json_encode($eventData)
+                'content' => json_encode($eventData, JSON_THROW_ON_ERROR)
             ]
         );
         $response = $this->getRestResponseContent(['statusCode' => 200, 'contentType' => 'application/json']);
@@ -3572,7 +3567,7 @@ class RecurringEventUpdateExceptionTest extends AbstractTestCase
                 'method'  => 'POST',
                 'url'     => $this->getUrl('oro_api_post_calendarevent'),
                 'server'  => $this->generateWsseAuthHeader('foo_user_1', 'foo_user_1_api_key'),
-                'content' => json_encode($eventData)
+                'content' => json_encode($eventData, JSON_THROW_ON_ERROR)
             ]
         );
         $response = $this->getRestResponseContent(['statusCode' => 201, 'contentType' => 'application/json']);
@@ -3605,7 +3600,7 @@ class RecurringEventUpdateExceptionTest extends AbstractTestCase
                 'method'  => 'POST',
                 'url'     => $this->getUrl('oro_api_post_calendarevent'),
                 'server'  => $this->generateWsseAuthHeader('foo_user_1', 'foo_user_1_api_key'),
-                'content' => json_encode($exceptionData)
+                'content' => json_encode($exceptionData, JSON_THROW_ON_ERROR)
             ]
         );
         $response = $this->getRestResponseContent(['statusCode' => 201, 'contentType' => 'application/json']);
@@ -3934,7 +3929,7 @@ class RecurringEventUpdateExceptionTest extends AbstractTestCase
                 'method'  => 'POST',
                 'url'     => $this->getUrl('oro_api_post_calendarevent'),
                 'server'  => $this->generateWsseAuthHeader('foo_user_1', 'foo_user_1_api_key'),
-                'content' => json_encode($eventData)
+                'content' => json_encode($eventData, JSON_THROW_ON_ERROR)
             ]
         );
         $response = $this->getRestResponseContent(['statusCode' => 201, 'contentType' => 'application/json']);
@@ -3973,7 +3968,7 @@ class RecurringEventUpdateExceptionTest extends AbstractTestCase
                 'method'  => 'POST',
                 'url'     => $this->getUrl('oro_api_post_calendarevent'),
                 'server'  => $this->generateWsseAuthHeader('foo_user_1', 'foo_user_1_api_key'),
-                'content' => json_encode($exceptionData)
+                'content' => json_encode($exceptionData, JSON_THROW_ON_ERROR)
             ]
         );
         $this->getRestResponseContent(['statusCode' => 201, 'contentType' => 'application/json']);
@@ -3998,7 +3993,7 @@ class RecurringEventUpdateExceptionTest extends AbstractTestCase
                 'method'  => 'PUT',
                 'url'     => $this->getUrl('oro_api_put_calendarevent', ['id' => $recurringEvent->getId()]),
                 'server'  => $this->generateWsseAuthHeader('foo_user_1', 'foo_user_1_api_key'),
-                'content' => json_encode($eventData)
+                'content' => json_encode($eventData, JSON_THROW_ON_ERROR)
             ]
         );
         $response = $this->getRestResponseContent(['statusCode' => 200, 'contentType' => 'application/json']);

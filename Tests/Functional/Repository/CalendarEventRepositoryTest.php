@@ -7,15 +7,14 @@ use Oro\Bundle\CalendarBundle\Entity\CalendarEvent;
 use Oro\Bundle\CalendarBundle\Entity\Repository\CalendarEventRepository;
 use Oro\Bundle\CalendarBundle\Entity\Repository\CalendarRepository;
 use Oro\Bundle\CalendarBundle\Tests\Functional\DataFixtures\LoadCalendarEventData;
-use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
 use Oro\Bundle\OrganizationBundle\Entity\Organization;
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 use Oro\Bundle\UserBundle\Entity\User;
 
 class CalendarEventRepositoryTest extends WebTestCase
 {
-    const DUPLICATED_UID = 'b139fecc-41cf-478d-8f8e-b6122f491ace';
-    const MATCHING_UID = '1acb93ce-c54a-11e7-abc4-cec278b6b50a';
+    private const DUPLICATED_UID = 'b139fecc-41cf-478d-8f8e-b6122f491ace';
+    private const MATCHING_UID = '1acb93ce-c54a-11e7-abc4-cec278b6b50a';
 
     protected function setUp(): void
     {
@@ -29,8 +28,7 @@ class CalendarEventRepositoryTest extends WebTestCase
         $calendar = $this->getCalendar();
 
         $calendarEvent = new CalendarEvent();
-        $calendarEvent
-            ->setUid(static::DUPLICATED_UID);
+        $calendarEvent->setUid(self::DUPLICATED_UID);
 
         $events = $repository->findDuplicatedEvent($calendarEvent, $calendar->getId());
 
@@ -38,7 +36,7 @@ class CalendarEventRepositoryTest extends WebTestCase
 
         $eventFromDb = $events[0];
 
-        $this->assertEquals(static::DUPLICATED_UID, $eventFromDb->getUid());
+        $this->assertEquals(self::DUPLICATED_UID, $eventFromDb->getUid());
         $this->assertEquals($calendar->getId(), $eventFromDb->getCalendar()->getId());
     }
 
@@ -46,7 +44,7 @@ class CalendarEventRepositoryTest extends WebTestCase
     {
         $repository = $this->getRepository();
         /** @var CalendarEvent $calendarEvent */
-        $calendarEvent = $repository->findOneBy(['uid' => static::DUPLICATED_UID]);
+        $calendarEvent = $repository->findOneBy(['uid' => self::DUPLICATED_UID]);
 
         $this->assertNotNull($calendarEvent);
 
@@ -104,21 +102,17 @@ class CalendarEventRepositoryTest extends WebTestCase
         $this->assertCount(0, $events);
     }
 
-    private function getDoctrineHelper(): DoctrineHelper
-    {
-        return $this->getContainer()->get('oro_entity.doctrine_helper');
-    }
-
     private function getRepository(): CalendarEventRepository
     {
-        return $this->getDoctrineHelper()->getEntityRepository(CalendarEvent::class);
+        return self::getContainer()->get('doctrine')->getRepository(CalendarEvent::class);
     }
 
     private function getCalendar(): Calendar
     {
-        $doctrineHelper = $this->getDoctrineHelper();
-        $user = $doctrineHelper->getEntityRepository(User::class)->findOneByUsername('admin');
-        $organization = $doctrineHelper->getEntityRepository(Organization::class)->getFirst();
+        $user = self::getContainer()->get('doctrine')->getRepository(User::class)
+            ->findOneBy(['username' => 'admin']);
+        $organization = self::getContainer()->get('doctrine')->getRepository(Organization::class)
+            ->getFirst();
 
         /** @var CalendarRepository $calendarRepo */
         $calendarRepo = $this->getContainer()->get('oro_entity.doctrine_helper')->getEntityRepository(Calendar::class);

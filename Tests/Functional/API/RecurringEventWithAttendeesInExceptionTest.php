@@ -189,18 +189,13 @@ class RecurringEventWithAttendeesInExceptionTest extends AbstractUseCaseTestCase
         $this->assertCount(0, $calendarEventExceptions);
     }
 
-    protected function checkPreconditions()
+    private function checkPreconditions(): void
     {
         $result = $this->getCalendarEventsByCalendarViaAPI(self::DEFAULT_USER_CALENDAR_ID);
         $this->assertEmpty($result);
     }
 
-    /**
-     * @param int $calendarId
-     *
-     * @return array
-     */
-    protected function getCalendarEventsByCalendarViaAPI($calendarId)
+    private function getCalendarEventsByCalendarViaAPI(int $calendarId): array
     {
         $request = [
             'calendar'    => $calendarId,

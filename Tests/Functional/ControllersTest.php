@@ -6,7 +6,7 @@ use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 
 class ControllersTest extends WebTestCase
 {
-    const DEFAULT_USER_CALENDAR_ID = 1;
+    private const DEFAULT_USER_CALENDAR_ID = 1;
 
     protected function setUp(): void
     {

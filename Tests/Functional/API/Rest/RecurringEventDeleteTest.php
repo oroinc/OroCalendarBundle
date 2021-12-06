@@ -87,7 +87,7 @@ class RecurringEventDeleteTest extends AbstractTestCase
                 'method'  => 'POST',
                 'url'     => $this->getUrl('oro_api_post_calendarevent'),
                 'server'  => $this->generateWsseAuthHeader('foo_user_1', 'foo_user_1_api_key'),
-                'content' => json_encode($eventData)
+                'content' => json_encode($eventData, JSON_THROW_ON_ERROR)
             ]
         );
         $response = $this->getRestResponseContent(['statusCode' => 201, 'contentType' => 'application/json']);
@@ -133,7 +133,7 @@ class RecurringEventDeleteTest extends AbstractTestCase
                 'method'  => 'POST',
                 'url'     => $this->getUrl('oro_api_post_calendarevent'),
                 'server'  => $this->generateWsseAuthHeader('foo_user_1', 'foo_user_1_api_key'),
-                'content' => json_encode($exceptionData)
+                'content' => json_encode($exceptionData, JSON_THROW_ON_ERROR)
             ]
         );
         $this->assertJsonResponseStatusCodeEquals($this->client->getResponse(), 201);
@@ -157,11 +157,14 @@ class RecurringEventDeleteTest extends AbstractTestCase
                 'method'  => 'POST',
                 'url'     => $this->getUrl('oro_api_post_calendarevent'),
                 'server'  => $this->generateWsseAuthHeader('foo_user_1', 'foo_user_1_api_key'),
-                'content' => json_encode($exceptionData)
+                'content' => json_encode($exceptionData, JSON_THROW_ON_ERROR)
             ]
         );
         $this->assertJsonResponseStatusCodeEquals($this->client->getResponse(), 201);
-        $this->assertEquals($recurringEvent->getUid(), json_decode($this->client->getResponse()->getContent())->uid);
+        $this->assertEquals(
+            $recurringEvent->getUid(),
+            json_decode($this->client->getResponse()->getContent(), false, 512, JSON_THROW_ON_ERROR)->uid
+        );
 
         // Step 4. Create cancelled exception.
         $exceptionData = [
@@ -196,7 +199,7 @@ class RecurringEventDeleteTest extends AbstractTestCase
                 'method'  => 'POST',
                 'url'     => $this->getUrl('oro_api_post_calendarevent'),
                 'server'  => $this->generateWsseAuthHeader('foo_user_1', 'foo_user_1_api_key'),
-                'content' => json_encode($exceptionData)
+                'content' => json_encode($exceptionData, JSON_THROW_ON_ERROR)
             ]
         );
         $this->assertJsonResponseStatusCodeEquals($this->client->getResponse(), 201);
@@ -214,7 +217,7 @@ class RecurringEventDeleteTest extends AbstractTestCase
                     ]
                 ),
                 'server'  => $this->generateWsseAuthHeader('foo_user_1', 'foo_user_1_api_key'),
-                'content' => json_encode($eventData)
+                'content' => json_encode($eventData, JSON_THROW_ON_ERROR)
             ]
         );
         $this->assertEmptyResponseStatusCodeEquals($this->client->getResponse(), 204);
@@ -360,7 +363,7 @@ class RecurringEventDeleteTest extends AbstractTestCase
                 'method'  => 'POST',
                 'url'     => $this->getUrl('oro_api_post_calendarevent'),
                 'server'  => $this->generateWsseAuthHeader('foo_user_1', 'foo_user_1_api_key'),
-                'content' => json_encode($eventData)
+                'content' => json_encode($eventData, JSON_THROW_ON_ERROR)
             ]
         );
         $response = $this->getRestResponseContent(['statusCode' => 201, 'contentType' => 'application/json']);
@@ -400,7 +403,7 @@ class RecurringEventDeleteTest extends AbstractTestCase
                 'method'  => 'POST',
                 'url'     => $this->getUrl('oro_api_post_calendarevent'),
                 'server'  => $this->generateWsseAuthHeader('foo_user_1', 'foo_user_1_api_key'),
-                'content' => json_encode($exceptionData)
+                'content' => json_encode($exceptionData, JSON_THROW_ON_ERROR)
             ]
         );
         $response = $this->getRestResponseContent(['statusCode' => 201, 'contentType' => 'application/json']);
@@ -649,7 +652,7 @@ class RecurringEventDeleteTest extends AbstractTestCase
                 'method'  => 'POST',
                 'url'     => $this->getUrl('oro_api_post_calendarevent'),
                 'server'  => $this->generateWsseAuthHeader('foo_user_1', 'foo_user_1_api_key'),
-                'content' => json_encode($eventData)
+                'content' => json_encode($eventData, JSON_THROW_ON_ERROR)
             ]
         );
         $response = $this->getRestResponseContent(['statusCode' => 201, 'contentType' => 'application/json']);
@@ -689,7 +692,7 @@ class RecurringEventDeleteTest extends AbstractTestCase
                 'method'  => 'POST',
                 'url'     => $this->getUrl('oro_api_post_calendarevent'),
                 'server'  => $this->generateWsseAuthHeader('foo_user_1', 'foo_user_1_api_key'),
-                'content' => json_encode($exceptionData)
+                'content' => json_encode($exceptionData, JSON_THROW_ON_ERROR)
             ]
         );
         $response = $this->getRestResponseContent(['statusCode' => 201, 'contentType' => 'application/json']);
@@ -914,7 +917,7 @@ class RecurringEventDeleteTest extends AbstractTestCase
                 'method'  => 'POST',
                 'url'     => $this->getUrl('oro_api_post_calendarevent'),
                 'server'  => $this->generateWsseAuthHeader('foo_user_1', 'foo_user_1_api_key'),
-                'content' => json_encode($eventData)
+                'content' => json_encode($eventData, JSON_THROW_ON_ERROR)
             ]
         );
         $response = $this->getRestResponseContent(['statusCode' => 201, 'contentType' => 'application/json']);
@@ -954,7 +957,7 @@ class RecurringEventDeleteTest extends AbstractTestCase
                 'method'  => 'POST',
                 'url'     => $this->getUrl('oro_api_post_calendarevent'),
                 'server'  => $this->generateWsseAuthHeader('foo_user_1', 'foo_user_1_api_key'),
-                'content' => json_encode($exceptionData)
+                'content' => json_encode($exceptionData, JSON_THROW_ON_ERROR)
             ]
         );
         $response = $this->getRestResponseContent(['statusCode' => 201, 'contentType' => 'application/json']);
@@ -1153,7 +1156,7 @@ class RecurringEventDeleteTest extends AbstractTestCase
                 'method'  => 'POST',
                 'url'     => $this->getUrl('oro_api_post_calendarevent'),
                 'server'  => $this->generateWsseAuthHeader('foo_user_1', 'foo_user_1_api_key'),
-                'content' => json_encode($eventData)
+                'content' => json_encode($eventData, JSON_THROW_ON_ERROR)
             ]
         );
         $response = $this->getRestResponseContent(['statusCode' => 201, 'contentType' => 'application/json']);
@@ -1193,7 +1196,7 @@ class RecurringEventDeleteTest extends AbstractTestCase
                 'method'  => 'POST',
                 'url'     => $this->getUrl('oro_api_post_calendarevent'),
                 'server'  => $this->generateWsseAuthHeader('foo_user_1', 'foo_user_1_api_key'),
-                'content' => json_encode($exceptionData)
+                'content' => json_encode($exceptionData, JSON_THROW_ON_ERROR)
             ]
         );
         $response = $this->getRestResponseContent(['statusCode' => 201, 'contentType' => 'application/json']);
@@ -1239,7 +1242,7 @@ class RecurringEventDeleteTest extends AbstractTestCase
                 'method'  => 'POST',
                 'url'     => $this->getUrl('oro_api_post_calendarevent'),
                 'server'  => $this->generateWsseAuthHeader('foo_user_1', 'foo_user_1_api_key'),
-                'content' => json_encode($exceptionData)
+                'content' => json_encode($exceptionData, JSON_THROW_ON_ERROR)
             ]
         );
         $response = $this->getRestResponseContent(['statusCode' => 201, 'contentType' => 'application/json']);
@@ -1266,7 +1269,7 @@ class RecurringEventDeleteTest extends AbstractTestCase
                 'method'  => 'POST',
                 'url'     => $this->getUrl('oro_api_post_calendarevent'),
                 'server'  => $this->generateWsseAuthHeader('foo_user_1', 'foo_user_1_api_key'),
-                'content' => json_encode($exceptionData)
+                'content' => json_encode($exceptionData, JSON_THROW_ON_ERROR)
             ]
         );
         $response = $this->getRestResponseContent(['statusCode' => 201, 'contentType' => 'application/json']);
@@ -1307,7 +1310,7 @@ class RecurringEventDeleteTest extends AbstractTestCase
                 'method'  => 'POST',
                 'url'     => $this->getUrl('oro_api_post_calendarevent'),
                 'server'  => $this->generateWsseAuthHeader('foo_user_1', 'foo_user_1_api_key'),
-                'content' => json_encode($exceptionData)
+                'content' => json_encode($exceptionData, JSON_THROW_ON_ERROR)
             ]
         );
         $this->assertJsonResponseStatusCodeEquals($this->client->getResponse(), 201);

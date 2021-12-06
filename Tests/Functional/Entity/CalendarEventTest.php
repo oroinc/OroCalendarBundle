@@ -2,7 +2,7 @@
 
 namespace Oro\Bundle\CalendarBundle\Tests\Functional\Entity;
 
-use Doctrine\Persistence\ObjectManager;
+use Doctrine\ORM\EntityManagerInterface;
 use Oro\Bundle\CalendarBundle\Entity\Attendee;
 use Oro\Bundle\CalendarBundle\Entity\Calendar;
 use Oro\Bundle\CalendarBundle\Entity\CalendarEvent;
@@ -58,7 +58,7 @@ class CalendarEventTest extends WebTestCase
         $entityManager->flush();
         $entityManager->clear();
 
-        $this->assertEmpty($entityManager->find('OroCalendarBundle:Attendee', $childCalendar->getId()));
+        $this->assertEmpty($entityManager->find(Attendee::class, $childCalendar->getId()));
     }
 
     public function testUidIsGeneratedInCaseItIsNotProvided()
@@ -97,12 +97,7 @@ class CalendarEventTest extends WebTestCase
         $this->assertEquals($uid, $eventFromDb->getUid());
     }
 
-    /**
-     * @param User $user
-     *
-     * @return Attendee
-     */
-    protected function createAttendee(User $user)
+    private function createAttendee(User $user): Attendee
     {
         $attendee = new Attendee();
         $attendee->setDisplayName($user->getFullName());
@@ -112,20 +107,12 @@ class CalendarEventTest extends WebTestCase
         return $attendee;
     }
 
-    /**
-     * @param Calendar $calendar
-     * @param string $title
-     * @param CalendarEvent $parent
-     * @param Attendee[] $attendees
-     *
-     * @return CalendarEvent
-     */
-    protected function createCalendarEvent(
+    private function createCalendarEvent(
         Calendar $calendar,
-        $title,
+        string $title,
         CalendarEvent $parent = null,
         array $attendees = []
-    ) {
+    ): CalendarEvent {
         $event = new CalendarEvent();
         $event->setCalendar($calendar)
             ->setTitle($title)
@@ -143,13 +130,8 @@ class CalendarEventTest extends WebTestCase
         return $event;
     }
 
-    /**
-     * @return ObjectManager
-     */
-    protected function getEntityManager()
+    private function getEntityManager(): EntityManagerInterface
     {
-        return $this->getContainer()
-            ->get('doctrine')
-            ->getManagerForClass('OroCalendarBundle:CalendarEvent');
+        return $this->getContainer()->get('doctrine')->getManagerForClass(CalendarEvent::class);
     }
 }

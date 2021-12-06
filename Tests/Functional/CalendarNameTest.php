@@ -9,33 +9,15 @@ use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 
 class CalendarNameTest extends WebTestCase
 {
-    /**
-     * @var EntityNameResolver
-     */
-    protected $nameResollver;
-
-    /**
-     * {@inheritdoc}
-     */
     protected function setUp(): void
     {
         $this->initClient([]);
-
-        $this->loadFixtures([
-            LoadUserData::class
-        ]);
-
-        $this->nameResollver = $this->getClientInstance()
-            ->getContainer()
-            ->get('oro_entity.entity_name_resolver');
+        $this->loadFixtures([LoadUserData::class]);
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    protected function tearDown(): void
+    private function getEntityNameResolver(): EntityNameResolver
     {
-        unset($this->nameResollver);
+        return self::getContainer()->get('oro_entity.entity_name_resolver');
     }
 
     /**
@@ -59,11 +41,11 @@ class CalendarNameTest extends WebTestCase
             $calendar->setOwner(null);
         }
 
-        $eventName = $this->nameResollver->getName($calendar);
+        $eventName = $this->getEntityNameResolver()->getName($calendar);
         $this->assertSame($expectedEventName, $eventName);
     }
 
-    public function dataProvider()
+    public function dataProvider(): array
     {
         return [
             'Event with name' => [

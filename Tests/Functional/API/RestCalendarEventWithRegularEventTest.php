@@ -2,6 +2,7 @@
 
 namespace Oro\Bundle\CalendarBundle\Tests\Functional\API;
 
+use Oro\Bundle\CalendarBundle\Entity\CalendarEvent;
 use Oro\Bundle\CalendarBundle\Tests\Functional\DataFixtures\LoadCalendarEventData;
 use Oro\Bundle\CalendarBundle\Tests\Functional\DataFixtures\LoadUserData;
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
@@ -12,10 +13,9 @@ use Oro\Bundle\TestFrameworkBundle\Tests\Functional\DataFixtures\LoadActivityTar
  */
 class RestCalendarEventWithRegularEventTest extends WebTestCase
 {
-    const DATE_RANGE_START = '-5 day';
-    const DATE_RANGE_END = '+5 day';
-
-    const DEFAULT_USER_CALENDAR_ID = 1;
+    private const DATE_RANGE_START = '-5 day';
+    private const DATE_RANGE_END = '+5 day';
+    private const DEFAULT_USER_CALENDAR_ID = 1;
 
     protected function setUp(): void
     {
@@ -27,12 +27,7 @@ class RestCalendarEventWithRegularEventTest extends WebTestCase
         ]);
     }
 
-    /**
-     * Creates regular event.
-     *
-     * @return array
-     */
-    public function testPostRegularEvent()
+    public function testPostRegularEvent(): array
     {
         $parameters = $this->getRegularEventParameters();
         $this->client->request('POST', $this->getUrl('oro_api_post_calendarevent'), $parameters);
@@ -41,7 +36,7 @@ class RestCalendarEventWithRegularEventTest extends WebTestCase
         $this->assertNotEmpty($result);
         $this->assertTrue(isset($result['id']));
         $this->assertNotEmpty($result['uid']);
-        $event = $this->getContainer()->get('doctrine')->getRepository('OroCalendarBundle:CalendarEvent')
+        $event = $this->getContainer()->get('doctrine')->getRepository(CalendarEvent::class)
             ->find($result['id']);
         $this->assertNotNull($event);
 
@@ -49,8 +44,6 @@ class RestCalendarEventWithRegularEventTest extends WebTestCase
     }
 
     /**
-     * Reads regular event.
-     *
      * @depends testPostRegularEvent
      */
     public function testGetRegularEvent(array $data)
@@ -77,8 +70,6 @@ class RestCalendarEventWithRegularEventTest extends WebTestCase
     }
 
     /**
-     * Updates regular event.
-     *
      * @depends testPostRegularEvent
      */
     public function testPutRegularEvent(array $data)
@@ -93,14 +84,12 @@ class RestCalendarEventWithRegularEventTest extends WebTestCase
         );
 
         $result = $this->getJsonResponseContent($this->client->getResponse(), 200);
-        $event = $this->getContainer()->get('doctrine')->getRepository('OroCalendarBundle:CalendarEvent')
+        $event = $this->getContainer()->get('doctrine')->getRepository(CalendarEvent::class)
             ->find($id);
         $this->assertEquals($parameters['title'], $event->getTitle());
     }
 
     /**
-     * Deletes regular event.
-     *
      * @depends testPostRegularEvent
      */
     public function testDeleteRegularEvent(array $data)
@@ -113,19 +102,19 @@ class RestCalendarEventWithRegularEventTest extends WebTestCase
         );
 
         $this->assertEmptyResponseStatusCodeEquals($this->client->getResponse(), 204);
-        $event = $this->getContainer()->get('doctrine')->getRepository('OroCalendarBundle:CalendarEvent')
+        $event = $this->getContainer()->get('doctrine')->getRepository(CalendarEvent::class)
             ->findOneBy(['id' => $id]); // do not use 'load' method to avoid proxy object loading.
         $this->assertNull($event);
     }
 
     public function testCgetByDateRangeFilter()
     {
-        $request = array(
+        $request = [
             'calendar' => self::DEFAULT_USER_CALENDAR_ID,
             'start' => gmdate(DATE_RFC3339, strtotime(self::DATE_RANGE_START)),
             'end' => gmdate(DATE_RFC3339, strtotime(self::DATE_RANGE_END)),
             'subordinate' => false
-        );
+        ];
         $this->client->request('GET', $this->getUrl('oro_api_get_calendarevents', $request));
 
         $result = $this->getJsonResponseContent($this->client->getResponse(), 200);
@@ -134,41 +123,41 @@ class RestCalendarEventWithRegularEventTest extends WebTestCase
 
     public function testCgetByDateRangeFilterWithSummerWinterTimeChecking()
     {
-        $request = array(
+        $request = [
             'calendar' => self::DEFAULT_USER_CALENDAR_ID,
             'start' => date_create('2016-01-21 00:00:00', new \DateTimeZone('UTC'))->format(DATE_RFC3339),
             'end' => date_create('2016-01-23 00:00:00', new \DateTimeZone('UTC'))->format(DATE_RFC3339),
             'subordinate' => false
-        );
+        ];
         $this->client->request('GET', $this->getUrl('oro_api_get_calendarevents', $request));
 
         $result = $this->getJsonResponseContent($this->client->getResponse(), 200);
         $this->assertCount(2, $result);
-        $this->assertEquals($result[0]['start'], '2016-01-21T04:00:00+00:00');
-        $this->assertEquals($result[0]['end'], '2016-01-21T05:00:00+00:00');
+        $this->assertEquals('2016-01-21T04:00:00+00:00', $result[0]['start']);
+        $this->assertEquals('2016-01-21T05:00:00+00:00', $result[0]['end']);
 
-        $request = array(
+        $request = [
             'calendar' => self::DEFAULT_USER_CALENDAR_ID,
             'start' => date_create('2016-06-21 00:00:00', new \DateTimeZone('UTC'))->format(DATE_RFC3339),
             'end' => date_create('2016-06-23 00:00:00', new \DateTimeZone('UTC'))->format(DATE_RFC3339),
             'subordinate' => false
-        );
+        ];
         $this->client->request('GET', $this->getUrl('oro_api_get_calendarevents', $request));
 
         $result = $this->getJsonResponseContent($this->client->getResponse(), 200);
         $this->assertCount(2, $result);
-        $this->assertEquals($result[0]['start'], '2016-06-21T03:00:00+00:00');
-        $this->assertEquals($result[0]['end'], '2016-06-21T04:00:00+00:00');
+        $this->assertEquals('2016-06-21T03:00:00+00:00', $result[0]['start']);
+        $this->assertEquals('2016-06-21T04:00:00+00:00', $result[0]['end']);
     }
 
     public function testCgetByPagination()
     {
-        $request = array(
+        $request = [
             'calendar' => self::DEFAULT_USER_CALENDAR_ID,
             'page' => 1,
             'limit' => 10,
             'subordinate' => false
-        );
+        ];
         $this->client->request(
             'GET',
             $this->getUrl('oro_api_get_calendarevents', $request)
@@ -181,13 +170,13 @@ class RestCalendarEventWithRegularEventTest extends WebTestCase
 
     public function testCgetByPaginationWithRecurringEventIdFilter()
     {
-        $request = array(
+        $request = [
             'calendar' => self::DEFAULT_USER_CALENDAR_ID,
             'page' => 1,
             'limit' => 100,
             'subordinate' => false,
             'recurringEventId' => $this->getReference('eventInRangeWithCancelledException')->getId(),
-        );
+        ];
         $this->client->request(
             'GET',
             $this->getUrl('oro_api_get_calendarevents', $request)
@@ -200,12 +189,12 @@ class RestCalendarEventWithRegularEventTest extends WebTestCase
 
     public function testGetListOfEventsByUidFilter()
     {
-        $request = array(
+        $request = [
             'calendar' => self::DEFAULT_USER_CALENDAR_ID,
             'page' => 1,
             'limit' => 100,
             'subordinate' => false,
-        );
+        ];
         $uid = 'b139fecc-41cf-478d-8f8e-b6122f491ace';
         $this->client->request(
             'GET',
@@ -234,10 +223,7 @@ class RestCalendarEventWithRegularEventTest extends WebTestCase
         $this->assertEquals($id, $result['id']);
     }
 
-    /**
-     * @return array
-     */
-    protected function getRegularEventParameters()
+    private function getRegularEventParameters(): array
     {
         return [
             'title' => 'Test Regular Event',

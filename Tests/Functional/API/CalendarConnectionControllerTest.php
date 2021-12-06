@@ -2,6 +2,7 @@
 
 namespace Oro\Bundle\CalendarBundle\Tests\Functional\API;
 
+use Oro\Bundle\CalendarBundle\Entity\Calendar;
 use Oro\Bundle\CalendarBundle\Model\Recurrence;
 use Oro\Bundle\CalendarBundle\Tests\Functional\DataFixtures\LoadUserData;
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
@@ -9,7 +10,7 @@ use Oro\Bundle\UserBundle\Entity\User;
 
 class CalendarConnectionControllerTest extends WebTestCase
 {
-    const DEFAULT_USER_CALENDAR_ID = 1;
+    private const DEFAULT_USER_CALENDAR_ID = 1;
 
     protected function setUp(): void
     {
@@ -84,7 +85,7 @@ class CalendarConnectionControllerTest extends WebTestCase
      */
     public function testGetsAfterPost()
     {
-        $user      = $this->getReference('oro_calendar:user:system_user_1');
+        $user = $this->getReference('oro_calendar:user:system_user_1');
         $admin = $this->getAdminUser();
 
         $request = [
@@ -151,7 +152,7 @@ class CalendarConnectionControllerTest extends WebTestCase
         $user = $this->getReference('oro_calendar:user:system_user_1');
 
         $request = [
-            'calendar'        => $this->findCalendar($user)->getId(),
+            'calendar'        => $this->getCalendar($user)->getId(),
             'calendarAlias'   => 'user',
             'targetCalendar'  => self::DEFAULT_USER_CALENDAR_ID,
             'visible'         => true,
@@ -166,7 +167,7 @@ class CalendarConnectionControllerTest extends WebTestCase
      */
     public function testGetsAfterAddConnection()
     {
-        $user      = $this->getReference('oro_calendar:user:system_user_1');
+        $user = $this->getReference('oro_calendar:user:system_user_1');
         $admin = $this->getAdminUser();
 
         $request = [
@@ -236,24 +237,19 @@ class CalendarConnectionControllerTest extends WebTestCase
         );
     }
 
-    /**
-     * @param array $responseData
-     *
-     * @return array
-     */
-    public function extractInterestingResponseData(array $responseData)
+    private function extractInterestingResponseData(array $responseData): array
     {
         $result = array_intersect_key(
             $responseData,
             [
-                'title'            => null,
-                'description'      => null,
-                'start'            => null,
-                'end'              => null,
-                'allDay'           => null,
-                'attendees'        => null,
-                'calendarAlias'    => null,
-                'recurrence'       => null,
+                'title'         => null,
+                'description'   => null,
+                'start'         => null,
+                'end'           => null,
+                'allDay'        => null,
+                'attendees'     => null,
+                'calendarAlias' => null,
+                'recurrence'    => null,
             ]
         );
 
@@ -266,11 +262,9 @@ class CalendarConnectionControllerTest extends WebTestCase
         );
 
         foreach ($attendees as &$attendee) {
-            unset(
-                $attendee['createdAt'],
-                $attendee['updatedAt']
-            );
+            unset($attendee['createdAt'], $attendee['updatedAt']);
         }
+        unset($attendee);
 
         $result['attendees'] = $attendees;
         unset($result['recurrence']['id']);
@@ -278,20 +272,17 @@ class CalendarConnectionControllerTest extends WebTestCase
         return $result;
     }
 
-    /**
-     * @return User
-     */
-    protected function getAdminUser()
+    private function getAdminUser(): User
     {
         return $this->getContainer()->get('doctrine')
-            ->getRepository('OroUserBundle:User')
-            ->findOneByEmail('admin@example.com');
+            ->getRepository(User::class)
+            ->findOneBy(['email' => self::AUTH_USER]);
     }
 
-    public function findCalendar(User $user)
+    private function getCalendar(User $user): Calendar
     {
         return $this->getContainer()->get('doctrine')
-            ->getRepository('OroCalendarBundle:Calendar')
-            ->findOneByOwner($user);
+            ->getRepository(Calendar::class)
+            ->findOneBy(['owner' => $user]);
     }
 }

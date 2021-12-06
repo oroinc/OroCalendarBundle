@@ -329,7 +329,7 @@ class CalendarEventHandlerTest extends \PHPUnit\Framework\TestCase
 
         $calendar = $this->createMock(Calendar::class);
 
-        $repository ->expects(self::once())
+        $repository->expects(self::once())
             ->method('findDefaultCalendar')
             ->willReturn($calendar);
 

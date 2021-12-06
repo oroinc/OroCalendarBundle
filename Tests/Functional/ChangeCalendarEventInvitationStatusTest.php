@@ -54,7 +54,8 @@ class ChangeCalendarEventInvitationStatusTest extends AbstractTestCase
                         'calendar' => $this->getReference('oro_calendar:calendar:foo_user_2')->getId(),
                         'calendarAlias' => 'user',
                         'visible' => true
-                    ]
+                    ],
+                    JSON_THROW_ON_ERROR
                 )
             ]
         );
@@ -90,7 +91,8 @@ class ChangeCalendarEventInvitationStatusTest extends AbstractTestCase
                                 'status' => Attendee::STATUS_NONE,
                             ]
                         ]
-                    ]
+                    ],
+                    JSON_THROW_ON_ERROR
                 )
             ]
         );
@@ -149,10 +151,10 @@ class ChangeCalendarEventInvitationStatusTest extends AbstractTestCase
                     'calendar' => $this->getReference('oro_calendar:calendar:foo_user_1')->getId(),
                     'calendarAlias' => 'user',
                     'parentEventId' => null,
-                    'title' => "Regular event",
+                    'title' => 'Regular event',
                     'description' => null,
-                    'start' => "2016-10-14T22:00:00+00:00",
-                    'end' => "2016-10-14T23:00:00+00:00",
+                    'start' => '2016-10-14T22:00:00+00:00',
+                    'end' => '2016-10-14T23:00:00+00:00',
                     'allDay' => false,
                     'attendees' => [
                         [
@@ -201,10 +203,10 @@ class ChangeCalendarEventInvitationStatusTest extends AbstractTestCase
                     'calendar' => $this->getReference('oro_calendar:calendar:foo_user_2')->getId(),
                     'calendarAlias' => 'user',
                     'parentEventId' => $newEvent->getId(),
-                    'title' => "Regular event",
+                    'title' => 'Regular event',
                     'description' => null,
-                    'start' => "2016-10-14T22:00:00+00:00",
-                    'end' => "2016-10-14T23:00:00+00:00",
+                    'start' => '2016-10-14T22:00:00+00:00',
+                    'end' => '2016-10-14T23:00:00+00:00',
                     'allDay' => false,
                     'attendees' => [
                         [
@@ -314,10 +316,10 @@ class ChangeCalendarEventInvitationStatusTest extends AbstractTestCase
                     'calendar' => $this->getReference('oro_calendar:calendar:foo_user_1')->getId(),
                     'calendarAlias' => 'user',
                     'parentEventId' => null,
-                    'title' => "Regular event",
+                    'title' => 'Regular event',
                     'description' => null,
-                    'start' => "2016-10-14T22:00:00+00:00",
-                    'end' => "2016-10-14T23:00:00+00:00",
+                    'start' => '2016-10-14T22:00:00+00:00',
+                    'end' => '2016-10-14T23:00:00+00:00',
                     'allDay' => false,
                     'attendees' => [
                         [
@@ -364,10 +366,10 @@ class ChangeCalendarEventInvitationStatusTest extends AbstractTestCase
                     'calendar' => $this->getReference('oro_calendar:calendar:foo_user_2')->getId(),
                     'calendarAlias' => 'user',
                     'parentEventId' => $newEvent->getId(),
-                    'title' => "Regular event",
+                    'title' => 'Regular event',
                     'description' => null,
-                    'start' => "2016-10-14T22:00:00+00:00",
-                    'end' => "2016-10-14T23:00:00+00:00",
+                    'start' => '2016-10-14T22:00:00+00:00',
+                    'end' => '2016-10-14T23:00:00+00:00',
                     'allDay' => false,
                     'attendees' => [
                         [
@@ -473,10 +475,10 @@ class ChangeCalendarEventInvitationStatusTest extends AbstractTestCase
                     'calendar' => $this->getReference('oro_calendar:calendar:foo_user_1')->getId(),
                     'calendarAlias' => 'user',
                     'parentEventId' => null,
-                    'title' => "Regular event",
+                    'title' => 'Regular event',
                     'description' => null,
-                    'start' => "2016-10-14T22:00:00+00:00",
-                    'end' => "2016-10-14T23:00:00+00:00",
+                    'start' => '2016-10-14T22:00:00+00:00',
+                    'end' => '2016-10-14T23:00:00+00:00',
                     'allDay' => false,
                     'attendees' => [
                         [
@@ -523,10 +525,10 @@ class ChangeCalendarEventInvitationStatusTest extends AbstractTestCase
                     'calendar' => $this->getReference('oro_calendar:calendar:foo_user_2')->getId(),
                     'calendarAlias' => 'user',
                     'parentEventId' => $newEvent->getId(),
-                    'title' => "Regular event",
+                    'title' => 'Regular event',
                     'description' => null,
-                    'start' => "2016-10-14T22:00:00+00:00",
-                    'end' => "2016-10-14T23:00:00+00:00",
+                    'start' => '2016-10-14T22:00:00+00:00',
+                    'end' => '2016-10-14T23:00:00+00:00',
                     'allDay' => false,
                     'attendees' => [
                         [
@@ -632,10 +634,10 @@ class ChangeCalendarEventInvitationStatusTest extends AbstractTestCase
                     'calendar' => $this->getReference('oro_calendar:calendar:foo_user_1')->getId(),
                     'calendarAlias' => 'user',
                     'parentEventId' => null,
-                    'title' => "Regular event",
+                    'title' => 'Regular event',
                     'description' => null,
-                    'start' => "2016-10-14T22:00:00+00:00",
-                    'end' => "2016-10-14T23:00:00+00:00",
+                    'start' => '2016-10-14T22:00:00+00:00',
+                    'end' => '2016-10-14T23:00:00+00:00',
                     'allDay' => false,
                     'attendees' => [
                         [
@@ -682,10 +684,10 @@ class ChangeCalendarEventInvitationStatusTest extends AbstractTestCase
                     'calendar' => $this->getReference('oro_calendar:calendar:foo_user_2')->getId(),
                     'calendarAlias' => 'user',
                     'parentEventId' => $newEvent->getId(),
-                    'title' => "Regular event",
+                    'title' => 'Regular event',
                     'description' => null,
-                    'start' => "2016-10-14T22:00:00+00:00",
-                    'end' => "2016-10-14T23:00:00+00:00",
+                    'start' => '2016-10-14T22:00:00+00:00',
+                    'end' => '2016-10-14T23:00:00+00:00',
                     'allDay' => false,
                     'attendees' => [
                         [
@@ -803,10 +805,10 @@ class ChangeCalendarEventInvitationStatusTest extends AbstractTestCase
                     'calendar' => $this->getReference('oro_calendar:calendar:foo_user_1')->getId(),
                     'calendarAlias' => 'user',
                     'parentEventId' => null,
-                    'title' => "Regular event",
+                    'title' => 'Regular event',
                     'description' => null,
-                    'start' => "2016-10-14T22:00:00+00:00",
-                    'end' => "2016-10-14T23:00:00+00:00",
+                    'start' => '2016-10-14T22:00:00+00:00',
+                    'end' => '2016-10-14T23:00:00+00:00',
                     'allDay' => false,
                     'attendees' => [
                         [
@@ -853,10 +855,10 @@ class ChangeCalendarEventInvitationStatusTest extends AbstractTestCase
                     'calendar' => $this->getReference('oro_calendar:calendar:foo_user_2')->getId(),
                     'calendarAlias' => 'user',
                     'parentEventId' => $newEvent->getId(),
-                    'title' => "Regular event",
+                    'title' => 'Regular event',
                     'description' => null,
-                    'start' => "2016-10-14T22:00:00+00:00",
-                    'end' => "2016-10-14T23:00:00+00:00",
+                    'start' => '2016-10-14T22:00:00+00:00',
+                    'end' => '2016-10-14T23:00:00+00:00',
                     'allDay' => false,
                     'attendees' => [
                         [

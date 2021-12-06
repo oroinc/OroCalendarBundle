@@ -2,7 +2,7 @@
 
 namespace Oro\Bundle\CalendarBundle\Tests\Functional\Controller;
 
-use Oro\Bundle\CalendarBundle\Model\Recurrence;
+use Oro\Bundle\CalendarBundle\Entity\CalendarEvent;
 use Oro\Bundle\CalendarBundle\Tests\Functional\AbstractValidationErrorTestCase;
 use Oro\Bundle\CalendarBundle\Tests\Functional\DataFixtures\LoadUserData;
 use Symfony\Component\DomCrawler\Crawler;
@@ -57,7 +57,7 @@ class ValidationFailedTest extends AbstractValidationErrorTestCase
 
         $this->assertHtmlResponseStatusCodeEquals($result, 200);
 
-        $calendarEvent = $this->getEntityRepository('OroCalendarBundle:CalendarEvent')
+        $calendarEvent = $this->getEntityRepository(CalendarEvent::class)
             ->findOneBy(['title' => $formData['title']]);
         $this->assertNull($calendarEvent, 'Failed asserting the event was not created due to validation error.');
 
@@ -101,7 +101,7 @@ class ValidationFailedTest extends AbstractValidationErrorTestCase
      * @param array $fieldNames
      * @return array
      */
-    protected function getFormFieldsValidationErrors(Crawler $crawler, $formId, $fieldIdPrefix, array $fieldNames)
+    private function getFormFieldsValidationErrors(Crawler $crawler, $formId, $fieldIdPrefix, array $fieldNames)
     {
         $result = [];
 
@@ -124,7 +124,7 @@ class ValidationFailedTest extends AbstractValidationErrorTestCase
      * @param string $fieldIdContains
      * @return array
      */
-    protected function getFormFieldValidationErrors(Crawler $crawler, $formIdContains, $fieldIdContains)
+    private function getFormFieldValidationErrors(Crawler $crawler, $formIdContains, $fieldIdContains)
     {
         $formXPath = sprintf('//form[contains(@id, "%s")]', $formIdContains);
 
@@ -168,7 +168,7 @@ class ValidationFailedTest extends AbstractValidationErrorTestCase
      *
      * @return array
      */
-    protected function getRecurrenceErrors(Crawler $crawler)
+    private function getRecurrenceErrors(Crawler $crawler)
     {
         $component = 'orocalendar/js/app/components/calendar-event-recurrence-component';
         $errorsXPath = sprintf(
@@ -176,7 +176,7 @@ class ValidationFailedTest extends AbstractValidationErrorTestCase
             $component
         );
 
-        $componentOptions = json_decode($crawler->filterXPath($errorsXPath)->text(), true);
+        $componentOptions = json_decode($crawler->filterXPath($errorsXPath)->text(), true, 512, JSON_THROW_ON_ERROR);
 
         $errors = $componentOptions['errors'];
 

@@ -2,7 +2,7 @@
 
 namespace Oro\Bundle\CalendarBundle\Tests\Functional\API\Rest;
 
-use Oro\Bundle\CalendarBundle\Model\Recurrence;
+use Oro\Bundle\CalendarBundle\Entity\CalendarEvent;
 use Oro\Bundle\CalendarBundle\Tests\Functional\AbstractValidationErrorTestCase;
 use Oro\Bundle\CalendarBundle\Tests\Functional\DataFixtures\LoadUserData;
 
@@ -45,7 +45,7 @@ class ValidationFailedTest extends AbstractValidationErrorTestCase
                 'method'  => 'POST',
                 'url'     => $this->getUrl('oro_api_post_calendarevent'),
                 'server'  => $this->generateWsseAuthHeader('foo_user_1', 'foo_user_1_api_key'),
-                'content' => json_encode($eventData)
+                'content' => json_encode($eventData, JSON_THROW_ON_ERROR)
             ]
         );
 
@@ -56,7 +56,7 @@ class ValidationFailedTest extends AbstractValidationErrorTestCase
             ]
         );
 
-        $calendarEvent = $this->getEntityRepository('OroCalendarBundle:CalendarEvent')
+        $calendarEvent = $this->getEntityRepository(CalendarEvent::class)
             ->findOneBy(['title' => $eventData['title']]);
         $this->assertNull($calendarEvent, 'Failed asserting the event was not created due to validation error.');
 
@@ -66,11 +66,7 @@ class ValidationFailedTest extends AbstractValidationErrorTestCase
         );
     }
 
-    /**
-     * @param array $recurrenceErrors
-     * @return array
-     */
-    protected function getValidationFailedResponse(array $recurrenceErrors = [])
+    private function getValidationFailedResponse(array $recurrenceErrors = []): array
     {
         foreach ($recurrenceErrors as $recurrenceField => $errors) {
             $recurrenceErrors[$recurrenceField] = ['errors' => $errors];
@@ -140,7 +136,7 @@ class ValidationFailedTest extends AbstractValidationErrorTestCase
                 'method'  => 'POST',
                 'url'     => $this->getUrl('oro_api_post_calendarevent'),
                 'server'  => $this->generateWsseAuthHeader('foo_user_1', 'foo_user_1_api_key'),
-                'content' => json_encode($eventData)
+                'content' => json_encode($eventData, JSON_THROW_ON_ERROR)
             ]
         );
 
@@ -151,7 +147,7 @@ class ValidationFailedTest extends AbstractValidationErrorTestCase
             ]
         );
 
-        $calendarEvent = $this->getEntityRepository('OroCalendarBundle:CalendarEvent')
+        $calendarEvent = $this->getEntityRepository(CalendarEvent::class)
             ->findOneBy(['title' => $eventData['title']]);
         $this->assertNull($calendarEvent, 'Failed asserting the event was not created due to validation error.');
 

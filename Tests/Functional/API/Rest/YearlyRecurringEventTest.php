@@ -63,7 +63,7 @@ class YearlyRecurringEventTest extends AbstractTestCase
                 'method'  => 'POST',
                 'url'     => $this->getUrl('oro_api_post_calendarevent'),
                 'server'  => $this->generateWsseAuthHeader('foo_user_1', 'foo_user_1_api_key'),
-                'content' => json_encode($eventData)
+                'content' => json_encode($eventData, JSON_THROW_ON_ERROR)
             ]
         );
 

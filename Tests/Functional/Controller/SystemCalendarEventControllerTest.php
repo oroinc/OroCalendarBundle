@@ -52,8 +52,8 @@ class SystemCalendarEventControllerTest extends WebTestCase
         $form['oro_calendar_event_form[attendees]'] = implode(
             ContextsToViewTransformer::SEPARATOR,
             [
-                json_encode(['entityClass' => User::class, 'entityId' => $user1->getId()]),
-                json_encode(['entityClass' => User::class, 'entityId' => $user2->getId()]),
+                json_encode(['entityClass' => User::class, 'entityId' => $user1->getId()], JSON_THROW_ON_ERROR),
+                json_encode(['entityClass' => User::class, 'entityId' => $user2->getId()], JSON_THROW_ON_ERROR),
             ]
         );
 
@@ -61,7 +61,7 @@ class SystemCalendarEventControllerTest extends WebTestCase
         $crawler = $this->client->submit($form);
 
         $this->assertHtmlResponseStatusCodeEquals($this->client->getResponse(), 200);
-        static::assertStringContainsString('Calendar event saved', $crawler->html());
+        self::assertStringContainsString('Calendar event saved', $crawler->html());
         $this->assertCount(2, $this->registry->getRepository(Attendee::class)->findAll());
 
         $mainEvent = $this->getCalendarEvent();
@@ -81,10 +81,10 @@ class SystemCalendarEventControllerTest extends WebTestCase
         );
 
         $this->assertHtmlResponseStatusCodeEquals($this->client->getResponse(), 200);
-        static::assertStringContainsString(self::TITLE, $crawler->html());
-        static::assertStringContainsString(self::DESCRIPTION, $crawler->html());
-        static::assertStringContainsString('Mar 8, 2018, 12:00 PM', $crawler->html());
-        static::assertStringContainsString('Mar 8, 2018, 8:00 PM', $crawler->html());
+        self::assertStringContainsString(self::TITLE, $crawler->html());
+        self::assertStringContainsString(self::DESCRIPTION, $crawler->html());
+        self::assertStringContainsString('Mar 8, 2018, 12:00 PM', $crawler->html());
+        self::assertStringContainsString('Mar 8, 2018, 8:00 PM', $crawler->html());
     }
 
     /**
@@ -109,10 +109,10 @@ class SystemCalendarEventControllerTest extends WebTestCase
         );
 
         $this->assertHtmlResponseStatusCodeEquals($this->client->getResponse(), 200);
-        static::assertStringContainsString(self::TITLE, $crawler->html());
-        static::assertStringContainsString(self::DESCRIPTION, $crawler->html());
-        static::assertStringContainsString('Mar 8, 2018, 12:00 PM', $crawler->html());
-        static::assertStringContainsString('Mar 8, 2018, 8:00 PM', $crawler->html());
+        self::assertStringContainsString(self::TITLE, $crawler->html());
+        self::assertStringContainsString(self::DESCRIPTION, $crawler->html());
+        self::assertStringContainsString('Mar 8, 2018, 12:00 PM', $crawler->html());
+        self::assertStringContainsString('Mar 8, 2018, 8:00 PM', $crawler->html());
     }
 
     /**
@@ -129,7 +129,10 @@ class SystemCalendarEventControllerTest extends WebTestCase
 
         $attendees = [];
         foreach ($calendarEvent->getAttendees() as $attendee) {
-            $attendees[] = json_encode(['entityClass' => Attendee::class, 'entityId' => $attendee->getId()]);
+            $attendees[] = json_encode(
+                ['entityClass' => Attendee::class, 'entityId' => $attendee->getId()],
+                JSON_THROW_ON_ERROR
+            );
         }
 
         $form = $crawler->selectButton('Save and Close')->form();
@@ -142,16 +145,13 @@ class SystemCalendarEventControllerTest extends WebTestCase
         $crawler = $this->client->submit($form);
 
         $this->assertHtmlResponseStatusCodeEquals($this->client->getResponse(), 200);
-        static::assertStringContainsString('Calendar event saved', $crawler->html());
-        static::assertStringContainsString('Updated ' . self::TITLE, $crawler->html());
-        static::assertStringContainsString('Updated ' . self::DESCRIPTION, $crawler->html());
+        self::assertStringContainsString('Calendar event saved', $crawler->html());
+        self::assertStringContainsString('Updated ' . self::TITLE, $crawler->html());
+        self::assertStringContainsString('Updated ' . self::DESCRIPTION, $crawler->html());
         $this->assertCount(2, $this->registry->getRepository(Attendee::class)->findAll());
     }
 
-    /**
-     * @return CalendarEvent
-     */
-    protected function getCalendarEvent()
+    private function getCalendarEvent(): CalendarEvent
     {
         $calendarEvent = $this->registry->getRepository(CalendarEvent::class)
             ->findOneBy(['title' => self::TITLE, 'parent' => null]);

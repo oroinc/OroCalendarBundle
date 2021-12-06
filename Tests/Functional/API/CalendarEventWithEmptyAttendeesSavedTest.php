@@ -42,22 +42,14 @@ class CalendarEventWithEmptyAttendeesSavedTest extends AbstractUseCaseTestCase
         $this->assertCalendarEvents($expectedCalendarEvents, $actualCalendarEvents);
     }
 
-    /**
-     * @return array
-     */
-    protected function checkPreconditions()
+    private function checkPreconditions(): void
     {
         $result = $this->getAllCalendarEvents(self::DEFAULT_USER_CALENDAR_ID);
 
         $this->assertEmpty($result);
     }
 
-    /**
-     * @param int $calendarId
-     *
-     * @return array
-     */
-    protected function getAllCalendarEvents($calendarId)
+    private function getAllCalendarEvents(int $calendarId): array
     {
         $request = [
             'calendar'    => $calendarId,

@@ -201,8 +201,7 @@ class RestCalendarEventWithCancelledAndUpdatedRecurrentEventTest extends Abstrac
         $this->assertCalendarEvents($expectedSimpleUserCalendarEventsUpdatedData, $actualEvents);
 
         $this->deleteEventViaAPI($mainExceptionEvent->getId());
-        unset($expectedCalendarEventsUpdatedData[5]);
-        unset($expectedSimpleUserCalendarEventsUpdatedData[5]);
+        unset($expectedCalendarEventsUpdatedData[5], $expectedSimpleUserCalendarEventsUpdatedData[5]);
 
         $actualEvents = $this->getCalendarEventsByCalendarViaAPI(self::DEFAULT_USER_CALENDAR_ID);
         $this->assertCalendarEvents($expectedCalendarEventsUpdatedData, $actualEvents);
@@ -214,18 +213,13 @@ class RestCalendarEventWithCancelledAndUpdatedRecurrentEventTest extends Abstrac
         $this->assertCount(0, $calendarEventExceptions);
     }
 
-    protected function checkPreconditions()
+    private function checkPreconditions(): void
     {
         $result = $this->getCalendarEventsByCalendarViaAPI(self::DEFAULT_USER_CALENDAR_ID);
         $this->assertEmpty($result);
     }
 
-    /**
-     * @param int $calendarId
-     *
-     * @return array
-     */
-    protected function getCalendarEventsByCalendarViaAPI($calendarId)
+    private function getCalendarEventsByCalendarViaAPI(int $calendarId): array
     {
         $request = [
             'calendar'    => $calendarId,

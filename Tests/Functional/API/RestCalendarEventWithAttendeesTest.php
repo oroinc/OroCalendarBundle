@@ -2,8 +2,8 @@
 
 namespace Oro\Bundle\CalendarBundle\Tests\Functional\API;
 
-use Doctrine\Common\Collections\Collection;
 use Oro\Bundle\CalendarBundle\Entity\Attendee;
+use Oro\Bundle\CalendarBundle\Entity\CalendarEvent;
 use Oro\Bundle\CalendarBundle\Tests\Functional\DataFixtures\LoadUserData;
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 use Oro\Bundle\UserBundle\Entity\User;
@@ -13,7 +13,7 @@ use Oro\Bundle\UserBundle\Entity\User;
  */
 class RestCalendarEventWithAttendeesTest extends WebTestCase
 {
-    const DEFAULT_USER_CALENDAR_ID = 1;
+    private const DEFAULT_USER_CALENDAR_ID = 1;
 
     protected function setUp(): void
     {
@@ -37,12 +37,7 @@ class RestCalendarEventWithAttendeesTest extends WebTestCase
         $this->assertEmpty($result);
     }
 
-    /**
-     * Create new event
-     *
-     * @return int
-     */
-    public function testPost()
+    public function testPost(): int
     {
         $user = $this->getReference('oro_calendar:user:system_user_1');
 
@@ -102,12 +97,10 @@ class RestCalendarEventWithAttendeesTest extends WebTestCase
      * @SuppressWarnings(PHPMD.ExcessiveMethodLength)
      *
      * @depends testPost
-     *
-     * @param int $id
      */
-    public function testGetAfterPost($id)
+    public function testGetAfterPost(int $id)
     {
-        $user      = $this->getReference('oro_calendar:user:system_user_1');
+        $user = $this->getReference('oro_calendar:user:system_user_1');
         $adminUser = $this->getAdminUser();
 
         $this->client->request(
@@ -122,6 +115,7 @@ class RestCalendarEventWithAttendeesTest extends WebTestCase
         foreach ($result['attendees'] as &$attendee) {
             unset($attendee['createdAt'], $attendee['updatedAt']);
         }
+        unset($attendee);
 
         $this->assertEquals(
             [
@@ -186,7 +180,7 @@ class RestCalendarEventWithAttendeesTest extends WebTestCase
         );
 
         $calendarEvent = $this->getContainer()->get('doctrine')
-            ->getRepository('OroCalendarBundle:CalendarEvent')
+            ->getRepository(CalendarEvent::class)
             ->find($id);
 
         $attendees = $calendarEvent->getAttendees();
@@ -212,12 +206,8 @@ class RestCalendarEventWithAttendeesTest extends WebTestCase
 
     /**
      * @depends testPost
-     *
-     * @param int $id
-     *
-     * @return int
      */
-    public function testPut($id)
+    public function testPut(int $id): int
     {
         $adminUser = $this->getAdminUser();
 
@@ -257,10 +247,8 @@ class RestCalendarEventWithAttendeesTest extends WebTestCase
 
     /**
      * @depends testPut
-     *
-     * @param int $id
      */
-    public function testGetAfterPut($id)
+    public function testGetAfterPut(int $id)
     {
         $adminUser = $this->getAdminUser();
 
@@ -276,6 +264,7 @@ class RestCalendarEventWithAttendeesTest extends WebTestCase
         foreach ($result['attendees'] as &$attendee) {
             unset($attendee['createdAt'], $attendee['updatedAt']);
         }
+        unset($attendee);
 
         $this->assertEquals(
             [
@@ -312,7 +301,7 @@ class RestCalendarEventWithAttendeesTest extends WebTestCase
         );
 
         $calendarEvent = $this->getContainer()->get('doctrine')
-            ->getRepository('OroCalendarBundle:CalendarEvent')
+            ->getRepository(CalendarEvent::class)
             ->find($id);
 
         $attendees = $calendarEvent->getAttendees();
@@ -355,8 +344,7 @@ class RestCalendarEventWithAttendeesTest extends WebTestCase
         foreach ($result[0]['attendees'] as &$attendee) {
             unset($attendee['createdAt'], $attendee['updatedAt']);
         }
-
-        unset($result[0]['id']);
+        unset($attendee, $result[0]['id']);
 
         $adminUser = $this->getAdminUser();
 
@@ -401,10 +389,8 @@ class RestCalendarEventWithAttendeesTest extends WebTestCase
 
     /**
      * @depends testPut
-     *
-     * @param int $id
      */
-    public function testGetByCalendar($id)
+    public function testGetByCalendar(int $id)
     {
         $this->client->request(
             'GET',
@@ -422,10 +408,8 @@ class RestCalendarEventWithAttendeesTest extends WebTestCase
 
     /**
      * @depends testPut
-     *
-     * @param int $id
      */
-    public function testCget($id)
+    public function testCget(int $id)
     {
         $request = [
             'calendar'    => self::DEFAULT_USER_CALENDAR_ID,
@@ -480,7 +464,7 @@ class RestCalendarEventWithAttendeesTest extends WebTestCase
         // guard
         $this->assertNotNull(
             $this->getContainer()->get('doctrine')
-                ->getRepository('OroCalendarBundle:CalendarEvent')
+                ->getRepository(CalendarEvent::class)
                 ->find($id)
         );
 
@@ -488,22 +472,17 @@ class RestCalendarEventWithAttendeesTest extends WebTestCase
         $this->assertEquals(204, $this->client->getResponse()->getStatusCode());
 
         $this->getContainer()->get('doctrine')
-            ->getManagerForClass('OroCalendarBundle:CalendarEvent')
+            ->getManagerForClass(CalendarEvent::class)
             ->clear();
 
         $this->assertNull(
             $this->getContainer()->get('doctrine')
-                ->getRepository('OroCalendarBundle:CalendarEvent')
+                ->getRepository(CalendarEvent::class)
                 ->find($id)
         );
     }
 
-    /**
-     * @param array $responseData
-     *
-     * @return array
-     */
-    public function extractInterestingResponseData(array $responseData)
+    private function extractInterestingResponseData(array $responseData): array
     {
         $result = array_intersect_key(
             $responseData,
@@ -537,12 +516,7 @@ class RestCalendarEventWithAttendeesTest extends WebTestCase
         return $result;
     }
 
-    /**
-     * Create new event
-     *
-     * @return int
-     */
-    public function testPostRemoveAttendees()
+    public function testPostRemoveAttendees(): int
     {
         $user = $this->getReference('oro_calendar:user:system_user_1');
 
@@ -582,12 +556,10 @@ class RestCalendarEventWithAttendeesTest extends WebTestCase
 
     /**
      * @depends testPostRemoveAttendees
-     *
-     * @param int $id
      */
-    public function testGetAfterPostRemoveAttendees($id)
+    public function testGetAfterPostRemoveAttendees(int $id)
     {
-        $user      = $this->getReference('oro_calendar:user:system_user_1');
+        $user = $this->getReference('oro_calendar:user:system_user_1');
         $adminUser = $this->getAdminUser();
 
         $this->client->request(
@@ -602,6 +574,7 @@ class RestCalendarEventWithAttendeesTest extends WebTestCase
         foreach ($result['attendees'] as &$attendee) {
             unset($attendee['createdAt'], $attendee['updatedAt']);
         }
+        unset($attendee);
 
         $this->assertEquals(
             [
@@ -638,7 +611,7 @@ class RestCalendarEventWithAttendeesTest extends WebTestCase
         );
 
         $calendarEvent = $this->getContainer()->get('doctrine')
-            ->getRepository('OroCalendarBundle:CalendarEvent')
+            ->getRepository(CalendarEvent::class)
             ->find($id);
 
         $attendees = $calendarEvent->getAttendees();
@@ -664,12 +637,8 @@ class RestCalendarEventWithAttendeesTest extends WebTestCase
 
     /**
      * @depends testPostRemoveAttendees
-     *
-     * @param int $id
-     *
-     * @return int
      */
-    public function testPutRemoveAttendees($id)
+    public function testPutRemoveAttendees(int $id): int
     {
         $request = [
             'attendees' => [],
@@ -688,10 +657,8 @@ class RestCalendarEventWithAttendeesTest extends WebTestCase
 
     /**
      * @depends testPutRemoveAttendees
-     *
-     * @param int $id
      */
-    public function testGetAfterPutRemoveAttendees($id)
+    public function testGetAfterPutRemoveAttendees(int $id)
     {
         $this->client->request(
             'GET',
@@ -705,6 +672,7 @@ class RestCalendarEventWithAttendeesTest extends WebTestCase
         foreach ($result['attendees'] as &$attendee) {
             unset($attendee['createdAt'], $attendee['updatedAt']);
         }
+        unset($attendee);
 
         $this->assertEquals(
             [
@@ -726,7 +694,7 @@ class RestCalendarEventWithAttendeesTest extends WebTestCase
         );
 
         $calendarEvent = $this->getContainer()->get('doctrine')
-            ->getRepository('OroCalendarBundle:CalendarEvent')
+            ->getRepository(CalendarEvent::class)
             ->find($id);
 
         $attendees = $calendarEvent->getAttendees();
@@ -765,19 +733,14 @@ class RestCalendarEventWithAttendeesTest extends WebTestCase
         $this->assertTrue(isset($result['id']));
 
         $calendarEvent = $this->getContainer()->get('doctrine')
-            ->getRepository('OroCalendarBundle:CalendarEvent')
+            ->getRepository(CalendarEvent::class)
             ->find($result['id']);
 
         $attendee = $calendarEvent->getAttendees()->first();
         $this->assertEquals($user->getId(), $attendee->getUser()->getId());
     }
 
-    /**
-     * Create new event
-     *
-     * @return int
-     */
-    public function testPostWithNullAttendee()
+    public function testPostWithNullAttendee(): int
     {
         $adminUser = $this->getAdminUser();
 
@@ -810,12 +773,8 @@ class RestCalendarEventWithAttendeesTest extends WebTestCase
 
     /**
      * @depends testPostWithNullAttendee
-     *
-     * @param int $id
-     *
-     * @return int
      */
-    public function testPutWithNullAttendee($id)
+    public function testPutWithNullAttendee(int $id)
     {
         $request = [
             'calendar'        => self::DEFAULT_USER_CALENDAR_ID,
@@ -836,34 +795,9 @@ class RestCalendarEventWithAttendeesTest extends WebTestCase
         $this->getJsonResponseContent($this->client->getResponse(), 200);
     }
 
-    /**
-     * @return User
-     */
-    protected function getAdminUser()
+    private function getAdminUser(): User
     {
-        return $this->getContainer()->get('doctrine')
-            ->getRepository('OroUserBundle:User')
-            ->findOneByEmail('admin@example.com');
-    }
-
-    /**
-     * @param Attendee[]|Collection $attendees
-     *
-     * @return Attendee[]
-     */
-    protected function sortAttendees($attendees)
-    {
-        if ($attendees instanceof Collection) {
-            $attendees = $attendees->toArray();
-        }
-
-        usort(
-            $attendees,
-            function (Attendee $attendee1, Attendee $attendee2) {
-                return strcmp($attendee1->getDisplayName(), $attendee2->getDisplayName());
-            }
-        );
-
-        return $attendees;
+        return $this->getContainer()->get('doctrine')->getRepository(User::class)
+            ->findOneBy(['email' => self::AUTH_USER]);
     }
 }

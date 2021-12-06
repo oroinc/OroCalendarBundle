@@ -4,7 +4,8 @@ namespace Oro\Bundle\CalendarBundle\Tests\Functional\API;
 
 use Oro\Bundle\CalendarBundle\Entity\Attendee;
 use Oro\Bundle\CalendarBundle\Entity\CalendarEvent;
-use Oro\Bundle\CalendarBundle\Model\Recurrence;
+use Oro\Bundle\CalendarBundle\Entity\Recurrence;
+use Oro\Bundle\CalendarBundle\Model\Recurrence as RecurrenceModel;
 use Oro\Bundle\CalendarBundle\Tests\Functional\DataFixtures\LoadCalendarEventData;
 use Oro\Bundle\CalendarBundle\Tests\Functional\DataFixtures\LoadUserData;
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
@@ -25,12 +26,7 @@ class RestCalendarEventWithRecurrentEventTest extends WebTestCase
         ]);
     }
 
-    /**
-     * Creates recurring event.
-     *
-     * @return array
-     */
-    public function testPostRecurringEvent()
+    public function testPostRecurringEvent(): array
     {
         $recurringEventParameters = $this->getRecurringEventParameters();
         $this->client->request('POST', $this->getUrl('oro_api_post_calendarevent'), $recurringEventParameters);
@@ -40,11 +36,11 @@ class RestCalendarEventWithRecurrentEventTest extends WebTestCase
         $this->assertTrue(isset($result['id']));
         /** @var CalendarEvent $event */
         $event = $this->getContainer()->get('doctrine')
-            ->getRepository('OroCalendarBundle:CalendarEvent')
+            ->getRepository(CalendarEvent::class)
             ->find($result['id']);
         $this->assertNotNull($event);
         $this->assertEquals(
-            Recurrence::MAX_END_DATE,
+            RecurrenceModel::MAX_END_DATE,
             $event->getRecurrence()->getCalculatedEndTime()->format(DATE_RFC3339)
         );
 
@@ -59,13 +55,9 @@ class RestCalendarEventWithRecurrentEventTest extends WebTestCase
     }
 
     /**
-     * Reads recurring event.
-     *
      * @depends testPostRecurringEvent
-     *
-     * @param array $data
      */
-    public function testGetRecurringEvent($data)
+    public function testGetRecurringEvent(array $data)
     {
         $this->client->request(
             'GET',
@@ -87,7 +79,7 @@ class RestCalendarEventWithRecurrentEventTest extends WebTestCase
         $recurringEventParameters = $this->getRecurringEventParameters();
         $this->client->request('POST', $this->getUrl('oro_api_post_calendarevent'), $recurringEventParameters);
         $result = $this->getJsonResponseContent($this->client->getResponse(), 201);
-        $event = $this->getContainer()->get('doctrine')->getRepository('OroCalendarBundle:CalendarEvent')
+        $event = $this->getContainer()->get('doctrine')->getRepository(CalendarEvent::class)
             ->find($result['id']);
         $data['id'] = $event->getId();
         $data['recurrenceId'] = $event->getRecurrence()->getId();
@@ -117,7 +109,7 @@ class RestCalendarEventWithRecurrentEventTest extends WebTestCase
         $result = $this->getJsonResponseContent($this->client->getResponse(), 200);
         $this->assertEquals(Attendee::STATUS_NONE, $result['invitationStatus']);
 
-        $event = $this->getContainer()->get('doctrine')->getRepository('OroCalendarBundle:CalendarEvent')
+        $event = $this->getContainer()->get('doctrine')->getRepository(CalendarEvent::class)
             ->findOneBy(['id' => $data['id']]);
         $activityTargetEntities = $event->getActivityTargets();
         $this->assertCount(1, $activityTargetEntities);
@@ -126,7 +118,7 @@ class RestCalendarEventWithRecurrentEventTest extends WebTestCase
             reset($activityTargetEntities)->getId()
         );
         $this->assertNull($event->getRecurrence());
-        $recurrence = $this->getContainer()->get('doctrine')->getRepository('OroCalendarBundle:Recurrence')
+        $recurrence = $this->getContainer()->get('doctrine')->getRepository(Recurrence::class)
             ->findOneBy(['id' => $data['recurrenceId']]);
         $this->assertNull($recurrence);
 
@@ -144,7 +136,7 @@ class RestCalendarEventWithRecurrentEventTest extends WebTestCase
         $recurringEventParameters = $this->getRecurringEventParameters();
         $this->client->request('POST', $this->getUrl('oro_api_post_calendarevent'), $recurringEventParameters);
         $result = $this->getJsonResponseContent($this->client->getResponse(), 201);
-        $event = $this->getContainer()->get('doctrine')->getRepository('OroCalendarBundle:CalendarEvent')
+        $event = $this->getContainer()->get('doctrine')->getRepository(CalendarEvent::class)
             ->find($result['id']);
         $data['id'] = $event->getId();
         $data['recurrenceId'] = $event->getRecurrence()->getId();
@@ -154,24 +146,18 @@ class RestCalendarEventWithRecurrentEventTest extends WebTestCase
         );
 
         $this->assertEmptyResponseStatusCodeEquals($this->client->getResponse(), 204);
-        $event = $this->getContainer()->get('doctrine')->getRepository('OroCalendarBundle:CalendarEvent')
+        $event = $this->getContainer()->get('doctrine')->getRepository(CalendarEvent::class)
             ->findOneBy(['id' => $data['id']]); // do not use 'load' method to avoid proxy object loading.
         $this->assertNull($event);
-        $recurrence = $this->getContainer()->get('doctrine')->getRepository('OroCalendarBundle:Recurrence')
+        $recurrence = $this->getContainer()->get('doctrine')->getRepository(Recurrence::class)
             ->findOneBy(['id' => $data['recurrenceId']]);
         $this->assertNull($recurrence);
     }
 
     /**
-     * Creates recurring event exception.
-     *
      * @depends testPostRecurringEvent
-     *
-     * @param array $data
-     *
-     * @return array
      */
-    public function testPostRecurringEventException($data)
+    public function testPostRecurringEventException(array $data): array
     {
         $recurringEventExceptionParameters = $this->getRecurringEventExceptionParameters();
         $recurringEventExceptionParameters['recurringEventId'] = $data['id'];
@@ -184,7 +170,7 @@ class RestCalendarEventWithRecurrentEventTest extends WebTestCase
 
         $this->assertNotEmpty($result);
         $this->assertTrue(isset($result['id']));
-        $exception = $this->getContainer()->get('doctrine')->getRepository('OroCalendarBundle:CalendarEvent')
+        $exception = $this->getContainer()->get('doctrine')->getRepository(CalendarEvent::class)
             ->find($result['id']);
         $this->assertNotNull($exception);
         $this->assertEquals($data['id'], $exception->getRecurringEvent()->getId());
@@ -203,13 +189,9 @@ class RestCalendarEventWithRecurrentEventTest extends WebTestCase
     }
 
     /**
-     * Reads recurring event exception.
-     *
      * @depends testPostRecurringEventException
-     *
-     * @param array $data
      */
-    public function testGetRecurringEventException($data)
+    public function testGetRecurringEventException(array $data)
     {
         $this->client->request(
             'GET',
@@ -234,13 +216,9 @@ class RestCalendarEventWithRecurrentEventTest extends WebTestCase
     }
 
     /**
-     * Updates recurring event exception.
-     *
      * @depends testPostRecurringEventException
-     *
-     * @param array $data
      */
-    public function testPutRecurringEventException($data)
+    public function testPutRecurringEventException(array $data)
     {
         $recurringEventExceptionParameters = $data['recurringEventExceptionParameters'];
         $recurringEventExceptionParameters['recurringEventId'] = $data['recurringEventId'];
@@ -252,7 +230,7 @@ class RestCalendarEventWithRecurrentEventTest extends WebTestCase
         );
 
         $result = $this->getJsonResponseContent($this->client->getResponse(), 200);
-        $event = $this->getContainer()->get('doctrine')->getRepository('OroCalendarBundle:CalendarEvent')
+        $event = $this->getContainer()->get('doctrine')->getRepository(CalendarEvent::class)
             ->find($data['id']);
         $this->assertCount(1, $event->getChildEvents());
         $this->assertNotNull($event->getRecurringEvent());
@@ -271,13 +249,9 @@ class RestCalendarEventWithRecurrentEventTest extends WebTestCase
     }
 
     /**
-     * Deletes recurring event exception.
-     *
      * @depends testPostRecurringEventException
-     *
-     * @param array $data
      */
-    public function testDeleteRecurringEventException($data)
+    public function testDeleteRecurringEventException(array $data)
     {
         $this->client->request(
             'DELETE',
@@ -286,7 +260,7 @@ class RestCalendarEventWithRecurrentEventTest extends WebTestCase
 
         $this->assertEmptyResponseStatusCodeEquals($this->client->getResponse(), 204);
 
-        $event = $this->getContainer()->get('doctrine')->getRepository('OroCalendarBundle:CalendarEvent')
+        $event = $this->getContainer()->get('doctrine')->getRepository(CalendarEvent::class)
             ->findOneBy(['id' => $data['id']]); // do not use 'load' method to avoid proxy object loading.
         $this->assertNull($event);
     }
@@ -303,7 +277,7 @@ class RestCalendarEventWithRecurrentEventTest extends WebTestCase
         // creates new recurring event
         $this->client->request('POST', $this->getUrl('oro_api_post_calendarevent'), $recurringEventParameters);
         $result = $this->getJsonResponseContent($this->client->getResponse(), 201);
-        $event = $this->getContainer()->get('doctrine')->getRepository('OroCalendarBundle:CalendarEvent')
+        $event = $this->getContainer()->get('doctrine')->getRepository(CalendarEvent::class)
             ->find($result['id']);
         $data['id'] = $event->getId();
         $data['recurrenceId'] = $event->getRecurrence()->getId();
@@ -326,23 +300,18 @@ class RestCalendarEventWithRecurrentEventTest extends WebTestCase
 
         // ensures that all related entities are deleted
         $this->assertEmptyResponseStatusCodeEquals($this->client->getResponse(), 204);
-        $event = $this->getContainer()->get('doctrine')->getRepository('OroCalendarBundle:CalendarEvent')
+        $event = $this->getContainer()->get('doctrine')->getRepository(CalendarEvent::class)
             ->findOneBy(['id' => $data['id']]); // do not use 'load' method to avoid proxy object loading.
         $this->assertNull($event);
-        $recurrence = $this->getContainer()->get('doctrine')->getRepository('OroCalendarBundle:Recurrence')
+        $recurrence = $this->getContainer()->get('doctrine')->getRepository(Recurrence::class)
             ->findOneBy(['id' => $data['recurrenceId']]);
         $this->assertNull($recurrence);
-        $exception = $this->getContainer()->get('doctrine')->getRepository('OroCalendarBundle:CalendarEvent')
+        $exception = $this->getContainer()->get('doctrine')->getRepository(CalendarEvent::class)
             ->findOneBy(['id' => $data['exceptionId']]);
         $this->assertNull($exception);
     }
 
-    /**
-     * Creates recurring event.
-     *
-     * @return array
-     */
-    public function testPostRecurringEventWithTimeZone()
+    public function testPostRecurringEventWithTimeZone(): array
     {
         $recurringEventParameters = $this->getRecurringEventParameters();
         $recurringEvents = $recurringEventParameters;
@@ -363,11 +332,11 @@ class RestCalendarEventWithRecurrentEventTest extends WebTestCase
         $this->assertTrue(isset($result['id']));
         /** @var CalendarEvent $event */
         $event = $this->getContainer()->get('doctrine')
-            ->getRepository('OroCalendarBundle:CalendarEvent')
+            ->getRepository(CalendarEvent::class)
             ->find($result['id']);
         $this->assertNotNull($event);
         $this->assertEquals(
-            Recurrence::MAX_END_DATE,
+            RecurrenceModel::MAX_END_DATE,
             $event->getRecurrence()->getCalculatedEndTime()->format(DATE_RFC3339)
         );
 
@@ -375,13 +344,9 @@ class RestCalendarEventWithRecurrentEventTest extends WebTestCase
     }
 
     /**
-     * Reads recurring event.
-     *
      * @depends testPostRecurringEventWithTimeZone
-     *
-     * @param array $data
      */
-    public function testGetRecurringEventWithTimeZone($data)
+    public function testGetRecurringEventWithTimeZone(array $data)
     {
         $this->client->request(
             'GET',
@@ -394,10 +359,7 @@ class RestCalendarEventWithRecurrentEventTest extends WebTestCase
         $this->assertEquals($data['recurrenceId'], $result['recurrence']['id']);
     }
 
-    /**
-     * @return array
-     */
-    protected function getRecurringEventParameters()
+    private function getRecurringEventParameters(): array
     {
         $targetOne = $this->getReference('activity_target_one');
 
@@ -410,7 +372,7 @@ class RestCalendarEventWithRecurrentEventTest extends WebTestCase
             'backgroundColor' => '#FF0000',
             'calendar' => $this->getReference('oro_calendar:calendar:system_user_1')->getId(),
             'recurrence' => [
-                'recurrenceType' => Recurrence::TYPE_DAILY,
+                'recurrenceType' => RecurrenceModel::TYPE_DAILY,
                 'interval' => 1,
                 'instance' => null,
                 'dayOfWeek' => [],
@@ -429,14 +391,11 @@ class RestCalendarEventWithRecurrentEventTest extends WebTestCase
             'contexts' => json_encode([
                 'entityId' => $targetOne->getId(),
                 'entityClass' => get_class($targetOne),
-            ])
+            ], JSON_THROW_ON_ERROR)
         ];
     }
 
-    /**
-     * @return array
-     */
-    protected function getRecurringEventExceptionParameters()
+    private function getRecurringEventExceptionParameters(): array
     {
         return [
             'title' => 'Test Recurring Event Exception',

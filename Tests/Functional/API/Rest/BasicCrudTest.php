@@ -68,7 +68,8 @@ class BasicCrudTest extends AbstractTestCase
                         'end'      => '2016-10-14T23:00:00+00:00',
                         'calendar' => $this->getReference('oro_calendar:calendar:foo_user_1')->getId(),
                         'allDay'   => false
-                    ]
+                    ],
+                    JSON_THROW_ON_ERROR
                 )
             ]
         );
@@ -107,10 +108,10 @@ class BasicCrudTest extends AbstractTestCase
                 'uid'                      => $newEvent->getUid(),
                 'calendar'                 => $this->getReference('oro_calendar:calendar:foo_user_1')->getId(),
                 'parentEventId'            => null,
-                'title'                    => "Regular event",
+                'title'                    => 'Regular event',
                 'description'              => null,
-                'start'                    => "2016-10-14T22:00:00+00:00",
-                'end'                      => "2016-10-14T23:00:00+00:00",
+                'start'                    => '2016-10-14T22:00:00+00:00',
+                'end'                      => '2016-10-14T23:00:00+00:00',
                 'allDay'                   => false,
                 'attendees'                => [],
                 'editable'                 => true,
@@ -195,10 +196,10 @@ CONTENT;
                 'uid'                      => $newEvent->getUid(),
                 'calendar'                 => $this->getReference('oro_calendar:calendar:foo_user_1')->getId(),
                 'parentEventId'            => null,
-                'title'                    => "Regular event",
+                'title'                    => 'Regular event',
                 'description'              => null,
-                'start'                    => "2016-10-14T22:00:00+00:00",
-                'end'                      => "2016-10-14T23:00:00+00:00",
+                'start'                    => '2016-10-14T22:00:00+00:00',
+                'end'                      => '2016-10-14T23:00:00+00:00',
                 'allDay'                   => false,
                 'attendees'                => [],
                 'editable'                 => true,
@@ -254,7 +255,8 @@ CONTENT;
                             'startTime'      => '2016-10-14T22:00:00+00:00',
                             'occurrences'    => 4,
                         ]
-                    ]
+                    ],
+                    JSON_THROW_ON_ERROR
                 )
             ]
         );
@@ -292,7 +294,8 @@ CONTENT;
                             'startTime'      => '2016-10-14T22:00:00+00:00',
                             'occurrences'    => 4,
                         ]
-                    ]
+                    ],
+                    JSON_THROW_ON_ERROR
                 )
             ]
         );
@@ -372,7 +375,8 @@ CONTENT;
                                 'type'        => Attendee::TYPE_REQUIRED,
                             ],
                         ]
-                    ]
+                    ],
+                    JSON_THROW_ON_ERROR
                 )
             ]
         );
@@ -411,7 +415,8 @@ CONTENT;
                                 'type'        => Attendee::TYPE_REQUIRED,
                             ],
                         ]
-                    ]
+                    ],
+                    JSON_THROW_ON_ERROR
                 )
             ]
         );
@@ -464,7 +469,8 @@ CONTENT;
                         'start' => '2016-10-14T22:00:00+00:00',
                         'end' => '2016-10-14T23:00:00+00:00',
                         'allDay' => false,
-                    ]
+                    ],
+                    JSON_THROW_ON_ERROR
                 )
             ]
         );

@@ -3,8 +3,11 @@
 namespace Oro\Bundle\CalendarBundle\Tests\Functional\Controller;
 
 use Oro\Bundle\ActivityBundle\Form\DataTransformer\ContextsToViewTransformer;
+use Oro\Bundle\CalendarBundle\Entity\Attendee;
+use Oro\Bundle\CalendarBundle\Entity\CalendarEvent;
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 use Oro\Bundle\UserBundle\Entity\User;
+use Oro\Bundle\UserBundle\Tests\Functional\DataFixtures\LoadUserData;
 
 class CalendarEventControllerTest extends WebTestCase
 {
@@ -12,42 +15,39 @@ class CalendarEventControllerTest extends WebTestCase
     {
         $this->initClient([], $this->generateBasicAuthHeader());
         $this->client->useHashNavigation(true);
-        $this->loadFixtures(['Oro\Bundle\UserBundle\Tests\Functional\DataFixtures\LoadUserData']);
+        $this->loadFixtures([LoadUserData::class]);
     }
 
     public function testIndex()
     {
         $crawler = $this->client->request('GET', $this->getUrl('oro_calendar_event_index'));
-        $result  = $this->client->getResponse();
+        $result = $this->client->getResponse();
         $this->assertHtmlResponseStatusCodeEquals($result, 200);
         $this->assertEquals('Calendar Events - Activities', $crawler->filter('#page-title')->html());
     }
 
-    /**
-     * @return array
-     */
-    public function testCreateAction()
+    public function testCreateAction(): array
     {
         $crawler = $this->client->request('GET', $this->getUrl('oro_calendar_event_create'));
-        $form    = $crawler->selectButton('Save and Close')->form();
-        $user    = $this->getReference('simple_user');
-        $admin   = $this->getAdminUser();
+        $form = $crawler->selectButton('Save and Close')->form();
+        $user = $this->getReference('simple_user');
+        $admin = $this->getAdminUser();
 
-        $form['oro_calendar_event_form[title]']       = 'test title extra unique title';
+        $form['oro_calendar_event_form[title]'] = 'test title extra unique title';
         $form['oro_calendar_event_form[description]'] = 'test description';
-        $form['oro_calendar_event_form[start]']       = '2016-05-23T14:46:02Z';
-        $form['oro_calendar_event_form[end]']         = '2016-05-23T15:46:02Z';
-        $form['oro_calendar_event_form[attendees]']   = implode(
+        $form['oro_calendar_event_form[start]'] = '2016-05-23T14:46:02Z';
+        $form['oro_calendar_event_form[end]'] = '2016-05-23T15:46:02Z';
+        $form['oro_calendar_event_form[attendees]'] = implode(
             ContextsToViewTransformer::SEPARATOR,
             [
                 json_encode([
                     'entityClass' => get_class($user),
                     'entityId' => $user->getId(),
-                ]),
+                ], JSON_THROW_ON_ERROR),
                 json_encode([
                     'entityClass' => get_class($admin),
                     'entityId' => $admin->getId(),
-                ])
+                ], JSON_THROW_ON_ERROR)
             ]
         );
 
@@ -56,10 +56,10 @@ class CalendarEventControllerTest extends WebTestCase
 
         $result = $this->client->getResponse();
         $this->assertHtmlResponseStatusCodeEquals($result, 200);
-        static::assertStringContainsString('Calendar event saved', $crawler->html());
+        self::assertStringContainsString('Calendar event saved', $crawler->html());
 
         $attendees = $this->getContainer()->get('doctrine')
-            ->getRepository('OroCalendarBundle:Attendee')
+            ->getRepository(Attendee::class)
             ->findAll();
         $this->assertCount(2, $attendees);
 
@@ -69,7 +69,7 @@ class CalendarEventControllerTest extends WebTestCase
         }
 
         $calendarEvent = $this->getContainer()->get('doctrine')
-            ->getRepository('OroCalendarBundle:CalendarEvent')
+            ->getRepository(CalendarEvent::class)
             ->findOneBy(['title' => 'test title extra unique title']);
 
         return [
@@ -87,7 +87,7 @@ class CalendarEventControllerTest extends WebTestCase
             'GET',
             $this->getUrl('oro_calendar_event_view', ['id' => $param['calendarId']])
         );
-        $result  = $this->client->getResponse();
+        $result = $this->client->getResponse();
         $this->assertHtmlResponseStatusCodeEquals($result, 200);
     }
 
@@ -107,23 +107,23 @@ class CalendarEventControllerTest extends WebTestCase
             'GET',
             $this->getUrl('oro_calendar_event_update', ['id' => $result['id']])
         );
-        $form    = $crawler->selectButton('Save and Close')->form();
+        $form = $crawler->selectButton('Save and Close')->form();
 
-        $form['oro_calendar_event_form[title]']       = 'test title';
+        $form['oro_calendar_event_form[title]'] = 'test title';
         $form['oro_calendar_event_form[description]'] = 'test description';
-        $form['oro_calendar_event_form[start]']       = '2016-05-23T14:46:02Z';
-        $form['oro_calendar_event_form[end]']         = '2016-05-23T15:46:02Z';
-        $form['oro_calendar_event_form[attendees]']   = implode(
+        $form['oro_calendar_event_form[start]'] = '2016-05-23T14:46:02Z';
+        $form['oro_calendar_event_form[end]'] = '2016-05-23T15:46:02Z';
+        $form['oro_calendar_event_form[attendees]'] = implode(
             ContextsToViewTransformer::SEPARATOR,
             [
                 json_encode([
-                    'entityClass' => 'Oro\Bundle\CalendarBundle\Entity\Attendee',
+                    'entityClass' => Attendee::class,
                     'entityId' => $param['attendees'][0],
-                ]),
+                ], JSON_THROW_ON_ERROR),
                 json_encode([
-                    'entityClass' => 'Oro\Bundle\CalendarBundle\Entity\Attendee',
+                    'entityClass' => Attendee::class,
                     'entityId' => $param['attendees'][1],
-                ])
+                ], JSON_THROW_ON_ERROR)
             ]
         );
 
@@ -132,27 +132,22 @@ class CalendarEventControllerTest extends WebTestCase
 
         $result = $this->client->getResponse();
         $this->assertHtmlResponseStatusCodeEquals($result, 200);
-        static::assertStringContainsString('Calendar event saved', $crawler->html());
+        self::assertStringContainsString('Calendar event saved', $crawler->html());
 
         $attendees = $this->getContainer()->get('doctrine')
-            ->getRepository('OroCalendarBundle:Attendee')
+            ->getRepository(Attendee::class)
             ->findAll();
         $this->assertCount(2, $attendees);
 
         foreach ($attendees as $attendee) {
-            $this->assertTrue(
-                in_array($attendee->getId(), $param['attendees'])
-            );
+            $this->assertContains($attendee->getId(), $param['attendees']);
         }
     }
 
-    /**
-     * @return User
-     */
-    protected function getAdminUser()
+    private function getAdminUser(): User
     {
         return $this->getContainer()->get('doctrine')
-            ->getRepository('OroUserBundle:User')
-            ->findOneByEmail('admin@example.com');
+            ->getRepository(User::class)
+            ->findOneBy(['email' => self::AUTH_USER]);
     }
 }

@@ -3,7 +3,7 @@
 namespace Oro\Bundle\CalendarBundle\Tests\Functional\API;
 
 use Doctrine\Common\Collections\Criteria;
-use Doctrine\ORM\EntityManager;
+use Doctrine\ORM\EntityManagerInterface;
 use Oro\Bundle\CalendarBundle\Entity\Calendar;
 use Oro\Bundle\CalendarBundle\Entity\CalendarEvent;
 use Oro\Bundle\CalendarBundle\Tests\Functional\DataFixtures\LoadUserData;
@@ -15,7 +15,7 @@ use Oro\Bundle\UserBundle\Entity\User;
  */
 abstract class AbstractUseCaseTestCase extends WebTestCase
 {
-    const DEFAULT_USER_CALENDAR_ID = 1;
+    protected const DEFAULT_USER_CALENDAR_ID = 1;
 
     protected function setUp(): void
     {
@@ -23,7 +23,7 @@ abstract class AbstractUseCaseTestCase extends WebTestCase
         $this->loadFixtures([LoadUserData::class]);
     }
 
-    protected function assertCalendarEvents(array $expectedCalendarEvents, array $actualCalendarEvents)
+    protected function assertCalendarEvents(array $expectedCalendarEvents, array $actualCalendarEvents): void
     {
         $this->assertCount(count($expectedCalendarEvents), $actualCalendarEvents, 'Calendar Events count mismatch');
 
@@ -41,9 +41,9 @@ abstract class AbstractUseCaseTestCase extends WebTestCase
                     sprintf(
                         'Calendar Event Attendees count mismatch for calendar event.%s Expected: %s%s Actual: %s',
                         PHP_EOL,
-                        json_encode($expectedEventData),
+                        json_encode($expectedEventData, JSON_THROW_ON_ERROR),
                         PHP_EOL,
-                        json_encode($actualEvent)
+                        json_encode($actualEvent, JSON_THROW_ON_ERROR)
                     )
                 );
 
@@ -66,12 +66,7 @@ abstract class AbstractUseCaseTestCase extends WebTestCase
         }
     }
 
-    /**
-     * @param array $expected
-     * @param array $actual
-     * @param string $entityAlias
-     */
-    protected function assertArraysPartiallyEqual(array $expected, array $actual, $entityAlias)
+    protected function assertArraysPartiallyEqual(array $expected, array $actual, string $entityAlias): void
     {
         foreach ($expected as $propertyName => $expectedValue) {
             $this->assertEquals(
@@ -83,21 +78,15 @@ abstract class AbstractUseCaseTestCase extends WebTestCase
                     $entityAlias,
                     $propertyName,
                     PHP_EOL,
-                    json_encode($expected),
+                    json_encode($expected, JSON_THROW_ON_ERROR),
                     PHP_EOL,
-                    json_encode($actual)
+                    json_encode($actual, JSON_THROW_ON_ERROR)
                 )
             );
         }
     }
 
-    /**
-     * @param array $expectedCalendarEventsData
-     * @param int   $calendarId
-     *
-     * @return array
-     */
-    protected function changeExpectedDataCalendarId(array $expectedCalendarEventsData, $calendarId)
+    protected function changeExpectedDataCalendarId(array $expectedCalendarEventsData, int $calendarId): array
     {
         foreach ($expectedCalendarEventsData as &$expectedCalendarEventData) {
             $expectedCalendarEventData['calendar'] = $calendarId;
@@ -106,11 +95,7 @@ abstract class AbstractUseCaseTestCase extends WebTestCase
         return $expectedCalendarEventsData;
     }
 
-    /**
-     * @param int $eventId
-     * @param int $expectedCount
-     */
-    protected function assertCalendarEventAttendeesCount($eventId, $expectedCount)
+    protected function assertCalendarEventAttendeesCount(int $eventId, int $expectedCount): void
     {
         /** we should clear doctrine cache to get real result */
         $this->getEntityManager()->clear();
@@ -122,10 +107,8 @@ abstract class AbstractUseCaseTestCase extends WebTestCase
 
     /**
      * Create new event
-     *
-     * @return int
      */
-    protected function addCalendarEventViaAPI($data)
+    protected function addCalendarEventViaAPI(array $data): int
     {
         $this->client->request('POST', $this->getUrl('oro_api_post_calendarevent'), $data);
 
@@ -136,47 +119,28 @@ abstract class AbstractUseCaseTestCase extends WebTestCase
         return $result['id'];
     }
 
-    /**
-     * @param int   $calendarEventId
-     * @param array $data Dataa for update
-     *
-     * @return array
-     */
-    protected function updateCalendarEventViaAPI($calendarEventId, $data)
+    protected function updateCalendarEventViaAPI(int $calendarEventId, array $data): array
     {
         $this->client->request(
             'PUT',
             $this->getUrl('oro_api_put_calendarevent', ['id' => $calendarEventId]),
             $data
         );
-        $result = $this->getJsonResponseContent($this->client->getResponse(), 200);
 
-        return $result;
+        return $this->getJsonResponseContent($this->client->getResponse(), 200);
     }
 
-    /**
-     * @param int $calendarEventId
-     *
-     * @return array
-     */
-    protected function getCalendarEventViaAPI($calendarEventId)
+    protected function getCalendarEventViaAPI(int $calendarEventId): array
     {
         $this->client->request(
             'GET',
             $this->getUrl('oro_api_get_calendarevent', ['id' => $calendarEventId])
         );
 
-        $result = $this->getJsonResponseContent($this->client->getResponse(), 200);
-
-        return $result;
+        return $this->getJsonResponseContent($this->client->getResponse(), 200);
     }
 
-    /**
-     * @param array $request
-     *
-     * @return array
-     */
-    protected function getOrderedCalendarEventsViaAPI(array $request)
+    protected function getOrderedCalendarEventsViaAPI(array $request): array
     {
         $result = $this->getAllCalendarEventsViaAPI($request);
 
@@ -191,24 +155,15 @@ abstract class AbstractUseCaseTestCase extends WebTestCase
         return $result;
     }
 
-    /**
-     * @param array $request
-     *
-     * @return array
-     */
-    protected function getAllCalendarEventsViaAPI(array $request)
+    protected function getAllCalendarEventsViaAPI(array $request): array
     {
         $url = $this->getUrl('oro_api_get_calendarevents', $request);
         $this->client->request('GET', $url);
-        $result = $this->getJsonResponseContent($this->client->getResponse(), 200);
 
-        return $result;
+        return $this->getJsonResponseContent($this->client->getResponse(), 200);
     }
 
-    /**
-     * @param int $calendarEventId
-     */
-    protected function deleteEventViaAPI($calendarEventId)
+    protected function deleteEventViaAPI(int $calendarEventId): void
     {
         $this->client->request(
             'DELETE',
@@ -221,13 +176,13 @@ abstract class AbstractUseCaseTestCase extends WebTestCase
     /**
      * @return CalendarEvent[]
      */
-    public function getRecurringCalendarEventsFromDB()
+    public function getRecurringCalendarEventsFromDB(): array
     {
         $criteria = new Criteria();
         $criteria->where(Criteria::expr()->isNull('recurringEvent'));
 
         $calendarEvents = $this->getEntityManager()
-            ->getRepository('OroCalendarBundle:CalendarEvent')
+            ->getRepository(CalendarEvent::class)
             ->matching($criteria);
 
         return $calendarEvents->toArray();
@@ -236,65 +191,42 @@ abstract class AbstractUseCaseTestCase extends WebTestCase
     /**
      * @return CalendarEvent[]
      */
-    public function getCalendarEventExceptionsFromDB()
+    public function getCalendarEventExceptionsFromDB(): array
     {
         $criteria = new Criteria();
         $criteria->where(Criteria::expr()->neq('recurringEvent', null));
 
         $calendarEvents = $this->getEntityManager()
-            ->getRepository('OroCalendarBundle:CalendarEvent')
+            ->getRepository(CalendarEvent::class)
             ->matching($criteria);
 
         return $calendarEvents->toArray();
     }
 
-    /**
-     * @param int $id
-     *
-     * @return null|CalendarEvent
-     */
-    protected function getCalendarEventById($id)
+    protected function getCalendarEventById(int $id): ?CalendarEvent
     {
-        $event = $this->getEntityManager()
-            ->getRepository('OroCalendarBundle:CalendarEvent')
-            ->find($id);
-
-        return $event;
+        return $this->getEntityManager()->getRepository(CalendarEvent::class)->find($id);
     }
 
-    /**
-     * @param User          $attendeeMappedUser
-     * @param CalendarEvent $parentEvent
-     *
-     * @return CalendarEvent|null
-     */
-    protected function getAttendeeCalendarEvent(User $attendeeMappedUser, CalendarEvent $parentEvent)
+    protected function getAttendeeCalendarEvent(User $attendeeMappedUser, CalendarEvent $parentEvent): ?CalendarEvent
     {
         $calendar = $this->getUserCalendar($attendeeMappedUser);
 
         return $this->getEntityManager()
-            ->getRepository('OroCalendarBundle:CalendarEvent')
+            ->getRepository(CalendarEvent::class)
             ->findOneBy(['parent' => $parentEvent, 'calendar' => $calendar]);
     }
 
-    /**
-     * @param User $user
-     *
-     * @return Calendar|null
-     */
-    protected function getUserCalendar(User $user)
+    protected function getUserCalendar(User $user): ?Calendar
     {
         return $this->getEntityManager()
-            ->getRepository('OroCalendarBundle:Calendar')
+            ->getRepository(Calendar::class)
             ->getUserCalendarsQueryBuilder($user->getOrganization()->getId(), $user->getId())
             ->getQuery()
             ->getOneOrNullResult();
     }
 
-    /**
-     * @return EntityManager
-     */
-    protected function getEntityManager()
+    protected function getEntityManager(): EntityManagerInterface
     {
         return $this->getContainer()->get('doctrine')->getManager();
     }

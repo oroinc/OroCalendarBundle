@@ -84,7 +84,7 @@ class RecurringCalendarEventMassDeleteTest extends AbstractTestCase
                 'method'  => 'POST',
                 'url'     => $this->getUrl('oro_api_post_calendarevent'),
                 'server'  => $this->generateWsseAuthHeader('foo_user_1', 'foo_user_1_api_key'),
-                'content' => json_encode($eventData)
+                'content' => json_encode($eventData, JSON_THROW_ON_ERROR)
             ]
         );
         $response = $this->getRestResponseContent(
@@ -127,7 +127,8 @@ class RecurringCalendarEventMassDeleteTest extends AbstractTestCase
                                 'type'        => Attendee::TYPE_REQUIRED,
                             ]
                         ]
-                    ]
+                    ],
+                    JSON_THROW_ON_ERROR
                 )
             ]
         );
@@ -170,7 +171,7 @@ class RecurringCalendarEventMassDeleteTest extends AbstractTestCase
                 'method'  => 'POST',
                 'url'     => $this->getUrl('oro_api_post_calendarevent'),
                 'server'  => $this->generateWsseAuthHeader('foo_user_1', 'foo_user_1_api_key'),
-                'content' => json_encode($eventData)
+                'content' => json_encode($eventData, JSON_THROW_ON_ERROR)
             ]
         );
         $response = $this->getRestResponseContent(
@@ -205,7 +206,7 @@ class RecurringCalendarEventMassDeleteTest extends AbstractTestCase
             )
         );
         $result = $this->client->getResponse();
-        $data = json_decode($result->getContent(), true);
+        $data = json_decode($result->getContent(), true, 512, JSON_THROW_ON_ERROR);
         $this->assertTrue($data['successful'] === true);
         $this->assertTrue($data['count'] === 1);
 
@@ -251,37 +252,37 @@ class RecurringCalendarEventMassDeleteTest extends AbstractTestCase
         $expectedResponse = [
             [
                 'id'          => $recurringEvent->getId(),
-                'title'       => "Test Recurring Event",
-                'description' => "Test Recurring Event Description",
-                'start'       => "2016-04-25T01:00:00+00:00",
-                'end'         => "2016-04-25T02:00:00+00:00",
+                'title'       => 'Test Recurring Event',
+                'description' => 'Test Recurring Event Description',
+                'start'       => '2016-04-25T01:00:00+00:00',
+                'end'         => '2016-04-25T02:00:00+00:00',
                 'allDay'      => false,
                 'attendees'   => $expectedAttendees,
             ],
             [
                 'id'          => $recurringEvent->getId(),
-                'title'       => "Test Recurring Event",
-                'description' => "Test Recurring Event Description",
-                'start'       => "2016-05-08T01:00:00+00:00",
-                'end'         => "2016-05-08T02:00:00+00:00",
+                'title'       => 'Test Recurring Event',
+                'description' => 'Test Recurring Event Description',
+                'start'       => '2016-05-08T01:00:00+00:00',
+                'end'         => '2016-05-08T02:00:00+00:00',
                 'allDay'      => false,
                 'attendees'   => $expectedAttendees,
             ],
             [
                 'id'          => $recurringEvent->getId(),
-                'title'       => "Test Recurring Event",
-                'description' => "Test Recurring Event Description",
-                'start'       => "2016-05-09T01:00:00+00:00",
-                'end'         => "2016-05-09T02:00:00+00:00",
+                'title'       => 'Test Recurring Event',
+                'description' => 'Test Recurring Event Description',
+                'start'       => '2016-05-09T01:00:00+00:00',
+                'end'         => '2016-05-09T02:00:00+00:00',
                 'allDay'      => false,
                 'attendees'   => $expectedAttendees,
             ],
             [
                 'id'          => $exceptionEvent->getId(),
-                'title'       => "Test Recurring Event Changed",
-                'description' => "Test Recurring Event Description",
-                'start'       => "2016-05-22T03:00:00+00:00",
-                'end'         => "2016-05-22T05:00:00+00:00",
+                'title'       => 'Test Recurring Event Changed',
+                'description' => 'Test Recurring Event Description',
+                'start'       => '2016-05-22T03:00:00+00:00',
+                'end'         => '2016-05-22T05:00:00+00:00',
                 'allDay'      => false,
                 'attendees'   => $expectedAttendees,
             ]
@@ -374,7 +375,7 @@ class RecurringCalendarEventMassDeleteTest extends AbstractTestCase
                 'method'  => 'POST',
                 'url'     => $this->getUrl('oro_api_post_calendarevent'),
                 'server'  => $this->generateWsseAuthHeader('foo_user_1', 'foo_user_1_api_key'),
-                'content' => json_encode($eventData)
+                'content' => json_encode($eventData, JSON_THROW_ON_ERROR)
             ]
         );
         $response = $this->getRestResponseContent(['statusCode' => 201, 'contentType' => 'application/json']);
@@ -419,7 +420,7 @@ class RecurringCalendarEventMassDeleteTest extends AbstractTestCase
                 'method'  => 'POST',
                 'url'     => $this->getUrl('oro_api_post_calendarevent'),
                 'server'  => $this->generateWsseAuthHeader('foo_user_1', 'foo_user_1_api_key'),
-                'content' => json_encode($exceptionData)
+                'content' => json_encode($exceptionData, JSON_THROW_ON_ERROR)
             ]
         );
         $this->assertJsonResponseStatusCodeEquals($this->client->getResponse(), 201);
@@ -442,7 +443,7 @@ class RecurringCalendarEventMassDeleteTest extends AbstractTestCase
                 'method'  => 'POST',
                 'url'     => $this->getUrl('oro_api_post_calendarevent'),
                 'server'  => $this->generateWsseAuthHeader('foo_user_1', 'foo_user_1_api_key'),
-                'content' => json_encode($exceptionData)
+                'content' => json_encode($exceptionData, JSON_THROW_ON_ERROR)
             ]
         );
         $this->assertJsonResponseStatusCodeEquals($this->client->getResponse(), 201);
@@ -470,9 +471,9 @@ class RecurringCalendarEventMassDeleteTest extends AbstractTestCase
             )
         );
         $result = $this->client->getResponse();
-        $data = json_decode($result->getContent(), true);
-        $this->assertTrue($data['successful'] === true);
-        $this->assertTrue($data['count'] === 1);
+        $data = json_decode($result->getContent(), true, 512, JSON_THROW_ON_ERROR);
+        $this->assertTrue($data['successful']);
+        $this->assertSame(1, $data['count']);
 
         // Step 5. Check no events exist in calendars of all attendees.
 

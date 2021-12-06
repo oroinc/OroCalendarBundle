@@ -5,10 +5,11 @@ namespace Oro\Bundle\CalendarBundle\Tests\Functional\Controller;
 use Oro\Bundle\CalendarBundle\Entity\CalendarEvent;
 use Oro\Bundle\CalendarBundle\Model\Recurrence;
 use Oro\Bundle\CalendarBundle\Tests\Functional\API\AbstractUseCaseTestCase;
+use Oro\Bundle\UserBundle\Tests\Functional\DataFixtures\LoadUserData;
 
 class RecurringCalendarEventControllerTest extends AbstractUseCaseTestCase
 {
-    const RECURRING_EVENT_TITLE = 'Test Creating/Updating Recurring Event';
+    private const RECURRING_EVENT_TITLE = 'Test Creating/Updating Recurring Event';
 
     protected function setUp(): void
     {
@@ -16,7 +17,7 @@ class RecurringCalendarEventControllerTest extends AbstractUseCaseTestCase
 
         $this->initClient([], $this->generateBasicAuthHeader());
         $this->client->useHashNavigation(true);
-        $this->loadFixtures(['Oro\Bundle\UserBundle\Tests\Functional\DataFixtures\LoadUserData']);
+        $this->loadFixtures([LoadUserData::class]);
     }
 
     public function testCreateEventWithRecurring()
@@ -51,24 +52,22 @@ class RecurringCalendarEventControllerTest extends AbstractUseCaseTestCase
 
         $result = $this->client->getResponse();
         $this->assertHtmlResponseStatusCodeEquals($result, 200);
-        static::assertStringContainsString('Calendar event saved', $crawler->html(), 'Calendar event not saved');
+        $this->assertStringContainsString('Calendar event saved', $crawler->html(), 'Calendar event not saved');
 
         $calendarEvent = $this->getContainer()->get('doctrine')
-            ->getRepository('OroCalendarBundle:CalendarEvent')
+            ->getRepository(CalendarEvent::class)
             ->findOneBy(['title' => self::RECURRING_EVENT_TITLE]);
 
         $this->assertNotNull($calendarEvent);
         $this->assertNotNull($calendarEvent->getRecurrence());
 
-        $this->assertEquals($calendarEvent->getRecurrence()->getRecurrenceType(), Recurrence::TYPE_MONTH_N_TH);
+        $this->assertEquals(Recurrence::TYPE_MONTH_N_TH, $calendarEvent->getRecurrence()->getRecurrenceType());
     }
 
     /**
      * @depends testCreateEventWithRecurring
-     *
-     * @return CalendarEvent $calendarEvent
      */
-    public function testUpdateEventWithRecurring()
+    public function testUpdateEventWithRecurring(): CalendarEvent
     {
         $response = $this->client->requestGrid(
             'calendar-event-grid',
@@ -109,28 +108,24 @@ class RecurringCalendarEventControllerTest extends AbstractUseCaseTestCase
 
         $result = $this->client->getResponse();
         $this->assertHtmlResponseStatusCodeEquals($result, 200);
-        static::assertStringContainsString('Calendar event saved', $crawler->html(), 'Calendar event not saved');
+        $this->assertStringContainsString('Calendar event saved', $crawler->html(), 'Calendar event not saved');
 
         $calendarEvent = $this->getContainer()->get('doctrine')
-            ->getRepository('OroCalendarBundle:CalendarEvent')
+            ->getRepository(CalendarEvent::class)
             ->findOneBy(['title' => self::RECURRING_EVENT_TITLE]);
 
         $this->assertNotNull($calendarEvent);
         $this->assertNotNull($calendarEvent->getRecurrence());
 
-        $this->assertEquals($calendarEvent->getRecurrence()->getRecurrenceType(), Recurrence::TYPE_DAILY);
+        $this->assertEquals(Recurrence::TYPE_DAILY, $calendarEvent->getRecurrence()->getRecurrenceType());
 
         return $calendarEvent;
     }
 
     /**
      * @depends testUpdateEventWithRecurring
-     *
-     * @param CalendarEvent $calendarEvent
-     *
-     * @return CalendarEvent $calendarEvent
      */
-    public function testUpdateExceptionsOnRecurrenceFieldsUpdate($calendarEvent)
+    public function testUpdateExceptionsOnRecurrenceFieldsUpdate(CalendarEvent $calendarEvent): CalendarEvent
     {
         $this->initClient([], $this->generateWsseAuthHeader());
 
@@ -173,7 +168,7 @@ class RecurringCalendarEventControllerTest extends AbstractUseCaseTestCase
 
         $result = $this->client->getResponse();
         $this->assertHtmlResponseStatusCodeEquals($result, 200);
-        static::assertStringContainsString('Calendar event saved', $crawler->html(), 'Calendar event not saved');
+        $this->assertStringContainsString('Calendar event saved', $crawler->html(), 'Calendar event not saved');
 
         $this->initClient([], $this->generateWsseAuthHeader());
 
@@ -206,10 +201,8 @@ class RecurringCalendarEventControllerTest extends AbstractUseCaseTestCase
 
     /**
      * @depends testUpdateExceptionsOnRecurrenceFieldsUpdate
-     *
-     * @param CalendarEvent $calendarEvent
      */
-    public function testUpdateExceptionsOnEmptyRecurrence($calendarEvent)
+    public function testUpdateExceptionsOnEmptyRecurrence(CalendarEvent $calendarEvent)
     {
         $this->initClient([], $this->generateWsseAuthHeader());
 
@@ -244,7 +237,7 @@ class RecurringCalendarEventControllerTest extends AbstractUseCaseTestCase
 
         $result = $this->client->getResponse();
         $this->assertHtmlResponseStatusCodeEquals($result, 200);
-        static::assertStringContainsString('Calendar event saved', $crawler->html(), 'Calendar event not saved');
+        $this->assertStringContainsString('Calendar event saved', $crawler->html(), 'Calendar event not saved');
 
         $this->initClient([], $this->generateWsseAuthHeader());
 
@@ -269,8 +262,11 @@ class RecurringCalendarEventControllerTest extends AbstractUseCaseTestCase
     /**
      * @dataProvider recurringEventCreationDataProvider
      */
-    public function testCreateRecurringEvent($recurringEventParameters, $apiRequestParams, $expectedCalendarEvents)
-    {
+    public function testCreateRecurringEvent(
+        array $recurringEventParameters,
+        array $apiRequestParams,
+        array $expectedCalendarEvents
+    ) {
         $formData = [];
         foreach ($recurringEventParameters as $name => $parameterValue) {
             if (is_array($parameterValue)) {
@@ -295,10 +291,10 @@ class RecurringCalendarEventControllerTest extends AbstractUseCaseTestCase
 
         $result = $this->client->getResponse();
         $this->assertHtmlResponseStatusCodeEquals($result, 200);
-        static::assertStringContainsString('Calendar event saved', $crawler->html(), 'Calendar event not saved');
+        $this->assertStringContainsString('Calendar event saved', $crawler->html(), 'Calendar event not saved');
 
         $calendarEvent = $this->getContainer()->get('doctrine')
-            ->getRepository('OroCalendarBundle:CalendarEvent')
+            ->getRepository(CalendarEvent::class)
             ->findOneBy(['title' => $recurringEventParameters['title']]);
 
         $this->assertNotNull($calendarEvent);
@@ -323,11 +319,9 @@ class RecurringCalendarEventControllerTest extends AbstractUseCaseTestCase
     }
 
     /**
-     * @return array
-     *
      * @SuppressWarnings(PHPMD.ExcessiveMethodLength)
      */
-    public function recurringEventCreationDataProvider()
+    public function recurringEventCreationDataProvider(): array
     {
         return [
             'Daily' => [
@@ -526,12 +520,7 @@ class RecurringCalendarEventControllerTest extends AbstractUseCaseTestCase
         ];
     }
 
-    /**
-     * @param $calendarEvent
-     *
-     * @return array
-     */
-    protected function getExceptionsData($calendarEvent)
+    private function getExceptionsData(CalendarEvent $calendarEvent): array
     {
         return [
             [//canceled event exception
@@ -559,7 +548,7 @@ class RecurringCalendarEventControllerTest extends AbstractUseCaseTestCase
         ];
     }
 
-    protected function addExceptions($calendarEvent)
+    private function addExceptions(CalendarEvent $calendarEvent): void
     {
         foreach ($this->getExceptionsData($calendarEvent) as $exceptionData) {
             $this->addCalendarEventViaAPI($exceptionData);
@@ -585,12 +574,7 @@ class RecurringCalendarEventControllerTest extends AbstractUseCaseTestCase
         $this->assertCalendarEvents($expectedCalendarEvents, $actualEvents);
     }
 
-    /**
-     * @param $calendarEvent
-     *
-     * @return array
-     */
-    protected function getApiRequestData($calendarEvent)
+    private function getApiRequestData(CalendarEvent $calendarEvent): array
     {
         return [
             'calendar'    => $calendarEvent->getCalendar()->getId(),

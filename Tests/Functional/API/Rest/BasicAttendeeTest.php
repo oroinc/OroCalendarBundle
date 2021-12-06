@@ -67,7 +67,8 @@ class BasicAttendeeTest extends AbstractTestCase
                                 'email'       => 'foo_user_2@example.com',
                             ]
                         ],
-                    ]
+                    ],
+                    JSON_THROW_ON_ERROR
                 )
             ]
         );
@@ -105,10 +106,10 @@ class BasicAttendeeTest extends AbstractTestCase
                 'uid'                      => $newEvent->getUid(),
                 'calendar'                 => $this->getReference('oro_calendar:calendar:foo_user_1')->getId(),
                 'parentEventId'            => null,
-                'title'                    => "Regular event",
+                'title'                    => 'Regular event',
                 'description'              => null,
-                'start'                    => "2016-10-14T22:00:00+00:00",
-                'end'                      => "2016-10-14T23:00:00+00:00",
+                'start'                    => '2016-10-14T22:00:00+00:00',
+                'end'                      => '2016-10-14T23:00:00+00:00',
                 'allDay'                   => false,
                 'attendees'                => [
                     [
@@ -173,7 +174,8 @@ class BasicAttendeeTest extends AbstractTestCase
                                 'type'        => Attendee::TYPE_ORGANIZER,
                             ]
                         ],
-                    ]
+                    ],
+                    JSON_THROW_ON_ERROR
                 )
             ]
         );
@@ -220,10 +222,10 @@ class BasicAttendeeTest extends AbstractTestCase
                 'uid'                      => $newEvent->getUid(),
                 'calendar'                 => $this->getReference('oro_calendar:calendar:system_user_1')->getId(),
                 'parentEventId'            => null,
-                'title'                    => "Regular event",
+                'title'                    => 'Regular event',
                 'description'              => null,
-                'start'                    => "2016-10-14T22:00:00+00:00",
-                'end'                      => "2016-10-14T23:00:00+00:00",
+                'start'                    => '2016-10-14T22:00:00+00:00',
+                'end'                      => '2016-10-14T23:00:00+00:00',
                 'allDay'                   => false,
                 'attendees'                => [
                     [
@@ -288,7 +290,8 @@ class BasicAttendeeTest extends AbstractTestCase
                                 'type'        => Attendee::TYPE_REQUIRED,
                             ]
                         ],
-                    ]
+                    ],
+                    JSON_THROW_ON_ERROR
                 )
             ]
         );
@@ -327,10 +330,10 @@ class BasicAttendeeTest extends AbstractTestCase
                 'uid'                      => $newEvent->getUid(),
                 'calendar'                 => $this->getReference('oro_calendar:calendar:foo_user_1')->getId(),
                 'parentEventId'            => null,
-                'title'                    => "Regular event",
+                'title'                    => 'Regular event',
                 'description'              => null,
-                'start'                    => "2016-10-14T22:00:00+00:00",
-                'end'                      => "2016-10-14T23:00:00+00:00",
+                'start'                    => '2016-10-14T22:00:00+00:00',
+                'end'                      => '2016-10-14T23:00:00+00:00',
                 'allDay'                   => false,
                 'attendees'                => [
                     [
@@ -396,7 +399,8 @@ class BasicAttendeeTest extends AbstractTestCase
                                 'type'        => Attendee::TYPE_REQUIRED,
                             ]
                         ],
-                    ]
+                    ],
+                    JSON_THROW_ON_ERROR
                 )
             ]
         );
@@ -435,7 +439,8 @@ class BasicAttendeeTest extends AbstractTestCase
                                 'type'        => Attendee::TYPE_REQUIRED,
                             ]
                         ],
-                    ]
+                    ],
+                    JSON_THROW_ON_ERROR
                 )
             ]
         );
@@ -481,10 +486,10 @@ class BasicAttendeeTest extends AbstractTestCase
                 'uid'                      => $newEvent->getUid(),
                 'calendar'                 => $this->getReference('oro_calendar:calendar:foo_user_1')->getId(),
                 'parentEventId'            => null,
-                'title'                    => "Regular event",
+                'title'                    => 'Regular event',
                 'description'              => null,
-                'start'                    => "2016-10-14T22:00:00+00:00",
-                'end'                      => "2016-10-14T23:00:00+00:00",
+                'start'                    => '2016-10-14T22:00:00+00:00',
+                'end'                      => '2016-10-14T23:00:00+00:00',
                 'allDay'                   => false,
                 'attendees'                => [
                     [
@@ -567,7 +572,8 @@ class BasicAttendeeTest extends AbstractTestCase
                                 'type'        => Attendee::TYPE_REQUIRED,
                             ]
                         ],
-                    ]
+                    ],
+                    JSON_THROW_ON_ERROR
                 )
             ]
         );
@@ -593,7 +599,8 @@ class BasicAttendeeTest extends AbstractTestCase
                 'content' => json_encode(
                     [
                         'attendees' => [],
-                    ]
+                    ],
+                    JSON_THROW_ON_ERROR
                 )
             ]
         );
@@ -639,10 +646,10 @@ class BasicAttendeeTest extends AbstractTestCase
                 'uid'                      => $newEvent->getUid(),
                 'calendar'                 => $this->getReference('oro_calendar:calendar:foo_user_1')->getId(),
                 'parentEventId'            => null,
-                'title'                    => "Regular event",
+                'title'                    => 'Regular event',
                 'description'              => null,
-                'start'                    => "2016-10-14T22:00:00+00:00",
-                'end'                      => "2016-10-14T23:00:00+00:00",
+                'start'                    => '2016-10-14T22:00:00+00:00',
+                'end'                      => '2016-10-14T23:00:00+00:00',
                 'allDay'                   => false,
                 'attendees'                => [],
                 'editable'                 => true,
