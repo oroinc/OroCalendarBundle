@@ -4,7 +4,7 @@
 
 ### activityTargets
 
-A records to which the calendar event record associated with.
+Records associated with the calendar event record.
 
 ## SUBRESOURCES
 
