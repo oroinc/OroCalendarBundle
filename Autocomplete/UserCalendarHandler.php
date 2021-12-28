@@ -4,7 +4,7 @@ namespace Oro\Bundle\CalendarBundle\Autocomplete;
 
 use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\QueryBuilder;
-use Oro\Bundle\AttachmentBundle\Manager\AttachmentManager;
+use Oro\Bundle\AttachmentBundle\Provider\PictureSourcesProviderInterface;
 use Oro\Bundle\EntityBundle\Tools\EntityRoutingHelper;
 use Oro\Bundle\OrganizationBundle\Entity\Organization;
 use Oro\Bundle\SecurityBundle\Acl\Voter\AclVoterInterface;
@@ -24,19 +24,19 @@ class UserCalendarHandler extends UserAclHandler
     protected $aclHelper;
 
     /**
-     * @param EntityManager                 $em
-     * @param AttachmentManager             $attachmentManager
-     * @param string                        $className
+     * @param EntityManager $em
+     * @param PictureSourcesProviderInterface $pictureSourcesProvider
+     * @param string $className
      * @param AuthorizationCheckerInterface $authorizationChecker
-     * @param TokenAccessorInterface        $tokenAccessor
-     * @param OwnerTreeProvider             $treeProvider
+     * @param TokenAccessorInterface $tokenAccessor
+     * @param OwnerTreeProvider $treeProvider
      * @param EntityRoutingHelper $entityRoutingHelper
-     * @param AclHelper                     $aclHelper
-     * @param AclVoterInterface             $aclVoter
+     * @param AclHelper $aclHelper
+     * @param AclVoterInterface $aclVoter
      */
     public function __construct(
         EntityManager $em,
-        AttachmentManager $attachmentManager,
+        PictureSourcesProviderInterface $pictureSourcesProvider,
         $className,
         AuthorizationCheckerInterface $authorizationChecker,
         TokenAccessorInterface $tokenAccessor,
@@ -47,7 +47,7 @@ class UserCalendarHandler extends UserAclHandler
     ) {
         parent::__construct(
             $em,
-            $attachmentManager,
+            $pictureSourcesProvider,
             $className,
             $authorizationChecker,
             $tokenAccessor,

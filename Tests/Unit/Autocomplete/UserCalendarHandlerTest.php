@@ -3,7 +3,7 @@
 namespace Oro\Bundle\CalendarBundle\Tests\Unit\Autocomplete;
 
 use Doctrine\ORM\EntityManager;
-use Oro\Bundle\AttachmentBundle\Manager\AttachmentManager;
+use Oro\Bundle\AttachmentBundle\Provider\PictureSourcesProviderInterface;
 use Oro\Bundle\CalendarBundle\Autocomplete\UserCalendarHandler;
 use Oro\Bundle\CalendarBundle\Entity\Calendar;
 use Oro\Bundle\EntityBundle\Provider\EntityNameResolver;
@@ -20,8 +20,8 @@ class UserCalendarHandlerTest extends \PHPUnit\Framework\TestCase
     /** @var EntityManager|\PHPUnit\Framework\MockObject\MockObject */
     private $em;
 
-    /** @var AttachmentManager|\PHPUnit\Framework\MockObject\MockObject */
-    private $attachmentManager;
+    /** @var PictureSourcesProviderInterface|\PHPUnit\Framework\MockObject\MockObject */
+    private $pictureSourcesProvider;
 
     /** @var AuthorizationCheckerInterface|\PHPUnit\Framework\MockObject\MockObject */
     private $authorizationChecker;
@@ -47,7 +47,7 @@ class UserCalendarHandlerTest extends \PHPUnit\Framework\TestCase
     protected function setUp(): void
     {
         $this->em = $this->createMock(EntityManager::class);
-        $this->attachmentManager = $this->createMock(AttachmentManager::class);
+        $this->pictureSourcesProvider = $this->createMock(PictureSourcesProviderInterface::class);
         $this->authorizationChecker = $this->createMock(AuthorizationCheckerInterface::class);
         $this->tokenAccessor = $this->createMock(TokenAccessorInterface::class);
         $this->treeProvider = $this->createMock(OwnerTreeProvider::class);
@@ -57,7 +57,7 @@ class UserCalendarHandlerTest extends \PHPUnit\Framework\TestCase
 
         $this->handler = new UserCalendarHandler(
             $this->em,
-            $this->attachmentManager,
+            $this->pictureSourcesProvider,
             UserCalendarHandler::class,
             $this->authorizationChecker,
             $this->tokenAccessor,
