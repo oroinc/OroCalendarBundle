@@ -66,7 +66,7 @@ class RecurrenceExtension extends AbstractExtension implements ServiceSubscriber
      */
     public function getRecurrenceTextValue(Entity\Recurrence $recurrence = null)
     {
-        $textValue = $this->getTranslator()->trans('oro.calendar.calendarevent.recurrence.na');
+        $textValue = '';
         if ($recurrence) {
             $textValue = $this->getRecurrenceModel()->getTextValue($recurrence);
         }
