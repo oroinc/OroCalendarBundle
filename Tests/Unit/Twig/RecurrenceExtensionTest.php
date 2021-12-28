@@ -49,12 +49,8 @@ class RecurrenceExtensionTest extends \PHPUnit\Framework\TestCase
 
     public function testGetRecurrenceTextValueWithNA()
     {
-        $this->translator->expects($this->once())
-            ->method('trans')
-            ->willReturn('N/A');
-
         $this->assertEquals(
-            'N/A',
+            '',
             self::callTwigFunction($this->extension, 'get_recurrence_text_value', [null])
         );
     }
