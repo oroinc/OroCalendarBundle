@@ -9,9 +9,6 @@ api:
 #
 #        Oro\Bundle\CalendarBundle\Entity\CalendarEvent:
 #            documentation_resource: '@OroCalendarBundle/Resources/doc/api/calendar_event.md'
-#            fields:
-#               activityTargets:
-#                   data_type: association:manyToMany:activity
 #            filters:
 #                fields:
 #                    updatedAt: ~ # enable manually because this field is not indexed
