@@ -14,14 +14,20 @@ Oro\Bundle\CalendarBundle\Entity\CalendarEvent:
                 max: 255
         start:
             - Type:
-                  type: \DateTimeInterface
+                  type: DateTimeInterface
                   message: oro.calendar.calendar_event.start.type.message
+                  payload:
+                      jsValidation:
+                          type: DateTime
             - NotBlank:     ~
             - Oro\Bundle\CalendarBundle\Validator\Constraints\DateEarlierThan: end
         end:
             - Type:
-                  type: \DateTimeInterface
+                  type: DateTimeInterface
                   message: oro.calendar.calendar_event.end.type.message
+                  payload:
+                      jsValidation:
+                          type: DateTime
             - NotBlank: ~
         attendees:
             - Valid: ~
@@ -104,12 +110,18 @@ Oro\Bundle\CalendarBundle\Entity\Recurrence:
                 max: 12
         startTime:
             - Type:
-                type: \DateTimeInterface
+                type: DateTimeInterface
                 message: oro.calendar.recurrence.start_time.type.message
+                payload:
+                    jsValidation:
+                        type: DateTime
         endTime:
             - Type:
-                  type: \DateTimeInterface
+                  type: DateTimeInterface
                   message: oro.calendar.recurrence.end_time.type.message
+                  payload:
+                      jsValidation:
+                          type: DateTime
         occurrences:
             - Type:
                 type: integer
