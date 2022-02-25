@@ -58,7 +58,7 @@ define(function(require) {
             this.formInitialState = this.getFormState();
             this.attendeeInitialValues = this.getAttendeeValues();
             this.notifyMessage =
-                __(this.attendeeInitialValues.length ? 'Notify about update message': 'Notify guests message');
+                __(this.attendeeInitialValues.length ? 'Notify about update message' : 'Notify guests message');
         },
 
         /**
