@@ -20,7 +20,7 @@ define(function(require) {
                         <td class="${this.widgetContentClass}">
                         ${this.dayGrid ? `
                             <div class="fc-day-grid"></div>
-                            '<hr class="fc-divider ${this.widgetHeaderClass}">
+                            <hr class="fc-divider ${this.widgetHeaderClass}">
                         ` : ''}
                         </td>
                     </tr>
