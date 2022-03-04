@@ -1,7 +1,6 @@
 search:
     Oro\Bundle\CalendarBundle\Entity\CalendarEvent:
         alias:                          oro_clendar_event
-        title_fields:                   [title]
         route:
             name:                       oro_calendar_event_view
             parameters:
