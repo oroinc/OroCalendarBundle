@@ -20,7 +20,7 @@ define(function(require) {
                         <td class="${this.widgetContentClass}">
                         ${this.dayGrid ? `
                             <div class="fc-day-grid"></div>
-                            '<hr class="fc-divider ${this.widgetHeaderClass}">
+                            <hr class="fc-divider ${this.widgetHeaderClass}">
                         ` : ''}
                         </td>
                     </tr>
@@ -57,12 +57,12 @@ define(function(require) {
             const titleHtml = `<span class="fc-title">${htmlEscape(event.title || '') || '&nbsp;'}</span>`;
 
             return `<a class="${classes.join(' ')}"
-                       ${event.url ? `href="${htmlEscape(event.url)}"`: ''}
+                       ${event.url ? `href="${htmlEscape(event.url)}"` : ''}
                        ${skinCss ? `style="${skinCss}"` : ''}
             >
                 <div class="fc-content">${this.isRTL ? `${titleHtml} ${timeHtml}` : `${timeHtml} ${titleHtml}`}</div>
-                ${isResizableFromStart ? `<div class="fc-resizer fc-start-resizer"></div>`: ''}
-                ${isResizableFromEnd ? `<div class="fc-resizer fc-end-resizer"></div>`: ''}
+                ${isResizableFromStart ? `<div class="fc-resizer fc-start-resizer"></div>` : ''}
+                ${isResizableFromEnd ? `<div class="fc-resizer fc-end-resizer"></div>` : ''}
             </a>`;
         }
     });
