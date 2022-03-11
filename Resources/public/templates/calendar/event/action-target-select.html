@@ -4,12 +4,12 @@
             <label class="event-action-target-select-form__item clearfix">
                 <input type="radio" name="action-target" <% if (!restrictOnlyThisEventAction) { %>checked="checked"<% } else { %>disabled="disabled"<% } %> value="exception">
                 <div class="event-action-target-select-form__item-title"><%- _.__('oro.calendar.event.select-edit-type.only-this-event.title') %></div>
-                <div class="event-action-target-select-form__item-desc"><%= _.__('oro.calendar.event.select-edit-type.only-this-event.description') %></div>
+                <div class="event-action-target-select-form__item-desc"><%- _.__('oro.calendar.event.select-edit-type.only-this-event.description') %></div>
             </label>
             <label class="event-action-target-select-form__item clearfix">
                 <input type="radio" name="action-target" value="all" <% if (restrictOnlyThisEventAction) { %>checked="checked"<% } %>>
                 <div class="event-action-target-select-form__item-title"><%- _.__('oro.calendar.event.select-edit-type.all-events.title') %></div>
-                <div class="event-action-target-select-form__item-desc"><%= _.__('oro.calendar.event.select-' + actionType + '-type.all-events.description') %></div>
+                <div class="event-action-target-select-form__item-desc"><%- _.__('oro.calendar.event.select-' + actionType + '-type.all-events.description') %></div>
             </label>
             <div class="widget-actions form-actions hide">
                 <button class="btn" type="reset" data-action-name="reset"><%- _.__('Cancel') %></button>
