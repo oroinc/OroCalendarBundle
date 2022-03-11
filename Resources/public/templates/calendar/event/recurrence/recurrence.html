@@ -17,7 +17,7 @@
         <ul class="controls">
         <% _.each(errors, function(item) {
             _.each(item.messages, function(message) { %>
-                <li><%- item.label %>:&nbsp;<%= message %></li>
+                <li><%- item.label %>:&nbsp;<%- message %></li>
             <% })
         }) %>
         </ul>
