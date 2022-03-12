@@ -7,7 +7,7 @@ use Oro\Bundle\CalendarBundle\Model\Recurrence;
 use Oro\Bundle\CalendarBundle\Model\Recurrence\WeeklyStrategy;
 use Oro\Bundle\LocaleBundle\Formatter\DateTimeFormatterInterface;
 use Oro\Bundle\LocaleBundle\Model\LocaleSettings;
-use Symfony\Component\Translation\Translator;
+use Symfony\Contracts\Translation\TranslatorInterface;
 
 class WeeklyStrategyTest extends AbstractTestStrategy
 {
@@ -16,7 +16,7 @@ class WeeklyStrategyTest extends AbstractTestStrategy
 
     protected function setUp(): void
     {
-        $translator = $this->createMock(Translator::class);
+        $translator = $this->createMock(TranslatorInterface::class);
         $translator->expects($this->any())
             ->method('trans')
             ->willReturnCallback(function ($id, array $parameters = []) {
