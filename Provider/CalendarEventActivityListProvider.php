@@ -12,7 +12,6 @@ use Oro\Bundle\CalendarBundle\Entity\SystemCalendar;
 use Oro\Bundle\CommentBundle\Model\CommentProviderInterface;
 use Oro\Bundle\CommentBundle\Tools\CommentAssociationHelper;
 use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
-use Oro\Bundle\UserBundle\Entity\User;
 
 /**
  * Provides a way to use CalendarEvent entity in an activity list.
@@ -55,8 +54,9 @@ class CalendarEventActivityListProvider implements
 
     /**
      * {@inheritdoc}
+     * @param CalendarEvent $entity
      */
-    public function getRoutes($activityEntity)
+    public function getRoutes($entity)
     {
         $routes = [
             'itemViewLink' => 'oro_calendar_event_view',
@@ -65,8 +65,7 @@ class CalendarEventActivityListProvider implements
             'itemDelete' => 'oro_calendar_event_delete'
         ];
 
-        /** @var CalendarEvent $activityEntity */
-        if ($activityEntity->getSystemCalendar() instanceof SystemCalendar) {
+        if ($entity->getSystemCalendar() instanceof SystemCalendar) {
             $routes = array_merge(
                 $routes,
                 [
@@ -82,59 +81,61 @@ class CalendarEventActivityListProvider implements
 
     /**
      * {@inheritdoc}
+     * @param CalendarEvent $entity
      */
     public function getSubject($entity)
     {
-        /** @var $entity CalendarEvent */
         return $entity->getTitle();
     }
 
     /**
      * {@inheritdoc}
+     * @param CalendarEvent $entity
      */
     public function getDescription($entity)
     {
-        /** @var $entity CalendarEvent */
         return trim(strip_tags($entity->getDescription()));
     }
 
     /**
      * {@inheritdoc}
+     * @param CalendarEvent $entity
      */
     public function getCreatedAt($entity)
     {
-        /** @var $entity CalendarEvent */
         return $entity->getCreatedAt();
     }
 
     /**
      * {@inheritdoc}
+     * @param CalendarEvent $entity
      */
     public function getUpdatedAt($entity)
     {
-        /** @var $entity CalendarEvent */
         return $entity->getUpdatedAt();
     }
 
     /**
      * {@inheritdoc}
      */
-    public function getData(ActivityList $activityListEntity)
+    public function getData(ActivityList $activityList)
     {
         return [];
     }
 
     /**
      * {@inheritdoc}
+     * @param CalendarEvent $entity
      */
-    public function getOrganization($activityEntity)
+    public function getOrganization($entity)
     {
-        /** @var $activityEntity CalendarEvent */
-        if ($activityEntity->getCalendar()) {
-            return $activityEntity->getCalendar()->getOrganization();
-        } elseif ($activityEntity->getSystemCalendar()) {
-            return $activityEntity->getSystemCalendar()->getOrganization();
+        if ($entity->getCalendar()) {
+            return $entity->getCalendar()->getOrganization();
         }
+        if ($entity->getSystemCalendar()) {
+            return $entity->getSystemCalendar()->getOrganization();
+        }
+
         return null;
     }
 
@@ -168,6 +169,7 @@ class CalendarEventActivityListProvider implements
 
     /**
      * {@inheritdoc}
+     * @param CalendarEvent $entity
      */
     public function getTargetEntities($entity)
     {
@@ -184,6 +186,7 @@ class CalendarEventActivityListProvider implements
 
     /**
      * {@inheritdoc}
+     * @param CalendarEvent $entity
      */
     public function getActivityOwners($entity, ActivityList $activityList)
     {
@@ -198,21 +201,28 @@ class CalendarEventActivityListProvider implements
         $activityOwner->setActivity($activityList);
         $activityOwner->setOrganization($organization);
         $activityOwner->setUser($owner);
+
         return [$activityOwner];
     }
 
     /**
-     * Get calendar owner
-     *
-     * @param CalendarEvent $activityEntity
-     * @return null|User
+     * {@inheritDoc}
      */
-    public function getOwner($activityEntity)
+    public function isActivityListApplicable(ActivityList $activityList): bool
     {
-        /** @var $activityEntity CalendarEvent */
-        if ($activityEntity->getCalendar()) {
-            return $activityEntity->getCalendar()->getOwner();
+        return true;
+    }
+
+    /**
+     * {@inheritDoc}
+     * @param CalendarEvent $entity
+     */
+    public function getOwner($entity)
+    {
+        if ($entity->getCalendar()) {
+            return $entity->getCalendar()->getOwner();
         }
+
         return null;
     }
 }
