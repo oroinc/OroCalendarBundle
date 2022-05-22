@@ -21,10 +21,7 @@ class AttendeesExtensionTest extends \PHPUnit\Framework\TestCase
         $this->featureChecker = $this->createMock(FeatureChecker::class);
 
         $container = self::getContainerBuilder()
-            ->add(
-                'oro_featuretoggle.checker.feature_checker',
-                $this->featureChecker
-            )
+            ->add('oro_featuretoggle.checker.feature_checker', $this->featureChecker)
             ->getContainer($this);
 
         $this->extension = new AttendeesExtension($container);
