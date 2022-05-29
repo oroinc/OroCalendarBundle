@@ -2,12 +2,10 @@
 
 namespace Oro\Bundle\CalendarBundle\Workflow\Action;
 
-use Doctrine\Bundle\DoctrineBundle\Registry;
 use Doctrine\Common\Collections\ArrayCollection;
-use Doctrine\Persistence\ObjectManager;
+use Doctrine\Persistence\ManagerRegistry;
 use Oro\Bundle\CalendarBundle\Entity\Calendar;
 use Oro\Bundle\CalendarBundle\Entity\CalendarEvent;
-use Oro\Bundle\CalendarBundle\Entity\Repository\CalendarRepository;
 use Oro\Bundle\ReminderBundle\Entity\Reminder;
 use Oro\Bundle\ReminderBundle\Model\ReminderInterval;
 use Oro\Bundle\UserBundle\Entity\User;
@@ -49,36 +47,14 @@ class CreateCalendarEventAction extends AbstractAction
 
     const OPTION_DEFAULT_DURATION_INTERVAL = 'PT1H';
 
-    /**
-     * @var array
-     */
-    private $options;
+    private ManagerRegistry $doctrine;
 
-    /**
-     * @var CalendarRepository
-     */
-    protected $calendarRepository;
+    private array $options;
 
-    /**
-     * @var ObjectManager
-     */
-    protected $manager;
-
-    /**
-     * @var array
-     */
-    protected $requiredFields = [
-        self::OPTION_KEY_TITLE,
-        self::OPTION_KEY_INITIATOR,
-        self::OPTION_KEY_START,
-    ];
-
-    public function __construct(ContextAccessor $contextAccessor, Registry $registry)
+    public function __construct(ContextAccessor $contextAccessor, ManagerRegistry $doctrine)
     {
-        $this->calendarRepository = $registry->getRepository('OroCalendarBundle:Calendar');
-        $this->manager = $registry->getManagerForClass('Oro\Bundle\CalendarBundle\Entity\CalendarEvent');
-
         parent::__construct($contextAccessor);
+        $this->doctrine = $doctrine;
     }
 
     /**
@@ -86,7 +62,10 @@ class CreateCalendarEventAction extends AbstractAction
      */
     public function initialize(array $options)
     {
-        $missingFields = array_diff($this->requiredFields, array_keys($options));
+        $missingFields = array_diff(
+            [self::OPTION_KEY_TITLE, self::OPTION_KEY_INITIATOR, self::OPTION_KEY_START],
+            array_keys($options)
+        );
 
         if (0 !== count($missingFields)) {
             throw new InvalidParameterException(
@@ -112,31 +91,25 @@ class CreateCalendarEventAction extends AbstractAction
             ->setStart($start)
             ->setEnd($this->getEndDateTime($calendarEvent, $context))
             ->setTitle($this->options[self::OPTION_KEY_TITLE])
-            ->setDescription($this->getDescription())
+            ->setDescription($this->options[self::OPTION_KEY_DESCRIPTION] ?? null)
             ->setCalendar($initiatorCalendar)
-            ->setAllDay(false)
-        ;
+            ->setAllDay(false);
 
         $this->addGuests($context, $calendarEvent);
 
-        $this->manager->persist($calendarEvent);
-        $this->manager->flush();
+        $em = $this->doctrine->getManagerForClass(CalendarEvent::class);
+        $em->persist($calendarEvent);
+        $em->flush();
 
         $this->setReminders($calendarEvent);
-
-        $this->manager->flush();
+        $em->flush();
 
         if (isset($this->options[self::OPTION_KEY_ATTRIBUTE])) {
             $this->contextAccessor->setValue($context, $this->options[self::OPTION_KEY_ATTRIBUTE], $calendarEvent);
         }
     }
 
-    /**
-     * @param CalendarEvent $calendarEvent
-     * @param $context
-     * @return \DateTime
-     */
-    protected function getEndDateTime(CalendarEvent $calendarEvent, $context)
+    private function getEndDateTime(CalendarEvent $calendarEvent, mixed $context): \DateTime
     {
         if (true === isset($this->options[self::OPTION_KEY_END])) {
             $end = $this->contextAccessor->getValue($context, $this->options[self::OPTION_KEY_END]);
@@ -151,14 +124,14 @@ class CreateCalendarEventAction extends AbstractAction
         return $end;
     }
 
-    protected function setReminders(CalendarEvent $calendarEvent)
+    private function setReminders(CalendarEvent $calendarEvent): void
     {
         if (false === isset($this->options[self::OPTION_KEY_REMINDERS])) {
             return;
         }
 
         $reminders = new ArrayCollection();
-
+        $em = $this->doctrine->getManagerForClass(CalendarEvent::class);
         foreach ($this->options[self::OPTION_KEY_REMINDERS] as $reminder) {
             $reminderEntity = new Reminder();
             $interval = new ReminderInterval(
@@ -176,7 +149,7 @@ class CreateCalendarEventAction extends AbstractAction
                 ->setRecipient($calendarEvent->getCalendar()->getOwner())
             ;
 
-            $this->manager->persist($reminderEntity);
+            $em->persist($reminderEntity);
         }
 
         $calendarEvent->setReminders($reminders);
@@ -186,12 +159,7 @@ class CreateCalendarEventAction extends AbstractAction
         }
     }
 
-    /**
-     * @param CalendarEvent $parentCalendarEvent
-     * @param User $user
-     * @return CalendarEvent
-     */
-    protected function createChildEvent(CalendarEvent $parentCalendarEvent, User $user)
+    private function createChildEvent(CalendarEvent $parentCalendarEvent, User $user): void
     {
         $userCalendar = $this->getDefaultUserCalendar($user);
 
@@ -201,27 +169,18 @@ class CreateCalendarEventAction extends AbstractAction
             ->setEnd($parentCalendarEvent->getEnd())
             ->setTitle($parentCalendarEvent->getTitle())
             ->setCalendar($userCalendar)
-            ->setAllDay(false)
-        ;
+            ->setAllDay(false);
 
         $parentCalendarEvent->addChildEvent($childCalendarEvent);
-
-        return $childCalendarEvent;
     }
 
-    /**
-     * @param User $user
-     * @return null|Calendar
-     */
-    protected function getDefaultUserCalendar(User $user)
+    private function getDefaultUserCalendar(User $user): ?Calendar
     {
-        return $this->calendarRepository->findDefaultCalendar(
-            $user->getId(),
-            $user->getOrganization()->getId()
-        );
+        return $this->doctrine->getRepository(Calendar::class)
+            ->findDefaultCalendar($user->getId(), $user->getOrganization()->getId());
     }
 
-    protected function addGuests($context, CalendarEvent $calendarEvent)
+    private function addGuests($context, CalendarEvent $calendarEvent): void
     {
         if (false === isset($this->options[self::OPTION_KEY_GUESTS])) {
             return;
@@ -232,15 +191,5 @@ class CreateCalendarEventAction extends AbstractAction
             $user = $this->contextAccessor->getValue($context, $guest);
             $this->createChildEvent($calendarEvent, $user);
         }
-    }
-
-    /**
-     * @return null
-     */
-    protected function getDescription()
-    {
-        return array_key_exists(self::OPTION_KEY_DESCRIPTION, $this->options)
-            ? $this->options[self::OPTION_KEY_DESCRIPTION]
-            : null;
     }
 }

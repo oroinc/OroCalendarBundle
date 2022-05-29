@@ -2,10 +2,9 @@
 
 namespace Oro\Bundle\CalendarBundle\Validator\Constraints;
 
-use Doctrine\Persistence\ObjectRepository;
+use Doctrine\Persistence\ManagerRegistry;
 use Oro\Bundle\CalendarBundle\Entity\CalendarEvent;
 use Oro\Bundle\CalendarBundle\Entity\Repository\CalendarEventRepository;
-use Symfony\Bridge\Doctrine\ManagerRegistry;
 use Symfony\Component\Validator\Constraint;
 use Symfony\Component\Validator\ConstraintValidator;
 
@@ -17,14 +16,11 @@ use Symfony\Component\Validator\ConstraintValidator;
  */
 class UniqueUidValidator extends ConstraintValidator
 {
-    /**
-     * @var ManagerRegistry
-     */
-    private $managerRegistry;
+    private ManagerRegistry $doctrine;
 
-    public function __construct(ManagerRegistry $managerRegistry)
+    public function __construct(ManagerRegistry $doctrine)
     {
-        $this->managerRegistry = $managerRegistry;
+        $this->doctrine = $doctrine;
     }
 
     /**
@@ -61,13 +57,8 @@ class UniqueUidValidator extends ConstraintValidator
         }
     }
 
-    /**
-     * @return ObjectRepository|CalendarEventRepository
-     */
-    private function getRepository(): ObjectRepository
+    private function getRepository(): CalendarEventRepository
     {
-        return $this->managerRegistry
-            ->getManagerForClass(CalendarEvent::class)
-            ->getRepository(CalendarEvent::class);
+        return $this->doctrine->getRepository(CalendarEvent::class);
     }
 }

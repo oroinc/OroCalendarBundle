@@ -2,7 +2,7 @@
 
 namespace Oro\Bundle\CalendarBundle\Tests\Unit\Workflow\Action;
 
-use Doctrine\Bundle\DoctrineBundle\Registry;
+use Doctrine\Persistence\ManagerRegistry;
 use Doctrine\Persistence\ObjectManager;
 use Oro\Bundle\CalendarBundle\Entity\Calendar;
 use Oro\Bundle\CalendarBundle\Entity\CalendarEvent;
@@ -19,16 +19,11 @@ use Symfony\Component\PropertyAccess\PropertyPath;
 
 class CreateCalendarEventActionTest extends \PHPUnit\Framework\TestCase
 {
-    /** @var ContextAccessor */
-    private $contextAccessor;
-
-    /** @var Registry|\PHPUnit\Framework\MockObject\MockObject */
-    private $registry;
+    /** @var ManagerRegistry|\PHPUnit\Framework\MockObject\MockObject */
+    private $doctrine;
 
     protected function setUp(): void
     {
-        $this->contextAccessor = new ContextAccessor();
-
         $calendarRepository = $this->createMock(CalendarRepository::class);
 
         $calendar = new Calendar();
@@ -36,8 +31,8 @@ class CreateCalendarEventActionTest extends \PHPUnit\Framework\TestCase
         $calendarRepository->expects($this->any())
             ->method('findDefaultCalendar')
             ->willReturn($calendar);
-        $this->registry = $this->createMock(Registry::class);
-        $this->registry->expects($this->any())
+        $this->doctrine = $this->createMock(ManagerRegistry::class);
+        $this->doctrine->expects($this->any())
             ->method('getRepository')
             ->willReturn($calendarRepository);
     }
@@ -78,7 +73,7 @@ class CreateCalendarEventActionTest extends \PHPUnit\Framework\TestCase
                     ));
                 }
             });
-        $this->registry->expects($this->any())
+        $this->doctrine->expects($this->any())
             ->method('getManagerForClass')
             ->willReturn($em);
 
@@ -189,7 +184,7 @@ class CreateCalendarEventActionTest extends \PHPUnit\Framework\TestCase
 
     private function getAction(): CreateCalendarEventAction
     {
-        $action = new CreateCalendarEventAction($this->contextAccessor, $this->registry);
+        $action = new CreateCalendarEventAction(new ContextAccessor(), $this->doctrine);
         $dispatcher = $this->createMock(EventDispatcher::class);
         $action->setDispatcher($dispatcher);
 

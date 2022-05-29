@@ -2,7 +2,7 @@
 
 namespace Oro\Bundle\CalendarBundle\Tests\Unit\Validator\Constraints;
 
-use Doctrine\Persistence\ObjectManager;
+use Doctrine\Persistence\ManagerRegistry;
 use Doctrine\Persistence\ObjectRepository;
 use Oro\Bundle\CalendarBundle\Entity\Calendar;
 use Oro\Bundle\CalendarBundle\Entity\CalendarEvent;
@@ -10,7 +10,6 @@ use Oro\Bundle\CalendarBundle\Entity\Repository\CalendarEventRepository;
 use Oro\Bundle\CalendarBundle\Validator\Constraints\UniqueUid;
 use Oro\Bundle\CalendarBundle\Validator\Constraints\UniqueUidValidator;
 use Oro\Component\Testing\ReflectionUtil;
-use Symfony\Bridge\Doctrine\ManagerRegistry;
 use Symfony\Component\Validator\Test\ConstraintValidatorTestCase;
 
 class UniqueUidValidatorTest extends ConstraintValidatorTestCase
@@ -115,15 +114,10 @@ class UniqueUidValidatorTest extends ConstraintValidatorTestCase
      */
     protected function createValidator()
     {
-        $em = $this->createMock(ObjectManager::class);
-        $em->expects($this->any())
-            ->method('getRepository')
-            ->willReturn($this->repository);
-
         $doctrine = $this->createMock(ManagerRegistry::class);
         $doctrine->expects($this->any())
-            ->method('getManagerForClass')
-            ->willReturn($em);
+            ->method('getRepository')
+            ->willReturn($this->repository);
 
         return new UniqueUidValidator($doctrine);
     }

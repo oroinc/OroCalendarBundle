@@ -2,7 +2,7 @@
 
 namespace Oro\Bundle\CalendarBundle\Tests\Unit\Validator\Constraints;
 
-use Doctrine\Persistence\ObjectManager;
+use Doctrine\Persistence\ManagerRegistry;
 use Doctrine\Persistence\ObjectRepository;
 use Oro\Bundle\CalendarBundle\Entity\Attendee;
 use Oro\Bundle\CalendarBundle\Entity\CalendarEvent;
@@ -10,7 +10,6 @@ use Oro\Bundle\CalendarBundle\Entity\Repository\AttendeeRepository;
 use Oro\Bundle\CalendarBundle\Validator\Constraints\EventAttendees;
 use Oro\Bundle\CalendarBundle\Validator\Constraints\EventAttendeesValidator;
 use Oro\Component\Testing\ReflectionUtil;
-use Symfony\Bridge\Doctrine\ManagerRegistry;
 use Symfony\Component\Validator\Test\ConstraintValidatorTestCase;
 
 class EventAttendeesValidatorTest extends ConstraintValidatorTestCase
@@ -109,15 +108,10 @@ class EventAttendeesValidatorTest extends ConstraintValidatorTestCase
      */
     protected function createValidator()
     {
-        $em = $this->createMock(ObjectManager::class);
-        $em->expects($this->any())
-            ->method('getRepository')
-            ->willReturn($this->repository);
-
         $doctrine = $this->createMock(ManagerRegistry::class);
         $doctrine->expects($this->any())
-            ->method('getManagerForClass')
-            ->willReturn($em);
+            ->method('getRepository')
+            ->willReturn($this->repository);
 
         return new EventAttendeesValidator($doctrine);
     }

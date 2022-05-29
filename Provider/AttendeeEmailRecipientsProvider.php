@@ -3,6 +3,7 @@
 namespace Oro\Bundle\CalendarBundle\Provider;
 
 use Doctrine\Persistence\ManagerRegistry;
+use Oro\Bundle\CalendarBundle\Entity\Attendee;
 use Oro\Bundle\CalendarBundle\Entity\Repository\AttendeeRepository;
 use Oro\Bundle\EmailBundle\Model\EmailRecipientsProviderArgs;
 use Oro\Bundle\EmailBundle\Provider\EmailRecipientsHelper;
@@ -13,15 +14,12 @@ use Oro\Bundle\EmailBundle\Provider\EmailRecipientsProviderInterface;
  */
 class AttendeeEmailRecipientsProvider implements EmailRecipientsProviderInterface
 {
-    /** @var ManagerRegistry */
-    protected $registry;
+    private ManagerRegistry $doctrine;
+    private EmailRecipientsHelper $emailRecipientsHelper;
 
-    /** @var EmailRecipientsHelper */
-    protected $emailRecipientsHelper;
-
-    public function __construct(ManagerRegistry $registry, EmailRecipientsHelper $emailRecipientsHelper)
+    public function __construct(ManagerRegistry $doctrine, EmailRecipientsHelper $emailRecipientsHelper)
     {
-        $this->registry = $registry;
+        $this->doctrine = $doctrine;
         $this->emailRecipientsHelper = $emailRecipientsHelper;
     }
 
@@ -47,11 +45,8 @@ class AttendeeEmailRecipientsProvider implements EmailRecipientsProviderInterfac
         return 'oro.calendar.autocomplete.attendees';
     }
 
-    /**
-     * @return AttendeeRepository
-     */
-    protected function getAttendeeRepository()
+    private function getAttendeeRepository(): AttendeeRepository
     {
-        return $this->registry->getRepository('Oro\Bundle\CalendarBundle\Entity\Attendee');
+        return $this->doctrine->getRepository(Attendee::class);
     }
 }
