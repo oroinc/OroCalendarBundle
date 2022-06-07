@@ -6,6 +6,7 @@ use Doctrine\Common\DataFixtures\DependentFixtureInterface;
 use Doctrine\Persistence\ObjectManager;
 use Oro\Bundle\CalendarBundle\Entity\SystemCalendar;
 use Oro\Bundle\TestFrameworkBundle\Test\DataFixtures\AbstractFixture;
+use Oro\Bundle\UserBundle\Entity\User;
 
 class LoadSystemCalendarData extends AbstractFixture implements DependentFixtureInterface
 {
@@ -37,7 +38,7 @@ class LoadSystemCalendarData extends AbstractFixture implements DependentFixture
      */
     public function load(ObjectManager $manager)
     {
-        $user = $manager->getRepository('OroUserBundle:User')->findOneBy(['username' => 'admin']);
+        $user = $manager->getRepository(User::class)->findOneBy(['username' => 'admin']);
 
         foreach ($this->calendars as $name => $data) {
             $systemCalendar = new SystemCalendar();

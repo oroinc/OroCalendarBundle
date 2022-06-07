@@ -5,9 +5,12 @@ namespace Oro\Bundle\CalendarBundle\Tests\Functional\DataFixtures;
 use Doctrine\Common\DataFixtures\DependentFixtureInterface;
 use Doctrine\Persistence\ObjectManager;
 use Oro\Bundle\CalendarBundle\Entity\Attendee;
+use Oro\Bundle\CalendarBundle\Entity\Calendar;
 use Oro\Bundle\CalendarBundle\Entity\CalendarEvent;
 use Oro\Bundle\CalendarBundle\Entity\Recurrence;
+use Oro\Bundle\OrganizationBundle\Entity\Organization;
 use Oro\Bundle\TestFrameworkBundle\Test\DataFixtures\AbstractFixture;
+use Oro\Bundle\UserBundle\Entity\User;
 use Symfony\Component\Yaml\Yaml;
 
 class LoadCalendarEventData extends AbstractFixture implements DependentFixtureInterface
@@ -28,9 +31,9 @@ class LoadCalendarEventData extends AbstractFixture implements DependentFixtureI
      */
     public function load(ObjectManager $manager)
     {
-        $user = $manager->getRepository('OroUserBundle:User')->findOneByUsername('admin');
-        $organization = $manager->getRepository('OroOrganizationBundle:Organization')->getFirst();
-        $calendar = $manager->getRepository('OroCalendarBundle:Calendar')->findDefaultCalendar(
+        $user = $manager->getRepository(User::class)->findOneByUsername('admin');
+        $organization = $manager->getRepository(Organization::class)->getFirst();
+        $calendar = $manager->getRepository(Calendar::class)->findDefaultCalendar(
             $user->getId(),
             $organization->getId()
         );

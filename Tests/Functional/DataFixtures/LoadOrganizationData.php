@@ -30,7 +30,7 @@ class LoadOrganizationData extends AbstractFixture
     public function load(ObjectManager $manager)
     {
         // Add system organization to reference repository
-        $organization = $manager->getRepository('OroOrganizationBundle:Organization')->getFirst();
+        $organization = $manager->getRepository(Organization::class)->getFirst();
         $this->setReference('oro_calendar:organization:system', $organization);
 
         // Persist other organizations

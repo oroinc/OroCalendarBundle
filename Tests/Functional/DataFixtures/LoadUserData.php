@@ -4,6 +4,7 @@ namespace Oro\Bundle\CalendarBundle\Tests\Functional\DataFixtures;
 
 use Doctrine\Common\DataFixtures\DependentFixtureInterface;
 use Doctrine\Persistence\ObjectManager;
+use Oro\Bundle\CalendarBundle\Entity\Calendar;
 use Oro\Bundle\TestFrameworkBundle\Test\DataFixtures\AbstractFixture;
 use Oro\Bundle\TestFrameworkBundle\Tests\Functional\DataFixtures\LoadBusinessUnit;
 use Oro\Bundle\UserBundle\Entity\Role;
@@ -166,7 +167,7 @@ class LoadUserData extends AbstractFixture implements DependentFixtureInterface
         foreach ($this->data as $data) {
             $userReference = $data['reference'];
             $user = $this->getReference($userReference);
-            $calendar = $manager->getRepository('OroCalendarBundle:Calendar')
+            $calendar = $manager->getRepository(Calendar::class)
                 ->findOneBy(
                     [
                         'owner' => $user,
