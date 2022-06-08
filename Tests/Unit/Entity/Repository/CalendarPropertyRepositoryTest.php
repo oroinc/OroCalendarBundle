@@ -4,6 +4,7 @@ namespace Oro\Bundle\CalendarBundle\Tests\Unit\Entity\Repository;
 
 use Doctrine\Common\Annotations\AnnotationReader;
 use Doctrine\ORM\Mapping\Driver\AnnotationDriver;
+use Oro\Bundle\CalendarBundle\Entity\CalendarProperty;
 use Oro\Bundle\CalendarBundle\Entity\Repository\CalendarPropertyRepository;
 use Oro\Component\TestUtils\ORM\Mocks\EntityManagerMock;
 use Oro\Component\TestUtils\ORM\OrmTestCase;
@@ -16,13 +17,7 @@ class CalendarPropertyRepositoryTest extends OrmTestCase
     protected function setUp(): void
     {
         $this->em = $this->getTestEntityManager();
-        $this->em->getConfiguration()->setMetadataDriverImpl(new AnnotationDriver(
-            new AnnotationReader(),
-            'Oro\Bundle\CalendarBundle\Entity'
-        ));
-        $this->em->getConfiguration()->setEntityNamespaces([
-            'OroCalendarBundle' => 'Oro\Bundle\CalendarBundle\Entity'
-        ]);
+        $this->em->getConfiguration()->setMetadataDriverImpl(new AnnotationDriver(new AnnotationReader()));
     }
 
     public function testGetTaskListByTimeIntervalQueryBuilder()
@@ -30,7 +25,7 @@ class CalendarPropertyRepositoryTest extends OrmTestCase
         $targetCalendarId = 123;
 
         /** @var CalendarPropertyRepository $repo */
-        $repo = $this->em->getRepository('OroCalendarBundle:CalendarProperty');
+        $repo = $this->em->getRepository(CalendarProperty::class);
         $qb = $repo->getConnectionsByTargetCalendarQueryBuilder($targetCalendarId);
 
         $this->assertEquals(
@@ -48,7 +43,7 @@ class CalendarPropertyRepositoryTest extends OrmTestCase
         $alias = 'test';
 
         /** @var CalendarPropertyRepository $repo */
-        $repo = $this->em->getRepository('OroCalendarBundle:CalendarProperty');
+        $repo = $this->em->getRepository(CalendarProperty::class);
         $qb = $repo->getConnectionsByTargetCalendarQueryBuilder($targetCalendarId, $alias);
 
         $this->assertEquals(

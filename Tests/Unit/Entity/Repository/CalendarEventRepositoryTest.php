@@ -5,6 +5,7 @@ namespace Oro\Bundle\CalendarBundle\Tests\Unit\Entity\Repository;
 use Doctrine\Common\Annotations\AnnotationReader;
 use Doctrine\Common\Collections\Criteria;
 use Doctrine\ORM\Mapping\Driver\AnnotationDriver;
+use Oro\Bundle\CalendarBundle\Entity\CalendarEvent;
 use Oro\Bundle\CalendarBundle\Entity\Repository\CalendarEventRepository;
 use Oro\Component\TestUtils\ORM\Mocks\EntityManagerMock;
 use Oro\Component\TestUtils\ORM\OrmTestCase;
@@ -20,19 +21,13 @@ class CalendarEventRepositoryTest extends OrmTestCase
     protected function setUp(): void
     {
         $this->em = $this->getTestEntityManager();
-        $this->em->getConfiguration()->setMetadataDriverImpl(new AnnotationDriver(
-            new AnnotationReader(),
-            'Oro\Bundle\CalendarBundle\Entity'
-        ));
-        $this->em->getConfiguration()->setEntityNamespaces([
-            'OroCalendarBundle' => 'Oro\Bundle\CalendarBundle\Entity'
-        ]);
+        $this->em->getConfiguration()->setMetadataDriverImpl(new AnnotationDriver(new AnnotationReader()));
     }
 
     public function testGetUserEventListByTimeIntervalQueryBuilder()
     {
         /** @var CalendarEventRepository $repo */
-        $repo = $this->em->getRepository('OroCalendarBundle:CalendarEvent');
+        $repo = $this->em->getRepository(CalendarEvent::class);
 
         $qb = $repo->getUserEventListByTimeIntervalQueryBuilder(new \DateTime(), new \DateTime());
 
@@ -72,7 +67,7 @@ class CalendarEventRepositoryTest extends OrmTestCase
     public function testGetUserEventListByTimeIntervalQueryBuilderWithAdditionalFiltersAsArray()
     {
         /** @var CalendarEventRepository $repo */
-        $repo = $this->em->getRepository('OroCalendarBundle:CalendarEvent');
+        $repo = $this->em->getRepository(CalendarEvent::class);
 
         $qb = $repo->getUserEventListByTimeIntervalQueryBuilder(
             new \DateTime(),
@@ -120,7 +115,7 @@ class CalendarEventRepositoryTest extends OrmTestCase
     public function testGetUserEventListByTimeIntervalQueryBuilderWithAdditionalFiltersAsCriteria()
     {
         /** @var CalendarEventRepository $repo */
-        $repo = $this->em->getRepository('OroCalendarBundle:CalendarEvent');
+        $repo = $this->em->getRepository(CalendarEvent::class);
 
         $qb = $repo->getUserEventListByTimeIntervalQueryBuilder(
             new \DateTime(),
@@ -168,7 +163,7 @@ class CalendarEventRepositoryTest extends OrmTestCase
     public function testGetUserEventListByTimeIntervalQueryBuilderWithAdditionalFields()
     {
         /** @var CalendarEventRepository $repo */
-        $repo = $this->em->getRepository('OroCalendarBundle:CalendarEvent');
+        $repo = $this->em->getRepository(CalendarEvent::class);
 
         $qb = $repo->getUserEventListByTimeIntervalQueryBuilder(
             new \DateTime(),
@@ -214,7 +209,7 @@ class CalendarEventRepositoryTest extends OrmTestCase
     public function testGetSystemEventListByTimeIntervalQueryBuilder()
     {
         /** @var CalendarEventRepository $repo */
-        $repo = $this->em->getRepository('OroCalendarBundle:CalendarEvent');
+        $repo = $this->em->getRepository(CalendarEvent::class);
 
         $qb = $repo->getSystemEventListByTimeIntervalQueryBuilder(new \DateTime(), new \DateTime());
 
@@ -247,7 +242,7 @@ class CalendarEventRepositoryTest extends OrmTestCase
     public function testGetSystemEventListByTimeIntervalQueryBuilderWithAdditionalFiltersAsCriteria()
     {
         /** @var CalendarEventRepository $repo */
-        $repo = $this->em->getRepository('OroCalendarBundle:CalendarEvent');
+        $repo = $this->em->getRepository(CalendarEvent::class);
 
         $qb = $repo->getSystemEventListByTimeIntervalQueryBuilder(
             new \DateTime(),
@@ -286,7 +281,7 @@ class CalendarEventRepositoryTest extends OrmTestCase
     public function testGetSystemEventListByTimeIntervalQueryBuilderWithAdditionalFiltersAsArray()
     {
         /** @var CalendarEventRepository $repo */
-        $repo = $this->em->getRepository('OroCalendarBundle:CalendarEvent');
+        $repo = $this->em->getRepository(CalendarEvent::class);
 
         $qb = $repo->getSystemEventListByTimeIntervalQueryBuilder(
             new \DateTime(),
@@ -325,7 +320,7 @@ class CalendarEventRepositoryTest extends OrmTestCase
     public function testGetPublicEventListByTimeIntervalQueryBuilder()
     {
         /** @var CalendarEventRepository $repo */
-        $repo = $this->em->getRepository('OroCalendarBundle:CalendarEvent');
+        $repo = $this->em->getRepository(CalendarEvent::class);
 
         $qb = $repo->getPublicEventListByTimeIntervalQueryBuilder(new \DateTime(), new \DateTime());
 
@@ -354,7 +349,7 @@ class CalendarEventRepositoryTest extends OrmTestCase
     public function testGetPublicEventListByTimeIntervalQueryBuilderWithAdditionalFiltersAsCriteria()
     {
         /** @var CalendarEventRepository $repo */
-        $repo = $this->em->getRepository('OroCalendarBundle:CalendarEvent');
+        $repo = $this->em->getRepository(CalendarEvent::class);
 
         $qb = $repo->getPublicEventListByTimeIntervalQueryBuilder(
             new \DateTime(),
@@ -389,7 +384,7 @@ class CalendarEventRepositoryTest extends OrmTestCase
     public function testGetPublicEventListByTimeIntervalQueryBuilderWithAdditionalFiltersAsArray()
     {
         /** @var CalendarEventRepository $repo */
-        $repo = $this->em->getRepository('OroCalendarBundle:CalendarEvent');
+        $repo = $this->em->getRepository(CalendarEvent::class);
 
         $qb = $repo->getPublicEventListByTimeIntervalQueryBuilder(
             new \DateTime(),

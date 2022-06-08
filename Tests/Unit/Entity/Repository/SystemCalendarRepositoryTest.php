@@ -5,6 +5,7 @@ namespace Oro\Bundle\CalendarBundle\Tests\Unit\Entity\Repository;
 use Doctrine\Common\Annotations\AnnotationReader;
 use Doctrine\ORM\Mapping\Driver\AnnotationDriver;
 use Oro\Bundle\CalendarBundle\Entity\Repository\SystemCalendarRepository;
+use Oro\Bundle\CalendarBundle\Entity\SystemCalendar;
 use Oro\Component\TestUtils\ORM\Mocks\EntityManagerMock;
 use Oro\Component\TestUtils\ORM\OrmTestCase;
 
@@ -16,19 +17,13 @@ class SystemCalendarRepositoryTest extends OrmTestCase
     protected function setUp(): void
     {
         $this->em = $this->getTestEntityManager();
-        $this->em->getConfiguration()->setMetadataDriverImpl(new AnnotationDriver(
-            new AnnotationReader(),
-            'Oro\Bundle\CalendarBundle\Entity'
-        ));
-        $this->em->getConfiguration()->setEntityNamespaces([
-            'OroCalendarBundle' => 'Oro\Bundle\CalendarBundle\Entity'
-        ]);
+        $this->em->getConfiguration()->setMetadataDriverImpl(new AnnotationDriver(new AnnotationReader()));
     }
 
     public function testGetSystemCalendarsByIdsQueryBuilder()
     {
         /** @var SystemCalendarRepository $repo */
-        $repo = $this->em->getRepository('OroCalendarBundle:SystemCalendar');
+        $repo = $this->em->getRepository(SystemCalendar::class);
 
         $qb = $repo->getSystemCalendarsByIdsQueryBuilder([]);
 
@@ -55,7 +50,7 @@ class SystemCalendarRepositoryTest extends OrmTestCase
         $organizationId = 1;
 
         /** @var SystemCalendarRepository $repo */
-        $repo = $this->em->getRepository('OroCalendarBundle:SystemCalendar');
+        $repo = $this->em->getRepository(SystemCalendar::class);
 
         $qb = $repo->getSystemCalendarsQueryBuilder($organizationId);
 
@@ -72,7 +67,7 @@ class SystemCalendarRepositoryTest extends OrmTestCase
     public function testGetPublicCalendarsQueryBuilder()
     {
         /** @var SystemCalendarRepository $repo */
-        $repo = $this->em->getRepository('OroCalendarBundle:SystemCalendar');
+        $repo = $this->em->getRepository(SystemCalendar::class);
 
         $qb = $repo->getPublicCalendarsQueryBuilder();
 
@@ -90,7 +85,7 @@ class SystemCalendarRepositoryTest extends OrmTestCase
         $organizationId = 1;
 
         /** @var SystemCalendarRepository $repo */
-        $repo = $this->em->getRepository('OroCalendarBundle:SystemCalendar');
+        $repo = $this->em->getRepository(SystemCalendar::class);
 
         $qb = $repo->getCalendarsQueryBuilder($organizationId);
 
