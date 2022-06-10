@@ -1,0 +1,7 @@
+Oro\Bundle\CalendarBundle\Entity\Attendee:
+  ce_attendee_without_user:
+    email: 'samuel.byrd_4885e@aol.com'
+    displayName: 'Samuel Byrd'
+    createdAt: '<dateTime()>'
+    updatedAt: '<dateTime()>'
+    calendarEvent: '@calendarEvent_1'

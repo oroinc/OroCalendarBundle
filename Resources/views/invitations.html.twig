@@ -21,7 +21,7 @@
         <li class="list-group-item">
             <i {% if invitationClass %}class="{{ invitationClass }}" title="{{ attendee.status.name }}"{% endif %}></i>
             <span class="list-group-item-text">
-                {% set avatar = attendee.user ? attendee.user.avatar %}
+                {% set avatar = attendee.user ? attendee.user.avatar : null %}
                 {% include '@OroAttachment/Twig/picture.html.twig' with {
                     sources: oro_filtered_picture_sources(avatar, 'avatar_xsmall') ?: asset('bundles/oroui/img/avatar-xsmall.png'),
                 } %}
