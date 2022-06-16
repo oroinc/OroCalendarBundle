@@ -20,7 +20,7 @@ class CalendarPropertyRepositoryTest extends OrmTestCase
         $this->em->getConfiguration()->setMetadataDriverImpl(new AnnotationDriver(new AnnotationReader()));
     }
 
-    public function testGetTaskListByTimeIntervalQueryBuilder()
+    public function testGetConnectionsByTargetCalendarQueryBuilder()
     {
         $targetCalendarId = 123;
 
@@ -37,7 +37,7 @@ class CalendarPropertyRepositoryTest extends OrmTestCase
         $this->assertEquals($targetCalendarId, $qb->getParameter('targetCalendarId')->getValue());
     }
 
-    public function testGetTaskListByTimeIntervalQueryBuilderWithAlias()
+    public function testGetConnectionsByTargetCalendarQueryBuilderWithAlias()
     {
         $targetCalendarId = 123;
         $alias = 'test';
