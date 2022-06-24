@@ -128,17 +128,11 @@
     <script type="text/template" id="template-calendar-connection-item">
         {% apply spaceless %}
         <li class="connection-item<% if (visible) { %> active<% } %>">
-            <span class="connection-item-label" data-role="connection-label">
-                <span class="calendar-color">
-                    <% className = 'calendar-color__storage shift-checkbox' + (visible ? ' is-colored' : '')  %>
-                    <span class="<%- className %>" data-role="calendar-color-storage"
-                        <% if (!_.isEmpty(backgroundColor)) { %>
-                            style="background-color: <%- backgroundColor %>; border-color: <%- backgroundColor %>; color: <%- backgroundColor %>;"
-                        <% } %>
-                    >
-                        <input data-role="color-checkbox" type="checkbox" <% if (visible) { %> checked <% } %>>
-                    </span>
-                </span>
+            <span class="connection-item-label checkbox-label" data-role="connection-label">
+                <input data-role="color-checkbox" type="checkbox"
+                    <% if (visible) { %> checked <% } %>
+                    <% if (!_.isEmpty(backgroundColor)) { %> style="--checkbox-skin-color: <%- backgroundColor %>;"<% } %>
+                >
                 <span class="user-calendar" title="<%- calendarName %>"><%- calendarName %></span>
             </span>
             <div class="connection-menu-container dropdown">

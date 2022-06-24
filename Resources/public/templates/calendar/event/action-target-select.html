@@ -1,13 +1,17 @@
 <div class="form-container">
     <form class="event-action-target-select-form">
         <fieldset class="form form-horizontal">
-            <label class="event-action-target-select-form__item clearfix">
-                <input type="radio" name="action-target" <% if (!restrictOnlyThisEventAction) { %>checked="checked"<% } else { %>disabled="disabled"<% } %> value="exception">
+            <label class="event-action-target-select-form__item">
+                <div class="event-action-target-select-form__item-side">
+                    <input type="radio" name="action-target" <% if (!restrictOnlyThisEventAction) { %>checked="checked"<% } else { %>disabled="disabled"<% } %> value="exception">
+                </div>
                 <div class="event-action-target-select-form__item-title"><%- _.__('oro.calendar.event.select-edit-type.only-this-event.title') %></div>
                 <div class="event-action-target-select-form__item-desc"><%- _.__('oro.calendar.event.select-edit-type.only-this-event.description') %></div>
             </label>
-            <label class="event-action-target-select-form__item clearfix">
-                <input type="radio" name="action-target" value="all" <% if (restrictOnlyThisEventAction) { %>checked="checked"<% } %>>
+            <label class="event-action-target-select-form__item">
+                <div class="event-action-target-select-form__item-side">
+                    <input type="radio" name="action-target" value="all" <% if (restrictOnlyThisEventAction) { %>checked="checked"<% } %>>
+                </div>
                 <div class="event-action-target-select-form__item-title"><%- _.__('oro.calendar.event.select-edit-type.all-events.title') %></div>
                 <div class="event-action-target-select-form__item-desc"><%- _.__('oro.calendar.event.select-' + actionType + '-type.all-events.description') %></div>
             </label>

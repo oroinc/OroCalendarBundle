@@ -40,24 +40,30 @@
     padding: 10px 16px;
 
     &__item {
+        display: inline-grid;
+        grid-template-areas:
+            'side title'
+            'side desc';
+        grid-template-columns: auto 1fr;
+        gap: 0 8px;
         margin-bottom: 10px;
+    }
 
-        [type='radio'] {
-            float: left;
-        }
+    &__item-side {
+        grid-area: side;
     }
 
     &__item-title {
         color: $body-color;
         font-weight: font-weight('bold');
         font-size: 14px;
-        margin-left: 20px;
+        grid-area: title;
     }
 
     &__item-desc {
         color: lighten($body-color, 25%);
         font-size: 12px;
-        margin-left: 20px;
+        grid-area: desc;
     }
 }
 

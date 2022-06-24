@@ -35,8 +35,7 @@ define(function(require) {
                 return '.connection-item[data-calendar-uid="' + calendarUid + '"]';
             },
             newCalendarSelector: '#new_calendar',
-            contextMenuTemplate: '#template-calendar-menu',
-            visibilityButton: '[data-role="calendar-color-storage"]'
+            contextMenuTemplate: '#template-calendar-menu'
         },
 
         events: {
@@ -121,7 +120,7 @@ define(function(require) {
         },
 
         setItemVisibility: function($item, backgroundColor) {
-            const $visibilityButton = $item.find(this.selectors.visibilityButton);
+            const $visibilityCheckbox = $item.find('[data-role="color-checkbox"]');
             const colors = this.options.colorManager.getCalendarColors($item.attr(this.attrs.calendarUid));
 
             $item
@@ -131,23 +130,14 @@ define(function(require) {
                     ? this.options.colorManager.getContrastColor(backgroundColor)
                     : colors.color
                 );
-            $visibilityButton
+
+            $visibilityCheckbox
                 .css({
-                    backgroundColor: backgroundColor || colors.backgroundColor,
-                    borderColor: backgroundColor || colors.backgroundColor,
-                    color: backgroundColor || colors.backgroundColor
-                });
-
-            if (backgroundColor.length) {
-                $item.addClass('active');
-                $visibilityButton.addClass('is-colored');
-            } else {
-                $item.removeClass('active');
-                $visibilityButton.removeClass('is-colored');
-            }
-
-            $visibilityButton
-                .find('[data-role="color-checkbox"]').prop('checked', backgroundColor.length).trigger('focus');
+                    '--checkbox-skin-color': backgroundColor || colors.backgroundColor
+                })
+                .find('[data-role="color-checkbox"]')
+                .prop('checked', backgroundColor.length)
+                .trigger('focus');
         },
 
         onModelAdded: function(model) {
