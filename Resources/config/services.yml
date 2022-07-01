@@ -492,15 +492,8 @@ services:
 
     oro_calendar.provider.calendar_entity_name:
         class: Oro\Bundle\CalendarBundle\Provider\CalendarEntityNameProvider
-        public: false
         arguments:
             - '@translator'
-        tags:
-            - { name: oro_entity.name_provider, priority: 100}
-
-    oro_calendar.provider.calendar_event_entity_name:
-        class: Oro\Bundle\CalendarBundle\Provider\CalendarEventEntityNameProvider
-        public: false
         tags:
             - { name: oro_entity.name_provider, priority: 100}
 
