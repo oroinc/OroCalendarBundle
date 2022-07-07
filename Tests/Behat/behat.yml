@@ -66,6 +66,10 @@ oro_behat_extension:
       selector:
         locator: '//tr[@data-time="10:30:00"]'
         type: xpath
+    Empty slot at 10:30 PM:
+      selector:
+        locator: '//tr[@data-time="22:30:00"]/td[@class="fc-widget-content"]'
+        type: xpath
     Select Expected Close Date:
       selector:
         locator: '//input[@placeholder="Choose a date"]'

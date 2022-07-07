@@ -812,7 +812,11 @@ define(function(require) {
             ];
             _.extend(options, _.pick(this.options.eventsOptions, keys));
             if (!_.isUndefined(options.defaultDate)) {
-                options.defaultDate = moment(options.defaultDate);
+                // Eliminated issue with timezone double correction:
+                // 1) default timezone setting
+                // 2) time offset in the value
+                // Only default timezone from settings is taken in account now
+                options.defaultDate = moment.unix(moment(options.defaultDate).unix());
             }
 
             if (!options.aspectRatio) {
