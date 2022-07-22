@@ -11,19 +11,17 @@ Feature: Application search
     Given I login as administrator
     And I click "Search"
     And type "Common" in "search"
-    And I should see 3 search suggestions
+    And I should see 2 search suggestions
     When I click "Search Submit"
     Then I should be on Search Result page
     And I should see following search entity types:
       | Type            | N | isSelected |
-      | All             | 3 | yes        |
+      | All             | 2 | yes        |
       | Business Units  | 1 |            |
       | Calendar Events | 1 |            |
-      | Organizations   | 1 |            |
-    And number of records should be 3
+    And number of records should be 2
     And I should see following search results:
       | Title                | Type           |
-      | Common Organization  | Organization   |
       | Common Event         | Calendar event |
       | Common Business Unit | Business Unit  |
 
@@ -35,10 +33,9 @@ Feature: Application search
       | Common Event         | Calendar event |
     And should see following search entity types:
       | Type            | N | isSelected |
-      | All             | 3 |            |
+      | All             | 2 |            |
       | Business Units  | 1 |            |
       | Calendar Events | 1 | yes        |
-      | Organizations   | 1 |            |
     When I filter result by "Calendar Events" type
     Then number of records should be 1
     And I should see following search results:
@@ -46,7 +43,6 @@ Feature: Application search
       | Common Event | Calendar event |
     And should see following search entity types:
       | Type            | N | isSelected |
-      | All             | 3 |            |
+      | All             | 2 |            |
       | Business Units  | 1 |            |
       | Calendar Events | 1 | yes        |
-      | Organizations   | 1 |            |
