@@ -114,8 +114,6 @@ class DateFormatExtension extends AbstractExtension implements ServiceSubscriber
     }
 
     /**
-     * @deprecated Since 1.11, will be removed after 2.0.
-     *
      * Returns a string represents a range between $startDate and $endDate, formatted according the given parameters
      * Examples:
      *      $endDate is not specified
