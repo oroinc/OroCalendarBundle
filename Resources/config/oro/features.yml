@@ -3,7 +3,70 @@ features:
         label: oro.calendar.feature.calendar_events_attendee_notifications.label
         description: oro.calendar.feature.calendar_events_attendee_notifications.description
         allow_if_all_abstain: true
+
     calendar_events_attendee_duplications:
         label: oro.calendar.feature.calendar_events_attendee_duplications.label
         description: oro.calendar.feature.calendar_events_attendee_duplications.description
         allow_if_all_abstain: true
+
+    calendar:
+        label: oro.calendar.feature.calendar.label
+        description: oro.calendar.feature.calendar.description
+        allow_if_all_abstain: true
+        routes:
+            - oro_calendar_view_default
+            - oro_calendar_view
+            - oro_calendar_event_index
+            - oro_calendar_event_view
+            - oro_calendar_event_widget_info
+            - oro_calendar_event_activity_view
+            - oro_calendar_event_create
+            - oro_calendar_event_update
+            - oro_calendar_event_delete
+            - oro_system_calendar_index
+            - oro_system_calendar_view
+            - oro_system_calendar_create
+            - oro_system_calendar_update
+            - oro_system_calendar_widget_events
+            - oro_system_calendar_event_view
+            - oro_system_calendar_event_widget_info
+            - oro_system_calendar_event_create
+            - oro_system_calendar_event_update
+            - oro_api_get_calendar_connections
+            - oro_api_put_calendar_connection
+            - oro_api_post_calendar_connection
+            - oro_api_delete_calendar_connection
+            - oro_api_options_calendar_connections
+            - oro_api_get_calendarevents
+            - oro_api_get_calendarevent
+            - oro_api_get_calendarevent_by_calendar
+            - oro_api_put_calendarevent
+            - oro_api_post_calendarevent
+            - oro_api_delete_calendarevent
+            - oro_api_options_calendarevents
+            - oro_api_get_calendar_default
+            - oro_api_delete_systemcalendar
+            - oro_api_options_systemcalendars
+        entities:
+            - Oro\Bundle\CalendarBundle\Entity\Calendar
+            - Oro\Bundle\CalendarBundle\Entity\CalendarEvent
+            - Oro\Bundle\CalendarBundle\Entity\CalendarProperty
+            - Oro\Bundle\CalendarBundle\Entity\Recurrence
+            - Oro\Bundle\CalendarBundle\Entity\Attendee
+            - Oro\Bundle\CalendarBundle\Entity\SystemCalendar
+        navigation_items:
+            - application_menu.activities_tab.calendar_event_list
+            - application_menu.usermenu.oro_calendar_view_default
+            - application_menu.calendar_menu
+            - application_menu.calendar_menu_mobile
+        placeholder_items:
+            - calendar_event_reminder_template
+            - oro_add_calendar_event_button
+            - oro_assign_calendar_event_button
+            - oro_add_calendar_event_link
+            - oro_assign_calendar_event_link
+        dashboard_widgets:
+            - my_calendar
+        configuration:
+            - oro_calendar.calendar_colors
+            - oro_calendar.event_colors

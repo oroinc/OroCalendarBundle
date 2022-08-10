@@ -259,8 +259,11 @@ oro:
 
         feature:
             calendar_events_attendee_notifications:
-                label: Send attendee notifications
-                description: Determines whether the attendee notifications should be send by Oro
+                label: Calendar Event Notifications
+                description: Enables the Oro application to send customized notifications to the calendar event attendees about the upcoming events.
             calendar_events_attendee_duplications:
-                label: Create duplication event in attendee calendar
-                description: Determines whether the duplication event should be created in attendee' calendar
+                label: Duplication of Event to Attendees` Calendars
+                description: Enables duplication of events in the attendees’ calendars.
+            calendar:
+                label: Calendars
+                description: Enables creating, managing, and configuring calendars with tasks and events related to a specific user, organization, or a system.
