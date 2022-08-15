@@ -2,8 +2,8 @@
 
 namespace Oro\Bundle\CalendarBundle\Tests\Functional\API;
 
+use Oro\Bundle\CalendarBundle\Entity\Attendee;
 use Oro\Bundle\CalendarBundle\Model\Recurrence;
-use Oro\Bundle\CalendarBundle\Tests\Unit\Fixtures\Entity\Attendee;
 
 class RestCalendarEventWithCancelledAndUpdatedRecurrentEventTest extends AbstractUseCaseTestCase
 {
