@@ -275,18 +275,13 @@ services:
     oro_calendar.autocomplete.user_calendar_handler:
         class: Oro\Bundle\CalendarBundle\Autocomplete\UserCalendarHandler
         arguments:
-            - '@doctrine.orm.entity_manager'
+            - '@doctrine'
             - '@oro_attachment.provider.picture_sources'
-            - 'Oro\Bundle\UserBundle\Entity\User'
             - '@security.authorization_checker'
             - '@oro_security.token_accessor'
-            - '@oro_security.ownership_tree_provider'
             - '@oro_entity.routing_helper'
+            - '@oro_entity.entity_name_resolver'
             - '@oro_security.acl_helper'
-            - '@?security.acl.voter.basic_permissions'
-        calls:
-            - [ setProperties, [["namePrefix", "firstName", "middleName", "lastName", "nameSuffix"]] ]
-            - [ setEntityNameResolver, ['@oro_entity.entity_name_resolver'] ]
         tags:
             - { name: oro_form.autocomplete.search_handler, alias: user_calendars, acl_resource: oro_user_user_view }
         lazy: true
