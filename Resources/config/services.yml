@@ -284,7 +284,6 @@ services:
             - '@oro_security.acl_helper'
         tags:
             - { name: oro_form.autocomplete.search_handler, alias: user_calendars, acl_resource: oro_user_user_view }
-        lazy: true
 
     oro_calendar.activity_list.provider:
         class: Oro\Bundle\CalendarBundle\Provider\CalendarEventActivityListProvider
