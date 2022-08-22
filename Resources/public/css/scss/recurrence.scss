@@ -69,6 +69,7 @@
 
         &__number {
             &:not(textarea) {
+                vertical-align: middle;
                 width: 36px;
                 margin-right: $content-padding-small;
             }
@@ -94,6 +95,10 @@
 
         .controls select {
             width: auto;
+        }
+
+        .selector.fixedWidth {
+            width: 130px;
         }
     }
 

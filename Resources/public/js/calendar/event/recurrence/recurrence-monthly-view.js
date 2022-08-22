@@ -89,6 +89,9 @@ define(function(require) {
 
         updateControlBlocksState: function() {
             const repeatOnInstance = !this.$('[data-related-field="instance"]').val();
+
+            this.$el.toggleClass('repeat-day-visible', repeatOnInstance);
+            this.$el.toggleClass('repeat-instance-visible', !repeatOnInstance);
             this.$('[data-name="repeat-on-day"]').toggle(repeatOnInstance);
             this.$('[data-name="repeat-on-instance"]').toggle(!repeatOnInstance);
         },

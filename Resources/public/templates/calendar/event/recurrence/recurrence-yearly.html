@@ -39,7 +39,7 @@
                 </option>
                 <% }); %>
             </select>
-            <span data-name="repeat-on-day">
+            <span class="repeat-on-day" data-name="repeat-on-day">
                 <span class="fields-row">
                     <input class="recurrence-subview-control__number"
                            type="text"
@@ -51,7 +51,7 @@
                            value="yearly">
                 </span>
             </span>
-            <span data-name="repeat-on-instance">
+            <span class="repeat-on-instance" data-name="repeat-on-instance">
                 <select data-related-field="dayOfWeek">
                     <% _.each(groupWeekDayOptions, function (option) { %>
                     <option value="<%- option.value %>"
