@@ -33,6 +33,10 @@
                 }
             }
         }
+
+        .selector.fixedWidth {
+            width: 100%;
+        }
     }
 
     &-summary {
@@ -51,5 +55,29 @@
         &__select {
             min-width: 285px;
         }
+    }
+}
+
+.repeat-day-visible {
+    .recurrence-subview-control__number {
+        margin-right: 0;
+    }
+
+    .recurrence-subview-control {
+        .selector select {
+            width: auto;
+        }
+
+        .selector.fixedWidth {
+            width: calc(100% - 52px);
+            min-width: calc(100% - 52px);
+        }
+    }
+}
+
+.repeat-instance-visible {
+    .repeat-on-instance {
+        display: block;
+        margin-top: $content-padding-small;
     }
 }
