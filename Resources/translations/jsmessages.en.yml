@@ -94,6 +94,8 @@ oro:
                 all-events:
                     description: "All events in the series will be deleted."
                 apply: "Delete"
+        reminder_template:
+            due_message: '{{ subject }} is starting at {{ expireAt }}'
 "Add New Event": "Add New Event"
 "View Event": "View Event"
 "Edit Event": "Edit Event"
