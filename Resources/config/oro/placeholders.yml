@@ -1,12 +1,5 @@
 placeholders:
-    placeholders:
-        oro_reminder_reminder_templates:
-            items:
-                calendar_event_reminder_template: ~
     items:
-        calendar_event_reminder_template:
-            template: '@@OroCalendar/CalendarEvent/reminderTemplate.html.twig'
-
         oro_add_calendar_event_button:
             template: '@@OroCalendar/CalendarEvent/activityButton.html.twig'
             acl: oro_calendar_event_create

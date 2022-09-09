@@ -3,6 +3,7 @@ aliases:
     oro/select2-attendees-component$: orocalendar/js/app/components/select2-attendees-component
 app-modules:
     - orocalendar/js/app/modules/calendar-module
+    - orocalendar/js/app/modules/template-macros-module
 dynamic-imports:
     commons:
         - orocalendar/js/validator/dateearlierthan
