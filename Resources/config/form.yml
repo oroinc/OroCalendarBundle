@@ -29,7 +29,7 @@ services:
         public: true
         factory: ['@form.factory', 'createNamed']
         arguments:
-            - ''
+            - "oro_calendar_event_form"
             - Oro\Bundle\CalendarBundle\Form\Type\CalendarEventApiType
 
     oro_calendar.calendar_event.form.handler.abstract:

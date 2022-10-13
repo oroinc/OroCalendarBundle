@@ -35,6 +35,7 @@ Oro\Bundle\CalendarBundle\Entity\CalendarEvent:
             - Valid: ~
         reminders:
             - Valid: ~
+            - Oro\Bundle\CalendarBundle\Validator\Constraints\ReminderStartDate: ~
         organizerEmail:
             - Email: ~
             - Length:

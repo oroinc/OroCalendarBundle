@@ -19,6 +19,9 @@ oro:
             end:
                 type:
                     message: 'This value is not a valid date.'
+            reminder:
+                date_start_less_than_now:
+                    message: 'Reminder start date less than now.'
         recurrence:
             start_time:
                 type:

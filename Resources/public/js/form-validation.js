@@ -43,14 +43,15 @@ define([
                         errors.push(value);
                     });
                 } else if (_.isObject(err.errors)) {
-                    const validator = (container.is('form') ? container : container.find('form')).data('validator');
+                    const from = container.is('form') ? container : container.find('form');
+                    const validator = from.data('validator');
                     if (validator) {
-                        validator.showBackendErrors(err.errors);
+                        validator.showBackendErrors(err.errors, from.attr('name'));
                     }
                 }
+            } else {
+                this.addErrors(container, errors);
             }
-
-            this.addErrors(container, errors);
 
             if (!_.isUndefined(err.children)) {
                 // JSON REST response

@@ -1,4 +1,5 @@
 @regression
+@ticket-BB-11878
 Feature: Create calendar events
   In order to have my company events organized
   As Admin user
@@ -19,10 +20,27 @@ Feature: Create calendar events
       | All-day event | Yes |
     And I should not see an "Multiday Event" element
 
-  Scenario: Create AllDay No-repeat calendar event
-    Given go to Activities/ Calendar Events
+  Scenario: Check Reminder errors
+    When go to Activities/ Calendar Events
     And click "Create Calendar event"
-    Then I check switching All-Day Event on and off doesn't change event start and end time
+    When I set Reminders with:
+      | Method | Interval unit | Interval number |
+      | Email  | minutes       | 21347349587354  |
+    Then I should see "Event Form" validation errors:
+      | Reminder 1 Interval number | This value should be between 1 and 2,147,483,647. |
+    When I fill "Event Form" with:
+      | Title | Event with wrong reminder |
+    And I set Reminders with:
+      | Method | Interval unit | Interval number |
+      | Email  | days          | 999999999       |
+    Then I save and close form
+    And I should see "Event Form" validation errors:
+      | Reminder 1 Interval number | Reminder start date less than now. |
+    Then I click "Cancel"
+
+  Scenario: Create AllDay No-repeat calendar event
+    When click "Create Calendar event"
+    And I check switching All-Day Event on and off doesn't change event start and end time
     When I save and close form
     Then I should see validation errors:
       | Title | This value should not be blank. |
@@ -34,10 +52,6 @@ Feature: Create calendar events
       | Description   | testfull desc           |
       | Guests        | John Doe                |
       | Color         | Cornflower Blue         |
-    And set Reminders with:
-      | Method        | Interval unit | Interval number |
-      | Email         | days          | 1               |
-      | Flash message | minutes       | 30              |
     And I save and close form
     And click "Notify"
     Then I should see "Calendar event saved" flash message

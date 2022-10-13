@@ -41,6 +41,7 @@ oro_behat_extension:
         mapping:
           Start: 'oro_calendar_event_form[start]'
           End: 'oro_calendar_event_form[end]'
+          Reminder 1 Interval number: 'oro_calendar_event_form[reminders][0][interval][number]'
     Start Datetime:
       selector: '[name="oro_calendar_event_form[start]"]'
     End Datetime:
