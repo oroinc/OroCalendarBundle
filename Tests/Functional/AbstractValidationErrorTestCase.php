@@ -10,11 +10,9 @@ use Oro\Bundle\CalendarBundle\Model\Recurrence;
 abstract class AbstractValidationErrorTestCase extends AbstractTestCase
 {
     /**
-     * @return array
-     *
      * @SuppressWarnings(PHPMD.ExcessiveMethodLength)
      */
-    public function recurrenceValidationFailedDataProvider()
+    public function recurrenceValidationFailedDataProvider(): array
     {
         $startTime = gmdate(DATE_RFC3339);
         $wrongEndTime = gmdate(DATE_RFC3339, strtotime('-1 day'));

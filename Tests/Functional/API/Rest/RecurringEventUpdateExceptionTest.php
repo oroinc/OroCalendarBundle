@@ -43,11 +43,7 @@ class RecurringEventUpdateExceptionTest extends AbstractTestCase
         $this->loadFixtures([LoadUserData::class]);
     }
 
-    /**
-     * @param $response
-     * @return array
-     */
-    private function getResponseArray($response)
+    private function getResponseArray(array $response): array
     {
         return [
             'uid'                       => $response['uid'],
@@ -59,11 +55,7 @@ class RecurringEventUpdateExceptionTest extends AbstractTestCase
         ];
     }
 
-    /**
-     * @param $response
-     * @return array
-     */
-    private function getAcceptedResponseArray($response)
+    private function getAcceptedResponseArray(array $response): array
     {
         return [
             'uid'                       => $response['uid'],
@@ -272,10 +264,7 @@ class RecurringEventUpdateExceptionTest extends AbstractTestCase
         $this->assertResponseEquals($expectedResponse, $response, false);
     }
 
-    /**
-     * @return array
-     */
-    public function updateExceptionsDataProvider()
+    public function updateExceptionsDataProvider(): array
     {
         return [
             'All simple attributes should be changed, but title'           => [

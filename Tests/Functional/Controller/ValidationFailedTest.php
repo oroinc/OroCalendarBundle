@@ -94,15 +94,13 @@ class ValidationFailedTest extends AbstractValidationErrorTestCase
 
     /**
      * Returns a list of errors in the form found for given $fieldNames
-     *
-     * @param Crawler $crawler
-     * @param string $formId
-     * @param string $fieldIdPrefix
-     * @param array $fieldNames
-     * @return array
      */
-    private function getFormFieldsValidationErrors(Crawler $crawler, $formId, $fieldIdPrefix, array $fieldNames)
-    {
+    private function getFormFieldsValidationErrors(
+        Crawler $crawler,
+        string $formId,
+        string $fieldIdPrefix,
+        array $fieldNames
+    ): array {
         $result = [];
 
         foreach ($fieldNames as $fieldName) {
@@ -118,14 +116,12 @@ class ValidationFailedTest extends AbstractValidationErrorTestCase
 
     /**
      * Returns array of validation error of the field.
-     *
-     * @param Crawler $crawler
-     * @param string $formIdContains
-     * @param string $fieldIdContains
-     * @return array
      */
-    private function getFormFieldValidationErrors(Crawler $crawler, $formIdContains, $fieldIdContains)
-    {
+    private function getFormFieldValidationErrors(
+        Crawler $crawler,
+        string $formIdContains,
+        string $fieldIdContains
+    ): array {
         $formXPath = sprintf('//form[contains(@id, "%s")]', $formIdContains);
 
         $fieldLabelXPath = sprintf(
@@ -163,12 +159,8 @@ class ValidationFailedTest extends AbstractValidationErrorTestCase
 
     /**
      * Returns array of validation errors of the 'recurrence' fields.
-     *
-     * @param Crawler $crawler
-     *
-     * @return array
      */
-    private function getRecurrenceErrors(Crawler $crawler)
+    private function getRecurrenceErrors(Crawler $crawler): array
     {
         $component = 'orocalendar/js/app/components/calendar-event-recurrence-component';
         $errorsXPath = sprintf(
