@@ -15,21 +15,21 @@ use Symfony\Component\Validator\Test\ConstraintValidatorTestCase;
 
 class ReminderStartDateConstraintValidatorTest extends ConstraintValidatorTestCase
 {
-    private CalendarEvent|\PHPUnit\Framework\MockObject\MockObject $calendarEvent;
+    /** @var CalendarEvent|\PHPUnit\Framework\MockObject\MockObject */
+    private $calendarEvent;
 
-    private Reminder|\PHPUnit\Framework\MockObject\MockObject $reminder;
+    /** @var Reminder|\PHPUnit\Framework\MockObject\MockObject */
+    private $reminder;
 
-    public function setUp(): void
+    protected function setUp(): void
     {
         $this->calendarEvent = $this->createMock(CalendarEvent::class);
+        $this->reminder = $this->createMock(Reminder::class);
 
         $form = $this->createMock(Form::class);
-        $form
-            ->expects(self::any())
+        $form->expects(self::any())
             ->method('getData')
             ->willReturn($this->calendarEvent);
-
-        $this->reminder = $this->createMock(Reminder::class);
 
         parent::setUp();
 
@@ -43,13 +43,11 @@ class ReminderStartDateConstraintValidatorTest extends ConstraintValidatorTestCa
 
     public function testValidReminderInterval(): void
     {
-        $this->reminder
-            ->expects(self::once())
+        $this->reminder->expects(self::once())
             ->method('getInterval')
             ->willReturn(new ReminderInterval('1', 'D'));
 
-        $this->calendarEvent
-            ->expects(self::once())
+        $this->calendarEvent->expects(self::once())
             ->method('getStart')
             ->willReturn(new \DateTime('+2day', new \DateTimeZone('UTC')));
 
@@ -63,19 +61,16 @@ class ReminderStartDateConstraintValidatorTest extends ConstraintValidatorTestCa
 
     public function testInvalidReminderInterval(): void
     {
-        $this->reminder
-            ->expects(self::once())
+        $this->reminder->expects(self::once())
             ->method('getInterval')
             ->willReturn(new ReminderInterval('1', 'D'));
 
         $reminderBar = $this->createMock(Reminder::class);
-        $reminderBar
-            ->expects(self::once())
+        $reminderBar->expects(self::once())
             ->method('getInterval')
             ->willReturn(new ReminderInterval('5', 'D'));
 
-        $this->calendarEvent
-            ->expects(self::any())
+        $this->calendarEvent->expects(self::any())
             ->method('getStart')
             ->willReturn(new \DateTime('+2 days', new \DateTimeZone('UTC')));
 
