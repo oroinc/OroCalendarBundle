@@ -210,12 +210,12 @@ Feature: Create calendar events
     And I confirm deletion
     Then I should see success message with number of records were deleted
 
-  Scenario: Create recurrent calendar event with default UTC -07:00 timezone on dashboard widget
+  Scenario: Create recurrent calendar event with default UTC +08:00 timezone on dashboard widget
     Given I go to System / Configuration
     And I follow "System Configuration/General Setup/Localization" on configuration sidebar
     And uncheck "Use default" for "Timezone" field
     And I fill form with:
-      | Timezone | (UTC -07:00) America/Los Angeles |
+      | Timezone | (UTC +08:00) Asia/Taipei |
     And I click "Save settings"
     When I go to Dashboards/Dashboard
     And I scroll to "Empty slot at 10:30 PM"
