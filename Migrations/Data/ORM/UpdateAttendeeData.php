@@ -4,9 +4,12 @@ namespace Oro\Bundle\CalendarBundle\Migrations\Data\ORM;
 
 use Doctrine\Common\DataFixtures\AbstractFixture;
 use Doctrine\Common\DataFixtures\DependentFixtureInterface;
-use Doctrine\ORM\EntityManager;
+use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\Persistence\ObjectManager;
 
+/**
+ * Update type and status for attended data.
+ */
 class UpdateAttendeeData extends AbstractFixture implements DependentFixtureInterface
 {
     /**
@@ -26,7 +29,7 @@ class UpdateAttendeeData extends AbstractFixture implements DependentFixtureInte
         $this->updateType($manager);
     }
 
-    protected function updateStatus(EntityManager $em)
+    protected function updateStatus(EntityManagerInterface $em)
     {
         $connection = $em->getConnection();
         if (!in_array(
@@ -60,7 +63,7 @@ SQL
         );
     }
 
-    protected function updateType(EntityManager $em)
+    protected function updateType(EntityManagerInterface $em)
     {
         $connection = $em->getConnection();
 

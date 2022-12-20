@@ -19,9 +19,13 @@ class ReminderStartDateConstraintValidator extends ConstraintValidator
             throw new UnexpectedTypeException($constraint, ReminderStartDate::class);
         }
 
-        /** @var Form $form $form */
-        $form = $this->context->getRoot();
-        $start = $form->getData()?->getStart();
+        $data = $this->context->getRoot();
+
+        if ($data instanceof Form) {
+            $start = $data->getData()?->getStart();
+        } else {
+            $start = $data?->getStart();
+        }
 
         foreach ($value as $key => $reminder) {
             if (!$reminder instanceof Reminder) {

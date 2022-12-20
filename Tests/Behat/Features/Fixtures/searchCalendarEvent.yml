@@ -7,8 +7,8 @@ Oro\Bundle\CalendarBundle\Entity\CalendarEvent:
   calendarEvent:
     title: Common Event
     calendar: '@first_calendar'
-    start: <dateTimeThisYear('now')>
-    end: <dateTimeThisYear('now')>
+    start: <dateTimeBetween('+1 day', '+5 days')>
+    end: <dateTimeBetween($start, '+10 days')>
     allDay: false
 
 Oro\Bundle\OrganizationBundle\Entity\Organization:
