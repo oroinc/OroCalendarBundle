@@ -1,5 +1,7 @@
 /* @theme: admin.oro; */
 
+@use 'sass:color';
+
 .calendar-container {
     position: relative;
 }
@@ -61,7 +63,7 @@
     }
 
     &__item-desc {
-        color: lighten($body-color, 25%);
+        color: color.adjust($body-color, $lightness: 25%);
         font-size: 12px;
         grid-area: desc;
     }
