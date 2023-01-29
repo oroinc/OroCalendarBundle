@@ -2,13 +2,19 @@
 
 namespace Oro\Bundle\CalendarBundle\EventListener;
 
-use Doctrine\ORM\Event\LifecycleEventArgs;
 use Doctrine\ORM\Event\PreUpdateEventArgs;
 use Doctrine\ORM\Mapping as ORM;
+use Doctrine\Persistence\Event\LifecycleEventArgs;
 use Oro\Bundle\CalendarBundle\Entity\CalendarEvent;
 use Oro\Bundle\CalendarBundle\Exception\UidAlreadySetException;
 use Oro\Bundle\SecurityBundle\Tools\UUIDGenerator;
 
+/**
+ * Listens to CalendarEvent
+ * Generates missed UID for current and parent CalendarEvent
+ * Updates recurring and parent calendar events UID
+ * Throws exception in case when already created UID has been changed
+ */
 class CalendarEventEntityListener
 {
     /** @ORM\PrePersist() */
