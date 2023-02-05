@@ -12,28 +12,24 @@ use Oro\Bundle\CalendarBundle\Form\Type\CalendarPropertyApiType;
 use Oro\Bundle\FormBundle\Form\Type\EntityIdentifierType;
 use Oro\Component\Testing\ReflectionUtil;
 use Oro\Component\Testing\Unit\PreloadedExtension;
-use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Test\TypeTestCase;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
 class CalendarPropertyApiTypeTest extends TypeTestCase
 {
-    /** @var ManagerRegistry|\PHPUnit\Framework\MockObject\MockObject */
-    private $registry;
-
     /**
      * {@inheritDoc}
      */
-    protected function getExtensions()
+    protected function getExtensions(): array
     {
-        $this->registry = $this->createMock(ManagerRegistry::class);
         $em = $this->createMock(EntityManager::class);
         $meta = $this->createMock(ClassMetadata::class);
         $repo = $this->createMock(EntityRepository::class);
         $calendar = new Calendar();
         ReflectionUtil::setId($calendar, 1);
 
-        $this->registry->expects($this->any())
+        $doctrine = $this->createMock(ManagerRegistry::class);
+        $doctrine->expects($this->any())
             ->method('getManagerForClass')
             ->with('OroCalendarBundle:Calendar')
             ->willReturn($em);
@@ -54,30 +50,10 @@ class CalendarPropertyApiTypeTest extends TypeTestCase
             ->willReturn($calendar);
 
         return [
-            new PreloadedExtension(
-                $this->loadTypes(),
-                []
-            )
+            new PreloadedExtension([
+                new EntityIdentifierType($doctrine),
+            ], [])
         ];
-    }
-
-    /**
-     * @return AbstractType[]
-     */
-    private function loadTypes(): array
-    {
-        $types = [
-            new EntityIdentifierType($this->registry),
-        ];
-
-        $keys = array_map(
-            function (AbstractType $type) {
-                return $type->getName();
-            },
-            $types
-        );
-
-        return array_combine($keys, $types);
     }
 
     public function testSubmitValidData()
@@ -121,12 +97,7 @@ class CalendarPropertyApiTypeTest extends TypeTestCase
         $resolver = $this->createMock(OptionsResolver::class);
         $resolver->expects($this->once())
             ->method('setDefaults')
-            ->with(
-                [
-                    'data_class'           => CalendarProperty::class,
-                    'csrf_protection'      => false,
-                ]
-            );
+            ->with(['data_class' => CalendarProperty::class, 'csrf_protection' => false]);
 
         $type = new CalendarPropertyApiType();
         $type->configureOptions($resolver);

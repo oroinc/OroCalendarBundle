@@ -22,7 +22,7 @@ class CalendarChoiceTypeTest extends TypeTestCase
     /**
      * {@inheritDoc}
      */
-    protected function getExtensions()
+    protected function getExtensions(): array
     {
         $this->calendarEventManager = $this->createMock(CalendarEventManager::class);
         $this->translator = $this->createMock(TranslatorInterface::class);

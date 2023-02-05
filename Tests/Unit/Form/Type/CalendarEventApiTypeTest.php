@@ -35,7 +35,6 @@ use Oro\Bundle\UserBundle\Form\Type\UserMultiSelectType;
 use Oro\Component\Testing\Unit\FormIntegrationTestCase;
 use Oro\Component\Testing\Unit\PreloadedExtension;
 use Psr\Container\ContainerInterface;
-use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\Extension\Validator\ValidatorExtension;
 use Symfony\Component\OptionsResolver\OptionsResolver;
@@ -125,11 +124,38 @@ class CalendarEventApiTypeTest extends FormIntegrationTestCase
     /**
      * {@inheritDoc}
      */
-    protected function getExtensions()
+    protected function getExtensions(): array
     {
+        $searchHandler = $this->createMock(SearchHandlerInterface::class);
+        $searchHandler->expects($this->any())
+            ->method('getEntityName')
+            ->willReturn('OroUserBundle:User');
+
+        $searchRegistry = $this->createMock(SearchRegistry::class);
+        $searchRegistry->expects($this->any())
+            ->method('getSearchHandler')
+            ->willReturn($searchHandler);
+
         return [
             new PreloadedExtension(
-                $this->loadTypes(),
+                [
+                    $this->calendarEventApiType,
+                    new ReminderCollectionType(),
+                    new CollectionType(),
+                    new ReminderType(),
+                    new MethodType(new SendProcessorRegistry([], $this->createMock(ContainerInterface::class))),
+                    new ReminderIntervalType(),
+                    new UnitType(),
+                    new UserMultiSelectType($this->entityManager),
+                    new OroJquerySelect2HiddenType(
+                        $this->entityManager,
+                        $searchRegistry,
+                        $this->createMock(ConfigProvider::class)
+                    ),
+                    new CalendarEventAttendeesApiType(),
+                    new RecurrenceFormType(new Recurrence($this->createMock(StrategyInterface::class))),
+                    new EntityIdentifierType($this->registry),
+                ],
                 [
                     TextType::class => [new DynamicFieldsOptionsExtension()]
                 ]
@@ -168,11 +194,7 @@ class CalendarEventApiTypeTest extends FormIntegrationTestCase
 
         $this->calendarEventManager->expects($this->once())
             ->method('setCalendar')
-            ->with(
-                $this->isInstanceOf(CalendarEvent::class),
-                Calendar::CALENDAR_ALIAS,
-                1
-            );
+            ->with($this->isInstanceOf(CalendarEvent::class), Calendar::CALENDAR_ALIAS, 1);
 
         $form->submit($formData);
 
@@ -227,11 +249,7 @@ class CalendarEventApiTypeTest extends FormIntegrationTestCase
 
         $this->calendarEventManager->expects($this->once())
             ->method('setCalendar')
-            ->with(
-                $this->isInstanceOf(CalendarEvent::class),
-                'system',
-                1
-            );
+            ->with($this->isInstanceOf(CalendarEvent::class), 'system', 1);
 
         $form->submit($formData);
 
@@ -262,60 +280,12 @@ class CalendarEventApiTypeTest extends FormIntegrationTestCase
         $resolver = $this->createMock(OptionsResolver::class);
         $resolver->expects($this->once())
             ->method('setDefaults')
-            ->with(
-                [
-                    'data_class'           => CalendarEvent::class,
-                    'csrf_token_id'        => 'calendar_event',
-                    'csrf_protection'      => false,
-                ]
-            );
+            ->with([
+                'data_class'      => CalendarEvent::class,
+                'csrf_token_id'   => 'calendar_event',
+                'csrf_protection' => false
+            ]);
 
         $this->calendarEventApiType->configureOptions($resolver);
-    }
-
-    /**
-     * @return AbstractType[]
-     */
-    private function loadTypes(): array
-    {
-        $searchHandler = $this->createMock(SearchHandlerInterface::class);
-        $searchHandler->expects($this->any())
-            ->method('getEntityName')
-            ->willReturn('OroUserBundle:User');
-
-        $searchRegistry = $this->createMock(SearchRegistry::class);
-        $searchRegistry->expects($this->any())
-            ->method('getSearchHandler')
-            ->willReturn($searchHandler);
-
-        $configProvider = $this->createMock(ConfigProvider::class);
-
-        $strategy = $this->createMock(StrategyInterface::class);
-
-        $recurrenceModel = new Recurrence($strategy);
-
-        $types = [
-            $this->calendarEventApiType,
-            new ReminderCollectionType(),
-            new CollectionType(),
-            new ReminderType(),
-            new MethodType(new SendProcessorRegistry([], $this->createMock(ContainerInterface::class))),
-            new ReminderIntervalType(),
-            new UnitType(),
-            new UserMultiSelectType($this->entityManager),
-            new OroJquerySelect2HiddenType($this->entityManager, $searchRegistry, $configProvider),
-            new CalendarEventAttendeesApiType(),
-            new RecurrenceFormType($recurrenceModel),
-            new EntityIdentifierType($this->registry),
-        ];
-
-        $keys = array_map(
-            function (AbstractType $type) {
-                return $type->getName();
-            },
-            $types
-        );
-
-        return array_combine($keys, $types);
     }
 }

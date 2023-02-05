@@ -8,7 +8,6 @@ use Oro\Bundle\CalendarBundle\Provider\SystemCalendarConfig;
 use Oro\Bundle\ConfigBundle\Config\ConfigManager;
 use Oro\Bundle\FormBundle\Form\Type\OroSimpleColorPickerType;
 use Oro\Component\Testing\Unit\PreloadedExtension;
-use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Test\TypeTestCase;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
@@ -28,10 +27,10 @@ class SystemCalendarTypeTest extends TypeTestCase
     /** @var TranslatorInterface|\PHPUnit\Framework\MockObject\MockObject */
     private $translator;
 
-    /**
-     * {@inheritDoc}
-     */
-    protected function getExtensions()
+    /** @var SystemCalendarType */
+    private $formType;
+
+    protected function setUp(): void
     {
         $this->authorizationChecker = $this->createMock(AuthorizationCheckerInterface::class);
         $this->calendarConfig = $this->createMock(SystemCalendarConfig::class);
@@ -43,32 +42,25 @@ class SystemCalendarTypeTest extends TypeTestCase
             ->with('oro_calendar.calendar_colors')
             ->willReturn(['#FF0000']);
 
-        return [
-            new PreloadedExtension(
-                $this->loadTypes(),
-                []
-            )
-        ];
+        $this->formType = new SystemCalendarType($this->authorizationChecker, $this->calendarConfig);
+
+        parent::setUp();
     }
 
     /**
-     * @return AbstractType[]
+     * {@inheritDoc}
      */
-    private function loadTypes(): array
+    protected function getExtensions(): array
     {
-        $types = [
-            SystemCalendarType::class => new SystemCalendarType($this->authorizationChecker, $this->calendarConfig),
-            OroSimpleColorPickerType::class => new OroSimpleColorPickerType($this->configManager, $this->translator),
+        return [
+            new PreloadedExtension(
+                [
+                    $this->formType,
+                    new OroSimpleColorPickerType($this->configManager, $this->translator),
+                ],
+                []
+            )
         ];
-
-        $keys = array_map(
-            function (AbstractType $type) {
-                return $type->getName();
-            },
-            $types
-        );
-
-        return array_combine($keys, $types);
     }
 
     public function testSubmitValidData()
@@ -163,14 +155,11 @@ class SystemCalendarTypeTest extends TypeTestCase
         $resolver = $this->createMock(OptionsResolver::class);
         $resolver->expects($this->once())
             ->method('setDefaults')
-            ->with(
-                [
-                    'data_class' => SystemCalendar::class,
-                    'csrf_token_id' => 'system_calendar',
-                ]
-            );
+            ->with([
+                'data_class'    => SystemCalendar::class,
+                'csrf_token_id' => 'system_calendar',
+            ]);
 
-        $type = new SystemCalendarType($this->authorizationChecker, $this->calendarConfig);
-        $type->configureOptions($resolver);
+        $this->formType->configureOptions($resolver);
     }
 }
