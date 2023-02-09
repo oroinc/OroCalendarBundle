@@ -11,8 +11,7 @@ use Oro\Component\TestUtils\ORM\OrmTestCase;
 
 class SystemCalendarRepositoryTest extends OrmTestCase
 {
-    /** @var EntityManagerMock */
-    private $em;
+    private EntityManagerMock $em;
 
     protected function setUp(): void
     {
