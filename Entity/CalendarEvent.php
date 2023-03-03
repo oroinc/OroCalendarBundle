@@ -5,13 +5,16 @@ namespace Oro\Bundle\CalendarBundle\Entity;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
+use Oro\Bundle\ActivityBundle\Model\ActivityInterface;
+use Oro\Bundle\ActivityBundle\Model\ExtendActivity;
 use Oro\Bundle\CalendarBundle\Exception\NotUserCalendarEvent;
-use Oro\Bundle\CalendarBundle\Model\ExtendCalendarEvent;
 use Oro\Bundle\DataAuditBundle\Entity\AuditAdditionalFieldsInterface;
 use Oro\Bundle\EntityBundle\EntityProperty\DatesAwareInterface;
 use Oro\Bundle\EntityBundle\EntityProperty\DatesAwareTrait;
 use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\Config;
 use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\ConfigField;
+use Oro\Bundle\EntityExtendBundle\Entity\ExtendEntityInterface;
+use Oro\Bundle\EntityExtendBundle\Entity\ExtendEntityTrait;
 use Oro\Bundle\ReminderBundle\Entity\RemindableInterface;
 use Oro\Bundle\ReminderBundle\Model\ReminderData;
 use Oro\Bundle\UserBundle\Entity\User;
@@ -75,12 +78,16 @@ use Oro\Bundle\UserBundle\Entity\User;
  * @SuppressWarnings(PHPMD.TooManyPublicMethods)
  * @SuppressWarnings(PHPMD.TooManyFields)
  */
-class CalendarEvent extends ExtendCalendarEvent implements
+class CalendarEvent implements
     RemindableInterface,
     DatesAwareInterface,
-    AuditAdditionalFieldsInterface
+    AuditAdditionalFieldsInterface,
+    ActivityInterface,
+    ExtendEntityInterface
 {
     use DatesAwareTrait;
+    use ExtendActivity;
+    use ExtendEntityTrait;
 
     /**
      * @ORM\Id
@@ -374,8 +381,6 @@ class CalendarEvent extends ExtendCalendarEvent implements
      */
     public function __construct()
     {
-        parent::__construct();
-
         $this->reminders   = new ArrayCollection();
         $this->childEvents = new ArrayCollection();
         $this->attendees   = new ArrayCollection();

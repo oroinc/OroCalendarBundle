@@ -22,7 +22,6 @@ class Attendee extends BaseAttendee
      */
     public function __construct($id = null)
     {
-        parent::__construct();
         $this->id = $id;
     }
 

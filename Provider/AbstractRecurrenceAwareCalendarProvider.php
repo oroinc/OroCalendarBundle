@@ -5,8 +5,13 @@ namespace Oro\Bundle\CalendarBundle\Provider;
 use Oro\Bundle\CalendarBundle\Entity;
 use Oro\Bundle\CalendarBundle\Model;
 use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
-use Oro\Component\PropertyAccess\PropertyAccessor;
+use Oro\Bundle\EntityExtendBundle\PropertyAccess;
+use Symfony\Component\PropertyAccess\PropertyAccessor;
+use Symfony\Component\PropertyAccess\PropertyAccessorInterface;
 
+/**
+ * Base recurrence aware calendar provider.
+ */
 abstract class AbstractRecurrenceAwareCalendarProvider extends AbstractCalendarProvider
 {
     /**
@@ -14,10 +19,7 @@ abstract class AbstractRecurrenceAwareCalendarProvider extends AbstractCalendarP
      */
     protected $recurrenceModel;
 
-    /**
-     * @var PropertyAccessor
-     */
-    protected $propertyAccessor;
+    protected ?PropertyAccessorInterface $propertyAccessor = null;
 
     public function __construct(DoctrineHelper $doctrineHelper, Model\Recurrence $recurrence)
     {
@@ -275,7 +277,7 @@ abstract class AbstractRecurrenceAwareCalendarProvider extends AbstractCalendarP
     protected function getPropertyAccessor()
     {
         if (null === $this->propertyAccessor) {
-            $this->propertyAccessor = new PropertyAccessor();
+            $this->propertyAccessor = PropertyAccess::createPropertyAccessor();
         }
 
         return $this->propertyAccessor;

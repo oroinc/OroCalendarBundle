@@ -4,8 +4,9 @@ namespace Oro\Bundle\CalendarBundle\Entity;
 
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\Mapping as ORM;
-use Oro\Bundle\CalendarBundle\Model\ExtendCalendar;
 use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\Config;
+use Oro\Bundle\EntityExtendBundle\Entity\ExtendEntityInterface;
+use Oro\Bundle\EntityExtendBundle\Entity\ExtendEntityTrait;
 use Oro\Bundle\OrganizationBundle\Entity\Organization;
 use Oro\Bundle\UserBundle\Entity\User;
 
@@ -39,8 +40,10 @@ use Oro\Bundle\UserBundle\Entity\User;
  *      }
  * )
  */
-class Calendar extends ExtendCalendar
+class Calendar implements ExtendEntityInterface
 {
+    use ExtendEntityTrait;
+
     const CALENDAR_ALIAS = 'user';
 
     /**
@@ -85,8 +88,6 @@ class Calendar extends ExtendCalendar
      */
     public function __construct()
     {
-        parent::__construct();
-
         $this->events = new ArrayCollection();
     }
 

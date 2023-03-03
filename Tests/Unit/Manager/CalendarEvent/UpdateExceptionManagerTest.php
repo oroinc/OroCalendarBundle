@@ -7,7 +7,7 @@ use Oro\Bundle\CalendarBundle\Manager\AttendeeManager;
 use Oro\Bundle\CalendarBundle\Manager\CalendarEvent\DeleteManager;
 use Oro\Bundle\CalendarBundle\Manager\CalendarEvent\UpdateExceptionManager;
 use Oro\Bundle\CalendarBundle\Tests\Unit\Fixtures\Entity\CalendarEvent;
-use Oro\Component\PropertyAccess\PropertyAccessor;
+use Oro\Bundle\EntityExtendBundle\PropertyAccess;
 
 class UpdateExceptionManagerTest extends \PHPUnit\Framework\TestCase
 {
@@ -40,7 +40,7 @@ class UpdateExceptionManagerTest extends \PHPUnit\Framework\TestCase
         $originalEvent = clone $actualEvent;
 
         $newRecurrence = new Recurrence();
-        $propertyAccessor = new PropertyAccessor();
+        $propertyAccessor = PropertyAccess::createPropertyAccessor();
         $propertyAccessor->setValue($newRecurrence, $field, $value);
         $actualEvent->setRecurrence($newRecurrence);
 

@@ -5,18 +5,20 @@ namespace Oro\Bundle\CalendarBundle\Provider;
 use Oro\Bundle\CalendarBundle\Entity\Attendee;
 use Oro\Bundle\CalendarBundle\Entity\CalendarEvent;
 use Oro\Bundle\CalendarBundle\Entity\Recurrence;
+use Oro\Bundle\EntityExtendBundle\PropertyAccess;
 use Oro\Bundle\SecurityBundle\Authentication\TokenAccessorInterface;
-use Oro\Component\PropertyAccess\PropertyAccessor;
 use Symfony\Component\PropertyAccess\Exception\InvalidPropertyPathException;
 use Symfony\Component\PropertyAccess\Exception\NoSuchPropertyException;
+use Symfony\Component\PropertyAccess\Exception\UnexpectedTypeException;
+use Symfony\Component\PropertyAccess\PropertyAccessor;
+use Symfony\Component\PropertyAccess\PropertyAccessorInterface;
 
 /**
  * Serializes user`s calendar event object into an array.
  */
 class UserCalendarEventNormalizer extends AbstractCalendarEventNormalizer
 {
-    /** @var PropertyAccessor */
-    protected $propertyAccessor;
+    protected ?PropertyAccessorInterface $propertyAccessor = null;
 
     /** @var TokenAccessorInterface */
     protected $tokenAccessor;
@@ -190,9 +192,7 @@ class UserCalendarEventNormalizer extends AbstractCalendarEventNormalizer
 
         try {
             return $propertyAccessor->getValue($object, $propertyPath);
-        } catch (InvalidPropertyPathException $e) {
-            return null;
-        } catch (NoSuchPropertyException $e) {
+        } catch (InvalidPropertyPathException|NoSuchPropertyException|UnexpectedTypeException $e) {
             return null;
         }
     }
@@ -203,7 +203,7 @@ class UserCalendarEventNormalizer extends AbstractCalendarEventNormalizer
     protected function getPropertyAccessor()
     {
         if (null === $this->propertyAccessor) {
-            $this->propertyAccessor = new PropertyAccessor();
+            $this->propertyAccessor = PropertyAccess::createPropertyAccessor();
         }
 
         return $this->propertyAccessor;

@@ -4,9 +4,10 @@ namespace Oro\Bundle\CalendarBundle\Entity;
 
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\Mapping as ORM;
-use Oro\Bundle\CalendarBundle\Model\ExtendSystemCalendar;
 use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\Config;
 use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\ConfigField;
+use Oro\Bundle\EntityExtendBundle\Entity\ExtendEntityInterface;
+use Oro\Bundle\EntityExtendBundle\Entity\ExtendEntityTrait;
 use Oro\Bundle\OrganizationBundle\Entity\Organization;
 
 /**
@@ -33,8 +34,10 @@ use Oro\Bundle\OrganizationBundle\Entity\Organization;
  *      }
  * )
  */
-class SystemCalendar extends ExtendSystemCalendar
+class SystemCalendar implements ExtendEntityInterface
 {
+    use ExtendEntityTrait;
+
     const CALENDAR_ALIAS        = 'system';
     const PUBLIC_CALENDAR_ALIAS = 'public';
 
@@ -115,8 +118,6 @@ class SystemCalendar extends ExtendSystemCalendar
     public function __construct()
     {
         $this->events = new ArrayCollection();
-
-        parent::__construct();
     }
 
     /**

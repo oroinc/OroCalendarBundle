@@ -3,8 +3,9 @@
 namespace Oro\Bundle\CalendarBundle\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
-use Oro\Bundle\CalendarBundle\Model\ExtendCalendarProperty;
 use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\Config;
+use Oro\Bundle\EntityExtendBundle\Entity\ExtendEntityInterface;
+use Oro\Bundle\EntityExtendBundle\Entity\ExtendEntityTrait;
 
 /**
  * This entity is used to store different kind of user's properties for a calendar.
@@ -37,8 +38,10 @@ use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\Config;
  *      }
  * )
  */
-class CalendarProperty extends ExtendCalendarProperty
+class CalendarProperty implements ExtendEntityInterface
 {
+    use ExtendEntityTrait;
+
     /**
      * @var int
      *

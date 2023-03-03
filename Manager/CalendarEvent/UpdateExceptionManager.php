@@ -5,7 +5,9 @@ namespace Oro\Bundle\CalendarBundle\Manager\CalendarEvent;
 use Oro\Bundle\CalendarBundle\Entity\Attendee;
 use Oro\Bundle\CalendarBundle\Entity\CalendarEvent;
 use Oro\Bundle\CalendarBundle\Manager\AttendeeManager;
-use Oro\Component\PropertyAccess\PropertyAccessor;
+use Oro\Bundle\EntityExtendBundle\PropertyAccess;
+use Symfony\Component\PropertyAccess\PropertyAccessor;
+use Symfony\Component\PropertyAccess\PropertyAccessorInterface;
 
 /**
  * Responsible to actualize the state of recurring event exception state after main event was updated.
@@ -38,10 +40,7 @@ class UpdateExceptionManager
      */
     protected $deleteManager;
 
-    /**
-     * @var PropertyAccessor
-     */
-    protected $propertyAccessor;
+    protected ?PropertyAccessorInterface $propertyAccessor = null;
 
     public function __construct(AttendeeManager $attendeeManager, DeleteManager $deleteManager)
     {
@@ -227,7 +226,7 @@ class UpdateExceptionManager
     protected function getPropertyAccessor()
     {
         if (!$this->propertyAccessor) {
-            $this->propertyAccessor = new PropertyAccessor();
+            $this->propertyAccessor = PropertyAccess::createPropertyAccessor();
         }
         return $this->propertyAccessor;
     }

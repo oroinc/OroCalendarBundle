@@ -3,10 +3,12 @@
 namespace Oro\Bundle\CalendarBundle\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
-use Oro\Bundle\CalendarBundle\Model\ExtendAttendee;
 use Oro\Bundle\EmailBundle\Model\EmailHolderInterface;
 use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\Config;
 use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\ConfigField;
+use Oro\Bundle\EntityExtendBundle\Entity\AbstractEnumValue;
+use Oro\Bundle\EntityExtendBundle\Entity\ExtendEntityInterface;
+use Oro\Bundle\EntityExtendBundle\Entity\ExtendEntityTrait;
 use Oro\Bundle\UserBundle\Entity\User;
 
 /**
@@ -25,9 +27,15 @@ use Oro\Bundle\UserBundle\Entity\User;
  *          }
  *      }
  * )
+ * @method AbstractEnumValue getType()
+ * @method Attendee setType(AbstractEnumValue $value)
+ * @method AbstractEnumValue getStatus()
+ * @method Attendee setStatus(AbstractEnumValue $value)
  */
-class Attendee extends ExtendAttendee implements EmailHolderInterface
+class Attendee implements EmailHolderInterface, ExtendEntityInterface
 {
+    use ExtendEntityTrait;
+
     const STATUS_ENUM_CODE = 'ce_attendee_status';
     const TYPE_ENUM_CODE = 'ce_attendee_type';
 
