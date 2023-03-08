@@ -4,10 +4,10 @@ namespace Oro\Bundle\CalendarBundle\Tests\Unit\Entity\Repository;
 
 use Doctrine\Common\Annotations\AnnotationReader;
 use Doctrine\Common\Collections\Criteria;
+use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\Mapping\Driver\AnnotationDriver;
 use Oro\Bundle\CalendarBundle\Entity\CalendarEvent;
 use Oro\Bundle\CalendarBundle\Entity\Repository\CalendarEventRepository;
-use Oro\Component\TestUtils\ORM\Mocks\EntityManagerMock;
 use Oro\Component\TestUtils\ORM\OrmTestCase;
 
 /**
@@ -15,7 +15,7 @@ use Oro\Component\TestUtils\ORM\OrmTestCase;
  */
 class CalendarEventRepositoryTest extends OrmTestCase
 {
-    private EntityManagerMock $em;
+    private EntityManagerInterface $em;
 
     protected function setUp(): void
     {

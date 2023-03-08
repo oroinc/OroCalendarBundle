@@ -3,15 +3,15 @@
 namespace Oro\Bundle\CalendarBundle\Tests\Unit\Ownership;
 
 use Doctrine\Common\Annotations\AnnotationReader;
+use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\Mapping\Driver\AnnotationDriver;
 use Oro\Bundle\CalendarBundle\Entity\Calendar;
 use Oro\Bundle\CalendarBundle\Ownership\CalendarOwnerAssignmentChecker;
-use Oro\Component\TestUtils\ORM\Mocks\EntityManagerMock;
 use Oro\Component\TestUtils\ORM\OrmTestCase;
 
 class CalendarOwnerAssignmentCheckerTest extends OrmTestCase
 {
-    private EntityManagerMock $em;
+    private EntityManagerInterface $em;
 
     protected function setUp(): void
     {

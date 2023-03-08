@@ -3,15 +3,15 @@
 namespace Oro\Bundle\CalendarBundle\Tests\Unit\Entity\Repository;
 
 use Doctrine\Common\Annotations\AnnotationReader;
+use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\Mapping\Driver\AnnotationDriver;
 use Oro\Bundle\CalendarBundle\Entity\Repository\SystemCalendarRepository;
 use Oro\Bundle\CalendarBundle\Entity\SystemCalendar;
-use Oro\Component\TestUtils\ORM\Mocks\EntityManagerMock;
 use Oro\Component\TestUtils\ORM\OrmTestCase;
 
 class SystemCalendarRepositoryTest extends OrmTestCase
 {
-    private EntityManagerMock $em;
+    private EntityManagerInterface $em;
 
     protected function setUp(): void
     {
