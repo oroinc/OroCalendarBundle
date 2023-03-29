@@ -231,7 +231,7 @@ Feature: Create calendar events
     And I fill form with:
       | Timezone | (UTC +08:00) Asia/Taipei |
     And I click "Save settings"
-    When I go to Dashboards/Dashboard
+    When I login as administrator
     And I scroll to "Empty slot at 10:30 PM"
     And I click on "Empty slot at 10:30 PM"
     And I fill "Event Form" with:
