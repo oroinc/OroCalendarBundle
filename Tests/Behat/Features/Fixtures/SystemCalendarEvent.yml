@@ -1,0 +1,15 @@
+Oro\Bundle\CalendarBundle\Entity\SystemCalendar:
+    systemCalendar:
+        name: 'System Calendar'
+        public: true
+        createdAt: '<dateTime()>'
+        updatedAt: '<dateTime()>'
+        organization: '@organization'
+
+Oro\Bundle\CalendarBundle\Entity\CalendarEvent:
+    calendarEvent:
+        title: System Calendar Event
+        systemCalendar: '@systemCalendar'
+        start: <dateTimeBetween('+1 day', '+5 days')>
+        end: <dateTimeBetween($start, '+10 days')>
+        allDay: false

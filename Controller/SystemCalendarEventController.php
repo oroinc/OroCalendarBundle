@@ -200,6 +200,13 @@ class SystemCalendarEventController extends AbstractController
 
         $this->checkPermissionByConfig($systemCalendar);
 
+        $isGranted = $systemCalendar->isPublic()
+            ? $this->isGranted('oro_public_calendar_management')
+            : $this->isGranted('oro_system_calendar_management');
+        if (!$isGranted) {
+            throw new AccessDeniedException();
+        }
+
         if (!$systemCalendar->isPublic() && !$this->isGranted('VIEW', $systemCalendar)) {
             // an user must have permissions to view system calendar
             throw new AccessDeniedException();
