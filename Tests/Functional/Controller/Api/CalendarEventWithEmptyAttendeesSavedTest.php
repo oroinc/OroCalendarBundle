@@ -1,6 +1,6 @@
 <?php
 
-namespace Oro\Bundle\CalendarBundle\Tests\Functional\API;
+namespace Oro\Bundle\CalendarBundle\Tests\Functional\Controller\Api;
 
 class CalendarEventWithEmptyAttendeesSavedTest extends AbstractUseCaseTestCase
 {

@@ -1,6 +1,6 @@
 <?php
 
-namespace Oro\Bundle\CalendarBundle\Tests\Functional\API;
+namespace Oro\Bundle\CalendarBundle\Tests\Functional\Controller\Api;
 
 use Doctrine\Common\Collections\Criteria;
 use Doctrine\ORM\EntityManagerInterface;
@@ -11,7 +11,7 @@ use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 use Oro\Bundle\UserBundle\Entity\User;
 
 /**
- * Use \Oro\Bundle\CalendarBundle\Tests\Functional\AbstractTestCase instead of extending this.
+ * Use {@see \Oro\Bundle\CalendarBundle\Tests\Functional\AbstractTestCase} instead of extending this.
  */
 abstract class AbstractUseCaseTestCase extends WebTestCase
 {
