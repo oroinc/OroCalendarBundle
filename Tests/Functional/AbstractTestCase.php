@@ -11,12 +11,12 @@ use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 class AbstractTestCase extends WebTestCase
 {
     /**
-     * The list of fields which can be exposed in the API if some optional bundels are enabled.
-     * This properties are not considered when response verified.
+     * The list of fields which can be exposed in the API if some optional bundles are enabled.
+     * These properties are not considered when response verified.
      *
      * @var array
      */
-    protected static $ignoredResponseFields = ['use_hangout'];
+    protected static $ignoredResponseFields = [];
 
     protected function setUp(): void
     {

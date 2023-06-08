@@ -9,6 +9,9 @@ use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\Form\FormEvent;
 use Symfony\Component\Form\FormEvents;
 
+/**
+ * Used to fix submitted form data according to expected values
+ */
 class CalendarEventApiTypeSubscriber implements EventSubscriberInterface
 {
     /** @var CalendarEventManager */
@@ -39,7 +42,7 @@ class CalendarEventApiTypeSubscriber implements EventSubscriberInterface
 
         $this->fixBooleanFields(
             $data,
-            ['allDay', 'isCancelled', 'use_hangout']
+            ['allDay', 'isCancelled']
         );
 
         if (isset($data['attendees']) && ($data['attendees'] === '')) {
