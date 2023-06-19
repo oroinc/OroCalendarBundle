@@ -852,7 +852,7 @@ class CalendarEvent implements
      */
     public function getAttendees()
     {
-        $calendarEvent = $this->getParent() ? : $this;
+        $calendarEvent = $this->getParent() ?: $this;
 
         return $calendarEvent->attendees;
     }
