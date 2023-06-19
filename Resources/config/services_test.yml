@@ -1,0 +1,17 @@
+services:
+    oro_calendar.tests.entity_name_resolver.classes_provider:
+        class: Oro\Bundle\EntityBundle\Tests\Functional\Environment\TestEntityNameResolverConfigurableClassesProvider
+        decorates: oro_entity.tests.entity_name_resolver.classes_provider
+        arguments:
+            - '@.inner'
+            -
+                - 'Oro\Bundle\CalendarBundle\Entity\Calendar'
+                - 'Oro\Bundle\CalendarBundle\Entity\CalendarEvent'
+
+    oro_calendar.tests.entity_name_resolver.data_loader:
+        class: Oro\Bundle\CalendarBundle\Tests\Functional\Environment\TestEntityNameResolverDataLoader
+        decorates: oro_entity.tests.entity_name_resolver.data_loader
+        arguments:
+            - '@.inner'
+            - '@oro_user.manager'
+            - '@translator'
