@@ -1,4 +1,5 @@
 <?php
+
 namespace Oro\Bundle\CalendarBundle\Migrations\Schema\v1_16;
 
 use Doctrine\DBAL\Schema\Schema;

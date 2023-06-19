@@ -241,7 +241,7 @@ class CalendarEventTest extends \PHPUnit\Framework\TestCase
 
         $this->assertEquals($firstEvent, $masterEvent->getChildEventByCalendar($firstCalendar));
         $this->assertEquals($secondEvent, $masterEvent->getChildEventByCalendar($secondCalendar));
-        $this->assertNull($masterEvent->getChildEventByCalendar(new Calendar));
+        $this->assertNull($masterEvent->getChildEventByCalendar(new Calendar()));
     }
 
     public function testGetReminderData()

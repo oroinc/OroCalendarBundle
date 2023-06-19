@@ -194,7 +194,7 @@ class CalendarEventController extends RestController
             $code   = Response::HTTP_OK;
         }
 
-        return $this->buildResponse($result ? : '', self::ACTION_READ, ['result' => $result], $code);
+        return $this->buildResponse($result ?: '', self::ACTION_READ, ['result' => $result], $code);
     }
 
     /**
@@ -224,7 +224,7 @@ class CalendarEventController extends RestController
             $code   = Response::HTTP_OK;
         }
 
-        return $this->buildResponse($result ? : '', self::ACTION_READ, ['result' => $result], $code);
+        return $this->buildResponse($result ?: '', self::ACTION_READ, ['result' => $result], $code);
     }
 
     /**
