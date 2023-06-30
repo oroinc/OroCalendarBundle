@@ -14,8 +14,7 @@ use Symfony\Component\Form\FormEvents;
  */
 class CalendarEventApiTypeSubscriber implements EventSubscriberInterface
 {
-    /** @var CalendarEventManager */
-    protected $calendarEventManager;
+    protected CalendarEventManager $calendarEventManager;
 
     /**
      * CalendarEventApiTypeSubscriber constructor.
@@ -49,6 +48,9 @@ class CalendarEventApiTypeSubscriber implements EventSubscriberInterface
             $data['attendees'] = null;
         }
 
+        // `Updated At` field can not be changed from outside
+        unset($data['updatedAt']);
+
         $formEvent->setData($data);
     }
 
@@ -67,10 +69,6 @@ class CalendarEventApiTypeSubscriber implements EventSubscriberInterface
                     $data[$name] = (bool)$value;
                 }
             }
-        }
-
-        if (isset($data['attendees']) && ($data['attendees'] === '')) {
-            $data['attendees'] = null;
         }
     }
 

@@ -34,6 +34,7 @@ use Oro\Bundle\ReminderBundle\Model\SendProcessorRegistry;
 use Oro\Bundle\UserBundle\Form\Type\UserMultiSelectType;
 use Oro\Component\Testing\Unit\FormIntegrationTestCase;
 use Oro\Component\Testing\Unit\PreloadedExtension;
+use PHPUnit\Framework\MockObject\MockObject;
 use Psr\Container\ContainerInterface;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\Extension\Validator\ValidatorExtension;
@@ -42,20 +43,11 @@ use Symfony\Component\Validator\Validation;
 
 class CalendarEventApiTypeTest extends FormIntegrationTestCase
 {
-    /** @var ManagerRegistry|\PHPUnit\Framework\MockObject\MockObject */
-    private $registry;
-
-    /** @var EntityManager|\PHPUnit\Framework\MockObject\MockObject */
-    private $entityManager;
-
-    /** @var CalendarEventManager|\PHPUnit\Framework\MockObject\MockObject */
-    private $calendarEventManager;
-
-    /** @var NotificationManager|\PHPUnit\Framework\MockObject\MockObject */
-    private $notificationManager;
-
-    /** @var CalendarEventApiType */
-    private $calendarEventApiType;
+    private ManagerRegistry|MockObject $registry;
+    private EntityManager|MockObject $entityManager;
+    private CalendarEventManager|MockObject $calendarEventManager;
+    private NotificationManager|MockObject $notificationManager;
+    private CalendarEventApiType $calendarEventApiType;
 
     protected function setUp(): void
     {
@@ -65,51 +57,51 @@ class CalendarEventApiTypeTest extends FormIntegrationTestCase
         $this->notificationManager = $this->createMock(NotificationManager::class);
 
         $userMeta = $this->createMock(ClassMetadata::class);
-        $userMeta->expects($this->any())
+        $userMeta->expects(self::any())
             ->method('getSingleIdentifierFieldName')
             ->willReturn('id');
         $eventMeta = $this->createMock(ClassMetadata::class);
-        $eventMeta->expects($this->any())
+        $eventMeta->expects(self::any())
             ->method('getSingleIdentifierFieldName')
             ->willReturn('id');
 
         $query = $this->createMock(AbstractQuery::class);
-        $query->expects($this->any())
+        $query->expects(self::any())
             ->method('execute')
             ->willReturn([]);
 
         $qb = $this->createMock(QueryBuilder::class);
-        $qb->expects($this->any())
+        $qb->expects(self::any())
             ->method('where')
             ->willReturnSelf();
-        $qb->expects($this->any())
+        $qb->expects(self::any())
             ->method('setParameter')
             ->willReturnSelf();
-        $qb->expects($this->any())
+        $qb->expects(self::any())
             ->method('getQuery')
             ->willReturn($query);
 
         $userRepo = $this->createMock(EntityRepository::class);
-        $userRepo->expects($this->any())
+        $userRepo->expects(self::any())
             ->method('createQueryBuilder')
             ->with('event')
             ->willReturn($qb);
 
-        $this->entityManager->expects($this->any())
+        $this->entityManager->expects(self::any())
             ->method('getRepository')
             ->with('OroUserBundle:User')
             ->willReturn($userRepo);
-        $this->entityManager->expects($this->any())
+        $this->entityManager->expects(self::any())
             ->method('getClassMetadata')
             ->with('OroUserBundle:User')
             ->willReturn($userMeta);
 
         $emForEvent = $this->createMock(EntityManager::class);
-        $emForEvent->expects($this->any())
+        $emForEvent->expects(self::any())
             ->method('getClassMetadata')
             ->with('OroCalendarBundle:CalendarEvent')
             ->willReturn($eventMeta);
-        $this->registry->expects($this->any())
+        $this->registry->expects(self::any())
             ->method('getManagerForClass')
             ->willReturn($emForEvent);
 
@@ -127,12 +119,12 @@ class CalendarEventApiTypeTest extends FormIntegrationTestCase
     protected function getExtensions(): array
     {
         $searchHandler = $this->createMock(SearchHandlerInterface::class);
-        $searchHandler->expects($this->any())
+        $searchHandler->expects(self::any())
             ->method('getEntityName')
             ->willReturn('OroUserBundle:User');
 
         $searchRegistry = $this->createMock(SearchRegistry::class);
-        $searchRegistry->expects($this->any())
+        $searchRegistry->expects(self::any())
             ->method('getSearchHandler')
             ->willReturn($searchHandler);
 
@@ -173,13 +165,14 @@ class CalendarEventApiTypeTest extends FormIntegrationTestCase
             'description'     => 'testDescription',
             'start'           => '2013-10-05T13:00:00Z',
             'end'             => '2013-10-05T13:30:00+00:00',
+            'createdAt'       => '2013-10-05T11:00:00Z',
             'allDay'          => true,
             'backgroundColor' => '#FF0000',
             'reminders'       => [],
             'attendees'       => [],
         ];
 
-        $this->notificationManager->expects($this->any())
+        $this->notificationManager->expects(self::any())
             ->method('getSupportedStrategies')
             ->willReturn([]);
 
@@ -192,32 +185,38 @@ class CalendarEventApiTypeTest extends FormIntegrationTestCase
             ]
         );
 
-        $this->calendarEventManager->expects($this->once())
+        $this->calendarEventManager->expects(self::once())
             ->method('setCalendar')
             ->with($this->isInstanceOf(CalendarEvent::class), Calendar::CALENDAR_ALIAS, 1);
 
-        $form->submit($formData);
+        $form->submit(array_merge($formData, [
+            'updatedAt' => '2013-10-05T11:30:00+00:00',
+        ]));
 
-        $this->assertTrue($form->isSynchronized());
+        self::assertTrue($form->isSynchronized());
         /** @var CalendarEvent $result */
         $result = $form->getData();
-        $this->assertInstanceOf(CalendarEvent::class, $result);
-        $this->assertEquals('MOCK-UID-11111', $result->getUid());
-        $this->assertEquals('testTitle', $result->getTitle());
-        $this->assertEquals('testDescription', $result->getDescription());
-        $this->assertDateTimeEquals(new \DateTime('2013-10-05T13:00:00Z'), $result->getStart());
-        $this->assertDateTimeEquals(new \DateTime('2013-10-05T13:30:00Z'), $result->getEnd());
-        $this->assertTrue($result->getAllDay());
-        $this->assertEquals('#FF0000', $result->getBackgroundColor());
+        self::assertInstanceOf(CalendarEvent::class, $result);
+        self::assertEquals('MOCK-UID-11111', $result->getUid());
+        self::assertEquals('testTitle', $result->getTitle());
+        self::assertEquals('testDescription', $result->getDescription());
+        self::assertDateTimeEquals(new \DateTime('2013-10-05T13:00:00Z'), $result->getStart());
+        self::assertDateTimeEquals(new \DateTime('2013-10-05T13:30:00Z'), $result->getEnd());
+        self::assertDateTimeEquals(new \DateTime('2013-10-05T11:00:00Z'), $result->getCreatedAt());
+        self::assertNull($result->getUpdatedAt());
+        self::assertTrue($result->getAllDay());
+        self::assertEquals('#FF0000', $result->getBackgroundColor());
 
         $view = $form->createView();
         $children = $view->children;
 
         foreach (array_keys($formData) as $key) {
-            $this->assertArrayHasKey($key, $children);
+            self::assertArrayHasKey($key, $children);
         }
 
-        $this->assertFalse($form->has('invitedUsers'));
+        self::assertArrayNotHasKey('updatedAt', $children);
+
+        self::assertFalse($form->has('invitedUsers'));
     }
 
     public function testSubmitValidDataSystemCalendar()
@@ -229,12 +228,13 @@ class CalendarEventApiTypeTest extends FormIntegrationTestCase
             'description'     => 'testDescription',
             'start'           => '2013-10-05T13:00:00Z',
             'end'             => '2013-10-05T13:30:00+00:00',
+            'createdAt'       => '2013-10-05T11:00:00Z',
             'allDay'          => true,
             'backgroundColor' => '#FF0000',
             'reminders'       => [],
         ];
 
-        $this->notificationManager->expects($this->any())
+        $this->notificationManager->expects(self::any())
             ->method('getSupportedStrategies')
             ->willReturn([]);
 
@@ -247,38 +247,40 @@ class CalendarEventApiTypeTest extends FormIntegrationTestCase
             ]
         );
 
-        $this->calendarEventManager->expects($this->once())
+        $this->calendarEventManager->expects(self::once())
             ->method('setCalendar')
             ->with($this->isInstanceOf(CalendarEvent::class), 'system', 1);
 
         $form->submit($formData);
 
-        $this->assertTrue($form->isSynchronized());
+        self::assertTrue($form->isSynchronized());
         /** @var CalendarEvent $result */
         $result = $form->getData();
-        $this->assertInstanceOf(CalendarEvent::class, $result);
-        $this->assertNull($result->getUid());
-        $this->assertEquals('testTitle', $result->getTitle());
-        $this->assertEquals('testDescription', $result->getDescription());
-        $this->assertDateTimeEquals(new \DateTime('2013-10-05T13:00:00Z'), $result->getStart());
-        $this->assertDateTimeEquals(new \DateTime('2013-10-05T13:30:00Z'), $result->getEnd());
-        $this->assertTrue($result->getAllDay());
-        $this->assertEquals('#FF0000', $result->getBackgroundColor());
+        self::assertInstanceOf(CalendarEvent::class, $result);
+        self::assertNull($result->getUid());
+        self::assertEquals('testTitle', $result->getTitle());
+        self::assertEquals('testDescription', $result->getDescription());
+        self::assertDateTimeEquals(new \DateTime('2013-10-05T13:00:00Z'), $result->getStart());
+        self::assertDateTimeEquals(new \DateTime('2013-10-05T13:30:00Z'), $result->getEnd());
+        self::assertDateTimeEquals(new \DateTime('2013-10-05T11:00:00Z'), $result->getCreatedAt());
+        self::assertNull($result->getUpdatedAt());
+        self::assertTrue($result->getAllDay());
+        self::assertEquals('#FF0000', $result->getBackgroundColor());
 
         $view = $form->createView();
         $children = $view->children;
 
         foreach (array_keys($formData) as $key) {
-            $this->assertArrayHasKey($key, $children);
+            self::assertArrayHasKey($key, $children);
         }
 
-        $this->assertFalse($form->has('invitedUsers'));
+        self::assertFalse($form->has('invitedUsers'));
     }
 
     public function testConfigureOptions()
     {
         $resolver = $this->createMock(OptionsResolver::class);
-        $resolver->expects($this->once())
+        $resolver->expects(self::once())
             ->method('setDefaults')
             ->with([
                 'data_class'      => CalendarEvent::class,

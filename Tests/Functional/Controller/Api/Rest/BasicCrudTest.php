@@ -63,11 +63,13 @@ class BasicCrudTest extends AbstractTestCase
                 'server'  => $this->generateWsseAuthHeader('foo_user_1', 'foo_user_1_api_key'),
                 'content' => json_encode(
                     [
-                        'title'    => 'Regular event',
-                        'start'    => '2016-10-14T22:00:00+00:00',
-                        'end'      => '2016-10-14T23:00:00+00:00',
-                        'calendar' => $this->getReference('oro_calendar:calendar:foo_user_1')->getId(),
-                        'allDay'   => false
+                        'title'     => 'Regular event',
+                        'start'     => '2016-10-14T22:00:00+00:00',
+                        'end'       => '2016-10-14T23:00:00+00:00',
+                        'createdAt' => '2016-10-14T21:00:00+00:00',
+                        'updatedAt' => '2016-10-14T21:30:00+00:00',
+                        'calendar'  => $this->getReference('oro_calendar:calendar:foo_user_1')->getId(),
+                        'allDay'    => false
                     ],
                     JSON_THROW_ON_ERROR
                 )
@@ -122,7 +124,7 @@ class BasicCrudTest extends AbstractTestCase
                 'recurringEventId'         => null,
                 'originalStart'            => null,
                 'isCancelled'              => false,
-                'createdAt'                => $newEvent->getCreatedAt()->format(DATE_RFC3339),
+                'createdAt'                => '2016-10-14T21:00:00+00:00',
                 'updatedAt'                => $newEvent->getUpdatedAt()->format(DATE_RFC3339),
                 'isOrganizer'              => $newEvent->isOrganizer(),
                 'organizerDisplayName'     => $newEvent->getOrganizerDisplayName(),
