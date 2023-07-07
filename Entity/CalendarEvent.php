@@ -5,6 +5,7 @@ namespace Oro\Bundle\CalendarBundle\Entity;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
+use Extend\Entity\Autocomplete\OroCalendarBundle_Entity_CalendarEvent;
 use Oro\Bundle\ActivityBundle\Model\ActivityInterface;
 use Oro\Bundle\ActivityBundle\Model\ExtendActivity;
 use Oro\Bundle\CalendarBundle\Exception\NotUserCalendarEvent;
@@ -77,6 +78,7 @@ use Oro\Bundle\UserBundle\Entity\User;
  * @SuppressWarnings(PHPMD.ExcessivePublicCount)
  * @SuppressWarnings(PHPMD.TooManyPublicMethods)
  * @SuppressWarnings(PHPMD.TooManyFields)
+ * @mixin OroCalendarBundle_Entity_CalendarEvent
  */
 class CalendarEvent implements
     RemindableInterface,

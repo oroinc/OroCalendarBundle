@@ -3,6 +3,7 @@
 namespace Oro\Bundle\CalendarBundle\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
+use Extend\Entity\Autocomplete\OroCalendarBundle_Entity_Attendee;
 use Oro\Bundle\EmailBundle\Model\EmailHolderInterface;
 use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\Config;
 use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\ConfigField;
@@ -31,6 +32,7 @@ use Oro\Bundle\UserBundle\Entity\User;
  * @method Attendee setType(AbstractEnumValue $value)
  * @method AbstractEnumValue getStatus()
  * @method Attendee setStatus(AbstractEnumValue $value)
+ * @mixin OroCalendarBundle_Entity_Attendee
  */
 class Attendee implements EmailHolderInterface, ExtendEntityInterface
 {
