@@ -191,7 +191,7 @@ class Calendar implements ExtendEntityInterface
     /**
      * Sets owning organization
      *
-     * @param Organization $organization
+     * @param Organization|null $organization
      *
      * @return self
      */

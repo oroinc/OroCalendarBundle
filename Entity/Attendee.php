@@ -193,7 +193,7 @@ class Attendee implements EmailHolderInterface, ExtendEntityInterface
     }
 
     /**
-     * @param User $user
+     * @param User|null $user
      *
      * @return Attendee
      */
