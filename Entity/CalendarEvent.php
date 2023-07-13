@@ -451,7 +451,7 @@ class CalendarEvent implements
     /**
      * Sets owning user's calendar
      *
-     * @param Calendar $calendar
+     * @param Calendar|null $calendar
      *
      * @return CalendarEvent
      */
@@ -497,7 +497,7 @@ class CalendarEvent implements
     /**
      * Sets owning system calendar
      *
-     * @param SystemCalendar $systemCalendar
+     * @param SystemCalendar|null $systemCalendar
      *
      * @return CalendarEvent
      */
@@ -804,7 +804,7 @@ class CalendarEvent implements
     /**
      * Set parent calendar event.
      *
-     * @param CalendarEvent $parent
+     * @param CalendarEvent|null $parent
      *
      * @return CalendarEvent
      */

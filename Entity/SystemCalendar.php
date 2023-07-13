@@ -245,7 +245,7 @@ class SystemCalendar implements ExtendEntityInterface
      * Sets owning organization
      * Public calendars don't belong to any organization
      *
-     * @param Organization $organization
+     * @param Organization|null $organization
      *
      * @return self
      */
