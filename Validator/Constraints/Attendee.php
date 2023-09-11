@@ -11,7 +11,7 @@ class Attendee extends Constraint
     /**
      * {@inheritdoc}
      */
-    public function getTargets()
+    public function getTargets(): string|array
     {
         return static::CLASS_CONSTRAINT;
     }

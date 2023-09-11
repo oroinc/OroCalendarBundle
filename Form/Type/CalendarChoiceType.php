@@ -108,7 +108,7 @@ class CalendarChoiceType extends AbstractType
     /**
      * {@inheritdoc}
      */
-    public function getBlockPrefix()
+    public function getBlockPrefix(): string
     {
         return 'oro_calendar_choice';
     }
@@ -116,7 +116,7 @@ class CalendarChoiceType extends AbstractType
     /**
      * {@inheritdoc}
      */
-    public function getParent()
+    public function getParent(): ?string
     {
         return ChoiceType::class;
     }

@@ -15,7 +15,7 @@ class DateEarlierThan extends Constraint
     /**
      * {@inheritdoc}
      */
-    public function getDefaultOption()
+    public function getDefaultOption(): ?string
     {
         return 'field';
     }
@@ -23,7 +23,7 @@ class DateEarlierThan extends Constraint
     /**
      * {@inheritdoc}
      */
-    public function getRequiredOptions()
+    public function getRequiredOptions(): array
     {
         return array('field');
     }

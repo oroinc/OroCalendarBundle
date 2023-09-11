@@ -208,7 +208,7 @@ class CalendarEventType extends AbstractType
     /**
      * {@inheritdoc}
      */
-    public function getBlockPrefix()
+    public function getBlockPrefix(): string
     {
         return 'oro_calendar_event';
     }

@@ -17,7 +17,7 @@ class CalendarChoiceTemplateType extends AbstractType
     /**
      * {@inheritdoc}
      */
-    public function getBlockPrefix()
+    public function getBlockPrefix(): string
     {
         return 'oro_calendar_choice_template';
     }
