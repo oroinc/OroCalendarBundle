@@ -99,7 +99,7 @@ class RecurrenceExtension extends AbstractExtension implements ServiceSubscriber
     /**
      * {@inheritdoc}
      */
-    public static function getSubscribedServices()
+    public static function getSubscribedServices(): array
     {
         return [
             TranslatorInterface::class,

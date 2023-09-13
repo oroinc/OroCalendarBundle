@@ -24,7 +24,7 @@ class AttendeesExtension extends AbstractExtension implements ServiceSubscriberI
     /**
      * {@inheritDoc}
      */
-    public static function getSubscribedServices()
+    public static function getSubscribedServices(): array
     {
         return ['oro_featuretoggle.checker.feature_checker'];
     }
