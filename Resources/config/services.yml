@@ -3,8 +3,9 @@ services:
         class: Oro\Bundle\CalendarBundle\EventListener\EntityListener
         arguments:
             - '@oro_security.token_accessor'
-            - '@oro_calendar.model.recurrence'
+            - '@Psr\Container\ContainerInterface'
         tags:
+            - { name: container.service_subscriber, id: oro_calendar.model.recurrence, key: Oro\Bundle\CalendarBundle\Model\Recurrence }
             - { name: doctrine.event_listener, event: preUpdate }
             - { name: doctrine.event_listener, event: prePersist }
             - { name: doctrine.event_listener, event: onFlush }
