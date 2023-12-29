@@ -2,18 +2,17 @@
 
 namespace Oro\Bundle\CalendarBundle\Migrations\Schema;
 
-use Doctrine\DBAL\Platforms\AbstractPlatform;
 use Doctrine\DBAL\Schema\Schema;
-use Oro\Bundle\ActivityBundle\Migration\Extension\ActivityExtension;
 use Oro\Bundle\ActivityBundle\Migration\Extension\ActivityExtensionAwareInterface;
+use Oro\Bundle\ActivityBundle\Migration\Extension\ActivityExtensionAwareTrait;
 use Oro\Bundle\CalendarBundle\Entity\Attendee;
 use Oro\Bundle\CalendarBundle\Migrations\Schema\v1_15\AddCommentAssociation;
-use Oro\Bundle\CommentBundle\Migration\Extension\CommentExtension;
 use Oro\Bundle\CommentBundle\Migration\Extension\CommentExtensionAwareInterface;
+use Oro\Bundle\CommentBundle\Migration\Extension\CommentExtensionAwareTrait;
 use Oro\Bundle\EntityBundle\EntityConfig\DatagridScope;
 use Oro\Bundle\EntityExtendBundle\EntityConfig\ExtendScope;
-use Oro\Bundle\EntityExtendBundle\Migration\Extension\ExtendExtension;
 use Oro\Bundle\EntityExtendBundle\Migration\Extension\ExtendExtensionAwareInterface;
+use Oro\Bundle\EntityExtendBundle\Migration\Extension\ExtendExtensionAwareTrait;
 use Oro\Bundle\FormBundle\Form\Type\OroResizeableRichTextType;
 use Oro\Bundle\MigrationBundle\Migration\Installation;
 use Oro\Bundle\MigrationBundle\Migration\QueryBag;
@@ -24,40 +23,9 @@ class OroCalendarBundleInstaller implements
     CommentExtensionAwareInterface,
     ActivityExtensionAwareInterface
 {
-    /**
-     * @var AbstractPlatform
-     */
-    protected $platform;
-
-    /** @var ExtendExtension $extendExtension */
-    protected $extendExtension;
-
-    /** @var CommentExtension */
-    protected $commentExtension;
-
-    /** @var ActivityExtension */
-    protected $activityExtension;
-
-    /**
-     * {@inheritdoc}
-     */
-    public function setExtendExtension(ExtendExtension $extendExtension)
-    {
-        $this->extendExtension = $extendExtension;
-    }
-
-    public function setCommentExtension(CommentExtension $commentExtension)
-    {
-        $this->commentExtension = $commentExtension;
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function setActivityExtension(ActivityExtension $activityExtension)
-    {
-        $this->activityExtension = $activityExtension;
-    }
+    use ExtendExtensionAwareTrait;
+    use CommentExtensionAwareTrait;
+    use ActivityExtensionAwareTrait;
 
     /**
      * {@inheritdoc}

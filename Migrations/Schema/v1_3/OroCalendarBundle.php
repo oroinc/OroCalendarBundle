@@ -2,7 +2,6 @@
 
 namespace Oro\Bundle\CalendarBundle\Migrations\Schema\v1_3;
 
-use Doctrine\DBAL\Platforms\AbstractPlatform;
 use Doctrine\DBAL\Schema\Schema;
 use Doctrine\DBAL\Schema\Table;
 use Doctrine\DBAL\Types\Type;
@@ -13,6 +12,7 @@ use Oro\Bundle\EntityExtendBundle\Migration\Extension\ExtendExtension;
 use Oro\Bundle\EntityExtendBundle\Migration\OroOptions;
 use Oro\Bundle\EntityExtendBundle\Tools\ExtendDbIdentifierNameGenerator;
 use Oro\Bundle\MigrationBundle\Migration\Extension\DatabasePlatformAwareInterface;
+use Oro\Bundle\MigrationBundle\Migration\Extension\DatabasePlatformAwareTrait;
 use Oro\Bundle\MigrationBundle\Migration\Migration;
 use Oro\Bundle\MigrationBundle\Migration\OrderedMigrationInterface;
 use Oro\Bundle\MigrationBundle\Migration\ParametrizedSqlMigrationQuery;
@@ -23,8 +23,7 @@ class OroCalendarBundle implements
     OrderedMigrationInterface,
     DatabasePlatformAwareInterface
 {
-    /** @var AbstractPlatform */
-    protected $platform;
+    use DatabasePlatformAwareTrait;
 
     /** @var ExtendDbIdentifierNameGenerator */
     protected $nameGenerator;
@@ -41,14 +40,6 @@ class OroCalendarBundle implements
     public function getOrder()
     {
         return 2;
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function setDatabasePlatform(AbstractPlatform $platform)
-    {
-        $this->platform = $platform;
     }
 
     /**

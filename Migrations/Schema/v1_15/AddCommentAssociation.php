@@ -5,20 +5,15 @@ namespace Oro\Bundle\CalendarBundle\Migrations\Schema\v1_15;
 use Doctrine\DBAL\Schema\Schema;
 use Oro\Bundle\CommentBundle\Migration\Extension\CommentExtension;
 use Oro\Bundle\CommentBundle\Migration\Extension\CommentExtensionAwareInterface;
+use Oro\Bundle\CommentBundle\Migration\Extension\CommentExtensionAwareTrait;
 use Oro\Bundle\MigrationBundle\Migration\Migration;
 use Oro\Bundle\MigrationBundle\Migration\QueryBag;
 
 class AddCommentAssociation implements Migration, CommentExtensionAwareInterface
 {
+    use CommentExtensionAwareTrait;
+
     const CALENDAR_EVENT_TABLE = 'oro_calendar_event';
-
-    /** @var CommentExtension */
-    protected $commentExtension;
-
-    public function setCommentExtension(CommentExtension $commentExtension)
-    {
-        $this->commentExtension = $commentExtension;
-    }
 
     /**
      * {@inheritdoc}

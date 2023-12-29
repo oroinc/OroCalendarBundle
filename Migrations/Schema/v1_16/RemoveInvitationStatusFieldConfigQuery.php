@@ -2,7 +2,6 @@
 
 namespace Oro\Bundle\CalendarBundle\Migrations\Schema\v1_16;
 
-use Doctrine\DBAL\Connection;
 use Oro\Bundle\MigrationBundle\Migration\ArrayLogger;
 use Oro\Bundle\MigrationBundle\Migration\ParametrizedMigrationQuery;
 use Psr\Log\LoggerInterface;
@@ -52,13 +51,5 @@ class RemoveInvitationStatusFieldConfigQuery extends ParametrizedMigrationQuery
         if (!$dryRun) {
             $this->connection->executeStatement($sql, $parameters);
         }
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function setConnection(Connection $connection)
-    {
-        $this->connection = $connection;
     }
 }

@@ -9,7 +9,7 @@ use Oro\Bundle\MigrationBundle\Migration\ParametrizedSqlMigrationQuery;
 use Oro\Bundle\MigrationBundle\Migration\QueryBag;
 use Oro\Bundle\SecurityBundle\Migration\DeleteAclMigrationQuery;
 use Symfony\Component\DependencyInjection\ContainerAwareInterface;
-use Symfony\Component\DependencyInjection\ContainerInterface;
+use Symfony\Component\DependencyInjection\ContainerAwareTrait;
 use Symfony\Component\Security\Acl\Domain\ObjectIdentity;
 
 class RemoveCalendarConnection implements
@@ -17,8 +17,7 @@ class RemoveCalendarConnection implements
     OrderedMigrationInterface,
     ContainerAwareInterface
 {
-    /** @var ContainerInterface */
-    protected $container;
+    use ContainerAwareTrait;
 
     /**
      * {@inheritdoc}
@@ -26,14 +25,6 @@ class RemoveCalendarConnection implements
     public function getOrder()
     {
         return 2;
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function setContainer(ContainerInterface $container = null)
-    {
-        $this->container = $container;
     }
 
     /**
