@@ -3,7 +3,6 @@
 namespace Oro\Bundle\CalendarBundle\Migrations\Schema\v1_13;
 
 use Doctrine\DBAL\Schema\Schema;
-use Oro\Bundle\CalendarBundle\Entity\Attendee;
 use Oro\Bundle\EntityExtendBundle\EntityConfig\ExtendScope;
 use Oro\Bundle\EntityExtendBundle\Migration\Extension\ExtendExtensionAwareInterface;
 use Oro\Bundle\EntityExtendBundle\Migration\Extension\ExtendExtensionAwareTrait;
@@ -15,9 +14,9 @@ class OroCalendarBundle implements Migration, ExtendExtensionAwareInterface
     use ExtendExtensionAwareTrait;
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      */
-    public function up(Schema $schema, QueryBag $queries)
+    public function up(Schema $schema, QueryBag $queries): void
     {
         /**
          * If migration is already completed it should not run again
@@ -37,7 +36,7 @@ class OroCalendarBundle implements Migration, ExtendExtensionAwareInterface
         $queries->addQuery(new ConvertCalendarEventOwnerToAttendee());
     }
 
-    protected function createAttendee(Schema $schema)
+    private function createAttendee(Schema $schema): void
     {
         $table = $schema->createTable('oro_calendar_event_attendee');
         $table->addColumn('id', 'integer', ['autoincrement' => true]);
@@ -54,28 +53,28 @@ class OroCalendarBundle implements Migration, ExtendExtensionAwareInterface
         $table->addIndex(['calendar_event_id']);
     }
 
-    protected function createRecurrenceTable(Schema $schema)
+    private function createRecurrenceTable(Schema $schema): void
     {
         $table = $schema->createTable('oro_calendar_recurrence');
         $table->addColumn('id', 'integer', ['autoincrement' => true]);
         $table->addColumn('recurrence_type', 'string', ['notnull' => true, 'length' => 16]);
-        $table->addColumn('interval', 'integer', []);
+        $table->addColumn('interval', 'integer');
         $table->addColumn('instance', 'integer', ['notnull' => false]);
         $table->addColumn('day_of_week', 'array', ['notnull' => false, 'comment' => '(DC2Type:array)']);
         $table->addColumn('day_of_month', 'integer', ['notnull' => false]);
         $table->addColumn('month_of_year', 'integer', ['notnull' => false]);
-        $table->addColumn('start_time', 'datetime', []);
+        $table->addColumn('start_time', 'datetime');
         $table->addColumn('end_time', 'datetime', ['notnull' => false]);
-        $table->addColumn('calculated_end_time', 'datetime', []);
+        $table->addColumn('calculated_end_time', 'datetime');
         $table->addColumn('occurrences', 'integer', ['notnull' => false]);
         $table->addColumn('timezone', 'string', ['notnull' => true, 'length' => 255]);
         $table->setPrimaryKey(['id']);
-        $table->addIndex(['start_time'], 'oro_calendar_r_start_time_idx', []);
-        $table->addIndex(['end_time'], 'oro_calendar_r_end_time_idx', []);
-        $table->addIndex(['calculated_end_time'], 'oro_calendar_r_c_end_time_idx', []);
+        $table->addIndex(['start_time'], 'oro_calendar_r_start_time_idx');
+        $table->addIndex(['end_time'], 'oro_calendar_r_end_time_idx');
+        $table->addIndex(['calculated_end_time'], 'oro_calendar_r_c_end_time_idx');
     }
 
-    protected function addForeignKeys(Schema $schema)
+    private function addForeignKeys(Schema $schema): void
     {
         $table = $schema->getTable('oro_calendar_event_attendee');
 
@@ -94,7 +93,7 @@ class OroCalendarBundle implements Migration, ExtendExtensionAwareInterface
         );
     }
 
-    protected function addEnums(Schema $schema)
+    private function addEnums(Schema $schema): void
     {
         $table = $schema->getTable('oro_calendar_event_attendee');
 
@@ -102,7 +101,7 @@ class OroCalendarBundle implements Migration, ExtendExtensionAwareInterface
             $schema,
             $table,
             'status',
-            Attendee::STATUS_ENUM_CODE,
+            'ce_attendee_status',
             false,
             false,
             [
@@ -114,7 +113,7 @@ class OroCalendarBundle implements Migration, ExtendExtensionAwareInterface
             $schema,
             $table,
             'type',
-            Attendee::TYPE_ENUM_CODE,
+            'ce_attendee_type',
             false,
             false,
             [
@@ -123,7 +122,7 @@ class OroCalendarBundle implements Migration, ExtendExtensionAwareInterface
         );
     }
 
-    protected function updateCalendarEvent(Schema $schema)
+    private function updateCalendarEvent(Schema $schema): void
     {
         $table = $schema->getTable('oro_calendar_event');
 
