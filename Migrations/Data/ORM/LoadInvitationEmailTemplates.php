@@ -3,6 +3,7 @@
 namespace Oro\Bundle\CalendarBundle\Migrations\Data\ORM;
 
 use Doctrine\Persistence\ObjectManager;
+use Oro\Bundle\CalendarBundle\Entity\CalendarEvent;
 use Oro\Bundle\EmailBundle\Entity\EmailTemplate;
 use Oro\Bundle\EmailBundle\Migrations\Data\ORM\AbstractEmailFixture;
 use Oro\Bundle\MigrationBundle\Fixture\VersionedFixtureInterface;
@@ -13,9 +14,9 @@ use Oro\Bundle\MigrationBundle\Fixture\VersionedFixtureInterface;
 class LoadInvitationEmailTemplates extends AbstractEmailFixture implements VersionedFixtureInterface
 {
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      */
-    protected function findExistingTemplate(ObjectManager $manager, array $template)
+    protected function findExistingTemplate(ObjectManager $manager, array $template): ?EmailTemplate
     {
         if (empty($template['params']['name'])) {
             return null;
@@ -23,16 +24,14 @@ class LoadInvitationEmailTemplates extends AbstractEmailFixture implements Versi
 
         return $manager->getRepository(EmailTemplate::class)->findOneBy([
             'name' => $template['params']['name'],
-            'entityName' => 'Oro\Bundle\CalendarBundle\Entity\CalendarEvent',
+            'entityName' => CalendarEvent::class
         ]);
     }
 
     /**
-     * Return path to email templates
-     *
-     * @return string
+     * {@inheritDoc}
      */
-    public function getEmailsDir()
+    public function getEmailsDir(): string
     {
         return $this->container
             ->get('kernel')
@@ -40,9 +39,9 @@ class LoadInvitationEmailTemplates extends AbstractEmailFixture implements Versi
     }
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      */
-    public function getVersion()
+    public function getVersion(): string
     {
         return '1.1';
     }
