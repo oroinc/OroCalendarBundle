@@ -5,10 +5,14 @@ namespace Oro\Bundle\CalendarBundle\Manager;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\Common\Util\ClassUtils;
 use Oro\Bundle\CalendarBundle\Entity\Attendee;
+use Oro\Bundle\CalendarBundle\Entity\CalendarEvent;
 use Oro\Bundle\CalendarBundle\Entity\Repository\AttendeeRepository;
 use Oro\Bundle\CalendarBundle\Entity\Repository\CalendarEventRepository;
 use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
 
+/**
+ * Simplify work with Attendee entity.
+ */
 class AttendeeManager
 {
     /** @var DoctrineHelper */
@@ -69,7 +73,7 @@ class AttendeeManager
     public function loadAttendeesByCalendarEventId($id)
     {
         return $this->doctrineHelper
-            ->getEntityRepository('OroCalendarBundle:Attendee')
+            ->getEntityRepository(Attendee::class)
             ->findBy(['calendarEvent' => $id]);
     }
 
@@ -128,11 +132,11 @@ class AttendeeManager
         }
 
         /** @var CalendarEventRepository $calendarEventRepository */
-        $calendarEventRepository = $this->doctrineHelper->getEntityRepository('OroCalendarBundle:CalendarEvent');
+        $calendarEventRepository = $this->doctrineHelper->getEntityRepository(CalendarEvent::class);
         $parentToChildren = $calendarEventRepository->getParentEventIds($calendarEventIds);
 
         /** @var AttendeeRepository $attendeeRepository */
-        $attendeeRepository = $this->doctrineHelper->getEntityRepository('OroCalendarBundle:Attendee');
+        $attendeeRepository = $this->doctrineHelper->getEntityRepository(Attendee::class);
         $qb = $attendeeRepository->createAttendeeListsQb(array_keys($parentToChildren));
         $this->attendeeRelationManager->addRelatedEntityInfo($qb);
 

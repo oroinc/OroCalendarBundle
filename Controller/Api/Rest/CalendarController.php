@@ -2,8 +2,10 @@
 
 namespace Oro\Bundle\CalendarBundle\Controller\Api\Rest;
 
+use Doctrine\Persistence\ManagerRegistry;
 use FOS\RestBundle\Controller\AbstractFOSRestController;
 use Nelmio\ApiDocBundle\Annotation\ApiDoc;
+use Oro\Bundle\CalendarBundle\Entity\Calendar;
 use Oro\Bundle\CalendarBundle\Entity\Repository\CalendarRepository;
 use Oro\Bundle\OrganizationBundle\Entity\Organization;
 use Oro\Bundle\SecurityBundle\Annotation\AclAncestor;
@@ -32,11 +34,11 @@ class CalendarController extends AbstractFOSRestController
         $user = $this->getUser();
 
         /** @var Organization $organization */
-        $organization = $this->get('oro_security.token_accessor')->getOrganization();
+        $organization = $this->container->get('oro_security.token_accessor')->getOrganization();
 
-        $em = $this->getDoctrine()->getManager();
+        $em = $this->container->get('doctrine')->getManager();
         /** @var CalendarRepository $repo */
-        $repo = $em->getRepository('OroCalendarBundle:Calendar');
+        $repo = $em->getRepository(Calendar::class);
 
         $calendar = $repo->findDefaultCalendar($user->getId(), $organization->getId());
 
@@ -47,9 +49,18 @@ class CalendarController extends AbstractFOSRestController
         );
 
         if (!$result['calendarName']) {
-            $result['calendarName'] = $this->get('oro_entity.entity_name_resolver')->getName($calendar->getOwner());
+            $result['calendarName'] = $this->container->get('oro_entity.entity_name_resolver')
+                ->getName($calendar->getOwner());
         }
 
         return new Response(json_encode($result), Response::HTTP_OK);
+    }
+
+    public static function getSubscribedServices(): array
+    {
+        return array_merge(
+            parent::getSubscribedServices(),
+            ['doctrine' => ManagerRegistry::class]
+        );
     }
 }

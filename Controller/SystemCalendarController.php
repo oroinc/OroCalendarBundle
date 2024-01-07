@@ -66,7 +66,7 @@ class SystemCalendarController extends AbstractController
         return $this->update(
             $request,
             new SystemCalendar(),
-            $this->get('router')->generate('oro_system_calendar_create')
+            $this->container->get('router')->generate('oro_system_calendar_create')
         );
     }
 
@@ -83,7 +83,7 @@ class SystemCalendarController extends AbstractController
         return $this->update(
             $request,
             $entity,
-            $this->get('router')->generate('oro_system_calendar_update', ['id' => $entity->getId()])
+            $this->container->get('router')->generate('oro_system_calendar_update', ['id' => $entity->getId()])
         );
     }
 
@@ -111,16 +111,16 @@ class SystemCalendarController extends AbstractController
     {
         $saved = false;
 
-        $systemCalendarFormHandler = $this->get(SystemCalendarHandler::class);
+        $systemCalendarFormHandler = $this->container->get(SystemCalendarHandler::class);
         if ($systemCalendarFormHandler->process($entity)) {
             if (!$request->get('_widgetContainer')) {
-                $translator = $this->get(TranslatorInterface::class);
+                $translator = $this->container->get(TranslatorInterface::class);
                 $request->getSession()->getFlashBag()->add(
                     'success',
                     $translator->trans('oro.calendar.controller.systemcalendar.saved.message')
                 );
 
-                return $this->get(Router::class)->redirect($entity);
+                return $this->container->get(Router::class)->redirect($entity);
             }
             $saved = true;
         }
@@ -179,12 +179,12 @@ class SystemCalendarController extends AbstractController
 
     private function getCalendarConfig(): SystemCalendarConfig
     {
-        return $this->get(SystemCalendarConfig::class);
+        return $this->container->get(SystemCalendarConfig::class);
     }
 
     private function getSecurityTokenAccessor(): TokenAccessorInterface
     {
-        return $this->get(TokenAccessorInterface::class);
+        return $this->container->get(TokenAccessorInterface::class);
     }
 
     private function isPublicCalendarManagementEnabled(): bool

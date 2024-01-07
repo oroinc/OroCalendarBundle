@@ -33,7 +33,7 @@ class CalendarConnectionController extends RestController
     {
         $items = $this->getManager()->getCalendarManager()
             ->getCalendars(
-                $this->get('oro_security.token_accessor')->getOrganization()->getId(),
+                $this->container->get('oro_security.token_accessor')->getOrganization()->getId(),
                 $this->getUser()->getId(),
                 $id
             );
@@ -98,7 +98,7 @@ class CalendarConnectionController extends RestController
      */
     public function getManager()
     {
-        return $this->get('oro_calendar.calendar_property.manager.api');
+        return $this->container->get('oro_calendar.calendar_property.manager.api');
     }
 
     /**
@@ -106,7 +106,7 @@ class CalendarConnectionController extends RestController
      */
     public function getForm()
     {
-        return $this->get('oro_calendar.calendar_property.form.api');
+        return $this->container->get('oro_calendar.calendar_property.form.api');
     }
 
     /**
@@ -114,7 +114,7 @@ class CalendarConnectionController extends RestController
      */
     public function getFormHandler()
     {
-        return $this->get('oro_calendar.calendar_property.form.handler.api');
+        return $this->container->get('oro_calendar.calendar_property.form.handler.api');
     }
 
     /**

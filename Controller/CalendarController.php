@@ -33,10 +33,10 @@ class CalendarController extends AbstractController
     {
         /** @var User $user */
         $user = $this->getUser();
-        $organization = $this->get(TokenAccessorInterface::class)->getOrganization();
+        $organization = $this->container->get(TokenAccessorInterface::class)->getOrganization();
 
         /** @var CalendarRepository $repo */
-        $repo = $this->get(ManagerRegistry::class)->getRepository(Calendar::class);
+        $repo = $this->container->get(ManagerRegistry::class)->getRepository(Calendar::class);
 
         $calendar = $repo->findDefaultCalendar($user->getId(), $organization->getId());
 
@@ -52,7 +52,7 @@ class CalendarController extends AbstractController
      * @Acl(
      *      id="oro_calendar_view",
      *      type="entity",
-     *      class="OroCalendarBundle:Calendar",
+     *      class="Oro\Bundle\CalendarBundle\Entity\Calendar",
      *      permission="VIEW",
      *      group_name=""
      * )
@@ -61,10 +61,10 @@ class CalendarController extends AbstractController
      */
     public function viewAction(Calendar $calendar)
     {
-        $calendarConfigProvider = $this->get(CalendarDateTimeConfigProvider::class);
+        $calendarConfigProvider = $this->container->get(CalendarDateTimeConfigProvider::class);
         $dateRange = $calendarConfigProvider->getDateRange();
 
-        $formFactory = $this->get(FormFactoryInterface::class);
+        $formFactory = $this->container->get(FormFactoryInterface::class);
         $eventForm = $formFactory->createNamed(
             'oro_calendar_event_form',
             CalendarEventType::class,

@@ -104,7 +104,7 @@ class SystemCalendarEventController extends AbstractController
         return $this->update(
             $request,
             $entity,
-            $this->get('router')->generate('oro_system_calendar_event_create', ['id' => $calendar->getId()])
+            $this->container->get('router')->generate('oro_system_calendar_event_create', ['id' => $calendar->getId()])
         );
     }
 
@@ -140,7 +140,7 @@ class SystemCalendarEventController extends AbstractController
         return $this->update(
             $request,
             $entity,
-            $this->get('router')->generate('oro_system_calendar_event_update', ['id' => $entity->getId()])
+            $this->container->get('router')->generate('oro_system_calendar_event_update', ['id' => $entity->getId()])
         );
     }
 
@@ -155,14 +155,15 @@ class SystemCalendarEventController extends AbstractController
     {
         $saved = false;
 
-        if ($this->get(SystemCalendarEventHandler::class)->process($entity)) {
+        if ($this->container->get(SystemCalendarEventHandler::class)->process($entity)) {
             if (!$request->get('_widgetContainer')) {
                 $request->getSession()->getFlashBag()->add(
                     'success',
-                    $this->get(TranslatorInterface::class)->trans('oro.calendar.controller.event.saved.message')
+                    $this->container->get(TranslatorInterface::class)
+                        ->trans('oro.calendar.controller.event.saved.message')
                 );
 
-                return $this->get(Router::class)->redirect($entity);
+                return $this->container->get(Router::class)->redirect($entity);
             }
             $saved = true;
         }
@@ -170,7 +171,7 @@ class SystemCalendarEventController extends AbstractController
         return [
             'entity'     => $entity,
             'saved'      => $saved,
-            'form'       => $this->get(CalendarEventHandler::class)->getForm()->createView(),
+            'form'       => $this->container->get(CalendarEventHandler::class)->getForm()->createView(),
             'formAction' => $formAction
         ];
     }
@@ -181,7 +182,7 @@ class SystemCalendarEventController extends AbstractController
      */
     private function getTargetEntity(Request $request)
     {
-        $entityRoutingHelper = $this->get(EntityRoutingHelper::class);
+        $entityRoutingHelper = $this->container->get(EntityRoutingHelper::class);
         $targetEntityClass = $entityRoutingHelper->getEntityClassName($request, 'targetActivityClass');
         $targetEntityId = $entityRoutingHelper->getEntityId($request, 'targetActivityId');
         if (!$targetEntityClass || !$targetEntityId) {
@@ -231,7 +232,7 @@ class SystemCalendarEventController extends AbstractController
 
     protected function getCalendarConfig(): SystemCalendarConfig
     {
-        return $this->get(SystemCalendarConfig::class);
+        return $this->container->get(SystemCalendarConfig::class);
     }
 
     /**

@@ -10,6 +10,9 @@ use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\Form\FormEvent;
 use Symfony\Component\Form\FormEvents;
 
+/**
+ * Makes sure that a calendar is set for a new calendar event.
+ */
 class CalendarSubscriber implements EventSubscriberInterface
 {
     /** @var TokenAccessorInterface */
@@ -44,7 +47,7 @@ class CalendarSubscriber implements EventSubscriberInterface
         if ($data && !$data->getId() && !$data->getCalendar() && !$data->getSystemCalendar()) {
             /** @var Calendar $defaultCalendar */
             $defaultCalendar = $this->registry
-                ->getRepository('OroCalendarBundle:Calendar')
+                ->getRepository(Calendar::class)
                 ->findDefaultCalendar(
                     $this->tokenAccessor->getUserId(),
                     $this->tokenAccessor->getOrganizationId()

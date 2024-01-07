@@ -2,6 +2,7 @@
 
 namespace Oro\Bundle\CalendarBundle\Form\Type;
 
+use Oro\Bundle\CalendarBundle\Entity\Calendar;
 use Oro\Bundle\FormBundle\Form\Type\EntityIdentifierType;
 use Oro\Bundle\SoapBundle\Form\EventListener\PatchSubscriber;
 use Symfony\Component\Form\AbstractType;
@@ -12,6 +13,9 @@ use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
+/**
+ * The form type for CalendarProperty entity.
+ */
 class CalendarPropertyApiType extends AbstractType
 {
     /**
@@ -26,7 +30,7 @@ class CalendarPropertyApiType extends AbstractType
                 EntityIdentifierType::class,
                 [
                     'required' => true,
-                    'class'    => 'OroCalendarBundle:Calendar',
+                    'class'    => Calendar::class,
                     'multiple' => false
                 ]
             )

@@ -5,7 +5,11 @@ namespace Oro\Bundle\CalendarBundle\Migrations\Data\ORM;
 use Doctrine\Common\DataFixtures\DependentFixtureInterface;
 use Doctrine\Persistence\ObjectManager;
 use Oro\Bundle\ActivityListBundle\Migrations\Data\ORM\AddActivityListsData;
+use Oro\Bundle\CalendarBundle\Entity\CalendarEvent;
 
+/**
+ * Adds activity lists for CalendarEvent entity.
+ */
 class AddCalendarEventActivityLists extends AddActivityListsData implements DependentFixtureInterface
 {
     /**
@@ -23,7 +27,7 @@ class AddCalendarEventActivityLists extends AddActivityListsData implements Depe
     {
         $this->addActivityListsForActivityClass(
             $manager,
-            'OroCalendarBundle:CalendarEvent',
+            CalendarEvent::class,
             'calendar.owner',
             'calendar.organization'
         );

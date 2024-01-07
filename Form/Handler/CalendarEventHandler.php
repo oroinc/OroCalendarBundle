@@ -103,7 +103,7 @@ class CalendarEventHandler extends AbstractCalendarEventHandler
 
         /** @var Calendar $defaultCalendar */
         $defaultCalendar = $this->getEntityManager()
-            ->getRepository('OroCalendarBundle:Calendar')
+            ->getRepository(Calendar::class)
             ->findDefaultCalendar($userId, $organizationId);
         $entity->setCalendar($defaultCalendar);
     }
@@ -129,7 +129,7 @@ class CalendarEventHandler extends AbstractCalendarEventHandler
             ) {
                 /** @var Calendar $defaultCalendar */
                 $defaultCalendar = $this->getEntityManager()
-                    ->getRepository('OroCalendarBundle:Calendar')
+                    ->getRepository(Calendar::class)
                     ->findDefaultCalendar($targetEntity->getId(), $targetEntity->getOrganization()->getId());
                 $entity->setCalendar($defaultCalendar);
             }

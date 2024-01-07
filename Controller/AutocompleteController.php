@@ -30,7 +30,7 @@ class AutocompleteController extends AbstractController
     public function autocompleteAttendeesAction(Request $request)
     {
         $autocompleteRequest = new AutocompleteRequest($request);
-        $validator           = $this->get(ValidatorInterface::class);
+        $validator           = $this->container->get(ValidatorInterface::class);
         $isXmlHttpRequest    = $request->isXmlHttpRequest();
         $code                = 200;
         $result              = [
@@ -54,7 +54,7 @@ class AutocompleteController extends AbstractController
             throw new HttpException($code, implode(', ', $result['errors']));
         }
 
-        $searchHandler = $this->get(AttendeeSearchHandler::class);
+        $searchHandler = $this->container->get(AttendeeSearchHandler::class);
 
         return new JsonResponse($searchHandler->search(
             $autocompleteRequest->getQuery(),

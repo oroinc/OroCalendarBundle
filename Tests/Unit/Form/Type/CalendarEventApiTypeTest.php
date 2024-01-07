@@ -31,6 +31,7 @@ use Oro\Bundle\ReminderBundle\Form\Type\ReminderInterval\UnitType;
 use Oro\Bundle\ReminderBundle\Form\Type\ReminderIntervalType;
 use Oro\Bundle\ReminderBundle\Form\Type\ReminderType;
 use Oro\Bundle\ReminderBundle\Model\SendProcessorRegistry;
+use Oro\Bundle\UserBundle\Entity\User;
 use Oro\Bundle\UserBundle\Form\Type\UserMultiSelectType;
 use Oro\Component\Testing\Unit\FormIntegrationTestCase;
 use Oro\Component\Testing\Unit\PreloadedExtension;
@@ -89,17 +90,17 @@ class CalendarEventApiTypeTest extends FormIntegrationTestCase
 
         $this->entityManager->expects(self::any())
             ->method('getRepository')
-            ->with('OroUserBundle:User')
+            ->with(User::class)
             ->willReturn($userRepo);
         $this->entityManager->expects(self::any())
             ->method('getClassMetadata')
-            ->with('OroUserBundle:User')
+            ->with(User::class)
             ->willReturn($userMeta);
 
         $emForEvent = $this->createMock(EntityManager::class);
         $emForEvent->expects(self::any())
             ->method('getClassMetadata')
-            ->with('OroCalendarBundle:CalendarEvent')
+            ->with(CalendarEvent::class)
             ->willReturn($eventMeta);
         $this->registry->expects(self::any())
             ->method('getManagerForClass')
@@ -121,7 +122,7 @@ class CalendarEventApiTypeTest extends FormIntegrationTestCase
         $searchHandler = $this->createMock(SearchHandlerInterface::class);
         $searchHandler->expects(self::any())
             ->method('getEntityName')
-            ->willReturn('OroUserBundle:User');
+            ->willReturn(User::class);
 
         $searchRegistry = $this->createMock(SearchRegistry::class);
         $searchRegistry->expects(self::any())

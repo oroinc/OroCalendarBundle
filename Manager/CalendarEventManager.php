@@ -61,7 +61,7 @@ class CalendarEventManager
     public function getSystemCalendars()
     {
         /** @var SystemCalendarRepository $repo */
-        $repo      = $this->doctrine->getRepository('OroCalendarBundle:SystemCalendar');
+        $repo      = $this->doctrine->getRepository(SystemCalendar::class);
         $calendars = $repo->getCalendarsQueryBuilder($this->tokenAccessor->getOrganizationId())
             ->select('sc.id, sc.name, sc.public')
             ->getQuery()
@@ -145,7 +145,7 @@ class CalendarEventManager
     public function getUserCalendars()
     {
         /** @var CalendarRepository $repo */
-        $repo      = $this->doctrine->getRepository('OroCalendarBundle:Calendar');
+        $repo      = $this->doctrine->getRepository(Calendar::class);
         $calendars = $repo->getUserCalendarsQueryBuilder(
             $this->tokenAccessor->getOrganizationId(),
             $this->tokenAccessor->getUserId()
@@ -233,7 +233,7 @@ class CalendarEventManager
      */
     protected function findCalendar($calendarId)
     {
-        return $this->doctrine->getRepository('OroCalendarBundle:Calendar')
+        return $this->doctrine->getRepository(Calendar::class)
             ->find($calendarId);
     }
 
@@ -244,7 +244,7 @@ class CalendarEventManager
      */
     protected function findSystemCalendar($calendarId)
     {
-        return $this->doctrine->getRepository('OroCalendarBundle:SystemCalendar')
+        return $this->doctrine->getRepository(SystemCalendar::class)
             ->find($calendarId);
     }
 

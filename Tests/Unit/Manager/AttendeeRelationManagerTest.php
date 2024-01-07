@@ -11,8 +11,9 @@ use Oro\Bundle\LocaleBundle\DQL\DQLNameFormatter;
 use Oro\Bundle\LocaleBundle\Formatter\NameFormatter;
 use Oro\Bundle\UserBundle\Entity\Email;
 use Oro\Bundle\UserBundle\Entity\Repository\UserRepository;
+use PHPUnit\Framework\TestCase;
 
-class AttendeeRelationManagerTest extends \PHPUnit\Framework\TestCase
+class AttendeeRelationManagerTest extends TestCase
 {
     /** @var User[] */
     private $users;
@@ -39,7 +40,7 @@ class AttendeeRelationManagerTest extends \PHPUnit\Framework\TestCase
         $registry = $this->createMock(ManagerRegistry::class);
         $registry->expects($this->any())
             ->method('getRepository')
-            ->with('OroUserBundle:User')
+            ->with(\Oro\Bundle\UserBundle\Entity\User::class)
             ->willReturn($userRepository);
 
         $nameFormatter = $this->createMock(NameFormatter::class);

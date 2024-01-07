@@ -2,6 +2,7 @@
 
 namespace Oro\Bundle\CalendarBundle\Form\Type;
 
+use Oro\Bundle\CalendarBundle\Entity\CalendarEvent;
 use Oro\Bundle\CalendarBundle\Form\EventListener\AttendeesSubscriber;
 use Oro\Bundle\CalendarBundle\Form\EventListener\CalendarEventApiTypeSubscriber;
 use Oro\Bundle\CalendarBundle\Form\EventListener\CalendarEventRecurrenceSubscriber;
@@ -151,7 +152,7 @@ class CalendarEventApiType extends AbstractType
                 [
                     'required'      => false,
                     'property_path' => 'recurringEvent',
-                    'class'         => 'OroCalendarBundle:CalendarEvent',
+                    'class'         => CalendarEvent::class,
                     'multiple'      => false,
                 ]
             )

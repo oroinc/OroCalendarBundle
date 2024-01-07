@@ -33,7 +33,7 @@ class SystemCalendarController extends RestController
      */
     public function getManager()
     {
-        return $this->get('oro_calendar.system_calendar.manager.api');
+        return $this->container->get('oro_calendar.system_calendar.manager.api');
     }
 
     /**
@@ -42,7 +42,7 @@ class SystemCalendarController extends RestController
     public function getForm()
     {
         throw new \BadMethodCallException('Not implemented');
-        //return $this->get('oro_calendar.system_calendar.form.api');
+        //return $this->container->get('oro_calendar.system_calendar.form.api');
     }
 
     /**
@@ -51,6 +51,6 @@ class SystemCalendarController extends RestController
     public function getFormHandler()
     {
         throw new \BadMethodCallException('Not implemented');
-        //return $this->get('oro_calendar.system_calendar.form.handler.api');
+        //return $this->container->get('oro_calendar.system_calendar.form.handler.api');
     }
 }

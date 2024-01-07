@@ -22,25 +22,27 @@ use Oro\Bundle\EntityExtendBundle\Tests\Unit\Fixtures\TestEnumValue;
 use Oro\Bundle\OrganizationBundle\Entity\Organization;
 use Oro\Bundle\SecurityBundle\Authentication\TokenAccessorInterface;
 use Oro\Component\Testing\ReflectionUtil;
+use PHPUnit\Framework\MockObject\MockObject;
+use PHPUnit\Framework\TestCase;
 
 /**
  * @SuppressWarnings(PHPMD.TooManyPublicMethods)
  */
-class CalendarEventManagerTest extends \PHPUnit\Framework\TestCase
+class CalendarEventManagerTest extends TestCase
 {
-    /** @var UpdateManager|\PHPUnit\Framework\MockObject\MockObject */
+    /** @var UpdateManager|MockObject */
     private $updateManager;
 
-    /** @var ManagerRegistry|\PHPUnit\Framework\MockObject\MockObject */
+    /** @var ManagerRegistry|MockObject */
     private $doctrine;
 
-    /** @var TokenAccessorInterface|\PHPUnit\Framework\MockObject\MockObject */
+    /** @var TokenAccessorInterface|MockObject */
     private $tokenAccessor;
 
-    /** @var EntityNameResolver|\PHPUnit\Framework\MockObject\MockObject */
+    /** @var EntityNameResolver|MockObject */
     private $entityNameResolver;
 
-    /** @var SystemCalendarConfig|\PHPUnit\Framework\MockObject\MockObject */
+    /** @var SystemCalendarConfig|MockObject */
     private $calendarConfig;
 
     /** @var CalendarEventManager */
@@ -77,7 +79,7 @@ class CalendarEventManagerTest extends \PHPUnit\Framework\TestCase
         $repo = $this->createMock(SystemCalendarRepository::class);
         $this->doctrine->expects($this->once())
             ->method('getRepository')
-            ->with('OroCalendarBundle:SystemCalendar')
+            ->with(SystemCalendar::class)
             ->willReturn($repo);
         $qb = $this->createMock(QueryBuilder::class);
         $repo->expects($this->once())
@@ -123,7 +125,7 @@ class CalendarEventManagerTest extends \PHPUnit\Framework\TestCase
         $repo = $this->createMock(CalendarRepository::class);
         $this->doctrine->expects($this->once())
             ->method('getRepository')
-            ->with('OroCalendarBundle:Calendar')
+            ->with(Calendar::class)
             ->willReturn($repo);
         $qb = $this->createMock(QueryBuilder::class);
         $repo->expects($this->once())
@@ -178,7 +180,7 @@ class CalendarEventManagerTest extends \PHPUnit\Framework\TestCase
         $repo = $this->createMock(CalendarRepository::class);
         $this->doctrine->expects($this->once())
             ->method('getRepository')
-            ->with('OroCalendarBundle:Calendar')
+            ->with(Calendar::class)
             ->willReturn($repo);
         $repo->expects($this->once())
             ->method('find')
@@ -222,7 +224,7 @@ class CalendarEventManagerTest extends \PHPUnit\Framework\TestCase
         $repo = $this->createMock(SystemCalendarRepository::class);
         $this->doctrine->expects($this->once())
             ->method('getRepository')
-            ->with('OroCalendarBundle:SystemCalendar')
+            ->with(SystemCalendar::class)
             ->willReturn($repo);
         $repo->expects($this->once())
             ->method('find')
@@ -249,7 +251,7 @@ class CalendarEventManagerTest extends \PHPUnit\Framework\TestCase
         $repo = $this->createMock(SystemCalendarRepository::class);
         $this->doctrine->expects($this->once())
             ->method('getRepository')
-            ->with('OroCalendarBundle:SystemCalendar')
+            ->with(SystemCalendar::class)
             ->willReturn($repo);
         $repo->expects($this->once())
             ->method('find')

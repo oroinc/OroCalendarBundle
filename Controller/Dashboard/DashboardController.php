@@ -31,14 +31,17 @@ class DashboardController extends AbstractController
      */
     public function myCalendarAction($widget)
     {
-        $calendar = $this->get(ManagerRegistry::class)
+        $calendar = $this->container->get(ManagerRegistry::class)
             ->getRepository(Calendar::class)
             ->findDefaultCalendar(
                 $this->getUser()->getId(),
-                $this->get(TokenAccessorInterface::class)->getOrganization()->getId()
+                $this->container->get(TokenAccessorInterface::class)->getOrganization()->getId()
             );
 
-        $currentDate = new \DateTime('now', new \DateTimeZone($this->get(LocaleSettings::class)->getTimeZone()));
+        $currentDate = new \DateTime(
+            'now',
+            new \DateTimeZone($this->container->get(LocaleSettings::class)->getTimeZone())
+        );
 
         $startDate = clone $currentDate;
         $startDate->setTime(0, 0, 0);
@@ -51,7 +54,7 @@ class DashboardController extends AbstractController
             $firstHour--;
         }
 
-        $eventForm = $this->get(FormFactoryInterface::class)->createNamed(
+        $eventForm = $this->container->get(FormFactoryInterface::class)->createNamed(
             'oro_calendar_event_form',
             CalendarEventType::class,
             null,
@@ -68,7 +71,7 @@ class DashboardController extends AbstractController
                 'selectable'     => $this->isGranted('oro_calendar_event_create'),
                 'editable'       => $this->isGranted('oro_calendar_event_update'),
                 'removable'      => $this->isGranted('oro_calendar_event_delete'),
-                'timezoneOffset' => $this->get(CalendarDateTimeConfigProvider::class)->getTimezoneOffset()
+                'timezoneOffset' => $this->container->get(CalendarDateTimeConfigProvider::class)->getTimezoneOffset()
             ],
             'startDate'  => $startDate,
             'endDate'    => $endDate,
@@ -77,7 +80,7 @@ class DashboardController extends AbstractController
 
         return array_merge(
             $result,
-            $this->get(WidgetConfigs::class)->getWidgetAttributesForTwig($widget)
+            $this->container->get(WidgetConfigs::class)->getWidgetAttributesForTwig($widget)
         );
     }
 

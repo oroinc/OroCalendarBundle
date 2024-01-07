@@ -465,6 +465,7 @@ class CalendarEventTest extends \PHPUnit\Framework\TestCase
         $calendarOwner = new User();
         $calendarOwner->setId(100);
         $calendarOwner->setEmail($userCalendarOwnerEmail);
+        $calendarOwner->setUserIdentifier($userCalendarOwnerEmail);
         $calendar = new Calendar();
         $calendar->setOwner($calendarOwner);
 

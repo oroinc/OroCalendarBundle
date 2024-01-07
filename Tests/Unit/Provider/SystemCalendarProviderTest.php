@@ -4,6 +4,7 @@ namespace Oro\Bundle\CalendarBundle\Tests\Unit\Provider;
 
 use Doctrine\ORM\AbstractQuery;
 use Doctrine\ORM\QueryBuilder;
+use Oro\Bundle\CalendarBundle\Entity\CalendarEvent;
 use Oro\Bundle\CalendarBundle\Entity\Repository\CalendarEventRepository;
 use Oro\Bundle\CalendarBundle\Entity\Repository\SystemCalendarRepository;
 use Oro\Bundle\CalendarBundle\Entity\SystemCalendar;
@@ -14,20 +15,22 @@ use Oro\Bundle\CalendarBundle\Provider\SystemCalendarProvider;
 use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
 use Oro\Bundle\OrganizationBundle\Entity\Organization;
 use Oro\Component\Testing\ReflectionUtil;
+use PHPUnit\Framework\MockObject\MockObject;
+use PHPUnit\Framework\TestCase;
 use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
 
-class SystemCalendarProviderTest extends \PHPUnit\Framework\TestCase
+class SystemCalendarProviderTest extends TestCase
 {
-    /** @var DoctrineHelper|\PHPUnit\Framework\MockObject\MockObject */
+    /** @var DoctrineHelper|MockObject */
     private $doctrineHelper;
 
-    /** @var SystemCalendarEventNormalizer|\PHPUnit\Framework\MockObject\MockObject */
+    /** @var SystemCalendarEventNormalizer|MockObject */
     private $calendarEventNormalizer;
 
-    /** @var SystemCalendarConfig|\PHPUnit\Framework\MockObject\MockObject */
+    /** @var SystemCalendarConfig|MockObject */
     private $calendarConfig;
 
-    /** @var AuthorizationCheckerInterface|\PHPUnit\Framework\MockObject\MockObject */
+    /** @var AuthorizationCheckerInterface|MockObject */
     private $authorizationChecker;
 
     /** @var SystemCalendarProvider */
@@ -114,7 +117,7 @@ class SystemCalendarProviderTest extends \PHPUnit\Framework\TestCase
 
         $this->doctrineHelper->expects($this->once())
             ->method('getEntityRepository')
-            ->with('OroCalendarBundle:SystemCalendar')
+            ->with(SystemCalendar::class)
             ->willReturn($repo);
 
         $result = $this->provider->getCalendarDefaultValues($organizationId, $userId, $calendarId, $calendarIds);
@@ -178,7 +181,7 @@ class SystemCalendarProviderTest extends \PHPUnit\Framework\TestCase
 
         $this->doctrineHelper->expects($this->once())
             ->method('getEntityRepository')
-            ->with('OroCalendarBundle:SystemCalendar')
+            ->with(SystemCalendar::class)
             ->willReturn($repo);
 
         $result = $this->provider->getCalendarDefaultValues($organizationId, $userId, $calendarId, $calendarIds);
@@ -259,7 +262,7 @@ class SystemCalendarProviderTest extends \PHPUnit\Framework\TestCase
         $repo = $this->createMock(CalendarEventRepository::class);
         $this->doctrineHelper->expects($this->once())
             ->method('getEntityRepository')
-            ->with('OroCalendarBundle:CalendarEvent')
+            ->with(CalendarEvent::class)
             ->willReturn($repo);
         $repo->expects($this->once())
             ->method('getSystemEventListByTimeIntervalQueryBuilder')

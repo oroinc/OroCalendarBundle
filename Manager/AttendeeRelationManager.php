@@ -11,6 +11,9 @@ use Oro\Bundle\LocaleBundle\Formatter\NameFormatter;
 use Oro\Bundle\OrganizationBundle\Entity\Organization;
 use Oro\Bundle\UserBundle\Entity\User;
 
+/**
+ * Simplifies the work with Attendee entity relations.
+ */
 class AttendeeRelationManager
 {
     /** @var ManagerRegistry */
@@ -107,7 +110,7 @@ class AttendeeRelationManager
         }
 
         $users = $this->registry
-            ->getRepository('OroUserBundle:User')
+            ->getRepository(User::class)
             ->findUsersByEmailsAndOrganization(array_keys($unboundAttendeesByEmail), $organization);
 
         $this->bindUsersToAttendees($users, $unboundAttendeesByEmail);

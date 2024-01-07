@@ -61,7 +61,7 @@ class CalendarTest extends \PHPUnit\Framework\TestCase
         $owner->setUsername('testUsername');
         $obj->setOwner($owner);
 
-        $this->assertEquals($owner->getUsername(), (string)$obj);
+        $this->assertEquals($owner->getUserIdentifier(), (string)$obj);
     }
 
     public function propertiesDataProvider(): array

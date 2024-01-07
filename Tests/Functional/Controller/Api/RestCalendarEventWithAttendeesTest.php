@@ -192,7 +192,7 @@ class RestCalendarEventWithAttendeesTest extends WebTestCase
             }
         )->first();
         $this->assertEquals('admin@example.com', $admin->getEmail());
-        $this->assertEquals('admin', $admin->getUser()->getUsername());
+        $this->assertEquals('admin', $admin->getUser()->getUserIdentifier());
         $this->assertEquals($admin, $calendarEvent->getRelatedAttendee());
 
         $simpleUser = $attendees->filter(
@@ -201,7 +201,7 @@ class RestCalendarEventWithAttendeesTest extends WebTestCase
             }
         )->first();
         $this->assertEquals('system_user_1@example.com', $simpleUser->getEmail());
-        $this->assertEquals('system_user_1', $simpleUser->getUser()->getUsername());
+        $this->assertEquals('system_user_1', $simpleUser->getUser()->getUserIdentifier());
     }
 
     /**
@@ -320,7 +320,7 @@ class RestCalendarEventWithAttendeesTest extends WebTestCase
 
         $this->assertCount(1, $boundAttendees);
         $this->assertEquals('admin@example.com', $boundAttendees[0]->getEmail());
-        $this->assertEquals('admin', $boundAttendees[0]->getUser()->getUsername());
+        $this->assertEquals('admin', $boundAttendees[0]->getUser()->getUserIdentifier());
         $this->assertEquals($boundAttendees[0], $calendarEvent->getRelatedAttendee());
     }
 
@@ -623,7 +623,7 @@ class RestCalendarEventWithAttendeesTest extends WebTestCase
             }
         )->first();
         $this->assertEquals('admin@example.com', $admin->getEmail());
-        $this->assertEquals('admin', $admin->getUser()->getUsername());
+        $this->assertEquals('admin', $admin->getUser()->getUserIdentifier());
         $this->assertEquals($admin, $calendarEvent->getRelatedAttendee());
 
         $simpleUser = $attendees->filter(
@@ -632,7 +632,7 @@ class RestCalendarEventWithAttendeesTest extends WebTestCase
             }
         )->first();
         $this->assertEquals('system_user_1@example.com', $simpleUser->getEmail());
-        $this->assertEquals('system_user_1', $simpleUser->getUser()->getUsername());
+        $this->assertEquals('system_user_1', $simpleUser->getUser()->getUserIdentifier());
     }
 
     /**

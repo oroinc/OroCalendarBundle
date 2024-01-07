@@ -101,7 +101,7 @@ class CalendarEventEntityListener
         string $newUid,
         LifecycleEventArgs $doctrineEvent
     ) {
-        $doctrineEvent->getEntityManager()->getUnitOfWork()->scheduleExtraUpdate(
+        $doctrineEvent->getObjectManager()->getUnitOfWork()->scheduleExtraUpdate(
             $calendarEvent,
             ['uid' => [$calendarEvent->getUid(), $newUid]]
         );

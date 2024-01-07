@@ -9,16 +9,18 @@ use Oro\Bundle\CalendarBundle\Form\EventListener\CalendarSubscriber;
 use Oro\Bundle\CalendarBundle\Tests\Unit\Fixtures\Entity\Calendar;
 use Oro\Bundle\CalendarBundle\Tests\Unit\Fixtures\Entity\CalendarEvent;
 use Oro\Bundle\SecurityBundle\Authentication\TokenAccessorInterface;
+use PHPUnit\Framework\MockObject\MockObject;
+use PHPUnit\Framework\TestCase;
 use Symfony\Component\Form\FormEvent;
 use Symfony\Component\Form\FormEvents;
 use Symfony\Component\Form\FormInterface;
 
-class CalendarSubscriberTest extends \PHPUnit\Framework\TestCase
+class CalendarSubscriberTest extends TestCase
 {
-    /** @var TokenAccessorInterface|\PHPUnit\Framework\MockObject\MockObject */
+    /** @var TokenAccessorInterface|MockObject */
     private $tokenAccessor;
 
-    /** @var ManagerRegistry|\PHPUnit\Framework\MockObject\MockObject */
+    /** @var ManagerRegistry|MockObject */
     private $registry;
 
     /** @var CalendarSubscriber */
@@ -65,7 +67,7 @@ class CalendarSubscriberTest extends \PHPUnit\Framework\TestCase
         $repo = $this->createMock(CalendarRepository::class);
         $this->registry->expects($this->once())
             ->method('getRepository')
-            ->with('OroCalendarBundle:Calendar')
+            ->with(\Oro\Bundle\CalendarBundle\Entity\Calendar::class)
             ->willReturn($repo);
         $repo->expects($this->any())
             ->method('findDefaultCalendar')
@@ -102,7 +104,7 @@ class CalendarSubscriberTest extends \PHPUnit\Framework\TestCase
         $repo = $this->createMock(CalendarRepository::class);
         $this->registry->expects($this->never())
             ->method('getRepository')
-            ->with('OroCalendarBundle:Calendar')
+            ->with(\Oro\Bundle\CalendarBundle\Entity\Calendar::class)
             ->willReturn($repo);
         $repo->expects($this->any())
             ->method('findDefaultCalendar')
@@ -138,7 +140,7 @@ class CalendarSubscriberTest extends \PHPUnit\Framework\TestCase
         $repo = $this->createMock(CalendarRepository::class);
         $this->registry->expects($this->never())
             ->method('getRepository')
-            ->with('OroCalendarBundle:Calendar')
+            ->with(\Oro\Bundle\CalendarBundle\Entity\Calendar::class)
             ->willReturn($repo);
         $repo->expects($this->any())
             ->method('findDefaultCalendar')

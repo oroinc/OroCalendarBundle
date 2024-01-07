@@ -249,7 +249,7 @@ class UpdateChildManager
     protected function getUsersDefaultCalendars(array $userIds, Organization $organization)
     {
         /** @var CalendarRepository $calendarRepository */
-        $calendarRepository = $this->doctrine->getRepository('OroCalendarBundle:Calendar');
+        $calendarRepository = $this->doctrine->getRepository(Calendar::class);
 
         /** @var Calendar $calendar */
         return $calendarRepository->findDefaultCalendars($userIds, $organization->getId());

@@ -34,8 +34,8 @@ class LoadUsersCalendarData extends AbstractFixture implements OrderedFixtureInt
     public function setContainer(ContainerInterface $container = null)
     {
         parent::setContainer($container);
-        $this->calendarRepository = $this->em->getRepository('OroCalendarBundle:Calendar');
-        $this->roleRepository     = $this->em->getRepository('OroUserBundle:Role');
+        $this->calendarRepository = $this->em->getRepository(Calendar::class);
+        $this->roleRepository     = $this->em->getRepository(Role::class);
     }
 
     /**

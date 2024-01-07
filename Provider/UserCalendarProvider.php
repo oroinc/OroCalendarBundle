@@ -2,12 +2,16 @@
 
 namespace Oro\Bundle\CalendarBundle\Provider;
 
-use Oro\Bundle\CalendarBundle\Entity;
+use Oro\Bundle\CalendarBundle\Entity\Calendar;
+use Oro\Bundle\CalendarBundle\Entity\CalendarEvent;
 use Oro\Bundle\CalendarBundle\Entity\Repository\CalendarEventRepository;
 use Oro\Bundle\CalendarBundle\Model;
 use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
 use Oro\Bundle\EntityBundle\Provider\EntityNameResolver;
 
+/**
+ * The implementation of the calendar provider for the user calendar.
+ */
 class UserCalendarProvider extends AbstractRecurrenceAwareCalendarProvider
 {
     /** @var EntityNameResolver */
@@ -39,7 +43,7 @@ class UserCalendarProvider extends AbstractRecurrenceAwareCalendarProvider
             return [];
         }
 
-        $qb = $this->doctrineHelper->getEntityRepository('OroCalendarBundle:Calendar')
+        $qb = $this->doctrineHelper->getEntityRepository(Calendar::class)
             ->createQueryBuilder('o')
             ->select('o, owner')
             ->innerJoin('o.owner', 'owner');
@@ -47,7 +51,7 @@ class UserCalendarProvider extends AbstractRecurrenceAwareCalendarProvider
 
         $result = [];
 
-        /** @var Entity\Calendar[] $calendars */
+        /** @var Calendar[] $calendars */
         $calendars = $qb->getQuery()->getResult();
         foreach ($calendars as $calendar) {
             $resultItem = [
@@ -80,7 +84,7 @@ class UserCalendarProvider extends AbstractRecurrenceAwareCalendarProvider
         $extraFields = []
     ) {
         /** @var CalendarEventRepository $repo */
-        $repo        = $this->doctrineHelper->getEntityRepository('OroCalendarBundle:CalendarEvent');
+        $repo        = $this->doctrineHelper->getEntityRepository(CalendarEvent::class);
         $extraFields = $this->filterSupportedFields($extraFields, 'Oro\Bundle\CalendarBundle\Entity\CalendarEvent');
         $qb          = $repo->getUserEventListByTimeIntervalQueryBuilder($start, $end, [], $extraFields);
 
@@ -99,7 +103,6 @@ class UserCalendarProvider extends AbstractRecurrenceAwareCalendarProvider
                 ->andWhere('1 = 0');
         }
 
-        // @TODO: Fix ACL for calendars providers in BAP-12973.
         $items = $this->calendarEventNormalizer->getCalendarEvents($calendarId, $qb->getQuery());
         $items = $this->getExpandedRecurrences($items, $start, $end);
 
@@ -107,11 +110,11 @@ class UserCalendarProvider extends AbstractRecurrenceAwareCalendarProvider
     }
 
     /**
-     * @param Entity\Calendar $calendar
+     * @param Calendar $calendar
      *
      * @return string
      */
-    protected function buildCalendarName(Entity\Calendar $calendar)
+    protected function buildCalendarName(Calendar $calendar)
     {
         return $calendar->getName() ?: $this->entityNameResolver->getName($calendar->getOwner());
     }

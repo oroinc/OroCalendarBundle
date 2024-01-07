@@ -112,8 +112,8 @@ class CalendarEventController extends RestController
         $subordinate  = (true == $request->get('subordinate'));
         $extendFields = $this->getExtendFieldNames('Oro\Bundle\CalendarBundle\Entity\CalendarEvent');
         if ($request->get('start') && $request->get('end')) {
-            $result = $this->get('oro_calendar.calendar_manager')->getCalendarEvents(
-                $this->get('oro_security.token_accessor')->getOrganization()->getId(),
+            $result = $this->container->get('oro_calendar.calendar_manager')->getCalendarEvents(
+                $this->container->get('oro_security.token_accessor')->getOrganization()->getId(),
                 $this->getUser()->getId(),
                 $calendarId,
                 new \DateTime($request->get('start')),
@@ -149,7 +149,7 @@ class CalendarEventController extends RestController
             $qb->setMaxResults($limit)
                 ->setFirstResult($page > 0 ? ($page - 1) * $limit : 0);
 
-            $result = $this->get('oro_calendar.calendar_event_normalizer.user')->getCalendarEvents(
+            $result = $this->container->get('oro_calendar.calendar_event_normalizer.user')->getCalendarEvents(
                 $calendarId,
                 $qb->getQuery()
             );
@@ -185,7 +185,7 @@ class CalendarEventController extends RestController
         $result = null;
         $code   = Response::HTTP_NOT_FOUND;
         if ($entity) {
-            $result = $this->get('oro_calendar.calendar_event_normalizer.user')
+            $result = $this->container->get('oro_calendar.calendar_event_normalizer.user')
                 ->getCalendarEvent(
                     $entity,
                     null,
@@ -219,7 +219,7 @@ class CalendarEventController extends RestController
         $result = null;
         $code   = Response::HTTP_NOT_FOUND;
         if ($entity) {
-            $result = $this->get('oro_calendar.calendar_event_normalizer.user')
+            $result = $this->container->get('oro_calendar.calendar_event_normalizer.user')
                 ->getCalendarEvent($entity, (int)$id);
             $code   = Response::HTTP_OK;
         }
@@ -273,7 +273,7 @@ class CalendarEventController extends RestController
      * @Acl(
      *      id="oro_calendar_event_delete",
      *      type="entity",
-     *      class="OroCalendarBundle:CalendarEvent",
+     *      class="Oro\Bundle\CalendarBundle\Entity\CalendarEvent",
      *      permission="DELETE",
      *      group_name=""
      * )
@@ -283,7 +283,7 @@ class CalendarEventController extends RestController
     public function deleteAction(int $id)
     {
         $options = [];
-        $request = $this->get('request_stack')->getCurrentRequest();
+        $request = $this->container->get('request_stack')->getCurrentRequest();
         if ($request) {
             if ((bool)$request->query->get('isCancelInsteadDelete', false)) {
                 $options['cancelInsteadDelete'] = true;
@@ -300,7 +300,7 @@ class CalendarEventController extends RestController
      */
     public function getManager()
     {
-        return $this->get('oro_calendar.calendar_event.manager.api');
+        return $this->container->get('oro_calendar.calendar_event.manager.api');
     }
 
     /**
@@ -308,7 +308,7 @@ class CalendarEventController extends RestController
      */
     public function getForm()
     {
-        return $this->get('oro_calendar.calendar_event.form.api');
+        return $this->container->get('oro_calendar.calendar_event.form.api');
     }
 
     /**
@@ -316,7 +316,7 @@ class CalendarEventController extends RestController
      */
     public function getFormHandler()
     {
-        return $this->get('oro_calendar.calendar_event.form.handler.api');
+        return $this->container->get('oro_calendar.calendar_event.form.handler.api');
     }
 
     /**
@@ -397,7 +397,7 @@ class CalendarEventController extends RestController
      */
     protected function getExtendFieldNames($class)
     {
-        $configProvider = $this->get('oro_entity_config.provider.extend');
+        $configProvider = $this->container->get('oro_entity_config.provider.extend');
         $configs        = $configProvider->filter(
             function (ConfigInterface $extendConfig) {
                 return
@@ -423,7 +423,8 @@ class CalendarEventController extends RestController
     protected function createResponseData($entity)
     {
         $response        = parent::createResponseData($entity);
-        $serializedEvent = $this->get('oro_calendar.calendar_event_normalizer.user')->getCalendarEvent($entity);
+        $serializedEvent = $this->container->get('oro_calendar.calendar_event_normalizer.user')
+            ->getCalendarEvent($entity);
 
         $response['uid']                      = (string)$serializedEvent['uid'];
         $response['organizerEmail']           = (string)$serializedEvent['organizerEmail'];

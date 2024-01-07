@@ -22,7 +22,7 @@ class CalendarEventAttendeesListener implements OptionalListenerInterface
             return;
         }
 
-        $entityManager = $args->getEntityManager();
+        $entityManager = $args->getObjectManager();
         $unitOfWork = $entityManager->getUnitOfWork();
 
         $newEntities = $unitOfWork->getScheduledEntityInsertions();

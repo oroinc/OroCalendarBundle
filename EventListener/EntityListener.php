@@ -51,17 +51,17 @@ class EntityListener implements ServiceSubscriberInterface
 
     public function preUpdate(PreUpdateEventArgs $args): void
     {
-        $this->processEntity($args->getEntity());
+        $this->processEntity($args->getObject());
     }
 
     public function prePersist(LifecycleEventArgs $args): void
     {
-        $this->processEntity($args->getEntity());
+        $this->processEntity($args->getObject());
     }
 
     public function onFlush(OnFlushEventArgs $event): void
     {
-        $em  = $event->getEntityManager();
+        $em  = $event->getObjectManager();
         $uow = $em->getUnitOfWork();
 
         foreach ($uow->getScheduledEntityInsertions() as $entity) {
@@ -87,7 +87,7 @@ class EntityListener implements ServiceSubscriberInterface
     public function postFlush(PostFlushEventArgs $event): void
     {
         if (!empty($this->insertedCalendars)) {
-            $em = $event->getEntityManager();
+            $em = $event->getObjectManager();
             foreach ($this->insertedCalendars as $calendar) {
                 // connect the calendar to itself
                 $calendarProperty = new CalendarProperty();
@@ -130,7 +130,7 @@ class EntityListener implements ServiceSubscriberInterface
 
     private function isCalendarExists(EntityManager $em, User $user, Organization $organization): bool
     {
-        $calendarRepository = $em->getRepository('OroCalendarBundle:Calendar');
+        $calendarRepository = $em->getRepository(Calendar::class);
 
         return (bool)$calendarRepository->findDefaultCalendar($user->getId(), $organization->getId());
     }

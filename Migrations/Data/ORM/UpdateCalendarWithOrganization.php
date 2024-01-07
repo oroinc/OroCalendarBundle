@@ -4,8 +4,12 @@ namespace Oro\Bundle\CalendarBundle\Migrations\Data\ORM;
 
 use Doctrine\Common\DataFixtures\OrderedFixtureInterface;
 use Doctrine\Persistence\ObjectManager;
+use Oro\Bundle\CalendarBundle\Entity\Calendar;
 use Oro\Bundle\OrganizationBundle\Migrations\Data\ORM\UpdateWithOrganization;
 
+/**
+ * Updates calendars with organization.
+ */
 class UpdateCalendarWithOrganization extends UpdateWithOrganization implements OrderedFixtureInterface
 {
     /**
@@ -25,6 +29,6 @@ class UpdateCalendarWithOrganization extends UpdateWithOrganization implements O
      */
     public function load(ObjectManager $manager)
     {
-        $this->update($manager, 'OroCalendarBundle:Calendar');
+        $this->update($manager, Calendar::class);
     }
 }

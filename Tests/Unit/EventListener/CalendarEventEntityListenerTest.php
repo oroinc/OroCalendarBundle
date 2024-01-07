@@ -78,7 +78,7 @@ class CalendarEventEntityListenerTest extends \PHPUnit\Framework\TestCase
     {
         $eventMock = $this->getPreUpdateEvent(true, null, '123');
         /** @var UnitOfWork|\PHPUnit\Framework\MockObject\MockObject $unitOfWork */
-        $unitOfWork = $eventMock->getEntityManager()->getUnitOfWork();
+        $unitOfWork = $eventMock->getObjectManager()->getUnitOfWork();
         $unitOfWork->expects($this->atLeastOnce())
             ->method('scheduleExtraUpdate');
 
@@ -98,7 +98,7 @@ class CalendarEventEntityListenerTest extends \PHPUnit\Framework\TestCase
     {
         $eventMock = $this->getPreUpdateEvent(true, null, '123');
         /** @var UnitOfWork|\PHPUnit\Framework\MockObject\MockObject $unitOfWork */
-        $unitOfWork = $eventMock->getEntityManager()->getUnitOfWork();
+        $unitOfWork = $eventMock->getObjectManager()->getUnitOfWork();
         $unitOfWork->expects($this->atLeastOnce())
             ->method('scheduleExtraUpdate');
 
@@ -151,7 +151,7 @@ class CalendarEventEntityListenerTest extends \PHPUnit\Framework\TestCase
 
         $event = $this->createMock(PreUpdateEventArgs::class);
         $event->expects($this->any())
-            ->method('getEntityManager')
+            ->method('getObjectManager')
             ->willReturn($em);
         $event->expects($this->any())
             ->method('hasChangedField')

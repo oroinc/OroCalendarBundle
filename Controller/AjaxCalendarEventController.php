@@ -2,6 +2,7 @@
 
 namespace Oro\Bundle\CalendarBundle\Controller;
 
+use Doctrine\Persistence\ManagerRegistry;
 use Oro\Bundle\CalendarBundle\Entity\Attendee;
 use Oro\Bundle\CalendarBundle\Entity\CalendarEvent;
 use Oro\Bundle\CalendarBundle\Exception\ChangeInvitationStatusException;
@@ -41,8 +42,8 @@ class AjaxCalendarEventController extends AbstractController
     public function changeStatusAction(CalendarEvent $entity, $status)
     {
         try {
-            $loggedUser = $this->get(TokenAccessorInterface::class)->getUser();
-            $manager = $this->get(CalendarEventManager::class);
+            $loggedUser = $this->container->get(TokenAccessorInterface::class)->getUser();
+            $manager = $this->container->get(CalendarEventManager::class);
             $manager->changeInvitationStatus($entity, $status, $loggedUser);
         } catch (ChangeInvitationStatusException $exception) {
             return new JsonResponse(
@@ -53,11 +54,11 @@ class AjaxCalendarEventController extends AbstractController
             );
         }
 
-        $this->getDoctrine()
+        $this->container->get('doctrine')
             ->getManagerForClass('Oro\Bundle\CalendarBundle\Entity\CalendarEvent')
             ->flush();
 
-        $this->get(NotificationManager::class)->onChangeInvitationStatus(
+        $this->container->get(NotificationManager::class)->onChangeInvitationStatus(
             $entity,
             NotificationManager::ALL_NOTIFICATIONS_STRATEGY
         );
@@ -78,10 +79,10 @@ class AjaxCalendarEventController extends AbstractController
      */
     public function attendeesAutocompleteDataAction($id)
     {
-        $attendeeManager = $this->get(AttendeeManager::class);
+        $attendeeManager = $this->container->get(AttendeeManager::class);
         $attendees = $attendeeManager->loadAttendeesByCalendarEventId($id);
 
-        $attendeeRelationManager = $this->get(AttendeeRelationManager::class);
+        $attendeeRelationManager = $this->container->get(AttendeeRelationManager::class);
 
         $result = [];
 
@@ -125,6 +126,7 @@ class AjaxCalendarEventController extends AbstractController
                 NotificationManager::class,
                 AttendeeRelationManager::class,
                 AttendeeManager::class,
+                'doctrine' => ManagerRegistry::class,
             ]
         );
     }

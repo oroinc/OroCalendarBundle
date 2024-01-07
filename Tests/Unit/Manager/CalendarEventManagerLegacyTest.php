@@ -26,13 +26,15 @@ use Oro\Bundle\EntityExtendBundle\Tests\Unit\Fixtures\TestEnumValue;
 use Oro\Bundle\FeatureToggleBundle\Checker\FeatureChecker;
 use Oro\Bundle\OrganizationBundle\Entity\Organization;
 use Oro\Bundle\SecurityBundle\Authentication\TokenAccessorInterface;
+use PHPUnit\Framework\MockObject\MockObject;
+use PHPUnit\Framework\TestCase;
 
 /**
  * Old tests moved after remove of \Oro\Bundle\CalendarBundle\Tests\Unit\Form\EventListener\ChildEventsSubscriberTest.
  */
-class CalendarEventManagerLegacyTest extends \PHPUnit\Framework\TestCase
+class CalendarEventManagerLegacyTest extends TestCase
 {
-    /** @var FeatureChecker|\PHPUnit\Framework\MockObject\MockObject */
+    /** @var FeatureChecker|MockObject */
     private $featureChecker;
 
     /** @var CalendarEventManager */
@@ -69,7 +71,7 @@ class CalendarEventManagerLegacyTest extends \PHPUnit\Framework\TestCase
             ->willReturnMap([
                 ['Extend\Entity\EV_Ce_Attendee_Status', null, $repository],
                 ['Extend\Entity\EV_Ce_Attendee_Type', null, $repository],
-                ['OroCalendarBundle:Calendar', null, $repository],
+                [Calendar::class, null, $repository],
                 [CalendarEvent::class, null, $calendarEventRepository],
             ]);
 

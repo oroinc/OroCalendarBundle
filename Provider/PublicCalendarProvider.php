@@ -2,6 +2,7 @@
 
 namespace Oro\Bundle\CalendarBundle\Provider;
 
+use Oro\Bundle\CalendarBundle\Entity\CalendarEvent;
 use Oro\Bundle\CalendarBundle\Entity\Repository\CalendarEventRepository;
 use Oro\Bundle\CalendarBundle\Entity\Repository\SystemCalendarRepository;
 use Oro\Bundle\CalendarBundle\Entity\SystemCalendar;
@@ -47,7 +48,7 @@ class PublicCalendarProvider extends AbstractRecurrenceAwareCalendarProvider
 
         $result = [];
         /** @var SystemCalendarRepository $repo */
-        $repo = $this->doctrineHelper->getEntityRepository('OroCalendarBundle:SystemCalendar');
+        $repo = $this->doctrineHelper->getEntityRepository(SystemCalendar::class);
         $qb   = $repo->getPublicCalendarsQueryBuilder();
         /** @var SystemCalendar[] $calendars */
         $calendars = $qb->getQuery()->getResult();
@@ -88,7 +89,7 @@ class PublicCalendarProvider extends AbstractRecurrenceAwareCalendarProvider
         }
 
         /** @var CalendarEventRepository $repo */
-        $repo         = $this->doctrineHelper->getEntityRepository('OroCalendarBundle:CalendarEvent');
+        $repo         = $this->doctrineHelper->getEntityRepository(CalendarEvent::class);
         $extraFields  = $this->filterSupportedFields($extraFields, 'Oro\Bundle\CalendarBundle\Entity\CalendarEvent');
         $qb           = $repo->getPublicEventListByTimeIntervalQueryBuilder(
             $start,
@@ -108,7 +109,6 @@ class PublicCalendarProvider extends AbstractRecurrenceAwareCalendarProvider
                 ->setParameter('invisibleIds', $invisibleIds);
         }
 
-        // @TODO: Fix ACL for calendars providers in BAP-12973.
         $items = $this->calendarEventNormalizer->getCalendarEvents($calendarId, $qb->getQuery());
 
         $items = $this->getExpandedRecurrences($items, $start, $end);

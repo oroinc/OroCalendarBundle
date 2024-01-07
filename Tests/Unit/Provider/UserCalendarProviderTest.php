@@ -7,6 +7,7 @@ use Doctrine\ORM\EntityRepository;
 use Doctrine\ORM\Query\Expr;
 use Doctrine\ORM\QueryBuilder;
 use Oro\Bundle\CalendarBundle\Entity\Calendar;
+use Oro\Bundle\CalendarBundle\Entity\CalendarEvent;
 use Oro\Bundle\CalendarBundle\Entity\Repository\CalendarEventRepository;
 use Oro\Bundle\CalendarBundle\Model\Recurrence;
 use Oro\Bundle\CalendarBundle\Provider\UserCalendarEventNormalizer;
@@ -15,19 +16,21 @@ use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
 use Oro\Bundle\EntityBundle\Provider\EntityNameResolver;
 use Oro\Bundle\UserBundle\Entity\User;
 use Oro\Component\Testing\ReflectionUtil;
+use PHPUnit\Framework\MockObject\MockObject;
+use PHPUnit\Framework\TestCase;
 
-class UserCalendarProviderTest extends \PHPUnit\Framework\TestCase
+class UserCalendarProviderTest extends TestCase
 {
-    /** @var DoctrineHelper|\PHPUnit\Framework\MockObject\MockObject */
+    /** @var DoctrineHelper|MockObject */
     private $doctrineHelper;
 
-    /** @var EntityNameResolver|\PHPUnit\Framework\MockObject\MockObject */
+    /** @var EntityNameResolver|MockObject */
     private $entityNameResolver;
 
-    /** @var UserCalendarEventNormalizer|\PHPUnit\Framework\MockObject\MockObject */
+    /** @var UserCalendarEventNormalizer|MockObject */
     private $calendarEventNormalizer;
 
-    /** @var Recurrence|\PHPUnit\Framework\MockObject\MockObject */
+    /** @var Recurrence|MockObject */
     private $recurrenceModel;
 
     /** @var UserCalendarProvider */
@@ -77,7 +80,7 @@ class UserCalendarProviderTest extends \PHPUnit\Framework\TestCase
             ->willReturn($qb);
         $this->doctrineHelper->expects($this->once())
             ->method('getEntityRepository')
-            ->with('OroCalendarBundle:Calendar')
+            ->with(Calendar::class)
             ->willReturn($repo);
         $qb->expects($this->once())
             ->method('select')
@@ -212,7 +215,7 @@ class UserCalendarProviderTest extends \PHPUnit\Framework\TestCase
         $repo = $this->createMock(CalendarEventRepository::class);
         $this->doctrineHelper->expects($this->once())
             ->method('getEntityRepository')
-            ->with('OroCalendarBundle:CalendarEvent')
+            ->with(CalendarEvent::class)
             ->willReturn($repo);
         $repo->expects($this->once())
             ->method('getUserEventListByTimeIntervalQueryBuilder')
@@ -259,7 +262,7 @@ class UserCalendarProviderTest extends \PHPUnit\Framework\TestCase
         $repo = $this->createMock(CalendarEventRepository::class);
         $this->doctrineHelper->expects($this->once())
             ->method('getEntityRepository')
-            ->with('OroCalendarBundle:CalendarEvent')
+            ->with(CalendarEvent::class)
             ->willReturn($repo);
         $repo->expects($this->once())
             ->method('getUserEventListByTimeIntervalQueryBuilder')

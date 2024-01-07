@@ -21,19 +21,21 @@ use Oro\Bundle\SecurityBundle\Authentication\TokenAccessorInterface;
 use Oro\Bundle\UserBundle\Entity\User;
 use Oro\Component\Testing\ReflectionUtil;
 use Oro\Component\Testing\Unit\TestContainerBuilder;
+use PHPUnit\Framework\MockObject\MockObject;
+use PHPUnit\Framework\TestCase;
 
-class EntityListenerTest extends \PHPUnit\Framework\TestCase
+class EntityListenerTest extends TestCase
 {
-    /** @var EntityManager|\PHPUnit\Framework\MockObject\MockObject */
+    /** @var EntityManager|MockObject */
     private $em;
 
-    /** @var UnitOfWork|\PHPUnit\Framework\MockObject\MockObject */
+    /** @var UnitOfWork|MockObject */
     private $uow;
 
-    /** @var TokenAccessorInterface|\PHPUnit\Framework\MockObject\MockObject */
+    /** @var TokenAccessorInterface|MockObject */
     private $tokenAccessor;
 
-    /** @var RecurrenceModel|\PHPUnit\Framework\MockObject\MockObject */
+    /** @var RecurrenceModel|MockObject */
     private $recurrenceModel;
 
     /** @var EntityListener */
@@ -174,7 +176,7 @@ class EntityListenerTest extends \PHPUnit\Framework\TestCase
 
         $this->em->expects(self::once())
             ->method('getRepository')
-            ->with('OroCalendarBundle:Calendar')
+            ->with(Calendar::class)
             ->willReturn($calendarRepo);
         $this->em->expects(self::once())
             ->method('persist')

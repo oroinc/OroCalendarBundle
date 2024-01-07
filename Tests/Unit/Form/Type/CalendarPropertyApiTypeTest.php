@@ -31,15 +31,15 @@ class CalendarPropertyApiTypeTest extends TypeTestCase
         $doctrine = $this->createMock(ManagerRegistry::class);
         $doctrine->expects($this->any())
             ->method('getManagerForClass')
-            ->with('OroCalendarBundle:Calendar')
+            ->with(Calendar::class)
             ->willReturn($em);
         $em->expects($this->any())
             ->method('getClassMetadata')
-            ->with('OroCalendarBundle:Calendar')
+            ->with(Calendar::class)
             ->willReturn($meta);
         $em->expects($this->any())
             ->method('getRepository')
-            ->with('OroCalendarBundle:Calendar')
+            ->with(Calendar::class)
             ->willReturn($repo);
         $meta->expects($this->any())
             ->method('getSingleIdentifierFieldName')

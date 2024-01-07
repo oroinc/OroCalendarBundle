@@ -6,6 +6,7 @@ use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\AbstractQuery;
 use Doctrine\ORM\QueryBuilder;
 use Oro\Bundle\CalendarBundle\Entity\Attendee;
+use Oro\Bundle\CalendarBundle\Entity\CalendarEvent;
 use Oro\Bundle\CalendarBundle\Entity\Repository\AttendeeRepository;
 use Oro\Bundle\CalendarBundle\Entity\Repository\CalendarEventRepository;
 use Oro\Bundle\CalendarBundle\Manager\AttendeeManager;
@@ -13,16 +14,18 @@ use Oro\Bundle\CalendarBundle\Manager\AttendeeRelationManager;
 use Oro\Bundle\CalendarBundle\Tests\Unit\Fixtures\Entity\Attendee as AttendeeStub;
 use Oro\Bundle\CalendarBundle\Tests\Unit\Fixtures\Entity\User;
 use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
+use PHPUnit\Framework\MockObject\MockObject;
+use PHPUnit\Framework\TestCase;
 
-class AttendeeManagerTest extends \PHPUnit\Framework\TestCase
+class AttendeeManagerTest extends TestCase
 {
-    /** @var CalendarEventRepository|\PHPUnit\Framework\MockObject\MockObject */
+    /** @var CalendarEventRepository|MockObject */
     private $calendarEventRepository;
 
-    /** @var AttendeeRepository|\PHPUnit\Framework\MockObject\MockObject */
+    /** @var AttendeeRepository|MockObject */
     private $attendeeRepository;
 
-    /** @var AttendeeRelationManager|\PHPUnit\Framework\MockObject\MockObject */
+    /** @var AttendeeRelationManager|MockObject */
     private $attendeeRelationManager;
 
     /** @var AttendeeManager */
@@ -42,8 +45,8 @@ class AttendeeManagerTest extends \PHPUnit\Framework\TestCase
         $doctrineHelper->expects($this->any())
             ->method('getEntityRepository')
             ->willReturnMap([
-                ['OroCalendarBundle:CalendarEvent', $this->calendarEventRepository],
-                ['OroCalendarBundle:Attendee', $this->attendeeRepository],
+                [CalendarEvent::class, $this->calendarEventRepository],
+                [Attendee::class, $this->attendeeRepository],
             ]);
 
         $this->attendeeRelationManager = $this->createMock(AttendeeRelationManager::class);

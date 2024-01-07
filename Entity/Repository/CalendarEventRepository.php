@@ -10,6 +10,7 @@ use Doctrine\ORM\QueryBuilder;
 use Oro\Bundle\CalendarBundle\Entity\Attendee;
 use Oro\Bundle\CalendarBundle\Entity\Calendar;
 use Oro\Bundle\CalendarBundle\Entity\CalendarEvent;
+use Oro\Bundle\CalendarBundle\Entity\Recurrence;
 use Oro\Component\DoctrineUtils\ORM\QueryBuilderUtil;
 
 /**
@@ -210,7 +211,7 @@ class CalendarEventRepository extends EntityRepository
         $prefix = self::RECURRENCE_FIELD_PREFIX;
         $queryBuilder
             ->leftJoin(
-                'OroCalendarBundle:Recurrence',
+                Recurrence::class,
                 'r',
                 Expr\Join::WITH,
                 '(parent.id IS NOT NULL AND parent.recurrence = r.id) OR (parent.id IS NULL AND e.recurrence = r.id)'

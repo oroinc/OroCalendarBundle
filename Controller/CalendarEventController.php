@@ -32,7 +32,7 @@ class CalendarEventController extends AbstractController
      * @Acl(
      *      id="oro_calendar_event_view",
      *      type="entity",
-     *      class="OroCalendarBundle:CalendarEvent",
+     *      class="Oro\Bundle\CalendarBundle\Entity\CalendarEvent",
      *      permission="VIEW",
      *      group_name=""
      * )
@@ -56,8 +56,8 @@ class CalendarEventController extends AbstractController
     {
         $this->checkPermissionByParentCalendar($entity, 'view');
 
-        $loggedUser = $this->get(TokenAccessorInterface::class)->getUser();
-        $canChangeInvitationStatus = $this->get(CalendarEventManager::class)
+        $loggedUser = $this->container->get(TokenAccessorInterface::class)->getUser();
+        $canChangeInvitationStatus = $this->container->get(CalendarEventManager::class)
             ->canChangeInvitationStatus(
                 $entity,
                 $loggedUser
@@ -87,8 +87,8 @@ class CalendarEventController extends AbstractController
     {
         $this->checkPermissionByParentCalendar($entity, 'view');
 
-        $loggedUser = $this->get(TokenAccessorInterface::class)->getUser();
-        $canChangeInvitationStatus = $this->get(CalendarEventManager::class)
+        $loggedUser = $this->container->get(TokenAccessorInterface::class)->getUser();
+        $canChangeInvitationStatus = $this->container->get(CalendarEventManager::class)
             ->canChangeInvitationStatus(
                 $entity,
                 $loggedUser
@@ -116,7 +116,7 @@ class CalendarEventController extends AbstractController
     public function activityAction($entityClass, $entityId)
     {
         return [
-            'entity' => $this->get(EntityRoutingHelper::class)->getEntity($entityClass, $entityId)
+            'entity' => $this->container->get(EntityRoutingHelper::class)->getEntity($entityClass, $entityId)
         ];
     }
 
@@ -126,7 +126,7 @@ class CalendarEventController extends AbstractController
      * @Acl(
      *      id="oro_calendar_event_create",
      *      type="entity",
-     *      class="OroCalendarBundle:CalendarEvent",
+     *      class="Oro\Bundle\CalendarBundle\Entity\CalendarEvent",
      *      permission="CREATE",
      *      group_name=""
      * )
@@ -143,7 +143,7 @@ class CalendarEventController extends AbstractController
         $entity->setStart($startTime);
         $entity->setEnd($endTime);
 
-        $formAction = $this->get(EntityRoutingHelper::class)
+        $formAction = $this->container->get(EntityRoutingHelper::class)
             ->generateUrlByRequest('oro_calendar_event_create', $request);
 
         return $this->update($request, $entity, $formAction);
@@ -155,7 +155,7 @@ class CalendarEventController extends AbstractController
      * @Acl(
      *      id="oro_calendar_event_update",
      *      type="entity",
-     *      class="OroCalendarBundle:CalendarEvent",
+     *      class="Oro\Bundle\CalendarBundle\Entity\CalendarEvent",
      *      permission="EDIT",
      *      group_name=""
      * )
@@ -168,7 +168,8 @@ class CalendarEventController extends AbstractController
     {
         $this->checkPermissionByParentCalendar($entity, 'edit');
 
-        $formAction = $this->get('router')->generate('oro_calendar_event_update', ['id' => $entity->getId()]);
+        $formAction = $this->container->get('router')
+            ->generate('oro_calendar_event_update', ['id' => $entity->getId()]);
 
         return $this->update($request, $entity, $formAction);
     }
@@ -181,7 +182,7 @@ class CalendarEventController extends AbstractController
      * @Acl(
      *      id="oro_calendar_event_delete",
      *      type="entity",
-     *      class="OroCalendarBundle:CalendarEvent",
+     *      class="Oro\Bundle\CalendarBundle\Entity\CalendarEvent",
      *      permission="DELETE",
      *      group_name=""
      * )
@@ -210,15 +211,16 @@ class CalendarEventController extends AbstractController
     {
         $saved = false;
 
-        $formHandler = $this->get(CalendarEventHandler::class);
+        $formHandler = $this->container->get(CalendarEventHandler::class);
         if ($formHandler->process($entity)) {
             if (!$request->get('_widgetContainer')) {
                 $request->getSession()->getFlashBag()->add(
                     'success',
-                    $this->get(TranslatorInterface::class)->trans('oro.calendar.controller.event.saved.message')
+                    $this->container->get(TranslatorInterface::class)
+                        ->trans('oro.calendar.controller.event.saved.message')
                 );
 
-                return $this->get(Router::class)->redirect($entity);
+                return $this->container->get(Router::class)->redirect($entity);
             }
             $saved = true;
         }
@@ -239,7 +241,7 @@ class CalendarEventController extends AbstractController
      */
     protected function getTargetEntity(Request $request)
     {
-        $entityRoutingHelper = $this->get(EntityRoutingHelper::class);
+        $entityRoutingHelper = $this->container->get(EntityRoutingHelper::class);
         $targetEntityClass   = $entityRoutingHelper->getEntityClassName($request, 'targetActivityClass');
         $targetEntityId      = $entityRoutingHelper->getEntityId($request, 'targetActivityId');
         if (!$targetEntityClass || !$targetEntityId) {
