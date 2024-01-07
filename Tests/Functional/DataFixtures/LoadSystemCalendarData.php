@@ -6,15 +6,14 @@ use Doctrine\Common\DataFixtures\DependentFixtureInterface;
 use Doctrine\Persistence\ObjectManager;
 use Oro\Bundle\CalendarBundle\Entity\SystemCalendar;
 use Oro\Bundle\TestFrameworkBundle\Test\DataFixtures\AbstractFixture;
-use Oro\Bundle\UserBundle\Entity\User;
+use Oro\Bundle\TestFrameworkBundle\Tests\Functional\DataFixtures\LoadOrganization;
 
 class LoadSystemCalendarData extends AbstractFixture implements DependentFixtureInterface
 {
     public const SYSTEM_CALENDAR_PUBLIC = 'system_calendar.public';
     public const SYSTEM_CALENDAR_ORGANIZATION = 'system_calendar.organization';
 
-    /** @var array */
-    private $calendars = [
+    private array $calendars = [
         self::SYSTEM_CALENDAR_PUBLIC => [
             'name' => 'Public System Calendar',
             'public' => true
@@ -26,31 +25,26 @@ class LoadSystemCalendarData extends AbstractFixture implements DependentFixture
     ];
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      */
-    public function getDependencies()
+    public function getDependencies(): array
     {
-        return [LoadUserData::class];
+        return [LoadUserData::class, LoadOrganization::class];
     }
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      */
-    public function load(ObjectManager $manager)
+    public function load(ObjectManager $manager): void
     {
-        $user = $manager->getRepository(User::class)->findOneBy(['username' => 'admin']);
-
         foreach ($this->calendars as $name => $data) {
             $systemCalendar = new SystemCalendar();
             $systemCalendar->setName($data['name']);
             $systemCalendar->setPublic($data['public']);
-            $systemCalendar->setOrganization($user->getOrganization());
-
+            $systemCalendar->setOrganization($this->getReference(LoadOrganization::ORGANIZATION));
             $manager->persist($systemCalendar);
-
             $this->setReference($name, $systemCalendar);
         }
-
         $manager->flush();
     }
 }

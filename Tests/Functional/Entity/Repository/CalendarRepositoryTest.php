@@ -2,10 +2,12 @@
 
 namespace Oro\Bundle\CalendarBundle\Tests\Functional\Entity\Repository;
 
+use Doctrine\Persistence\ManagerRegistry;
 use Oro\Bundle\CalendarBundle\Entity\Calendar;
 use Oro\Bundle\CalendarBundle\Entity\Repository\CalendarRepository;
 use Oro\Bundle\OrganizationBundle\Entity\Organization;
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
+use Oro\Bundle\TestFrameworkBundle\Tests\Functional\DataFixtures\LoadOrganization;
 use Oro\Bundle\UserBundle\Entity\User;
 
 class CalendarRepositoryTest extends WebTestCase
@@ -13,29 +15,32 @@ class CalendarRepositoryTest extends WebTestCase
     protected function setUp(): void
     {
         $this->initClient();
+        $this->loadFixtures([LoadOrganization::class]);
     }
 
     private function getRepository(): CalendarRepository
     {
-        return self::getContainer()->get('doctrine')->getRepository(Calendar::class);
+        return $this->getDoctrine()->getRepository(Calendar::class);
     }
 
-    public function testFindDefaultCalendars()
+    private function getDoctrine(): ManagerRegistry
     {
-        $doctrine = $this->getContainer()->get('doctrine');
-        $userRepository = $doctrine->getRepository(User::class);
-        $organizationRepository = $doctrine->getRepository(Organization::class);
+        return self::getContainer()->get('doctrine');
+    }
 
-        $firstOrganization = $organizationRepository->getFirst();
-        $firstOrganizationId = $firstOrganization->getId();
+    public function testFindDefaultCalendars(): void
+    {
+        $repository = $this->getRepository();
+        /** @var Organization $organization */
+        $organization = $this->getReference(LoadOrganization::ORGANIZATION);
 
         $userIds = [];
         $expectedCalendars = [];
-
-        $users = $userRepository->findBy(['organization' => $firstOrganization]);
+        $users = $this->getDoctrine()->getRepository(User::class)
+            ->findBy(['organization' => $organization]);
         foreach ($users as $user) {
             $userId = $user->getId();
-            $calendar = $this->getRepository()->findDefaultCalendar($userId, $firstOrganizationId);
+            $calendar = $repository->findDefaultCalendar($userId, $organization->getId());
             if ($calendar) {
                 $userIds[] = $userId;
                 $expectedCalendars[] = $calendar;
@@ -44,7 +49,7 @@ class CalendarRepositoryTest extends WebTestCase
 
         $this->assertEquals(
             $expectedCalendars,
-            $this->getRepository()->findDefaultCalendars($userIds, $firstOrganizationId)
+            $repository->findDefaultCalendars($userIds, $organization->getId())
         );
     }
 }

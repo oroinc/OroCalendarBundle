@@ -2,13 +2,13 @@
 
 namespace Oro\Bundle\CalendarBundle\Tests\Functional\Repository;
 
+use Doctrine\Persistence\ManagerRegistry;
 use Oro\Bundle\CalendarBundle\Entity\Calendar;
 use Oro\Bundle\CalendarBundle\Entity\CalendarEvent;
 use Oro\Bundle\CalendarBundle\Entity\Repository\CalendarEventRepository;
-use Oro\Bundle\CalendarBundle\Entity\Repository\CalendarRepository;
 use Oro\Bundle\CalendarBundle\Tests\Functional\DataFixtures\LoadCalendarEventData;
-use Oro\Bundle\OrganizationBundle\Entity\Organization;
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
+use Oro\Bundle\TestFrameworkBundle\Tests\Functional\DataFixtures\LoadUser;
 use Oro\Bundle\UserBundle\Entity\User;
 
 class CalendarEventRepositoryTest extends WebTestCase
@@ -19,7 +19,26 @@ class CalendarEventRepositoryTest extends WebTestCase
     protected function setUp(): void
     {
         $this->initClient();
-        $this->loadFixtures([LoadCalendarEventData::class]);
+        $this->loadFixtures([LoadCalendarEventData::class, LoadUser::class]);
+    }
+
+    private function getRepository(): CalendarEventRepository
+    {
+        return $this->getDoctrine()->getRepository(CalendarEvent::class);
+    }
+
+    private function getDoctrine(): ManagerRegistry
+    {
+        return self::getContainer()->get('doctrine');
+    }
+
+    private function getCalendar(): Calendar
+    {
+        /** @var User $user */
+        $user = $this->getReference(LoadUser::USER);
+
+        return $this->getDoctrine()->getRepository(Calendar::class)
+            ->findDefaultCalendar($user->getId(), $user->getOrganization()->getId());
     }
 
     public function testFindDuplicateForCalendarEventWithoutId()
@@ -100,23 +119,5 @@ class CalendarEventRepositoryTest extends WebTestCase
         $events = $repository->findEventsWithMatchingUidAndOrganizer($calendarEvent);
 
         $this->assertCount(0, $events);
-    }
-
-    private function getRepository(): CalendarEventRepository
-    {
-        return self::getContainer()->get('doctrine')->getRepository(CalendarEvent::class);
-    }
-
-    private function getCalendar(): Calendar
-    {
-        $user = self::getContainer()->get('doctrine')->getRepository(User::class)
-            ->findOneBy(['username' => 'admin']);
-        $organization = self::getContainer()->get('doctrine')->getRepository(Organization::class)
-            ->getFirst();
-
-        /** @var CalendarRepository $calendarRepo */
-        $calendarRepo = $this->getContainer()->get('oro_entity.doctrine_helper')->getEntityRepository(Calendar::class);
-
-        return $calendarRepo->findDefaultCalendar($user->getId(), $organization->getId());
     }
 }

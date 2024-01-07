@@ -2,48 +2,48 @@
 
 namespace Oro\Bundle\CalendarBundle\Tests\Functional\DataFixtures;
 
+use Doctrine\Common\DataFixtures\AbstractFixture;
+use Doctrine\Common\DataFixtures\DependentFixtureInterface;
 use Doctrine\Persistence\ObjectManager;
 use Oro\Bundle\OrganizationBundle\Entity\Organization;
-use Oro\Bundle\TestFrameworkBundle\Test\DataFixtures\AbstractFixture;
+use Oro\Bundle\TestFrameworkBundle\Tests\Functional\DataFixtures\LoadOrganization;
 
-class LoadOrganizationData extends AbstractFixture
+class LoadOrganizationData extends AbstractFixture implements DependentFixtureInterface
 {
-    /**
-     * @var array
-     */
-    protected $data = [
-        [
+    private array $data = [
+        'oro_calendar:organization:foo' => [
             'name'      => 'Foo Inc.',
-            'enabled'   => true,
-            'reference' => 'oro_calendar:organization:foo',
+            'enabled'   => true
         ],
-        [
+        'oro_calendar:organization:bar' => [
             'name'      => 'Bar Inc.',
-            'enabled'   => true,
-            'reference' => 'oro_calendar:organization:bar',
-        ],
+            'enabled'   => true
+        ]
     ];
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      */
-    public function load(ObjectManager $manager)
+    public function getDependencies(): array
+    {
+        return [LoadOrganization::class];
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public function load(ObjectManager $manager): void
     {
         // Add system organization to reference repository
-        $organization = $manager->getRepository(Organization::class)->getFirst();
-        $this->setReference('oro_calendar:organization:system', $organization);
-
+        $this->setReference('oro_calendar:organization:system', $this->getReference(LoadOrganization::ORGANIZATION));
         // Persist other organizations
-        foreach ($this->data as $data) {
+        foreach ($this->data as $reference => $data) {
             $entity = new Organization();
-
-            $this->setEntityPropertyValues($entity, $data, ['reference']);
-
-            $this->setReference($data['reference'], $entity);
-
+            $entity->setName($data['name']);
+            $entity->setEnabled($data['enabled']);
+            $this->setReference($reference, $entity);
             $manager->persist($entity);
         }
-
         $manager->flush();
     }
 }

@@ -4,35 +4,35 @@ namespace Oro\Bundle\CalendarBundle\Tests\Functional\DataFixtures;
 
 use Doctrine\Common\DataFixtures\DependentFixtureInterface;
 use Doctrine\Persistence\ObjectManager;
-use Oro\Bundle\CalendarBundle\Entity\Attendee;
 use Oro\Bundle\CalendarBundle\Entity\Calendar;
 use Oro\Bundle\CalendarBundle\Entity\CalendarEvent;
 use Oro\Bundle\CalendarBundle\Entity\Recurrence;
 use Oro\Bundle\OrganizationBundle\Entity\Organization;
 use Oro\Bundle\TestFrameworkBundle\Test\DataFixtures\AbstractFixture;
+use Oro\Bundle\TestFrameworkBundle\Tests\Functional\DataFixtures\LoadOrganization;
+use Oro\Bundle\TestFrameworkBundle\Tests\Functional\DataFixtures\LoadUser;
 use Oro\Bundle\UserBundle\Entity\User;
 use Symfony\Component\Yaml\Yaml;
 
 class LoadCalendarEventData extends AbstractFixture implements DependentFixtureInterface
 {
-    const CALENDAR_EVENT_TITLE = 'Regular event not in start:end range';
-    const CALENDAR_EVENT_WITH_ATTENDEE = 'Event with attendee';
-
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      */
-    public function getDependencies()
+    public function getDependencies(): array
     {
-        return [LoadUserData::class];
+        return [LoadUserData::class, LoadOrganization::class, LoadUser::class];
     }
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      */
-    public function load(ObjectManager $manager)
+    public function load(ObjectManager $manager): void
     {
-        $user = $manager->getRepository(User::class)->findOneByUsername('admin');
-        $organization = $manager->getRepository(Organization::class)->getFirst();
+        /** @var User $user */
+        $user = $this->getReference(LoadUser::USER);
+        /** @var Organization $organization */
+        $organization = $this->getReference(LoadOrganization::ORGANIZATION);
         $calendar = $manager->getRepository(Calendar::class)->findDefaultCalendar(
             $user->getId(),
             $organization->getId()
@@ -84,19 +84,6 @@ class LoadCalendarEventData extends AbstractFixture implements DependentFixtureI
                 $this->setReference($data['reference'], $event);
             }
         }
-
-        $event    = new CalendarEvent();
-        $attendee = new Attendee();
-        $userName = 'user' . mt_rand(0, 100);
-        $attendee->setEmail($userName.'@example.com');
-        $attendee->setDisplayName($userName);
-        $attendee->setUser($this->getReference('oro_calendar:user:system_user_1'));
-        $event->setCalendar($calendar)
-            ->setTitle(self::CALENDAR_EVENT_WITH_ATTENDEE)
-            ->setStart(new \DateTime('+1 year', new \DateTimeZone('UTC')))
-            ->setEnd(new \DateTime('+1 year + 1 hour', new \DateTimeZone('UTC')))
-            ->setAllDay(false);
-        $manager->persist($event);
 
         $manager->flush();
     }
