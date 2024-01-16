@@ -10,6 +10,7 @@ oro_behat_extension:
         - Oro\Bundle\TestFrameworkBundle\Tests\Behat\Context\OroMainContext
         - Oro\Bundle\SearchBundle\Tests\Behat\Context\SearchContext
         - Oro\Bundle\SecurityBundle\Tests\Behat\Context\ACLContext
+        - Oro\Bundle\ReminderBundle\Tests\Behat\Context\ReminderContext
       paths:
       - '@OroCalendarBundle/Tests/Behat/Features'
   pages:
