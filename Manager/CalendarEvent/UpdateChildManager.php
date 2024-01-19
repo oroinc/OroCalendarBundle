@@ -2,11 +2,13 @@
 
 namespace Oro\Bundle\CalendarBundle\Manager\CalendarEvent;
 
+use Doctrine\Common\Collections\Collection;
 use Doctrine\Persistence\ManagerRegistry;
 use Oro\Bundle\CalendarBundle\Entity\Calendar;
 use Oro\Bundle\CalendarBundle\Entity\CalendarEvent;
 use Oro\Bundle\CalendarBundle\Entity\Repository\CalendarRepository;
 use Oro\Bundle\OrganizationBundle\Entity\Organization;
+use Oro\Bundle\ReminderBundle\Entity\Reminder;
 
 /**
  * Responsible to actualize child event state after parent event was updated:
@@ -231,6 +233,7 @@ class UpdateChildManager
         $attendeeCalendarEvent->setCalendar($calendar);
         $attendeeCalendarEvent->setParent($calendarEvent);
         $attendeeCalendarEvent->setIsOrganizer(false);
+        $attendeeCalendarEvent->setReminders($this->cloneReminders($calendarEvent->getReminders()));
         $calendarEvent->addChildEvent($attendeeCalendarEvent);
         $attendeeCalendarEvent->setRelatedAttendee($attendeeCalendarEvent->findRelatedAttendee());
 
@@ -238,6 +241,16 @@ class UpdateChildManager
         $this->updateAttendeeCalendarEvent($calendarEvent, $attendeeCalendarEvent);
 
         return $attendeeCalendarEvent;
+    }
+
+    private function cloneReminders(Collection $source): Collection
+    {
+        return $source->map(function (Reminder $reminder) {
+            return (new Reminder())
+                ->setState($reminder->getState())
+                ->setMethod($reminder->getMethod())
+                ->setInterval($reminder->getInterval());
+        });
     }
 
     /**
