@@ -25,7 +25,7 @@ class FixEmailTemplates extends ParametrizedMigrationQuery
         $sql = "SELECT * FROM oro_email_template
             WHERE content LIKE '%calendar_date_range%' ORDER BY id";
         $this->logQuery($logger, $sql);
-        $templates = $this->connection->fetchAll($sql);
+        $templates = $this->connection->fetchAllAssociative($sql);
 
         try {
             $this->connection->beginTransaction();

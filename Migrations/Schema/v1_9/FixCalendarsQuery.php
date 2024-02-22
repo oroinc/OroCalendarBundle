@@ -29,7 +29,7 @@ class FixCalendarsQuery extends ParametrizedMigrationQuery
         // find duplicated calendars
         $sql = 'SELECT * FROM oro_calendar ORDER BY id';
         $this->logQuery($logger, $sql);
-        $calendars = $this->connection->fetchAll($sql);
+        $calendars = $this->connection->fetchAllAssociative($sql);
 
         $existingCalendars = [];
         $calendarsForDeletion = [];

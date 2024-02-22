@@ -42,7 +42,7 @@ class UpdateAttendeeEntityConfig extends ParametrizedMigrationQuery
         $this->logQuery($logger, $query, $params, $types);
 
         // prepare update query
-        $rows = $this->connection->fetchAll($query, $params, $types);
+        $rows = $this->connection->fetchAllAssociative($query, $params, $types);
         if (count($rows) > 0) {
             $row = $rows[0];
             $data = $this->connection->convertToPHPValue($row['data'], 'array');
