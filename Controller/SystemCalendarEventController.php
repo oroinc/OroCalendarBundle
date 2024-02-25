@@ -24,12 +24,11 @@ use Symfony\Contracts\Translation\TranslatorInterface;
 class SystemCalendarEventController extends AbstractController
 {
     /**
-     * @Route("/event/view/{id}", name="oro_system_calendar_event_view", requirements={"id"="\d+"})
-     * @Template
-     *
      * @param CalendarEvent $entity
      * @return array
      */
+    #[Route(path: '/event/view/{id}', name: 'oro_system_calendar_event_view', requirements: ['id' => '\d+'])]
+    #[Template]
     public function viewAction(CalendarEvent $entity)
     {
         $calendar = $entity->getSystemCalendar();
@@ -48,19 +47,19 @@ class SystemCalendarEventController extends AbstractController
     }
 
     /**
-     * @Route(
-     *      "/widget/info/{id}/{renderContexts}",
-     *      name="oro_system_calendar_event_widget_info",
-     *      requirements={"id"="\d+", "renderContexts"="\d+"},
-     *      defaults={"renderContexts"=true}
-     * )
-     * @Template
      *
      * @param Request $request
      * @param CalendarEvent $entity
      * @param int $renderContexts
      * @return array
      */
+    #[Route(
+        path: '/widget/info/{id}/{renderContexts}',
+        name: 'oro_system_calendar_event_widget_info',
+        requirements: ['id' => '\d+', 'renderContexts' => '\d+'],
+        defaults: ['renderContexts' => true]
+    )]
+    #[Template]
     public function infoAction(Request $request, CalendarEvent $entity, $renderContexts)
     {
         $calendar = $entity->getSystemCalendar();
@@ -75,12 +74,12 @@ class SystemCalendarEventController extends AbstractController
     }
 
     /**
-     * @Route("/{id}/event/create", name="oro_system_calendar_event_create", requirements={"id"="\d+"})
-     * @Template("@OroCalendar/SystemCalendarEvent/update.html.twig")
      * @param Request $request
      * @param SystemCalendar $calendar
      * @return array|RedirectResponse
      */
+    #[Route(path: '/{id}/event/create', name: 'oro_system_calendar_event_create', requirements: ['id' => '\d+'])]
+    #[Template('@OroCalendar/SystemCalendarEvent/update.html.twig')]
     public function createAction(Request $request, SystemCalendar $calendar)
     {
         $this->checkPermissionByConfig($calendar);
@@ -109,12 +108,12 @@ class SystemCalendarEventController extends AbstractController
     }
 
     /**
-     * @Route("/event/update/{id}", name="oro_system_calendar_event_update", requirements={"id"="\d+"})
-     * @Template
      * @param Request $request
      * @param CalendarEvent $entity
      * @return array|RedirectResponse
      */
+    #[Route(path: '/event/update/{id}', name: 'oro_system_calendar_event_update', requirements: ['id' => '\d+'])]
+    #[Template]
     public function updateAction(Request $request, CalendarEvent $entity)
     {
         $calendar = $entity->getSystemCalendar();

@@ -10,7 +10,7 @@ use Oro\Bundle\CalendarBundle\Manager\AttendeeManager;
 use Oro\Bundle\CalendarBundle\Manager\AttendeeRelationManager;
 use Oro\Bundle\CalendarBundle\Manager\CalendarEvent\NotificationManager;
 use Oro\Bundle\CalendarBundle\Manager\CalendarEventManager;
-use Oro\Bundle\SecurityBundle\Annotation\CsrfProtection;
+use Oro\Bundle\SecurityBundle\Attribute\CsrfProtection;
 use Oro\Bundle\SecurityBundle\Authentication\TokenAccessorInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -18,27 +18,39 @@ use Symfony\Component\Routing\Annotation\Route;
 
 /**
  * AJAX calendar event controller
- * @Route("/event/ajax")
  */
+#[Route(path: '/event/ajax')]
 class AjaxCalendarEventController extends AbstractController
 {
     /**
-     * @Route("/accepted/{id}", methods={"POST"},
-     *      name="oro_calendar_event_accepted",
-     *      requirements={"id"="\d+"}, defaults={"status"="accepted"})
-     * @Route("/tentative/{id}", methods={"POST"},
-     *      name="oro_calendar_event_tentative",
-     *      requirements={"id"="\d+"}, defaults={"status"="tentative"})
-     * @Route("/declined/{id}", methods={"POST"},
-     *      name="oro_calendar_event_declined",
-     *      requirements={"id"="\d+"}, defaults={"status"="declined"})
-     * @CsrfProtection()
      *
      * @param CalendarEvent $entity
      * @param string        $status
      *
      * @return JsonResponse
      */
+    #[Route(
+        path: '/accepted/{id}',
+        name: 'oro_calendar_event_accepted',
+        requirements: ['id' => '\d+'],
+        defaults: ['status' => 'accepted'],
+        methods: ['POST']
+    )]
+    #[Route(
+        path: '/tentative/{id}',
+        name: 'oro_calendar_event_tentative',
+        requirements: ['id' => '\d+'],
+        defaults: ['status' => 'tentative'],
+        methods: ['POST']
+    )]
+    #[Route(
+        path: '/declined/{id}',
+        name: 'oro_calendar_event_declined',
+        requirements: ['id' => '\d+'],
+        defaults: ['status' => 'declined'],
+        methods: ['POST']
+    )]
+    #[CsrfProtection()]
     public function changeStatusAction(CalendarEvent $entity, $status)
     {
         try {
@@ -55,7 +67,7 @@ class AjaxCalendarEventController extends AbstractController
         }
 
         $this->container->get('doctrine')
-            ->getManagerForClass('Oro\Bundle\CalendarBundle\Entity\CalendarEvent')
+            ->getManagerForClass(CalendarEvent::class)
             ->flush();
 
         $this->container->get(NotificationManager::class)->onChangeInvitationStatus(
@@ -67,16 +79,15 @@ class AjaxCalendarEventController extends AbstractController
     }
 
     /**
-     * @Route(
-     *      "/attendees-autocomplete-data/{id}",
-     *      name="oro_calendar_event_attendees_autocomplete_data",
-     *      options={"expose"=true}
-     * )
      *
      * @param int $id
-     *
      * @return JsonResponse
      */
+    #[Route(
+        path: '/attendees-autocomplete-data/{id}',
+        name: 'oro_calendar_event_attendees_autocomplete_data',
+        options: ['expose' => true]
+    )]
     public function attendeesAutocompleteDataAction($id)
     {
         $attendeeManager = $this->container->get(AttendeeManager::class);

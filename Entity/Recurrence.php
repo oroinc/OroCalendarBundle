@@ -2,37 +2,26 @@
 
 namespace Oro\Bundle\CalendarBundle\Entity;
 
+use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 
 /**
  * Recurrence Entity.
- *
- * @ORM\Table(
- *     name="oro_calendar_recurrence",
- *      indexes={
- *          @ORM\Index(name="oro_calendar_r_start_time_idx", columns={"start_time"}),
- *          @ORM\Index(name="oro_calendar_r_end_time_idx", columns={"end_time"}),
- *          @ORM\Index(name="oro_calendar_r_c_end_time_idx", columns={"calculated_end_time"})
- *      }
- * )
- * @ORM\Entity
  */
+#[ORM\Entity]
+#[ORM\Table(name: 'oro_calendar_recurrence')]
+#[ORM\Index(columns: ['start_time'], name: 'oro_calendar_r_start_time_idx')]
+#[ORM\Index(columns: ['end_time'], name: 'oro_calendar_r_end_time_idx')]
+#[ORM\Index(columns: ['calculated_end_time'], name: 'oro_calendar_r_c_end_time_idx')]
 class Recurrence
 {
-    /**
-     * @ORM\Id
-     * @ORM\Column(type="integer")
-     * @ORM\GeneratedValue(strategy="AUTO")
-     */
-    protected $id;
+    #[ORM\Id]
+    #[ORM\Column(type: Types::INTEGER)]
+    #[ORM\GeneratedValue(strategy: 'AUTO')]
+    protected ?int $id = null;
 
-    /**
-     * @ORM\OneToOne(
-     *     targetEntity="Oro\Bundle\CalendarBundle\Entity\CalendarEvent",
-     *     mappedBy="recurrence"
-     * )
-     */
-    protected $calendarEvent;
+    #[ORM\OneToOne(mappedBy: 'recurrence', targetEntity: CalendarEvent::class)]
+    protected ?CalendarEvent $calendarEvent = null;
 
     /**
      * Determines what recurrence strategy must be used to calculate occurrences of recurring event,
@@ -53,12 +42,9 @@ class Recurrence
      * @see \Oro\Bundle\CalendarBundle\Model\Recurrence\MonthNthStrategy
      * @see \Oro\Bundle\CalendarBundle\Model\Recurrence\YearlyStrategy
      * @see \Oro\Bundle\CalendarBundle\Model\Recurrence\YearNthStrategy
-     *
-     * @var string
-     *
-     * @ORM\Column(name="recurrence_type", type="string", length=16)
      */
-    protected $recurrenceType;
+    #[ORM\Column(name: 'recurrence_type', type: Types::STRING, length: 16)]
+    protected ?string $recurrenceType = null;
 
     /**
      * Contains number of units how often recurring events must repeat.
@@ -69,12 +55,9 @@ class Recurrence
      * For weekly recurrence it is number of weeks.
      * For monthly, monthnth recurrences it is number of months.
      * For yearly, yearnth recurrences it is number of month, which is multiple of 12. I.e. 12, 24, 36 etc.
-     *
-     * @var int
-     *
-     * @ORM\Column(name="`interval`", type="integer")
      */
-    protected $interval;
+    #[ORM\Column(name: '`interval`', type: Types::INTEGER)]
+    protected ?int $interval = null;
 
     /**
      * Contains a value from 1 to 5, that is relative value for 'first', 'second', 'third', 'fourth' and 'last'.
@@ -90,12 +73,9 @@ class Recurrence
      * @see \Oro\Bundle\CalendarBundle\Model\Recurrence::INSTANCE_THIRD
      * @see \Oro\Bundle\CalendarBundle\Model\Recurrence::INSTANCE_FOURTH
      * @see \Oro\Bundle\CalendarBundle\Model\Recurrence::INSTANCE_LAST
-     *
-     * @var int
-     *
-     * @ORM\Column(name="instance", type="integer", nullable=true)
      */
-    protected $instance;
+    #[ORM\Column(name: 'instance', type: Types::INTEGER, nullable: true)]
+    protected ?int $instance = null;
 
     /**
      * Contains array of weekdays.
@@ -117,80 +97,58 @@ class Recurrence
      * @see \Oro\Bundle\CalendarBundle\Model\Recurrence::DAY_SATURDAY
      *
      * @var string[]
-     *
-     * @ORM\Column(name="day_of_week", type="array", nullable=true)
      */
+    #[ORM\Column(name: 'day_of_week', type: Types::ARRAY, nullable: true)]
     protected $dayOfWeek;
 
     /**
      * Contains day of month that is used by monthly and yearly strategies.
-     *
-     * @var int
-     *
-     * @ORM\Column(name="day_of_month", type="integer", nullable=true)
      */
-    protected $dayOfMonth;
+    #[ORM\Column(name: 'day_of_month', type: Types::INTEGER, nullable: true)]
+    protected ?int $dayOfMonth = null;
 
     /**
      * Contains month number that is used by yearly and yearnth strategies.
-     *
-     * @var int
-     *
-     * @ORM\Column(name="month_of_year", type="integer", nullable=true)
      */
-    protected $monthOfYear;
+    #[ORM\Column(name: 'month_of_year', type: Types::INTEGER, nullable: true)]
+    protected ?int $monthOfYear = null;
 
     /**
      * Start datetime for range of recurrence.
-     *
-     * @var \DateTime
-     *
-     * @ORM\Column(name="start_time", type="datetime")
      */
-    protected $startTime;
+    #[ORM\Column(name: 'start_time', type: Types::DATETIME_MUTABLE)]
+    protected ?\DateTimeInterface $startTime = null;
 
     /**
      * End datetime for range of recurrence.
-     *
-     * @var \DateTime
-     *
-     * @ORM\Column(name="end_time", type="datetime", nullable=true)
      */
-    protected $endTime;
+    #[ORM\Column(name: 'end_time', type: Types::DATETIME_MUTABLE, nullable: true)]
+    protected ?\DateTimeInterface $endTime = null;
 
     /**
      * Contains calculated end datetime for range of recurrence.
      * It is used for optimization of SQL query responsible to get all events in some range of time.
      *
      * @see \Oro\Bundle\CalendarBundle\Model\Recurrence\StrategyInterface::getCalculatedEndTime
-     *
-     * @var \DateTime
-     *
-     * @ORM\Column(name="calculated_end_time", type="datetime")
      */
-    protected $calculatedEndTime;
+    #[ORM\Column(name: 'calculated_end_time', type: Types::DATETIME_MUTABLE)]
+    protected ?\DateTimeInterface $calculatedEndTime = null;
 
     /**
      * Contains the number of occurrences for range of recurrence.
      * It means that recurrence ends after X occurrences, where X is value of $occurrences.
-     *
-     * @var int
-     *
-     * @ORM\Column(name="occurrences", type="integer", nullable=true)
      */
-    protected $occurrences;
+    #[ORM\Column(name: 'occurrences', type: Types::INTEGER, nullable: true)]
+    protected ?int $occurrences = null;
 
     /**
      * The time zone in which the time is specified.
      * For recurring events this field is required and specifies the time zone in which the recurrence is expanded.
      *
      * The list of supported Timezones http://php.net/manual/en/timezones.php
-     *
-     * @var string
-     *
-     * @ORM\Column(name="timezone", type="string", length=255)
      */
-    protected $timeZone;
+    #[ORM\Column(name: 'timezone', type: Types::STRING, length: 255)]
+    protected ?string $timeZone = null;
 
     /**
      * Gets id

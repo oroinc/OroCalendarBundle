@@ -17,7 +17,7 @@ use Oro\Bundle\SecurityBundle\Tools\UUIDGenerator;
  */
 class CalendarEventEntityListener
 {
-    /** @ORM\PrePersist() */
+    #[ORM\PrePersist]
     public function prePersist(CalendarEvent $calendarEvent, LifecycleEventArgs $event)
     {
         if ($calendarEvent->getParent() !== null && $calendarEvent->getParent()->getUid() !== null) {
@@ -40,7 +40,7 @@ class CalendarEventEntityListener
         $this->updateParentUid($calendarEvent);
     }
 
-    /** @ORM\PreUpdate() */
+    #[ORM\PreUpdate]
     public function preUpdate(CalendarEvent $calendarEvent, PreUpdateEventArgs $event)
     {
         if (!$event->hasChangedField('uid')) {

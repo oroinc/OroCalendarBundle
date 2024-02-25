@@ -4,16 +4,19 @@ namespace Oro\Bundle\CalendarBundle\Entity;
 
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
+use Doctrine\Common\Collections\Criteria;
+use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 use Extend\Entity\Autocomplete\OroCalendarBundle_Entity_CalendarEvent;
 use Oro\Bundle\ActivityBundle\Model\ActivityInterface;
 use Oro\Bundle\ActivityBundle\Model\ExtendActivity;
+use Oro\Bundle\CalendarBundle\Entity\Repository\CalendarEventRepository;
 use Oro\Bundle\CalendarBundle\Exception\NotUserCalendarEvent;
 use Oro\Bundle\DataAuditBundle\Entity\AuditAdditionalFieldsInterface;
 use Oro\Bundle\EntityBundle\EntityProperty\DatesAwareInterface;
 use Oro\Bundle\EntityBundle\EntityProperty\DatesAwareTrait;
-use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\Config;
-use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\ConfigField;
+use Oro\Bundle\EntityConfigBundle\Metadata\Attribute\Config;
+use Oro\Bundle\EntityConfigBundle\Metadata\Attribute\ConfigField;
 use Oro\Bundle\EntityExtendBundle\Entity\ExtendEntityInterface;
 use Oro\Bundle\EntityExtendBundle\Entity\ExtendEntityTrait;
 use Oro\Bundle\ReminderBundle\Entity\RemindableInterface;
@@ -23,55 +26,6 @@ use Oro\Bundle\UserBundle\Entity\User;
 /**
  * Calendar Event ORM Entity.
  *
- * @ORM\Entity(repositoryClass="Oro\Bundle\CalendarBundle\Entity\Repository\CalendarEventRepository")
- * @ORM\Table(
- *      name="oro_calendar_event",
- *      indexes={
- *          @ORM\Index(name="oro_calendar_event_idx", columns={"calendar_id", "start_at", "end_at"}),
- *          @ORM\Index(name="oro_sys_calendar_event_idx", columns={"system_calendar_id", "start_at", "end_at"}),
- *          @ORM\Index(name="oro_calendar_event_up_idx", columns={"updated_at"}),
- *          @ORM\Index(name="oro_calendar_event_osa_idx", columns={"original_start_at"}),
- *          @ORM\Index(name="oro_calendar_event_uid_idx", columns={"calendar_id", "uid"})
- *      }
- * )
- * @ORM\HasLifecycleCallbacks()
- * @Config(
- *      routeName="oro_calendar_view_default",
- *      routeView="oro_calendar_event_view",
- *      defaultValues={
- *          "entity"={
- *              "icon"="fa-clock-o"
- *          },
- *          "dataaudit"={
- *              "auditable"=true
- *          },
- *          "security"={
- *              "type"="ACL",
- *              "group_name"="",
- *              "category"="account_management"
- *          },
- *          "grouping"={
- *              "groups"={"activity"}
- *          },
- *          "reminder"={
- *              "reminder_template_name"="calendar_reminder",
- *              "reminder_flash_template_identifier"="calendar_event_template"
- *          },
- *          "activity"={
- *              "route"="oro_calendar_event_activity_view",
- *              "acl"="oro_calendar_view",
- *              "action_button_widget"="oro_add_calendar_event_button",
- *              "action_link_widget"="oro_add_calendar_event_link"
- *          },
- *          "attachment"={
- *              "immutable"=true
- *          },
- *          "grid"={
- *              "default"="calendar-event-grid",
- *              "context"="calendar-event-for-context-grid"
- *          }
- *      }
- * )
  *
  * @SuppressWarnings(PHPMD.ExcessiveClassComplexity)
  * @SuppressWarnings(PHPMD.ExcessiveClassLength)
@@ -80,6 +34,36 @@ use Oro\Bundle\UserBundle\Entity\User;
  * @SuppressWarnings(PHPMD.TooManyFields)
  * @mixin OroCalendarBundle_Entity_CalendarEvent
  */
+#[ORM\Entity(repositoryClass: CalendarEventRepository::class)]
+#[ORM\Table(name: 'oro_calendar_event')]
+#[ORM\Index(columns: ['calendar_id', 'start_at', 'end_at'], name: 'oro_calendar_event_idx')]
+#[ORM\Index(columns: ['system_calendar_id', 'start_at', 'end_at'], name: 'oro_sys_calendar_event_idx')]
+#[ORM\Index(columns: ['updated_at'], name: 'oro_calendar_event_up_idx')]
+#[ORM\Index(columns: ['original_start_at'], name: 'oro_calendar_event_osa_idx')]
+#[ORM\Index(columns: ['calendar_id', 'uid'], name: 'oro_calendar_event_uid_idx')]
+#[ORM\HasLifecycleCallbacks]
+#[Config(
+    routeName: 'oro_calendar_view_default',
+    routeView: 'oro_calendar_event_view',
+    defaultValues: [
+        'entity' => ['icon' => 'fa-clock-o'],
+        'dataaudit' => ['auditable' => true],
+        'security' => ['type' => 'ACL', 'group_name' => '', 'category' => 'account_management'],
+        'grouping' => ['groups' => ['activity']],
+        'reminder' => [
+            'reminder_template_name' => 'calendar_reminder',
+            'reminder_flash_template_identifier' => 'calendar_event_template'
+        ],
+        'activity' => [
+            'route' => 'oro_calendar_event_activity_view',
+            'acl' => 'oro_calendar_view',
+            'action_button_widget' => 'oro_add_calendar_event_button',
+            'action_link_widget' => 'oro_add_calendar_event_link'
+        ],
+        'attachment' => ['immutable' => true],
+        'grid' => ['default' => 'calendar-event-grid', 'context' => 'calendar-event-for-context-grid']
+    ]
+)]
 class CalendarEvent implements
     RemindableInterface,
     DatesAwareInterface,
@@ -91,148 +75,57 @@ class CalendarEvent implements
     use ExtendActivity;
     use ExtendEntityTrait;
 
-    /**
-     * @ORM\Id
-     * @ORM\Column(name="id", type="integer")
-     * @ORM\GeneratedValue(strategy="AUTO")
-     */
-    protected $id;
+    #[ORM\Id]
+    #[ORM\Column(name: 'id', type: Types::INTEGER)]
+    #[ORM\GeneratedValue(strategy: 'AUTO')]
+    protected ?int $id = null;
+
+    #[ORM\Column(name: 'uid', type: Types::STRING, length: 36, nullable: true)]
+    #[ConfigField(defaultValues: ['dataaudit' => ['auditable' => true]])]
+    protected ?string $uid = null;
 
     /**
-     * @var string
-     *
-     * @ORM\Column(name="uid", type="string", nullable=true, length=36)
-     * @ConfigField(
-     *      defaultValues={
-     *          "dataaudit"={
-     *              "auditable"=true
-     *          }
-     *      }
-     * )
+     * @var Collection<int, CalendarEvent>
      */
-    protected $uid;
+    #[ORM\OneToMany(mappedBy: 'parent', targetEntity: CalendarEvent::class, cascade: ['all'], orphanRemoval: true)]
+    protected ?Collection $childEvents = null;
 
-    /**
-     * @var ArrayCollection
-     *
-     * @ORM\OneToMany(targetEntity="CalendarEvent", mappedBy="parent", orphanRemoval=true, cascade={"all"})
-     */
-    protected $childEvents;
+    #[ORM\ManyToOne(targetEntity: CalendarEvent::class, fetch: 'EAGER', inversedBy: 'childEvents')]
+    #[ORM\JoinColumn(name: 'parent_id', referencedColumnName: 'id', onDelete: 'CASCADE')]
+    protected ?CalendarEvent $parent = null;
 
-    /**
-     * @var CalendarEvent
-     *
-     * @ORM\ManyToOne(targetEntity="CalendarEvent", inversedBy="childEvents", fetch="EAGER")
-     * @ORM\JoinColumn(name="parent_id", referencedColumnName="id", onDelete="CASCADE")
-     */
-    protected $parent;
+    #[ORM\ManyToOne(targetEntity: Calendar::class, inversedBy: 'events')]
+    #[ORM\JoinColumn(name: 'calendar_id', referencedColumnName: 'id', nullable: true, onDelete: 'CASCADE')]
+    #[ConfigField(defaultValues: ['dataaudit' => ['auditable' => true]])]
+    protected ?Calendar $calendar = null;
 
-    /**
-     * @var Calendar
-     *
-     * @ORM\ManyToOne(targetEntity="Calendar", inversedBy="events")
-     * @ORM\JoinColumn(name="calendar_id", referencedColumnName="id", nullable=true, onDelete="CASCADE")
-     * @ConfigField(
-     *      defaultValues={
-     *          "dataaudit"={
-     *              "auditable"=true
-     *          }
-     *      }
-     * )
-     */
-    protected $calendar;
+    #[ORM\ManyToOne(targetEntity: SystemCalendar::class, inversedBy: 'events')]
+    #[ORM\JoinColumn(name: 'system_calendar_id', referencedColumnName: 'id', nullable: true, onDelete: 'CASCADE')]
+    #[ConfigField(defaultValues: ['dataaudit' => ['auditable' => true]])]
+    protected ?SystemCalendar $systemCalendar = null;
 
-    /**
-     * @var SystemCalendar
-     *
-     * @ORM\ManyToOne(targetEntity="SystemCalendar", inversedBy="events")
-     * @ORM\JoinColumn(name="system_calendar_id", referencedColumnName="id", nullable=true, onDelete="CASCADE")
-     * @ConfigField(
-     *      defaultValues={
-     *          "dataaudit"={
-     *              "auditable"=true
-     *          }
-     *      }
-     * )
-     */
-    protected $systemCalendar;
+    #[ORM\Column(name: 'title', type: Types::STRING, length: 255)]
+    #[ConfigField(defaultValues: ['dataaudit' => ['auditable' => true]])]
+    protected ?string $title = null;
 
-    /**
-     * @var string
-     *
-     * @ORM\Column(name="title", type="string", length=255)
-     * @ConfigField(
-     *      defaultValues={
-     *          "dataaudit"={
-     *              "auditable"=true
-     *          }
-     *      }
-     * )
-     */
-    protected $title;
+    #[ORM\Column(name: 'description', type: Types::TEXT, nullable: true)]
+    #[ConfigField(defaultValues: ['dataaudit' => ['auditable' => true]])]
+    protected ?string $description = null;
 
-    /**
-     * @var string
-     *
-     * @ORM\Column(name="description", type="text", nullable=true)
-     * @ConfigField(
-     *      defaultValues={
-     *          "dataaudit"={
-     *              "auditable"=true
-     *          }
-     *      }
-     * )
-     */
-    protected $description;
+    #[ORM\Column(name: 'start_at', type: Types::DATETIME_MUTABLE)]
+    #[ConfigField(defaultValues: ['dataaudit' => ['auditable' => true]])]
+    protected ?\DateTimeInterface $start = null;
 
-    /**
-     * @var \DateTime
-     *
-     * @ORM\Column(name="start_at", type="datetime")
-     * @ConfigField(
-     *      defaultValues={
-     *          "dataaudit"={
-     *              "auditable"=true
-     *          }
-     *      }
-     * )
-     */
-    protected $start;
+    #[ORM\Column(name: 'end_at', type: Types::DATETIME_MUTABLE)]
+    #[ConfigField(defaultValues: ['dataaudit' => ['auditable' => true]])]
+    protected ?\DateTimeInterface $end = null;
 
-    /**
-     * @var \DateTime
-     *
-     * @ORM\Column(name="end_at", type="datetime")
-     * @ConfigField(
-     *      defaultValues={
-     *          "dataaudit"={
-     *              "auditable"=true
-     *          }
-     *      }
-     * )
-     */
-    protected $end;
+    #[ORM\Column(name: 'all_day', type: Types::BOOLEAN, nullable: false, options: ['default' => false])]
+    #[ConfigField(defaultValues: ['dataaudit' => ['auditable' => true]])]
+    protected ?bool $allDay = false;
 
-    /**
-     * @var bool
-     *
-     * @ORM\Column(name="all_day", type="boolean", nullable=false, options={"default"=false})
-     * @ConfigField(
-     *      defaultValues={
-     *          "dataaudit"={
-     *              "auditable"=true
-     *          }
-     *      }
-     * )
-     */
-    protected $allDay = false;
-
-    /**
-     * @var string|null
-     *
-     * @ORM\Column(name="background_color", type="string", length=7, nullable=true)
-     */
-    protected $backgroundColor;
+    #[ORM\Column(name: 'background_color', type: Types::STRING, length: 7, nullable: true)]
+    protected ?string $backgroundColor = null;
 
     /**
      * @var Collection
@@ -244,48 +137,32 @@ class CalendarEvent implements
      * value of the one from parentEvent is used since all (parent, child) events have the same attendees
      * (so there is no need for some synchronization mechanism in case attendees changes).
      *
-     * @var Collection|Attendee[]
-     *
-     * @ORM\OneToMany(
-     *     targetEntity="Oro\Bundle\CalendarBundle\Entity\Attendee",
-     *     mappedBy="calendarEvent",
-     *     cascade={"all"},
-     *     orphanRemoval=true,
-     *     fetch="EAGER"
-     * )
-     * @ORM\OrderBy({"displayName"="ASC"})
+     * @var Collection<int, Attendee>
      */
-    protected $attendees;
+    #[ORM\OneToMany(
+        mappedBy: 'calendarEvent',
+        targetEntity: Attendee::class,
+        cascade: ['all'],
+        fetch: 'EAGER',
+        orphanRemoval: true
+    )]
+    #[ORM\OrderBy(['displayName' => Criteria::ASC])]
+    protected ?Collection $attendees = null;
 
     /**
      * Attendee associated with this event (one attendee from attendees property having calendar owner in user property)
      * It can be null for parent event in case creator of the event is not among attendees.
-     *
-     * @var Attendee
-     *
-     * @ORM\ManyToOne(
-     *     targetEntity="Oro\Bundle\CalendarBundle\Entity\Attendee",
-     *     cascade={"persist", "remove"},
-     *     fetch="EAGER"
-     * )
-     * @ORM\JoinColumn(name="related_attendee_id", referencedColumnName="id", onDelete="SET NULL")
      */
-    protected $relatedAttendee;
+    #[ORM\ManyToOne(targetEntity: Attendee::class, cascade: ['persist', 'remove'], fetch: 'EAGER')]
+    #[ORM\JoinColumn(name: 'related_attendee_id', referencedColumnName: 'id', onDelete: 'SET NULL')]
+    protected ?Attendee $relatedAttendee = null;
 
     /**
      * Defines recurring event rules. Only original recurring event has this relation not empty.
-     *
-     * @var Recurrence
-     *
-     * @ORM\OneToOne(
-     *     targetEntity="Oro\Bundle\CalendarBundle\Entity\Recurrence",
-     *     inversedBy="calendarEvent",
-     *     cascade={"ALL"},
-     *     orphanRemoval=true
-     * )
-     * @ORM\JoinColumn(name="recurrence_id", nullable=true, referencedColumnName="id", onDelete="SET NULL")
      */
-    protected $recurrence;
+    #[ORM\OneToOne(inversedBy: 'calendarEvent', targetEntity: Recurrence::class, cascade: ['ALL'], orphanRemoval: true)]
+    #[ORM\JoinColumn(name: 'recurrence_id', referencedColumnName: 'id', nullable: true, onDelete: 'SET NULL')]
+    protected ?Recurrence $recurrence = null;
 
     /**
      * Collection of exceptions of recurring event.
@@ -299,35 +176,28 @@ class CalendarEvent implements
      * Only exception event uses these properties: $recurringEvent, $originalStart and $cancelled.
      * At the same time exception cannot use these properties: $recurrence, $recurringEventExceptions.
      *
-     * @var ArrayCollection
-     *
-     * @ORM\OneToMany(targetEntity="CalendarEvent", mappedBy="recurringEvent", cascade={"persist"})
+     * @var Collection<int, CalendarEvent>
      */
-    protected $recurringEventExceptions;
+    #[ORM\OneToMany(mappedBy: 'recurringEvent', targetEntity: CalendarEvent::class, cascade: ['persist'])]
+    protected ?Collection $recurringEventExceptions = null;
 
     /**
      * This attribute determines whether an event is an exception and what is original recurring event.
      *
      * Only exception event has this relation not empty.
-     *
-     * @var CalendarEvent
-     *
-     * @ORM\ManyToOne(targetEntity="CalendarEvent", inversedBy="recurringEventExceptions")
-     * @ORM\JoinColumn(name="recurring_event_id", referencedColumnName="id", onDelete="CASCADE")
      */
-    protected $recurringEvent;
+    #[ORM\ManyToOne(targetEntity: CalendarEvent::class, inversedBy: 'recurringEventExceptions')]
+    #[ORM\JoinColumn(name: 'recurring_event_id', referencedColumnName: 'id', onDelete: 'CASCADE')]
+    protected ?CalendarEvent $recurringEvent = null;
 
     /**
      * For an instance of exception of $recurringEvent, this is the time at which this event would start according to
      * the recurrence data saved in $recurrence property of $recurringEvent.
      *
      * Only exception event has this value not empty.
-     *
-     * @var \DateTime
-     *
-     * @ORM\Column(name="original_start_at", type="datetime", nullable=true)
      */
-    protected $originalStart;
+    #[ORM\Column(name: 'original_start_at', type: Types::DATETIME_MUTABLE, nullable: true)]
+    protected ?\DateTimeInterface $originalStart = null;
 
     /**
      * For an instance of exception of $recurringEvent, this flag determines if this event is cancelled.
@@ -335,10 +205,9 @@ class CalendarEvent implements
      * Only exception event has this value not empty.
      *
      * @var bool
-     *
-     * @ORM\Column(name="is_cancelled", type="boolean", nullable=false, options={"default"=false})
      */
-    protected $cancelled = false;
+    #[ORM\Column(name: 'is_cancelled', type: Types::BOOLEAN, nullable: false, options: ['default' => false])]
+    protected ?bool $cancelled = false;
 
     /**
      * System flag to indicate clone method of child event is in progress.
@@ -349,34 +218,18 @@ class CalendarEvent implements
      */
     protected $childEventCloneInProgress = false;
 
-    /**
-     * @var bool
-     *
-     * @ORM\Column(name="is_organizer", type="boolean", nullable=true)
-     */
-    protected $isOrganizer;
+    #[ORM\Column(name: 'is_organizer', type: Types::BOOLEAN, nullable: true)]
+    protected ?bool $isOrganizer = null;
 
-    /**
-     * @var string
-     *
-     * @ORM\Column(name="organizer_email", type="string", length=255, nullable=true)
-     */
-    protected $organizerEmail;
+    #[ORM\Column(name: 'organizer_email', type: Types::STRING, length: 255, nullable: true)]
+    protected ?string $organizerEmail = null;
 
-    /**
-     * @var string
-     *
-     * @ORM\Column(name="organizer_display_name", type="string", length=255, nullable=true)
-     */
-    protected $organizerDisplayName;
+    #[ORM\Column(name: 'organizer_display_name', type: Types::STRING, length: 255, nullable: true)]
+    protected ?string $organizerDisplayName = null;
 
-    /**
-     * @var User
-     *
-     * @ORM\ManyToOne(targetEntity="Oro\Bundle\UserBundle\Entity\User")
-     * @ORM\JoinColumn(name="organizer_user_id", referencedColumnName="id", nullable=true, onDelete="SET NULL")
-     */
-    protected $organizerUser;
+    #[ORM\ManyToOne(targetEntity: User::class)]
+    #[ORM\JoinColumn(name: 'organizer_user_id', referencedColumnName: 'id', nullable: true, onDelete: 'SET NULL')]
+    protected ?User $organizerUser = null;
 
     /**
      * CalendarEvent constructor.

@@ -7,8 +7,8 @@ use Oro\Bundle\CalendarBundle\Entity\CalendarEvent;
 use Oro\Bundle\CalendarBundle\Form\Handler\CalendarEventHandler;
 use Oro\Bundle\CalendarBundle\Manager\CalendarEventManager;
 use Oro\Bundle\EntityBundle\Tools\EntityRoutingHelper;
-use Oro\Bundle\SecurityBundle\Annotation\Acl;
-use Oro\Bundle\SecurityBundle\Annotation\AclAncestor;
+use Oro\Bundle\SecurityBundle\Attribute\Acl;
+use Oro\Bundle\SecurityBundle\Attribute\AclAncestor;
 use Oro\Bundle\SecurityBundle\Authentication\TokenAccessorInterface;
 use Oro\Bundle\UIBundle\Route\Router;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
@@ -21,22 +21,19 @@ use Symfony\Contracts\Translation\TranslatorInterface;
 
 /**
  * Calendar event controller
- *
- * @Route("/event")
  */
+#[Route(path: '/event')]
 class CalendarEventController extends AbstractController
 {
-    /**
-     * @Route(name="oro_calendar_event_index")
-     * @Template
-     * @Acl(
-     *      id="oro_calendar_event_view",
-     *      type="entity",
-     *      class="Oro\Bundle\CalendarBundle\Entity\CalendarEvent",
-     *      permission="VIEW",
-     *      group_name=""
-     * )
-     */
+    #[Route(name: 'oro_calendar_event_index')]
+    #[Template]
+    #[Acl(
+        id: 'oro_calendar_event_view',
+        type: 'entity',
+        class: CalendarEvent::class,
+        permission: 'VIEW',
+        groupName: ''
+    )]
     public function indexAction()
     {
         return [
@@ -45,13 +42,12 @@ class CalendarEventController extends AbstractController
     }
 
     /**
-     * @Route("/view/{id}", name="oro_calendar_event_view", requirements={"id"="\d+"})
-     * @Template
-     * @AclAncestor("oro_calendar_event_view")
-     *
      * @param CalendarEvent $entity
      * @return array|RedirectResponse
      */
+    #[Route(path: '/view/{id}', name: 'oro_calendar_event_view', requirements: ['id' => '\d+'])]
+    #[Template]
+    #[AclAncestor('oro_calendar_event_view')]
     public function viewAction(CalendarEvent $entity)
     {
         $this->checkPermissionByParentCalendar($entity, 'view');
@@ -69,20 +65,20 @@ class CalendarEventController extends AbstractController
     }
 
     /**
-     * @Route(
-     *      "/widget/info/{id}/{renderContexts}",
-     *      name="oro_calendar_event_widget_info",
-     *      requirements={"id"="\d+", "renderContexts"="\d+"},
-     *      defaults={"renderContexts"=true}
-     * )
-     * @Template
-     * @AclAncestor("oro_calendar_event_view")
      *
      * @param Request $request
      * @param CalendarEvent $entity
      * @param integer|bool $renderContexts
      * @return array
      */
+    #[Route(
+        path: '/widget/info/{id}/{renderContexts}',
+        name: 'oro_calendar_event_widget_info',
+        requirements: ['id' => '\d+', 'renderContexts' => '\d+'],
+        defaults: ['renderContexts' => true]
+    )]
+    #[Template]
+    #[AclAncestor('oro_calendar_event_view')]
     public function infoAction(Request $request, CalendarEvent $entity, $renderContexts)
     {
         $this->checkPermissionByParentCalendar($entity, 'view');
@@ -105,14 +101,14 @@ class CalendarEventController extends AbstractController
      * This action is used to render the list of calendar events associated with the given entity
      * on the view page of this entity
      *
-     * @Route("/activity/view/{entityClass}/{entityId}", name="oro_calendar_event_activity_view")
-     * @AclAncestor("oro_calendar_event_view")
-     * @Template
      *
      * @param string $entityClass
      * @param int $entityId
      * @return array
      */
+    #[Route(path: '/activity/view/{entityClass}/{entityId}', name: 'oro_calendar_event_activity_view')]
+    #[Template]
+    #[AclAncestor('oro_calendar_event_view')]
     public function activityAction($entityClass, $entityId)
     {
         return [
@@ -121,18 +117,18 @@ class CalendarEventController extends AbstractController
     }
 
     /**
-     * @Route("/create", name="oro_calendar_event_create")
-     * @Template("@OroCalendar/CalendarEvent/update.html.twig")
-     * @Acl(
-     *      id="oro_calendar_event_create",
-     *      type="entity",
-     *      class="Oro\Bundle\CalendarBundle\Entity\CalendarEvent",
-     *      permission="CREATE",
-     *      group_name=""
-     * )
      * @param Request $request
      * @return array|RedirectResponse
      */
+    #[Route(path: '/create', name: 'oro_calendar_event_create')]
+    #[Template('@OroCalendar/CalendarEvent/update.html.twig')]
+    #[Acl(
+        id: 'oro_calendar_event_create',
+        type: 'entity',
+        class: CalendarEvent::class,
+        permission: 'CREATE',
+        groupName: ''
+    )]
     public function createAction(Request $request)
     {
         $entity = new CalendarEvent();
@@ -150,20 +146,20 @@ class CalendarEventController extends AbstractController
     }
 
     /**
-     * @Route("/update/{id}", name="oro_calendar_event_update", requirements={"id"="\d+"})
-     * @Template
-     * @Acl(
-     *      id="oro_calendar_event_update",
-     *      type="entity",
-     *      class="Oro\Bundle\CalendarBundle\Entity\CalendarEvent",
-     *      permission="EDIT",
-     *      group_name=""
-     * )
      *
      * @param Request $request
      * @param CalendarEvent $entity
      * @return array|RedirectResponse
      */
+    #[Route(path: '/update/{id}', name: 'oro_calendar_event_update', requirements: ['id' => '\d+'])]
+    #[Template]
+    #[Acl(
+        id: 'oro_calendar_event_update',
+        type: 'entity',
+        class: CalendarEvent::class,
+        permission: 'EDIT',
+        groupName: ''
+    )]
     public function updateAction(Request $request, CalendarEvent $entity)
     {
         $this->checkPermissionByParentCalendar($entity, 'edit');
@@ -177,20 +173,20 @@ class CalendarEventController extends AbstractController
     /**
      * Remove calendar event.
      *
-     * @Route("/delete/{id}", name="oro_calendar_event_delete", requirements={"id"="\d+"})
      *
-     * @Acl(
-     *      id="oro_calendar_event_delete",
-     *      type="entity",
-     *      class="Oro\Bundle\CalendarBundle\Entity\CalendarEvent",
-     *      permission="DELETE",
-     *      group_name=""
-     * )
      *
      * @param Request $request
      * @param int $id
      * @return Response
      */
+    #[Route(path: '/delete/{id}', name: 'oro_calendar_event_delete', requirements: ['id' => '\d+'])]
+    #[Acl(
+        id: 'oro_calendar_event_delete',
+        type: 'entity',
+        class: CalendarEvent::class,
+        permission: 'DELETE',
+        groupName: ''
+    )]
     public function deleteAction(Request $request, $id)
     {
         return $this->forward(

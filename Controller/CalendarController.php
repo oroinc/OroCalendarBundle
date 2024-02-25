@@ -7,8 +7,8 @@ use Oro\Bundle\CalendarBundle\Entity\Calendar;
 use Oro\Bundle\CalendarBundle\Entity\Repository\CalendarRepository;
 use Oro\Bundle\CalendarBundle\Form\Type\CalendarEventType;
 use Oro\Bundle\CalendarBundle\Provider\CalendarDateTimeConfigProvider;
-use Oro\Bundle\SecurityBundle\Annotation\Acl;
-use Oro\Bundle\SecurityBundle\Annotation\AclAncestor;
+use Oro\Bundle\SecurityBundle\Attribute\Acl;
+use Oro\Bundle\SecurityBundle\Attribute\AclAncestor;
 use Oro\Bundle\SecurityBundle\Authentication\TokenAccessorInterface;
 use Oro\Bundle\UserBundle\Entity\User;
 use Oro\Bundle\UserBundle\Form\Type\UserSelectType;
@@ -24,11 +24,10 @@ class CalendarController extends AbstractController
 {
     /**
      * View user's default calendar
-     *
-     * @Route("/default", name="oro_calendar_view_default")
-     * @Template
-     * @AclAncestor("oro_calendar_view")
      */
+    #[Route(path: '/default', name: 'oro_calendar_view_default')]
+    #[Template]
+    #[AclAncestor('oro_calendar_view')]
     public function viewDefaultAction()
     {
         /** @var User $user */
@@ -46,19 +45,13 @@ class CalendarController extends AbstractController
     /**
      * View calendar
      *
-     * @Route("/view/{id}", name="oro_calendar_view", requirements={"id"="\d+"})
      *
-     * @Template
-     * @Acl(
-     *      id="oro_calendar_view",
-     *      type="entity",
-     *      class="Oro\Bundle\CalendarBundle\Entity\Calendar",
-     *      permission="VIEW",
-     *      group_name=""
-     * )
      * @param Calendar $calendar
      * @return array
      */
+    #[Route(path: '/view/{id}', name: 'oro_calendar_view', requirements: ['id' => '\d+'])]
+    #[Template]
+    #[Acl(id: 'oro_calendar_view', type: 'entity', class: Calendar::class, permission: 'VIEW', groupName: '')]
     public function viewAction(Calendar $calendar)
     {
         $calendarConfigProvider = $this->container->get(CalendarDateTimeConfigProvider::class);

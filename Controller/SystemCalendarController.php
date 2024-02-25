@@ -21,10 +21,8 @@ use Symfony\Contracts\Translation\TranslatorInterface;
  */
 class SystemCalendarController extends AbstractController
 {
-    /**
-     * @Route(name="oro_system_calendar_index")
-     * @Template
-     */
+    #[Route(name: 'oro_system_calendar_index')]
+    #[Template]
     public function indexAction()
     {
         $this->checkPublicAndSystemCalendarsEnabled();
@@ -34,10 +32,8 @@ class SystemCalendarController extends AbstractController
         ];
     }
 
-    /**
-     * @Route("/view/{id}", name="oro_system_calendar_view", requirements={"id"="\d+"})
-     * @Template
-     */
+    #[Route(path: '/view/{id}', name: 'oro_system_calendar_view', requirements: ['id' => '\d+'])]
+    #[Template]
     public function viewAction(SystemCalendar $entity)
     {
         $this->checkCalendarPermissions($entity);
@@ -54,11 +50,11 @@ class SystemCalendarController extends AbstractController
     }
 
     /**
-     * @Route("/create", name="oro_system_calendar_create")
-     * @Template("@OroCalendar/SystemCalendar/update.html.twig")
      * @param Request $request
      * @return array|RedirectResponse
      */
+    #[Route(path: '/create', name: 'oro_system_calendar_create')]
+    #[Template('@OroCalendar/SystemCalendar/update.html.twig')]
     public function createAction(Request $request)
     {
         $this->checkPublicAndSystemCalendarsEnabled();
@@ -71,11 +67,11 @@ class SystemCalendarController extends AbstractController
     }
 
     /**
-     * @Route("/update/{id}", name="oro_system_calendar_update", requirements={"id"="\d+"})
-     * @Template("@OroCalendar/SystemCalendar/update.html.twig")
      * @param Request $request
      * @return array|RedirectResponse
      */
+    #[Route(path: '/update/{id}', name: 'oro_system_calendar_update', requirements: ['id' => '\d+'])]
+    #[Template('@OroCalendar/SystemCalendar/update.html.twig')]
     public function updateAction(Request $request, SystemCalendar $entity)
     {
         $this->checkCalendarPermissions($entity);
@@ -87,10 +83,8 @@ class SystemCalendarController extends AbstractController
         );
     }
 
-    /**
-     * @Route("/widget/events/{id}", name="oro_system_calendar_widget_events", requirements={"id"="\d+"})
-     * @Template
-     */
+    #[Route(path: '/widget/events/{id}', name: 'oro_system_calendar_widget_events', requirements: ['id' => '\d+'])]
+    #[Template]
     public function eventsAction(SystemCalendar $entity)
     {
         $this->checkCalendarPermissions($entity);

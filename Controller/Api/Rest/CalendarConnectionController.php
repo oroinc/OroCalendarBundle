@@ -4,7 +4,7 @@ namespace Oro\Bundle\CalendarBundle\Controller\Api\Rest;
 
 use Nelmio\ApiDocBundle\Annotation\ApiDoc;
 use Oro\Bundle\CalendarBundle\Manager\CalendarPropertyApiEntityManager;
-use Oro\Bundle\SecurityBundle\Annotation\AclAncestor;
+use Oro\Bundle\SecurityBundle\Attribute\AclAncestor;
 use Oro\Bundle\SoapBundle\Controller\Api\Rest\RestController;
 use Oro\Bundle\SoapBundle\Form\Handler\ApiFormHandler;
 use Symfony\Component\Form\Form;
@@ -24,11 +24,11 @@ class CalendarConnectionController extends RestController
      *      description="Get calendar connections",
      *      resource=true
      * )
-     * @AclAncestor("oro_calendar_view")
      *
      * @return Response
      * @throws \InvalidArgumentException
      */
+    #[AclAncestor('oro_calendar_view')]
     public function cgetAction($id)
     {
         $items = $this->getManager()->getCalendarManager()
@@ -50,10 +50,10 @@ class CalendarConnectionController extends RestController
      *      description="Update calendar connection",
      *      resource=true
      * )
-     * @AclAncestor("oro_calendar_view")
      *
      * @return Response
      */
+    #[AclAncestor('oro_calendar_view')]
     public function putAction($id)
     {
         return $this->handleUpdateRequest($id);
@@ -66,10 +66,10 @@ class CalendarConnectionController extends RestController
      *      description="Create new calendar connection",
      *      resource=true
      * )
-     * @AclAncestor("oro_calendar_view")
      *
      * @return Response
      */
+    #[AclAncestor('oro_calendar_view')]
     public function postAction()
     {
         return $this->handleCreateRequest();
@@ -84,10 +84,10 @@ class CalendarConnectionController extends RestController
      *      description="Remove calendar connection",
      *      resource=true
      * )
-     * @AclAncestor("oro_calendar_view")
      *
      * @return Response
      */
+    #[AclAncestor('oro_calendar_view')]
     public function deleteAction($id)
     {
         return $this->handleDeleteRequest($id);

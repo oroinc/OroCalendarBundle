@@ -3,39 +3,33 @@
 namespace Oro\Bundle\CalendarBundle\Entity;
 
 use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
+use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 use Extend\Entity\Autocomplete\OroCalendarBundle_Entity_SystemCalendar;
-use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\Config;
-use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\ConfigField;
+use Oro\Bundle\CalendarBundle\Entity\Repository\SystemCalendarRepository;
+use Oro\Bundle\EntityConfigBundle\Metadata\Attribute\Config;
+use Oro\Bundle\EntityConfigBundle\Metadata\Attribute\ConfigField;
 use Oro\Bundle\EntityExtendBundle\Entity\ExtendEntityInterface;
 use Oro\Bundle\EntityExtendBundle\Entity\ExtendEntityTrait;
 use Oro\Bundle\OrganizationBundle\Entity\Organization;
+use Oro\Bundle\OrganizationBundle\Entity\OrganizationInterface;
 
 /**
  * System calendar entity
- * @ORM\Entity(repositoryClass="Oro\Bundle\CalendarBundle\Entity\Repository\SystemCalendarRepository")
- * @ORM\Table(
- *      name="oro_system_calendar",
- *      indexes={
- *          @ORM\Index(name="oro_system_calendar_up_idx", columns={"updated_at"})
- *      }
- * )
- * @ORM\HasLifecycleCallbacks()
- * @Config(
- *      defaultValues={
- *          "entity"={
- *              "icon"="fa-calendar"
- *          },
- *          "activity"={
- *              "immutable"=true
- *          },
- *          "attachment"={
- *              "immutable"=true
- *          }
- *      }
- * )
  * @mixin OroCalendarBundle_Entity_SystemCalendar
  */
+#[ORM\Entity(repositoryClass: SystemCalendarRepository::class)]
+#[ORM\Table(name: 'oro_system_calendar')]
+#[ORM\Index(columns: ['updated_at'], name: 'oro_system_calendar_up_idx')]
+#[ORM\HasLifecycleCallbacks]
+#[Config(
+    defaultValues: [
+        'entity' => ['icon' => 'fa-calendar'],
+        'activity' => ['immutable' => true],
+        'attachment' => ['immutable' => true]
+    ]
+)]
 class SystemCalendar implements ExtendEntityInterface
 {
     use ExtendEntityTrait;
@@ -43,76 +37,37 @@ class SystemCalendar implements ExtendEntityInterface
     const CALENDAR_ALIAS        = 'system';
     const PUBLIC_CALENDAR_ALIAS = 'public';
 
-    /**
-     * @ORM\Id
-     * @ORM\Column(type="integer")
-     * @ORM\GeneratedValue(strategy="AUTO")
-     */
-    protected $id;
+    #[ORM\Id]
+    #[ORM\Column(type: Types::INTEGER)]
+    #[ORM\GeneratedValue(strategy: 'AUTO')]
+    protected ?int $id = null;
+
+    #[ORM\Column(type: Types::STRING, length: 255)]
+    protected ?string $name = null;
+
+    #[ORM\Column(name: 'background_color', type: Types::STRING, length: 7, nullable: true)]
+    protected ?string $backgroundColor = null;
+
+    #[ORM\Column(name: 'is_public', type: Types::BOOLEAN)]
+    protected ?bool $public = false;
 
     /**
-     * @var string
-     *
-     * @ORM\Column(type="string", length=255)
+     * @var Collection<int, CalendarEvent>
      */
-    protected $name;
+    #[ORM\OneToMany(mappedBy: 'systemCalendar', targetEntity: CalendarEvent::class, cascade: ['persist'])]
+    protected ?Collection $events = null;
 
-    /**
-     * @var string|null
-     *
-     * @ORM\Column(name="background_color", type="string", length=7, nullable=true)
-     */
-    protected $backgroundColor;
+    #[ORM\ManyToOne(targetEntity: Organization::class)]
+    #[ORM\JoinColumn(name: 'organization_id', referencedColumnName: 'id', onDelete: 'SET NULL')]
+    protected ?OrganizationInterface $organization = null;
 
-    /**
-     * @var boolean
-     *
-     * @ORM\Column(name="is_public", type="boolean")
-     */
-    protected $public = false;
+    #[ORM\Column(name: 'created_at', type: Types::DATETIME_MUTABLE)]
+    #[ConfigField(defaultValues: ['entity' => ['label' => 'oro.ui.created_at']])]
+    protected ?\DateTimeInterface $createdAt = null;
 
-    /**
-     * @var ArrayCollection|CalendarEvent[]
-     *
-     * @ORM\OneToMany(targetEntity="CalendarEvent", mappedBy="systemCalendar", cascade={"persist"})
-     */
-    protected $events;
-
-    /**
-     * @var Organization
-     *
-     * @ORM\ManyToOne(targetEntity="Oro\Bundle\OrganizationBundle\Entity\Organization")
-     * @ORM\JoinColumn(name="organization_id", referencedColumnName="id", onDelete="SET NULL")
-     */
-    protected $organization;
-
-    /**
-     * @var \DateTime
-     *
-     * @ORM\Column(name="created_at", type="datetime")
-     * @ConfigField(
-     *      defaultValues={
-     *          "entity"={
-     *              "label"="oro.ui.created_at"
-     *          }
-     *      }
-     * )
-     */
-    protected $createdAt;
-
-    /**
-     * @var \DateTime
-     *
-     * @ORM\Column(name="updated_at", type="datetime")
-     * @ConfigField(
-     *      defaultValues={
-     *          "entity"={
-     *              "label"="oro.ui.updated_at"
-     *          }
-     *      }
-     * )
-     */
-    protected $updatedAt;
+    #[ORM\Column(name: 'updated_at', type: Types::DATETIME_MUTABLE)]
+    #[ConfigField(defaultValues: ['entity' => ['label' => 'oro.ui.updated_at']])]
+    protected ?\DateTimeInterface $updatedAt = null;
 
     /**
      * Constructor
@@ -323,9 +278,8 @@ class SystemCalendar implements ExtendEntityInterface
 
     /**
      * Pre persist event handler
-     *
-     * @ORM\PrePersist
      */
+    #[ORM\PrePersist]
     public function prePersist()
     {
         $this->createdAt = new \DateTime('now', new \DateTimeZone('UTC'));
@@ -334,9 +288,8 @@ class SystemCalendar implements ExtendEntityInterface
 
     /**
      * Pre update event handler
-     *
-     * @ORM\PreUpdate
      */
+    #[ORM\PreUpdate]
     public function preUpdate()
     {
         $this->updatedAt = new \DateTime('now', new \DateTimeZone('UTC'));

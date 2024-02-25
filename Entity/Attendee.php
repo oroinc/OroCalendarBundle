@@ -2,11 +2,13 @@
 
 namespace Oro\Bundle\CalendarBundle\Entity;
 
+use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 use Extend\Entity\Autocomplete\OroCalendarBundle_Entity_Attendee;
+use Oro\Bundle\CalendarBundle\Entity\Repository\AttendeeRepository;
 use Oro\Bundle\EmailBundle\Model\EmailHolderInterface;
-use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\Config;
-use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\ConfigField;
+use Oro\Bundle\EntityConfigBundle\Metadata\Attribute\Config;
+use Oro\Bundle\EntityConfigBundle\Metadata\Attribute\ConfigField;
 use Oro\Bundle\EntityExtendBundle\Entity\AbstractEnumValue;
 use Oro\Bundle\EntityExtendBundle\Entity\ExtendEntityInterface;
 use Oro\Bundle\EntityExtendBundle\Entity\ExtendEntityTrait;
@@ -15,25 +17,16 @@ use Oro\Bundle\UserBundle\Entity\User;
 /**
  * Represents calendar event's attendee and holds information about related user and calendar event.
  *
- * @ORM\Entity(repositoryClass="Oro\Bundle\CalendarBundle\Entity\Repository\AttendeeRepository")
- * @ORM\Table(name="oro_calendar_event_attendee")
- * @ORM\HasLifecycleCallbacks()
- * @Config(
- *      defaultValues={
- *          "entity"={
- *              "icon"="fa-info-circle"
- *          },
- *          "activity"={
- *              "immutable"=true
- *          }
- *      }
- * )
  * @method AbstractEnumValue getType()
  * @method Attendee setType(AbstractEnumValue $value)
  * @method AbstractEnumValue getStatus()
  * @method Attendee setStatus(AbstractEnumValue $value)
  * @mixin OroCalendarBundle_Entity_Attendee
  */
+#[ORM\Entity(repositoryClass: AttendeeRepository::class)]
+#[ORM\Table(name: 'oro_calendar_event_attendee')]
+#[ORM\HasLifecycleCallbacks]
+#[Config(defaultValues: ['entity' => ['icon' => 'fa-info-circle'], 'activity' => ['immutable' => true]])]
 class Attendee implements EmailHolderInterface, ExtendEntityInterface
 {
     use ExtendEntityTrait;
@@ -50,78 +43,36 @@ class Attendee implements EmailHolderInterface, ExtendEntityInterface
     const TYPE_OPTIONAL  = 'optional';
     const TYPE_REQUIRED  = 'required';
 
-    /**
-     * @var int
-     *
-     * @ORM\Id
-     * @ORM\Column(type="integer")
-     * @ORM\GeneratedValue(strategy="AUTO")
-     */
-    protected $id;
+    #[ORM\Id]
+    #[ORM\Column(type: Types::INTEGER)]
+    #[ORM\GeneratedValue(strategy: 'AUTO')]
+    protected ?int $id = null;
+
+    #[ORM\Column(name: 'email', type: Types::STRING, length: 255, nullable: true)]
+    protected ?string $email = null;
+
+    #[ORM\Column(name: 'display_name', type: Types::STRING, length: 255, nullable: true)]
+    protected ?string $displayName = null;
+
+    #[ORM\ManyToOne(targetEntity: User::class)]
+    #[ORM\JoinColumn(name: 'user_id', referencedColumnName: 'id', nullable: true, onDelete: 'SET NULL')]
+    protected ?User $user = null;
 
     /**
-     * @var string
-     *
-     * @ORM\Column(name="email", type="string", length=255, nullable=true)
-     */
-    protected $email;
-
-    /**
-     * @var string
-     *
-     * @ORM\Column(name="display_name", type="string", length=255, nullable=true)
-     */
-    protected $displayName;
-
-    /**
-     * @var User
-     *
-     * @ORM\ManyToOne(targetEntity="Oro\Bundle\UserBundle\Entity\User")
-     * @ORM\JoinColumn(name="user_id", referencedColumnName="id", nullable=true, onDelete="SET NULL")
-     */
-    protected $user;
-
-    /**
-     * @var CalendarEvent
-     *
      * NOTE: The column supports NULL intentionally. Doctrine inserts record into "oro_calendar_event_attendee" first
      * before record of "oro_calendar_event" is inserted, so NULL has to be supported to not trigger DB violatation.
-     *
-     * @ORM\ManyToOne(
-     *     targetEntity="Oro\Bundle\CalendarBundle\Entity\CalendarEvent",
-     *     inversedBy="attendees"
-     * )
-     * @ORM\JoinColumn(name="calendar_event_id", referencedColumnName="id", nullable=true, onDelete="CASCADE")
      */
-    protected $calendarEvent;
+    #[ORM\ManyToOne(targetEntity: CalendarEvent::class, inversedBy: 'attendees')]
+    #[ORM\JoinColumn(name: 'calendar_event_id', referencedColumnName: 'id', nullable: true, onDelete: 'CASCADE')]
+    protected ?CalendarEvent $calendarEvent = null;
 
-    /**
-     * @var \DateTime
-     *
-     * @ORM\Column(name="created_at", type="datetime")
-     * @ConfigField(
-     *      defaultValues={
-     *          "entity"={
-     *              "label"="oro.ui.created_at"
-     *          }
-     *      }
-     * )
-     */
-    protected $createdAt;
+    #[ORM\Column(name: 'created_at', type: Types::DATETIME_MUTABLE)]
+    #[ConfigField(defaultValues: ['entity' => ['label' => 'oro.ui.created_at']])]
+    protected ?\DateTimeInterface $createdAt = null;
 
-    /**
-     * @var \DateTime
-     *
-     * @ORM\Column(name="updated_at", type="datetime")
-     * @ConfigField(
-     *      defaultValues={
-     *          "entity"={
-     *              "label"="oro.ui.updated_at"
-     *          }
-     *      }
-     * )
-     */
-    protected $updatedAt;
+    #[ORM\Column(name: 'updated_at', type: Types::DATETIME_MUTABLE)]
+    #[ConfigField(defaultValues: ['entity' => ['label' => 'oro.ui.updated_at']])]
+    protected ?\DateTimeInterface $updatedAt = null;
 
     /**
      * @return int
@@ -266,9 +217,8 @@ class Attendee implements EmailHolderInterface, ExtendEntityInterface
 
     /**
      * Pre persist event listener
-     *
-     * @ORM\PrePersist
      */
+    #[ORM\PrePersist]
     public function beforeSave()
     {
         $this->createdAt = new \DateTime('now', new \DateTimeZone('UTC'));
@@ -277,9 +227,8 @@ class Attendee implements EmailHolderInterface, ExtendEntityInterface
 
     /**
      * Invoked before the entity is updated.
-     *
-     * @ORM\PreUpdate
      */
+    #[ORM\PreUpdate]
     public function preUpdate()
     {
         $this->updatedAt = new \DateTime('now', new \DateTimeZone('UTC'));

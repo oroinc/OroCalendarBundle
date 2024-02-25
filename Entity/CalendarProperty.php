@@ -2,9 +2,11 @@
 
 namespace Oro\Bundle\CalendarBundle\Entity;
 
+use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 use Extend\Entity\Autocomplete\OroCalendarBundle_Entity_CalendarProperty;
-use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\Config;
+use Oro\Bundle\CalendarBundle\Entity\Repository\CalendarPropertyRepository;
+use Oro\Bundle\EntityConfigBundle\Metadata\Attribute\Config;
 use Oro\Bundle\EntityExtendBundle\Entity\ExtendEntityInterface;
 use Oro\Bundle\EntityExtendBundle\Entity\ExtendEntityTrait;
 
@@ -12,89 +14,46 @@ use Oro\Bundle\EntityExtendBundle\Entity\ExtendEntityTrait;
  * This entity is used to store different kind of user's properties for a calendar.
  * The combination of calendarAlias and calendar is unique identifier of a calendar.
  *
- * @ORM\Entity(repositoryClass="Oro\Bundle\CalendarBundle\Entity\Repository\CalendarPropertyRepository")
- * @ORM\Table(
- *      name="oro_calendar_property",
- *      uniqueConstraints={
- *          @ORM\UniqueConstraint(
- *              name="oro_calendar_prop_uq",
- *              columns={"calendar_alias", "calendar_id", "target_calendar_id"}
- *          )
- *      }
- * )
- * @Config(
- *      defaultValues={
- *          "entity"={
- *              "icon"="fa-cog"
- *          },
- *          "comment"={
- *              "immutable"=true
- *          },
- *          "activity"={
- *              "immutable"=true
- *          },
- *          "attachment"={
- *              "immutable"=true
- *          }
- *      }
- * )
  * @mixin OroCalendarBundle_Entity_CalendarProperty
  */
+#[ORM\Entity(repositoryClass: CalendarPropertyRepository::class)]
+#[ORM\Table(name: 'oro_calendar_property')]
+#[ORM\UniqueConstraint(name: 'oro_calendar_prop_uq', columns: ['calendar_alias', 'calendar_id', 'target_calendar_id'])]
+#[Config(
+    defaultValues: [
+        'entity' => ['icon' => 'fa-cog'],
+        'comment' => ['immutable' => true],
+        'activity' => ['immutable' => true],
+        'attachment' => ['immutable' => true]
+    ]
+)]
 class CalendarProperty implements ExtendEntityInterface
 {
     use ExtendEntityTrait;
 
-    /**
-     * @var int
-     *
-     * @ORM\Id
-     * @ORM\Column(type="integer")
-     * @ORM\GeneratedValue(strategy="AUTO")
-     */
-    protected $id;
+    #[ORM\Id]
+    #[ORM\Column(type: Types::INTEGER)]
+    #[ORM\GeneratedValue(strategy: 'AUTO')]
+    protected ?int $id = null;
 
-    /**
-     * @var Calendar
-     *
-     * @ORM\ManyToOne(targetEntity="Calendar")
-     * @ORM\JoinColumn(name="target_calendar_id", referencedColumnName="id", nullable=false, onDelete="CASCADE")
-     */
-    protected $targetCalendar;
+    #[ORM\ManyToOne(targetEntity: Calendar::class)]
+    #[ORM\JoinColumn(name: 'target_calendar_id', referencedColumnName: 'id', nullable: false, onDelete: 'CASCADE')]
+    protected ?Calendar $targetCalendar = null;
 
-    /**
-     * @var string
-     *
-     * @ORM\Column(name="calendar_alias", type="string", length=32)
-     */
-    protected $calendarAlias;
+    #[ORM\Column(name: 'calendar_alias', type: Types::STRING, length: 32)]
+    protected ?string $calendarAlias = null;
 
-    /**
-     * @var int
-     *
-     * @ORM\Column(name="calendar_id", type="integer")
-     */
-    protected $calendar;
+    #[ORM\Column(name: 'calendar_id', type: Types::INTEGER)]
+    protected ?int $calendar = null;
 
-    /**
-     * @var int
-     *
-     * @ORM\Column(name="position", type="integer", options={"default"=0})
-     */
-    protected $position = 0;
+    #[ORM\Column(name: 'position', type: Types::INTEGER, options: ['default' => 0])]
+    protected ?int $position = 0;
 
-    /**
-     * @var boolean
-     *
-     * @ORM\Column(name="visible", type="boolean", options={"default"=true})
-     */
-    protected $visible = true;
+    #[ORM\Column(name: 'visible', type: Types::BOOLEAN, options: ['default' => true])]
+    protected ?bool $visible = true;
 
-    /**
-     * @var string|null
-     *
-     * @ORM\Column(name="background_color", type="string", length=7, nullable=true)
-     */
-    protected $backgroundColor;
+    #[ORM\Column(name: 'background_color', type: Types::STRING, length: 7, nullable: true)]
+    protected ?string $backgroundColor = null;
 
     /**
      * Gets id of this set of calendar properties.

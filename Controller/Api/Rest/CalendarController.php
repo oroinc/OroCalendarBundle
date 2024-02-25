@@ -8,7 +8,7 @@ use Nelmio\ApiDocBundle\Annotation\ApiDoc;
 use Oro\Bundle\CalendarBundle\Entity\Calendar;
 use Oro\Bundle\CalendarBundle\Entity\Repository\CalendarRepository;
 use Oro\Bundle\OrganizationBundle\Entity\Organization;
-use Oro\Bundle\SecurityBundle\Annotation\AclAncestor;
+use Oro\Bundle\SecurityBundle\Attribute\AclAncestor;
 use Oro\Bundle\UserBundle\Entity\User;
 use Symfony\Component\HttpFoundation\Response;
 
@@ -24,10 +24,10 @@ class CalendarController extends AbstractFOSRestController
      *      description="Get default calendar of user",
      *      resource=true
      * )
-     * @AclAncestor("oro_calendar_view")
      *
      * @return Response
      */
+    #[AclAncestor('oro_calendar_view')]
     public function getDefaultAction()
     {
         /** @var User $user */

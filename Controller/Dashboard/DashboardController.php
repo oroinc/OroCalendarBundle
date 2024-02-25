@@ -20,15 +20,15 @@ use Symfony\Component\Routing\Annotation\Route;
 class DashboardController extends AbstractController
 {
     /**
-     * @Route(
-     *      "/my_calendar/{widget}",
-     *      name="oro_calendar_dashboard_my_calendar",
-     *      requirements={"widget"="[\w\-]+"}
-     * )
-     * @Template("@OroCalendar/Dashboard/myCalendar.html.twig")
      * @param string $widget
      * @return array
      */
+    #[Route(
+        path: '/my_calendar/{widget}',
+        name: 'oro_calendar_dashboard_my_calendar',
+        requirements: ['widget' => '[\w\-]+']
+    )]
+    #[Template('@OroCalendar/Dashboard/myCalendar.html.twig')]
     public function myCalendarAction($widget)
     {
         $calendar = $this->container->get(ManagerRegistry::class)

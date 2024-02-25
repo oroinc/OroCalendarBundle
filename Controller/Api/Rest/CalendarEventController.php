@@ -11,8 +11,8 @@ use Oro\Bundle\CalendarBundle\Manager\CalendarEvent\NotificationManager;
 use Oro\Bundle\EntityConfigBundle\Config\ConfigInterface;
 use Oro\Bundle\EntityExtendBundle\EntityConfig\ExtendScope;
 use Oro\Bundle\EntityExtendBundle\Tools\ExtendHelper;
-use Oro\Bundle\SecurityBundle\Annotation\Acl;
-use Oro\Bundle\SecurityBundle\Annotation\AclAncestor;
+use Oro\Bundle\SecurityBundle\Attribute\Acl;
+use Oro\Bundle\SecurityBundle\Attribute\AclAncestor;
 use Oro\Bundle\SoapBundle\Controller\Api\Rest\RestController;
 use Oro\Bundle\SoapBundle\Entity\Manager\ApiEntityManager;
 use Oro\Bundle\SoapBundle\Form\Handler\ApiFormHandler;
@@ -32,85 +32,88 @@ class CalendarEventController extends RestController
     /**
      * Get calendar events. To get data, use either page/limit or start/end filters.
      *
-     * @QueryParam(
-     *      name="calendar", requirements="\d+",
-     *      nullable=false,
-     *      strict=true,
-     *      description="Calendar id."
-     * )
-     * @QueryParam(
-     *      name="page",
-     *      requirements="\d+",
-     *      nullable=true,
-     *      description="Page number, starting from 1. Defaults to 1."
-     * )
-     * @QueryParam(
-     *      name="limit",
-     *      requirements="\d+",
-     *      nullable=true,
-     *      description="Number of items per page. defaults to 10."
-     * )
-     * @QueryParam(
-     *      name="start",
-     *      requirements="\d{4}(-\d{2}(-\d{2}([T ]\d{2}:\d{2}(:\d{2}(\.\d+)?)?(Z|([-+]\d{2}(:?\d{2})?))?)?)?)?",
-     *      nullable=true,
-     *      strict=true,
-     *      description="Start date in RFC 3339. For example: 2009-11-05T13:15:30Z."
-     * )
-     * @QueryParam(
-     *      name="end",
-     *      requirements="\d{4}(-\d{2}(-\d{2}([T ]\d{2}:\d{2}(:\d{2}(\.\d+)?)?(Z|([-+]\d{2}(:?\d{2})?))?)?)?)?",
-     *      nullable=true,
-     *      strict=true,
-     *      description="End date in RFC 3339. For example: 2009-11-05T13:15:30Z."
-     * )
-     * @QueryParam(
-     *      name="subordinate",
-     *      requirements="(true)|(false)",
-     *      nullable=true,
-     *      strict=true,
-     *      default="false",
-     *      description="Determines whether events from connected calendars should be included or not."
-     * )
-     * @QueryParam(
-     *     name="createdAt",
-     *     requirements="\d{4}(-\d{2}(-\d{2}([T ]\d{2}:\d{2}(:\d{2}(\.\d+)?)?(Z|([-+]\d{2}(:?\d{2})?))?)?)?)?",
-     *     nullable=true,
-     *     description="Date in RFC 3339 format. For example: 2009-11-05T13:15:30Z, 2008-07-01T22:35:17+08:00"
-     * )
-     * @QueryParam(
-     *     name="updatedAt",
-     *     requirements="\d{4}(-\d{2}(-\d{2}([T ]\d{2}:\d{2}(:\d{2}(\.\d+)?)?(Z|([-+]\d{2}(:?\d{2})?))?)?)?)?",
-     *     nullable=true,
-     *     description="Date in RFC 3339 format. For example: 2009-11-05T13:15:30Z, 2008-07-01T22:35:17+08:00"
-     * )
-     * @QueryParam(
-     *     name="recurringEventId", requirements="\d+",
-     *     nullable=true,
-     *     description="Filter events associated with recurring event. Recurring event will be returned as well. Does't work with start/end filters."
-     * )
-     * @QueryParam(
-     *      name="uid",
-     *      requirements=".+",
-     *      nullable=true,
-     *      description="iCalendar UID field (RFC5545). In most cases UUID format is used (RFC4122). Does't work with start/end filters."
-     * )
      * @ApiDoc(
      *      description="Get calendar events",
      *      resource=true
      * )
-     * @AclAncestor("oro_calendar_event_view")
      *
      * @param Request $request
-     *
      * @return Response
      */
     // @codingStandardsIgnoreEnd
+    #[QueryParam(
+        name: 'calendar',
+        requirements: '\d+',
+        description: 'Calendar id.',
+        strict: true,
+        nullable: false
+    )]
+    #[QueryParam(
+        name: 'page',
+        requirements: '\d+',
+        description: 'Page number, starting from 1. Defaults to 1.',
+        nullable: true
+    )]
+    #[QueryParam(
+        name: 'limit',
+        requirements: '\d+',
+        description: 'Number of items per page. defaults to 10.',
+        nullable: true
+    )]
+    #[QueryParam(
+        name: 'start',
+        requirements: '\d{4}(-\d{2}(-\d{2}([T ]\d{2}:\d{2}(:\d{2}(\.\d+)?)?(Z|([-+]\d{2}(:?\d{2})?))?)?)?)?',
+        description: 'Start date in RFC 3339. For example: 2009-11-05T13:15:30Z.',
+        strict: true,
+        nullable: true
+    )]
+    #[QueryParam(
+        name: 'end',
+        requirements: '\d{4}(-\d{2}(-\d{2}([T ]\d{2}:\d{2}(:\d{2}(\.\d+)?)?(Z|([-+]\d{2}(:?\d{2})?))?)?)?)?',
+        description: 'End date in RFC 3339. For example: 2009-11-05T13:15:30Z.',
+        strict: true,
+        nullable: true
+    )]
+    #[QueryParam(
+        name: 'subordinate',
+        requirements: '(true)|(false)',
+        default: false,
+        description: 'Determines whether events from connected calendars should be included or not.',
+        strict: true,
+        nullable: true
+    )]
+    #[QueryParam(
+        name: 'createdAt',
+        requirements: '\d{4}(-\d{2}(-\d{2}([T ]\d{2}:\d{2}(:\d{2}(\.\d+)?)?(Z|([-+]\d{2}(:?\d{2})?))?)?)?)?',
+        description: 'Date in RFC 3339 format. For example: 2009-11-05T13:15:30Z, 2008-07-01T22:35:17+08:00',
+        nullable: true
+    )]
+    #[QueryParam(
+        name: 'updatedAt',
+        requirements: '\d{4}(-\d{2}(-\d{2}([T ]\d{2}:\d{2}(:\d{2}(\.\d+)?)?(Z|([-+]\d{2}(:?\d{2})?))?)?)?)?',
+        description: 'Date in RFC 3339 format. For example: 2009-11-05T13:15:30Z, 2008-07-01T22:35:17+08:00',
+        nullable: true
+    )]
+    #[QueryParam(
+        name: 'recurringEventId',
+        requirements: '\d+',
+        description: "Filter events associated with recurring event. 
+                      Recurring event will be returned as well. Does't work with start/end filters.",
+        nullable: true
+    )]
+    #[QueryParam(
+        name: 'uid',
+        requirements: '.+',
+        description: "iCalendar UID field (RFC5545). In most cases UUID format is used (RFC4122). 
+                      Does't work with start/end filters.",
+        nullable: true
+    )]
+    #[AclAncestor('oro_calendar_event_view')]
     public function cgetAction(Request $request)
     {
         $calendarId   = (int)$request->get('calendar');
         $subordinate  = (true == $request->get('subordinate'));
-        $extendFields = $this->getExtendFieldNames('Oro\Bundle\CalendarBundle\Entity\CalendarEvent');
+        $extendFields = $this->getExtendFieldNames(CalendarEvent::class);
         if ($request->get('start') && $request->get('end')) {
             $result = $this->container->get('oro_calendar.calendar_manager')->getCalendarEvents(
                 $this->container->get('oro_security.token_accessor')->getOrganization()->getId(),
@@ -173,10 +176,10 @@ class CalendarEventController extends RestController
      *      description="Get calendar event",
      *      resource=true
      * )
-     * @AclAncestor("oro_calendar_event_view")
      *
      * @return Response
      */
+    #[AclAncestor('oro_calendar_event_view')]
     public function getAction(int $id)
     {
         /** @var CalendarEvent|null $entity */
@@ -189,7 +192,7 @@ class CalendarEventController extends RestController
                 ->getCalendarEvent(
                     $entity,
                     null,
-                    $this->getExtendFieldNames('Oro\Bundle\CalendarBundle\Entity\CalendarEvent')
+                    $this->getExtendFieldNames(CalendarEvent::class)
                 );
             $code   = Response::HTTP_OK;
         }
@@ -207,10 +210,10 @@ class CalendarEventController extends RestController
      *      description="Get calendar event supposing it is displayed in the specified calendar",
      *      resource=true
      * )
-     * @AclAncestor("oro_calendar_event_view")
      *
      * @return Response
      */
+    #[AclAncestor('oro_calendar_event_view')]
     public function getByCalendarAction($id, $eventId)
     {
         /** @var CalendarEvent|null $entity */
@@ -236,10 +239,10 @@ class CalendarEventController extends RestController
      *      description="Update calendar event",
      *      resource=true
      * )
-     * @AclAncestor("oro_calendar_event_update")
      *
      * @return Response
      */
+    #[AclAncestor('oro_calendar_event_update')]
     public function putAction(int $id)
     {
         return $this->handleUpdateRequest($id);
@@ -252,10 +255,10 @@ class CalendarEventController extends RestController
      *      description="Create new calendar event",
      *      resource=true
      * )
-     * @AclAncestor("oro_calendar_event_create")
      *
      * @return Response
      */
+    #[AclAncestor('oro_calendar_event_create')]
     public function postAction()
     {
         return $this->handleCreateRequest();
@@ -270,16 +273,16 @@ class CalendarEventController extends RestController
      *      description="Remove calendar event",
      *      resource=true
      * )
-     * @Acl(
-     *      id="oro_calendar_event_delete",
-     *      type="entity",
-     *      class="Oro\Bundle\CalendarBundle\Entity\CalendarEvent",
-     *      permission="DELETE",
-     *      group_name=""
-     * )
      *
      * @return Response
      */
+    #[Acl(
+        id: 'oro_calendar_event_delete',
+        type: 'entity',
+        class: CalendarEvent::class,
+        permission: 'DELETE',
+        groupName: ''
+    )]
     public function deleteAction(int $id)
     {
         $options = [];

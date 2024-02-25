@@ -14,9 +14,8 @@ use Symfony\Component\Validator\Validator\ValidatorInterface;
 
 /**
  * Autocomplete search controller for calendar attendee.
- *
- * @Route("/calendarevents/autocomplete")
  */
+#[Route(path: '/calendarevents/autocomplete')]
 class AutocompleteController extends AbstractController
 {
     /**
@@ -24,9 +23,8 @@ class AutocompleteController extends AbstractController
      *
      * @return JsonResponse
      * @throws HttpException
-     *
-     * @Route("/attendees", name="oro_calendarevent_autocomplete_attendees")
      */
+    #[Route(path: '/attendees', name: 'oro_calendarevent_autocomplete_attendees')]
     public function autocompleteAttendeesAction(Request $request)
     {
         $autocompleteRequest = new AutocompleteRequest($request);
