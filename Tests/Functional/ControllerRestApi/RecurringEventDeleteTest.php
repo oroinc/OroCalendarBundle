@@ -1,6 +1,6 @@
 <?php
 
-namespace Oro\Bundle\CalendarBundle\Tests\Functional\Controller\Api\Rest;
+namespace Oro\Bundle\CalendarBundle\Tests\Functional\ControllerRestApi;
 
 use Oro\Bundle\CalendarBundle\Entity;
 use Oro\Bundle\CalendarBundle\Entity\Attendee;

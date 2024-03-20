@@ -1,6 +1,6 @@
 <?php
 
-namespace Oro\Bundle\CalendarBundle\Tests\Functional\Controller\Api;
+namespace Oro\Bundle\CalendarBundle\Tests\Functional\ControllerApi;
 
 use Oro\Bundle\CalendarBundle\Entity\Calendar;
 use Oro\Bundle\CalendarBundle\Model\Recurrence;

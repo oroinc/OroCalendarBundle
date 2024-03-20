@@ -4,7 +4,7 @@ namespace Oro\Bundle\CalendarBundle\Tests\Functional\Controller;
 
 use Oro\Bundle\CalendarBundle\Entity\CalendarEvent;
 use Oro\Bundle\CalendarBundle\Model\Recurrence;
-use Oro\Bundle\CalendarBundle\Tests\Functional\Controller\Api\AbstractUseCaseTestCase;
+use Oro\Bundle\CalendarBundle\Tests\Functional\ControllerApi\AbstractUseCaseTestCase;
 use Oro\Bundle\UserBundle\Tests\Functional\DataFixtures\LoadUserData;
 
 class RecurringCalendarEventControllerTest extends AbstractUseCaseTestCase
