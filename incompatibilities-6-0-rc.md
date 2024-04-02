@@ -37,4 +37,6 @@ CalendarBundle
   > - `processDelete($entity, EntityManager $manager)`<sup>[[?]](https://github.com/oroinc/OroCalendarBundle/tree/5.1.0/Datagrid/MassAction/DeleteMassActionHandler.php#L27 "Oro\Bundle\CalendarBundle\Datagrid\MassAction\DeleteMassActionHandler")</sup>
   > - `processDelete($entity, EntityManagerInterface $manager)`<sup>[[?]](https://github.com/oroinc/OroCalendarBundle/tree/6.0.0-rc/Datagrid/MassAction/DeleteMassActionHandler.php#L25 "Oro\Bundle\CalendarBundle\Datagrid\MassAction\DeleteMassActionHandler")</sup>
 
+* The `CalendarEvent 'use_hangout'`<sup>[[?]](https://github.com/oroinc/OroCalendarBundle/blob/6.0.0/Migrations/Schema/v1_22/RemoveHangoutCalendarEventFields.php#L27)</sup> field was removed.
+
 
