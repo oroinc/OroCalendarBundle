@@ -38,4 +38,3 @@ CalendarBundle
   > - `processDelete($entity, EntityManagerInterface $manager)`<sup>[[?]](https://github.com/oroinc/OroCalendarBundle/tree/6.0.0-rc/Datagrid/MassAction/DeleteMassActionHandler.php#L25 "Oro\Bundle\CalendarBundle\Datagrid\MassAction\DeleteMassActionHandler")</sup>
 
 
-
