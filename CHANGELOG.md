@@ -21,7 +21,7 @@ The current file describes significant changes in the code that may affect the u
 
 ### Removed
 
-* The `CalendarEvent 'use_hangout'`<sup>[[?]](https://github.com/oroinc/OroCalendarBundle/blob/6.0.0/Migrations/Schema/v1_22/RemoveHangoutCalendarEventFields.php#L27)</sup> field was removed.
+* The `Oro\Bundle\CalendarBundle\Entity\CalendarEvent 'use_hangout'` field was removed.
 
 ## 5.1.0 (2023-03-31)
 [Show detailed list of changes](incompatibilities-5-1.md)
