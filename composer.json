@@ -12,7 +12,7 @@
         }
     ],
     "require": {
-        "oro/platform": "6.0.*"
+        "oro/platform": "6.1.*"
     },
     "autoload": {
         "psr-4": { "Oro\\Bundle\\CalendarBundle\\": "" },
@@ -31,7 +31,7 @@
             "fullcalendar": "3.4.0"
         },
         "branch-alias": {
-            "dev-master": "6.0-dev"
+            "dev-master": "6.1-dev"
         }
     }
 }
