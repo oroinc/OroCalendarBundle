@@ -1,3 +1,4 @@
+@regression
 @fixture-OroCalendarBundle:calendarEventFields.yml
 
 Feature: Calendar Event Organizer field
