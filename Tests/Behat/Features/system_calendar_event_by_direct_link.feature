@@ -1,3 +1,4 @@
+@regression
 @ticket-CRM-9408
 @fixture-OroCalendarBundle:SystemCalendarEvent.yml
 @fixture-OroUserBundle:manager.yml
