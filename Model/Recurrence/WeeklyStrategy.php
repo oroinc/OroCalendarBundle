@@ -93,7 +93,7 @@ class WeeklyStrategy extends AbstractStrategy
                     $result[] = $next;
                 }
 
-                $fromStartInterval = $next >= $recurrence->getStartTime() ? $fromStartInterval +1 : $fromStartInterval;
+                $fromStartInterval = $next >= $recurrence->getStartTime() ? $fromStartInterval + 1 : $fromStartInterval;
             }
             $fullWeeks += $interval;
             $afterFullWeeksDate = new \DateTime("+{$fullWeeks} week {$startTime->format('c')}");
