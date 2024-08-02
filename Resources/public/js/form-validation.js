@@ -194,7 +194,7 @@ define([
             if (_.isString(container)) {
                 container = $(container);
             }
-            container.find('.error>:input,:input.error').first().focus();
+            container.find('.error>:input,:input.error').first().trigger('focus');
         }
     };
 });

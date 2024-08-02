@@ -92,13 +92,13 @@ define(function(require) {
                 this.listenTo(this.confirmModal, 'ok', () => {
                     this.$notifyInput.val('all');
                     this.updateInitialState();
-                    this.$form.submit();
+                    this.$form.trigger('submit');
                 });
                 this.listenTo(this.confirmModal, 'buttonClick', buttonId => {
                     if (buttonId === 'secondary') {
                         this.$notifyInput.val('none');
                         this.updateInitialState();
-                        this.$form.submit();
+                        this.$form.trigger('submit');
                     }
                 });
             }

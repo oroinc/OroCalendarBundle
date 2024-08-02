@@ -180,7 +180,7 @@ define(function(require) {
         _onEditDialogAction: function(e) {
             const $content = this.getEventForm();
             $content.wrapInner('<div data-layout="separate" />');
-            this.setElement($content.find('>*:first'));
+            this.setElement($content.children().first());
             this.eventDialog.setTitle(__('Edit Event'));
             this.eventDialog.setContent($content);
             this.eventDialog.widget.dialog('option', 'width', 1000);
@@ -381,7 +381,7 @@ define(function(require) {
                             input.val(value);
                         }
                     }
-                    input.change();
+                    input.trigger('change');
                 }
             }, this);
 
