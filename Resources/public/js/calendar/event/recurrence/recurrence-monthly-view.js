@@ -122,7 +122,7 @@ define(function(require) {
                 value.dayOfWeek = _.clone(this.model.RECURRENCE_WEEKENDS);
             } else if (value.dayOfWeek === 'day') {
                 value.dayOfWeek = _.clone(this.model.RECURRENCE_DAYOFWEEK);
-            } else if (value.dayOfWeek && !_.isArray(value.dayOfWeek)) {
+            } else if (value.dayOfWeek && !Array.isArray(value.dayOfWeek)) {
                 value.dayOfWeek = [value.dayOfWeek];
             }
             return value;

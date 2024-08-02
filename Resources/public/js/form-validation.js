@@ -38,7 +38,7 @@ define([
             }
             if (!_.isUndefined(err.errors)) {
                 // JSON REST response
-                if (_.isArray(err.errors)) {
+                if (Array.isArray(err.errors)) {
                     _.each(err.errors, function(value) {
                         errors.push(value);
                     });
@@ -63,7 +63,7 @@ define([
                         const field = container.find('#' + formFieldPrefix + key);
                         this.removeFieldErrors(field);
 
-                        if (!_.isUndefined(value.errors) && _.isArray(value.errors)) {
+                        if (!_.isUndefined(value.errors) && Array.isArray(value.errors)) {
                             this.addFieldErrors(field, value.errors);
                         }
                     });
@@ -132,7 +132,7 @@ define([
                 $field.after($errorContainer);
             }
 
-            $errorContainer.show().text(_.isArray(errorMessages) ? errorMessages.join('; ') : errorMessages);
+            $errorContainer.show().text(Array.isArray(errorMessages) ? errorMessages.join('; ') : errorMessages);
             $field.addClass('error');
             $container.addClass('validation-error');
         },
@@ -194,7 +194,7 @@ define([
             if (_.isString(container)) {
                 container = $(container);
             }
-            container.find('.error>:input,:input.error').first().focus();
+            container.find('.error>:input,:input.error').first().trigger('focus');
         }
     };
 });

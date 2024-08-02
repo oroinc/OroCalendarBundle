@@ -180,7 +180,7 @@ define(function(require) {
         _onEditDialogAction: function(e) {
             const $content = this.getEventForm();
             $content.wrapInner('<div data-layout="separate" />');
-            this.setElement($content.find('>*:first'));
+            this.setElement($content.children().first());
             this.eventDialog.setTitle(__('Edit Event'));
             this.eventDialog.setContent($content);
             this.eventDialog.widget.dialog('option', 'width', 1000);
@@ -238,7 +238,7 @@ define(function(require) {
 
         onEventFormSubmit: function() {
             // calendarUid value should be processed by form and value should be sent to backend
-            this.eventDialog.$('form ' + this.selectors.calendarUid).removeAttr('disabled');
+            this.eventDialog.$('form ' + this.selectors.calendarUid).prop('disabled', false);
             this._saveEventFromData(this.getEventFormData());
         },
 
@@ -381,7 +381,7 @@ define(function(require) {
                             input.val(value);
                         }
                     }
-                    input.change();
+                    input.trigger('change');
                 }
             }, this);
 
@@ -509,11 +509,11 @@ define(function(require) {
             // convert multiselect separate values into array of values
             formData = _.reduce(formData, function(result, item) {
                 const existingItem = _.findWhere(result, {name: item.name});
-                if (!existingItem && _.isArray($form.find('[name="' + item.name + '"]').val())) {
+                if (!existingItem && Array.isArray($form.find('[name="' + item.name + '"]').val())) {
                     // convert first value of multiselect into array
                     item.value = [item.value];
                 }
-                if (existingItem && _.isArray(existingItem.value)) {
+                if (existingItem && Array.isArray(existingItem.value)) {
                     existingItem.value.push(item.value);
                 } else {
                     result.push(item);
@@ -610,8 +610,8 @@ define(function(require) {
                     $calendarUid.parent().find('label').addClass('disabled');
                 }
             } else {
-                $calendarUid.removeAttr('disabled');
-                $calendarUid.parent().removeAttr('title');
+                $calendarUid.prop('disabled', false);
+                $calendarUid.parent().attr('title', null);
                 // fix select2 dynamic change disabled
                 if ($calendarUid.parent().hasClass('disabled')) {
                     $calendarUid.parent().removeClass('disabled');

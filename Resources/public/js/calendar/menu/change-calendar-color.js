@@ -122,7 +122,7 @@ define([
                     'color': this.colorManager.getContrastColor(this.customColor)
                 });
             } else {
-                this.$customColor.removeAttr('data-selected');
+                this.$customColor.attr('data-selected', null);
                 this.$colorPicker.simplecolorpicker('selectColor', this.model.get('backgroundColor'));
                 this.$customColorParent.hide();
             }
