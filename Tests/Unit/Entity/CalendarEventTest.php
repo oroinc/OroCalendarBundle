@@ -154,16 +154,30 @@ class CalendarEventTest extends \PHPUnit\Framework\TestCase
         $calendarEvent->setRelatedAttendee($attendee);
 
         $attendee->setStatus(
-            new TestEnumValue(Attendee::STATUS_ACCEPTED, Attendee::STATUS_ACCEPTED)
+            new TestEnumValue(
+                'test',
+                'Test',
+                Attendee::STATUS_ACCEPTED
+            )
         );
         $this->assertEquals(Attendee::STATUS_ACCEPTED, $calendarEvent->getInvitationStatus());
-        $this->assertEquals(Attendee::STATUS_ACCEPTED, $calendarEvent->getRelatedAttendee()->getStatus());
+        $this->assertEquals(
+            Attendee::STATUS_ACCEPTED,
+            $calendarEvent->getRelatedAttendee()->getStatus()->getInternalId()
+        );
 
         $attendee->setStatus(
-            new TestEnumValue(Attendee::STATUS_TENTATIVE, Attendee::STATUS_TENTATIVE)
+            new TestEnumValue(
+                'test',
+                'Test',
+                Attendee::STATUS_TENTATIVE
+            )
         );
         $this->assertEquals(Attendee::STATUS_TENTATIVE, $calendarEvent->getInvitationStatus());
-        $this->assertEquals(Attendee::STATUS_TENTATIVE, $calendarEvent->getRelatedAttendee()->getStatus());
+        $this->assertEquals(
+            Attendee::STATUS_TENTATIVE,
+            $calendarEvent->getRelatedAttendee()->getStatus()->getInternalId()
+        );
     }
 
     public function testInvitationStatusNoneWhenAttendeesDoNotExist()

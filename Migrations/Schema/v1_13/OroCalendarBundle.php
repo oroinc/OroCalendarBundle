@@ -4,14 +4,14 @@ namespace Oro\Bundle\CalendarBundle\Migrations\Schema\v1_13;
 
 use Doctrine\DBAL\Schema\Schema;
 use Oro\Bundle\EntityExtendBundle\EntityConfig\ExtendScope;
-use Oro\Bundle\EntityExtendBundle\Migration\Extension\ExtendExtensionAwareInterface;
-use Oro\Bundle\EntityExtendBundle\Migration\Extension\ExtendExtensionAwareTrait;
+use Oro\Bundle\EntityExtendBundle\Migration\Extension\OutdatedExtendExtensionAwareInterface;
+use Oro\Bundle\EntityExtendBundle\Migration\Extension\OutdatedExtendExtensionAwareTrait;
 use Oro\Bundle\MigrationBundle\Migration\Migration;
 use Oro\Bundle\MigrationBundle\Migration\QueryBag;
 
-class OroCalendarBundle implements Migration, ExtendExtensionAwareInterface
+class OroCalendarBundle implements Migration, OutdatedExtendExtensionAwareInterface
 {
-    use ExtendExtensionAwareTrait;
+    use OutdatedExtendExtensionAwareTrait;
 
     /**
      * {@inheritDoc}
@@ -97,7 +97,7 @@ class OroCalendarBundle implements Migration, ExtendExtensionAwareInterface
     {
         $table = $schema->getTable('oro_calendar_event_attendee');
 
-        $this->extendExtension->addEnumField(
+        $this->outdatedExtendExtension->addOutdatedEnumField(
             $schema,
             $table,
             'status',
@@ -109,7 +109,7 @@ class OroCalendarBundle implements Migration, ExtendExtensionAwareInterface
             ]
         );
 
-        $this->extendExtension->addEnumField(
+        $this->outdatedExtendExtension->addOutdatedEnumField(
             $schema,
             $table,
             'type',

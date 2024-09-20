@@ -9,7 +9,7 @@ use Oro\Bundle\CalendarBundle\Entity\Repository\AttendeeRepository;
 use Oro\Bundle\EmailBundle\Model\EmailHolderInterface;
 use Oro\Bundle\EntityConfigBundle\Metadata\Attribute\Config;
 use Oro\Bundle\EntityConfigBundle\Metadata\Attribute\ConfigField;
-use Oro\Bundle\EntityExtendBundle\Entity\AbstractEnumValue;
+use Oro\Bundle\EntityExtendBundle\Entity\EnumOptionInterface;
 use Oro\Bundle\EntityExtendBundle\Entity\ExtendEntityInterface;
 use Oro\Bundle\EntityExtendBundle\Entity\ExtendEntityTrait;
 use Oro\Bundle\UserBundle\Entity\User;
@@ -17,10 +17,10 @@ use Oro\Bundle\UserBundle\Entity\User;
 /**
  * Represents calendar event's attendee and holds information about related user and calendar event.
  *
- * @method AbstractEnumValue getType()
- * @method Attendee setType(AbstractEnumValue $value)
- * @method AbstractEnumValue getStatus()
- * @method Attendee setStatus(AbstractEnumValue $value)
+ * @method EnumOptionInterface getType()
+ * @method Attendee setType(EnumOptionInterface $value)
+ * @method EnumOptionInterface getStatus()
+ * @method Attendee setStatus(EnumOptionInterface $value)
  * @mixin OroCalendarBundle_Entity_Attendee
  */
 #[ORM\Entity(repositoryClass: AttendeeRepository::class)]
@@ -100,7 +100,7 @@ class Attendee implements EmailHolderInterface, ExtendEntityInterface
     {
         $status = $this->getStatus();
 
-        return $status ? $status->getId() : Attendee::STATUS_NONE;
+        return $status ? $status->getInternalId() : Attendee::STATUS_NONE;
     }
 
     /**

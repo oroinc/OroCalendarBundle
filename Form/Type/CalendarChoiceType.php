@@ -15,6 +15,9 @@ use Symfony\Component\OptionsResolver\Options;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Contracts\Translation\TranslatorInterface;
 
+/**
+ * Defines dynamic set of choices for SystemCalendar entity
+ */
 class CalendarChoiceType extends AbstractType
 {
     /** @var CalendarEventManager */
@@ -44,10 +47,10 @@ class CalendarChoiceType extends AbstractType
     {
         $resolver->setDefaults(
             [
-                'choices'              => function (Options $options) {
+                'choices' => function (Options $options) {
                     return $this->getChoices($options['is_new']);
                 },
-                'is_new'               => false,
+                'is_new' => false,
                 'translatable_options' => false
             ]
         );

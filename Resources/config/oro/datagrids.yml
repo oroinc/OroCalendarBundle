@@ -27,7 +27,7 @@ datagrids:
                     left:
                         - { join: event.parent, alias: parent }
                         - { join: event.relatedAttendee, alias: ra }
-                        - { join: ra.status, alias: status }
+                        - { join: Oro\Bundle\EntityExtendBundle\Entity\EnumOption, alias: status, conditionType: WITH, condition: "JSON_EXTRACT(ra.serialized_data, 'status') = status" }
                         - { join: ra.user, alias: relatedAttendeeUser }
                         - { join: event.recurrence, alias: recurrence }
                         - { join: event.recurringEvent, alias: recurringEvent }

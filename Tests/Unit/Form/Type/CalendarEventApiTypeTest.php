@@ -2,12 +2,17 @@
 
 namespace Oro\Bundle\CalendarBundle\Tests\Unit\Form\Type;
 
+use Doctrine\Common\EventManager;
 use Doctrine\ORM\AbstractQuery;
+use Doctrine\ORM\Configuration;
 use Doctrine\ORM\EntityManager;
+use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\EntityRepository;
 use Doctrine\ORM\Mapping\ClassMetadata;
 use Doctrine\ORM\QueryBuilder;
 use Doctrine\Persistence\ManagerRegistry;
+use Gedmo\Translatable\TranslatableListener;
+use Oro\Bundle\CalendarBundle\Entity\Attendee;
 use Oro\Bundle\CalendarBundle\Entity\Calendar;
 use Oro\Bundle\CalendarBundle\Entity\CalendarEvent;
 use Oro\Bundle\CalendarBundle\Form\Type\CalendarEventApiType;
@@ -18,8 +23,14 @@ use Oro\Bundle\CalendarBundle\Manager\CalendarEventManager;
 use Oro\Bundle\CalendarBundle\Model\Recurrence;
 use Oro\Bundle\CalendarBundle\Model\Recurrence\StrategyInterface;
 use Oro\Bundle\CalendarBundle\Tests\Unit\Fixtures\Entity\CalendarEvent as CalendarEventFixture;
+use Oro\Bundle\EntityConfigBundle\Config\ConfigInterface;
+use Oro\Bundle\EntityConfigBundle\Config\ConfigManager;
 use Oro\Bundle\EntityConfigBundle\Provider\ConfigProvider;
+use Oro\Bundle\EntityExtendBundle\Entity\EnumOption;
+use Oro\Bundle\EntityExtendBundle\Entity\Repository\EnumOptionRepository;
 use Oro\Bundle\EntityExtendBundle\Form\Extension\DynamicFieldsOptionsExtension;
+use Oro\Bundle\EntityExtendBundle\Form\Guesser\ExtendFieldTypeGuesser;
+use Oro\Bundle\EntityExtendBundle\Form\Type\EnumSelectType;
 use Oro\Bundle\FormBundle\Autocomplete\SearchHandlerInterface;
 use Oro\Bundle\FormBundle\Autocomplete\SearchRegistry;
 use Oro\Bundle\FormBundle\Form\Type\CollectionType;
@@ -31,14 +42,18 @@ use Oro\Bundle\ReminderBundle\Form\Type\ReminderInterval\UnitType;
 use Oro\Bundle\ReminderBundle\Form\Type\ReminderIntervalType;
 use Oro\Bundle\ReminderBundle\Form\Type\ReminderType;
 use Oro\Bundle\ReminderBundle\Model\SendProcessorRegistry;
+use Oro\Bundle\SecurityBundle\ORM\Walker\AclHelper;
+use Oro\Bundle\TranslationBundle\Form\Type\TranslatableEntityType;
 use Oro\Bundle\UserBundle\Entity\User;
 use Oro\Bundle\UserBundle\Form\Type\UserMultiSelectType;
 use Oro\Component\Testing\Unit\FormIntegrationTestCase;
 use Oro\Component\Testing\Unit\PreloadedExtension;
 use PHPUnit\Framework\MockObject\MockObject;
 use Psr\Container\ContainerInterface;
+use Symfony\Component\Form\ChoiceList\Factory\ChoiceListFactoryInterface;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\Extension\Validator\ValidatorExtension;
+use Symfony\Component\Form\Guess\TypeGuess;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Validator\Validation;
 
@@ -87,7 +102,6 @@ class CalendarEventApiTypeTest extends FormIntegrationTestCase
             ->method('createQueryBuilder')
             ->with('event')
             ->willReturn($qb);
-
         $this->entityManager->expects(self::any())
             ->method('getRepository')
             ->with(User::class)
@@ -96,6 +110,11 @@ class CalendarEventApiTypeTest extends FormIntegrationTestCase
             ->method('getClassMetadata')
             ->with(User::class)
             ->willReturn($userMeta);
+        $enumOptionRepo = $this->createMock(EnumOptionRepository::class);
+        $enumOptionRepo->method('getValuesQueryBuilder')->willReturn($qb);
+        $this->registry->method('getRepository')
+            ->with(EnumOption::class)
+            ->willReturn($enumOptionRepo);
 
         $emForEvent = $this->createMock(EntityManager::class);
         $emForEvent->expects(self::any())
@@ -105,13 +124,40 @@ class CalendarEventApiTypeTest extends FormIntegrationTestCase
         $this->registry->expects(self::any())
             ->method('getManagerForClass')
             ->willReturn($emForEvent);
-
+        $em = $this->createMock(EntityManagerInterface::class);
+        $em->method('getConfiguration')->willReturn($this->createMock(Configuration::class));
+        $eventManager = $this->createMock(EventManager::class);
+        $eventManager->method('getAllListeners')->willReturn([[$this->createMock(TranslatableListener::class)]]);
+        $em->method('getEventManager')->willReturn($eventManager);
+        $this->registry->method('getManager')->willReturn($em);
         $this->calendarEventApiType = new CalendarEventApiType(
             $this->calendarEventManager,
             $this->notificationManager
         );
 
         parent::setUp();
+    }
+
+    protected function getTypeGuessers(): array
+    {
+        $extendTypeGuesser = $this->createMock(ExtendFieldTypeGuesser::class);
+        $attendeeClass = Attendee::class;
+        $attendeeEnumFields = [
+            'status' => Attendee::STATUS_ENUM_CODE,
+            'type' => Attendee::TYPE_ENUM_CODE
+        ];
+        $extendTypeGuesser->method('guessType')
+            ->willReturnCallback(
+                fn ($class, $field) => $class == $attendeeClass && array_key_exists($field, $attendeeEnumFields)
+                    ? new TypeGuess(
+                        EnumSelectType::class,
+                        ['enum_code' => $attendeeEnumFields[$field]],
+                        TypeGuess::HIGH_CONFIDENCE
+                    )
+                    : null
+            );
+
+        return [$extendTypeGuesser];
     }
 
     /**
@@ -128,6 +174,12 @@ class CalendarEventApiTypeTest extends FormIntegrationTestCase
         $searchRegistry->expects(self::any())
             ->method('getSearchHandler')
             ->willReturn($searchHandler);
+        $configManager = $this->createMock(ConfigManager::class);
+        $configProvider = $this->createMock(ConfigProvider::class);
+        $config = $this->createMock(ConfigInterface::class);
+        $configManager->method('getProvider')->with('enum')->willReturn($configProvider);
+        $configProvider->method('getConfig')->willReturn($config);
+        $config->method('is')->with('multiple')->willReturn(false);
 
         return [
             new PreloadedExtension(
@@ -140,6 +192,12 @@ class CalendarEventApiTypeTest extends FormIntegrationTestCase
                     new ReminderIntervalType(),
                     new UnitType(),
                     new UserMultiSelectType($this->entityManager),
+                    new EnumSelectType($configManager, $this->registry),
+                    new TranslatableEntityType(
+                        $this->registry,
+                        $this->createMock(ChoiceListFactoryInterface::class),
+                        $this->createMock(AclHelper::class)
+                    ),
                     new OroJquerySelect2HiddenType(
                         $this->entityManager,
                         $searchRegistry,
@@ -150,7 +208,8 @@ class CalendarEventApiTypeTest extends FormIntegrationTestCase
                     new EntityIdentifierType($this->registry),
                 ],
                 [
-                    TextType::class => [new DynamicFieldsOptionsExtension()]
+                    TextType::class => [new DynamicFieldsOptionsExtension()],
+                    EnumSelectType::class => [new DynamicFieldsOptionsExtension()]
                 ]
             ),
             new ValidatorExtension(Validation::createValidator())
@@ -160,17 +219,17 @@ class CalendarEventApiTypeTest extends FormIntegrationTestCase
     public function testSubmitValidData()
     {
         $formData = [
-            'uid'             => 'MOCK-UID-11111',
-            'calendar'        => 1,
-            'title'           => 'testTitle',
-            'description'     => 'testDescription',
-            'start'           => '2013-10-05T13:00:00Z',
-            'end'             => '2013-10-05T13:30:00+00:00',
-            'createdAt'       => '2013-10-05T11:00:00Z',
-            'allDay'          => true,
+            'uid' => 'MOCK-UID-11111',
+            'calendar' => 1,
+            'title' => 'testTitle',
+            'description' => 'testDescription',
+            'start' => '2013-10-05T13:00:00Z',
+            'end' => '2013-10-05T13:30:00+00:00',
+            'createdAt' => '2013-10-05T11:00:00Z',
+            'allDay' => true,
             'backgroundColor' => '#FF0000',
-            'reminders'       => [],
-            'attendees'       => [],
+            'reminders' => [],
+            'attendees' => [],
         ];
 
         $this->notificationManager->expects(self::any())
@@ -223,16 +282,16 @@ class CalendarEventApiTypeTest extends FormIntegrationTestCase
     public function testSubmitValidDataSystemCalendar()
     {
         $formData = [
-            'calendar'        => 1,
-            'calendarAlias'   => 'system',
-            'title'           => 'testTitle',
-            'description'     => 'testDescription',
-            'start'           => '2013-10-05T13:00:00Z',
-            'end'             => '2013-10-05T13:30:00+00:00',
-            'createdAt'       => '2013-10-05T11:00:00Z',
-            'allDay'          => true,
+            'calendar' => 1,
+            'calendarAlias' => 'system',
+            'title' => 'testTitle',
+            'description' => 'testDescription',
+            'start' => '2013-10-05T13:00:00Z',
+            'end' => '2013-10-05T13:30:00+00:00',
+            'createdAt' => '2013-10-05T11:00:00Z',
+            'allDay' => true,
             'backgroundColor' => '#FF0000',
-            'reminders'       => [],
+            'reminders' => [],
         ];
 
         $this->notificationManager->expects(self::any())
@@ -284,8 +343,8 @@ class CalendarEventApiTypeTest extends FormIntegrationTestCase
         $resolver->expects(self::once())
             ->method('setDefaults')
             ->with([
-                'data_class'      => CalendarEvent::class,
-                'csrf_token_id'   => 'calendar_event',
+                'data_class' => CalendarEvent::class,
+                'csrf_token_id' => 'calendar_event',
                 'csrf_protection' => false
             ]);
 

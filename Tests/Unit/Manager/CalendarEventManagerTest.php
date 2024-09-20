@@ -18,7 +18,9 @@ use Oro\Bundle\CalendarBundle\Provider\SystemCalendarConfig;
 use Oro\Bundle\CalendarBundle\Tests\Unit\Fixtures\Entity\Attendee;
 use Oro\Bundle\CalendarBundle\Tests\Unit\Fixtures\Entity\User;
 use Oro\Bundle\EntityBundle\Provider\EntityNameResolver;
+use Oro\Bundle\EntityExtendBundle\Entity\EnumOption;
 use Oro\Bundle\EntityExtendBundle\Tests\Unit\Fixtures\TestEnumValue;
+use Oro\Bundle\EntityExtendBundle\Tools\ExtendHelper;
 use Oro\Bundle\OrganizationBundle\Entity\Organization;
 use Oro\Bundle\SecurityBundle\Authentication\TokenAccessorInterface;
 use Oro\Component\Testing\ReflectionUtil;
@@ -279,18 +281,18 @@ class CalendarEventManagerTest extends TestCase
     {
         $user = new User();
         $user->setId(100);
-
-        $status = new TestEnumValue(Attendee::STATUS_ACCEPTED, Attendee::STATUS_ACCEPTED);
+        $statusId = ExtendHelper::buildEnumOptionId(Attendee::STATUS_ENUM_CODE, Attendee::STATUS_ACCEPTED);
+        $status = new TestEnumValue('test', 'Test', Attendee::STATUS_ACCEPTED);
 
         $statusRepository = $this->createMock(ObjectRepository::class);
         $statusRepository->expects($this->any())
             ->method('find')
-            ->with(Attendee::STATUS_ACCEPTED)
+            ->with($statusId)
             ->willReturn($status);
 
         $this->doctrine->expects($this->any())
             ->method('getRepository')
-            ->with('Extend\Entity\EV_Ce_Attendee_Status')
+            ->with(EnumOption::class)
             ->willReturn($statusRepository);
 
         $attendee = new Attendee();
@@ -322,16 +324,17 @@ class CalendarEventManagerTest extends TestCase
 
         $user = new User();
         $user->setId(100);
+        $statusId = ExtendHelper::buildEnumOptionId(Attendee::STATUS_ENUM_CODE, Attendee::STATUS_ACCEPTED);
 
         $statusRepository = $this->createMock(ObjectRepository::class);
         $statusRepository->expects($this->any())
             ->method('find')
-            ->with(Attendee::STATUS_ACCEPTED)
+            ->with($statusId)
             ->willReturn(null);
 
         $this->doctrine->expects($this->any())
             ->method('getRepository')
-            ->with('Extend\Entity\EV_Ce_Attendee_Status')
+            ->with(EnumOption::class)
             ->willReturn($statusRepository);
 
         $attendee = new Attendee();
@@ -350,17 +353,22 @@ class CalendarEventManagerTest extends TestCase
         $user = new User();
         $user->setId(100);
 
-        $status = new TestEnumValue(Attendee::STATUS_ACCEPTED, Attendee::STATUS_ACCEPTED);
+        $statusId = ExtendHelper::buildEnumOptionId(Attendee::STATUS_ENUM_CODE, Attendee::STATUS_ACCEPTED);
+        $status = new TestEnumValue(
+            'test',
+            'Test',
+            Attendee::STATUS_ACCEPTED
+        );
 
         $statusRepository = $this->createMock(ObjectRepository::class);
         $statusRepository->expects($this->any())
             ->method('find')
-            ->with(Attendee::STATUS_ACCEPTED)
+            ->with($statusId)
             ->willReturn($status);
 
         $this->doctrine->expects($this->any())
             ->method('getRepository')
-            ->with('Extend\Entity\EV_Ce_Attendee_Status')
+            ->with(EnumOption::class)
             ->willReturn($statusRepository);
 
         $attendee = new Attendee();

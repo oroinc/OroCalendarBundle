@@ -526,7 +526,7 @@ class UserCalendarEventNormalizerTest extends \PHPUnit\Framework\TestCase
                     'description' => 'test_descriptions',
                     'start' => $startDate->format('c'),
                     'end' => $endDate->format('c'),
-                    'allDay' => null,
+                    'allDay' => false,
                     'backgroundColor' => null,
                     'createdAt' => null,
                     'updatedAt' => null,
@@ -662,7 +662,7 @@ class UserCalendarEventNormalizerTest extends \PHPUnit\Framework\TestCase
                 $attendee->setDisplayName($attendeeData['displayName']);
 
                 if (array_key_exists('status', $attendeeData)) {
-                    $status = new TestEnumValue($attendeeData['status'], $attendeeData['status']);
+                    $status = new TestEnumValue('attede_status', $attendeeData['status'], 'none');
                     $attendee->setStatus($status);
                 }
 

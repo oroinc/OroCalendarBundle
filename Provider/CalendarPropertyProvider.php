@@ -7,6 +7,7 @@ use Oro\Bundle\CalendarBundle\Entity\Calendar;
 use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
 use Oro\Bundle\EntityConfigBundle\Config\ConfigManager;
 use Oro\Bundle\EntityConfigBundle\Config\Id\FieldConfigId;
+use Oro\Bundle\EntityExtendBundle\Entity\EnumOption;
 use Oro\Bundle\EntityExtendBundle\Extend\FieldTypeHelper;
 use Oro\Bundle\EntityExtendBundle\Extend\RelationType;
 use Oro\Bundle\EntityExtendBundle\Tools\ExtendHelper;
@@ -144,7 +145,7 @@ class CalendarPropertyProvider
                 /** @var FieldConfigId $fieldId */
                 $fieldId             = $fieldConfig->getId();
                 $fieldType           = $fieldId->getFieldType();
-                $underlyingFieldType = $this->fieldTypeHelper->getUnderlyingType($fieldType);
+                $underlyingFieldType = $this->fieldTypeHelper->getUnderlyingType($fieldType, $fieldConfig);
                 if (in_array($underlyingFieldType, RelationType::$toManyRelations, true)) {
                     // ignore to-many relations
                     continue;
@@ -157,22 +158,16 @@ class CalendarPropertyProvider
         return $this->fields;
     }
 
-    /**
-     * @return array
-     */
-    public function getDefaultValues()
+    public function getDefaultValues(): array
     {
         $result = [];
-
         $metadata = $this->getMetadata();
-        $fields   = $this->getFields();
+        $fields = $this->getFields();
         foreach ($fields as $fieldName => $fieldType) {
             $defaultValue = null;
             if ($metadata->hasField($fieldName)) {
-                $mapping      = $metadata->getFieldMapping($fieldName);
-                $defaultValue = isset($mapping['options']['default'])
-                    ? $mapping['options']['default']
-                    : null;
+                $mapping = $metadata->getFieldMapping($fieldName);
+                $defaultValue = $mapping['options']['default'] ?? null;
             } elseif ($fieldType === 'enum') {
                 $defaultValue = [$this, 'getEnumDefaultValue'];
             }
@@ -185,12 +180,8 @@ class CalendarPropertyProvider
     /**
      * Gets a default option of an enum associated with the given field
      * This method must be public because it is used as a callback
-     *
-     * @param string $fieldName
-     *
-     * @return string|null
      */
-    public function getEnumDefaultValue($fieldName)
+    public function getEnumDefaultValue(string$fieldName): ?string
     {
         if (isset($this->computedDefaultValues[$fieldName])
             || array_key_exists($fieldName, $this->computedDefaultValues)
@@ -199,13 +190,15 @@ class CalendarPropertyProvider
         }
 
         $fieldConfig = $this->configManager->getConfig(
-            new FieldConfigId('extend', self::CALENDAR_PROPERTY_CLASS, $fieldName, 'enum')
+            new FieldConfigId('enum', self::CALENDAR_PROPERTY_CLASS, $fieldName, 'enum')
         );
 
-        $repo = $this->doctrineHelper->getEntityRepository($fieldConfig->get('target_entity'));
+        $repo = $this->doctrineHelper->getEntityRepository(EnumOption::class);
         $data = $repo->createQueryBuilder('e')
             ->select('e.id')
             ->where('e.default = true')
+            ->andWhere('e.enum_code = :enumCode')
+            ->setParameter('enumCode', $fieldConfig->get('enum_code'))
             ->getQuery()
             ->getArrayResult();
 

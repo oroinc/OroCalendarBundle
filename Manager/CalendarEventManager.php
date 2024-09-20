@@ -13,6 +13,7 @@ use Oro\Bundle\CalendarBundle\Exception\ChangeInvitationStatusException;
 use Oro\Bundle\CalendarBundle\Manager\CalendarEvent\UpdateManager;
 use Oro\Bundle\CalendarBundle\Provider\SystemCalendarConfig;
 use Oro\Bundle\EntityBundle\Provider\EntityNameResolver;
+use Oro\Bundle\EntityExtendBundle\Entity\EnumOption;
 use Oro\Bundle\EntityExtendBundle\Tools\ExtendHelper;
 use Oro\Bundle\OrganizationBundle\Entity\Organization;
 use Oro\Bundle\SecurityBundle\Authentication\TokenAccessorInterface;
@@ -117,8 +118,8 @@ class CalendarEventManager
         }
 
         $statusEnum = $this->doctrine
-            ->getRepository(ExtendHelper::buildEnumValueClassName(Attendee::STATUS_ENUM_CODE))
-            ->find($newStatus);
+            ->getRepository(EnumOption::class)
+            ->find(ExtendHelper::buildEnumOptionId(Attendee::STATUS_ENUM_CODE, $newStatus));
 
         if (!$statusEnum) {
             throw ChangeInvitationStatusException::invitationStatusNotFound($newStatus);

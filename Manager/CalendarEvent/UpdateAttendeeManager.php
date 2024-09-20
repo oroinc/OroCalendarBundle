@@ -7,7 +7,8 @@ use Doctrine\Persistence\ManagerRegistry;
 use Oro\Bundle\CalendarBundle\Entity\Attendee;
 use Oro\Bundle\CalendarBundle\Entity\CalendarEvent;
 use Oro\Bundle\CalendarBundle\Manager\AttendeeRelationManager;
-use Oro\Bundle\EntityExtendBundle\Entity\AbstractEnumValue;
+use Oro\Bundle\EntityExtendBundle\Entity\EnumOption;
+use Oro\Bundle\EntityExtendBundle\Entity\EnumOptionInterface;
 use Oro\Bundle\EntityExtendBundle\Tools\ExtendHelper;
 use Oro\Bundle\OrganizationBundle\Entity\Organization;
 
@@ -63,8 +64,13 @@ class UpdateAttendeeManager
             }
 
             $statusEnum = $this->doctrine
-                ->getRepository(ExtendHelper::buildEnumValueClassName(Attendee::STATUS_ENUM_CODE))
-                ->find(Attendee::STATUS_NONE);
+                ->getRepository(EnumOption::class)
+                ->find(
+                    ExtendHelper::buildEnumOptionId(
+                        Attendee::STATUS_ENUM_CODE,
+                        Attendee::STATUS_NONE
+                    )
+                );
 
             $attendee->setStatus($statusEnum);
         }
@@ -98,7 +104,7 @@ class UpdateAttendeeManager
     }
 
     /**
-     * @return null|AbstractEnumValue
+     * @return null|EnumOptionInterface
      */
     protected function getAttendeeTypeForCalendarEventOwnerUser()
     {
@@ -106,7 +112,7 @@ class UpdateAttendeeManager
     }
 
     /**
-     * @return null|AbstractEnumValue
+     * @return null|EnumOptionInterface
      */
     protected function getAttendeeTypeByDefault()
     {
@@ -114,18 +120,14 @@ class UpdateAttendeeManager
     }
 
     /**
-     * @param string $id
-     *
-     * @return null|AbstractEnumValue
+     * @return null|EnumOptionInterface
      */
-    protected function getAttendeeType($id)
+    protected function getAttendeeType(string $internalId)
     {
-        /** @var AbstractEnumValue $attendeeType */
-        $attendeeType = $this->doctrine
-            ->getRepository(ExtendHelper::buildEnumValueClassName(Attendee::TYPE_ENUM_CODE))
-            ->find($id);
-
-        return $attendeeType;
+        /** @var EnumOptionInterface $attendeeType */
+        return $this->doctrine
+            ->getRepository(EnumOption::class)
+            ->find(ExtendHelper::buildEnumOptionId(Attendee::TYPE_ENUM_CODE, $internalId));
     }
 
     /**

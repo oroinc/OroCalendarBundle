@@ -11,6 +11,7 @@ use Oro\Bundle\CalendarBundle\Entity\Attendee;
 use Oro\Bundle\CalendarBundle\Entity\Calendar;
 use Oro\Bundle\CalendarBundle\Entity\CalendarEvent;
 use Oro\Bundle\CalendarBundle\Entity\Recurrence;
+use Oro\Bundle\EntityExtendBundle\Entity\EnumOption;
 use Oro\Component\DoctrineUtils\ORM\QueryBuilderUtil;
 
 /**
@@ -53,7 +54,7 @@ class CalendarEventRepository extends EntityRepository
         $qb = $this->getEventListQueryBuilder($filters, $extraFields)
             ->addSelect(
                 sprintf(
-                    'COALESCE(status.id, \'%s\') as invitationStatus',
+                    'COALESCE(status.internalId, \'%s\') as invitationStatus',
                     Attendee::STATUS_NONE
                 )
             )
@@ -62,7 +63,12 @@ class CalendarEventRepository extends EntityRepository
             ->addSelect('IDENTITY(relatedAttendee.user) AS relatedAttendeeUserId')
             ->leftJoin('e.relatedAttendee', 'relatedAttendee')
             ->leftJoin('e.parent', 'parent')
-            ->leftJoin('relatedAttendee.status', 'status')
+            ->leftJoin(
+                EnumOption::class,
+                'status',
+                Expr\Join::WITH,
+                "JSON_EXTRACT(relatedAttendee.serialized_data, 'status') = status"
+            )
             ->innerJoin('e.calendar', 'c');
 
         $this->addRecurrenceData($qb);

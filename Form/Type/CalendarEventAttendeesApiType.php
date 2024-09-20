@@ -22,8 +22,8 @@ class CalendarEventAttendeesApiType extends AbstractType
         $builder
             ->add('displayName')
             ->add('email')
-            ->add('status', null, ['dynamic_fields_ignore_exception' => true])
-            ->add('type', null, ['dynamic_fields_ignore_exception' => true]);
+            ->add('status', null, ['dynamic_fields_ignore_exception' => true, 'choice_value' => 'internalId'])
+            ->add('type', null, ['dynamic_fields_ignore_exception' => true, 'choice_value' => 'internalId']);
 
         $builder->addEventListener(
             FormEvents::PRE_SUBMIT,

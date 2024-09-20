@@ -3,10 +3,15 @@
 namespace Oro\Bundle\CalendarBundle\Entity\Repository;
 
 use Doctrine\ORM\EntityRepository;
+use Doctrine\ORM\Query\Expr;
 use Doctrine\ORM\QueryBuilder;
 use Oro\Bundle\CalendarBundle\Entity\CalendarEvent;
+use Oro\Bundle\EntityExtendBundle\Entity\EnumOption;
 use Oro\Bundle\OrganizationBundle\Entity\Organization;
 
+/**
+ * Doctrine repository for Attendee entity.
+ */
 class AttendeeRepository extends EntityRepository
 {
     /**
@@ -62,11 +67,21 @@ class AttendeeRepository extends EntityRepository
 
         return $qb
             ->select('attendee.displayName, attendee.email, attendee.createdAt, attendee.updatedAt')
-            ->addSelect('attendee_status.id as status, attendee_type.id as type')
+            ->addSelect('attendee_status.internalId as status, attendee_type.internalId as type')
             ->addSelect('event.id as calendarEventId')
             ->join('attendee.calendarEvent', 'event')
-            ->leftJoin('attendee.status', 'attendee_status')
-            ->leftJoin('attendee.type', 'attendee_type')
+            ->leftJoin(
+                EnumOption::class,
+                'attendee_status',
+                Expr\Join::WITH,
+                "JSON_EXTRACT(attendee.serialized_data, 'status') = attendee_status"
+            )
+            ->leftJoin(
+                EnumOption::class,
+                'attendee_type',
+                Expr\Join::WITH,
+                "JSON_EXTRACT(attendee.serialized_data, 'type') = attendee_type"
+            )
             ->where($qb->expr()->in('event.id', ':calendar_event'))
             ->setParameter('calendar_event', $calendarEventIds);
     }

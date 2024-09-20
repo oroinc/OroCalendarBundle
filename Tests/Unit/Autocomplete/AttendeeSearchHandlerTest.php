@@ -112,8 +112,8 @@ class AttendeeSearchHandlerTest extends \PHPUnit\Framework\TestCase
                     ->setUser($user)
                     ->setDisplayName($user->getFirstName())
                     ->setEmail($user->getEmail())
-                    ->setStatus(new TestEnumValue('test', 'test'))
-                    ->setType(new TestEnumValue('test', 'test'));
+                    ->setStatus(new TestEnumValue('test_enum_code', 'Test1', 'test1'))
+                    ->setType(new TestEnumValue('test_enum_code', 'Test2', 'test2'));
             });
 
         $result = $this->attendeeSearchHandler->search('query', 1, 100);
@@ -129,8 +129,8 @@ class AttendeeSearchHandlerTest extends \PHPUnit\Framework\TestCase
                         'text'        => 'user1',
                         'displayName' => 'user1',
                         'email'       => 'user1@example.com',
-                        'status'      => 'test',
-                        'type'        => 'test',
+                        'status'      => 'test1',
+                        'type'        => 'test_enum_code.test2',
                         'userId'      => 1,
                     ],
                     [
@@ -141,8 +141,8 @@ class AttendeeSearchHandlerTest extends \PHPUnit\Framework\TestCase
                         'text'        => 'user2',
                         'displayName' => 'user2',
                         'email'       => 'user2@example.com',
-                        'status'      => 'test',
-                        'type'        => 'test',
+                        'status'      => 'test1',
+                        'type'        => 'test_enum_code.test2',
                         'userId'      => 2,
                     ],
                 ],

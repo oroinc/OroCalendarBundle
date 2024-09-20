@@ -3,17 +3,17 @@
 namespace Oro\Bundle\CalendarBundle\Tests\Unit\Fixtures\Entity;
 
 use Oro\Bundle\CalendarBundle\Entity\Attendee as BaseAttendee;
-use Oro\Bundle\EntityExtendBundle\Entity\AbstractEnumValue;
+use Oro\Bundle\EntityExtendBundle\Entity\EnumOptionInterface;
 
 class Attendee extends BaseAttendee
 {
     /**
-     * @var AbstractEnumValue|null
+     * @var EnumOptionInterface|null
      */
     protected $status;
 
     /**
-     * @var AbstractEnumValue|null
+     * @var EnumOptionInterface|null
      */
     protected $type;
 
@@ -26,7 +26,7 @@ class Attendee extends BaseAttendee
     }
 
     /**
-     * @param AbstractEnumValue|null $status
+     * @param EnumOptionInterface|null $status
      * @return $this
      */
     public function setStatus($status)
@@ -37,7 +37,7 @@ class Attendee extends BaseAttendee
     }
 
     /**
-     * @return null|AbstractEnumValue
+     * @return null|EnumOptionInterface
      */
     public function getStatus()
     {
@@ -45,7 +45,7 @@ class Attendee extends BaseAttendee
     }
 
     /**
-     * @return null|AbstractEnumValue
+     * @return null|EnumOptionInterface
      */
     public function getType()
     {
@@ -53,7 +53,7 @@ class Attendee extends BaseAttendee
     }
 
     /**
-     * @param AbstractEnumValue|null $type
+     * @param EnumOptionInterface|null $type
      * @return $this
      */
     public function setType($type)

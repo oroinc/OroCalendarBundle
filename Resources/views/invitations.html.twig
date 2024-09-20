@@ -19,7 +19,7 @@
         {% set invitationStatus = attendee.statusCode %}
         {% set invitationClass = invitations.get_invitatition_status_class(invitationStatus) %}
         <li class="list-group-item">
-            <i {% if invitationClass %}class="{{ invitationClass }}" title="{{ attendee.status.name }}"{% endif %}></i>
+            <i {% if invitationClass %}class="{{ invitationClass }}" title="{{ attendee.status.id|trans_enum }}"{% endif %}></i>
             <span class="list-group-item-text">
                 {% set avatar = attendee.user ? attendee.user.avatar : null %}
                 {% include '@OroAttachment/Twig/picture.html.twig' with {
@@ -37,7 +37,7 @@
                     {% endif %}
                     {{ attendeeName }}
                 {% endif %}
-                {% set typeId = attendee.type ? attendee.type.id : null %}
+                {% set typeId = attendee.type ? attendee.type.internalId : null %}
                 {%- if typeId %}
                 - {{ invitations.get_attendee_type(typeId) }}
                 {% endif -%}

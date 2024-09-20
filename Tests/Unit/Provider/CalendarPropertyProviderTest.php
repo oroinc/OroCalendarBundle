@@ -13,6 +13,7 @@ use Oro\Bundle\EntityConfigBundle\Config\Config;
 use Oro\Bundle\EntityConfigBundle\Config\ConfigManager;
 use Oro\Bundle\EntityConfigBundle\Config\Id\FieldConfigId;
 use Oro\Bundle\EntityExtendBundle\Configuration\EntityExtendConfigurationProvider;
+use Oro\Bundle\EntityExtendBundle\Entity\EnumOption;
 use Oro\Bundle\EntityExtendBundle\EntityConfig\ExtendScope;
 use Oro\Bundle\EntityExtendBundle\Extend\FieldTypeHelper;
 
@@ -47,7 +48,7 @@ class CalendarPropertyProviderTest extends \PHPUnit\Framework\TestCase
     private function getFieldConfig(string $fieldName, string $fieldType, array $values = []): Config
     {
         return new Config(
-            new FieldConfigId('extend', CalendarPropertyProvider::CALENDAR_PROPERTY_CLASS, $fieldName, $fieldType),
+            new FieldConfigId('enum', CalendarPropertyProvider::CALENDAR_PROPERTY_CLASS, $fieldName, $fieldType),
             $values
         );
     }
@@ -143,7 +144,7 @@ class CalendarPropertyProviderTest extends \PHPUnit\Framework\TestCase
     public function testGetEnumDefaultValue(array $defaults, ?string $expected)
     {
         $fieldName = 'test_enum';
-        $fieldConfig = $this->getFieldConfig($fieldName, 'enum', ['target_entity' => 'Test\Enum']);
+        $fieldConfig = $this->getFieldConfig($fieldName, 'enum', ['target_entity' => EnumOption::class]);
 
         $this->configManager->expects($this->once())
             ->method('getConfig')
@@ -153,7 +154,7 @@ class CalendarPropertyProviderTest extends \PHPUnit\Framework\TestCase
         $repo = $this->createMock(EntityRepository::class);
         $this->doctrineHelper->expects($this->once())
             ->method('getEntityRepository')
-            ->with('Test\Enum')
+            ->with(EnumOption::class)
             ->willReturn($repo);
         $qb = $this->createMock(QueryBuilder::class);
         $repo->expects($this->once())
@@ -167,6 +168,13 @@ class CalendarPropertyProviderTest extends \PHPUnit\Framework\TestCase
         $qb->expects($this->once())
             ->method('where')
             ->with('e.default = true')
+            ->willReturnSelf();
+        $qb->expects($this->once())
+            ->method('andWhere')
+            ->with('e.enum_code = :enumCode')
+            ->willReturnSelf();
+        $qb->expects($this->once())
+            ->method('setParameter')
             ->willReturnSelf();
         $query = $this->createMock(AbstractQuery::class);
         $qb->expects($this->once())
@@ -240,13 +248,13 @@ class CalendarPropertyProviderTest extends \PHPUnit\Framework\TestCase
             ->method('getAssociationTargetClass')
             ->willReturnMap([
                 ['targetCalendar', Calendar::class],
-                ['enum', 'Test\Enum'],
+                ['enum', EnumOption::class],
             ]);
         $this->doctrineHelper->expects($this->exactly(2))
             ->method('getSingleEntityIdentifierFieldType')
             ->willReturnMap([
                 [Calendar::class, false, 'integer'],
-                ['Test\Enum', false, 'string'],
+                [EnumOption::class, false, 'string'],
             ]);
 
         $repo = $this->createMock(EntityRepository::class);

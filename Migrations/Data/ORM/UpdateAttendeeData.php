@@ -35,8 +35,7 @@ class UpdateAttendeeData extends AbstractFixture implements DependentFixtureInte
         if (!in_array(
             'invitation_status',
             array_keys($connection->getSchemaManager()->listTableColumns('oro_calendar_event'))
-        )
-        ) {
+        )) {
             return;
         }
 
@@ -45,8 +44,8 @@ class UpdateAttendeeData extends AbstractFixture implements DependentFixtureInte
 UPDATE
     oro_calendar_event_attendee AS a
 SET
-    status_id = (
-        SELECT
+    serialized_data = jsonb_set(serialized_data::jsonb, '{status}',
+        (SELECT
             CASE
                 WHEN ce.invitation_status = 'accepted' OR ce.invitation_status = 'declined' THEN ce.invitation_status
                 WHEN ce.invitation_status = 'tentatively_accepted' THEN 'tentative'
@@ -57,7 +56,7 @@ SET
             oro_calendar_event ce
         WHERE
             ce.related_attendee_id = a.id
-    );
+    )::jsonb);
 ALTER TABLE oro_calendar_event DROP COLUMN invitation_status;
 SQL
         );
@@ -71,7 +70,7 @@ SQL
 UPDATE
     oro_calendar_event_attendee AS a
 SET
-    type_id = (
+  serialized_data = jsonb_set(serialized_data::jsonb, '{type}', (
         SELECT
             CASE
                 WHEN ce.parent_id IS NOT NULL THEN 'optional'
@@ -81,7 +80,7 @@ SET
             oro_calendar_event ce
         WHERE
             ce.related_attendee_id = a.id
-    );
+    )::jsonb);
 SQL;
         $connection->executeQuery($query);
     }

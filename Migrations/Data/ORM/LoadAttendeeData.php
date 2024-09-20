@@ -3,16 +3,20 @@
 namespace Oro\Bundle\CalendarBundle\Migrations\Data\ORM;
 
 use Doctrine\Common\DataFixtures\AbstractFixture;
+use Doctrine\Common\DataFixtures\DependentFixtureInterface;
 use Doctrine\Persistence\ObjectManager;
 use Oro\Bundle\CalendarBundle\Entity\Attendee;
-use Oro\Bundle\EntityExtendBundle\Entity\AbstractEnumValue;
-use Oro\Bundle\EntityExtendBundle\Entity\Repository\EnumValueRepository;
-use Oro\Bundle\EntityExtendBundle\Tools\ExtendHelper;
+use Oro\Bundle\EntityExtendBundle\Entity\EnumOption;
+use Oro\Bundle\EntityExtendBundle\Entity\EnumOptionInterface;
+use Oro\Bundle\EntityExtendBundle\Entity\Repository\EnumOptionRepository;
+use Oro\Bundle\TranslationBundle\Migrations\Data\ORM\LoadLanguageData;
 
-class LoadAttendeeData extends AbstractFixture
+/**
+ * Loads Attendee status and type enum options data.
+ */
+class LoadAttendeeData extends AbstractFixture implements DependentFixtureInterface
 {
-    /** @var array */
-    protected $statusEnumData = [
+    protected array $statusEnumData = [
         Attendee::STATUS_NONE      => [
             'label'    => 'None',
             'priority' => 1,
@@ -35,8 +39,7 @@ class LoadAttendeeData extends AbstractFixture
         ]
     ];
 
-    /** @var array */
-    protected $typeEnumData = [
+    protected array $typeEnumData = [
         Attendee::TYPE_ORGANIZER => [
             'label'    => 'Organizer',
             'priority' => 1,
@@ -57,38 +60,31 @@ class LoadAttendeeData extends AbstractFixture
     /**
      * {@inheritdoc}
      */
-    public function load(ObjectManager $manager)
+    public function load(ObjectManager $manager): void
     {
         $this->loadData($manager, Attendee::STATUS_ENUM_CODE, $this->statusEnumData);
         $this->loadData($manager, Attendee::TYPE_ENUM_CODE, $this->typeEnumData);
     }
 
-    /**
-     * @param ObjectManager $manager
-     * @param string        $enumCode
-     * @param array         $data
-     */
-    protected function loadData(ObjectManager $manager, $enumCode, $data)
+    protected function loadData(ObjectManager $manager, string $enumCode, array $data): void
     {
-        $entityName = ExtendHelper::buildEnumValueClassName($enumCode);
-
-        /** @var EnumValueRepository $enumRepository */
-        $enumRepository = $manager->getRepository($entityName);
-        $existingValues = $enumRepository->findAll();
+        /** @var EnumOptionRepository $enumRepository */
+        $enumRepository = $manager->getRepository(EnumOption::class);
+        $existingValues = $enumRepository->findBy(['enumCode' => $enumCode]);
         $existingCodes  = [];
 
-        /** @var AbstractEnumValue $existingValue */
+        /** @var EnumOptionInterface $existingValue */
         foreach ($existingValues as $existingValue) {
-            $existingCodes[$existingValue->getId()] = true;
+            $existingCodes[$existingValue->getInternalId()] = true;
         }
-
         foreach ($data as $key => $value) {
             if (!isset($existingCodes[$key])) {
-                $enum = $enumRepository->createEnumValue(
+                $enum = $enumRepository->createEnumOption(
+                    $enumCode,
+                    $key,
                     $value['label'],
                     $value['priority'],
-                    $value['default'],
-                    $key
+                    $value['default']
                 );
 
                 $existingCodes[$key] = true;
@@ -97,5 +93,10 @@ class LoadAttendeeData extends AbstractFixture
         }
 
         $manager->flush();
+    }
+
+    public function getDependencies(): array
+    {
+        return [LoadLanguageData::class];
     }
 }

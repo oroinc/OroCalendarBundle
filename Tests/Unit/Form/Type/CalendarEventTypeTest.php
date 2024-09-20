@@ -10,6 +10,7 @@ use Oro\Bundle\CalendarBundle\Form\Type\CalendarEventAttendeesSelectType;
 use Oro\Bundle\CalendarBundle\Form\Type\CalendarEventType;
 use Oro\Bundle\CalendarBundle\Form\Type\RecurrenceFormType;
 use Oro\Bundle\CalendarBundle\Manager\CalendarEvent\NotificationManager;
+use Oro\Bundle\EntityExtendBundle\Entity\EnumOption;
 use Oro\Bundle\EntityExtendBundle\Tests\Unit\Fixtures\TestEnumValue;
 use Oro\Bundle\FormBundle\Form\Type\OroDateTimeType;
 use Oro\Bundle\FormBundle\Form\Type\OroResizeableRichTextType;
@@ -41,13 +42,13 @@ class CalendarEventTypeTest extends \PHPUnit\Framework\TestCase
         $repository->expects($this->any())
             ->method('find')
             ->willReturnCallback(function ($id) {
-                return new TestEnumValue($id, $id);
+                return new TestEnumValue('test', 'Test', $id);
             });
 
         $registry = $this->createMock(ManagerRegistry::class);
         $registry->expects($this->any())
             ->method('getRepository')
-            ->with('Extend\Entity\EV_Ce_Attendee_Status')
+            ->with(EnumOption::class)
             ->willReturn($repository);
 
         $this->type = new CalendarEventType(

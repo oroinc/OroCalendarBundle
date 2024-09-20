@@ -10,7 +10,7 @@ use Oro\Bundle\CalendarBundle\Tests\Unit\Fixtures\Entity\Attendee;
 use Oro\Bundle\CalendarBundle\Tests\Unit\Fixtures\Entity\Calendar;
 use Oro\Bundle\CalendarBundle\Tests\Unit\Fixtures\Entity\CalendarEvent;
 use Oro\Bundle\CalendarBundle\Tests\Unit\Fixtures\Entity\User;
-use Oro\Bundle\EntityExtendBundle\Entity\AbstractEnumValue;
+use Oro\Bundle\EntityExtendBundle\Entity\EnumOptionInterface;
 
 /**
  * @SuppressWarnings(PHPMD.ExcessiveClassLength)
@@ -723,9 +723,9 @@ class NotificationManagerTest extends \PHPUnit\Framework\TestCase
         $parentCalendar->setOwner($parentOwnerUser);
 
         $statusCode = Attendee::STATUS_ACCEPTED;
-        $status = $this->createMock(AbstractEnumValue::class);
+        $status = $this->createMock(EnumOptionInterface::class);
         $status->expects($this->once())
-            ->method('getId')
+            ->method('getInternalId')
             ->willReturn($statusCode);
 
         $attendee = new Attendee();
@@ -771,7 +771,7 @@ class NotificationManagerTest extends \PHPUnit\Framework\TestCase
         $parentCalendar = new Calendar();
         $parentCalendar->setOwner($parentOwnerUser);
 
-        $status = $this->createMock(AbstractEnumValue::class);
+        $status = $this->createMock(EnumOptionInterface::class);
 
         $attendee = new Attendee();
         $attendee->setUser($ownerUser);

@@ -22,6 +22,7 @@ use Oro\Bundle\CalendarBundle\Tests\Unit\Fixtures\Entity\Attendee;
 use Oro\Bundle\CalendarBundle\Tests\Unit\Fixtures\Entity\User;
 use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
 use Oro\Bundle\EntityBundle\Provider\EntityNameResolver;
+use Oro\Bundle\EntityExtendBundle\Entity\EnumOption;
 use Oro\Bundle\EntityExtendBundle\Tests\Unit\Fixtures\TestEnumValue;
 use Oro\Bundle\FeatureToggleBundle\Checker\FeatureChecker;
 use Oro\Bundle\OrganizationBundle\Entity\Organization;
@@ -46,7 +47,7 @@ class CalendarEventManagerLegacyTest extends TestCase
         $repository->expects($this->any())
             ->method('find')
             ->willReturnCallback(function ($id) {
-                return new TestEnumValue($id, $id);
+                return new TestEnumValue('test', 'Test', explode('.', $id)[1]);
             });
         $repository->expects($this->any())
             ->method('findDefaultCalendars')
@@ -69,8 +70,7 @@ class CalendarEventManagerLegacyTest extends TestCase
         $doctrine->expects($this->any())
             ->method('getRepository')
             ->willReturnMap([
-                ['Extend\Entity\EV_Ce_Attendee_Status', null, $repository],
-                ['Extend\Entity\EV_Ce_Attendee_Type', null, $repository],
+                [EnumOption::class, null, $repository],
                 [Calendar::class, null, $repository],
                 [CalendarEvent::class, null, $calendarEventRepository],
             ]);
@@ -160,13 +160,25 @@ class CalendarEventManagerLegacyTest extends TestCase
             ->setAllDay(false);
 
         $parentEvent->findRelatedAttendee()->setStatus(
-            new TestEnumValue(Attendee::STATUS_ACCEPTED, Attendee::STATUS_ACCEPTED)
+            new TestEnumValue(
+                Attendee::STATUS_ENUM_CODE,
+                Attendee::STATUS_ACCEPTED,
+                Attendee::STATUS_ACCEPTED
+            )
         );
         $firstEvent->findRelatedAttendee()->setStatus(
-            new TestEnumValue(Attendee::STATUS_DECLINED, Attendee::STATUS_DECLINED)
+            new TestEnumValue(
+                Attendee::STATUS_ENUM_CODE,
+                Attendee::STATUS_DECLINED,
+                Attendee::STATUS_DECLINED
+            )
         );
         $secondEvent->findRelatedAttendee()->setStatus(
-            new TestEnumValue(Attendee::STATUS_TENTATIVE, Attendee::STATUS_TENTATIVE)
+            new TestEnumValue(
+                Attendee::STATUS_ENUM_CODE,
+                Attendee::STATUS_TENTATIVE,
+                Attendee::STATUS_TENTATIVE
+            )
         );
 
         // assert modified data
