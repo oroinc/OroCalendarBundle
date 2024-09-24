@@ -14,6 +14,7 @@ class YearNthStrategyTest extends AbstractTestStrategy
     /** @var YearNthStrategy  */
     protected $strategy;
 
+    #[\Override]
     protected function setUp(): void
     {
         $translator = $this->createMock(TranslatorInterface::class);
@@ -97,6 +98,7 @@ class YearNthStrategyTest extends AbstractTestStrategy
     /**
      * @SuppressWarnings(PHPMD.ExcessiveMethodLength)
      */
+    #[\Override]
     public function propertiesDataProvider(): array
     {
         return [
@@ -467,6 +469,7 @@ class YearNthStrategyTest extends AbstractTestStrategy
         ];
     }
 
+    #[\Override]
     protected function getType(): string
     {
         return Recurrence::TYPE_YEAR_N_TH;

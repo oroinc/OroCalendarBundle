@@ -18,6 +18,7 @@ class ActionPermissionProviderTest extends \PHPUnit\Framework\TestCase
     /** @var ActionPermissionProvider */
     private $provider;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->tokenAccessor = $this->createMock(TokenAccessorInterface::class);

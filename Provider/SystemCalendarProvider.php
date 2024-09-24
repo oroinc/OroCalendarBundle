@@ -37,9 +37,7 @@ class SystemCalendarProvider extends AbstractRecurrenceAwareCalendarProvider
         $this->authorizationChecker = $authorizationChecker;
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function getCalendarDefaultValues($organizationId, $userId, $calendarId, array $calendarIds)
     {
         if (!$this->calendarConfig->isSystemCalendarEnabled()) {
@@ -76,9 +74,7 @@ class SystemCalendarProvider extends AbstractRecurrenceAwareCalendarProvider
         return $result;
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function getCalendarEvents(
         $organizationId,
         $userId,

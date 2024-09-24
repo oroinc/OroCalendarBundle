@@ -34,17 +34,13 @@ class OroCalendarBundle implements
     /** @var ActivityExtension */
     protected $activityExtension;
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function getOrder()
     {
         return 2;
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function up(Schema $schema, QueryBag $queries)
     {
         // fill createdAt and updatedAt

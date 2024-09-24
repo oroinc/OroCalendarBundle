@@ -14,6 +14,7 @@ class AttendeesSubscriberTest extends \PHPUnit\Framework\TestCase
     /** @var AttendeesSubscriber */
     private $attendeesSubscriber;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->attendeesSubscriber = new AttendeesSubscriber();

@@ -28,6 +28,7 @@ class EventOrganizerResolverTest extends \PHPUnit\Framework\TestCase
     /** @var EventOrganizerResolver */
     private $resolver;
 
+    #[\Override]
     protected function setUp(): void
     {
         parent::setUp();

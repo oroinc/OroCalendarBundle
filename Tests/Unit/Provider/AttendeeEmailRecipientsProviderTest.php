@@ -20,6 +20,7 @@ class AttendeeEmailRecipientsProviderTest extends \PHPUnit\Framework\TestCase
     /** @var AttendeeEmailRecipientsProvider */
     private $provider;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->attendeeRepository = $this->createMock(AttendeeRepository::class);

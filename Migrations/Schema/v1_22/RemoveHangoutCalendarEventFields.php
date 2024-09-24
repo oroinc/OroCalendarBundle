@@ -18,9 +18,7 @@ use Oro\Bundle\TranslationBundle\Migration\DeleteTranslationsByDomainAndKeyPrefi
  */
 class RemoveHangoutCalendarEventFields implements Migration
 {
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function up(Schema $schema, QueryBag $queries): void
     {
         $calendarEventClass = 'Oro\Bundle\CalendarBundle\Entity\CalendarEvent';

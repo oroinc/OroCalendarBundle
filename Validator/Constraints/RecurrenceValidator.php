@@ -24,9 +24,7 @@ class RecurrenceValidator extends ConstraintValidator
         $this->model = $recurrenceModel;
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function validate($value, Constraint $constraint)
     {
         if (!$constraint instanceof Recurrence) {

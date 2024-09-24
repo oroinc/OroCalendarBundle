@@ -43,9 +43,7 @@ class DateFormatExtension extends AbstractExtension implements ServiceSubscriber
         return $this->container->get('oro_config.global');
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function getFunctions()
     {
         return [
@@ -220,9 +218,7 @@ class DateFormatExtension extends AbstractExtension implements ServiceSubscriber
         return $localizationData['formattingCode'] ?? Configuration::DEFAULT_LOCALE;
     }
 
-    /**
-     * {@inheritdoc]
-     */
+    #[\Override]
     public static function getSubscribedServices(): array
     {
         return [

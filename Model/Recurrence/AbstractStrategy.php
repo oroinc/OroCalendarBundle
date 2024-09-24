@@ -114,9 +114,7 @@ abstract class AbstractStrategy implements StrategyInterface
         );
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function getCalculatedEndTime(Entity\Recurrence $recurrence)
     {
         $occurrences = $recurrence->getOccurrences();
@@ -236,9 +234,7 @@ abstract class AbstractStrategy implements StrategyInterface
         return $result;
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function getMaxInterval(Entity\Recurrence $recurrence)
     {
         return static::MAX_INTERVAL;
@@ -247,16 +243,14 @@ abstract class AbstractStrategy implements StrategyInterface
     /**
      * By default the multiplier is NULL so any value of interval is supported.
      *
-     * {@inheritdoc}
      */
+    #[\Override]
     public function getIntervalMultipleOf(Entity\Recurrence $recurrence)
     {
         return 1;
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function getRequiredProperties(Entity\Recurrence $recurrence)
     {
         return [

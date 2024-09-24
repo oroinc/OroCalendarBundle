@@ -7,17 +7,13 @@ use Psr\Log\LoggerInterface;
 
 class ConvertCalendarEventOwnerToAttendee extends ParametrizedMigrationQuery
 {
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function getDescription()
     {
         return 'Create attendees based on calendar events info and create relation between them.';
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function execute(LoggerInterface $logger)
     {
         $this->createAttendees($logger);

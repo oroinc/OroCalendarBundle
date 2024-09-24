@@ -28,6 +28,7 @@ class SystemCalendarHandlerTest extends \PHPUnit\Framework\TestCase
     /** @var SystemCalendarHandler */
     private $handler;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->form = $this->createMock(Form::class);

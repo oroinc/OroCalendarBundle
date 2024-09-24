@@ -11,9 +11,7 @@ use Symfony\Component\Form\FormEvents;
 
 class CalendarUidSubscriber implements EventSubscriberInterface
 {
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public static function getSubscribedEvents(): array
     {
         return [

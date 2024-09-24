@@ -36,6 +36,7 @@ class SystemCalendarProviderTest extends TestCase
     /** @var SystemCalendarProvider */
     private $provider;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->doctrineHelper = $this->createMock(DoctrineHelper::class);

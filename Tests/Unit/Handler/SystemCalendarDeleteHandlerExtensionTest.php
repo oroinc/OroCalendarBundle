@@ -26,6 +26,7 @@ class SystemCalendarDeleteHandlerExtensionTest extends \PHPUnit\Framework\TestCa
     /** @var SystemCalendarDeleteHandlerExtension */
     private $extension;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->calendarConfig = $this->createMock(SystemCalendarConfig::class);

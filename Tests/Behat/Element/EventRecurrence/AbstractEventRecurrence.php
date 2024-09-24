@@ -13,9 +13,7 @@ abstract class AbstractEventRecurrence extends Element
 
     private $intervalRecurrenceSet = false;
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function setValue($values)
     {
         $this->recurrenceParams = $this->fetchParamsToArray($values);

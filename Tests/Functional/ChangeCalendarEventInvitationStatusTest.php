@@ -25,6 +25,7 @@ use Oro\Bundle\CalendarBundle\Tests\Functional\DataFixtures\LoadUserData;
  */
 class ChangeCalendarEventInvitationStatusTest extends AbstractTestCase
 {
+    #[\Override]
     protected function setUp(): void
     {
         parent::setUp();

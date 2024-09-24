@@ -13,9 +13,7 @@ class OroCalendarBundle implements Migration, OutdatedExtendExtensionAwareInterf
 {
     use OutdatedExtendExtensionAwareTrait;
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public function up(Schema $schema, QueryBag $queries): void
     {
         /**

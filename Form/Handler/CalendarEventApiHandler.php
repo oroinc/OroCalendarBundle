@@ -54,9 +54,7 @@ class CalendarEventApiHandler extends AbstractCalendarEventHandler
         return false;
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     protected function getSendNotificationsStrategy()
     {
         if ($this->form->has('notifyAttendees') && $this->form->get('notifyAttendees')->getData()) {
@@ -66,9 +64,7 @@ class CalendarEventApiHandler extends AbstractCalendarEventHandler
         return NotificationManager::NONE_NOTIFICATIONS_STRATEGY;
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     protected function allowUpdateExceptions()
     {
         return $this->form->has('updateExceptions') && $this->form->get('updateExceptions')->getData();

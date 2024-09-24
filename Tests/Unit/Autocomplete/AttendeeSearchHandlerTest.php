@@ -34,6 +34,7 @@ class AttendeeSearchHandlerTest extends \PHPUnit\Framework\TestCase
     /** @var AttendeeSearchHandler */
     private $attendeeSearchHandler;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->indexer = $this->createMock(Indexer::class);

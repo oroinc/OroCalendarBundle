@@ -31,6 +31,7 @@ class AttendeeManagerTest extends TestCase
     /** @var AttendeeManager */
     private $attendeeManager;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->calendarEventRepository = $this->createMock(CalendarEventRepository::class);

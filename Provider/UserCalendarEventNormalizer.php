@@ -209,9 +209,7 @@ class UserCalendarEventNormalizer extends AbstractCalendarEventNormalizer
         return $this->propertyAccessor;
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     protected function applyItemPermissionsData(array &$item)
     {
         $item['editable'] =
@@ -240,9 +238,7 @@ class UserCalendarEventNormalizer extends AbstractCalendarEventNormalizer
         return $this->calendarEventManager->canChangeInvitationStatus($item, $this->tokenAccessor->getUser());
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     protected function afterApplyItemData(array &$item)
     {
         parent::afterApplyItemData($item);

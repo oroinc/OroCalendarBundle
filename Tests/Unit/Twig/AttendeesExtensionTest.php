@@ -16,6 +16,7 @@ class AttendeesExtensionTest extends \PHPUnit\Framework\TestCase
     /** @var AttendeesExtension */
     private $extension;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->featureChecker = $this->createMock(FeatureChecker::class);

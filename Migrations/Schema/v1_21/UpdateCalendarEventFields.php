@@ -25,17 +25,13 @@ class UpdateCalendarEventFields implements Migration, DatabasePlatformAwareInter
 {
     use DatabasePlatformAwareTrait;
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function getOrder()
     {
         return 0;
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function up(Schema $schema, QueryBag $queries)
     {
         $this->fixUidField($schema, $queries);

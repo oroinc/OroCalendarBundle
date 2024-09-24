@@ -14,6 +14,7 @@ class SystemCalendarEventGridHelperTest extends \PHPUnit\Framework\TestCase
     /** @var SystemCalendarEventGridHelper */
     private $helper;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->authorizationChecker = $this->createMock(AuthorizationCheckerInterface::class);

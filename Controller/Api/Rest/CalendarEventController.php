@@ -301,6 +301,7 @@ class CalendarEventController extends RestController
     /**
      * @return ApiEntityManager
      */
+    #[\Override]
     public function getManager()
     {
         return $this->container->get('oro_calendar.calendar_event.manager.api');
@@ -309,6 +310,7 @@ class CalendarEventController extends RestController
     /**
      * @return Form
      */
+    #[\Override]
     public function getForm()
     {
         return $this->container->get('oro_calendar.calendar_event.form.api');
@@ -317,14 +319,13 @@ class CalendarEventController extends RestController
     /**
      * @return ApiFormHandler
      */
+    #[\Override]
     public function getFormHandler()
     {
         return $this->container->get('oro_calendar.calendar_event.form.handler.api');
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function handleUpdateRequest($id)
     {
         /** @var CalendarEvent $entity */
@@ -350,9 +351,7 @@ class CalendarEventController extends RestController
         return $this->buildResponse($view, self::ACTION_UPDATE, ['id' => $id, 'entity' => $entity]);
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function handleCreateRequest($_ = null)
     {
         $isProcessed = false;
@@ -375,9 +374,7 @@ class CalendarEventController extends RestController
         return $this->buildResponse($view, self::ACTION_CREATE, ['success' => $isProcessed, 'entity' => $entity]);
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     protected function fixFormData(array &$data, $entity)
     {
         parent::fixFormData($data, $entity);
@@ -420,9 +417,7 @@ class CalendarEventController extends RestController
         );
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     protected function createResponseData($entity)
     {
         $response        = parent::createResponseData($entity);

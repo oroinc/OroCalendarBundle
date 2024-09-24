@@ -85,6 +85,7 @@ class Attendee implements EmailHolderInterface, ExtendEntityInterface
     /**
      * @return string
      */
+    #[\Override]
     public function getEmail()
     {
         return $this->email;
@@ -237,6 +238,7 @@ class Attendee implements EmailHolderInterface, ExtendEntityInterface
     /**
      * @return string
      */
+    #[\Override]
     public function __toString()
     {
         return (string) $this->displayName;

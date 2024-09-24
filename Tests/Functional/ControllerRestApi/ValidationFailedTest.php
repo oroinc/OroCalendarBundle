@@ -14,6 +14,7 @@ use Oro\Bundle\CalendarBundle\Tests\Functional\DataFixtures\LoadUserData;
  */
 class ValidationFailedTest extends AbstractValidationErrorTestCase
 {
+    #[\Override]
     protected function setUp(): void
     {
         parent::setUp();

@@ -116,9 +116,7 @@ class LoadUserData extends AbstractFixture implements DependentFixtureInterface
         ],
     ];
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function load(ObjectManager $manager)
     {
         $userManager = $this->container->get('oro_user.manager');
@@ -179,9 +177,7 @@ class LoadUserData extends AbstractFixture implements DependentFixtureInterface
         }
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function getDependencies()
     {
         return [LoadOrganizationData::class, LoadBusinessUnit::class];

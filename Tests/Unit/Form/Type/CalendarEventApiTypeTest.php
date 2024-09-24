@@ -65,6 +65,7 @@ class CalendarEventApiTypeTest extends FormIntegrationTestCase
     private NotificationManager|MockObject $notificationManager;
     private CalendarEventApiType $calendarEventApiType;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->registry = $this->createMock(ManagerRegistry::class);
@@ -138,6 +139,7 @@ class CalendarEventApiTypeTest extends FormIntegrationTestCase
         parent::setUp();
     }
 
+    #[\Override]
     protected function getTypeGuessers(): array
     {
         $extendTypeGuesser = $this->createMock(ExtendFieldTypeGuesser::class);
@@ -160,9 +162,7 @@ class CalendarEventApiTypeTest extends FormIntegrationTestCase
         return [$extendTypeGuesser];
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     protected function getExtensions(): array
     {
         $searchHandler = $this->createMock(SearchHandlerInterface::class);

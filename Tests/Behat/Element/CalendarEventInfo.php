@@ -30,9 +30,7 @@ class CalendarEventInfo extends UiDialog
         return $this->calendarItemInfo[$label];
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     protected function init()
     {
         $dataGroup = $this->findAll('css', ".attribute-item");

@@ -30,6 +30,7 @@ class SystemCalendarTypeTest extends TypeTestCase
     /** @var SystemCalendarType */
     private $formType;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->authorizationChecker = $this->createMock(AuthorizationCheckerInterface::class);
@@ -47,9 +48,7 @@ class SystemCalendarTypeTest extends TypeTestCase
         parent::setUp();
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     protected function getExtensions(): array
     {
         return [

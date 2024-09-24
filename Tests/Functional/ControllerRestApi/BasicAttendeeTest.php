@@ -16,6 +16,7 @@ use Oro\Bundle\CalendarBundle\Tests\Functional\DataFixtures\LoadUserData;
  */
 class BasicAttendeeTest extends AbstractTestCase
 {
+    #[\Override]
     protected function setUp(): void
     {
         parent::setUp();

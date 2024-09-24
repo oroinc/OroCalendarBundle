@@ -516,27 +516,23 @@ class CalendarEvent implements
         return $this;
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function getReminders()
     {
         return $this->reminders;
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function setReminders(Collection $reminders)
     {
         $this->reminders = $reminders;
     }
 
     /**
-     * {@inheritdoc}
      *
      * @throws NotUserCalendarEvent
      */
+    #[\Override]
     public function getReminderData()
     {
         if (!$this->getCalendar()) {
@@ -1102,6 +1098,7 @@ class CalendarEvent implements
     /**
      * @return string
      */
+    #[\Override]
     public function __toString()
     {
         return (string)$this->getTitle();
@@ -1131,9 +1128,7 @@ class CalendarEvent implements
         return $this->recurrence;
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function getAdditionalFields()
     {
         return [

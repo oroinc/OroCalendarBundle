@@ -15,9 +15,7 @@ class CalendarProviderPass implements CompilerPassInterface
 {
     use PriorityTaggedLocatorTrait;
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function process(ContainerBuilder $container): void
     {
         $tagName = 'oro_calendar.calendar_provider';

@@ -24,73 +24,55 @@ class DelegateStrategy implements StrategyInterface, ResetInterface
         $this->strategies = $strategies;
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function getOccurrences(Recurrence $recurrence, \DateTime $start, \DateTime $end)
     {
         return $this->getStrategy($recurrence)->getOccurrences($recurrence, $start, $end);
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function supports(Recurrence $recurrence)
     {
         return null !== $this->findStrategy($recurrence);
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function getTextValue(Recurrence $recurrence)
     {
         return $this->getStrategy($recurrence)->getTextValue($recurrence);
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function getCalculatedEndTime(Recurrence $recurrence)
     {
         return $this->getStrategy($recurrence)->getCalculatedEndTime($recurrence);
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function getMaxInterval(Recurrence $recurrence)
     {
         return $this->getStrategy($recurrence)->getMaxInterval($recurrence);
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function getIntervalMultipleOf(Recurrence $recurrence)
     {
         return $this->getStrategy($recurrence)->getIntervalMultipleOf($recurrence);
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function getRequiredProperties(Recurrence $recurrence)
     {
         return $this->getStrategy($recurrence)->getRequiredProperties($recurrence);
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function getName()
     {
         return 'recurrence_delegate';
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public function reset()
     {
         $this->initializedStrategies = null;

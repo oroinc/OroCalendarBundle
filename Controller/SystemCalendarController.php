@@ -191,9 +191,7 @@ class SystemCalendarController extends AbstractController
         return $this->isGranted('oro_system_calendar_management');
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public static function getSubscribedServices(): array
     {
         return array_merge(

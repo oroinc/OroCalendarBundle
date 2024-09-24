@@ -16,17 +16,12 @@ use Oro\Bundle\UserBundle\Migrations\Data\ORM\LoadRolesData;
  */
 class LoadUsersCalendarData extends AbstractFixture implements OrderedFixtureInterface
 {
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public function getOrder(): int
     {
         return 6;
     }
 
-    /**
-     * {@inheritDoc}
-     */
     public function load(ObjectManager $manager): void
     {
         $calendarRepository = $manager->getRepository(Calendar::class);
@@ -106,9 +101,6 @@ class LoadUsersCalendarData extends AbstractFixture implements OrderedFixtureInt
         $this->cleanSecurityContext();
     }
 
-    /**
-     * {@inheritDoc}
-     */
     protected function getExcludeProperties(): array
     {
         return array_merge(

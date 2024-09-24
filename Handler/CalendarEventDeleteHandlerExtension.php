@@ -32,9 +32,7 @@ class CalendarEventDeleteHandlerExtension extends AbstractEntityDeleteHandlerExt
         $this->notificationManager = $notificationManager;
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function assertDeleteGranted($entity): void
     {
         /** @var CalendarEvent $entity */
@@ -61,9 +59,7 @@ class CalendarEventDeleteHandlerExtension extends AbstractEntityDeleteHandlerExt
         }
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function postFlush($entity, array $options): void
     {
         /** @var CalendarEvent $entity */

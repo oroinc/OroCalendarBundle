@@ -6,9 +6,7 @@ use Oro\Bundle\CalendarBundle\Form\Type\CalendarEventApiType;
 
 class CalendarEventApiTypeExtension extends CalendarEventTypeExtension
 {
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public static function getExtendedTypes(): iterable
     {
         return [CalendarEventApiType::class];

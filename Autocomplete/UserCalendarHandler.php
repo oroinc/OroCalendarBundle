@@ -48,9 +48,7 @@ class UserCalendarHandler implements SearchHandlerInterface
         $this->aclHelper = $aclHelper;
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public function search($query, $page, $perPage, $searchById = false)
     {
         [$search, $entityClass, $permission, $entityId, $excludeCurrentUser] = explode(';', $query);
@@ -100,25 +98,19 @@ class UserCalendarHandler implements SearchHandlerInterface
         ];
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public function getProperties()
     {
         return ['id'];
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public function getEntityName()
     {
         return Calendar::class;
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public function convertItem($item)
     {
         /** @var Calendar $item */

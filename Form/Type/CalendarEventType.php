@@ -57,8 +57,8 @@ class CalendarEventType extends AbstractType
     /**
      * @SuppressWarnings(PHPMD.ExcessiveMethodLength)
      *
-     * {@inheritdoc}
      */
+    #[\Override]
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         $minYear = date_create('-10 year')->format('Y');
@@ -165,9 +165,7 @@ class CalendarEventType extends AbstractType
         $builder->addEventSubscriber(new CalendarEventRecurrenceSubscriber());
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function configureOptions(OptionsResolver $resolver)
     {
         $resolver->setDefaults(
@@ -181,9 +179,7 @@ class CalendarEventType extends AbstractType
         );
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function finishView(FormView $view, FormInterface $form, array $options)
     {
         if ($form->getData() && $form->getData()->getRecurrence()) {
@@ -197,17 +193,12 @@ class CalendarEventType extends AbstractType
         }
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function getName()
     {
         return $this->getBlockPrefix();
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function getBlockPrefix(): string
     {
         return 'oro_calendar_event';

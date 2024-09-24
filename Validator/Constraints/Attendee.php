@@ -8,9 +8,7 @@ class Attendee extends Constraint
 {
     public $message = 'Email or display name have to be specified.';
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function getTargets(): string|array
     {
         return static::CLASS_CONSTRAINT;

@@ -14,6 +14,7 @@ class YearlyStrategyTest extends AbstractTestStrategy
     /** @var YearlyStrategy  */
     protected $strategy;
 
+    #[\Override]
     protected function setUp(): void
     {
         $translator = $this->createMock(TranslatorInterface::class);
@@ -101,6 +102,7 @@ class YearlyStrategyTest extends AbstractTestStrategy
     /**
      * @SuppressWarnings(PHPMD.ExcessiveMethodLength)
      */
+    #[\Override]
     public function propertiesDataProvider(): array
     {
         return [
@@ -380,6 +382,7 @@ class YearlyStrategyTest extends AbstractTestStrategy
         ];
     }
 
+    #[\Override]
     protected function getType(): string
     {
         return Recurrence::TYPE_YEARLY;

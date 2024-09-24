@@ -19,6 +19,7 @@ class SystemCalendarEventControllerTest extends WebTestCase
     /** @var ManagerRegistry */
     private $registry;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->initClient([], $this->generateBasicAuthHeader());

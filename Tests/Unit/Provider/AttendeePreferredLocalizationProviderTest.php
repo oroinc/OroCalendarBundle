@@ -16,6 +16,7 @@ class AttendeePreferredLocalizationProviderTest extends \PHPUnit\Framework\TestC
     /** @var AttendeePreferredLocalizationProvider */
     private $provider;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->innerProvider = $this->createMock(PreferredLocalizationProviderInterface::class);

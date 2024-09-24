@@ -13,9 +13,7 @@ use Oro\Bundle\MigrationBundle\Fixture\VersionedFixtureInterface;
  */
 class LoadInvitationEmailTemplates extends AbstractEmailFixture implements VersionedFixtureInterface
 {
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     protected function findExistingTemplate(ObjectManager $manager, array $template): ?EmailTemplate
     {
         if (empty($template['params']['name'])) {
@@ -28,9 +26,7 @@ class LoadInvitationEmailTemplates extends AbstractEmailFixture implements Versi
         ]);
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public function getEmailsDir(): string
     {
         return $this->container
@@ -38,9 +34,7 @@ class LoadInvitationEmailTemplates extends AbstractEmailFixture implements Versi
             ->locateResource('@OroCalendarBundle/Migrations/Data/ORM/data/emails/invitation');
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public function getVersion(): string
     {
         return '1.1';

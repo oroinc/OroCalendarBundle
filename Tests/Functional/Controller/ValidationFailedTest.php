@@ -18,6 +18,7 @@ use Symfony\Component\DomCrawler\Crawler;
  */
 class ValidationFailedTest extends AbstractValidationErrorTestCase
 {
+    #[\Override]
     protected function setUp(): void
     {
         $this->initClient([], $this->generateBasicAuthHeader());

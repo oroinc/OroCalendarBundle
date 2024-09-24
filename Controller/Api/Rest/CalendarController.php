@@ -56,6 +56,7 @@ class CalendarController extends AbstractFOSRestController
         return new Response(json_encode($result), Response::HTTP_OK);
     }
 
+    #[\Override]
     public static function getSubscribedServices(): array
     {
         return array_merge(

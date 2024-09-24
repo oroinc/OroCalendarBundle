@@ -50,17 +50,13 @@ class SystemCalendarEventHandler extends AbstractCalendarEventHandler
         return false;
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     protected function allowUpdateExceptions()
     {
         return true;
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     protected function getSendNotificationsStrategy()
     {
         return NotificationManager::NONE_NOTIFICATIONS_STRATEGY;

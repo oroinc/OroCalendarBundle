@@ -15,9 +15,7 @@ class UniqueUid extends Constraint
 {
     public $message = 'UID field should be unique across one calendar';
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function getTargets(): string|array
     {
         return static::CLASS_CONSTRAINT;

@@ -27,9 +27,7 @@ class CalendarSubscriber implements EventSubscriberInterface
         $this->registry = $registry;
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public static function getSubscribedEvents(): array
     {
         return [

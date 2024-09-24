@@ -57,9 +57,7 @@ class CreateCalendarEventAction extends AbstractAction
         $this->doctrine = $doctrine;
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function initialize(array $options)
     {
         $missingFields = array_diff(
@@ -76,9 +74,7 @@ class CreateCalendarEventAction extends AbstractAction
         $this->options = $options;
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     protected function executeAction($context)
     {
         $initiator = $this->contextAccessor->getValue($context, $this->options[self::OPTION_KEY_INITIATOR]);

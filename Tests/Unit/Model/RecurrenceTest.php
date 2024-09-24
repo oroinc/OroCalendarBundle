@@ -14,6 +14,7 @@ class RecurrenceTest extends \PHPUnit\Framework\TestCase
     /** @var Recurrence */
     private $model;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->strategy = $this->createMock(StrategyInterface::class);

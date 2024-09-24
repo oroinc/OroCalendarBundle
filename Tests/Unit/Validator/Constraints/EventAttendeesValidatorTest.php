@@ -17,6 +17,7 @@ class EventAttendeesValidatorTest extends ConstraintValidatorTestCase
     /** @var ObjectRepository|\PHPUnit\Framework\MockObject\MockObject */
     private $repository;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->repository = $this->createMock(AttendeeRepository::class);
@@ -103,9 +104,7 @@ class EventAttendeesValidatorTest extends ConstraintValidatorTestCase
             ->assertRaised();
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     protected function createValidator()
     {
         $doctrine = $this->createMock(ManagerRegistry::class);

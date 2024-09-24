@@ -57,9 +57,7 @@ class LoadAttendeeData extends AbstractFixture implements DependentFixtureInterf
         ]
     ];
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function load(ObjectManager $manager): void
     {
         $this->loadData($manager, Attendee::STATUS_ENUM_CODE, $this->statusEnumData);
@@ -95,6 +93,7 @@ class LoadAttendeeData extends AbstractFixture implements DependentFixtureInterf
         $manager->flush();
     }
 
+    #[\Override]
     public function getDependencies(): array
     {
         return [LoadLanguageData::class];

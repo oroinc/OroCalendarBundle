@@ -25,6 +25,7 @@ class DateFormatExtensionTest extends \PHPUnit\Framework\TestCase
     /** @var DateFormatExtension */
     private $extension;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->configManager = $this->createMock(ConfigManager::class);

@@ -22,9 +22,7 @@ class CalendarEntityNameProvider implements EntityNameProviderInterface
         $this->translator = $translator;
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public function getName($format, $locale, $entity)
     {
         if (!$entity instanceof Calendar) {
@@ -42,9 +40,7 @@ class CalendarEntityNameProvider implements EntityNameProviderInterface
         return $name;
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public function getNameDQL($format, $locale, $className, $alias)
     {
         if (!is_a($className, Calendar::class, true)) {

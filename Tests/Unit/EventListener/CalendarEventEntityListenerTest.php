@@ -18,6 +18,7 @@ class CalendarEventEntityListenerTest extends \PHPUnit\Framework\TestCase
     /** @var CalendarEventEntityListener */
     private $listener;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->listener = new CalendarEventEntityListener();

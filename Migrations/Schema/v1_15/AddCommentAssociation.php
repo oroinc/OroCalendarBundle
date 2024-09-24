@@ -12,9 +12,7 @@ class AddCommentAssociation implements Migration, CommentExtensionAwareInterface
 {
     use CommentExtensionAwareTrait;
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public function up(Schema $schema, QueryBag $queries): void
     {
         if (!$this->commentExtension->hasCommentAssociation($schema, 'oro_calendar_event')) {

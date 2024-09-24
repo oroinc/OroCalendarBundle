@@ -44,9 +44,7 @@ class RecurrenceExtension extends AbstractExtension implements ServiceSubscriber
         return $this->container->get('oro_calendar.model.recurrence');
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function getFunctions()
     {
         return [
@@ -96,9 +94,7 @@ class RecurrenceExtension extends AbstractExtension implements ServiceSubscriber
         return $this->patternsCache[spl_object_hash($event)];
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public static function getSubscribedServices(): array
     {
         return [

@@ -21,17 +21,13 @@ class AttendeesExtension extends AbstractExtension implements ServiceSubscriberI
         $this->container = $container;
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public static function getSubscribedServices(): array
     {
         return ['oro_featuretoggle.checker.feature_checker'];
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public function getFunctions()
     {
         return [

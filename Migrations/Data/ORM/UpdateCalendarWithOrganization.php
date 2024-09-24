@@ -12,9 +12,7 @@ use Oro\Bundle\OrganizationBundle\Migrations\Data\ORM\UpdateWithOrganization;
  */
 class UpdateCalendarWithOrganization extends UpdateWithOrganization implements OrderedFixtureInterface
 {
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public function getOrder(): int
     {
         /*
@@ -24,9 +22,7 @@ class UpdateCalendarWithOrganization extends UpdateWithOrganization implements O
         return -230;
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public function load(ObjectManager $manager): void
     {
         $this->update($manager, Calendar::class);

@@ -34,9 +34,7 @@ class UserCalendarProvider extends AbstractRecurrenceAwareCalendarProvider
         $this->calendarEventNormalizer = $calendarEventNormalizer;
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function getCalendarDefaultValues($organizationId, $userId, $calendarId, array $calendarIds)
     {
         if (empty($calendarIds)) {
@@ -71,9 +69,7 @@ class UserCalendarProvider extends AbstractRecurrenceAwareCalendarProvider
         return $result;
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function getCalendarEvents(
         $organizationId,
         $userId,

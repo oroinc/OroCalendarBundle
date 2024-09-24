@@ -28,6 +28,7 @@ class EmailNotificationSenderTest extends \PHPUnit\Framework\TestCase
     /** @var EmailNotificationSender */
     private $emailNotificationSender;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->emailNotificationManager = $this->createMock(EmailNotificationManager::class);

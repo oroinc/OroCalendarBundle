@@ -75,6 +75,7 @@ class Calendar implements ExtendEntityInterface
     /**
      * @return string
      */
+    #[\Override]
     public function __toString()
     {
         return empty($this->name)

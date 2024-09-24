@@ -22,6 +22,7 @@ class RecurrenceExtensionTest extends \PHPUnit\Framework\TestCase
     /** @var RecurrenceExtension */
     private $extension;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->translator = $this->createMock(TranslatorInterface::class);

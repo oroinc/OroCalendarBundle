@@ -21,9 +21,7 @@ class AttendeesToViewTransformer extends ContextsToViewTransformer
         $this->attendeeManager = $attendeeManager;
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function reverseTransform($value)
     {
         $entities = parent::reverseTransform($value);

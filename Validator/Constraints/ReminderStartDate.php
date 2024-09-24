@@ -11,6 +11,7 @@ class ReminderStartDate extends Constraint
 {
     public string $message = 'oro.calendar.calendar_event.reminder.date_start_less_than_now.message';
 
+    #[\Override]
     public function validatedBy(): string
     {
         return ReminderStartDateConstraintValidator::class;

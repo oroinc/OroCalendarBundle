@@ -96,6 +96,7 @@ class CalendarConnectionController extends RestController
     /**
      * @return CalendarPropertyApiEntityManager
      */
+    #[\Override]
     public function getManager()
     {
         return $this->container->get('oro_calendar.calendar_property.manager.api');
@@ -104,6 +105,7 @@ class CalendarConnectionController extends RestController
     /**
      * @return Form
      */
+    #[\Override]
     public function getForm()
     {
         return $this->container->get('oro_calendar.calendar_property.form.api');
@@ -112,14 +114,13 @@ class CalendarConnectionController extends RestController
     /**
      * @return ApiFormHandler
      */
+    #[\Override]
     public function getFormHandler()
     {
         return $this->container->get('oro_calendar.calendar_property.form.handler.api');
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     protected function fixFormData(array &$data, $entity)
     {
         parent::fixFormData($data, $entity);

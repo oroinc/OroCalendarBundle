@@ -18,6 +18,7 @@ class CalendarProviderPassTest extends \PHPUnit\Framework\TestCase
 
     private CalendarProviderPass $compiler;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->container = new ContainerBuilder();

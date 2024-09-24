@@ -12,17 +12,13 @@ use Oro\Bundle\CalendarBundle\Entity\CalendarEvent;
  */
 class AddCalendarEventActivityLists extends AddActivityListsData implements DependentFixtureInterface
 {
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public function getDependencies(): array
     {
         return [UpdateCalendarWithOrganization::class];
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public function load(ObjectManager $manager): void
     {
         $this->addActivityListsForActivityClass(

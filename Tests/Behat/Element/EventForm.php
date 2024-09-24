@@ -25,6 +25,7 @@ class EventForm extends OroForm
     /**
      * Set recurrence parameters from TableNode
      */
+    #[\Override]
     public function fill(TableNode $table)
     {
         foreach ($table->getRows() as list($label, $value)) {
@@ -51,6 +52,7 @@ class EventForm extends OroForm
      * @param string $name
      * @return \Behat\Mink\Element\NodeElement|Element|null
      */
+    #[\Override]
     public function findField($name)
     {
         if ($this->elementFactory->hasElement($name)) {

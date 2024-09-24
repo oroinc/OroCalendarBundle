@@ -12,6 +12,7 @@ use Oro\Bundle\UserBundle\Entity\User;
 
 class CalendarRepositoryTest extends WebTestCase
 {
+    #[\Override]
     protected function setUp(): void
     {
         $this->initClient();

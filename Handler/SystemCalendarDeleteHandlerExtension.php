@@ -32,9 +32,7 @@ class SystemCalendarDeleteHandlerExtension extends AbstractEntityDeleteHandlerEx
         $this->tokenAccessor = $tokenAccessor;
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function assertDeleteGranted($entity): void
     {
         /** @var SystemCalendar $entity */

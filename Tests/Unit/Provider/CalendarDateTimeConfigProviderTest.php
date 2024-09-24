@@ -17,6 +17,7 @@ class CalendarDateTimeConfigProviderTest extends \PHPUnit\Framework\TestCase
     /** @var CalendarDateTimeConfigProvider */
     private $provider;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->localeSettings = $this->createMock(LocaleSettings::class);

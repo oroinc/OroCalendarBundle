@@ -131,25 +131,16 @@ class Recurrence
         return $this->recurrenceStrategy->getCalculatedEndTime($recurrence);
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function getMaxInterval(Entity\Recurrence $recurrence)
     {
         return $this->recurrenceStrategy->getMaxInterval($recurrence);
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function getIntervalMultipleOf(Entity\Recurrence $recurrence)
     {
         return $this->recurrenceStrategy->getIntervalMultipleOf($recurrence);
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function getRequiredProperties(Entity\Recurrence $recurrence)
     {
         return $this->recurrenceStrategy->getRequiredProperties($recurrence);

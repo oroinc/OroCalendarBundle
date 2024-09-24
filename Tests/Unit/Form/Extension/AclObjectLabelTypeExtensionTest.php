@@ -12,6 +12,7 @@ class AclObjectLabelTypeExtensionTest extends \PHPUnit\Framework\TestCase
     /** @var AclObjectLabelTypeExtension */
     private $formExtension;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->formExtension = new AclObjectLabelTypeExtension();

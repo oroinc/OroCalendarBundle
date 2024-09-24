@@ -12,9 +12,7 @@ class AttendeeSearchHandler extends ContextSearchHandler
     /** @var AttendeeManager */
     protected $attendeeManager;
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     protected function convertItems(array $items)
     {
         $groupped = $this->groupIdsByEntityName($items);
@@ -67,9 +65,7 @@ class AttendeeSearchHandler extends ContextSearchHandler
         return $groupped;
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     protected function getSearchAliases()
     {
         return ['oro_user'];

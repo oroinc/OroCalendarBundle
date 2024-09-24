@@ -35,6 +35,7 @@ class CalendarEventActivityListProviderTest extends \PHPUnit\Framework\TestCase
     /** @var CalendarEventActivityListProvider */
     private $provider;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->doctrineHelper = $this->createMock(DoctrineHelper::class);

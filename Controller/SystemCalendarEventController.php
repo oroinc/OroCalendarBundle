@@ -234,9 +234,7 @@ class SystemCalendarEventController extends AbstractController
         return $this->container->get(SystemCalendarConfig::class);
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public static function getSubscribedServices(): array
     {
         return array_merge(

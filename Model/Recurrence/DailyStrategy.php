@@ -12,17 +12,13 @@ class DailyStrategy extends AbstractStrategy
      */
     const MAX_INTERVAL = 99;
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function getName()
     {
         return 'recurrence_daily';
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function getOccurrences(Entity\Recurrence $recurrence, \DateTime $start, \DateTime $end)
     {
         $result = [];
@@ -52,17 +48,13 @@ class DailyStrategy extends AbstractStrategy
         return $result;
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function supports(Entity\Recurrence $recurrence)
     {
         return $recurrence->getRecurrenceType() === Recurrence::TYPE_DAILY;
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function getTextValue(Entity\Recurrence $recurrence)
     {
         $interval = $recurrence->getInterval();
@@ -87,9 +79,7 @@ class DailyStrategy extends AbstractStrategy
         return new \DateTime("+{$interval} day {$date->format('c')}");
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function getLastOccurrence(Entity\Recurrence $recurrence)
     {
         return $this->getNextOccurrence(

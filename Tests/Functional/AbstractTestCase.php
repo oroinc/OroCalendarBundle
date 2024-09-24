@@ -18,6 +18,7 @@ class AbstractTestCase extends WebTestCase
      */
     protected static $ignoredResponseFields = [];
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->initClient([]);

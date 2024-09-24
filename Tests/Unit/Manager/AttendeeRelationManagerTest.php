@@ -21,6 +21,7 @@ class AttendeeRelationManagerTest extends TestCase
     /** @var AttendeeRelationManager */
     private $attendeeRelationManager;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->users = [

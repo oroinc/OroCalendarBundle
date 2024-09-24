@@ -41,6 +41,7 @@ class CalendarEventManagerLegacyTest extends TestCase
     /** @var CalendarEventManager */
     private $calendarEventManager;
 
+    #[\Override]
     protected function setUp(): void
     {
         $repository = $this->createMock(CalendarRepository::class);

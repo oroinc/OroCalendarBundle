@@ -16,6 +16,7 @@ class CalendarEventRepositoryTest extends WebTestCase
     private const DUPLICATED_UID = 'b139fecc-41cf-478d-8f8e-b6122f491ace';
     private const MATCHING_UID = '1acb93ce-c54a-11e7-abc4-cec278b6b50a';
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->initClient();

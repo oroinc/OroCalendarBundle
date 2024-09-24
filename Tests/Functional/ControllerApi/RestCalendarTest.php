@@ -7,6 +7,7 @@ use Symfony\Component\HttpFoundation\Response;
 
 class RestCalendarTest extends WebTestCase
 {
+    #[\Override]
     protected function setUp(): void
     {
         $this->initClient(array(), $this->generateWsseAuthHeader());

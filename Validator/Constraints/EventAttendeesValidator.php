@@ -22,9 +22,9 @@ class EventAttendeesValidator extends ConstraintValidator
     }
 
     /**
-     * {@inheritdoc}
      * @param CalendarEvent $calendarEvent
      */
+    #[\Override]
     public function validate($calendarEvent, Constraint $constraint)
     {
         if ($calendarEvent->getId() === null) {

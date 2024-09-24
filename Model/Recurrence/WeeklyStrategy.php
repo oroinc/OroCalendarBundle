@@ -21,20 +21,18 @@ use Oro\Bundle\CalendarBundle\Model\Recurrence;
  */
 class WeeklyStrategy extends AbstractStrategy
 {
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function getName()
     {
         return 'recurrence_weekly';
     }
 
     /**
-     * {@inheritdoc}
      *
      * @SuppressWarnings(PHPMD.NPathComplexity)
      * @SuppressWarnings(PHPMD.CyclomaticComplexity)
      */
+    #[\Override]
     public function getOccurrences(Entity\Recurrence $recurrence, \DateTime $start, \DateTime $end)
     {
         $result = [];
@@ -102,17 +100,13 @@ class WeeklyStrategy extends AbstractStrategy
         return $result;
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function supports(Entity\Recurrence $recurrence)
     {
         return $recurrence->getRecurrenceType() === Recurrence::TYPE_WEEKLY;
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function getTextValue(Entity\Recurrence $recurrence)
     {
         $interval = $recurrence->getInterval();
@@ -175,11 +169,11 @@ class WeeklyStrategy extends AbstractStrategy
     }
 
     /**
-     * {@inheritdoc}
      *
      * @SuppressWarnings(PHPMD.NPathComplexity)
      * @SuppressWarnings(PHPMD.CyclomaticComplexity)
      */
+    #[\Override]
     public function getLastOccurrence(Entity\Recurrence $recurrence)
     {
         $weekDays = $recurrence->getDayOfWeek();
@@ -224,9 +218,7 @@ class WeeklyStrategy extends AbstractStrategy
         return $recurrence->getStartTime();
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function getRequiredProperties(Entity\Recurrence $recurrence)
     {
         return array_merge(

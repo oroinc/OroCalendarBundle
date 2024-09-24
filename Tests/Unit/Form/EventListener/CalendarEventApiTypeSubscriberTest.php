@@ -16,6 +16,7 @@ class CalendarEventApiTypeSubscriberTest extends TestCase
     private CalendarEventManager|MockObject $calendarEventManager;
     private CalendarEventApiTypeSubscriber $calendarEventApiTypeSubscriber;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->calendarEventManager = $this->createMock(CalendarEventManager::class);

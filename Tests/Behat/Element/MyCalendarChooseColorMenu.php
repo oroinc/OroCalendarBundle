@@ -9,6 +9,7 @@ use Oro\Bundle\TestFrameworkBundle\Behat\Element\Element;
  */
 class MyCalendarChooseColorMenu extends Element
 {
+    #[\Override]
     public function click()
     {
         if (!$this->isIsset()) {

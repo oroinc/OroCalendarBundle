@@ -24,9 +24,7 @@ class CalendarEventApiTypeSubscriber implements EventSubscriberInterface
         $this->calendarEventManager = $calendarEventManager;
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public static function getSubscribedEvents(): array
     {
         return [

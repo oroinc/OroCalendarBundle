@@ -16,9 +16,7 @@ class RecurringCalendarEventException extends Constraint
     public string $cantChangeCalendarMessage =
         'Calendar of calendar event exception can not be changed.';
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function getTargets(): string|array
     {
         return self::CLASS_CONSTRAINT;

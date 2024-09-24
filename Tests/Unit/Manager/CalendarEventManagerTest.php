@@ -50,6 +50,7 @@ class CalendarEventManagerTest extends TestCase
     /** @var CalendarEventManager */
     private $manager;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->updateManager = $this->createMock(UpdateManager::class);

@@ -54,6 +54,7 @@ class CalendarEventApiHandlerTest extends \PHPUnit\Framework\TestCase
     /** @var CalendarEventApiHandler */
     private $handler;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->form = $this->createMock(FormInterface::class);

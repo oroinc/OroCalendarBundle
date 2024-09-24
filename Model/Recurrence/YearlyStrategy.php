@@ -10,25 +10,19 @@ use Oro\Bundle\CalendarBundle\Model\Recurrence;
  */
 class YearlyStrategy extends MonthlyStrategy
 {
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function getName()
     {
         return 'recurrence_yearly';
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function supports(Entity\Recurrence $recurrence)
     {
         return $recurrence->getRecurrenceType() === Recurrence::TYPE_YEARLY;
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function getTextValue(Entity\Recurrence $recurrence)
     {
         $startYear = $recurrence->getStartTime() ? $recurrence->getStartTime()->format('Y') : null;
@@ -61,9 +55,7 @@ class YearlyStrategy extends MonthlyStrategy
         );
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     protected function getFirstOccurrence(Entity\Recurrence $recurrence)
     {
         $startYear = $recurrence->getStartTime() ? $recurrence->getStartTime()->format('Y') : null;
@@ -101,9 +93,7 @@ class YearlyStrategy extends MonthlyStrategy
         return $currentDay > $lastDay ? $lastDay : $currentDay;
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function getRequiredProperties(Entity\Recurrence $recurrence)
     {
         return array_merge(
@@ -118,8 +108,8 @@ class YearlyStrategy extends MonthlyStrategy
      * The multiplier for yearly recurrence type is 12, so only values of interval from this sequence are supported:
      * 12, 24, 36, ...
      *
-     * {@inheritdoc}
      */
+    #[\Override]
     public function getIntervalMultipleOf(Entity\Recurrence $recurrence)
     {
         return 12;

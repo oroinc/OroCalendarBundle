@@ -138,6 +138,7 @@ class CalendarEventHandler extends AbstractCalendarEventHandler
         return $this;
     }
 
+    #[\Override]
     protected function getSendNotificationsStrategy(): string
     {
         if ($this->form->has('notifyAttendees') && $this->form->get('notifyAttendees')->getData()) {
@@ -147,6 +148,7 @@ class CalendarEventHandler extends AbstractCalendarEventHandler
         return NotificationManager::NONE_NOTIFICATIONS_STRATEGY;
     }
 
+    #[\Override]
     protected function allowUpdateExceptions(): bool
     {
         return true;

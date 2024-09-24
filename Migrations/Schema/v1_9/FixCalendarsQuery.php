@@ -8,17 +8,13 @@ use Psr\Log\LoggerInterface;
 
 class FixCalendarsQuery extends ParametrizedMigrationQuery
 {
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function getDescription()
     {
         return 'Remove corrupted and duplicates calendars';
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function execute(LoggerInterface $logger)
     {
         // remove calendars without owners

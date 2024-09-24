@@ -26,6 +26,7 @@ class CalendarSubscriberTest extends TestCase
     /** @var CalendarSubscriber */
     private $calendarSubscriber;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->tokenAccessor = $this->createMock(TokenAccessorInterface::class);

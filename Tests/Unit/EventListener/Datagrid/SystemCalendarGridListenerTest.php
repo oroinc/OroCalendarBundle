@@ -31,6 +31,7 @@ class SystemCalendarGridListenerTest extends \PHPUnit\Framework\TestCase
     /** @var SystemCalendarGridListener */
     private $listener;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->authorizationChecker = $this->createMock(AuthorizationCheckerInterface::class);

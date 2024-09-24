@@ -27,6 +27,7 @@ class CalendarEventSearchListenerTest extends \PHPUnit\Framework\TestCase
     /** @var CalendarEventSearchListener */
     private $listener;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->urlGenerator = $this->createMock(UrlGeneratorInterface::class);

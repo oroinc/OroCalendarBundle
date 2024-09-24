@@ -19,9 +19,7 @@ class CalendarChoiceTypeTest extends TypeTestCase
     /** @var TranslatorInterface|\PHPUnit\Framework\MockObject\MockObject */
     private $translator;
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     protected function getExtensions(): array
     {
         $this->calendarEventManager = $this->createMock(CalendarEventManager::class);

@@ -22,9 +22,7 @@ class CalendarEventDeleteHandler extends AbstractEntityDeleteHandler
         $this->deleteManager = $deleteManager;
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function delete($entity, bool $flush = true, array $options = []): ?array
     {
         $this->assertDeleteGranted($entity);
@@ -44,9 +42,7 @@ class CalendarEventDeleteHandler extends AbstractEntityDeleteHandler
         return $flushOptions;
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     protected function deleteWithoutFlush($entity, array $options): void
     {
         /** @var CalendarEvent $entity */

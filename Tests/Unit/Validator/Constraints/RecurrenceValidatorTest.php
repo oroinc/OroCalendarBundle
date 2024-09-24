@@ -37,6 +37,7 @@ class RecurrenceValidatorTest extends ConstraintValidatorTestCase
     /** @var Model\Recurrence|\PHPUnit\Framework\MockObject\MockObject */
     private $model;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->model = $this->createMock(Model\Recurrence::class);
@@ -52,6 +53,7 @@ class RecurrenceValidatorTest extends ConstraintValidatorTestCase
         $this->setPropertyPath('');
     }
 
+    #[\Override]
     protected function createValidator(): RecurrenceValidator
     {
         return new RecurrenceValidator($this->model);

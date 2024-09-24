@@ -15,9 +15,7 @@ class EventAttendees extends Constraint
 {
     public $message = 'Attendees list cannot be changed';
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function getTargets(): string|array
     {
         return static::CLASS_CONSTRAINT;

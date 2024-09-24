@@ -41,6 +41,7 @@ class EntityListenerTest extends TestCase
     /** @var EntityListener */
     private $listener;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->em = $this->createMock(EntityManager::class);

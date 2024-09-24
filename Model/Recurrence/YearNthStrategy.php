@@ -10,17 +10,13 @@ use Oro\Bundle\CalendarBundle\Model\Recurrence;
  */
 class YearNthStrategy extends AbstractStrategy
 {
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function getName()
     {
         return 'recurrence_yearnth';
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function getOccurrences(Entity\Recurrence $recurrence, \DateTime $start, \DateTime $end)
     {
         $result = [];
@@ -71,17 +67,13 @@ class YearNthStrategy extends AbstractStrategy
         return $result;
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function supports(Entity\Recurrence $recurrence)
     {
         return $recurrence->getRecurrenceType() === Recurrence::TYPE_YEAR_N_TH;
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function getTextValue(Entity\Recurrence $recurrence)
     {
         $interval = (int)($recurrence->getInterval() / 12);
@@ -149,9 +141,7 @@ class YearNthStrategy extends AbstractStrategy
         return $days[$instance - 1];
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function getLastOccurrence(Entity\Recurrence $recurrence)
     {
         $startTime = $recurrence->getStartTime();
@@ -179,9 +169,7 @@ class YearNthStrategy extends AbstractStrategy
         );
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function getRequiredProperties(Entity\Recurrence $recurrence)
     {
         return array_merge(
@@ -198,8 +186,8 @@ class YearNthStrategy extends AbstractStrategy
      * The multiplier for yearly recurrence type is 12, so only values of interval from this sequence are supported:
      * 12, 24, 36, ...
      *
-     * {@inheritdoc}
      */
+    #[\Override]
     public function getIntervalMultipleOf(Entity\Recurrence $recurrence)
     {
         return 12;

@@ -27,9 +27,7 @@ class CalendarEventTypeExtension extends AbstractTypeExtension
         $this->organizerResolver = $organizerResolver;
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         parent::buildForm($builder, $options);
@@ -58,9 +56,7 @@ class CalendarEventTypeExtension extends AbstractTypeExtension
         $this->organizerResolver->updateOrganizerInfo($calendarEvent);
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public static function getExtendedTypes(): iterable
     {
         return [CalendarEventType::class];

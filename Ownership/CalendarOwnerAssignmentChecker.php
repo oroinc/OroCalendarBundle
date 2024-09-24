@@ -12,9 +12,7 @@ use Oro\Bundle\OrganizationBundle\Ownership\OwnerAssignmentChecker;
  */
 class CalendarOwnerAssignmentChecker extends OwnerAssignmentChecker
 {
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     protected function getHasAssignmentsQueryBuilder(
         $ownerId,
         string $entityClassName,

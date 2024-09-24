@@ -20,11 +20,13 @@ class LoadCalendarEventWithReminderData extends AbstractFixture implements Depen
         'oro_calendar:user:foo_user_2',
         'oro_calendar:user:foo_user_3'
     ];
+    #[\Override]
     public function getDependencies()
     {
         return [LoadUserData::class];
     }
 
+    #[\Override]
     public function load(ObjectManager $manager)
     {
         /** @var User $owner */

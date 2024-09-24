@@ -19,6 +19,7 @@ class RecurringCalendarEventExceptionValidatorTest extends ConstraintValidatorTe
     /** @var CalendarEventManager|\PHPUnit\Framework\MockObject\MockObject */
     private $calendarEventManager;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->calendarEventManager = $this->createMock(CalendarEventManager::class);
@@ -26,6 +27,7 @@ class RecurringCalendarEventExceptionValidatorTest extends ConstraintValidatorTe
         parent::setUp();
     }
 
+    #[\Override]
     protected function createValidator()
     {
         return new RecurringCalendarEventExceptionValidator($this->calendarEventManager);

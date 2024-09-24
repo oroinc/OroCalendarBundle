@@ -7,17 +7,13 @@ use Oro\Bundle\CalendarBundle\Model\Recurrence;
 
 class MonthlyStrategy extends AbstractStrategy
 {
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function getName()
     {
         return 'recurrence_monthly';
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function getOccurrences(Entity\Recurrence $recurrence, \DateTime $start, \DateTime $end)
     {
         $result = [];
@@ -47,17 +43,13 @@ class MonthlyStrategy extends AbstractStrategy
         return $result;
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function supports(Entity\Recurrence $recurrence)
     {
         return $recurrence->getRecurrenceType() === Recurrence::TYPE_MONTHLY;
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function getTextValue(Entity\Recurrence $recurrence)
     {
         $interval = $recurrence->getInterval();
@@ -140,9 +132,7 @@ class MonthlyStrategy extends AbstractStrategy
         return $occurrenceDate;
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function getLastOccurrence(Entity\Recurrence $recurrence)
     {
         $occurrenceDate = $this->getFirstOccurrence($recurrence);
@@ -154,9 +144,7 @@ class MonthlyStrategy extends AbstractStrategy
         );
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function getRequiredProperties(Entity\Recurrence $recurrence)
     {
         return array_merge(

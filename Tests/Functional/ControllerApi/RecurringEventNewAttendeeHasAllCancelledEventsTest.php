@@ -13,6 +13,7 @@ use Oro\Bundle\UserBundle\Entity\User;
  */
 class RecurringEventNewAttendeeHasAllCancelledEventsTest extends AbstractUseCaseTestCase
 {
+    #[\Override]
     protected function setUp(): void
     {
         $this->initClient([], $this->generateWsseAuthHeader());

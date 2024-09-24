@@ -22,9 +22,7 @@ class RecurringCalendarEventExceptionValidator extends ConstraintValidator
         $this->calendarEventManager = $calendarEventManager;
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function validate($value, Constraint $constraint)
     {
         if (!$constraint instanceof RecurringCalendarEventException) {

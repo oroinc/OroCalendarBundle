@@ -40,9 +40,7 @@ class CalendarEventActivityListProvider implements
         $this->commentAssociationHelper  = $commentAssociationHelper;
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function isApplicableTarget($entityClass, $accessible = true)
     {
         return $this->activityAssociationHelper->isActivityAssociationEnabled(
@@ -53,9 +51,9 @@ class CalendarEventActivityListProvider implements
     }
 
     /**
-     * {@inheritdoc}
      * @param CalendarEvent $entity
      */
+    #[\Override]
     public function getRoutes($entity)
     {
         $routes = [
@@ -80,53 +78,51 @@ class CalendarEventActivityListProvider implements
     }
 
     /**
-     * {@inheritdoc}
      * @param CalendarEvent $entity
      */
+    #[\Override]
     public function getSubject($entity)
     {
         return $entity->getTitle();
     }
 
     /**
-     * {@inheritdoc}
      * @param CalendarEvent $entity
      */
+    #[\Override]
     public function getDescription($entity)
     {
         return trim(strip_tags($entity->getDescription()));
     }
 
     /**
-     * {@inheritdoc}
      * @param CalendarEvent $entity
      */
+    #[\Override]
     public function getCreatedAt($entity)
     {
         return $entity->getCreatedAt();
     }
 
     /**
-     * {@inheritdoc}
      * @param CalendarEvent $entity
      */
+    #[\Override]
     public function getUpdatedAt($entity)
     {
         return $entity->getUpdatedAt();
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function getData(ActivityList $activityList)
     {
         return [];
     }
 
     /**
-     * {@inheritdoc}
      * @param CalendarEvent $entity
      */
+    #[\Override]
     public function getOrganization($entity)
     {
         if ($entity->getCalendar()) {
@@ -139,25 +135,19 @@ class CalendarEventActivityListProvider implements
         return null;
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function getTemplate()
     {
         return '@OroCalendar/CalendarEvent/js/activityItemTemplate.html.twig';
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function getActivityId($entity)
     {
         return $this->doctrineHelper->getSingleEntityIdentifier($entity);
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function isApplicable($entity)
     {
         if (\is_object($entity)) {
@@ -168,26 +158,24 @@ class CalendarEventActivityListProvider implements
     }
 
     /**
-     * {@inheritdoc}
      * @param CalendarEvent $entity
      */
+    #[\Override]
     public function getTargetEntities($entity)
     {
         return $entity->getActivityTargets();
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function isCommentsEnabled($entityClass)
     {
         return $this->commentAssociationHelper->isCommentAssociationEnabled($entityClass);
     }
 
     /**
-     * {@inheritdoc}
      * @param CalendarEvent $entity
      */
+    #[\Override]
     public function getActivityOwners($entity, ActivityList $activityList)
     {
         $organization = $this->getOrganization($entity);
@@ -205,18 +193,16 @@ class CalendarEventActivityListProvider implements
         return [$activityOwner];
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public function isActivityListApplicable(ActivityList $activityList): bool
     {
         return true;
     }
 
     /**
-     * {@inheritDoc}
      * @param CalendarEvent $entity
      */
+    #[\Override]
     public function getOwner($entity)
     {
         if ($entity->getCalendar()) {

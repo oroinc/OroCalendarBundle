@@ -37,6 +37,7 @@ class CalendarEventDeleteHandlerTest extends \PHPUnit\Framework\TestCase
     /** @var CalendarEventDeleteHandler */
     private $handler;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->doctrine = $this->createMock(ManagerRegistry::class);

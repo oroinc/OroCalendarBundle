@@ -28,6 +28,7 @@ use Oro\Bundle\CalendarBundle\Tests\Functional\DataFixtures\LoadUserData;
  */
 class RecurringEventRecurrenceUpdateExceptionTest extends AbstractTestCase
 {
+    #[\Override]
     protected function setUp(): void
     {
         parent::setUp();

@@ -14,9 +14,7 @@ use Symfony\Component\Form\FormEvents;
  */
 class AttendeesSubscriber implements EventSubscriberInterface
 {
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public static function getSubscribedEvents(): array
     {
         return [

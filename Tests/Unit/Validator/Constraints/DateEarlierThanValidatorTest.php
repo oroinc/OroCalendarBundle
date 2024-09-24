@@ -20,6 +20,7 @@ class DateEarlierThanValidatorTest extends ConstraintValidatorTestCase
     /** @var Form */
     private $formField;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->dateTimeStart = new \DateTime('-1 day');
@@ -39,6 +40,7 @@ class DateEarlierThanValidatorTest extends ConstraintValidatorTestCase
         $this->setRoot($form);
     }
 
+    #[\Override]
     protected function createValidator()
     {
         return new DateEarlierThanValidator();

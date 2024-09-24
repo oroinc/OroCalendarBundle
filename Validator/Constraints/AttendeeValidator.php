@@ -12,6 +12,7 @@ class AttendeeValidator extends ConstraintValidator
      * @param AttendeeEntity $value
      * @param Attendee $constraint
      */
+    #[\Override]
     public function validate($value, Constraint $constraint)
     {
         if ($value->getCalendarEvent()->getSystemCalendar() || $value->getDisplayName() || $value->getEmail()) {

@@ -38,6 +38,7 @@ class UserCalendarEventNormalizerTest extends \PHPUnit\Framework\TestCase
     /** @var UserCalendarEventNormalizer */
     private $normalizer;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->calendarEventManager = $this->createMock(CalendarEventManager::class);

@@ -23,9 +23,7 @@ class AttendeeEmailRecipientsProvider implements EmailRecipientsProviderInterfac
         $this->emailRecipientsHelper = $emailRecipientsHelper;
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function getRecipients(EmailRecipientsProviderArgs $args)
     {
         return $this->emailRecipientsHelper->plainRecipientsFromResult(
@@ -37,9 +35,7 @@ class AttendeeEmailRecipientsProvider implements EmailRecipientsProviderInterfac
         );
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function getSection(): string
     {
         return 'oro.calendar.autocomplete.attendees';

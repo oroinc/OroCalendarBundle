@@ -21,6 +21,7 @@ class RecurrenceFormTypeTest extends \PHPUnit\Framework\TestCase
     /** @var RecurrenceFormType */
     private $type;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->model = new Recurrence($this->createMock(StrategyInterface::class));

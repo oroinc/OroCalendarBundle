@@ -19,9 +19,7 @@ class DeleteMassActionHandler extends ParentHandler
         $this->deleteManager = $deleteManager;
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     protected function processDelete(object $entity, EntityManagerInterface $manager): void
     {
         /** @var CalendarEvent $entity */

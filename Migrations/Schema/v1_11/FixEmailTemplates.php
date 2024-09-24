@@ -8,17 +8,13 @@ use Psr\Log\LoggerInterface;
 
 class FixEmailTemplates extends ParametrizedMigrationQuery
 {
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function getDescription()
     {
         return 'Fix email templates with wrong calendar_date_range calls';
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function execute(LoggerInterface $logger)
     {
         // find duplicated calendars

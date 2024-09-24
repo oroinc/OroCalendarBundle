@@ -17,6 +17,7 @@ class RestCalendarEventWithRegularEventTest extends WebTestCase
     private const DATE_RANGE_END = '+5 day';
     private const DEFAULT_USER_CALENDAR_ID = 1;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->initClient([], $this->generateWsseAuthHeader());

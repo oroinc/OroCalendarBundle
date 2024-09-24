@@ -24,9 +24,9 @@ class UniqueUidValidator extends ConstraintValidator
     }
 
     /**
-     * {@inheritdoc}
      * @param CalendarEvent $calendarEvent
      */
+    #[\Override]
     public function validate($calendarEvent, Constraint $constraint)
     {
         // do not validate in case calendar event has a parent (see class annotation) or does not have UID

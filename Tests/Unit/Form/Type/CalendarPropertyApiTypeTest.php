@@ -17,9 +17,7 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 
 class CalendarPropertyApiTypeTest extends TypeTestCase
 {
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     protected function getExtensions(): array
     {
         $em = $this->createMock(EntityManager::class);

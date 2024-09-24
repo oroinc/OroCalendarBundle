@@ -12,17 +12,13 @@ use Doctrine\Persistence\ObjectManager;
  */
 class UpdateAttendeeData extends AbstractFixture implements DependentFixtureInterface
 {
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function getDependencies()
     {
         return ['Oro\Bundle\CalendarBundle\Migrations\Data\ORM\LoadAttendeeData'];
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function load(ObjectManager $manager)
     {
         $this->updateStatus($manager);

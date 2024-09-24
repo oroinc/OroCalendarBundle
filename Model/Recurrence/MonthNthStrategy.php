@@ -10,18 +10,16 @@ use Oro\Bundle\CalendarBundle\Model\Recurrence;
  */
 class MonthNthStrategy extends AbstractStrategy
 {
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function getName()
     {
         return 'recurrence_monthnth';
     }
 
     /**
-     * {@inheritdoc}
      * @SuppressWarnings(PHPMD.CyclomaticComplexity)
      */
+    #[\Override]
     public function getOccurrences(Entity\Recurrence $recurrence, \DateTime $start, \DateTime $end)
     {
         $result = [];
@@ -72,17 +70,13 @@ class MonthNthStrategy extends AbstractStrategy
         return $result;
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function supports(Entity\Recurrence $recurrence)
     {
         return $recurrence->getRecurrenceType() === Recurrence::TYPE_MONTH_N_TH;
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function getTextValue(Entity\Recurrence $recurrence)
     {
         $interval = $recurrence->getInterval();
@@ -148,9 +142,7 @@ class MonthNthStrategy extends AbstractStrategy
         return $days[$instance - 1];
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function getLastOccurrence(Entity\Recurrence $recurrence)
     {
         $dayOfWeek = $recurrence->getDayOfWeek();
@@ -175,9 +167,7 @@ class MonthNthStrategy extends AbstractStrategy
         );
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function getRequiredProperties(Entity\Recurrence $recurrence)
     {
         return array_merge(

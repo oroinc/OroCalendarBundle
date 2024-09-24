@@ -32,6 +32,7 @@ abstract class AbstractRecurrenceAwareCalendarProvider extends AbstractCalendarP
      *
      * @return array
      */
+    #[\Override]
     protected function getSupportedFields($className)
     {
         $classMetadata = $this->doctrineHelper->getEntityMetadata($className);
@@ -46,6 +47,7 @@ abstract class AbstractRecurrenceAwareCalendarProvider extends AbstractCalendarP
      *
      * @return array
      */
+    #[\Override]
     protected function filterSupportedFields($extraFields, $class)
     {
         $extraFields = !empty($extraFields)

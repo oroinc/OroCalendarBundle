@@ -14,6 +14,7 @@ class WeeklyStrategyTest extends AbstractTestStrategy
     /** @var WeeklyStrategy  */
     protected $strategy;
 
+    #[\Override]
     protected function setUp(): void
     {
         $translator = $this->createMock(TranslatorInterface::class);
@@ -93,6 +94,7 @@ class WeeklyStrategyTest extends AbstractTestStrategy
     /**
      * @SuppressWarnings(PHPMD.ExcessiveMethodLength)
      */
+    #[\Override]
     public function propertiesDataProvider(): array
     {
         return [
@@ -513,6 +515,7 @@ class WeeklyStrategyTest extends AbstractTestStrategy
         ];
     }
 
+    #[\Override]
     protected function getType(): string
     {
         return Recurrence::TYPE_WEEKLY;

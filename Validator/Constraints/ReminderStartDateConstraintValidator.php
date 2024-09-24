@@ -13,6 +13,7 @@ use Symfony\Component\Validator\Exception\UnexpectedTypeException;
  */
 class ReminderStartDateConstraintValidator extends ConstraintValidator
 {
+    #[\Override]
     public function validate($value, Constraint $constraint)
     {
         if (!$constraint instanceof ReminderStartDate) {

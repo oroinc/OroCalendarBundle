@@ -10,17 +10,13 @@ use Oro\Bundle\MigrationBundle\Migration\QueryBag;
 
 class OroCalendarBundle implements Migration, OrderedMigrationInterface
 {
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function getOrder()
     {
         return 1;
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function up(Schema $schema, QueryBag $queries)
     {
         $table = $schema->createTable('oro_calendar_property');

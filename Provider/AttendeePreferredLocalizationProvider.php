@@ -20,9 +20,7 @@ class AttendeePreferredLocalizationProvider extends AbstractPreferredLocalizatio
         $this->innerLocalizationProvider = $innerLocalizationProvider;
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function supports($entity): bool
     {
         return $entity instanceof Attendee;
@@ -32,6 +30,7 @@ class AttendeePreferredLocalizationProvider extends AbstractPreferredLocalizatio
      * @param Attendee $entity
      * @return Localization|null
      */
+    #[\Override]
     protected function getPreferredLocalizationForEntity($entity): ?Localization
     {
         return $this->innerLocalizationProvider->getPreferredLocalization($entity->getUser());

@@ -14,6 +14,7 @@ class MonthlyStrategyTest extends AbstractTestStrategy
     /** @var MonthlyStrategy  */
     protected $strategy;
 
+    #[\Override]
     protected function setUp(): void
     {
         $translator = $this->createMock(TranslatorInterface::class);
@@ -93,6 +94,7 @@ class MonthlyStrategyTest extends AbstractTestStrategy
     /**
      * @SuppressWarnings(PHPMD.ExcessiveMethodLength)
      */
+    #[\Override]
     public function propertiesDataProvider(): array
     {
         return [
@@ -404,6 +406,7 @@ class MonthlyStrategyTest extends AbstractTestStrategy
         ];
     }
 
+    #[\Override]
     protected function getType(): string
     {
         return Recurrence::TYPE_MONTHLY;

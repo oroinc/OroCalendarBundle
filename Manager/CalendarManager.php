@@ -40,9 +40,7 @@ class CalendarManager implements ResetInterface
         $this->calendarPropertyProvider = $calendarPropertyProvider;
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public function reset()
     {
         $this->providers = null;

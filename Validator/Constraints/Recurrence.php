@@ -17,9 +17,7 @@ class Recurrence extends Constraint
     public string $multipleChoicesMessage =
         'One or more of the given values is not one of the values: {{ allowed_values }}.';
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function getTargets(): string|array
     {
         return self::CLASS_CONSTRAINT;

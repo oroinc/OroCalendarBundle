@@ -13,17 +13,13 @@ use Oro\Bundle\EmailBundle\Migrations\Data\ORM\AbstractEmailFixture;
  */
 class ConvertCalendarInvitationEmail extends AbstractEmailFixture
 {
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public function getDependencies(): array
     {
         return [LoadEmailTemplates::class];
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public function getEmailsDir(): string
     {
         return $this->container
@@ -31,9 +27,7 @@ class ConvertCalendarInvitationEmail extends AbstractEmailFixture
             ->locateResource('@OroCalendarBundle/Migrations/Data/ORM/data/emails/invitation');
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     protected function loadTemplate(ObjectManager $manager, $fileName, array $file): void
     {
         $template = file_get_contents($file['path']);
@@ -47,17 +41,13 @@ class ConvertCalendarInvitationEmail extends AbstractEmailFixture
         }
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     protected function updateExistingTemplate(EmailTemplate $emailTemplate, array $template): void
     {
         $emailTemplate->setContent($template['content']);
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     protected function findExistingTemplate(ObjectManager $manager, array $template): ?EmailTemplate
     {
         if (!isset($template['params']['name'])

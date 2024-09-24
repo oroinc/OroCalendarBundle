@@ -34,6 +34,7 @@ class CalendarEventTypeTest extends \PHPUnit\Framework\TestCase
     /** @var CalendarEventType */
     private $type;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->authorizationChecker = $this->createMock(AuthorizationCheckerInterface::class);
