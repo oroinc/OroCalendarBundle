@@ -1,6 +1,6 @@
 <?php
 
-namespace Oro\Bundle\CalendarBundle\Tests\Unit\Manager;
+namespace Oro\Bundle\CalendarBundle\Tests\Unit\Manager\CalendarEvent;
 
 use Doctrine\ORM\EntityManager;
 use Oro\Bundle\CalendarBundle\Entity\Attendee;
