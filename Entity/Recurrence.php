@@ -259,7 +259,7 @@ class Recurrence
      *
      * @return self
      */
-    public function setDayOfWeek(array $dayOfWeek = null)
+    public function setDayOfWeek(?array $dayOfWeek = null)
     {
         $this->dayOfWeek = $dayOfWeek;
 
@@ -331,7 +331,7 @@ class Recurrence
      *
      * @return self
      */
-    public function setStartTime(\DateTime $startTime = null)
+    public function setStartTime(?\DateTime $startTime = null)
     {
         $this->startTime = $startTime;
 
@@ -353,7 +353,7 @@ class Recurrence
      *
      * @return self
      */
-    public function setEndTime(\DateTime $endTime = null)
+    public function setEndTime(?\DateTime $endTime = null)
     {
         $this->endTime = $endTime;
 
@@ -467,7 +467,7 @@ class Recurrence
      * @param \DateTime|null $target
      * @return bool
      */
-    protected function isDateTimeValueEqual(\DateTime $source = null, \DateTime $target = null)
+    protected function isDateTimeValueEqual(?\DateTime $source = null, ?\DateTime $target = null)
     {
         if ($source && $target) {
             return $source->format('U') == $target->format('U');

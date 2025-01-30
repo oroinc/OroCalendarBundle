@@ -310,7 +310,7 @@ class CalendarEvent implements
      *
      * @return CalendarEvent
      */
-    public function setCalendar(Calendar $calendar = null)
+    public function setCalendar(?Calendar $calendar = null)
     {
         $this->calendar = $calendar;
         // unlink an event from system calendar
@@ -327,7 +327,7 @@ class CalendarEvent implements
      * @param Calendar|null $otherCalendar
      * @return bool
      */
-    public function isCalendarEqual(Calendar $otherCalendar = null)
+    public function isCalendarEqual(?Calendar $otherCalendar = null)
     {
         $actualCalendar = $this->getCalendar();
         return $actualCalendar && $otherCalendar &&
@@ -356,7 +356,7 @@ class CalendarEvent implements
      *
      * @return CalendarEvent
      */
-    public function setSystemCalendar(SystemCalendar $systemCalendar = null)
+    public function setSystemCalendar(?SystemCalendar $systemCalendar = null)
     {
         $this->systemCalendar = $systemCalendar;
         // unlink an event from user's calendar
@@ -430,7 +430,7 @@ class CalendarEvent implements
      *
      * @return CalendarEvent
      */
-    public function setStart(\DateTime $start = null)
+    public function setStart(?\DateTime $start = null)
     {
         $this->start = $start;
 
@@ -459,7 +459,7 @@ class CalendarEvent implements
      *
      * @return CalendarEvent
      */
-    public function setEnd(\DateTime $end = null)
+    public function setEnd(?\DateTime $end = null)
     {
         $this->end = $end;
 
@@ -659,7 +659,7 @@ class CalendarEvent implements
      *
      * @return CalendarEvent
      */
-    public function setParent(CalendarEvent $parent = null)
+    public function setParent(?CalendarEvent $parent = null)
     {
         $this->parent = $parent;
 
@@ -870,7 +870,7 @@ class CalendarEvent implements
      *
      * @return CalendarEvent
      */
-    public function setRecurringEvent(CalendarEvent $recurringEvent = null)
+    public function setRecurringEvent(?CalendarEvent $recurringEvent = null)
     {
         $this->recurringEvent = $recurringEvent;
 
@@ -904,7 +904,7 @@ class CalendarEvent implements
      *
      * @return CalendarEvent
      */
-    public function setOriginalStart(\DateTime $originalStart = null)
+    public function setOriginalStart(?\DateTime $originalStart = null)
     {
         $this->originalStart = $originalStart;
 
@@ -1078,7 +1078,7 @@ class CalendarEvent implements
      * @param User|null $otherUser
      * @return bool
      */
-    public function isRelatedAttendeeUserEqual(User $otherUser = null)
+    public function isRelatedAttendeeUserEqual(?User $otherUser = null)
     {
         return $otherUser && $this->getRelatedAttendee() && $this->getRelatedAttendee()->isUserEqual($otherUser);
     }
@@ -1088,7 +1088,7 @@ class CalendarEvent implements
      *
      * @return CalendarEvent
      */
-    public function setRelatedAttendee(Attendee $relatedAttendee = null)
+    public function setRelatedAttendee(?Attendee $relatedAttendee = null)
     {
         $this->relatedAttendee = $relatedAttendee;
 
@@ -1111,7 +1111,7 @@ class CalendarEvent implements
      *
      * @return CalendarEvent
      */
-    public function setRecurrence(Recurrence $recurrence = null)
+    public function setRecurrence(?Recurrence $recurrence = null)
     {
         $this->recurrence = $recurrence;
 

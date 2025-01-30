@@ -149,7 +149,7 @@ class Attendee implements EmailHolderInterface, ExtendEntityInterface
      *
      * @return Attendee
      */
-    public function setUser(User $user = null)
+    public function setUser(?User $user = null)
     {
         $this->user = $user;
 
@@ -269,7 +269,7 @@ class Attendee implements EmailHolderInterface, ExtendEntityInterface
      * @param User|null $user
      * @return bool
      */
-    public function isUserEqual(User $user = null)
+    public function isUserEqual(?User $user = null)
     {
         $actualUser = $this->getUser();
         return $actualUser === $user || ($user && $actualUser && $actualUser->getId() == $user->getId());

@@ -142,8 +142,8 @@ class CalendarEventEntityListenerTest extends \PHPUnit\Framework\TestCase
 
     private function getPreUpdateEvent(
         bool $hasUidFieldChanged,
-        string $oldValue = null,
-        string $newValue = null
+        ?string $oldValue = null,
+        ?string $newValue = null
     ): PreUpdateEventArgs {
         $em = $this->createMock(EntityManager::class);
         $em->expects($this->any())

@@ -134,7 +134,7 @@ class CalendarEventActivityListProviderTest extends \PHPUnit\Framework\TestCase
     /**
      * @dataProvider getOrganizationDataProvider
      */
-    public function testGetOrganization(CalendarEvent $calendarEvent, Organization $expected = null)
+    public function testGetOrganization(CalendarEvent $calendarEvent, ?Organization $expected = null)
     {
         $this->assertSame($expected, $this->provider->getOrganization($calendarEvent));
     }

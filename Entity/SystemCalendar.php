@@ -207,7 +207,7 @@ class SystemCalendar implements ExtendEntityInterface
      *
      * @return self
      */
-    public function setOrganization(Organization $organization = null)
+    public function setOrganization(?Organization $organization = null)
     {
         if ($organization && $this->isPublic()) {
             return $this;
