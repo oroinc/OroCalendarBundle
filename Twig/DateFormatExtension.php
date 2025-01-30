@@ -74,8 +74,8 @@ class DateFormatExtension extends AbstractExtension implements ServiceSubscriber
      *          Thu Oct 17, 2013 5:00pm – Thu Oct 18, 2013 5:00pm - when $skipTime = false
      *          Thu Oct 17, 2013 – Thu Oct 18, 2013 - when $skipTime = true
      *
-     * @param \DateTime|null             $startDate
-     * @param \DateTime|null             $endDate
+     * @param \DateTime|null $startDate
+     * @param \DateTime|null $endDate
      * @param bool                       $skipTime
      * @param string|int|null            $dateType \IntlDateFormatter constant or it's string name
      * @param string|int|null            $timeType \IntlDateFormatter constant or it's string name
@@ -86,14 +86,14 @@ class DateFormatExtension extends AbstractExtension implements ServiceSubscriber
      * @return string
      */
     public function formatCalendarDateRangeOrganization(
-        \DateTime $startDate = null,
-        \DateTime $endDate = null,
-        $skipTime = false,
-        $dateType = null,
-        $timeType = null,
-        $locale = null,
-        $timeZone = null,
-        OrganizationInterface $organization = null
+        ?\DateTime             $startDate = null,
+        ?\DateTime             $endDate = null,
+                               $skipTime = false,
+                               $dateType = null,
+                               $timeType = null,
+                               $locale = null,
+                               $timeZone = null,
+        ?OrganizationInterface $organization = null
     ) {
         // Get localization settings from user scope
         if ($organization instanceof OrganizationInterface) {
@@ -127,8 +127,8 @@ class DateFormatExtension extends AbstractExtension implements ServiceSubscriber
      *          Thu Oct 17, 2013 5:00pm – Thu Oct 18, 2013 5:00pm - when $skipTime = false
      *          Thu Oct 17, 2013 – Thu Oct 18, 2013 - when $skipTime = true
      *
-     * @param \DateTime|null    $startDate
-     * @param \DateTime|null    $endDate
+     * @param \DateTime|null $startDate
+     * @param \DateTime|null $endDate
      * @param bool              $skipTime
      * @param string|int|null   $dateType \IntlDateFormatter constant or it's string name
      * @param string|int|null   $timeType \IntlDateFormatter constant or it's string name
@@ -138,13 +138,13 @@ class DateFormatExtension extends AbstractExtension implements ServiceSubscriber
      * @return string
      */
     public function formatCalendarDateRange(
-        \DateTime $startDate = null,
-        \DateTime $endDate = null,
-        $skipTime = false,
-        $dateType = null,
-        $timeType = null,
-        $locale = null,
-        $timeZone = null
+        ?\DateTime $startDate = null,
+        ?\DateTime $endDate = null,
+                   $skipTime = false,
+                   $dateType = null,
+                   $timeType = null,
+                   $locale = null,
+                   $timeZone = null
     ) {
         if (is_null($startDate)) {
             // exit because nothing to format.

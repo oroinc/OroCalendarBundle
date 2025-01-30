@@ -3,6 +3,7 @@
 namespace Oro\Bundle\CalendarBundle\Twig;
 
 use Oro\Bundle\CalendarBundle\Entity;
+use Oro\Bundle\CalendarBundle\Entity\Recurrence as EntityRecurrence;
 use Oro\Bundle\CalendarBundle\Model\Recurrence;
 use Psr\Container\ContainerInterface;
 use Symfony\Contracts\Service\ServiceSubscriberInterface;
@@ -56,13 +57,13 @@ class RecurrenceExtension extends AbstractExtension implements ServiceSubscriber
     /**
      * Returns text representation of Recurrence object.
      *
-     * @param null|Entity\Recurrence $recurrence
+     * @param null|EntityRecurrence $recurrence
      *
      * @return string
      *
      * @throws \InvalidArgumentException
      */
-    public function getRecurrenceTextValue(Entity\Recurrence $recurrence = null)
+    public function getRecurrenceTextValue(?EntityRecurrence $recurrence = null)
     {
         $textValue = '';
         if ($recurrence) {

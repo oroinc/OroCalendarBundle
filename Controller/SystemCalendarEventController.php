@@ -191,7 +191,7 @@ class SystemCalendarEventController extends AbstractController
         return $entityRoutingHelper->getEntity($targetEntityClass, $targetEntityId);
     }
 
-    private function checkPermissions(SystemCalendar $systemCalendar = null)
+    private function checkPermissions(?SystemCalendar $systemCalendar = null)
     {
         if (!$systemCalendar) {
             // an event must belong to system calendar

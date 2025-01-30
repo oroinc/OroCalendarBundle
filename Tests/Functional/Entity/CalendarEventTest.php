@@ -109,10 +109,10 @@ class CalendarEventTest extends WebTestCase
     }
 
     private function createCalendarEvent(
-        Calendar $calendar,
-        string $title,
-        CalendarEvent $parent = null,
-        array $attendees = []
+        Calendar       $calendar,
+        string         $title,
+        ?CalendarEvent $parent = null,
+        array          $attendees = []
     ): CalendarEvent {
         $event = new CalendarEvent();
         $event->setCalendar($calendar)

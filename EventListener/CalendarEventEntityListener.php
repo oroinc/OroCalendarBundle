@@ -59,7 +59,7 @@ class CalendarEventEntityListener
         $this->updateParentUid($calendarEvent, $event);
     }
 
-    private function updateParentUid(CalendarEvent $calendarEvent, LifecycleEventArgs $event = null)
+    private function updateParentUid(CalendarEvent $calendarEvent, ?LifecycleEventArgs $event = null)
     {
         if ($calendarEvent->getParent() !== null && $calendarEvent->getParent()->getUid() === null) {
             if ($event) {
@@ -80,7 +80,7 @@ class CalendarEventEntityListener
         }
     }
 
-    private function updateRecurrentUid(CalendarEvent $calendarEvent, LifecycleEventArgs $event = null)
+    private function updateRecurrentUid(CalendarEvent $calendarEvent, ?LifecycleEventArgs $event = null)
     {
         // if calendar event is an recurring event exception and its base recurring event does not have UID,
         // set the exception event's UID to the main recurring one

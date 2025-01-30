@@ -100,7 +100,7 @@ class UpdateExceptionManager
      * @param \DateTime|null $target
      * @return bool
      */
-    protected function isDateTimeValueEqual(\DateTime $source = null, \DateTime $target = null)
+    protected function isDateTimeValueEqual(?\DateTime $source = null, ?\DateTime $target = null)
     {
         if ($source && $target) {
             return $source->format('U') == $target->format('U');

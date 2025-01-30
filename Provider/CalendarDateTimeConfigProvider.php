@@ -20,7 +20,7 @@ class CalendarDateTimeConfigProvider
      * @param \DateTime|null $date
      * @return array
      */
-    public function getDateRange(\DateTime $date = null)
+    public function getDateRange(?\DateTime $date = null)
     {
         $timezone = $this->localeSettings->getTimeZone();
         $timezoneObj = new \DateTimeZone($timezone);
@@ -47,7 +47,7 @@ class CalendarDateTimeConfigProvider
      * @param \DateTime|null $date
      * @return array
      */
-    public function getTimezoneOffset(\DateTime $date = null)
+    public function getTimezoneOffset(?\DateTime $date = null)
     {
         $timezone = $this->localeSettings->getTimeZone();
 

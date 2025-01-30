@@ -102,7 +102,7 @@ class AttendeeRelationManager
      * @param Attendee[]|\Traversable $attendees
      * @param Organization|null $organization
      */
-    public function bindAttendees($attendees, Organization $organization = null)
+    public function bindAttendees($attendees, ?Organization $organization = null)
     {
         $unboundAttendeesByEmail = $this->getUnboundAttendeesByEmail($attendees);
         if (!$unboundAttendeesByEmail) {
