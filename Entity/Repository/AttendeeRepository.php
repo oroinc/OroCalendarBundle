@@ -23,8 +23,8 @@ class AttendeeRepository extends EntityRepository
      */
     public function getEmailRecipients(
         ?Organization $organization = null,
-                      $query = null,
-                      $limit = null
+        $query = null,
+        $limit = null
     ) {
         $qb = $this->createQueryBuilder('a')
             ->select('a.email, a.displayName AS name')

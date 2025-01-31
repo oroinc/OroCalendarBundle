@@ -86,13 +86,13 @@ class DateFormatExtension extends AbstractExtension implements ServiceSubscriber
      * @return string
      */
     public function formatCalendarDateRangeOrganization(
-        ?\DateTime             $startDate = null,
-        ?\DateTime             $endDate = null,
-                               $skipTime = false,
-                               $dateType = null,
-                               $timeType = null,
-                               $locale = null,
-                               $timeZone = null,
+        ?\DateTime $startDate = null,
+        ?\DateTime $endDate = null,
+        $skipTime = false,
+        $dateType = null,
+        $timeType = null,
+        $locale = null,
+        $timeZone = null,
         ?OrganizationInterface $organization = null
     ) {
         // Get localization settings from user scope
@@ -140,11 +140,11 @@ class DateFormatExtension extends AbstractExtension implements ServiceSubscriber
     public function formatCalendarDateRange(
         ?\DateTime $startDate = null,
         ?\DateTime $endDate = null,
-                   $skipTime = false,
-                   $dateType = null,
-                   $timeType = null,
-                   $locale = null,
-                   $timeZone = null
+        $skipTime = false,
+        $dateType = null,
+        $timeType = null,
+        $locale = null,
+        $timeZone = null
     ) {
         if (is_null($startDate)) {
             // exit because nothing to format.
