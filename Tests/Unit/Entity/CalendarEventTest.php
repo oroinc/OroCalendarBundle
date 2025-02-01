@@ -797,7 +797,7 @@ class CalendarEventTest extends \PHPUnit\Framework\TestCase
      */
     public function testOrganizerIsFetchedFromOwnerInCaseOrganizerEmailIsNotProvided(
         ?string $displayName,
-        string  $expectedDisplayName
+        string $expectedDisplayName
     ) {
         $calendarEvent = $this->getCalendarEventWithOwner();
         if ($displayName) {

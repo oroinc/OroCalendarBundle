@@ -159,7 +159,7 @@ class MonthNthStrategy extends AbstractStrategy
             );
         }
 
-        return  $this->getNextOccurrence(
+        return $this->getNextOccurrence(
             ($recurrence->getOccurrences() - 1) * $recurrence->getInterval(),
             $dayOfWeek,
             $instance,
