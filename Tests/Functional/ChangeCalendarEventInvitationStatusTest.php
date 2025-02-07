@@ -48,7 +48,7 @@ class ChangeCalendarEventInvitationStatusTest extends AbstractTestCase
             [
                 'method' => 'POST',
                 'url' => $this->getUrl('oro_api_post_calendar_connection'),
-                'server' => $this->generateWsseAuthHeader('foo_user_1', 'foo_user_1_api_key'),
+                'server' => self::generateApiAuthHeader('foo_user_1'),
                 'content' => json_encode(
                     [
                         'targetCalendar' => $this->getReference('oro_calendar:calendar:foo_user_1')->getId(),
@@ -73,7 +73,7 @@ class ChangeCalendarEventInvitationStatusTest extends AbstractTestCase
             [
                 'method' => 'POST',
                 'url' => $this->getUrl('oro_api_post_calendarevent'),
-                'server' => $this->generateWsseAuthHeader('foo_user_1', 'foo_user_1_api_key'),
+                'server' => self::generateApiAuthHeader('foo_user_1'),
                 'content' => json_encode(
                     [
                         'title' => 'Regular event',
@@ -133,7 +133,7 @@ class ChangeCalendarEventInvitationStatusTest extends AbstractTestCase
                         'subordinate' => true,
                     ]
                 ),
-                'server' => $this->generateWsseAuthHeader('foo_user_1', 'foo_user_1_api_key')
+                'server' => self::generateApiAuthHeader('foo_user_1')
             ]
         );
 
@@ -297,7 +297,7 @@ class ChangeCalendarEventInvitationStatusTest extends AbstractTestCase
                         'subordinate' => true,
                     ]
                 ),
-                'server' => $this->generateWsseAuthHeader('foo_user_1', 'foo_user_1_api_key')
+                'server' => self::generateApiAuthHeader('foo_user_1')
             ]
         );
 
@@ -456,7 +456,7 @@ class ChangeCalendarEventInvitationStatusTest extends AbstractTestCase
                         'subordinate' => true,
                     ]
                 ),
-                'server' => $this->generateWsseAuthHeader('foo_user_1', 'foo_user_1_api_key')
+                'server' => self::generateApiAuthHeader('foo_user_1')
             ]
         );
 
@@ -615,7 +615,7 @@ class ChangeCalendarEventInvitationStatusTest extends AbstractTestCase
                         'subordinate' => true,
                     ]
                 ),
-                'server' => $this->generateWsseAuthHeader('foo_user_1', 'foo_user_1_api_key')
+                'server' => self::generateApiAuthHeader('foo_user_1')
             ]
         );
 
@@ -785,7 +785,7 @@ class ChangeCalendarEventInvitationStatusTest extends AbstractTestCase
                         'subordinate' => true,
                     ]
                 ),
-                'server' => $this->generateWsseAuthHeader('foo_user_1', 'foo_user_1_api_key')
+                'server' => self::generateApiAuthHeader('foo_user_1')
             ]
         );
 

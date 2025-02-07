@@ -21,7 +21,7 @@ class YearlyRecurringEventTest extends AbstractTestCase
     #[\Override]
     protected function setUp(): void
     {
-        $this->initClient([], $this->generateWsseAuthHeader());
+        $this->initClient([], self::generateApiAuthHeader());
         $this->loadFixtures([LoadUserData::class]);
     }
 
@@ -63,7 +63,7 @@ class YearlyRecurringEventTest extends AbstractTestCase
             [
                 'method'  => 'POST',
                 'url'     => $this->getUrl('oro_api_post_calendarevent'),
-                'server'  => $this->generateWsseAuthHeader('foo_user_1', 'foo_user_1_api_key'),
+                'server'  => self::generateApiAuthHeader('foo_user_1'),
                 'content' => json_encode($eventData, JSON_THROW_ON_ERROR)
             ]
         );
@@ -85,7 +85,7 @@ class YearlyRecurringEventTest extends AbstractTestCase
                         'subordinate' => true,
                     ]
                 ),
-                'server' => $this->generateWsseAuthHeader('foo_user_1', 'foo_user_1_api_key')
+                'server' => self::generateApiAuthHeader('foo_user_1')
             ]
         );
 

@@ -9,7 +9,6 @@ use Oro\Bundle\TestFrameworkBundle\Test\DataFixtures\AbstractFixture;
 use Oro\Bundle\TestFrameworkBundle\Tests\Functional\DataFixtures\LoadBusinessUnit;
 use Oro\Bundle\UserBundle\Entity\Role;
 use Oro\Bundle\UserBundle\Entity\User;
-use Oro\Bundle\UserBundle\Entity\UserApi;
 
 class LoadUserData extends AbstractFixture implements DependentFixtureInterface
 {
@@ -23,7 +22,6 @@ class LoadUserData extends AbstractFixture implements DependentFixtureInterface
             'firstName'         => 'Elley',
             'lastName'          => 'Towards',
             'plainPassword'     => 'password',
-            'apiKey'            => 'system_user_1_api_key',
             'organization'      => 'oro_calendar:organization:system',
             'reference'         => 'oro_calendar:user:system_user_1',
             'calendarReference' => 'oro_calendar:calendar:system_user_1',
@@ -35,7 +33,6 @@ class LoadUserData extends AbstractFixture implements DependentFixtureInterface
             'firstName'         => 'Giffard',
             'lastName'          => 'Gray',
             'plainPassword'     => 'password',
-            'apiKey'            => 'system_user_2_api_key',
             'organization'      => 'oro_calendar:organization:system',
             'reference'         => 'oro_calendar:user:system_user_2',
             'calendarReference' => 'oro_calendar:calendar:system_user_2',
@@ -47,7 +44,6 @@ class LoadUserData extends AbstractFixture implements DependentFixtureInterface
             'firstName'         => 'Billy',
             'lastName'          => 'Wilf',
             'plainPassword'     => 'password',
-            'apiKey'            => 'foo_user_1_api_key',
             'organization'      => 'oro_calendar:organization:foo',
             'reference'         => 'oro_calendar:user:foo_user_1',
             'calendarReference' => 'oro_calendar:calendar:foo_user_1',
@@ -60,7 +56,6 @@ class LoadUserData extends AbstractFixture implements DependentFixtureInterface
             'firstName'         => 'Wesley',
             'lastName'          => 'Tate',
             'plainPassword'     => 'password',
-            'apiKey'            => 'foo_user_2_api_key',
             'organization'      => 'oro_calendar:organization:foo',
             'reference'         => 'oro_calendar:user:foo_user_2',
             'calendarReference' => 'oro_calendar:calendar:foo_user_2',
@@ -72,7 +67,6 @@ class LoadUserData extends AbstractFixture implements DependentFixtureInterface
             'firstName'         => 'Wally',
             'lastName'          => 'Lynn',
             'plainPassword'     => 'password',
-            'apiKey'            => 'foo_user_3_api_key',
             'organization'      => 'oro_calendar:organization:foo',
             'reference'         => 'oro_calendar:user:foo_user_3',
             'calendarReference' => 'oro_calendar:calendar:foo_user_3',
@@ -84,7 +78,6 @@ class LoadUserData extends AbstractFixture implements DependentFixtureInterface
             'firstName'         => 'Bruce',
             'lastName'          => 'Hector',
             'plainPassword'     => 'password',
-            'apiKey'            => 'bar_user_1_api_key',
             'organization'      => 'oro_calendar:organization:bar',
             'reference'         => 'oro_calendar:user:bar_user_1',
             'calendarReference' => 'oro_calendar:calendar:bar_user_1',
@@ -96,7 +89,6 @@ class LoadUserData extends AbstractFixture implements DependentFixtureInterface
             'firstName'         => 'Hadley',
             'lastName'          => 'Roosevelt',
             'plainPassword'     => 'password',
-            'apiKey'            => 'bar_user_2_api_key',
             'organization'      => 'oro_calendar:organization:bar',
             'reference'         => 'oro_calendar:user:bar_user_2',
             'calendarReference' => 'oro_calendar:calendar:bar_user_2',
@@ -108,7 +100,6 @@ class LoadUserData extends AbstractFixture implements DependentFixtureInterface
             'firstName'         => 'Foster',
             'lastName'          => 'Conway',
             'plainPassword'     => 'password',
-            'apiKey'            => 'bar_user_3_api_key',
             'organization'      => 'oro_calendar:organization:bar',
             'reference'         => 'oro_calendar:user:bar_user_3',
             'calendarReference' => 'oro_calendar:calendar:bar_user_3',
@@ -139,17 +130,9 @@ class LoadUserData extends AbstractFixture implements DependentFixtureInterface
             $this->setEntityPropertyValues(
                 $user,
                 $data,
-                ['reference', 'calendarReference', 'apiKey']
+                ['reference', 'calendarReference']
             );
             $user->addOrganization($data['organization']);
-
-            if (isset($data['apiKey'])) {
-                $apiKey = new UserApi();
-                $apiKey->setApiKey($data['apiKey']);
-                $apiKey->setOrganization($data['organization']);
-                $manager->persist($apiKey);
-                $user->addApiKey($apiKey);
-            }
 
             $userManager->updateUser($user);
             $this->setReference($data['reference'], $user);

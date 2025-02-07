@@ -55,7 +55,7 @@ class BasicAttendeeTest extends AbstractTestCase
             [
                 'method'  => 'POST',
                 'url'     => $this->getUrl('oro_api_post_calendarevent'),
-                'server'  => $this->generateWsseAuthHeader('foo_user_1', 'foo_user_1_api_key'),
+                'server'  => self::generateApiAuthHeader('foo_user_1'),
                 'content' => json_encode(
                     [
                         'title'     => 'Regular event',
@@ -90,7 +90,7 @@ class BasicAttendeeTest extends AbstractTestCase
             [
                 'method' => 'GET',
                 'url'    => $this->getUrl('oro_api_get_calendarevent', ['id' => $newEvent->getId()]),
-                'server' => $this->generateWsseAuthHeader('foo_user_1', 'foo_user_1_api_key')
+                'server' => self::generateApiAuthHeader('foo_user_1')
             ]
         );
 
@@ -160,7 +160,7 @@ class BasicAttendeeTest extends AbstractTestCase
             [
                 'method'  => 'POST',
                 'url'     => $this->getUrl('oro_api_post_calendarevent'),
-                'server'  => $this->generateWsseAuthHeader('system_user_1', 'system_user_1_api_key'),
+                'server'  => self::generateApiAuthHeader('system_user_1'),
                 'content' => json_encode(
                     [
                         'title'     => 'Regular event',
@@ -206,7 +206,7 @@ class BasicAttendeeTest extends AbstractTestCase
             [
                 'method' => 'GET',
                 'url'    => $this->getUrl('oro_api_get_calendarevent', ['id' => $newEvent->getId()]),
-                'server' => $this->generateWsseAuthHeader('system_user_1', 'system_user_1_api_key')
+                'server' => self::generateApiAuthHeader('system_user_1')
             ]
         );
 
@@ -276,7 +276,7 @@ class BasicAttendeeTest extends AbstractTestCase
             [
                 'method'  => 'POST',
                 'url'     => $this->getUrl('oro_api_post_calendarevent'),
-                'server'  => $this->generateWsseAuthHeader('foo_user_1', 'foo_user_1_api_key'),
+                'server'  => self::generateApiAuthHeader('foo_user_1'),
                 'content' => json_encode(
                     [
                         'title'     => 'Regular event',
@@ -314,7 +314,7 @@ class BasicAttendeeTest extends AbstractTestCase
             [
                 'method' => 'GET',
                 'url'    => $this->getUrl('oro_api_get_calendarevent', ['id' => $newEvent->getId()]),
-                'server' => $this->generateWsseAuthHeader('foo_user_1', 'foo_user_1_api_key')
+                'server' => self::generateApiAuthHeader('foo_user_1')
             ]
         );
 
@@ -385,7 +385,7 @@ class BasicAttendeeTest extends AbstractTestCase
             [
                 'method'  => 'POST',
                 'url'     => $this->getUrl('oro_api_post_calendarevent'),
-                'server'  => $this->generateWsseAuthHeader('foo_user_1', 'foo_user_1_api_key'),
+                'server'  => self::generateApiAuthHeader('foo_user_1'),
                 'content' => json_encode(
                     [
                         'title'     => 'Regular event',
@@ -423,7 +423,7 @@ class BasicAttendeeTest extends AbstractTestCase
             [
                 'method'  => 'PUT',
                 'url'     => $this->getUrl('oro_api_put_calendarevent', ['id' => $newEvent->getId()]),
-                'server'  => $this->generateWsseAuthHeader('foo_user_1', 'foo_user_1_api_key'),
+                'server'  => self::generateApiAuthHeader('foo_user_1'),
                 'content' => json_encode(
                     [
                         'attendees' => [
@@ -468,7 +468,7 @@ class BasicAttendeeTest extends AbstractTestCase
             [
                 'method' => 'GET',
                 'url'    => $this->getUrl('oro_api_get_calendarevent', ['id' => $newEvent->getId()]),
-                'server' => $this->generateWsseAuthHeader('foo_user_1', 'foo_user_1_api_key')
+                'server' => self::generateApiAuthHeader('foo_user_1')
             ]
         );
 
@@ -552,7 +552,7 @@ class BasicAttendeeTest extends AbstractTestCase
             [
                 'method'  => 'POST',
                 'url'     => $this->getUrl('oro_api_post_calendarevent'),
-                'server'  => $this->generateWsseAuthHeader('foo_user_1', 'foo_user_1_api_key'),
+                'server'  => self::generateApiAuthHeader('foo_user_1'),
                 'content' => json_encode(
                     [
                         'title'     => 'Regular event',
@@ -596,7 +596,7 @@ class BasicAttendeeTest extends AbstractTestCase
             [
                 'method'  => 'PUT',
                 'url'     => $this->getUrl('oro_api_put_calendarevent', ['id' => $newEvent->getId()]),
-                'server'  => $this->generateWsseAuthHeader('foo_user_1', 'foo_user_1_api_key'),
+                'server'  => self::generateApiAuthHeader('foo_user_1'),
                 'content' => json_encode(
                     [
                         'attendees' => [],
@@ -628,7 +628,7 @@ class BasicAttendeeTest extends AbstractTestCase
             [
                 'method' => 'GET',
                 'url'    => $this->getUrl('oro_api_get_calendarevent', ['id' => $newEvent->getId()]),
-                'server' => $this->generateWsseAuthHeader('foo_user_1', 'foo_user_1_api_key')
+                'server' => self::generateApiAuthHeader('foo_user_1')
             ]
         );
 

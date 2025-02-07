@@ -45,7 +45,7 @@ class ValidationFailedTest extends AbstractValidationErrorTestCase
             [
                 'method'  => 'POST',
                 'url'     => $this->getUrl('oro_api_post_calendarevent'),
-                'server'  => $this->generateWsseAuthHeader('foo_user_1', 'foo_user_1_api_key'),
+                'server'  => self::generateApiAuthHeader('foo_user_1'),
                 'content' => json_encode($eventData, JSON_THROW_ON_ERROR)
             ]
         );
@@ -136,7 +136,7 @@ class ValidationFailedTest extends AbstractValidationErrorTestCase
             [
                 'method'  => 'POST',
                 'url'     => $this->getUrl('oro_api_post_calendarevent'),
-                'server'  => $this->generateWsseAuthHeader('foo_user_1', 'foo_user_1_api_key'),
+                'server'  => self::generateApiAuthHeader('foo_user_1'),
                 'content' => json_encode($eventData, JSON_THROW_ON_ERROR)
             ]
         );

@@ -127,7 +127,7 @@ class RecurringCalendarEventControllerTest extends AbstractUseCaseTestCase
      */
     public function testUpdateExceptionsOnRecurrenceFieldsUpdate(CalendarEvent $calendarEvent): CalendarEvent
     {
-        $this->initClient([], $this->generateWsseAuthHeader());
+        $this->initClient([], self::generateApiAuthHeader());
 
         //add exceptions with API requests
         $this->addExceptions($calendarEvent);
@@ -170,7 +170,7 @@ class RecurringCalendarEventControllerTest extends AbstractUseCaseTestCase
         $this->assertHtmlResponseStatusCodeEquals($result, 200);
         $this->assertStringContainsString('Calendar event saved', $crawler->html(), 'Calendar event not saved');
 
-        $this->initClient([], $this->generateWsseAuthHeader());
+        $this->initClient([], self::generateApiAuthHeader());
 
         //make API request get event and make sure exceptions are removed
         $actualEvents = $this->getOrderedCalendarEventsViaAPI($this->getApiRequestData($calendarEvent));
@@ -204,7 +204,7 @@ class RecurringCalendarEventControllerTest extends AbstractUseCaseTestCase
      */
     public function testUpdateExceptionsOnEmptyRecurrence(CalendarEvent $calendarEvent)
     {
-        $this->initClient([], $this->generateWsseAuthHeader());
+        $this->initClient([], self::generateApiAuthHeader());
 
         //add exceptions with API requests
         $this->addExceptions($calendarEvent);
@@ -239,7 +239,7 @@ class RecurringCalendarEventControllerTest extends AbstractUseCaseTestCase
         $this->assertHtmlResponseStatusCodeEquals($result, 200);
         $this->assertStringContainsString('Calendar event saved', $crawler->html(), 'Calendar event not saved');
 
-        $this->initClient([], $this->generateWsseAuthHeader());
+        $this->initClient([], self::generateApiAuthHeader());
 
         //make API request get event and make sure exceptions are removed
         $actualEvents = $this->getOrderedCalendarEventsViaAPI($this->getApiRequestData($calendarEvent));
@@ -312,7 +312,7 @@ class RecurringCalendarEventControllerTest extends AbstractUseCaseTestCase
             'subordinate' => true,
         ];
 
-        $this->initClient([], $this->generateWsseAuthHeader());
+        $this->initClient([], self::generateApiAuthHeader());
         $actualEvents = $this->getOrderedCalendarEventsViaAPI($request);
         $this->assertCalendarEvents($expectedCalendarEvents, $actualEvents);
         $this->deleteEventViaAPI($calendarEvent->getId());

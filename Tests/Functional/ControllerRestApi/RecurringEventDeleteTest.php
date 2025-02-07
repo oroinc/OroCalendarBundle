@@ -87,7 +87,7 @@ class RecurringEventDeleteTest extends AbstractTestCase
             [
                 'method'  => 'POST',
                 'url'     => $this->getUrl('oro_api_post_calendarevent'),
-                'server'  => $this->generateWsseAuthHeader('foo_user_1', 'foo_user_1_api_key'),
+                'server'  => self::generateApiAuthHeader('foo_user_1'),
                 'content' => json_encode($eventData, JSON_THROW_ON_ERROR)
             ]
         );
@@ -133,7 +133,7 @@ class RecurringEventDeleteTest extends AbstractTestCase
             [
                 'method'  => 'POST',
                 'url'     => $this->getUrl('oro_api_post_calendarevent'),
-                'server'  => $this->generateWsseAuthHeader('foo_user_1', 'foo_user_1_api_key'),
+                'server'  => self::generateApiAuthHeader('foo_user_1'),
                 'content' => json_encode($exceptionData, JSON_THROW_ON_ERROR)
             ]
         );
@@ -157,7 +157,7 @@ class RecurringEventDeleteTest extends AbstractTestCase
             [
                 'method'  => 'POST',
                 'url'     => $this->getUrl('oro_api_post_calendarevent'),
-                'server'  => $this->generateWsseAuthHeader('foo_user_1', 'foo_user_1_api_key'),
+                'server'  => self::generateApiAuthHeader('foo_user_1'),
                 'content' => json_encode($exceptionData, JSON_THROW_ON_ERROR)
             ]
         );
@@ -199,7 +199,7 @@ class RecurringEventDeleteTest extends AbstractTestCase
             [
                 'method'  => 'POST',
                 'url'     => $this->getUrl('oro_api_post_calendarevent'),
-                'server'  => $this->generateWsseAuthHeader('foo_user_1', 'foo_user_1_api_key'),
+                'server'  => self::generateApiAuthHeader('foo_user_1'),
                 'content' => json_encode($exceptionData, JSON_THROW_ON_ERROR)
             ]
         );
@@ -217,7 +217,7 @@ class RecurringEventDeleteTest extends AbstractTestCase
                         'notifyAttendees'       => NotificationManager::ALL_NOTIFICATIONS_STRATEGY,
                     ]
                 ),
-                'server'  => $this->generateWsseAuthHeader('foo_user_1', 'foo_user_1_api_key'),
+                'server'  => self::generateApiAuthHeader('foo_user_1'),
                 'content' => json_encode($eventData, JSON_THROW_ON_ERROR)
             ]
         );
@@ -238,7 +238,7 @@ class RecurringEventDeleteTest extends AbstractTestCase
                         'subordinate' => true,
                     ]
                 ),
-                'server' => $this->generateWsseAuthHeader('foo_user_1', 'foo_user_1_api_key')
+                'server' => self::generateApiAuthHeader('foo_user_1')
             ]
         );
 
@@ -260,7 +260,7 @@ class RecurringEventDeleteTest extends AbstractTestCase
                         'subordinate' => true,
                     ]
                 ),
-                'server' => $this->generateWsseAuthHeader('foo_user_2', 'foo_user_2_api_key')
+                'server' => self::generateApiAuthHeader('foo_user_2')
             ]
         );
 
@@ -282,7 +282,7 @@ class RecurringEventDeleteTest extends AbstractTestCase
                         'subordinate' => true,
                     ]
                 ),
-                'server' => $this->generateWsseAuthHeader('foo_user_3', 'foo_user_3_api_key')
+                'server' => self::generateApiAuthHeader('foo_user_3')
             ]
         );
 
@@ -363,7 +363,7 @@ class RecurringEventDeleteTest extends AbstractTestCase
             [
                 'method'  => 'POST',
                 'url'     => $this->getUrl('oro_api_post_calendarevent'),
-                'server'  => $this->generateWsseAuthHeader('foo_user_1', 'foo_user_1_api_key'),
+                'server'  => self::generateApiAuthHeader('foo_user_1'),
                 'content' => json_encode($eventData, JSON_THROW_ON_ERROR)
             ]
         );
@@ -403,7 +403,7 @@ class RecurringEventDeleteTest extends AbstractTestCase
             [
                 'method'  => 'POST',
                 'url'     => $this->getUrl('oro_api_post_calendarevent'),
-                'server'  => $this->generateWsseAuthHeader('foo_user_1', 'foo_user_1_api_key'),
+                'server'  => self::generateApiAuthHeader('foo_user_1'),
                 'content' => json_encode($exceptionData, JSON_THROW_ON_ERROR)
             ]
         );
@@ -431,7 +431,7 @@ class RecurringEventDeleteTest extends AbstractTestCase
                         'notifyAttendees'       => NotificationManager::ALL_NOTIFICATIONS_STRATEGY,
                     ]
                 ),
-                'server' => $this->generateWsseAuthHeader('foo_user_2', 'foo_user_2_api_key'),
+                'server' => self::generateApiAuthHeader('foo_user_2'),
             ]
         );
         $this->assertEmptyResponseStatusCodeEquals($this->client->getResponse(), 204);
@@ -449,7 +449,7 @@ class RecurringEventDeleteTest extends AbstractTestCase
                         'subordinate' => true,
                     ]
                 ),
-                'server' => $this->generateWsseAuthHeader('foo_user_1', 'foo_user_1_api_key')
+                'server' => self::generateApiAuthHeader('foo_user_1')
             ]
         );
 
@@ -543,7 +543,7 @@ class RecurringEventDeleteTest extends AbstractTestCase
                         'subordinate' => true,
                     ]
                 ),
-                'server' => $this->generateWsseAuthHeader('foo_user_2', 'foo_user_2_api_key')
+                'server' => self::generateApiAuthHeader('foo_user_2')
             ]
         );
 
@@ -652,7 +652,7 @@ class RecurringEventDeleteTest extends AbstractTestCase
             [
                 'method'  => 'POST',
                 'url'     => $this->getUrl('oro_api_post_calendarevent'),
-                'server'  => $this->generateWsseAuthHeader('foo_user_1', 'foo_user_1_api_key'),
+                'server'  => self::generateApiAuthHeader('foo_user_1'),
                 'content' => json_encode($eventData, JSON_THROW_ON_ERROR)
             ]
         );
@@ -692,7 +692,7 @@ class RecurringEventDeleteTest extends AbstractTestCase
             [
                 'method'  => 'POST',
                 'url'     => $this->getUrl('oro_api_post_calendarevent'),
-                'server'  => $this->generateWsseAuthHeader('foo_user_1', 'foo_user_1_api_key'),
+                'server'  => self::generateApiAuthHeader('foo_user_1'),
                 'content' => json_encode($exceptionData, JSON_THROW_ON_ERROR)
             ]
         );
@@ -715,7 +715,7 @@ class RecurringEventDeleteTest extends AbstractTestCase
                         'notifyAttendees'       => NotificationManager::ALL_NOTIFICATIONS_STRATEGY,
                     ]
                 ),
-                'server' => $this->generateWsseAuthHeader('foo_user_1', 'foo_user_1_api_key'),
+                'server' => self::generateApiAuthHeader('foo_user_1'),
             ]
         );
         $this->assertEmptyResponseStatusCodeEquals($this->client->getResponse(), 204);
@@ -733,7 +733,7 @@ class RecurringEventDeleteTest extends AbstractTestCase
                         'subordinate' => true,
                     ]
                 ),
-                'server' => $this->generateWsseAuthHeader('foo_user_1', 'foo_user_1_api_key')
+                'server' => self::generateApiAuthHeader('foo_user_1')
             ]
         );
 
@@ -807,7 +807,7 @@ class RecurringEventDeleteTest extends AbstractTestCase
                         'subordinate' => true,
                     ]
                 ),
-                'server' => $this->generateWsseAuthHeader('foo_user_2', 'foo_user_2_api_key')
+                'server' => self::generateApiAuthHeader('foo_user_2')
             ]
         );
 
@@ -917,7 +917,7 @@ class RecurringEventDeleteTest extends AbstractTestCase
             [
                 'method'  => 'POST',
                 'url'     => $this->getUrl('oro_api_post_calendarevent'),
-                'server'  => $this->generateWsseAuthHeader('foo_user_1', 'foo_user_1_api_key'),
+                'server'  => self::generateApiAuthHeader('foo_user_1'),
                 'content' => json_encode($eventData, JSON_THROW_ON_ERROR)
             ]
         );
@@ -957,7 +957,7 @@ class RecurringEventDeleteTest extends AbstractTestCase
             [
                 'method'  => 'POST',
                 'url'     => $this->getUrl('oro_api_post_calendarevent'),
-                'server'  => $this->generateWsseAuthHeader('foo_user_1', 'foo_user_1_api_key'),
+                'server'  => self::generateApiAuthHeader('foo_user_1'),
                 'content' => json_encode($exceptionData, JSON_THROW_ON_ERROR)
             ]
         );
@@ -985,7 +985,7 @@ class RecurringEventDeleteTest extends AbstractTestCase
                         'notifyAttendees'       => NotificationManager::ALL_NOTIFICATIONS_STRATEGY,
                     ]
                 ),
-                'server' => $this->generateWsseAuthHeader('foo_user_2', 'foo_user_2_api_key'),
+                'server' => self::generateApiAuthHeader('foo_user_2'),
             ]
         );
         $this->assertEmptyResponseStatusCodeEquals($this->client->getResponse(), 204);
@@ -1003,7 +1003,7 @@ class RecurringEventDeleteTest extends AbstractTestCase
                         'subordinate' => true,
                     ]
                 ),
-                'server' => $this->generateWsseAuthHeader('foo_user_1', 'foo_user_1_api_key')
+                'server' => self::generateApiAuthHeader('foo_user_1')
             ]
         );
 
@@ -1087,7 +1087,7 @@ class RecurringEventDeleteTest extends AbstractTestCase
                         'subordinate' => true,
                     ]
                 ),
-                'server' => $this->generateWsseAuthHeader('foo_user_2', 'foo_user_2_api_key')
+                'server' => self::generateApiAuthHeader('foo_user_2')
             ]
         );
 
@@ -1156,7 +1156,7 @@ class RecurringEventDeleteTest extends AbstractTestCase
             [
                 'method'  => 'POST',
                 'url'     => $this->getUrl('oro_api_post_calendarevent'),
-                'server'  => $this->generateWsseAuthHeader('foo_user_1', 'foo_user_1_api_key'),
+                'server'  => self::generateApiAuthHeader('foo_user_1'),
                 'content' => json_encode($eventData, JSON_THROW_ON_ERROR)
             ]
         );
@@ -1196,7 +1196,7 @@ class RecurringEventDeleteTest extends AbstractTestCase
             [
                 'method'  => 'POST',
                 'url'     => $this->getUrl('oro_api_post_calendarevent'),
-                'server'  => $this->generateWsseAuthHeader('foo_user_1', 'foo_user_1_api_key'),
+                'server'  => self::generateApiAuthHeader('foo_user_1'),
                 'content' => json_encode($exceptionData, JSON_THROW_ON_ERROR)
             ]
         );
@@ -1242,7 +1242,7 @@ class RecurringEventDeleteTest extends AbstractTestCase
             [
                 'method'  => 'POST',
                 'url'     => $this->getUrl('oro_api_post_calendarevent'),
-                'server'  => $this->generateWsseAuthHeader('foo_user_1', 'foo_user_1_api_key'),
+                'server'  => self::generateApiAuthHeader('foo_user_1'),
                 'content' => json_encode($exceptionData, JSON_THROW_ON_ERROR)
             ]
         );
@@ -1269,7 +1269,7 @@ class RecurringEventDeleteTest extends AbstractTestCase
             [
                 'method'  => 'POST',
                 'url'     => $this->getUrl('oro_api_post_calendarevent'),
-                'server'  => $this->generateWsseAuthHeader('foo_user_1', 'foo_user_1_api_key'),
+                'server'  => self::generateApiAuthHeader('foo_user_1'),
                 'content' => json_encode($exceptionData, JSON_THROW_ON_ERROR)
             ]
         );
@@ -1310,7 +1310,7 @@ class RecurringEventDeleteTest extends AbstractTestCase
             [
                 'method'  => 'POST',
                 'url'     => $this->getUrl('oro_api_post_calendarevent'),
-                'server'  => $this->generateWsseAuthHeader('foo_user_1', 'foo_user_1_api_key'),
+                'server'  => self::generateApiAuthHeader('foo_user_1'),
                 'content' => json_encode($exceptionData, JSON_THROW_ON_ERROR)
             ]
         );
@@ -1335,7 +1335,7 @@ class RecurringEventDeleteTest extends AbstractTestCase
                         'notifyAttendees'       => NotificationManager::ALL_NOTIFICATIONS_STRATEGY,
                     ]
                 ),
-                'server' => $this->generateWsseAuthHeader('foo_user_2', 'foo_user_2_api_key'),
+                'server' => self::generateApiAuthHeader('foo_user_2'),
             ]
         );
         $this->assertEmptyResponseStatusCodeEquals($this->client->getResponse(), 204);
@@ -1353,7 +1353,7 @@ class RecurringEventDeleteTest extends AbstractTestCase
                         'subordinate' => true,
                     ]
                 ),
-                'server' => $this->generateWsseAuthHeader('foo_user_1', 'foo_user_1_api_key')
+                'server' => self::generateApiAuthHeader('foo_user_1')
             ]
         );
 
@@ -1445,7 +1445,7 @@ class RecurringEventDeleteTest extends AbstractTestCase
                         'subordinate' => true,
                     ]
                 ),
-                'server' => $this->generateWsseAuthHeader('foo_user_2', 'foo_user_2_api_key')
+                'server' => self::generateApiAuthHeader('foo_user_2')
             ]
         );
 
@@ -1468,7 +1468,7 @@ class RecurringEventDeleteTest extends AbstractTestCase
                         'subordinate' => true,
                     ]
                 ),
-                'server' => $this->generateWsseAuthHeader('foo_user_3', 'foo_user_3_api_key')
+                'server' => self::generateApiAuthHeader('foo_user_3')
             ]
         );
 

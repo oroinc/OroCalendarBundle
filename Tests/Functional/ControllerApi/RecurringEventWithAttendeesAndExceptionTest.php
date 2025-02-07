@@ -14,7 +14,7 @@ class RecurringEventWithAttendeesAndExceptionTest extends AbstractUseCaseTestCas
     #[\Override]
     protected function setUp(): void
     {
-        $this->initClient([], $this->generateWsseAuthHeader());
+        $this->initClient([], self::generateApiAuthHeader());
         $this->loadFixtures([LoadUserData::class]);
     }
 

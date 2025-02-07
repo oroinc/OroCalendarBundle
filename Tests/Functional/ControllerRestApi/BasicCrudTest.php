@@ -61,7 +61,7 @@ class BasicCrudTest extends AbstractTestCase
             [
                 'method'  => 'POST',
                 'url'     => $this->getUrl('oro_api_post_calendarevent'),
-                'server'  => $this->generateWsseAuthHeader('foo_user_1', 'foo_user_1_api_key'),
+                'server'  => self::generateApiAuthHeader('foo_user_1'),
                 'content' => json_encode(
                     [
                         'title'     => 'Regular event',
@@ -94,7 +94,7 @@ class BasicCrudTest extends AbstractTestCase
             [
                 'method' => 'GET',
                 'url'    => $this->getUrl('oro_api_get_calendarevent', ['id' => $newEvent->getId()]),
-                'server' => $this->generateWsseAuthHeader('foo_user_1', 'foo_user_1_api_key')
+                'server' => self::generateApiAuthHeader('foo_user_1')
             ]
         );
 
@@ -160,7 +160,7 @@ CONTENT;
             [
                 'method'     => 'POST',
                 'url'        => $this->getUrl('oro_api_post_calendarevent'),
-                'server'     => $this->generateWsseAuthHeader('foo_user_1', 'foo_user_1_api_key'),
+                'server'     => self::generateApiAuthHeader('foo_user_1'),
                 'parameters' => $parameters,
             ]
         );
@@ -182,7 +182,7 @@ CONTENT;
             [
                 'method' => 'GET',
                 'url'    => $this->getUrl('oro_api_get_calendarevent', ['id' => $newEvent->getId()]),
-                'server' => $this->generateWsseAuthHeader('foo_user_1', 'foo_user_1_api_key')
+                'server' => self::generateApiAuthHeader('foo_user_1')
             ]
         );
 
@@ -243,7 +243,7 @@ CONTENT;
             [
                 'method'  => 'POST',
                 'url'     => $this->getUrl('oro_api_post_calendarevent'),
-                'server'  => $this->generateWsseAuthHeader('foo_user_1', 'foo_user_1_api_key'),
+                'server'  => self::generateApiAuthHeader('foo_user_1'),
                 'content' => json_encode(
                     [
                         'title'      => 'Recurring event',
@@ -287,7 +287,7 @@ CONTENT;
             [
                 'method'  => 'PUT',
                 'url'     => $this->getUrl('oro_api_put_calendarevent', ['id' => $newEvent->getId()]),
-                'server'  => $this->generateWsseAuthHeader('foo_user_1', 'foo_user_1_api_key'),
+                'server'  => self::generateApiAuthHeader('foo_user_1'),
                 'content' => json_encode(
                     [
                         'recurrence' => [
@@ -320,7 +320,7 @@ CONTENT;
             [
                 'method' => 'GET',
                 'url'    => $this->getUrl('oro_api_get_calendarevent', ['id' => $newEvent->getId()]),
-                'server' => $this->generateWsseAuthHeader('foo_user_1', 'foo_user_1_api_key')
+                'server' => self::generateApiAuthHeader('foo_user_1')
             ]
         );
 
@@ -356,7 +356,7 @@ CONTENT;
             [
                 'method'  => 'POST',
                 'url'     => $this->getUrl('oro_api_post_calendarevent'),
-                'server'  => $this->generateWsseAuthHeader('foo_user_1', 'foo_user_1_api_key'),
+                'server'  => self::generateApiAuthHeader('foo_user_1'),
                 'content' => json_encode(
                     [
                         'title'     => 'Regular event',
@@ -407,7 +407,7 @@ CONTENT;
             [
                 'method'  => 'PUT',
                 'url'     => $this->getUrl('oro_api_put_calendarevent', ['id' => $newEvent->getId()]),
-                'server'  => $this->generateWsseAuthHeader('foo_user_1', 'foo_user_1_api_key'),
+                'server'  => self::generateApiAuthHeader('foo_user_1'),
                 'content' => json_encode(
                     [
                         'attendees' => [
@@ -441,7 +441,7 @@ CONTENT;
             [
                 'method' => 'GET',
                 'url'    => $this->getUrl('oro_api_get_calendarevent', ['id' => $newEvent->getId()]),
-                'server' => $this->generateWsseAuthHeader('foo_user_1', 'foo_user_1_api_key')
+                'server' => self::generateApiAuthHeader('foo_user_1')
             ]
         );
 
@@ -465,7 +465,7 @@ CONTENT;
             [
                 'method' => 'POST',
                 'url' => $this->getUrl('oro_api_post_calendarevent'),
-                'server' => $this->generateWsseAuthHeader('foo_user_1', 'foo_user_1_api_key'),
+                'server' => self::generateApiAuthHeader('foo_user_1'),
                 'content' => json_encode(
                     [
                         'title' => 'Event withouth calendar set',
