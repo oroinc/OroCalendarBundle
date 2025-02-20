@@ -16,7 +16,7 @@
     },
     "autoload": {
         "psr-4": { "Oro\\Bundle\\CalendarBundle\\": "" },
-        "exclude-from-classmap": ["/Tests/"]
+        "exclude-from-classmap": ["**/Tests/"]
     },
     "repositories": {
         "oro": {
