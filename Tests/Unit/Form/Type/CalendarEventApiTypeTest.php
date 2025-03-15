@@ -5,7 +5,6 @@ namespace Oro\Bundle\CalendarBundle\Tests\Unit\Form\Type;
 use Doctrine\Common\EventManager;
 use Doctrine\ORM\AbstractQuery;
 use Doctrine\ORM\Configuration;
-use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\EntityRepository;
 use Doctrine\ORM\Mapping\ClassMetadata;
@@ -59,17 +58,15 @@ use Symfony\Component\Validator\Validation;
 
 class CalendarEventApiTypeTest extends FormIntegrationTestCase
 {
-    private ManagerRegistry|MockObject $registry;
-    private EntityManager|MockObject $entityManager;
-    private CalendarEventManager|MockObject $calendarEventManager;
-    private NotificationManager|MockObject $notificationManager;
+    private ManagerRegistry&MockObject $doctrine;
+    private CalendarEventManager&MockObject $calendarEventManager;
+    private NotificationManager&MockObject $notificationManager;
     private CalendarEventApiType $calendarEventApiType;
 
     #[\Override]
     protected function setUp(): void
     {
-        $this->registry = $this->createMock(ManagerRegistry::class);
-        $this->entityManager = $this->createMock(EntityManager::class);
+        $this->doctrine = $this->createMock(ManagerRegistry::class);
         $this->calendarEventManager = $this->createMock(CalendarEventManager::class);
         $this->notificationManager = $this->createMock(NotificationManager::class);
 
@@ -103,34 +100,46 @@ class CalendarEventApiTypeTest extends FormIntegrationTestCase
             ->method('createQueryBuilder')
             ->with('event')
             ->willReturn($qb);
-        $this->entityManager->expects(self::any())
+
+        $enumOptionRepo = $this->createMock(EnumOptionRepository::class);
+        $enumOptionRepo->expects(self::any())
+            ->method('getValuesQueryBuilder')
+            ->willReturn($qb);
+
+        $eventManager = $this->createMock(EventManager::class);
+        $eventManager->expects(self::any())
+            ->method('getAllListeners')
+            ->willReturn([[$this->createMock(TranslatableListener::class)]]);
+
+        $entityManager = $this->createMock(EntityManagerInterface::class);
+        $entityManager->expects(self::any())
             ->method('getRepository')
             ->with(User::class)
             ->willReturn($userRepo);
-        $this->entityManager->expects(self::any())
+        $entityManager->expects(self::any())
             ->method('getClassMetadata')
-            ->with(User::class)
-            ->willReturn($userMeta);
-        $enumOptionRepo = $this->createMock(EnumOptionRepository::class);
-        $enumOptionRepo->method('getValuesQueryBuilder')->willReturn($qb);
-        $this->registry->method('getRepository')
+            ->willReturnMap([
+                [User::class, $userMeta],
+                [CalendarEvent::class, $eventMeta]
+            ]);
+        $entityManager->expects(self::any())
+            ->method('getConfiguration')
+            ->willReturn($this->createMock(Configuration::class));
+        $entityManager->expects(self::any())
+            ->method('getEventManager')
+            ->willReturn($eventManager);
+
+        $this->doctrine->expects(self::any())
+            ->method('getRepository')
             ->with(EnumOption::class)
             ->willReturn($enumOptionRepo);
-
-        $emForEvent = $this->createMock(EntityManager::class);
-        $emForEvent->expects(self::any())
-            ->method('getClassMetadata')
-            ->with(CalendarEvent::class)
-            ->willReturn($eventMeta);
-        $this->registry->expects(self::any())
+        $this->doctrine->expects(self::any())
+            ->method('getManager')
+            ->willReturn($entityManager);
+        $this->doctrine->expects(self::any())
             ->method('getManagerForClass')
-            ->willReturn($emForEvent);
-        $em = $this->createMock(EntityManagerInterface::class);
-        $em->method('getConfiguration')->willReturn($this->createMock(Configuration::class));
-        $eventManager = $this->createMock(EventManager::class);
-        $eventManager->method('getAllListeners')->willReturn([[$this->createMock(TranslatableListener::class)]]);
-        $em->method('getEventManager')->willReturn($eventManager);
-        $this->registry->method('getManager')->willReturn($em);
+            ->willReturn($entityManager);
+
         $this->calendarEventApiType = new CalendarEventApiType(
             $this->calendarEventManager,
             $this->notificationManager
@@ -148,9 +157,10 @@ class CalendarEventApiTypeTest extends FormIntegrationTestCase
             'status' => Attendee::STATUS_ENUM_CODE,
             'type' => Attendee::TYPE_ENUM_CODE
         ];
-        $extendTypeGuesser->method('guessType')
+        $extendTypeGuesser->expects(self::any())
+            ->method('guessType')
             ->willReturnCallback(
-                fn ($class, $field) => $class == $attendeeClass && array_key_exists($field, $attendeeEnumFields)
+                fn ($class, $field) => $class === $attendeeClass && array_key_exists($field, $attendeeEnumFields)
                     ? new TypeGuess(
                         EnumSelectType::class,
                         ['enum_code' => $attendeeEnumFields[$field]],
@@ -177,9 +187,17 @@ class CalendarEventApiTypeTest extends FormIntegrationTestCase
         $configManager = $this->createMock(ConfigManager::class);
         $configProvider = $this->createMock(ConfigProvider::class);
         $config = $this->createMock(ConfigInterface::class);
-        $configManager->method('getProvider')->with('enum')->willReturn($configProvider);
-        $configProvider->method('getConfig')->willReturn($config);
-        $config->method('is')->with('multiple')->willReturn(false);
+        $configManager->expects(self::any())
+            ->method('getProvider')
+            ->with('enum')
+            ->willReturn($configProvider);
+        $configProvider->expects(self::any())
+            ->method('getConfig')
+            ->willReturn($config);
+        $config->expects(self::any())
+            ->method('is')
+            ->with('multiple')
+            ->willReturn(false);
 
         return [
             new PreloadedExtension(
@@ -191,21 +209,21 @@ class CalendarEventApiTypeTest extends FormIntegrationTestCase
                     new MethodType(new SendProcessorRegistry([], $this->createMock(ContainerInterface::class))),
                     new ReminderIntervalType(),
                     new UnitType(),
-                    new UserMultiSelectType($this->entityManager),
-                    new EnumSelectType($configManager, $this->registry),
+                    new UserMultiSelectType($this->doctrine),
+                    new EnumSelectType($configManager, $this->doctrine),
                     new TranslatableEntityType(
-                        $this->registry,
+                        $this->doctrine,
                         $this->createMock(ChoiceListFactoryInterface::class),
                         $this->createMock(AclHelper::class)
                     ),
                     new OroJquerySelect2HiddenType(
-                        $this->entityManager,
+                        $this->doctrine,
                         $searchRegistry,
                         $this->createMock(ConfigProvider::class)
                     ),
                     new CalendarEventAttendeesApiType(),
                     new RecurrenceFormType(new Recurrence($this->createMock(StrategyInterface::class))),
-                    new EntityIdentifierType($this->registry),
+                    new EntityIdentifierType($this->doctrine),
                 ],
                 [
                     TextType::class => [new DynamicFieldsOptionsExtension()],

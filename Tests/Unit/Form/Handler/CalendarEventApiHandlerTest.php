@@ -3,8 +3,8 @@
 namespace Oro\Bundle\CalendarBundle\Tests\Unit\Form\Handler;
 
 use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\Persistence\ManagerRegistry;
-use Doctrine\Persistence\ObjectManager;
 use Oro\Bundle\ActivityBundle\Manager\ActivityManager;
 use Oro\Bundle\CalendarBundle\Entity\Attendee;
 use Oro\Bundle\CalendarBundle\Entity\Calendar;
@@ -81,17 +81,17 @@ class CalendarEventApiHandlerTest extends \PHPUnit\Framework\TestCase
             ->method('isValid')
             ->willReturn(true);
 
-        $objectManager = $this->createMock(ObjectManager::class);
-        $objectManager->expects($this->once())
+        $entityManager = $this->createMock(EntityManagerInterface::class);
+        $entityManager->expects($this->once())
             ->method('persist')
             ->with($this->identicalTo($this->entity));
-        $objectManager->expects($this->once())
+        $entityManager->expects($this->once())
             ->method('flush');
 
         $doctrine = $this->createMock(ManagerRegistry::class);
         $doctrine->expects($this->any())
             ->method('getManager')
-            ->willReturn($objectManager);
+            ->willReturn($entityManager);
 
         $tokenAccessor = $this->createMock(TokenAccessorInterface::class);
         $tokenAccessor->expects($this->any())

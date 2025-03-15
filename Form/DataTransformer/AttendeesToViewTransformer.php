@@ -2,23 +2,21 @@
 
 namespace Oro\Bundle\CalendarBundle\Form\DataTransformer;
 
-use Doctrine\ORM\EntityManager;
+use Doctrine\Persistence\ManagerRegistry;
 use Oro\Bundle\ActivityBundle\Form\DataTransformer\ContextsToViewTransformer;
 use Oro\Bundle\CalendarBundle\Entity\Attendee;
 use Oro\Bundle\CalendarBundle\Manager\AttendeeManager;
 
+/**
+ * Transforms attendees to the form view format.
+ */
 class AttendeesToViewTransformer extends ContextsToViewTransformer
 {
-    /** @var AttendeeManager */
-    protected $attendeeManager;
-
     public function __construct(
-        EntityManager $entityManager,
-        AttendeeManager $attendeeManager
+        ManagerRegistry $doctrine,
+        protected AttendeeManager $attendeeManager
     ) {
-        parent::__construct($entityManager);
-
-        $this->attendeeManager = $attendeeManager;
+        parent::__construct($doctrine);
     }
 
     #[\Override]

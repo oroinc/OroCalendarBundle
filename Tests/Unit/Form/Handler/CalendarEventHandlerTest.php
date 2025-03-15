@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace Oro\Bundle\CalendarBundle\Tests\Unit\Form\Handler;
 
+use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\Persistence\ManagerRegistry;
-use Doctrine\Persistence\ObjectManager;
 use Oro\Bundle\ActivityBundle\Manager\ActivityManager;
 use Oro\Bundle\CalendarBundle\Entity\Calendar;
 use Oro\Bundle\CalendarBundle\Entity\Repository\CalendarRepository;
@@ -37,8 +37,8 @@ class CalendarEventHandlerTest extends \PHPUnit\Framework\TestCase
     /** @var Request */
     private $request;
 
-    /** @var ObjectManager|\PHPUnit\Framework\MockObject\MockObject */
-    private $objectManager;
+    /** @var EntityManagerInterface|\PHPUnit\Framework\MockObject\MockObject */
+    private $entityManager;
 
     /** @var ActivityManager|\PHPUnit\Framework\MockObject\MockObject */
     private $activityManager;
@@ -73,7 +73,7 @@ class CalendarEventHandlerTest extends \PHPUnit\Framework\TestCase
         $this->form = $this->createMock(Form::class);
         $this->notifyAttendeesForm = $this->createMock(Form::class);
         $this->request = new Request();
-        $this->objectManager = $this->createMock(ObjectManager::class);
+        $this->entityManager = $this->createMock(EntityManagerInterface::class);
         $this->activityManager = $this->createMock(ActivityManager::class);
         $this->entityRoutingHelper = $this->createMock(EntityRoutingHelper::class);
         $this->tokenAccessor = $this->createMock(TokenAccessorInterface::class);
@@ -89,7 +89,7 @@ class CalendarEventHandlerTest extends \PHPUnit\Framework\TestCase
         $doctrine = $this->createMock(ManagerRegistry::class);
         $doctrine->expects(self::any())
             ->method('getManager')
-            ->willReturn($this->objectManager);
+            ->willReturn($this->entityManager);
 
         $this->notifyAttendeesForm->expects(self::any())
             ->method('getData')
@@ -151,9 +151,9 @@ class CalendarEventHandlerTest extends \PHPUnit\Framework\TestCase
         $this->form->expects(self::once())
             ->method('isValid')
             ->willReturn(false);
-        $this->objectManager->expects(self::never())
+        $this->entityManager->expects(self::never())
             ->method('persist');
-        $this->objectManager->expects(self::never())
+        $this->entityManager->expects(self::never())
             ->method('flush');
         $this->calendarEventManager->expects(self::never())
             ->method('onEventUpdate');
@@ -190,10 +190,10 @@ class CalendarEventHandlerTest extends \PHPUnit\Framework\TestCase
         $this->calendarEventManager->expects(self::once())
             ->method('onEventUpdate')
             ->with($this->entity, clone $this->entity, $this->organization, true);
-        $this->objectManager->expects(self::once())
+        $this->entityManager->expects(self::once())
             ->method('persist')
             ->with(self::identicalTo($this->entity));
-        $this->objectManager->expects(self::once())
+        $this->entityManager->expects(self::once())
             ->method('flush');
 
         self::assertTrue($this->handler->process($this->entity));
@@ -335,7 +335,7 @@ class CalendarEventHandlerTest extends \PHPUnit\Framework\TestCase
             ->method('findDefaultCalendar')
             ->willReturn($calendar);
 
-        $this->objectManager->expects(self::once())
+        $this->entityManager->expects(self::once())
             ->method('getRepository')
             ->willReturn($repository);
 
@@ -347,10 +347,10 @@ class CalendarEventHandlerTest extends \PHPUnit\Framework\TestCase
             ->method('onEventUpdate')
             ->with($this->entity, clone $this->entity, $this->organization, true);
 
-        $this->objectManager->expects(self::once())
+        $this->entityManager->expects(self::once())
             ->method('persist')
             ->with(self::identicalTo($this->entity));
-        $this->objectManager->expects(self::once())
+        $this->entityManager->expects(self::once())
             ->method('flush');
 
         self::assertTrue($this->handler->process($this->entity));
@@ -409,10 +409,10 @@ class CalendarEventHandlerTest extends \PHPUnit\Framework\TestCase
             ->method('onEventUpdate')
             ->with($this->entity, clone $this->entity, $this->organization, true);
 
-        $this->objectManager->expects(self::once())
+        $this->entityManager->expects(self::once())
             ->method('persist')
             ->with(self::identicalTo($this->entity));
-        $this->objectManager->expects(self::once())
+        $this->entityManager->expects(self::once())
             ->method('flush');
 
         self::assertTrue($this->handler->process($this->entity));

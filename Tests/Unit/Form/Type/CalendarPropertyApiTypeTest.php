@@ -2,7 +2,7 @@
 
 namespace Oro\Bundle\CalendarBundle\Tests\Unit\Form\Type;
 
-use Doctrine\ORM\EntityManager;
+use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\EntityRepository;
 use Doctrine\ORM\Mapping\ClassMetadata;
 use Doctrine\Persistence\ManagerRegistry;
@@ -20,7 +20,7 @@ class CalendarPropertyApiTypeTest extends TypeTestCase
     #[\Override]
     protected function getExtensions(): array
     {
-        $em = $this->createMock(EntityManager::class);
+        $em = $this->createMock(EntityManagerInterface::class);
         $meta = $this->createMock(ClassMetadata::class);
         $repo = $this->createMock(EntityRepository::class);
         $calendar = new Calendar();
@@ -31,14 +31,14 @@ class CalendarPropertyApiTypeTest extends TypeTestCase
             ->method('getManagerForClass')
             ->with(Calendar::class)
             ->willReturn($em);
+        $doctrine->expects($this->any())
+            ->method('getRepository')
+            ->with(Calendar::class)
+            ->willReturn($repo);
         $em->expects($this->any())
             ->method('getClassMetadata')
             ->with(Calendar::class)
             ->willReturn($meta);
-        $em->expects($this->any())
-            ->method('getRepository')
-            ->with(Calendar::class)
-            ->willReturn($repo);
         $meta->expects($this->any())
             ->method('getSingleIdentifierFieldName')
             ->willReturn('id');

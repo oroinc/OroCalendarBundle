@@ -3,7 +3,7 @@
 namespace Oro\Bundle\CalendarBundle\Tests\Functional;
 
 use Doctrine\Common\Util\ClassUtils;
-use Doctrine\ORM\EntityManager;
+use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\EntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
@@ -13,15 +13,13 @@ class AbstractTestCase extends WebTestCase
     /**
      * The list of fields which can be exposed in the API if some optional bundles are enabled.
      * These properties are not considered when response verified.
-     *
-     * @var array
      */
-    protected static $ignoredResponseFields = [];
+    protected static array $ignoredResponseFields = [];
 
     #[\Override]
     protected function setUp(): void
     {
-        $this->initClient([]);
+        $this->initClient();
     }
 
     /**
@@ -48,12 +46,12 @@ class AbstractTestCase extends WebTestCase
      *
      * @see \Oro\Bundle\TestFrameworkBundle\Test\Client::request
      */
-    protected function restRequest(array $parameters)
+    protected function restRequest(array $parameters): void
     {
         // Assert parameters are expected
-        $this->assertArrayHasKey('method', $parameters, 'Failed asserting request method is specified.');
+        self::assertArrayHasKey('method', $parameters, 'Failed asserting request method is specified.');
         $parameters['method'] = strtoupper($parameters['method']);
-        $this->assertContains(
+        self::assertContains(
             $parameters['method'],
             ['POST', 'GET', 'PUT', 'PATCH', 'DELETE', 'OPTIONS', 'HEAD'],
             'Failed asserting request method is expected.'
@@ -71,7 +69,7 @@ class AbstractTestCase extends WebTestCase
         $parameters = array_merge($defaultParameters, $parameters);
 
         if (!isset($parameters['url'])) {
-            $this->assertArrayHasKey('route', $parameters, 'Failed asserting request route is specified.');
+            self::assertArrayHasKey('route', $parameters, 'Failed asserting request route is specified.');
             $parameters['url'] = $this->getUrl($parameters['route'], $parameters['routeParameters']);
         }
 
@@ -97,14 +95,11 @@ class AbstractTestCase extends WebTestCase
      *      ]
      *  )
      * </code>
-     *
-     * @param array $parameters
-     * @return array|string
      */
-    protected function getRestResponseContent(array $parameters)
+    protected function getRestResponseContent(array $parameters): array|string
     {
         // Assert parameters are expected
-        $this->assertArrayHasKey('statusCode', $parameters, 'Failed asserting response status code is specified.');
+        self::assertArrayHasKey('statusCode', $parameters, 'Failed asserting response status code is specified.');
 
         $defaultParameters = [
             'contentType' => null,
@@ -113,7 +108,7 @@ class AbstractTestCase extends WebTestCase
         // Apply default parameters
         $parameters = array_merge($defaultParameters, $parameters);
 
-        $this->assertResponseStatusCodeEquals(
+        self::assertResponseStatusCodeEquals(
             $this->client->getResponse(),
             $parameters['statusCode'],
             sprintf(
@@ -124,7 +119,7 @@ class AbstractTestCase extends WebTestCase
         );
 
         if (!empty($parameters['contentType'])) {
-            $this->assertResponseContentTypeEquals(
+            self::assertResponseContentTypeEquals(
                 $this->client->getResponse(),
                 $parameters['contentType'],
                 sprintf(
@@ -137,8 +132,8 @@ class AbstractTestCase extends WebTestCase
 
         $responseContent = $this->client->getResponse()->getContent();
 
-        if ($parameters['contentType'] == 'application/json') {
-            $responseContent = $this->jsonToArray($this->client->getResponse()->getContent());
+        if ($parameters['contentType'] === 'application/json') {
+            $responseContent = self::jsonToArray($this->client->getResponse()->getContent());
         }
 
         return $responseContent;
@@ -147,13 +142,12 @@ class AbstractTestCase extends WebTestCase
     /**
      * Asserts response is expected. Uses strict compare by default. Disabling strict compare will compare only
      * intersection of expected response with actual response.
-     *
-     * @param array $expectedResponse
-     * @param array $actualResponse
-     * @param bool $strictCompare
      */
-    protected function assertResponseEquals(array $expectedResponse, array $actualResponse, $strictCompare = true)
-    {
+    protected function assertResponseEquals(
+        array $expectedResponse,
+        array $actualResponse,
+        bool $strictCompare = true
+    ): void {
         $message = sprintf(
             'Failed asserting %s %s has expected content in response.',
             $this->client->getRequest()->getMethod(),
@@ -161,28 +155,20 @@ class AbstractTestCase extends WebTestCase
         );
 
         $this->filterIgnoredResponseFields($actualResponse);
-        $this->sortArrayByKeyRecursively($expectedResponse);
-        $this->sortArrayByKeyRecursively($actualResponse);
+        self::sortArrayByKeyRecursively($expectedResponse);
+        self::sortArrayByKeyRecursively($actualResponse);
 
         if ($strictCompare) {
-            $this->assertEquals(
-                $expectedResponse,
-                $actualResponse,
-                $message
-            );
+            self::assertEquals($expectedResponse, $actualResponse, $message);
         } else {
-            $this->assertArrayIntersectEquals(
-                $expectedResponse,
-                $actualResponse,
-                $message
-            );
+            self::assertArrayIntersectEquals($expectedResponse, $actualResponse, $message);
         }
     }
 
     /**
      * Remove ignored fields from the response to not take it into account during comparison.
      */
-    protected function filterIgnoredResponseFields(array &$response)
+    protected function filterIgnoredResponseFields(array &$response): void
     {
         if (isset($response[0]) && is_array($response[0])) {
             foreach ($response as &$item) {
@@ -201,65 +187,48 @@ class AbstractTestCase extends WebTestCase
 
     /**
      * Get instance of Doctrine's entity repository.
-     *
-     * @param string $entityName
-     * @return EntityRepository
      */
-    protected function getEntityRepository($entityName)
+    protected function getEntityRepository(string $entityName): EntityRepository
     {
         $result = $this->getDoctrine()->getRepository($entityName);
 
-        $this->assertInstanceOf(EntityRepository::class, $result);
+        self::assertInstanceOf(EntityRepository::class, $result);
 
         return $result;
     }
 
     /**
      * Get instance of Doctrine's manager registry.
-     *
-     * @return ManagerRegistry
      */
-    protected function getDoctrine()
+    protected function getDoctrine(): ManagerRegistry
     {
-        return $this->getContainer()->get('doctrine');
+        return self::getContainer()->get('doctrine');
     }
 
     /**
      * Get instance of Doctrine's entity manager.
-     *
-     * @param string $name
-     * @return EntityManager
      */
-    protected function getEntityManager($name = null)
+    protected function getEntityManager(?string $name = null): EntityManagerInterface
     {
         $result = $this->getDoctrine()->getManager($name);
 
-        $this->assertInstanceOf(EntityManager::class, $result);
+        self::assertInstanceOf(EntityManagerInterface::class, $result);
 
         return $result;
     }
 
     /**
      * Reloads the same entity from the persistence
-     *
-     * @param mixed $entity
-     * @return mixed
      */
-    protected function reloadEntity($entity)
+    protected function reloadEntity(object $entity): ?object
     {
-        $id = $this->getIdentifierValues($entity);
-        return $this->getEntity(get_class($entity), $id);
+        return $this->getEntity(get_class($entity), $this->getIdentifierValues($entity));
     }
 
     /**
      * Get entity from the persistence
-     *
-     * @param string $className
-     * @param mixed $id
-     * @param boolean $optional
-     * @return mixed
      */
-    protected function getEntity($className, $id, $optional = false)
+    protected function getEntity(string $className, mixed $id, bool $optional = false): ?object
     {
         $className = ClassUtils::getRealClass($className);
 
@@ -270,13 +239,10 @@ class AbstractTestCase extends WebTestCase
         $result = $this->getEntityRepository($className)->find($id);
 
         if ($result && !$optional) {
-            $this->assertInstanceOf(
+            self::assertInstanceOf(
                 $className,
                 $result,
-                sprintf(
-                    'Failed asserting entity "%s" is existing in the persistence.',
-                    $className
-                )
+                sprintf('Failed asserting entity "%s" is existing in the persistence.', $className)
             );
         }
 
@@ -286,15 +252,13 @@ class AbstractTestCase extends WebTestCase
     /**
      * Refresh all references in the context to pull updates from the persistence.
      */
-    public function refreshReferences()
+    public function refreshReferences(): void
     {
         $referenceRepository = $this->getReferenceRepository();
 
+        $entityManager = $this->getDoctrine()->getManager();
         foreach ($referenceRepository->getReferences() as $name => $entity) {
-            /** @var EntityManager $entityManager */
-            $entityManager = $this->getDoctrine()->getManager();
             $contains = $entityManager->contains($entity);
-
             if ($contains) {
                 $entityManager->refresh($entity);
             } else {
@@ -306,14 +270,10 @@ class AbstractTestCase extends WebTestCase
         }
     }
 
-    /**
-     * @param mixed $entity
-     * @return array
-     */
-    protected function getIdentifierValues($entity)
+    protected function getIdentifierValues(object $entity): array
     {
-        $className = ClassUtils::getClass($entity);
-        $classMetadata = $this->getEntityManager()->getClassMetadata($className);
-        return $classMetadata->getIdentifierValues($entity);
+        return $this->getEntityManager()
+            ->getClassMetadata(ClassUtils::getClass($entity))
+            ->getIdentifierValues($entity);
     }
 }

@@ -3,7 +3,6 @@
 namespace Oro\Bundle\CalendarBundle\EventListener;
 
 use Doctrine\Common\Util\ClassUtils;
-use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\Event\OnFlushEventArgs;
 use Doctrine\ORM\Event\PostFlushEventArgs;
@@ -126,14 +125,14 @@ class EntityListener implements ServiceSubscriberInterface
         $this->insertedCalendars[] = $calendar;
     }
 
-    private function isCalendarExists(EntityManager $em, User $user, Organization $organization): bool
+    private function isCalendarExists(EntityManagerInterface $em, User $user, Organization $organization): bool
     {
         $calendarRepository = $em->getRepository(Calendar::class);
 
         return (bool)$calendarRepository->findDefaultCalendar($user->getId(), $organization->getId());
     }
 
-    private function getClassMetadata(object $entity, EntityManager $em): ClassMetadata
+    private function getClassMetadata(object $entity, EntityManagerInterface $em): ClassMetadata
     {
         $className = ClassUtils::getClass($entity);
         if (!isset($this->metadataLocalCache[$className])) {

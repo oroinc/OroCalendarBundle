@@ -84,7 +84,7 @@ services:
     oro_calendar.attendees_select.transformer:
         class: Oro\Bundle\CalendarBundle\Form\DataTransformer\AttendeesToViewTransformer
         arguments:
-            - '@doctrine.orm.entity_manager'
+            - '@doctrine'
             - '@oro_calendar.attendee_manager'
 
     oro_calendar.attendees_api.form.type:
@@ -98,7 +98,7 @@ services:
             - { name: form.type, alias: oro_calendar_property_api }
 
     oro_calendar.calendar_property.form.api:
-        class:    'Symfony\Component\Form\Form'
+        class: Symfony\Component\Form\Form
         public: true
         factory: ['@form.factory', 'createNamed']
         arguments:

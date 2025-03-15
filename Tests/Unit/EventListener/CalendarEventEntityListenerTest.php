@@ -2,7 +2,7 @@
 
 namespace Oro\Bundle\CalendarBundle\Tests\Unit\EventListener;
 
-use Doctrine\ORM\EntityManager;
+use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\Event\PreUpdateEventArgs;
 use Doctrine\ORM\UnitOfWork;
 use Doctrine\Persistence\Event\LifecycleEventArgs;
@@ -145,7 +145,7 @@ class CalendarEventEntityListenerTest extends \PHPUnit\Framework\TestCase
         ?string $oldValue = null,
         ?string $newValue = null
     ): PreUpdateEventArgs {
-        $em = $this->createMock(EntityManager::class);
+        $em = $this->createMock(EntityManagerInterface::class);
         $em->expects($this->any())
             ->method('getUnitOfWork')
             ->willReturn($this->createMock(UnitOfWork::class));

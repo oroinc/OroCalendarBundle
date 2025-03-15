@@ -2,7 +2,7 @@
 
 namespace Oro\Bundle\CalendarBundle\Form\Handler;
 
-use Doctrine\ORM\EntityManager;
+use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\Persistence\ManagerRegistry;
 use Oro\Bundle\ActivityBundle\Manager\ActivityManager;
 use Oro\Bundle\CalendarBundle\Entity\CalendarEvent;
@@ -73,8 +73,10 @@ abstract class AbstractCalendarEventHandler
         );
 
         $isNew = $entity->getId() ? false : true;
-        $this->getEntityManager()->persist($entity);
-        $this->getEntityManager()->flush();
+
+        $entityManager = $this->getEntityManager();
+        $entityManager->persist($entity);
+        $entityManager->flush();
 
         if (true === $this->featureChecker->isFeatureEnabled('calendar_events_attendee_notifications')) {
             $this->sendNotifications($entity, $originalEntity, $isNew);
@@ -113,18 +115,12 @@ abstract class AbstractCalendarEventHandler
      */
     abstract protected function getSendNotificationsStrategy();
 
-    /**
-     * @return EntityManager
-     */
-    protected function getEntityManager()
+    protected function getEntityManager(): EntityManagerInterface
     {
         return $this->doctrine->getManager();
     }
 
-    /**
-     * @return Request
-     */
-    protected function getRequest()
+    protected function getRequest(): Request
     {
         $request = $this->requestStack->getCurrentRequest();
         if (!$request) {

@@ -2,7 +2,7 @@
 
 namespace Oro\Bundle\CalendarBundle\Tests\Unit\Manager\CalendarEvent;
 
-use Doctrine\ORM\EntityManager;
+use Doctrine\ORM\EntityManagerInterface;
 use Oro\Bundle\CalendarBundle\Entity\Attendee;
 use Oro\Bundle\CalendarBundle\Entity\Calendar;
 use Oro\Bundle\CalendarBundle\Entity\CalendarEvent;
@@ -19,7 +19,7 @@ class MatchingEventsManagerTest extends \PHPUnit\Framework\TestCase
     private const UID = '17f409b2-7393-42b1-9976-3394d9f5302e';
     private const EMAIL = 'email@oroinc.com';
 
-    /** @var EntityManager|\PHPUnit\Framework\MockObject\MockObject */
+    /** @var EntityManagerInterface|\PHPUnit\Framework\MockObject\MockObject */
     private $entityManager;
 
     /** @var CalendarEventRepository|\PHPUnit\Framework\MockObject\MockObject */
@@ -31,7 +31,7 @@ class MatchingEventsManagerTest extends \PHPUnit\Framework\TestCase
     protected function setUp(): void
     {
         $this->repository = $this->createMock(CalendarEventRepository::class);
-        $this->entityManager = $this->createMock(EntityManager::class);
+        $this->entityManager = $this->createMock(EntityManagerInterface::class);
 
         $this->entityManager->expects($this->any())
             ->method('getRepository')

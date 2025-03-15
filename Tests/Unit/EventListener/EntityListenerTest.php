@@ -3,7 +3,7 @@
 namespace Oro\Bundle\CalendarBundle\Tests\Unit\EventListener;
 
 use Doctrine\Common\Collections\ArrayCollection;
-use Doctrine\ORM\EntityManager;
+use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\Event\OnFlushEventArgs;
 use Doctrine\ORM\Event\PreUpdateEventArgs;
 use Doctrine\ORM\Mapping\ClassMetadata;
@@ -26,7 +26,7 @@ use PHPUnit\Framework\TestCase;
 
 class EntityListenerTest extends TestCase
 {
-    /** @var EntityManager|MockObject */
+    /** @var EntityManagerInterface|MockObject */
     private $em;
 
     /** @var UnitOfWork|MockObject */
@@ -44,7 +44,7 @@ class EntityListenerTest extends TestCase
     #[\Override]
     protected function setUp(): void
     {
-        $this->em = $this->createMock(EntityManager::class);
+        $this->em = $this->createMock(EntityManagerInterface::class);
         $this->uow = $this->createMock(UnitOfWork::class);
         $this->tokenAccessor = $this->createMock(TokenAccessorInterface::class);
         $this->recurrenceModel = $this->createMock(RecurrenceModel::class);
