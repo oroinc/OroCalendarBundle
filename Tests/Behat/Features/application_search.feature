@@ -9,7 +9,6 @@ Feature: Application search
 
   Scenario: Search all
     Given I login as administrator
-    And I click "Search"
     And type "Common" in "search"
     And I should see 2 search suggestions
     When I click "Search Submit"

@@ -149,7 +149,8 @@ NOTE: use percentage font sizes or else old IE chokes
     text-align: center;
     text-transform: $btn-text-transform;
 
-    border: $btn-border-width solid transparent;
+    border-width: $btn-border-width;
+    border-style: solid;
 
     @include button-size($btn-padding-y, $btn-padding-x, $btn-font-size, $btn-line-height, $btn-border-radius);
     @include transition($btn-transition);
@@ -201,6 +202,7 @@ NOTE: use percentage font sizes or else old IE chokes
 .fc-state-down,
 .fc-state-active {
     @if ($btn-theme) {
+        color: map-get($btn-theme, 'active-color');
         background: map-get($btn-theme, 'active-background');
         box-shadow: map-get($btn-theme, 'active-box-shadow');
     }
@@ -227,7 +229,10 @@ NOTE: use percentage font sizes or else old IE chokes
 
 .fc .fc-button-group > * { /* extra precedence b/c buttons have margin set to zero */
     float: left;
-    margin: 0 0 0 1px;
+
+    &:not(:first-child) {
+        border-left-width: 0;
+    }
 }
 
 .fc .fc-button-group > :first-child { /* same */
@@ -342,7 +347,7 @@ $fc-cell-offset: 8px !default;
     border-spacing: 0;
 
     font-size: $base-font-size--sm; /* normalize cross-browser */
-    color: $primary-550;
+    color: $text-primary;
 }
 
 .fc th {
