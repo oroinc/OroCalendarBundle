@@ -9,6 +9,10 @@ use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\Form\FormEvent;
 use Symfony\Component\Form\FormEvents;
 
+/**
+ * Makes sure indexes of attendees from request are equal to indexes of the same
+ * attendees so that in the end we end up with correct data.
+ */
 class CalendarEventApiTypeSubscriber implements EventSubscriberInterface
 {
     /** @var CalendarEventManager */
@@ -45,6 +49,9 @@ class CalendarEventApiTypeSubscriber implements EventSubscriberInterface
         if (isset($data['attendees']) && ($data['attendees'] === '')) {
             $data['attendees'] = null;
         }
+
+        // `Updated At` field can not be changed from outside
+        unset($data['updatedAt']);
 
         $formEvent->setData($data);
     }
