@@ -52,10 +52,10 @@ SET
             oro_calendar_event ce
         WHERE
             ce.related_attendee_id = a.id
-    )::jsonb);
-ALTER TABLE oro_calendar_event DROP COLUMN invitation_status;
+    )::jsonb)
 SQL
         );
+        $connection->executeQuery('ALTER TABLE oro_calendar_event DROP COLUMN invitation_status');
     }
 
     protected function updateType(EntityManagerInterface $em)
@@ -76,7 +76,7 @@ SET
             oro_calendar_event ce
         WHERE
             ce.related_attendee_id = a.id
-    )::jsonb);
+    )::jsonb)
 SQL;
         $connection->executeQuery($query);
     }
