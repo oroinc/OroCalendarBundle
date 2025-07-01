@@ -1066,15 +1066,10 @@ a.fc-more:hover {
 --------------------------------------------------------------------------------------------------*/
 
 .fc .fc-axis { /* .fc to overcome default cell styles */
-    padding: 0 $fc-cell-offset;
     height: $fc-cell-height - ($fc-cell-offset * .5);
 
     vertical-align: middle;
     white-space: nowrap;
-}
-
-.fc-axis {
-    text-align: right;
 }
 
 .ui-widget td.fc-axis {
