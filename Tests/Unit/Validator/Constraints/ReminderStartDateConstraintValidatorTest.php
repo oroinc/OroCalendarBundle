@@ -1,6 +1,6 @@
 <?php
 
-namespace Oro\Bundle\CalendarBundle\Tests\Unit\Validator;
+namespace Oro\Bundle\CalendarBundle\Tests\Unit\Validator\Constraints;
 
 use Doctrine\Common\Collections\ArrayCollection;
 use Oro\Bundle\CalendarBundle\Entity\CalendarEvent;
@@ -8,6 +8,7 @@ use Oro\Bundle\CalendarBundle\Validator\Constraints\ReminderStartDate;
 use Oro\Bundle\CalendarBundle\Validator\Constraints\ReminderStartDateConstraintValidator;
 use Oro\Bundle\ReminderBundle\Entity\Reminder;
 use Oro\Bundle\ReminderBundle\Model\ReminderInterval;
+use PHPUnit\Framework\MockObject\MockObject;
 use Symfony\Component\Form\Form;
 use Symfony\Component\Validator\Constraints\NotNull;
 use Symfony\Component\Validator\Exception\UnexpectedTypeException;
@@ -15,12 +16,10 @@ use Symfony\Component\Validator\Test\ConstraintValidatorTestCase;
 
 class ReminderStartDateConstraintValidatorTest extends ConstraintValidatorTestCase
 {
-    /** @var CalendarEvent|\PHPUnit\Framework\MockObject\MockObject */
-    private $calendarEvent;
+    private CalendarEvent&MockObject $calendarEvent;
+    private Reminder&MockObject $reminder;
 
-    /** @var Reminder|\PHPUnit\Framework\MockObject\MockObject */
-    private $reminder;
-
+    #[\Override]
     protected function setUp(): void
     {
         $this->calendarEvent = $this->createMock(CalendarEvent::class);

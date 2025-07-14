@@ -1,6 +1,6 @@
 <?php
 
-namespace Oro\Bundle\CalendarBundle\Tests\Unit\Manager;
+namespace Oro\Bundle\CalendarBundle\Tests\Unit\Manager\CalendarEvent;
 
 use Oro\Bundle\CalendarBundle\Entity\Recurrence;
 use Oro\Bundle\CalendarBundle\Manager\AttendeeManager;
@@ -8,18 +8,16 @@ use Oro\Bundle\CalendarBundle\Manager\CalendarEvent\DeleteManager;
 use Oro\Bundle\CalendarBundle\Manager\CalendarEvent\UpdateExceptionManager;
 use Oro\Bundle\CalendarBundle\Tests\Unit\Fixtures\Entity\CalendarEvent;
 use Oro\Bundle\EntityExtendBundle\PropertyAccess;
+use PHPUnit\Framework\MockObject\MockObject;
+use PHPUnit\Framework\TestCase;
 
-class UpdateExceptionManagerTest extends \PHPUnit\Framework\TestCase
+class UpdateExceptionManagerTest extends TestCase
 {
-    /** @var AttendeeManager|\PHPUnit\Framework\MockObject\MockObject */
-    private $attendeeManager;
+    private AttendeeManager&MockObject $attendeeManager;
+    private DeleteManager&MockObject $deleteManager;
+    private UpdateExceptionManager $updateExceptionManager;
 
-    /** @var DeleteManager|\PHPUnit\Framework\MockObject\MockObject */
-    private $deleteManager;
-
-    /** @var UpdateExceptionManager */
-    private $updateExceptionManager;
-
+    #[\Override]
     protected function setUp(): void
     {
         $this->attendeeManager = $this->createMock(AttendeeManager::class);
@@ -31,7 +29,7 @@ class UpdateExceptionManagerTest extends \PHPUnit\Framework\TestCase
     /**
      * @dataProvider recurrenceFieldsValues
      */
-    public function testClearingExceptionsOnUpdate($field, $value)
+    public function testClearingExceptionsOnUpdate($field, $value): void
     {
         $actualEvent = new CalendarEvent(1);
         $recurrence = new Recurrence();
@@ -67,7 +65,7 @@ class UpdateExceptionManagerTest extends \PHPUnit\Framework\TestCase
         ];
     }
 
-    public function testUpdateExceptionsDataOnEventUpdate()
+    public function testUpdateExceptionsDataOnEventUpdate(): void
     {
         $originalEntity = new CalendarEvent();
         $originalEntity->setTitle('test')

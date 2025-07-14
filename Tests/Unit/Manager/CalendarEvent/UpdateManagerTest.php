@@ -1,6 +1,6 @@
 <?php
 
-namespace Oro\Bundle\CalendarBundle\Tests\Unit\Manager;
+namespace Oro\Bundle\CalendarBundle\Tests\Unit\Manager\CalendarEvent;
 
 use Oro\Bundle\CalendarBundle\Entity\CalendarEvent;
 use Oro\Bundle\CalendarBundle\Manager\CalendarEvent\MatchingEventsManager;
@@ -10,27 +10,19 @@ use Oro\Bundle\CalendarBundle\Manager\CalendarEvent\UpdateExceptionManager;
 use Oro\Bundle\CalendarBundle\Manager\CalendarEvent\UpdateManager;
 use Oro\Bundle\FeatureToggleBundle\Checker\FeatureChecker;
 use Oro\Bundle\OrganizationBundle\Entity\Organization;
+use PHPUnit\Framework\MockObject\MockObject;
+use PHPUnit\Framework\TestCase;
 
-class UpdateManagerTest extends \PHPUnit\Framework\TestCase
+class UpdateManagerTest extends TestCase
 {
-    /** @var UpdateAttendeeManager|\PHPUnit\Framework\MockObject\MockObject */
-    private $updateAttendeeManager;
+    private UpdateAttendeeManager&MockObject $updateAttendeeManager;
+    private UpdateChildManager&MockObject $updateChildManager;
+    private UpdateExceptionManager&MockObject $updateExceptionManager;
+    private MatchingEventsManager&MockObject $matchingEventsManager;
+    private FeatureChecker&MockObject $featureChecker;
+    private UpdateManager $updateManager;
 
-    /** @var UpdateChildManager|\PHPUnit\Framework\MockObject\MockObject */
-    private $updateChildManager;
-
-    /** @var UpdateExceptionManager|\PHPUnit\Framework\MockObject\MockObject */
-    private $updateExceptionManager;
-
-    /** @var MatchingEventsManager|\PHPUnit\Framework\MockObject\MockObject */
-    private $matchingEventsManager;
-
-    /** @var FeatureChecker|\PHPUnit\Framework\MockObject\MockObject */
-    private $featureChecker;
-
-    /** @var UpdateManager */
-    private $updateManager;
-
+    #[\Override]
     protected function setUp(): void
     {
         $this->updateAttendeeManager = $this->createMock(UpdateAttendeeManager::class);
@@ -48,7 +40,7 @@ class UpdateManagerTest extends \PHPUnit\Framework\TestCase
         );
     }
 
-    public function testOnEventUpdateWithEnabledMasterFeatures()
+    public function testOnEventUpdateWithEnabledMasterFeatures(): void
     {
         $entity = new CalendarEvent();
         $entity->setTitle('New Title');
@@ -84,7 +76,7 @@ class UpdateManagerTest extends \PHPUnit\Framework\TestCase
         $this->updateManager->onEventUpdate($entity, $originalEntity, $organization, $allowUpdateExceptions);
     }
 
-    public function testOnEventUpdateWithDisabledMasterFeatures()
+    public function testOnEventUpdateWithDisabledMasterFeatures(): void
     {
         $entity = new CalendarEvent();
         $entity->setTitle('New Title1');

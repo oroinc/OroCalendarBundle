@@ -1,16 +1,16 @@
 <?php
 
-namespace Oro\Bundle\CalendarBundle\Tests\Functional\Controller;
+namespace Oro\Bundle\CalendarBundle\Tests\Functional\ControllerApi;
 
 use Oro\Bundle\CalendarBundle\Entity\CalendarEvent;
 use Oro\Bundle\CalendarBundle\Model\Recurrence;
-use Oro\Bundle\CalendarBundle\Tests\Functional\ControllerApi\AbstractUseCaseTestCase;
 use Oro\Bundle\UserBundle\Tests\Functional\DataFixtures\LoadUserData;
 
 class RecurringCalendarEventControllerTest extends AbstractUseCaseTestCase
 {
     private const RECURRING_EVENT_TITLE = 'Test Creating/Updating Recurring Event';
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->markTestSkipped('CRM-7978');

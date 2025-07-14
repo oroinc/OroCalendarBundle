@@ -1,21 +1,21 @@
 <?php
 
-namespace Oro\Bundle\CalendarBundle\Tests\Unit\Manager;
+namespace Oro\Bundle\CalendarBundle\Tests\Unit\Manager\CalendarEvent;
 
 use Doctrine\Persistence\ManagerRegistry;
 use Oro\Bundle\CalendarBundle\Entity\Attendee;
 use Oro\Bundle\CalendarBundle\Entity\CalendarEvent;
 use Oro\Bundle\CalendarBundle\Manager\CalendarEvent\UpdateChildManager;
 use Oro\Bundle\OrganizationBundle\Entity\Organization;
+use PHPUnit\Framework\MockObject\MockObject;
+use PHPUnit\Framework\TestCase;
 
-class UpdateChildManagerTest extends \PHPUnit\Framework\TestCase
+class UpdateChildManagerTest extends TestCase
 {
-    /** @var ManagerRegistry|\PHPUnit\Framework\MockObject\MockObject */
-    private $doctrine;
+    private ManagerRegistry&MockObject $doctrine;
+    private UpdateChildManager $manager;
 
-    /** @var UpdateChildManager */
-    private $manager;
-
+    #[\Override]
     protected function setUp(): void
     {
         $this->doctrine = $this->createMock(ManagerRegistry::class);
@@ -23,7 +23,7 @@ class UpdateChildManagerTest extends \PHPUnit\Framework\TestCase
         $this->manager = new UpdateChildManager($this->doctrine);
     }
 
-    public function testChildEventsAreNotCreatedWhenCalendarEventIsMainEventButNoOrganizer()
+    public function testChildEventsAreNotCreatedWhenCalendarEventIsMainEventButNoOrganizer(): void
     {
         $calendarEvent = new CalendarEvent();
         $calendarEvent->setIsOrganizer(false)

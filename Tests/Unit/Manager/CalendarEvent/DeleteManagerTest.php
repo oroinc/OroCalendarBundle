@@ -1,6 +1,6 @@
 <?php
 
-namespace Oro\Bundle\CalendarBundle\Tests\Unit\Manager;
+namespace Oro\Bundle\CalendarBundle\Tests\Unit\Manager\CalendarEvent;
 
 use Doctrine\Persistence\ManagerRegistry;
 use Doctrine\Persistence\ObjectManager;
@@ -8,15 +8,15 @@ use Oro\Bundle\CalendarBundle\Entity\Recurrence;
 use Oro\Bundle\CalendarBundle\Manager\CalendarEvent\DeleteManager;
 use Oro\Bundle\CalendarBundle\Tests\Unit\Fixtures\Entity\Attendee;
 use Oro\Bundle\CalendarBundle\Tests\Unit\Fixtures\Entity\CalendarEvent;
+use PHPUnit\Framework\MockObject\MockObject;
+use PHPUnit\Framework\TestCase;
 
-class DeleteManagerTest extends \PHPUnit\Framework\TestCase
+class DeleteManagerTest extends TestCase
 {
-    /** @var ManagerRegistry|\PHPUnit\Framework\MockObject\MockObject */
-    private $objectManager;
+    private ObjectManager&MockObject $objectManager;
+    private DeleteManager $deleteManager;
 
-    /** @var DeleteManager */
-    private $deleteManager;
-
+    #[\Override]
     protected function setUp(): void
     {
         $this->objectManager = $this->createMock(ObjectManager::class);
@@ -29,7 +29,7 @@ class DeleteManagerTest extends \PHPUnit\Framework\TestCase
         $this->deleteManager = new DeleteManager($doctrine);
     }
 
-    public function testDeleteRecurringEventAndClearAllExceptions()
+    public function testDeleteRecurringEventAndClearAllExceptions(): void
     {
         $recurringEvent = new CalendarEvent(1);
         $recurringEvent->setRecurrence(new Recurrence());
@@ -56,7 +56,7 @@ class DeleteManagerTest extends \PHPUnit\Framework\TestCase
         $this->assertCount(0, $childRecurringEvent->getRecurringEventExceptions());
     }
 
-    public function testDeleteAttendeeExceptionEventCancelsTheEventAndRemovesAttendeeFromParentEvent()
+    public function testDeleteAttendeeExceptionEventCancelsTheEventAndRemovesAttendeeFromParentEvent(): void
     {
         $recurringEvent = new CalendarEvent(1);
         $childRecurringEvent = new CalendarEvent(2);
@@ -90,7 +90,7 @@ class DeleteManagerTest extends \PHPUnit\Framework\TestCase
         $this->assertFalse($exceptionEvent->isCancelled());
     }
 
-    public function testDeleteParentExceptionEventCancelsAllAttendeeEvents()
+    public function testDeleteParentExceptionEventCancelsAllAttendeeEvents(): void
     {
         $recurringEvent = new CalendarEvent(1);
         $childRecurringEvent = new CalendarEvent(2);
