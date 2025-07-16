@@ -16,10 +16,8 @@ use PHPUnit\Framework\TestCase;
 class AttendeeRelationManagerTest extends TestCase
 {
     /** @var User[] */
-    private $users;
-
-    /** @var AttendeeRelationManager */
-    private $attendeeRelationManager;
+    private array $users;
+    private AttendeeRelationManager $attendeeRelationManager;
 
     #[\Override]
     protected function setUp(): void
@@ -60,7 +58,7 @@ class AttendeeRelationManagerTest extends TestCase
         );
     }
 
-    public function testSetRelatedEntityWithUserWorks()
+    public function testSetRelatedEntityWithUserWorks(): void
     {
         $attendee = new Attendee();
 
@@ -77,7 +75,7 @@ class AttendeeRelationManagerTest extends TestCase
         $this->assertSame($user, $attendee->getUser());
     }
 
-    public function testSetRelatedEntityWithIncorrectTypeFails()
+    public function testSetRelatedEntityWithIncorrectTypeFails(): void
     {
         $this->expectException(\InvalidArgumentException::class);
         $this->expectExceptionMessage(
@@ -115,7 +113,7 @@ class AttendeeRelationManagerTest extends TestCase
         ];
     }
 
-    public function testGetRelatedEntity()
+    public function testGetRelatedEntity(): void
     {
         $user = new User();
         $attendee = (new Attendee())
@@ -127,7 +125,7 @@ class AttendeeRelationManagerTest extends TestCase
     /**
      * @dataProvider getDisplayNameProvider
      */
-    public function testGetDisplayName(Attendee $attendee, string $expectedDisplayName)
+    public function testGetDisplayName(Attendee $attendee, string $expectedDisplayName): void
     {
         $this->assertEquals($expectedDisplayName, $this->attendeeRelationManager->getDisplayName($attendee));
     }
@@ -162,7 +160,7 @@ class AttendeeRelationManagerTest extends TestCase
         ];
     }
 
-    public function testBindAttendees()
+    public function testBindAttendees(): void
     {
         $attendees = $this->getInitialAttendees();
         $this->attendeeRelationManager->bindAttendees($attendees);

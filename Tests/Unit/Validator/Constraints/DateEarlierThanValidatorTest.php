@@ -11,14 +11,9 @@ use Symfony\Component\Validator\Test\ConstraintValidatorTestCase;
 
 class DateEarlierThanValidatorTest extends ConstraintValidatorTestCase
 {
-    /** @var \DateTime */
-    private $dateTimeStart;
-
-    /** @var \DateTime */
-    private $dateTimeEnd;
-
-    /** @var Form */
-    private $formField;
+    private \DateTime $dateTimeStart;
+    private \DateTime $dateTimeEnd;
+    private Form $formField;
 
     #[\Override]
     protected function setUp(): void

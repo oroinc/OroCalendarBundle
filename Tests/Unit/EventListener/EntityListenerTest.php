@@ -26,20 +26,11 @@ use PHPUnit\Framework\TestCase;
 
 class EntityListenerTest extends TestCase
 {
-    /** @var EntityManagerInterface|MockObject */
-    private $em;
-
-    /** @var UnitOfWork|MockObject */
-    private $uow;
-
-    /** @var TokenAccessorInterface|MockObject */
-    private $tokenAccessor;
-
-    /** @var RecurrenceModel|MockObject */
-    private $recurrenceModel;
-
-    /** @var EntityListener */
-    private $listener;
+    private EntityManagerInterface&MockObject $em;
+    private UnitOfWork&MockObject $uow;
+    private TokenAccessorInterface&MockObject $tokenAccessor;
+    private RecurrenceModel&MockObject $recurrenceModel;
+    private EntityListener $listener;
 
     #[\Override]
     protected function setUp(): void
@@ -71,7 +62,7 @@ class EntityListenerTest extends TestCase
     /**
      * Test update of public calendar
      */
-    public function testPreUpdatePublicCalendar()
+    public function testPreUpdatePublicCalendar(): void
     {
         $entity = new SystemCalendar();
         $entity->setOrganization(new Organization());
@@ -87,7 +78,7 @@ class EntityListenerTest extends TestCase
     /**
      * Test update of system calendar
      */
-    public function testPreUpdateSystemCalendar()
+    public function testPreUpdateSystemCalendar(): void
     {
         $organization = new Organization();
 
@@ -106,7 +97,7 @@ class EntityListenerTest extends TestCase
     /**
      * Test new user creation
      */
-    public function testOnFlushCreateUser()
+    public function testOnFlushCreateUser(): void
     {
         $user = new User();
         $org1 = $this->getOrganization(1);
@@ -149,7 +140,7 @@ class EntityListenerTest extends TestCase
     /**
      * Test existing user modification
      */
-    public function testOnFlushUpdateUser()
+    public function testOnFlushUpdateUser(): void
     {
         $user = new User();
         ReflectionUtil::setId($user, 123);
@@ -194,7 +185,7 @@ class EntityListenerTest extends TestCase
         $this->listener->onFlush(new OnFlushEventArgs($this->em));
     }
 
-    public function testPrePersistShouldCalculateEndTimeForRecurrenceEntity()
+    public function testPrePersistShouldCalculateEndTimeForRecurrenceEntity(): void
     {
         $recurrence = new Recurrence();
         $calculatedEndTime = new \DateTime();
@@ -211,7 +202,7 @@ class EntityListenerTest extends TestCase
         self::assertSame($calculatedEndTime, $recurrence->getCalculatedEndTime());
     }
 
-    public function testPrePersistShouldNotCalculateEndTimeForOtherThanRecurrenceEntity()
+    public function testPrePersistShouldNotCalculateEndTimeForOtherThanRecurrenceEntity(): void
     {
         $this->recurrenceModel->expects(self::never())
             ->method('getCalculatedEndTime');
@@ -234,7 +225,7 @@ class EntityListenerTest extends TestCase
         return $coll;
     }
 
-    public function testPrePersistPublicCalendar()
+    public function testPrePersistPublicCalendar(): void
     {
         $entity = new SystemCalendar();
         $entity->setOrganization(new Organization());
@@ -246,7 +237,7 @@ class EntityListenerTest extends TestCase
         self::assertNull($entity->getOrganization());
     }
 
-    public function testPrePersistSystemCalendar()
+    public function testPrePersistSystemCalendar(): void
     {
         $organization = new Organization();
 

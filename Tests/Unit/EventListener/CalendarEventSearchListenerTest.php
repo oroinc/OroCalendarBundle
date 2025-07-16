@@ -14,18 +14,15 @@ use Oro\Bundle\SearchBundle\Event\PrepareEntityMapEvent;
 use Oro\Bundle\SearchBundle\Event\PrepareResultItemEvent;
 use Oro\Bundle\SearchBundle\Query\Result\Item;
 use Oro\Component\Testing\ReflectionUtil;
+use PHPUnit\Framework\MockObject\MockObject;
+use PHPUnit\Framework\TestCase;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 
-class CalendarEventSearchListenerTest extends \PHPUnit\Framework\TestCase
+class CalendarEventSearchListenerTest extends TestCase
 {
-    /** @var UrlGeneratorInterface|\PHPUnit\Framework\MockObject\MockObject */
-    private $urlGenerator;
-
-    /** @var ManagerRegistry|\PHPUnit\Framework\MockObject\MockObject */
-    private $doctrine;
-
-    /** @var CalendarEventSearchListener */
-    private $listener;
+    private UrlGeneratorInterface&MockObject $urlGenerator;
+    private ManagerRegistry&MockObject $doctrine;
+    private CalendarEventSearchListener $listener;
 
     #[\Override]
     protected function setUp(): void
@@ -52,7 +49,7 @@ class CalendarEventSearchListenerTest extends \PHPUnit\Framework\TestCase
         return $systemCalendar;
     }
 
-    public function testPrepareEntityMapEventWithNonCalendarEventEntity()
+    public function testPrepareEntityMapEventWithNonCalendarEventEntity(): void
     {
         $event = new PrepareEntityMapEvent(new \stdClass(), \stdClass::class, [], []);
 
@@ -61,7 +58,7 @@ class CalendarEventSearchListenerTest extends \PHPUnit\Framework\TestCase
         self::assertEquals([], $event->getData());
     }
 
-    public function testPrepareEntityMapEventWithCommonCalendarEventEntity()
+    public function testPrepareEntityMapEventWithCommonCalendarEventEntity(): void
     {
         $calendar = new Calendar();
         $calendar->setOrganization($this->getOrganization(12));
@@ -78,7 +75,7 @@ class CalendarEventSearchListenerTest extends \PHPUnit\Framework\TestCase
         );
     }
 
-    public function testPrepareEntityMapEventWithSystemCalendarEventEntity()
+    public function testPrepareEntityMapEventWithSystemCalendarEventEntity(): void
     {
         $calendar = new SystemCalendar();
         $calendar->setPublic(true);
@@ -95,7 +92,7 @@ class CalendarEventSearchListenerTest extends \PHPUnit\Framework\TestCase
         );
     }
 
-    public function testPrepareEntityMapEventWithOrganizationCalendarEventEntity()
+    public function testPrepareEntityMapEventWithOrganizationCalendarEventEntity(): void
     {
         $calendar = new SystemCalendar();
         $calendar->setPublic(false);
@@ -113,7 +110,7 @@ class CalendarEventSearchListenerTest extends \PHPUnit\Framework\TestCase
         );
     }
 
-    public function testPrepareResultItemEventWithNonCalendarEventEntity()
+    public function testPrepareResultItemEventWithNonCalendarEventEntity(): void
     {
         $item = new Item(\stdClass::class, 1);
         $event = new PrepareResultItemEvent($item);
@@ -125,7 +122,7 @@ class CalendarEventSearchListenerTest extends \PHPUnit\Framework\TestCase
         self::assertNull($item->getRecordUrl());
     }
 
-    public function testPrepareResultItemEventWithNonSystemCalendarEventEntity()
+    public function testPrepareResultItemEventWithNonSystemCalendarEventEntity(): void
     {
         $entity = new CalendarEvent();
         $item = new Item(CalendarEvent::class, 1);
@@ -138,7 +135,7 @@ class CalendarEventSearchListenerTest extends \PHPUnit\Framework\TestCase
         self::assertNull($item->getRecordUrl());
     }
 
-    public function testPrepareResultItemEventWithSystemCalendarEventEntity()
+    public function testPrepareResultItemEventWithSystemCalendarEventEntity(): void
     {
         $entity = new CalendarEvent();
         $entity->setSystemCalendar($this->getSystemCalendar(10));
@@ -158,7 +155,7 @@ class CalendarEventSearchListenerTest extends \PHPUnit\Framework\TestCase
         self::assertEquals('http://test.com/calendar/5', $item->getRecordUrl());
     }
 
-    public function testPrepareResultItemEventWithSystemCalendarEventEntityNotInEvent()
+    public function testPrepareResultItemEventWithSystemCalendarEventEntityNotInEvent(): void
     {
         $entity = new CalendarEvent();
         $entity->setSystemCalendar($this->getSystemCalendar(20));

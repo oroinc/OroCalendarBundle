@@ -15,43 +15,26 @@ use Oro\Bundle\OrganizationBundle\Entity\Organization;
 use Oro\Bundle\SecurityBundle\Authentication\TokenAccessorInterface;
 use Oro\Bundle\UserBundle\Entity\User;
 use Oro\Component\Testing\ReflectionUtil;
+use PHPUnit\Framework\MockObject\MockObject;
+use PHPUnit\Framework\TestCase;
 use Symfony\Component\Form\Form;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\RequestStack;
 
-class SystemCalendarEventHandlerTest extends \PHPUnit\Framework\TestCase
+class SystemCalendarEventHandlerTest extends TestCase
 {
     private const FORM_DATA = ['field' => 'value'];
 
-    /** @var Form|\PHPUnit\Framework\MockObject\MockObject */
-    private $form;
-
-    /** @var Request */
-    private $request;
-
-    /** @var EntityManagerInterface|\PHPUnit\Framework\MockObject\MockObject */
-    private $entityManager;
-
-    /** @var ActivityManager|\PHPUnit\Framework\MockObject\MockObject */
-    private $activityManager;
-
-    /** @var CalendarEventManager|\PHPUnit\Framework\MockObject\MockObject */
-    private $calendarEventManager;
-
-    /** @var NotificationManager|\PHPUnit\Framework\MockObject\MockObject */
-    private $notificationManager;
-
-    /** @var FeatureChecker|\PHPUnit\Framework\MockObject\MockObject */
-    private $featureChecker;
-
-    /** @var CalendarEvent */
-    private $entity;
-
-    /** @var Organization */
-    private $organization;
-
-    /** @var SystemCalendarEventHandler */
-    private $handler;
+    private Form&MockObject $form;
+    private Request $request;
+    private EntityManagerInterface&MockObject $entityManager;
+    private ActivityManager&MockObject $activityManager;
+    private CalendarEventManager&MockObject $calendarEventManager;
+    private NotificationManager&MockObject $notificationManager;
+    private FeatureChecker&MockObject $featureChecker;
+    private CalendarEvent $entity;
+    private Organization $organization;
+    private SystemCalendarEventHandler $handler;
 
     #[\Override]
     protected function setUp(): void
@@ -91,7 +74,7 @@ class SystemCalendarEventHandlerTest extends \PHPUnit\Framework\TestCase
         $this->handler->setForm($this->form);
     }
 
-    public function testProcessWithContexts()
+    public function testProcessWithContexts(): void
     {
         $context = new User();
         ReflectionUtil::setId($context, 123);
@@ -141,7 +124,7 @@ class SystemCalendarEventHandlerTest extends \PHPUnit\Framework\TestCase
     /**
      * @dataProvider supportedMethods
      */
-    public function testProcessInvalidData(string $method)
+    public function testProcessInvalidData(string $method): void
     {
         $this->request->initialize([], self::FORM_DATA);
         $this->request->setMethod($method);
@@ -168,7 +151,7 @@ class SystemCalendarEventHandlerTest extends \PHPUnit\Framework\TestCase
     /**
      * @dataProvider supportedMethods
      */
-    public function testProcessValidData(string $method)
+    public function testProcessValidData(string $method): void
     {
         $this->request->initialize([], self::FORM_DATA);
         $this->request->setMethod($method);

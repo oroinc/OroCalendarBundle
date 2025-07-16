@@ -5,14 +5,14 @@ namespace Oro\Bundle\CalendarBundle\Tests\Unit\Form\EventListener;
 use Doctrine\Common\Collections\ArrayCollection;
 use Oro\Bundle\CalendarBundle\Form\EventListener\AttendeesSubscriber;
 use Oro\Bundle\CalendarBundle\Tests\Unit\Fixtures\Entity\Attendee;
+use PHPUnit\Framework\TestCase;
 use Symfony\Component\Form\FormEvent;
 use Symfony\Component\Form\FormEvents;
 use Symfony\Component\Form\FormInterface;
 
-class AttendeesSubscriberTest extends \PHPUnit\Framework\TestCase
+class AttendeesSubscriberTest extends TestCase
 {
-    /** @var AttendeesSubscriber */
-    private $attendeesSubscriber;
+    private AttendeesSubscriber $attendeesSubscriber;
 
     #[\Override]
     protected function setUp(): void
@@ -20,7 +20,7 @@ class AttendeesSubscriberTest extends \PHPUnit\Framework\TestCase
         $this->attendeesSubscriber = new AttendeesSubscriber();
     }
 
-    public function testGetSubscribedEvents()
+    public function testGetSubscribedEvents(): void
     {
         $this->assertEquals(
             [
@@ -33,7 +33,7 @@ class AttendeesSubscriberTest extends \PHPUnit\Framework\TestCase
     /**
      * @dataProvider preSubmitProvider
      */
-    public function testPreSubmit(array $eventData, array|ArrayCollection $formData, array $expectedData)
+    public function testPreSubmit(array $eventData, array|ArrayCollection $formData, array $expectedData): void
     {
         $form = $this->createMock(FormInterface::class);
         $form->expects($this->any())

@@ -6,20 +6,15 @@ use Oro\Bundle\CalendarBundle\Manager\CalendarManager;
 use Oro\Bundle\CalendarBundle\Provider\CalendarPropertyProvider;
 use Oro\Bundle\CalendarBundle\Provider\CalendarProviderInterface;
 use Oro\Component\Testing\Unit\TestContainerBuilder;
+use PHPUnit\Framework\MockObject\MockObject;
+use PHPUnit\Framework\TestCase;
 
-class CalendarManagerTest extends \PHPUnit\Framework\TestCase
+class CalendarManagerTest extends TestCase
 {
-    /** @var CalendarPropertyProvider|\PHPUnit\Framework\MockObject\MockObject */
-    private $calendarPropertyProvider;
-
-    /** @var CalendarProviderInterface|\PHPUnit\Framework\MockObject\MockObject */
-    private $provider1;
-
-    /** @var CalendarProviderInterface|\PHPUnit\Framework\MockObject\MockObject */
-    private $provider2;
-
-    /** @var CalendarManager */
-    private $manager;
+    private CalendarPropertyProvider&MockObject $calendarPropertyProvider;
+    private CalendarProviderInterface&MockObject $provider1;
+    private CalendarProviderInterface&MockObject $provider2;
+    private CalendarManager $manager;
 
     #[\Override]
     protected function setUp(): void
@@ -40,7 +35,7 @@ class CalendarManagerTest extends \PHPUnit\Framework\TestCase
         );
     }
 
-    public function testGetCalendarsEmpty()
+    public function testGetCalendarsEmpty(): void
     {
         $organizationId = 1;
         $userId = 123;
@@ -68,7 +63,7 @@ class CalendarManagerTest extends \PHPUnit\Framework\TestCase
     /**
      * @SuppressWarnings(PHPMD.ExcessiveMethodLength)
      */
-    public function testGetCalendars()
+    public function testGetCalendars(): void
     {
         $organizationId = 123;
         $userId = 123;
@@ -191,7 +186,7 @@ class CalendarManagerTest extends \PHPUnit\Framework\TestCase
         return 'def_opt';
     }
 
-    public function testGetCalendarEvents()
+    public function testGetCalendarEvents(): void
     {
         $organizationId = 1;
         $userId = 123;

@@ -8,9 +8,10 @@ use Oro\Bundle\CalendarBundle\EventListener\NavigationListener;
 use Oro\Bundle\CalendarBundle\Provider\SystemCalendarConfig;
 use Oro\Bundle\NavigationBundle\Event\ConfigureMenuEvent;
 use Oro\Bundle\SecurityBundle\Authentication\TokenAccessorInterface;
+use PHPUnit\Framework\TestCase;
 use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
 
-class NavigationListenerTest extends \PHPUnit\Framework\TestCase
+class NavigationListenerTest extends TestCase
 {
     /**
      * @dataProvider dataProviderWithToken
@@ -21,7 +22,7 @@ class NavigationListenerTest extends \PHPUnit\Framework\TestCase
         bool $isSystemCalendarEnabled,
         bool $systemCalendarManagementAcl,
         bool $expectedVisibility
-    ) {
+    ): void {
         $factory = new MenuFactory();
         $menu = new MenuItem('parent_item', $factory);
         $menuItem = new MenuItem('oro_system_calendar_list', $factory);
@@ -77,7 +78,7 @@ class NavigationListenerTest extends \PHPUnit\Framework\TestCase
         bool $isPublicCalendarEnabled,
         bool $isSystemCalendarEnabled,
         bool $expectedVisibility
-    ) {
+    ): void {
         $factory = new MenuFactory();
         $menu = new MenuItem('parent_item', $factory);
         $menuItem = new MenuItem('oro_system_calendar_list', $factory);

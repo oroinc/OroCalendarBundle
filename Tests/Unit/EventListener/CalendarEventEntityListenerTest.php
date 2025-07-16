@@ -10,13 +10,14 @@ use Doctrine\Persistence\ObjectManager;
 use Oro\Bundle\CalendarBundle\Entity\CalendarEvent;
 use Oro\Bundle\CalendarBundle\EventListener\CalendarEventEntityListener;
 use Oro\Bundle\CalendarBundle\Exception\UidAlreadySetException;
+use PHPUnit\Framework\MockObject\MockObject;
+use PHPUnit\Framework\TestCase;
 
-class CalendarEventEntityListenerTest extends \PHPUnit\Framework\TestCase
+class CalendarEventEntityListenerTest extends TestCase
 {
     private const UID = 'MOCK-UUID-123456';
 
-    /** @var CalendarEventEntityListener */
-    private $listener;
+    private CalendarEventEntityListener $listener;
 
     #[\Override]
     protected function setUp(): void
@@ -24,7 +25,7 @@ class CalendarEventEntityListenerTest extends \PHPUnit\Framework\TestCase
         $this->listener = new CalendarEventEntityListener();
     }
 
-    public function testPrePersistSetParentUidToChildrenIfSet()
+    public function testPrePersistSetParentUidToChildrenIfSet(): void
     {
         $child1 = new CalendarEvent();
         $child2 = new CalendarEvent();
@@ -41,7 +42,7 @@ class CalendarEventEntityListenerTest extends \PHPUnit\Framework\TestCase
         $this->assertSame(self::UID, $child2->getUid());
     }
 
-    public function testPrePersistSetChildUidToParent()
+    public function testPrePersistSetChildUidToParent(): void
     {
         $child = new CalendarEvent();
         $child->setUid(self::UID);
@@ -55,7 +56,7 @@ class CalendarEventEntityListenerTest extends \PHPUnit\Framework\TestCase
         $this->assertSame(self::UID, $child->getUid());
     }
 
-    public function testPrePersistSetChildUidToParentAndAllItsChildren()
+    public function testPrePersistSetChildUidToParentAndAllItsChildren(): void
     {
         $child1 = new CalendarEvent();
         $child1->setUid(self::UID);
@@ -75,10 +76,10 @@ class CalendarEventEntityListenerTest extends \PHPUnit\Framework\TestCase
         $this->assertSame(self::UID, $child3->getUid());
     }
 
-    public function testPreUpdateSetChildUidToParent()
+    public function testPreUpdateSetChildUidToParent(): void
     {
         $eventMock = $this->getPreUpdateEvent(true, null, '123');
-        /** @var UnitOfWork|\PHPUnit\Framework\MockObject\MockObject $unitOfWork */
+        /** @var UnitOfWork&MockObject $unitOfWork */
         $unitOfWork = $eventMock->getObjectManager()->getUnitOfWork();
         $unitOfWork->expects($this->atLeastOnce())
             ->method('scheduleExtraUpdate');
@@ -95,10 +96,10 @@ class CalendarEventEntityListenerTest extends \PHPUnit\Framework\TestCase
         $this->assertSame(self::UID, $child->getUid());
     }
 
-    public function testPreUpdateSetChildUidToParentAndAllItsChildren()
+    public function testPreUpdateSetChildUidToParentAndAllItsChildren(): void
     {
         $eventMock = $this->getPreUpdateEvent(true, null, '123');
-        /** @var UnitOfWork|\PHPUnit\Framework\MockObject\MockObject $unitOfWork */
+        /** @var UnitOfWork&MockObject $unitOfWork */
         $unitOfWork = $eventMock->getObjectManager()->getUnitOfWork();
         $unitOfWork->expects($this->atLeastOnce())
             ->method('scheduleExtraUpdate');
@@ -121,14 +122,14 @@ class CalendarEventEntityListenerTest extends \PHPUnit\Framework\TestCase
         $this->assertSame(self::UID, $child3->getUid());
     }
 
-    public function testPreUpdateAllowsUpdateWhenUidIsNotChangedOrNullOrTheSame()
+    public function testPreUpdateAllowsUpdateWhenUidIsNotChangedOrNullOrTheSame(): void
     {
         $this->listener->preUpdate(new CalendarEvent(), $this->getPreUpdateEvent(false));
         $this->listener->preUpdate(new CalendarEvent(), $this->getPreUpdateEvent(true, '123', '123'));
         $this->listener->preUpdate(new CalendarEvent(), $this->getPreUpdateEvent(true, null, '123'));
     }
 
-    public function testPreUpdateThrowExceptionIfUidAlreadySet()
+    public function testPreUpdateThrowExceptionIfUidAlreadySet(): void
     {
         $this->expectException(UidAlreadySetException::class);
 

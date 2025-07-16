@@ -8,22 +8,17 @@ use Oro\Bundle\LocaleBundle\Formatter\DateTimeFormatterInterface;
 use Oro\Bundle\LocaleBundle\Manager\LocalizationManager;
 use Oro\Bundle\OrganizationBundle\Tests\Unit\Fixture\Entity\Organization;
 use Oro\Component\Testing\Unit\TwigExtensionTestCaseTrait;
+use PHPUnit\Framework\MockObject\MockObject;
+use PHPUnit\Framework\TestCase;
 
-class DateFormatExtensionTest extends \PHPUnit\Framework\TestCase
+class DateFormatExtensionTest extends TestCase
 {
     use TwigExtensionTestCaseTrait;
 
-    /** @var DateTimeFormatterInterface|\PHPUnit\Framework\MockObject\MockObject */
-    private $formatter;
-
-    /** @var ConfigManager|\PHPUnit\Framework\MockObject\MockObject */
-    private $configManager;
-
-    /** @var LocalizationManager|\PHPUnit\Framework\MockObject\MockObject */
-    private $localizationManager;
-
-    /** @var DateFormatExtension */
-    private $extension;
+    private DateTimeFormatterInterface&MockObject $formatter;
+    private ConfigManager&MockObject $configManager;
+    private LocalizationManager&MockObject $localizationManager;
+    private DateFormatExtension $extension;
 
     #[\Override]
     protected function setUp(): void
@@ -44,7 +39,7 @@ class DateFormatExtensionTest extends \PHPUnit\Framework\TestCase
     /**
      * @dataProvider formatCalendarDateRangeProvider
      */
-    public function testFormatCalendarDateRange(string $start, ?string $end, bool $skipTime, string $expected)
+    public function testFormatCalendarDateRange(string $start, ?string $end, bool $skipTime, string $expected): void
     {
         $startDate = new \DateTime($start);
         $endDate = $end === null ? null : new \DateTime($end);
@@ -89,7 +84,7 @@ class DateFormatExtensionTest extends \PHPUnit\Framework\TestCase
         ?string $locale,
         ?string $timeZone,
         ?Organization $organization
-    ) {
+    ): void {
         $startDate = new \DateTime($start);
         $endDate = new \DateTime($end);
 

@@ -15,25 +15,20 @@ use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
 use Oro\Bundle\OrganizationBundle\Entity\Organization;
 use Oro\Bundle\UserBundle\Entity\User;
 use Oro\Component\Testing\Unit\EntityTrait;
+use PHPUnit\Framework\MockObject\MockObject;
+use PHPUnit\Framework\TestCase;
 
 /**
  * @SuppressWarnings(PHPMD.TooManyPublicMethods)
  */
-class CalendarEventActivityListProviderTest extends \PHPUnit\Framework\TestCase
+class CalendarEventActivityListProviderTest extends TestCase
 {
     use EntityTrait;
 
-    /** @var DoctrineHelper|\PHPUnit\Framework\MockObject\MockObject */
-    private $doctrineHelper;
-
-    /** @var ActivityAssociationHelper|\PHPUnit\Framework\MockObject\MockObject */
-    private $activityAssociationHelper;
-
-    /** @var CommentAssociationHelper|\PHPUnit\Framework\MockObject\MockObject */
-    private $commentAssociationHelper;
-
-    /** @var CalendarEventActivityListProvider */
-    private $provider;
+    private DoctrineHelper&MockObject $doctrineHelper;
+    private ActivityAssociationHelper&MockObject $activityAssociationHelper;
+    private CommentAssociationHelper&MockObject $commentAssociationHelper;
+    private CalendarEventActivityListProvider $provider;
 
     #[\Override]
     protected function setUp(): void
@@ -49,7 +44,7 @@ class CalendarEventActivityListProviderTest extends \PHPUnit\Framework\TestCase
         );
     }
 
-    public function testIsApplicableTarget()
+    public function testIsApplicableTarget(): void
     {
         $entityClass = \stdClass::class;
         $accessible = false;
@@ -65,7 +60,7 @@ class CalendarEventActivityListProviderTest extends \PHPUnit\Framework\TestCase
     /**
      * @dataProvider getRoutesDataProvider
      */
-    public function testGetRoutes(CalendarEvent $calendarEvent, array $expected)
+    public function testGetRoutes(CalendarEvent $calendarEvent, array $expected): void
     {
         $this->assertEquals($expected, $this->provider->getRoutes($calendarEvent));
     }
@@ -94,7 +89,7 @@ class CalendarEventActivityListProviderTest extends \PHPUnit\Framework\TestCase
         ];
     }
 
-    public function testGetSubject()
+    public function testGetSubject(): void
     {
         $calendarEvent = new CalendarEvent();
         $calendarEvent->setTitle('test title');
@@ -102,7 +97,7 @@ class CalendarEventActivityListProviderTest extends \PHPUnit\Framework\TestCase
         $this->assertSame($calendarEvent->getTitle(), $this->provider->getSubject($calendarEvent));
     }
 
-    public function testGetDescription()
+    public function testGetDescription(): void
     {
         $calendarEvent = new CalendarEvent();
         $calendarEvent->setDescription(' <p>test description</p>   ');
@@ -110,7 +105,7 @@ class CalendarEventActivityListProviderTest extends \PHPUnit\Framework\TestCase
         $this->assertSame('test description', $this->provider->getDescription($calendarEvent));
     }
 
-    public function testGetCreatedAt()
+    public function testGetCreatedAt(): void
     {
         $calendarEvent = new CalendarEvent();
         $calendarEvent->setCreatedAt(new \DateTime('now'));
@@ -118,7 +113,7 @@ class CalendarEventActivityListProviderTest extends \PHPUnit\Framework\TestCase
         $this->assertSame($calendarEvent->getCreatedAt(), $this->provider->getCreatedAt($calendarEvent));
     }
 
-    public function testGetUpdatedAt()
+    public function testGetUpdatedAt(): void
     {
         $calendarEvent = new CalendarEvent();
         $calendarEvent->setUpdatedAt(new \DateTime('now'));
@@ -126,7 +121,7 @@ class CalendarEventActivityListProviderTest extends \PHPUnit\Framework\TestCase
         $this->assertSame($calendarEvent->getUpdatedAt(), $this->provider->getUpdatedAt($calendarEvent));
     }
 
-    public function testGetData()
+    public function testGetData(): void
     {
         $this->assertSame([], $this->provider->getData(new ActivityList()));
     }
@@ -134,7 +129,7 @@ class CalendarEventActivityListProviderTest extends \PHPUnit\Framework\TestCase
     /**
      * @dataProvider getOrganizationDataProvider
      */
-    public function testGetOrganization(CalendarEvent $calendarEvent, ?Organization $expected = null)
+    public function testGetOrganization(CalendarEvent $calendarEvent, ?Organization $expected = null): void
     {
         $this->assertSame($expected, $this->provider->getOrganization($calendarEvent));
     }
@@ -169,7 +164,7 @@ class CalendarEventActivityListProviderTest extends \PHPUnit\Framework\TestCase
         ];
     }
 
-    public function testGetTemplate()
+    public function testGetTemplate(): void
     {
         $this->assertSame(
             '@OroCalendar/CalendarEvent/js/activityItemTemplate.html.twig',
@@ -177,7 +172,7 @@ class CalendarEventActivityListProviderTest extends \PHPUnit\Framework\TestCase
         );
     }
 
-    public function testGetActivityId()
+    public function testGetActivityId(): void
     {
         $calendarEvent = new CalendarEvent();
         $id = 42;
@@ -193,7 +188,7 @@ class CalendarEventActivityListProviderTest extends \PHPUnit\Framework\TestCase
     /**
      * @dataProvider isApplicableDataProvider
      */
-    public function testIsApplicable(object|string $entity, bool $expected)
+    public function testIsApplicable(object|string $entity, bool $expected): void
     {
         $this->assertEquals($expected, $this->provider->isApplicable($entity));
     }
@@ -224,7 +219,7 @@ class CalendarEventActivityListProviderTest extends \PHPUnit\Framework\TestCase
         ];
     }
 
-    public function testGetTargetEntities()
+    public function testGetTargetEntities(): void
     {
         $targetEntities = [new CalendarEvent()];
 
@@ -236,7 +231,7 @@ class CalendarEventActivityListProviderTest extends \PHPUnit\Framework\TestCase
         $this->assertSame($targetEntities, $this->provider->getTargetEntities($activity));
     }
 
-    public function testIsCommentsEnabled()
+    public function testIsCommentsEnabled(): void
     {
         $this->commentAssociationHelper->expects($this->once())
             ->method('isCommentAssociationEnabled')
@@ -249,7 +244,7 @@ class CalendarEventActivityListProviderTest extends \PHPUnit\Framework\TestCase
     /**
      * @dataProvider getActivityOwnersDataProvider
      */
-    public function testGetActivityOwners(CalendarEvent $entity, ActivityList $activity, array $expected)
+    public function testGetActivityOwners(CalendarEvent $entity, ActivityList $activity, array $expected): void
     {
         $this->assertEquals($expected, $this->provider->getActivityOwners($entity, $activity));
     }
@@ -322,7 +317,7 @@ class CalendarEventActivityListProviderTest extends \PHPUnit\Framework\TestCase
     /**
      * @dataProvider getOwnerDataProvider
      */
-    public function testGetOwner(CalendarEvent $calendarEvent, ?User $user)
+    public function testGetOwner(CalendarEvent $calendarEvent, ?User $user): void
     {
         $this->assertSame($user, $this->provider->getOwner($calendarEvent));
     }

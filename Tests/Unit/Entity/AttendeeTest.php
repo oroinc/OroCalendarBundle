@@ -6,12 +6,13 @@ use Oro\Bundle\CalendarBundle\Entity\Attendee;
 use Oro\Bundle\CalendarBundle\Entity\CalendarEvent;
 use Oro\Bundle\UserBundle\Entity\User;
 use Oro\Component\Testing\Unit\EntityTestCaseTrait;
+use PHPUnit\Framework\TestCase;
 
-class AttendeeTest extends \PHPUnit\Framework\TestCase
+class AttendeeTest extends TestCase
 {
     use EntityTestCaseTrait;
 
-    public function testProperties()
+    public function testProperties(): void
     {
         $properties = [
             'id'            => ['id', 1],
@@ -27,7 +28,7 @@ class AttendeeTest extends \PHPUnit\Framework\TestCase
         self::assertPropertyAccessors($entity, $properties);
     }
 
-    public function testPrePersist()
+    public function testPrePersist(): void
     {
         $entity = new Attendee();
         $entity->beforeSave();
@@ -46,7 +47,7 @@ class AttendeeTest extends \PHPUnit\Framework\TestCase
         self::assertNotSame($entity->getCreatedAt(), $entity->getUpdatedAt());
     }
 
-    public function testPreUpdate()
+    public function testPreUpdate(): void
     {
         $entity = new Attendee();
         $entity->preUpdate();
@@ -58,7 +59,7 @@ class AttendeeTest extends \PHPUnit\Framework\TestCase
         self::assertNotSame($existingUpdatedAt, $entity->getUpdatedAt());
     }
 
-    public function testToString()
+    public function testToString(): void
     {
         $entity = new Attendee();
         self::assertSame('', (string)$entity);

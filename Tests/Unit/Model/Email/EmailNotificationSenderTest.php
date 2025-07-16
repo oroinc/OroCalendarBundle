@@ -14,19 +14,16 @@ use Oro\Bundle\EmailBundle\Model\EmailTemplateCriteria;
 use Oro\Bundle\NotificationBundle\Manager\EmailNotificationManager;
 use Oro\Bundle\NotificationBundle\Model\TemplateEmailNotification;
 use Oro\Component\Testing\Unit\EntityTrait;
+use PHPUnit\Framework\MockObject\MockObject;
+use PHPUnit\Framework\TestCase;
 
-class EmailNotificationSenderTest extends \PHPUnit\Framework\TestCase
+class EmailNotificationSenderTest extends TestCase
 {
     use EntityTrait;
 
-    /** @var EmailNotificationManager|\PHPUnit\Framework\MockObject\MockObject */
-    private $emailNotificationManager;
-
-    /** @var ObjectManager|\PHPUnit\Framework\MockObject\MockObject */
-    private $entityManager;
-
-    /** @var EmailNotificationSender */
-    private $emailNotificationSender;
+    private EmailNotificationManager&MockObject $emailNotificationManager;
+    private ObjectManager&MockObject $entityManager;
+    private EmailNotificationSender $emailNotificationSender;
 
     #[\Override]
     protected function setUp(): void
@@ -48,7 +45,7 @@ class EmailNotificationSenderTest extends \PHPUnit\Framework\TestCase
     /**
      * @dataProvider sendAttendeesNotificationsDataProvider
      */
-    public function testSendAttendeesNotifications(string $addNotificationMethod, string $expectedTemplateName)
+    public function testSendAttendeesNotifications(string $addNotificationMethod, string $expectedTemplateName): void
     {
         $attendeeWithUser = $this->getEntity(
             AttendeeEntity::class,
@@ -116,7 +113,7 @@ class EmailNotificationSenderTest extends \PHPUnit\Framework\TestCase
     /**
      * @dataProvider sendSendInvitationStatusChangeNotificationsDataProvider
      */
-    public function testSendInvitationStatusChangeNotifications(string $statusCode, string $expectedTemplateName)
+    public function testSendInvitationStatusChangeNotifications(string $statusCode, string $expectedTemplateName): void
     {
         $attendeeWithUser = $this->getEntity(
             AttendeeEntity::class,
@@ -160,7 +157,7 @@ class EmailNotificationSenderTest extends \PHPUnit\Framework\TestCase
         $this->emailNotificationSender->sendAddedNotifications();
     }
 
-    public function testDeleteChildCalendarEventNotifications()
+    public function testDeleteChildCalendarEventNotifications(): void
     {
         $attendeeWithUser = $this->getEntity(
             AttendeeEntity::class,

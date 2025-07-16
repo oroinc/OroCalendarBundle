@@ -8,10 +8,11 @@ use Oro\Bundle\EntityExtendBundle\PropertyAccess;
 use Oro\Bundle\OrganizationBundle\Entity\Organization;
 use Oro\Bundle\UserBundle\Entity\User;
 use Oro\Component\Testing\ReflectionUtil;
+use PHPUnit\Framework\TestCase;
 
-class CalendarTest extends \PHPUnit\Framework\TestCase
+class CalendarTest extends TestCase
 {
-    public function testIdGetter()
+    public function testIdGetter(): void
     {
         $obj = new Calendar();
         ReflectionUtil::setId($obj, 1);
@@ -21,7 +22,7 @@ class CalendarTest extends \PHPUnit\Framework\TestCase
     /**
      * @dataProvider propertiesDataProvider
      */
-    public function testSettersAndGetters(string $property, mixed $value)
+    public function testSettersAndGetters(string $property, mixed $value): void
     {
         $obj = new Calendar();
 
@@ -30,7 +31,7 @@ class CalendarTest extends \PHPUnit\Framework\TestCase
         $this->assertEquals($value, $accessor->getValue($obj, $property));
     }
 
-    public function testEvents()
+    public function testEvents(): void
     {
         $obj = new Calendar();
         $event = new CalendarEvent();
@@ -41,20 +42,20 @@ class CalendarTest extends \PHPUnit\Framework\TestCase
         $this->assertSame($obj, $events[0]->getCalendar());
     }
 
-    public function testToString()
+    public function testToString(): void
     {
         $obj = new Calendar();
         $obj->setName('testName');
         $this->assertEquals($obj->getName(), (string)$obj);
     }
 
-    public function testToStringDefault()
+    public function testToStringDefault(): void
     {
         $obj = new Calendar();
         $this->assertEquals('[default]', (string)$obj);
     }
 
-    public function testToStringUsername()
+    public function testToStringUsername(): void
     {
         $obj = new Calendar();
         $owner = new User();

@@ -6,6 +6,7 @@ use Oro\Bundle\CalendarBundle\Entity;
 use Oro\Bundle\CalendarBundle\Model;
 use Oro\Bundle\CalendarBundle\Validator\Constraints\Recurrence;
 use Oro\Bundle\CalendarBundle\Validator\Constraints\RecurrenceValidator;
+use PHPUnit\Framework\MockObject\MockObject;
 use Symfony\Component\Validator\Constraint;
 use Symfony\Component\Validator\Exception\UnexpectedTypeException;
 use Symfony\Component\Validator\Test\ConstraintValidatorTestCase;
@@ -34,8 +35,7 @@ class RecurrenceValidatorTest extends ConstraintValidatorTestCase
         Model\Recurrence::DAY_SATURDAY,
     ];
 
-    /** @var Model\Recurrence|\PHPUnit\Framework\MockObject\MockObject */
-    private $model;
+    private Model\Recurrence&MockObject $model;
 
     #[\Override]
     protected function setUp(): void

@@ -5,18 +5,19 @@ namespace Oro\Bundle\CalendarBundle\Tests\Unit\Form\Handler;
 use Doctrine\Persistence\ObjectManager;
 use Oro\Bundle\CalendarBundle\Entity\CalendarProperty;
 use Oro\Bundle\CalendarBundle\Form\Handler\CalendarPropertyApiHandler;
+use PHPUnit\Framework\TestCase;
 use Symfony\Component\Form\Form;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\RequestStack;
 
-class CalendarPropertyApiHandlerTest extends \PHPUnit\Framework\TestCase
+class CalendarPropertyApiHandlerTest extends TestCase
 {
     private const FORM_DATA = ['field' => 'value'];
 
     /**
      * @dataProvider supportedMethods
      */
-    public function testProcess(string $method)
+    public function testProcess(string $method): void
     {
         $form = $this->createMock(Form::class);
         $om = $this->createMock(ObjectManager::class);

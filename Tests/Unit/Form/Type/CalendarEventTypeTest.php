@@ -18,6 +18,8 @@ use Oro\Bundle\FormBundle\Form\Type\OroSimpleColorPickerType;
 use Oro\Bundle\ReminderBundle\Form\Type\ReminderCollectionType;
 use Oro\Bundle\SecurityBundle\Authentication\TokenAccessorInterface;
 use Oro\Bundle\UserBundle\Form\Type\UserSelectType;
+use PHPUnit\Framework\MockObject\MockObject;
+use PHPUnit\Framework\TestCase;
 use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
 use Symfony\Component\Form\Extension\Core\Type\HiddenType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
@@ -26,13 +28,10 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
 use Symfony\Component\Validator\Constraints\Choice;
 
-class CalendarEventTypeTest extends \PHPUnit\Framework\TestCase
+class CalendarEventTypeTest extends TestCase
 {
-    /** @var AuthorizationCheckerInterface|\PHPUnit\Framework\MockObject\MockObject */
-    private $authorizationChecker;
-
-    /** @var CalendarEventType */
-    private $type;
+    private AuthorizationCheckerInterface&MockObject $authorizationChecker;
+    private CalendarEventType $type;
 
     #[\Override]
     protected function setUp(): void
@@ -73,7 +72,7 @@ class CalendarEventTypeTest extends \PHPUnit\Framework\TestCase
      *
      * @SuppressWarnings(PHPMD.ExcessiveMethodLength)
      */
-    public function testBuildForm(bool $permissions)
+    public function testBuildForm(bool $permissions): void
     {
         $minYear = date_create('-10 year')->format('Y');
         $maxYear = date_create('+80 year')->format('Y');
@@ -193,7 +192,7 @@ class CalendarEventTypeTest extends \PHPUnit\Framework\TestCase
         $this->type->buildForm($builder, ['layout_template' => false]);
     }
 
-    public function testConfigureOptions()
+    public function testConfigureOptions(): void
     {
         $resolver = $this->createMock(OptionsResolver::class);
         $resolver->expects($this->once())

@@ -9,22 +9,17 @@ use Oro\Bundle\CalendarBundle\Provider\SystemCalendarConfig;
 use Oro\Bundle\EntityBundle\Handler\EntityDeleteAccessDeniedExceptionFactory;
 use Oro\Bundle\OrganizationBundle\Entity\Organization;
 use Oro\Bundle\SecurityBundle\Authentication\TokenAccessorInterface;
+use PHPUnit\Framework\MockObject\MockObject;
+use PHPUnit\Framework\TestCase;
 use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
 use Symfony\Component\Security\Core\Exception\AccessDeniedException;
 
-class SystemCalendarDeleteHandlerExtensionTest extends \PHPUnit\Framework\TestCase
+class SystemCalendarDeleteHandlerExtensionTest extends TestCase
 {
-    /** @var SystemCalendarConfig|\PHPUnit\Framework\MockObject\MockObject */
-    private $calendarConfig;
-
-    /** @var AuthorizationCheckerInterface|\PHPUnit\Framework\MockObject\MockObject */
-    private $authorizationChecker;
-
-    /** @var TokenAccessorInterface|\PHPUnit\Framework\MockObject\MockObject */
-    private $tokenAccessor;
-
-    /** @var SystemCalendarDeleteHandlerExtension */
-    private $extension;
+    private SystemCalendarConfig&MockObject $calendarConfig;
+    private AuthorizationCheckerInterface&MockObject $authorizationChecker;
+    private TokenAccessorInterface&MockObject $tokenAccessor;
+    private SystemCalendarDeleteHandlerExtension $extension;
 
     #[\Override]
     protected function setUp(): void
@@ -42,7 +37,7 @@ class SystemCalendarDeleteHandlerExtensionTest extends \PHPUnit\Framework\TestCa
         $this->extension->setAccessDeniedExceptionFactory(new EntityDeleteAccessDeniedExceptionFactory());
     }
 
-    public function testAssertDeleteGrantedWhenAccessGranted()
+    public function testAssertDeleteGrantedWhenAccessGranted(): void
     {
         $calendarOrganization = new Organization();
         $calendarOrganization->setId(1);
@@ -63,7 +58,7 @@ class SystemCalendarDeleteHandlerExtensionTest extends \PHPUnit\Framework\TestCa
         $this->extension->assertDeleteGranted($calendar);
     }
 
-    public function testAssertDeleteGrantedWhenPublicCalendarDisabled()
+    public function testAssertDeleteGrantedWhenPublicCalendarDisabled(): void
     {
         $this->expectException(AccessDeniedException::class);
         $this->expectExceptionMessage('The delete operation is forbidden. Reason: public calendars are disabled.');
@@ -78,7 +73,7 @@ class SystemCalendarDeleteHandlerExtensionTest extends \PHPUnit\Framework\TestCa
         $this->extension->assertDeleteGranted($calendar);
     }
 
-    public function testAssertDeleteGrantedWhenPublicCalendarDeleteNotGranted()
+    public function testAssertDeleteGrantedWhenPublicCalendarDeleteNotGranted(): void
     {
         $this->expectException(AccessDeniedException::class);
         $this->expectExceptionMessage('The delete operation is forbidden. Reason: access denied.');
@@ -97,7 +92,7 @@ class SystemCalendarDeleteHandlerExtensionTest extends \PHPUnit\Framework\TestCa
         $this->extension->assertDeleteGranted($calendar);
     }
 
-    public function testAssertDeleteGrantedWhenSystemCalendarDisabled()
+    public function testAssertDeleteGrantedWhenSystemCalendarDisabled(): void
     {
         $this->expectException(AccessDeniedException::class);
         $this->expectExceptionMessage('The delete operation is forbidden. Reason: system calendars are disabled.');
@@ -111,7 +106,7 @@ class SystemCalendarDeleteHandlerExtensionTest extends \PHPUnit\Framework\TestCa
         $this->extension->assertDeleteGranted($calendar);
     }
 
-    public function testAssertDeleteGrantedWhenSystemCalendarDeleteNotGranted()
+    public function testAssertDeleteGrantedWhenSystemCalendarDeleteNotGranted(): void
     {
         $this->expectException(AccessDeniedException::class);
         $this->expectExceptionMessage('The delete operation is forbidden. Reason: access denied.');
@@ -129,7 +124,7 @@ class SystemCalendarDeleteHandlerExtensionTest extends \PHPUnit\Framework\TestCa
         $this->extension->assertDeleteGranted($calendar);
     }
 
-    public function testAssertDeleteGrantedWhenSystemCalendarWasCreatedInAnotherOrganization()
+    public function testAssertDeleteGrantedWhenSystemCalendarWasCreatedInAnotherOrganization(): void
     {
         $this->expectException(AccessDeniedException::class);
         $this->expectExceptionMessage('The delete operation is forbidden. Reason: access denied.');

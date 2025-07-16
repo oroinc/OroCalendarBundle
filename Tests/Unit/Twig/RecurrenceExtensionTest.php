@@ -7,20 +7,17 @@ use Oro\Bundle\CalendarBundle\Model\Recurrence;
 use Oro\Bundle\CalendarBundle\Model\Recurrence\StrategyInterface;
 use Oro\Bundle\CalendarBundle\Twig\RecurrenceExtension;
 use Oro\Component\Testing\Unit\TwigExtensionTestCaseTrait;
+use PHPUnit\Framework\MockObject\MockObject;
+use PHPUnit\Framework\TestCase;
 use Symfony\Contracts\Translation\TranslatorInterface;
 
-class RecurrenceExtensionTest extends \PHPUnit\Framework\TestCase
+class RecurrenceExtensionTest extends TestCase
 {
     use TwigExtensionTestCaseTrait;
 
-    /** @var TranslatorInterface|\PHPUnit\Framework\MockObject\MockObject */
-    private $translator;
-
-    /** @var StrategyInterface|\PHPUnit\Framework\MockObject\MockObject */
-    private $strategy;
-
-    /** @var RecurrenceExtension */
-    private $extension;
+    private TranslatorInterface&MockObject $translator;
+    private StrategyInterface&MockObject $strategy;
+    private RecurrenceExtension $extension;
 
     #[\Override]
     protected function setUp(): void
@@ -36,7 +33,7 @@ class RecurrenceExtensionTest extends \PHPUnit\Framework\TestCase
         $this->extension = new RecurrenceExtension($container);
     }
 
-    public function testGetRecurrenceTextValue()
+    public function testGetRecurrenceTextValue(): void
     {
         $this->strategy->expects($this->once())
             ->method('getTextValue')
@@ -48,7 +45,7 @@ class RecurrenceExtensionTest extends \PHPUnit\Framework\TestCase
         );
     }
 
-    public function testGetRecurrenceTextValueWithNA()
+    public function testGetRecurrenceTextValueWithNA(): void
     {
         $this->assertEquals(
             '',

@@ -16,17 +16,14 @@ use Oro\Bundle\EntityExtendBundle\Configuration\EntityExtendConfigurationProvide
 use Oro\Bundle\EntityExtendBundle\Entity\EnumOption;
 use Oro\Bundle\EntityExtendBundle\EntityConfig\ExtendScope;
 use Oro\Bundle\EntityExtendBundle\Extend\FieldTypeHelper;
+use PHPUnit\Framework\MockObject\MockObject;
+use PHPUnit\Framework\TestCase;
 
-class CalendarPropertyProviderTest extends \PHPUnit\Framework\TestCase
+class CalendarPropertyProviderTest extends TestCase
 {
-    /** @var DoctrineHelper|\PHPUnit\Framework\MockObject\MockObject */
-    private $doctrineHelper;
-
-    /** @var ConfigManager|\PHPUnit\Framework\MockObject\MockObject */
-    private $configManager;
-
-    /** @var CalendarPropertyProvider */
-    private $provider;
+    private DoctrineHelper&MockObject $doctrineHelper;
+    private ConfigManager&MockObject $configManager;
+    private CalendarPropertyProvider $provider;
 
     #[\Override]
     protected function setUp(): void
@@ -54,7 +51,7 @@ class CalendarPropertyProviderTest extends \PHPUnit\Framework\TestCase
         );
     }
 
-    public function testGetFields()
+    public function testGetFields(): void
     {
         $fieldConfigs = [
             $this->getFieldConfig('id', 'integer'),
@@ -92,7 +89,7 @@ class CalendarPropertyProviderTest extends \PHPUnit\Framework\TestCase
         );
     }
 
-    public function testGetDefaultValues()
+    public function testGetDefaultValues(): void
     {
         $fieldConfigs = [
             $this->getFieldConfig('id', 'integer'),
@@ -142,7 +139,7 @@ class CalendarPropertyProviderTest extends \PHPUnit\Framework\TestCase
     /**
      * @dataProvider getEnumDefaultValueProvider
      */
-    public function testGetEnumDefaultValue(array $defaults, ?string $expected)
+    public function testGetEnumDefaultValue(array $defaults, ?string $expected): void
     {
         $fieldName = 'test_enum';
         $fieldConfig = $this->getFieldConfig($fieldName, 'enum', ['target_entity' => EnumOption::class]);
@@ -208,7 +205,7 @@ class CalendarPropertyProviderTest extends \PHPUnit\Framework\TestCase
     /**
      * @SuppressWarnings(PHPMD.ExcessiveMethodLength)
      */
-    public function testGetItems()
+    public function testGetItems(): void
     {
         $calendarId = 123;
 
@@ -306,7 +303,7 @@ class CalendarPropertyProviderTest extends \PHPUnit\Framework\TestCase
         );
     }
 
-    public function testGetItemsVisibility()
+    public function testGetItemsVisibility(): void
     {
         $calendarId = 123;
         $subordinate = true;
@@ -346,7 +343,7 @@ class CalendarPropertyProviderTest extends \PHPUnit\Framework\TestCase
         $this->assertSame($items, $result);
     }
 
-    public function testGetItemsVisibilityCurrentCalendarOnly()
+    public function testGetItemsVisibilityCurrentCalendarOnly(): void
     {
         $calendarId = 123;
         $subordinate = false;

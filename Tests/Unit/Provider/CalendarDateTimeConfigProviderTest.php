@@ -5,17 +5,14 @@ namespace Oro\Bundle\CalendarBundle\Tests\Unit\Provider;
 use Oro\Bundle\CalendarBundle\Provider\CalendarDateTimeConfigProvider;
 use Oro\Bundle\LocaleBundle\Model\Calendar;
 use Oro\Bundle\LocaleBundle\Model\LocaleSettings;
+use PHPUnit\Framework\MockObject\MockObject;
+use PHPUnit\Framework\TestCase;
 
-class CalendarDateTimeConfigProviderTest extends \PHPUnit\Framework\TestCase
+class CalendarDateTimeConfigProviderTest extends TestCase
 {
-    /** @var LocaleSettings|\PHPUnit\Framework\MockObject\MockObject */
-    private $localeSettings;
-
-    /** @var Calendar|\PHPUnit\Framework\MockObject\MockObject */
-    private $calendar;
-
-    /** @var CalendarDateTimeConfigProvider */
-    private $provider;
+    private LocaleSettings&MockObject $localeSettings;
+    private Calendar&MockObject $calendar;
+    private CalendarDateTimeConfigProvider $provider;
 
     #[\Override]
     protected function setUp(): void
@@ -29,7 +26,7 @@ class CalendarDateTimeConfigProviderTest extends \PHPUnit\Framework\TestCase
     /**
      * @dataProvider getDateRangeProvider
      */
-    public function testGetDateRange(string $current, string $start, string $end)
+    public function testGetDateRange(string $current, string $start, string $end): void
     {
         $this->localeSettings->expects($this->once())
             ->method('getTimeZone')
@@ -68,7 +65,7 @@ class CalendarDateTimeConfigProviderTest extends \PHPUnit\Framework\TestCase
         ];
     }
 
-    public function testGetTimezoneOffset()
+    public function testGetTimezoneOffset(): void
     {
         $this->localeSettings->expects($this->once())
             ->method('getTimeZone')

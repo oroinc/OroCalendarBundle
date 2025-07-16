@@ -5,16 +5,18 @@ namespace Oro\Bundle\CalendarBundle\Tests\Unit\Model\Recurrence;
 use Oro\Bundle\CalendarBundle\Entity\Recurrence;
 use Oro\Bundle\CalendarBundle\Model\Recurrence\DelegateStrategy;
 use Oro\Bundle\CalendarBundle\Model\Recurrence\StrategyInterface;
+use PHPUnit\Framework\MockObject\MockObject;
+use PHPUnit\Framework\TestCase;
 
-class DelegateStrategyTest extends \PHPUnit\Framework\TestCase
+class DelegateStrategyTest extends TestCase
 {
-    public function testGetName()
+    public function testGetName(): void
     {
         $strategy = new DelegateStrategy([]);
         $this->assertEquals('recurrence_delegate', $strategy->getName());
     }
 
-    public function testSupportsWhenExistsStrategyThatSupportRecurrence()
+    public function testSupportsWhenExistsStrategyThatSupportRecurrence(): void
     {
         $recurrence = new Recurrence();
 
@@ -35,7 +37,7 @@ class DelegateStrategyTest extends \PHPUnit\Framework\TestCase
         $this->assertTrue($strategy->supports($recurrence));
     }
 
-    public function testSupportsWhenNoStrategyThatSupportRecurrence()
+    public function testSupportsWhenNoStrategyThatSupportRecurrence(): void
     {
         $recurrence = new Recurrence();
 
@@ -59,7 +61,7 @@ class DelegateStrategyTest extends \PHPUnit\Framework\TestCase
     /**
      * @dataProvider delegateMethodsDataProvider
      */
-    public function testDelegateMethodWorks(string $method, array $arguments, mixed $returnValue)
+    public function testDelegateMethodWorks(string $method, array $arguments, mixed $returnValue): void
     {
         $recurrence = $arguments[0];
 
@@ -128,7 +130,7 @@ class DelegateStrategyTest extends \PHPUnit\Framework\TestCase
     /**
      * @dataProvider delegateMethodsDataProvider
      */
-    public function testDelegateMethodRaiseExceptionWhenStrategyNotMatched(string $method, array $arguments)
+    public function testDelegateMethodRaiseExceptionWhenStrategyNotMatched(string $method, array $arguments): void
     {
         $this->expectException(\InvalidArgumentException::class);
         $this->expectExceptionMessage('Recurrence type "baz" is not supported.');
@@ -153,10 +155,7 @@ class DelegateStrategyTest extends \PHPUnit\Framework\TestCase
         call_user_func_array([$strategy, $method], $arguments);
     }
 
-    /**
-     * @return StrategyInterface|\PHPUnit\Framework\MockObject\MockObject
-     */
-    private function createStrategy(string $name): StrategyInterface
+    private function createStrategy(string $name): StrategyInterface&MockObject
     {
         $result = $this->createMock(StrategyInterface::class);
         $result->expects($this->once())

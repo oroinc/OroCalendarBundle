@@ -5,28 +5,21 @@ namespace Oro\Bundle\CalendarBundle\Tests\Unit\Form\Handler;
 use Doctrine\Persistence\ObjectManager;
 use Oro\Bundle\CalendarBundle\Entity\SystemCalendar;
 use Oro\Bundle\CalendarBundle\Form\Handler\SystemCalendarHandler;
+use PHPUnit\Framework\MockObject\MockObject;
+use PHPUnit\Framework\TestCase;
 use Symfony\Component\Form\Form;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\RequestStack;
 
-class SystemCalendarHandlerTest extends \PHPUnit\Framework\TestCase
+class SystemCalendarHandlerTest extends TestCase
 {
     private const FORM_DATA = ['field' => 'value'];
 
-    /** @var Form|\PHPUnit\Framework\MockObject\MockObject */
-    private $form;
-
-    /** @var Request */
-    private $request;
-
-    /** @var ObjectManager|\PHPUnit\Framework\MockObject\MockObject */
-    private $om;
-
-    /** @var SystemCalendar */
-    private $entity;
-
-    /** @var SystemCalendarHandler */
-    private $handler;
+    private Form&MockObject $form;
+    private Request $request;
+    private ObjectManager&MockObject $om;
+    private SystemCalendar $entity;
+    private SystemCalendarHandler $handler;
 
     #[\Override]
     protected function setUp(): void
@@ -49,7 +42,7 @@ class SystemCalendarHandlerTest extends \PHPUnit\Framework\TestCase
     /**
      * @dataProvider supportedMethods
      */
-    public function testProcessInvalidData(string $method)
+    public function testProcessInvalidData(string $method): void
     {
         $this->request->initialize([], self::FORM_DATA);
         $this->request->setMethod($method);
@@ -76,7 +69,7 @@ class SystemCalendarHandlerTest extends \PHPUnit\Framework\TestCase
     /**
      * @dataProvider supportedMethods
      */
-    public function testProcessValidData(string $method)
+    public function testProcessValidData(string $method): void
     {
         $this->request->initialize([], self::FORM_DATA);
         $this->request->setMethod($method);

@@ -4,9 +4,10 @@ namespace Oro\Bundle\CalendarBundle\Tests\Unit\DependencyInjection;
 
 use Oro\Bundle\CalendarBundle\DependencyInjection\OroCalendarExtension;
 use Oro\Component\Config\CumulativeResourceManager;
+use PHPUnit\Framework\TestCase;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 
-class OroCalendarExtensionTest extends \PHPUnit\Framework\TestCase
+class OroCalendarExtensionTest extends TestCase
 {
     public function testLoad(): void
     {

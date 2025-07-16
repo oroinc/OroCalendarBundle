@@ -4,13 +4,13 @@ namespace Oro\Bundle\CalendarBundle\Tests\Unit\Form\Extension;
 
 use Oro\Bundle\CalendarBundle\Form\Extension\AclObjectLabelTypeExtension;
 use Oro\Bundle\SecurityBundle\Form\Type\ObjectLabelType;
+use PHPUnit\Framework\TestCase;
 use Symfony\Component\Form\Form;
 use Symfony\Component\Form\FormView;
 
-class AclObjectLabelTypeExtensionTest extends \PHPUnit\Framework\TestCase
+class AclObjectLabelTypeExtensionTest extends TestCase
 {
-    /** @var AclObjectLabelTypeExtension */
-    private $formExtension;
+    private AclObjectLabelTypeExtension $formExtension;
 
     #[\Override]
     protected function setUp(): void
@@ -21,7 +21,7 @@ class AclObjectLabelTypeExtensionTest extends \PHPUnit\Framework\TestCase
     /**
      * @dataProvider buildViewProvider
      */
-    public function testBuildView(string $oldValue, string $newValue)
+    public function testBuildView(string $oldValue, string $newValue): void
     {
         $formView = new FormView();
         $formView->vars['value'] = $oldValue;
@@ -41,7 +41,7 @@ class AclObjectLabelTypeExtensionTest extends \PHPUnit\Framework\TestCase
         ];
     }
 
-    public function testGetExtendedTypes()
+    public function testGetExtendedTypes(): void
     {
         $this->assertEquals([ObjectLabelType::class], AclObjectLabelTypeExtension::getExtendedTypes());
     }

@@ -16,27 +16,18 @@ use Oro\Bundle\ReminderBundle\Entity\Manager\ReminderManager;
 use Oro\Bundle\SecurityBundle\Authentication\TokenAccessorInterface;
 use Oro\Bundle\UIBundle\Tools\HtmlTagHelper;
 use Oro\Component\Testing\ReflectionUtil;
+use PHPUnit\Framework\MockObject\MockObject;
+use PHPUnit\Framework\TestCase;
 use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
 
-class UserCalendarEventNormalizerTest extends \PHPUnit\Framework\TestCase
+class UserCalendarEventNormalizerTest extends TestCase
 {
-    /** @var CalendarEventManager|\PHPUnit\Framework\MockObject\MockObject */
-    private $calendarEventManager;
-
-    /** @var AttendeeManager|\PHPUnit\Framework\MockObject\MockObject */
-    private $attendeeManager;
-
-    /** @var ReminderManager|\PHPUnit\Framework\MockObject\MockObject */
-    private $reminderManager;
-
-    /** @var AuthorizationCheckerInterface|\PHPUnit\Framework\MockObject\MockObject */
-    private $authorizationChecker;
-
-    /** @var TokenAccessorInterface|\PHPUnit\Framework\MockObject\MockObject */
-    private $tokenAccessor;
-
-    /** @var UserCalendarEventNormalizer */
-    private $normalizer;
+    private CalendarEventManager&MockObject $calendarEventManager;
+    private AttendeeManager&MockObject $attendeeManager;
+    private ReminderManager&MockObject $reminderManager;
+    private AuthorizationCheckerInterface&MockObject $authorizationChecker;
+    private TokenAccessorInterface&MockObject $tokenAccessor;
+    private UserCalendarEventNormalizer $normalizer;
 
     #[\Override]
     protected function setUp(): void
@@ -72,7 +63,7 @@ class UserCalendarEventNormalizerTest extends \PHPUnit\Framework\TestCase
         array $attendees,
         ?bool $editableInvitationStatus,
         array $expected
-    ) {
+    ): void {
         $calendarId = 123;
 
         $query = $this->createMock(AbstractQuery::class);
@@ -395,7 +386,7 @@ class UserCalendarEventNormalizerTest extends \PHPUnit\Framework\TestCase
         ?int $calendarId,
         bool $editableInvitationStatus,
         array $expected
-    ) {
+    ): void {
         $loggedUser = new User();
 
         $this->tokenAccessor->expects($this->once())

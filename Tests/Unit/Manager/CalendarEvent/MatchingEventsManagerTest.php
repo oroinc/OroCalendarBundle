@@ -11,23 +11,21 @@ use Oro\Bundle\CalendarBundle\Manager\CalendarEvent\MatchingEventsManager;
 use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
 use Oro\Bundle\UserBundle\Entity\User;
 use Oro\Component\Testing\Unit\EntityTrait;
+use PHPUnit\Framework\MockObject\MockObject;
+use PHPUnit\Framework\TestCase;
 
-class MatchingEventsManagerTest extends \PHPUnit\Framework\TestCase
+class MatchingEventsManagerTest extends TestCase
 {
     use EntityTrait;
 
     private const UID = '17f409b2-7393-42b1-9976-3394d9f5302e';
     private const EMAIL = 'email@oroinc.com';
 
-    /** @var EntityManagerInterface|\PHPUnit\Framework\MockObject\MockObject */
-    private $entityManager;
+    private EntityManagerInterface&MockObject $entityManager;
+    private CalendarEventRepository&MockObject $repository;
+    private MatchingEventsManager $manager;
 
-    /** @var CalendarEventRepository|\PHPUnit\Framework\MockObject\MockObject */
-    private $repository;
-
-    /** @var MatchingEventsManager */
-    private $manager;
-
+    #[\Override]
     protected function setUp(): void
     {
         $this->repository = $this->createMock(CalendarEventRepository::class);
@@ -47,7 +45,7 @@ class MatchingEventsManagerTest extends \PHPUnit\Framework\TestCase
         $this->manager = new MatchingEventsManager($doctrineHelper);
     }
 
-    public function testSkipIfEventIsNotNew()
+    public function testSkipIfEventIsNotNew(): void
     {
         $event = $this->getCalendarEvent(['id' => 1]);
 
@@ -57,7 +55,7 @@ class MatchingEventsManagerTest extends \PHPUnit\Framework\TestCase
         $this->manager->onEventUpdate($event);
     }
 
-    public function testMergeEvents()
+    public function testMergeEvents(): void
     {
         $ownerB = $this->getEntity(User::class, ['email' => 'second@oroinc.com']);
         $ownerC = $this->getEntity(User::class, ['email' => 'third@oroinc.com']);
@@ -112,7 +110,7 @@ class MatchingEventsManagerTest extends \PHPUnit\Framework\TestCase
         $this->assertCount(2, $eventA->getAttendees());
     }
 
-    public function testDoNotMergeEvents()
+    public function testDoNotMergeEvents(): void
     {
         $ownerB = $this->getEntity(User::class, ['email' => 'second@oroinc.com']);
         $ownerC = $this->getEntity(User::class, ['email' => 'third@oroinc.com']);
@@ -160,7 +158,7 @@ class MatchingEventsManagerTest extends \PHPUnit\Framework\TestCase
         $this->assertEquals($eventB->getAttendees(), $eventC->getAttendees());
     }
 
-    public function testMergeOnlyEventsWithAssignedCalendar()
+    public function testMergeOnlyEventsWithAssignedCalendar(): void
     {
         $ownerC = $this->getEntity(User::class, ['email' => 'third@oroinc.com']);
         $calendarC = $this->getEntity(Calendar::class, ['owner' => $ownerC]);
@@ -223,7 +221,7 @@ class MatchingEventsManagerTest extends \PHPUnit\Framework\TestCase
      * 4. User A creates an account in ORO
      * 5. User A sync events into the ORO (organizerUser set in all events)
      */
-    public function testCopyOrganizerUserAttendeesAreRemovedFromChildEventsInCaseOfMerging()
+    public function testCopyOrganizerUserAttendeesAreRemovedFromChildEventsInCaseOfMerging(): void
     {
         $ownerB = $this->getEntity(User::class, ['email' => 'second@oroinc.com']);
         $ownerC = $this->getEntity(User::class, ['email' => 'third@oroinc.com']);

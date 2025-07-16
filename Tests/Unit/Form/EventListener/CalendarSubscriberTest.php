@@ -17,14 +17,9 @@ use Symfony\Component\Form\FormInterface;
 
 class CalendarSubscriberTest extends TestCase
 {
-    /** @var TokenAccessorInterface|MockObject */
-    private $tokenAccessor;
-
-    /** @var ManagerRegistry|MockObject */
-    private $registry;
-
-    /** @var CalendarSubscriber */
-    private $calendarSubscriber;
+    private TokenAccessorInterface&MockObject $tokenAccessor;
+    private ManagerRegistry&MockObject $registry;
+    private CalendarSubscriber $calendarSubscriber;
 
     #[\Override]
     protected function setUp(): void
@@ -35,7 +30,7 @@ class CalendarSubscriberTest extends TestCase
         $this->calendarSubscriber = new CalendarSubscriber($this->tokenAccessor, $this->registry);
     }
 
-    public function testGetSubscribedEvents()
+    public function testGetSubscribedEvents(): void
     {
         $this->assertEquals(
             [
@@ -45,7 +40,7 @@ class CalendarSubscriberTest extends TestCase
         );
     }
 
-    public function testFillCalendarIfNewEvent()
+    public function testFillCalendarIfNewEvent(): void
     {
         $eventData = new CalendarEvent();
         $defaultCalendar = new Calendar();
@@ -80,7 +75,7 @@ class CalendarSubscriberTest extends TestCase
         $this->assertNotNull($event->getData()->getCalendar());
     }
 
-    public function testDoNotFillCalendarIfUpdateEvent()
+    public function testDoNotFillCalendarIfUpdateEvent(): void
     {
         $eventData = new CalendarEvent();
         $defaultCalendar = new Calendar();
@@ -117,7 +112,7 @@ class CalendarSubscriberTest extends TestCase
         $this->assertEquals($defaultCalendar, $event->getData()->getCalendar());
     }
 
-    public function testDoNotFillCalendarIfFilledCalendar()
+    public function testDoNotFillCalendarIfFilledCalendar(): void
     {
         $eventData = new CalendarEvent();
         $defaultCalendar = new Calendar();
@@ -153,7 +148,7 @@ class CalendarSubscriberTest extends TestCase
         $this->assertEquals($defaultCalendar, $event->getData()->getCalendar());
     }
 
-    public function testDoNotFillCalendarIfSystemCalendar()
+    public function testDoNotFillCalendarIfSystemCalendar(): void
     {
         $event = $this->createMock(CalendarEvent::class);
         $event->expects($this->once())

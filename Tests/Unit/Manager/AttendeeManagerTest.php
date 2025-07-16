@@ -19,17 +19,10 @@ use PHPUnit\Framework\TestCase;
 
 class AttendeeManagerTest extends TestCase
 {
-    /** @var CalendarEventRepository|MockObject */
-    private $calendarEventRepository;
-
-    /** @var AttendeeRepository|MockObject */
-    private $attendeeRepository;
-
-    /** @var AttendeeRelationManager|MockObject */
-    private $attendeeRelationManager;
-
-    /** @var AttendeeManager */
-    private $attendeeManager;
+    private CalendarEventRepository&MockObject $calendarEventRepository;
+    private AttendeeRepository&MockObject $attendeeRepository;
+    private AttendeeRelationManager&MockObject $attendeeRelationManager;
+    private AttendeeManager $attendeeManager;
 
     #[\Override]
     protected function setUp(): void
@@ -63,7 +56,7 @@ class AttendeeManagerTest extends TestCase
         );
     }
 
-    public function testLoadAttendeesByCalendarEventId()
+    public function testLoadAttendeesByCalendarEventId(): void
     {
         $this->attendeeRepository->expects($this->once())
             ->method('findBy')
@@ -76,7 +69,7 @@ class AttendeeManagerTest extends TestCase
     /**
      * @dataProvider createAttendeeExclusionsProvider
      */
-    public function testCreateAttendeeExclusions(array|ArrayCollection $attendees, array $expectedResult)
+    public function testCreateAttendeeExclusions(array|ArrayCollection $attendees, array $expectedResult): void
     {
         $this->assertEquals(
             $expectedResult,
@@ -125,7 +118,7 @@ class AttendeeManagerTest extends TestCase
         array $parentToChildren,
         array $queryResult,
         array $expectedResult
-    ) {
+    ): void {
         $query = $this->createMock(AbstractQuery::class);
         $qb = $this->createMock(QueryBuilder::class);
         $qb->expects($this->once())

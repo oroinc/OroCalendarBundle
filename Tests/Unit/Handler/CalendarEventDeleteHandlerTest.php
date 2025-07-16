@@ -14,28 +14,19 @@ use Oro\Bundle\CalendarBundle\Provider\SystemCalendarConfig;
 use Oro\Bundle\CalendarBundle\Tests\Unit\Fixtures\Entity\Calendar;
 use Oro\Bundle\EntityBundle\Handler\EntityDeleteAccessDeniedExceptionFactory;
 use Oro\Bundle\EntityBundle\Handler\EntityDeleteHandlerExtensionRegistry;
+use PHPUnit\Framework\MockObject\MockObject;
+use PHPUnit\Framework\TestCase;
 use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
 use Symfony\Component\Security\Core\Exception\AccessDeniedException;
 
-class CalendarEventDeleteHandlerTest extends \PHPUnit\Framework\TestCase
+class CalendarEventDeleteHandlerTest extends TestCase
 {
-    /** @var ManagerRegistry|\PHPUnit\Framework\MockObject\MockObject */
-    private $doctrine;
-
-    /** @var SystemCalendarConfig|\PHPUnit\Framework\MockObject\MockObject */
-    private $calendarConfig;
-
-    /** @var AuthorizationCheckerInterface|\PHPUnit\Framework\MockObject\MockObject */
-    private $authorizationChecker;
-
-    /** @var DeleteManager|\PHPUnit\Framework\MockObject\MockObject */
-    private $deleteManager;
-
-    /** @var NotificationManager|\PHPUnit\Framework\MockObject\MockObject */
-    private $notificationManager;
-
-    /** @var CalendarEventDeleteHandler */
-    private $handler;
+    private ManagerRegistry&MockObject $doctrine;
+    private SystemCalendarConfig&MockObject $calendarConfig;
+    private AuthorizationCheckerInterface&MockObject $authorizationChecker;
+    private DeleteManager&MockObject $deleteManager;
+    private NotificationManager&MockObject $notificationManager;
+    private CalendarEventDeleteHandler $handler;
 
     #[\Override]
     protected function setUp(): void
@@ -69,7 +60,7 @@ class CalendarEventDeleteHandlerTest extends \PHPUnit\Framework\TestCase
         $this->handler->setExtensionRegistry($extensionRegistry);
     }
 
-    public function testDeleteWhenPublicCalendarDisabled()
+    public function testDeleteWhenPublicCalendarDisabled(): void
     {
         $this->expectException(AccessDeniedException::class);
         $this->expectExceptionMessage('The delete operation is forbidden. Reason: public calendars are disabled.');
@@ -88,7 +79,7 @@ class CalendarEventDeleteHandlerTest extends \PHPUnit\Framework\TestCase
         $this->handler->delete($event);
     }
 
-    public function testDeleteWhenPublicCalendarEventManagementNotGranted()
+    public function testDeleteWhenPublicCalendarEventManagementNotGranted(): void
     {
         $this->expectException(AccessDeniedException::class);
         $this->expectExceptionMessage('The delete operation is forbidden. Reason: access denied.');
@@ -111,7 +102,7 @@ class CalendarEventDeleteHandlerTest extends \PHPUnit\Framework\TestCase
         $this->handler->delete($event);
     }
 
-    public function testDeleteWhenSystemCalendarDisabled()
+    public function testDeleteWhenSystemCalendarDisabled(): void
     {
         $this->expectException(AccessDeniedException::class);
         $this->expectExceptionMessage('The delete operation is forbidden. Reason: system calendars are disabled.');
@@ -129,7 +120,7 @@ class CalendarEventDeleteHandlerTest extends \PHPUnit\Framework\TestCase
         $this->handler->delete($event);
     }
 
-    public function testDeleteWhenSystemCalendarEventManagementNotGranted()
+    public function testDeleteWhenSystemCalendarEventManagementNotGranted(): void
     {
         $this->expectException(AccessDeniedException::class);
         $this->expectExceptionMessage('The delete operation is forbidden. Reason: access denied.');
@@ -151,7 +142,7 @@ class CalendarEventDeleteHandlerTest extends \PHPUnit\Framework\TestCase
         $this->handler->delete($event);
     }
 
-    public function testDeleteShouldSendNotificationIfNotifyAttendeesIsAll()
+    public function testDeleteShouldSendNotificationIfNotifyAttendeesIsAll(): void
     {
         $event = new CalendarEvent();
 
@@ -182,7 +173,7 @@ class CalendarEventDeleteHandlerTest extends \PHPUnit\Framework\TestCase
         $this->handler->delete($event, true, ['notifyAttendees' => NotificationManager::ALL_NOTIFICATIONS_STRATEGY]);
     }
 
-    public function testDeleteShouldNotSendNotificationIfNotifyAttendeesIsNone()
+    public function testDeleteShouldNotSendNotificationIfNotifyAttendeesIsNone(): void
     {
         $event = new CalendarEvent();
 
@@ -213,7 +204,7 @@ class CalendarEventDeleteHandlerTest extends \PHPUnit\Framework\TestCase
         $this->handler->delete($event, true, ['notifyAttendees' => NotificationManager::NONE_NOTIFICATIONS_STRATEGY]);
     }
 
-    public function testDeleteShouldSendNotificationIfNotifyStrategyIsNotSet()
+    public function testDeleteShouldSendNotificationIfNotifyStrategyIsNotSet(): void
     {
         $event = new CalendarEvent();
 
@@ -244,7 +235,7 @@ class CalendarEventDeleteHandlerTest extends \PHPUnit\Framework\TestCase
         $this->handler->delete($event);
     }
 
-    public function testDeleteInCaseIfUserHaveNoAccessToCalendar()
+    public function testDeleteInCaseIfUserHaveNoAccessToCalendar(): void
     {
         $this->expectException(AccessDeniedException::class);
         $this->expectExceptionMessage('The delete operation is forbidden. Reason: access denied.');

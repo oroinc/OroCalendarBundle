@@ -9,6 +9,7 @@ use Oro\Bundle\CalendarBundle\Manager\CalendarEventManager;
 use Oro\Bundle\CalendarBundle\Validator\Constraints\RecurringCalendarEventException;
 use Oro\Bundle\CalendarBundle\Validator\Constraints\RecurringCalendarEventExceptionValidator;
 use Oro\Component\Testing\ReflectionUtil;
+use PHPUnit\Framework\MockObject\MockObject;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\Validator\Constraint;
 use Symfony\Component\Validator\Exception\UnexpectedTypeException;
@@ -16,8 +17,7 @@ use Symfony\Component\Validator\Test\ConstraintValidatorTestCase;
 
 class RecurringCalendarEventExceptionValidatorTest extends ConstraintValidatorTestCase
 {
-    /** @var CalendarEventManager|\PHPUnit\Framework\MockObject\MockObject */
-    private $calendarEventManager;
+    private CalendarEventManager&MockObject $calendarEventManager;
 
     #[\Override]
     protected function setUp(): void

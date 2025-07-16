@@ -32,23 +32,12 @@ use PHPUnit\Framework\TestCase;
  */
 class CalendarEventManagerTest extends TestCase
 {
-    /** @var UpdateManager|MockObject */
-    private $updateManager;
-
-    /** @var ManagerRegistry|MockObject */
-    private $doctrine;
-
-    /** @var TokenAccessorInterface|MockObject */
-    private $tokenAccessor;
-
-    /** @var EntityNameResolver|MockObject */
-    private $entityNameResolver;
-
-    /** @var SystemCalendarConfig|MockObject */
-    private $calendarConfig;
-
-    /** @var CalendarEventManager */
-    private $manager;
+    private UpdateManager&MockObject $updateManager;
+    private ManagerRegistry&MockObject $doctrine;
+    private TokenAccessorInterface&MockObject $tokenAccessor;
+    private EntityNameResolver&MockObject $entityNameResolver;
+    private SystemCalendarConfig&MockObject $calendarConfig;
+    private CalendarEventManager $manager;
 
     #[\Override]
     protected function setUp(): void
@@ -68,7 +57,7 @@ class CalendarEventManagerTest extends TestCase
         );
     }
 
-    public function testGetSystemCalendars()
+    public function testGetSystemCalendars(): void
     {
         $organizationId = 1;
         $calendars = [
@@ -105,7 +94,7 @@ class CalendarEventManagerTest extends TestCase
         $this->assertEquals($calendars, $result);
     }
 
-    public function testGetUserCalendars()
+    public function testGetUserCalendars(): void
     {
         $organizationId = 1;
         $userId = 10;
@@ -162,7 +151,7 @@ class CalendarEventManagerTest extends TestCase
         );
     }
 
-    public function testSetCalendarUnknownAlias()
+    public function testSetCalendarUnknownAlias(): void
     {
         $this->expectException(\LogicException::class);
         $this->expectExceptionMessage('Unexpected calendar alias: "unknown". CalendarId: 123.');
@@ -172,7 +161,7 @@ class CalendarEventManagerTest extends TestCase
         $this->manager->setCalendar($event, 'unknown', 123);
     }
 
-    public function testSetUserCalendar()
+    public function testSetUserCalendar(): void
     {
         $calendarId = 123;
         $calendar = new Calendar();
@@ -195,7 +184,7 @@ class CalendarEventManagerTest extends TestCase
         $this->assertSame($calendar, $event->getCalendar());
     }
 
-    public function testSetSameUserCalendar()
+    public function testSetSameUserCalendar(): void
     {
         $calendarId = 123;
         $calendar = new Calendar();
@@ -212,7 +201,7 @@ class CalendarEventManagerTest extends TestCase
         $this->assertSame($calendar, $event->getCalendar());
     }
 
-    public function testSetSystemCalendar()
+    public function testSetSystemCalendar(): void
     {
         $calendarId = 123;
         $calendar = new SystemCalendar();
@@ -239,7 +228,7 @@ class CalendarEventManagerTest extends TestCase
         $this->assertSame($calendar, $event->getSystemCalendar());
     }
 
-    public function testSetPublicCalendar()
+    public function testSetPublicCalendar(): void
     {
         $calendarId = 123;
         $calendar = new SystemCalendar();
@@ -266,19 +255,19 @@ class CalendarEventManagerTest extends TestCase
         $this->assertSame($calendar, $event->getSystemCalendar());
     }
 
-    public function testGetCalendarUid()
+    public function testGetCalendarUid(): void
     {
         $this->assertEquals('test_123', $this->manager->getCalendarUid('test', 123));
     }
 
-    public function testParseCalendarUid()
+    public function testParseCalendarUid(): void
     {
         [$alias, $id] = $this->manager->parseCalendarUid('some_alias_123');
         $this->assertSame('some_alias', $alias);
         $this->assertSame(123, $id);
     }
 
-    public function testChangeInvitationStatus()
+    public function testChangeInvitationStatus(): void
     {
         $user = new User();
         $user->setId(100);
@@ -307,7 +296,7 @@ class CalendarEventManagerTest extends TestCase
         $this->assertEquals(Attendee::STATUS_ACCEPTED, $event->getInvitationStatus());
     }
 
-    public function testChangeInvitationStatusWithEmptyRelatedAttendee()
+    public function testChangeInvitationStatusWithEmptyRelatedAttendee(): void
     {
         $this->expectException(ChangeInvitationStatusException::class);
         $this->expectExceptionMessage('Cannot change invitation status of the event with no related attendee.');
@@ -318,7 +307,7 @@ class CalendarEventManagerTest extends TestCase
         $this->manager->changeInvitationStatus($event, Attendee::STATUS_ACCEPTED, $user);
     }
 
-    public function testChangeInvitationStatusWithNonExistingStatus()
+    public function testChangeInvitationStatusWithNonExistingStatus(): void
     {
         $this->expectException(ChangeInvitationStatusException::class);
         $this->expectExceptionMessage('Status "accepted" does not exists');
@@ -346,7 +335,7 @@ class CalendarEventManagerTest extends TestCase
         $this->manager->changeInvitationStatus($event, Attendee::STATUS_ACCEPTED, $user);
     }
 
-    public function testChangeInvitationStatusWithDifferentRelatedAttendeeUser()
+    public function testChangeInvitationStatusWithDifferentRelatedAttendeeUser(): void
     {
         $this->expectException(ChangeInvitationStatusException::class);
         $this->expectExceptionMessage('Cannot change invitation status of the event.');
@@ -394,7 +383,7 @@ class CalendarEventManagerTest extends TestCase
         return $result;
     }
 
-    public function testOnEventUpdate()
+    public function testOnEventUpdate(): void
     {
         $entity = new CalendarEvent();
         $entity->setTitle('New Title');

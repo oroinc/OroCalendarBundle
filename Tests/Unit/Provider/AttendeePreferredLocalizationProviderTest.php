@@ -7,14 +7,13 @@ use Oro\Bundle\CalendarBundle\Provider\AttendeePreferredLocalizationProvider;
 use Oro\Bundle\LocaleBundle\Entity\Localization;
 use Oro\Bundle\LocaleBundle\Provider\PreferredLocalizationProviderInterface;
 use Oro\Bundle\UserBundle\Entity\User;
+use PHPUnit\Framework\MockObject\MockObject;
+use PHPUnit\Framework\TestCase;
 
-class AttendeePreferredLocalizationProviderTest extends \PHPUnit\Framework\TestCase
+class AttendeePreferredLocalizationProviderTest extends TestCase
 {
-    /** @var PreferredLocalizationProviderInterface|\PHPUnit\Framework\MockObject\MockObject */
-    private $innerProvider;
-
-    /** @var AttendeePreferredLocalizationProvider */
-    private $provider;
+    private PreferredLocalizationProviderInterface&MockObject $innerProvider;
+    private AttendeePreferredLocalizationProvider $provider;
 
     #[\Override]
     protected function setUp(): void

@@ -10,12 +10,12 @@ use Oro\Bundle\CalendarBundle\Entity\Repository\CalendarEventRepository;
 use Oro\Bundle\CalendarBundle\Validator\Constraints\UniqueUid;
 use Oro\Bundle\CalendarBundle\Validator\Constraints\UniqueUidValidator;
 use Oro\Component\Testing\ReflectionUtil;
+use PHPUnit\Framework\MockObject\MockObject;
 use Symfony\Component\Validator\Test\ConstraintValidatorTestCase;
 
 class UniqueUidValidatorTest extends ConstraintValidatorTestCase
 {
-    /** @var ObjectRepository|\PHPUnit\Framework\MockObject\MockObject */
-    private $repository;
+    private ObjectRepository&MockObject $repository;
 
     #[\Override]
     protected function setUp(): void

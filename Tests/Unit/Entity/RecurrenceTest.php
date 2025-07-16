@@ -5,12 +5,13 @@ namespace Oro\Bundle\CalendarBundle\Tests\Unit\Entity;
 use Oro\Bundle\CalendarBundle\Entity\Recurrence;
 use Oro\Bundle\CalendarBundle\Tests\Unit\Fixtures\Entity\CalendarEvent;
 use Oro\Component\Testing\Unit\EntityTestCaseTrait;
+use PHPUnit\Framework\TestCase;
 
-class RecurrenceTest extends \PHPUnit\Framework\TestCase
+class RecurrenceTest extends TestCase
 {
     use EntityTestCaseTrait;
 
-    public function testProperties()
+    public function testProperties(): void
     {
         $properties = [
             'id'                => ['id', 1],

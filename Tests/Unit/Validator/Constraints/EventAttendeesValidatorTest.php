@@ -10,12 +10,12 @@ use Oro\Bundle\CalendarBundle\Entity\Repository\AttendeeRepository;
 use Oro\Bundle\CalendarBundle\Validator\Constraints\EventAttendees;
 use Oro\Bundle\CalendarBundle\Validator\Constraints\EventAttendeesValidator;
 use Oro\Component\Testing\ReflectionUtil;
+use PHPUnit\Framework\MockObject\MockObject;
 use Symfony\Component\Validator\Test\ConstraintValidatorTestCase;
 
 class EventAttendeesValidatorTest extends ConstraintValidatorTestCase
 {
-    /** @var ObjectRepository|\PHPUnit\Framework\MockObject\MockObject */
-    private $repository;
+    private ObjectRepository&MockObject $repository;
 
     #[\Override]
     protected function setUp(): void

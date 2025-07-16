@@ -12,24 +12,19 @@ use Oro\Bundle\DataGridBundle\Datasource\ResultRecord;
 use Oro\Bundle\DataGridBundle\Event\BuildAfter;
 use Oro\Bundle\DataGridBundle\Event\BuildBefore;
 use Oro\Bundle\SecurityBundle\Authentication\TokenAccessorInterface;
+use PHPUnit\Framework\MockObject\MockObject;
+use PHPUnit\Framework\TestCase;
 use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
 
 /**
  * @SuppressWarnings(PHPMD.TooManyPublicMethods)
  */
-class SystemCalendarGridListenerTest extends \PHPUnit\Framework\TestCase
+class SystemCalendarGridListenerTest extends TestCase
 {
-    /** @var AuthorizationCheckerInterface|\PHPUnit\Framework\MockObject\MockObject */
-    private $authorizationChecker;
-
-    /** @var TokenAccessorInterface|\PHPUnit\Framework\MockObject\MockObject */
-    private $tokenAccessor;
-
-    /** @var SystemCalendarConfig|\PHPUnit\Framework\MockObject\MockObject */
-    private $calendarConfig;
-
-    /** @var SystemCalendarGridListener */
-    private $listener;
+    private AuthorizationCheckerInterface&MockObject $authorizationChecker;
+    private TokenAccessorInterface&MockObject $tokenAccessor;
+    private SystemCalendarConfig&MockObject $calendarConfig;
+    private SystemCalendarGridListener $listener;
 
     #[\Override]
     protected function setUp(): void
@@ -49,7 +44,7 @@ class SystemCalendarGridListenerTest extends \PHPUnit\Framework\TestCase
         );
     }
 
-    public function testOnBuildBeforeBothPublicAndSystemCalendarsEnabled()
+    public function testOnBuildBeforeBothPublicAndSystemCalendarsEnabled(): void
     {
         $this->calendarConfig->expects($this->once())
             ->method('isPublicCalendarEnabled')
@@ -74,7 +69,7 @@ class SystemCalendarGridListenerTest extends \PHPUnit\Framework\TestCase
     public function testOnBuildBeforeAnyPublicOrSystemCalendarDisabled(
         bool $isPublicSupported,
         bool $isSystemSupported
-    ) {
+    ): void {
         $this->calendarConfig->expects($this->any())
             ->method('isPublicCalendarEnabled')
             ->willReturn($isPublicSupported);
@@ -105,7 +100,7 @@ class SystemCalendarGridListenerTest extends \PHPUnit\Framework\TestCase
         ];
     }
 
-    public function testOnBuildAfterBothPublicAndSystemGranted()
+    public function testOnBuildAfterBothPublicAndSystemGranted(): void
     {
         $this->calendarConfig->expects($this->once())
             ->method('isPublicCalendarEnabled')
@@ -149,7 +144,7 @@ class SystemCalendarGridListenerTest extends \PHPUnit\Framework\TestCase
         $this->listener->onBuildAfter($event);
     }
 
-    public function testOnBuildAfterBothPublicAndSystemEnabledButSystemNotGranted()
+    public function testOnBuildAfterBothPublicAndSystemEnabledButSystemNotGranted(): void
     {
         $this->calendarConfig->expects($this->once())
             ->method('isPublicCalendarEnabled')
@@ -190,7 +185,7 @@ class SystemCalendarGridListenerTest extends \PHPUnit\Framework\TestCase
         $this->listener->onBuildAfter($event);
     }
 
-    public function testOnBuildAfterPublicDisabled()
+    public function testOnBuildAfterPublicDisabled(): void
     {
         $organizationId = 1;
 
@@ -236,7 +231,7 @@ class SystemCalendarGridListenerTest extends \PHPUnit\Framework\TestCase
         $this->listener->onBuildAfter($event);
     }
 
-    public function testOnBuildAfterSystemDisabled()
+    public function testOnBuildAfterSystemDisabled(): void
     {
         $this->calendarConfig->expects($this->once())
             ->method('isPublicCalendarEnabled')
@@ -275,7 +270,7 @@ class SystemCalendarGridListenerTest extends \PHPUnit\Framework\TestCase
         $this->listener->onBuildAfter($event);
     }
 
-    public function testOnBuildAfterBothPublicAndSystemDisabled()
+    public function testOnBuildAfterBothPublicAndSystemDisabled(): void
     {
         $this->calendarConfig->expects($this->once())
             ->method('isPublicCalendarEnabled')
@@ -305,7 +300,7 @@ class SystemCalendarGridListenerTest extends \PHPUnit\Framework\TestCase
         $this->listener->onBuildAfter($event);
     }
 
-    public function testGetActionConfigurationClosurePublicGranted()
+    public function testGetActionConfigurationClosurePublicGranted(): void
     {
         $resultRecord = new ResultRecord(['public' => true]);
 
@@ -321,7 +316,7 @@ class SystemCalendarGridListenerTest extends \PHPUnit\Framework\TestCase
         );
     }
 
-    public function testGetActionConfigurationClosurePublicNotGranted()
+    public function testGetActionConfigurationClosurePublicNotGranted(): void
     {
         $resultRecord = new ResultRecord(['public' => true]);
 
@@ -343,7 +338,7 @@ class SystemCalendarGridListenerTest extends \PHPUnit\Framework\TestCase
     /**
      * @dataProvider getActionConfigurationClosureSystemProvider
      */
-    public function testGetActionConfigurationClosureSystem(bool $allowed, array $expected)
+    public function testGetActionConfigurationClosureSystem(bool $allowed, array $expected): void
     {
         $resultRecord = new ResultRecord(['public' => false]);
 

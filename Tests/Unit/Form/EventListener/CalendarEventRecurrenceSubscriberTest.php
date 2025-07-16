@@ -4,13 +4,13 @@ namespace Oro\Bundle\CalendarBundle\Tests\Unit\Form\EventListener;
 
 use Oro\Bundle\CalendarBundle\Entity\Recurrence;
 use Oro\Bundle\CalendarBundle\Form\EventListener\CalendarEventRecurrenceSubscriber;
+use PHPUnit\Framework\TestCase;
 use Symfony\Component\Form\FormEvent;
 use Symfony\Component\Form\FormInterface;
 
-class CalendarEventRecurrenceSubscriberTest extends \PHPUnit\Framework\TestCase
+class CalendarEventRecurrenceSubscriberTest extends TestCase
 {
-    /** @var CalendarEventRecurrenceSubscriber */
-    private $calendarEventRecurrenceSubscriber;
+    private CalendarEventRecurrenceSubscriber $calendarEventRecurrenceSubscriber;
 
     #[\Override]
     protected function setUp(): void
@@ -18,7 +18,7 @@ class CalendarEventRecurrenceSubscriberTest extends \PHPUnit\Framework\TestCase
         $this->calendarEventRecurrenceSubscriber = new CalendarEventRecurrenceSubscriber();
     }
 
-    public function testPreSubmitShouldRemoveRecurrence()
+    public function testPreSubmitShouldRemoveRecurrence(): void
     {
         $form = $this->createMock(FormInterface::class);
         $recurrenceForm = $this->createMock(FormInterface::class);

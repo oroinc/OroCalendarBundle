@@ -19,53 +19,30 @@ use Oro\Bundle\OrganizationBundle\Entity\Organization;
 use Oro\Bundle\SecurityBundle\Authentication\TokenAccessorInterface;
 use Oro\Bundle\UserBundle\Entity\User;
 use Oro\Component\Testing\ReflectionUtil;
+use PHPUnit\Framework\MockObject\MockObject;
+use PHPUnit\Framework\TestCase;
 use Symfony\Component\Form\Form;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\Security\Core\Exception\AccessDeniedException;
 
-class CalendarEventHandlerTest extends \PHPUnit\Framework\TestCase
+class CalendarEventHandlerTest extends TestCase
 {
     private const FORM_DATA = ['field' => 'value'];
 
-    /** @var Form|\PHPUnit\Framework\MockObject\MockObject */
-    private $form;
-
-    /** @var Form|\PHPUnit\Framework\MockObject\MockObject */
-    private $notifyAttendeesForm;
-
-    /** @var Request */
-    private $request;
-
-    /** @var EntityManagerInterface|\PHPUnit\Framework\MockObject\MockObject */
-    private $entityManager;
-
-    /** @var ActivityManager|\PHPUnit\Framework\MockObject\MockObject */
-    private $activityManager;
-
-    /** @var EntityRoutingHelper|\PHPUnit\Framework\MockObject\MockObject */
-    private $entityRoutingHelper;
-
-    /** @var TokenAccessorInterface|\PHPUnit\Framework\MockObject\MockObject */
-    private $tokenAccessor;
-
-    /** @var CalendarEventManager|\PHPUnit\Framework\MockObject\MockObject */
-    private $calendarEventManager;
-
-    /** @var NotificationManager|\PHPUnit\Framework\MockObject\MockObject */
-    private $notificationManager;
-
-    /** @var FeatureChecker|\PHPUnit\Framework\MockObject\MockObject */
-    private $featureChecker;
-
-    /** @var Organization */
-    private $organization;
-
-    /** @var CalendarEvent */
-    private $entity;
-
-    /** @var CalendarEventHandler */
-    private $handler;
+    private Form&MockObject $form;
+    private Form&MockObject $notifyAttendeesForm;
+    private Request $request;
+    private EntityManagerInterface&MockObject $entityManager;
+    private ActivityManager&MockObject $activityManager;
+    private EntityRoutingHelper&MockObject $entityRoutingHelper;
+    private TokenAccessorInterface&MockObject $tokenAccessor;
+    private CalendarEventManager&MockObject $calendarEventManager;
+    private NotificationManager&MockObject $notificationManager;
+    private FeatureChecker&MockObject $featureChecker;
+    private Organization $organization;
+    private CalendarEvent $entity;
+    private CalendarEventHandler $handler;
 
     #[\Override]
     protected function setUp(): void

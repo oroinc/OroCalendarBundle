@@ -5,14 +5,13 @@ namespace Oro\Bundle\CalendarBundle\Tests\Unit\Model;
 use Oro\Bundle\CalendarBundle\Entity;
 use Oro\Bundle\CalendarBundle\Model\Recurrence;
 use Oro\Bundle\CalendarBundle\Model\Recurrence\StrategyInterface;
+use PHPUnit\Framework\MockObject\MockObject;
+use PHPUnit\Framework\TestCase;
 
-class RecurrenceTest extends \PHPUnit\Framework\TestCase
+class RecurrenceTest extends TestCase
 {
-    /** @var StrategyInterface|\PHPUnit\Framework\MockObject\MockObject */
-    private $strategy;
-
-    /** @var Recurrence */
-    private $model;
+    private StrategyInterface&MockObject $strategy;
+    private Recurrence $model;
 
     #[\Override]
     protected function setUp(): void
@@ -25,7 +24,7 @@ class RecurrenceTest extends \PHPUnit\Framework\TestCase
     /**
      * @dataProvider delegateMethodsDataProvider
      */
-    public function testDelegateMethodWorks(string $method, array $arguments, mixed $returnValue)
+    public function testDelegateMethodWorks(string $method, array $arguments, mixed $returnValue): void
     {
         $this->strategy->expects($this->once())
             ->method($method)
@@ -75,7 +74,7 @@ class RecurrenceTest extends \PHPUnit\Framework\TestCase
         ];
     }
 
-    public function testGetRecurrenceTypesValues()
+    public function testGetRecurrenceTypesValues(): void
     {
         $this->assertEquals(
             [
@@ -90,7 +89,7 @@ class RecurrenceTest extends \PHPUnit\Framework\TestCase
         );
     }
 
-    public function testGetDaysOfWeekValues()
+    public function testGetDaysOfWeekValues(): void
     {
         $this->assertEquals(
             [
@@ -106,7 +105,7 @@ class RecurrenceTest extends \PHPUnit\Framework\TestCase
         );
     }
 
-    public function testGetRecurrenceTypes()
+    public function testGetRecurrenceTypes(): void
     {
         $this->assertEquals(
             [
@@ -121,7 +120,7 @@ class RecurrenceTest extends \PHPUnit\Framework\TestCase
         );
     }
 
-    public function testGetInstances()
+    public function testGetInstances(): void
     {
         $this->assertEquals(
             [
@@ -135,7 +134,7 @@ class RecurrenceTest extends \PHPUnit\Framework\TestCase
         );
     }
 
-    public function testGetDaysOfWeek()
+    public function testGetDaysOfWeek(): void
     {
         $this->assertEquals(
             [

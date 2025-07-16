@@ -5,16 +5,15 @@ namespace Oro\Bundle\CalendarBundle\Tests\Unit\Twig;
 use Oro\Bundle\CalendarBundle\Twig\AttendeesExtension;
 use Oro\Bundle\FeatureToggleBundle\Checker\FeatureChecker;
 use Oro\Component\Testing\Unit\TwigExtensionTestCaseTrait;
+use PHPUnit\Framework\MockObject\MockObject;
+use PHPUnit\Framework\TestCase;
 
-class AttendeesExtensionTest extends \PHPUnit\Framework\TestCase
+class AttendeesExtensionTest extends TestCase
 {
     use TwigExtensionTestCaseTrait;
 
-    /** @var FeatureChecker|\PHPUnit\Framework\MockObject\MockObject */
-    private $featureChecker;
-
-    /** @var AttendeesExtension */
-    private $extension;
+    private FeatureChecker&MockObject $featureChecker;
+    private AttendeesExtension $extension;
 
     #[\Override]
     protected function setUp(): void

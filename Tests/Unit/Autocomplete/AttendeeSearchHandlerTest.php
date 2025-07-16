@@ -17,22 +17,17 @@ use Oro\Bundle\SearchBundle\Engine\Indexer;
 use Oro\Bundle\SearchBundle\Query\Query;
 use Oro\Bundle\SearchBundle\Query\Result;
 use Oro\Bundle\SearchBundle\Query\Result\Item;
+use PHPUnit\Framework\MockObject\MockObject;
+use PHPUnit\Framework\TestCase;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Contracts\Translation\TranslatorInterface;
 
-class AttendeeSearchHandlerTest extends \PHPUnit\Framework\TestCase
+class AttendeeSearchHandlerTest extends TestCase
 {
-    /** @var Indexer|\PHPUnit\Framework\MockObject\MockObject */
-    private $indexer;
-
-    /** @var EntityRepository|\PHPUnit\Framework\MockObject\MockObject */
-    private $entityRepository;
-
-    /** @var AttendeeManager|\PHPUnit\Framework\MockObject\MockObject */
-    private $attendeeManager;
-
-    /** @var AttendeeSearchHandler */
-    private $attendeeSearchHandler;
+    private Indexer&MockObject $indexer;
+    private EntityRepository&MockObject $entityRepository;
+    private AttendeeManager&MockObject $attendeeManager;
+    private AttendeeSearchHandler $attendeeSearchHandler;
 
     #[\Override]
     protected function setUp(): void
@@ -76,7 +71,7 @@ class AttendeeSearchHandlerTest extends \PHPUnit\Framework\TestCase
         $this->attendeeSearchHandler->setAttendeeManager($this->attendeeManager);
     }
 
-    public function testSearch()
+    public function testSearch(): void
     {
         $items = [
             new Item('entity', 1),

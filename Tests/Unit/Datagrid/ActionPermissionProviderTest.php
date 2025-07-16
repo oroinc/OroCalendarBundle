@@ -6,17 +6,16 @@ use Oro\Bundle\CalendarBundle\Datagrid\ActionPermissionProvider;
 use Oro\Bundle\DataGridBundle\Datasource\ResultRecord;
 use Oro\Bundle\SecurityBundle\Authentication\TokenAccessorInterface;
 use Oro\Bundle\UserBundle\Entity\User;
+use PHPUnit\Framework\MockObject\MockObject;
+use PHPUnit\Framework\TestCase;
 
-class ActionPermissionProviderTest extends \PHPUnit\Framework\TestCase
+class ActionPermissionProviderTest extends TestCase
 {
     private const ADMIN = 1;
     private const USER = 2;
 
-    /** @var TokenAccessorInterface|\PHPUnit\Framework\MockObject\MockObject */
-    private $tokenAccessor;
-
-    /** @var ActionPermissionProvider */
-    private $provider;
+    private TokenAccessorInterface&MockObject $tokenAccessor;
+    private ActionPermissionProvider $provider;
 
     #[\Override]
     protected function setUp(): void
@@ -29,7 +28,7 @@ class ActionPermissionProviderTest extends \PHPUnit\Framework\TestCase
     /**
      * @dataProvider permissionsDataProvider
      */
-    public function testGetInvitationPermissions(array $params, array $expected)
+    public function testGetInvitationPermissions(array $params, array $expected): void
     {
         $user = new User();
         $user->setId(self::ADMIN);

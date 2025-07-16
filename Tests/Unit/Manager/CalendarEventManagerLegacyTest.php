@@ -35,11 +35,8 @@ use PHPUnit\Framework\TestCase;
  */
 class CalendarEventManagerLegacyTest extends TestCase
 {
-    /** @var FeatureChecker|MockObject */
-    private $featureChecker;
-
-    /** @var CalendarEventManager */
-    private $calendarEventManager;
+    private FeatureChecker&MockObject $featureChecker;
+    private CalendarEventManager $calendarEventManager;
 
     #[\Override]
     protected function setUp(): void
@@ -107,7 +104,7 @@ class CalendarEventManagerLegacyTest extends TestCase
         );
     }
 
-    public function testOnEventUpdate()
+    public function testOnEventUpdate(): void
     {
         $firstEventAttendee = new Attendee(1);
         $firstEventAttendee->setEmail('first@example.com');
@@ -194,7 +191,7 @@ class CalendarEventManagerLegacyTest extends TestCase
         $this->assertEventDataEquals($parentEvent, $eventWithoutRelatedAttendee);
     }
 
-    public function testRelatedAttendees()
+    public function testRelatedAttendees(): void
     {
         $user = new User();
 
@@ -216,7 +213,7 @@ class CalendarEventManagerLegacyTest extends TestCase
         $this->assertEquals($attendees->first(), $event->findRelatedAttendee());
     }
 
-    public function testAddEvents()
+    public function testAddEvents(): void
     {
         $user = new User(1);
         $user2 = new User(2);
@@ -252,7 +249,7 @@ class CalendarEventManagerLegacyTest extends TestCase
         $this->assertSame($attendees->get(1), $event->getChildEvents()->first()->findRelatedAttendee());
     }
 
-    public function testAddEventsWithDisabledMasterFeatures()
+    public function testAddEventsWithDisabledMasterFeatures(): void
     {
         $user = new User(1);
         $user2 = new User(2);
@@ -285,7 +282,7 @@ class CalendarEventManagerLegacyTest extends TestCase
         $this->assertCount(0, $event->getChildEvents());
     }
 
-    public function testUpdateAttendees()
+    public function testUpdateAttendees(): void
     {
         $user = (new User())
             ->setFirstName('first')

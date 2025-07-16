@@ -8,17 +8,14 @@ use Oro\Bundle\CalendarBundle\Entity\Repository\AttendeeRepository;
 use Oro\Bundle\CalendarBundle\Provider\AttendeeEmailRecipientsProvider;
 use Oro\Bundle\EmailBundle\Model\EmailRecipientsProviderArgs;
 use Oro\Bundle\EmailBundle\Provider\EmailRecipientsHelper;
+use PHPUnit\Framework\MockObject\MockObject;
+use PHPUnit\Framework\TestCase;
 
-class AttendeeEmailRecipientsProviderTest extends \PHPUnit\Framework\TestCase
+class AttendeeEmailRecipientsProviderTest extends TestCase
 {
-    /** @var AttendeeRepository|\PHPUnit\Framework\MockObject\MockObject */
-    private $attendeeRepository;
-
-    /** @var EmailRecipientsHelper|\PHPUnit\Framework\MockObject\MockObject */
-    private $emailRecipientsHelper;
-
-    /** @var AttendeeEmailRecipientsProvider */
-    private $provider;
+    private AttendeeRepository&MockObject $attendeeRepository;
+    private EmailRecipientsHelper&MockObject $emailRecipientsHelper;
+    private AttendeeEmailRecipientsProvider $provider;
 
     #[\Override]
     protected function setUp(): void
@@ -38,12 +35,12 @@ class AttendeeEmailRecipientsProviderTest extends \PHPUnit\Framework\TestCase
         );
     }
 
-    public function testGetSection()
+    public function testGetSection(): void
     {
         $this->assertEquals('oro.calendar.autocomplete.attendees', $this->provider->getSection());
     }
 
-    public function testGetRecipients()
+    public function testGetRecipients(): void
     {
         $args = new EmailRecipientsProviderArgs(null, 'query', 100);
 

@@ -7,10 +7,11 @@ use Oro\Bundle\CalendarBundle\Entity\SystemCalendar;
 use Oro\Bundle\EntityExtendBundle\PropertyAccess;
 use Oro\Bundle\OrganizationBundle\Entity\Organization;
 use Oro\Component\Testing\ReflectionUtil;
+use PHPUnit\Framework\TestCase;
 
-class SystemCalendarTest extends \PHPUnit\Framework\TestCase
+class SystemCalendarTest extends TestCase
 {
-    public function testIdGetter()
+    public function testIdGetter(): void
     {
         $obj = new SystemCalendar();
         ReflectionUtil::setId($obj, 1);
@@ -20,7 +21,7 @@ class SystemCalendarTest extends \PHPUnit\Framework\TestCase
     /**
      * @dataProvider propertiesDataProvider
      */
-    public function testSettersAndGetters(string $property, mixed $value)
+    public function testSettersAndGetters(string $property, mixed $value): void
     {
         $obj = new SystemCalendar();
         $accessor = PropertyAccess::createPropertyAccessor();
@@ -40,7 +41,7 @@ class SystemCalendarTest extends \PHPUnit\Framework\TestCase
         ];
     }
 
-    public function testPrePersist()
+    public function testPrePersist(): void
     {
         $obj = new SystemCalendar();
 
@@ -52,7 +53,7 @@ class SystemCalendarTest extends \PHPUnit\Framework\TestCase
         $this->assertInstanceOf(\DateTime::class, $obj->getUpdatedAt());
     }
 
-    public function testPreUpdate()
+    public function testPreUpdate(): void
     {
         $obj = new SystemCalendar();
 
@@ -62,7 +63,7 @@ class SystemCalendarTest extends \PHPUnit\Framework\TestCase
         $this->assertInstanceOf(\DateTime::class, $obj->getUpdatedAt());
     }
 
-    public function testEvents()
+    public function testEvents(): void
     {
         $obj = new SystemCalendar();
         $event = new CalendarEvent();
@@ -74,14 +75,14 @@ class SystemCalendarTest extends \PHPUnit\Framework\TestCase
         $this->assertSame($obj, $events[0]->getSystemCalendar());
     }
 
-    public function testToString()
+    public function testToString(): void
     {
         $obj = new SystemCalendar();
         $obj->setName('testName');
         $this->assertEquals($obj->getName(), (string)$obj);
     }
 
-    public function testSetOrganizationForNonPublic()
+    public function testSetOrganizationForNonPublic(): void
     {
         $organization = new Organization();
 
@@ -93,7 +94,7 @@ class SystemCalendarTest extends \PHPUnit\Framework\TestCase
         $this->assertSame($organization, $obj->getOrganization());
     }
 
-    public function testSetOrganizationForPublic()
+    public function testSetOrganizationForPublic(): void
     {
         $obj = new SystemCalendar();
         $obj->setPublic(true);

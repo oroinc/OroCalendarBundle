@@ -8,6 +8,7 @@ use Oro\Bundle\CalendarBundle\Provider\SystemCalendarConfig;
 use Oro\Bundle\ConfigBundle\Config\ConfigManager;
 use Oro\Bundle\FormBundle\Form\Type\OroSimpleColorPickerType;
 use Oro\Component\Testing\Unit\PreloadedExtension;
+use PHPUnit\Framework\MockObject\MockObject;
 use Symfony\Component\Form\Test\TypeTestCase;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
@@ -15,20 +16,11 @@ use Symfony\Contracts\Translation\TranslatorInterface;
 
 class SystemCalendarTypeTest extends TypeTestCase
 {
-    /** @var AuthorizationCheckerInterface|\PHPUnit\Framework\MockObject\MockObject */
-    private $authorizationChecker;
-
-    /** @var SystemCalendarConfig|\PHPUnit\Framework\MockObject\MockObject */
-    private $calendarConfig;
-
-    /** @var ConfigManager|\PHPUnit\Framework\MockObject\MockObject */
-    private $configManager;
-
-    /** @var TranslatorInterface|\PHPUnit\Framework\MockObject\MockObject */
-    private $translator;
-
-    /** @var SystemCalendarType */
-    private $formType;
+    private AuthorizationCheckerInterface&MockObject $authorizationChecker;
+    private SystemCalendarConfig&MockObject $calendarConfig;
+    private ConfigManager&MockObject $configManager;
+    private TranslatorInterface&MockObject $translator;
+    private SystemCalendarType $formType;
 
     #[\Override]
     protected function setUp(): void

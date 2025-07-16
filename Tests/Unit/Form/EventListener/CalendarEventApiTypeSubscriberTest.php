@@ -13,7 +13,7 @@ use Symfony\Component\Form\FormInterface;
 
 class CalendarEventApiTypeSubscriberTest extends TestCase
 {
-    private CalendarEventManager|MockObject $calendarEventManager;
+    private CalendarEventManager&MockObject $calendarEventManager;
     private CalendarEventApiTypeSubscriber $calendarEventApiTypeSubscriber;
 
     #[\Override]

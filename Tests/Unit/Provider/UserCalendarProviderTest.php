@@ -5,6 +5,7 @@ namespace Oro\Bundle\CalendarBundle\Tests\Unit\Provider;
 use Doctrine\ORM\AbstractQuery;
 use Doctrine\ORM\EntityRepository;
 use Doctrine\ORM\Query\Expr;
+use Doctrine\ORM\Query\Expr\Func;
 use Doctrine\ORM\QueryBuilder;
 use Oro\Bundle\CalendarBundle\Entity\Calendar;
 use Oro\Bundle\CalendarBundle\Entity\CalendarEvent;
@@ -21,20 +22,11 @@ use PHPUnit\Framework\TestCase;
 
 class UserCalendarProviderTest extends TestCase
 {
-    /** @var DoctrineHelper|MockObject */
-    private $doctrineHelper;
-
-    /** @var EntityNameResolver|MockObject */
-    private $entityNameResolver;
-
-    /** @var UserCalendarEventNormalizer|MockObject */
-    private $calendarEventNormalizer;
-
-    /** @var Recurrence|MockObject */
-    private $recurrenceModel;
-
-    /** @var UserCalendarProvider */
-    private $provider;
+    private DoctrineHelper&MockObject $doctrineHelper;
+    private EntityNameResolver&MockObject $entityNameResolver;
+    private UserCalendarEventNormalizer&MockObject $calendarEventNormalizer;
+    private Recurrence&MockObject $recurrenceModel;
+    private UserCalendarProvider $provider;
 
     #[\Override]
     protected function setUp(): void
@@ -52,7 +44,7 @@ class UserCalendarProviderTest extends TestCase
         );
     }
 
-    public function testGetCalendarDefaultValues()
+    public function testGetCalendarDefaultValues(): void
     {
         $organizationId = 1;
         $userId = 123;
@@ -96,7 +88,7 @@ class UserCalendarProviderTest extends TestCase
             ->willReturn(new Expr());
         $qb->expects($this->once())
             ->method('where')
-            ->with(new Expr\Func('o.id IN', [':calendarIds']))
+            ->with(new Func('o.id IN', [':calendarIds']))
             ->willReturnSelf();
 
         $query = $this->createMock(AbstractQuery::class);
@@ -141,7 +133,7 @@ class UserCalendarProviderTest extends TestCase
     /**
      * @SuppressWarnings(PHPMD.ExcessiveMethodLength)
      */
-    public function testGetCalendarEvents()
+    public function testGetCalendarEvents(): void
     {
         $organizationId = 1;
         $userId = 123;
@@ -249,7 +241,7 @@ class UserCalendarProviderTest extends TestCase
         $this->assertEquals($expectedEvents, $result);
     }
 
-    public function testGetCalendarEventsAllInvisible()
+    public function testGetCalendarEventsAllInvisible(): void
     {
         $organizationId = 1;
         $userId = 123;

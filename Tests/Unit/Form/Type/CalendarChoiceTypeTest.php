@@ -6,6 +6,7 @@ use Oro\Bundle\CalendarBundle\Entity\CalendarEvent;
 use Oro\Bundle\CalendarBundle\Form\Type\CalendarChoiceType;
 use Oro\Bundle\CalendarBundle\Manager\CalendarEventManager;
 use Oro\Component\Testing\Unit\PreloadedExtension;
+use PHPUnit\Framework\MockObject\MockObject;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\Extension\Core\Type\FormType;
 use Symfony\Component\Form\Test\TypeTestCase;
@@ -13,11 +14,8 @@ use Symfony\Contracts\Translation\TranslatorInterface;
 
 class CalendarChoiceTypeTest extends TypeTestCase
 {
-    /** @var CalendarEventManager|\PHPUnit\Framework\MockObject\MockObject */
-    private $calendarEventManager;
-
-    /** @var TranslatorInterface|\PHPUnit\Framework\MockObject\MockObject */
-    private $translator;
+    private CalendarEventManager&MockObject $calendarEventManager;
+    private TranslatorInterface&MockObject $translator;
 
     #[\Override]
     protected function getExtensions(): array

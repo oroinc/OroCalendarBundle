@@ -14,13 +14,14 @@ use Oro\Bundle\ReminderBundle\Entity\Reminder;
 use Oro\Bundle\UserBundle\Entity\User;
 use Oro\Component\Action\Exception\InvalidParameterException;
 use Oro\Component\ConfigExpression\ContextAccessor;
+use PHPUnit\Framework\MockObject\MockObject;
+use PHPUnit\Framework\TestCase;
 use Symfony\Component\EventDispatcher\EventDispatcher;
 use Symfony\Component\PropertyAccess\PropertyPath;
 
-class CreateCalendarEventActionTest extends \PHPUnit\Framework\TestCase
+class CreateCalendarEventActionTest extends TestCase
 {
-    /** @var ManagerRegistry|\PHPUnit\Framework\MockObject\MockObject */
-    private $doctrine;
+    private ManagerRegistry&MockObject $doctrine;
 
     #[\Override]
     protected function setUp(): void
@@ -41,8 +42,12 @@ class CreateCalendarEventActionTest extends \PHPUnit\Framework\TestCase
     /**
      * @dataProvider executeDataProvider
      */
-    public function testExecute(array $options, int $expectedPersistCount, string $exceptionMessage, array $data = [])
-    {
+    public function testExecute(
+        array $options,
+        int $expectedPersistCount,
+        string $exceptionMessage,
+        array $data = []
+    ): void {
         $em = $this->createMock(ObjectManager::class);
         $em->expects($this->exactly($expectedPersistCount))
             ->method('persist')

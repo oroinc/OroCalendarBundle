@@ -14,6 +14,7 @@ use Oro\Bundle\EntityExtendBundle\Tests\Unit\Fixtures\TestEnumValue;
 use Oro\Bundle\ReminderBundle\Model\ReminderData;
 use Oro\Component\Testing\ReflectionUtil;
 use Oro\Component\Testing\Unit\EntityTrait;
+use PHPUnit\Framework\TestCase;
 
 /**
  * @SuppressWarnings(PHPMD.TooManyPublicMethods)
@@ -21,7 +22,7 @@ use Oro\Component\Testing\Unit\EntityTrait;
  * @SuppressWarnings(PHPMD.ExcessivePublicCount)
  * @SuppressWarnings(PHPMD.TooManyMethods)
  */
-class CalendarEventTest extends \PHPUnit\Framework\TestCase
+class CalendarEventTest extends TestCase
 {
     use EntityTrait;
 
@@ -35,7 +36,7 @@ class CalendarEventTest extends \PHPUnit\Framework\TestCase
     private const PROVIDED_LAST_NAME = 'Name';
     private const PROVIDED_DISPLAY_NAME = 'Provided Name';
 
-    public function testIdGetter()
+    public function testIdGetter(): void
     {
         $obj = new CalendarEvent();
         ReflectionUtil::setId($obj, 1);
@@ -45,7 +46,7 @@ class CalendarEventTest extends \PHPUnit\Framework\TestCase
     /**
      * @dataProvider propertiesDataProvider
      */
-    public function testSettersAndGetters(string $property, mixed $value)
+    public function testSettersAndGetters(string $property, mixed $value): void
     {
         $obj = new CalendarEvent();
 
@@ -77,7 +78,7 @@ class CalendarEventTest extends \PHPUnit\Framework\TestCase
         ];
     }
 
-    public function testFindRelatedAttendeeExist()
+    public function testFindRelatedAttendeeExist(): void
     {
         $user = new User();
         $calendar = new Calendar();
@@ -93,7 +94,7 @@ class CalendarEventTest extends \PHPUnit\Framework\TestCase
         $this->assertSame($attendee, $calendarEvent->findRelatedAttendee());
     }
 
-    public function testFindRelatedAttendeeDoesNotExistWhenCalendarHasNoOwner()
+    public function testFindRelatedAttendeeDoesNotExistWhenCalendarHasNoOwner(): void
     {
         $user = new User();
         $calendar = new Calendar();
@@ -108,7 +109,7 @@ class CalendarEventTest extends \PHPUnit\Framework\TestCase
         $this->assertEmpty($calendarEvent->findRelatedAttendee());
     }
 
-    public function testFindRelatedAttendeeDoesNotExistWhenEventHasNoCalendar()
+    public function testFindRelatedAttendeeDoesNotExistWhenEventHasNoCalendar(): void
     {
         $user = new User();
 
@@ -121,7 +122,7 @@ class CalendarEventTest extends \PHPUnit\Framework\TestCase
         $this->assertEmpty($calendarEvent->findRelatedAttendee());
     }
 
-    public function testFindRelatedAttendeeDoesNotExistWhenCalendarOwnerDoesNotMatch()
+    public function testFindRelatedAttendeeDoesNotExistWhenCalendarOwnerDoesNotMatch(): void
     {
         $userOwner = new User();
         $userOwner->setId(100);
@@ -140,7 +141,7 @@ class CalendarEventTest extends \PHPUnit\Framework\TestCase
         $this->assertEmpty($calendarEvent->findRelatedAttendee());
     }
 
-    public function testInvitationStatus()
+    public function testInvitationStatus(): void
     {
         $user = new User();
         $calendar = new Calendar();
@@ -180,7 +181,7 @@ class CalendarEventTest extends \PHPUnit\Framework\TestCase
         );
     }
 
-    public function testInvitationStatusNoneWhenAttendeesDoNotExist()
+    public function testInvitationStatusNoneWhenAttendeesDoNotExist(): void
     {
         $user = new User();
         $calendar = new Calendar();
@@ -192,7 +193,7 @@ class CalendarEventTest extends \PHPUnit\Framework\TestCase
         $this->assertEquals(Attendee::STATUS_NONE, $calendarEvent->getInvitationStatus());
     }
 
-    public function testChildren()
+    public function testChildren(): void
     {
         $calendarEventOne = new CalendarEvent();
         $calendarEventOne->setTitle('First calendar event');
@@ -237,7 +238,7 @@ class CalendarEventTest extends \PHPUnit\Framework\TestCase
         $this->assertEquals([1 => $calendarEventTwo, 2 => $calendarEventThree], $actual->toArray());
     }
 
-    public function testGetChildEventByCalendar()
+    public function testGetChildEventByCalendar(): void
     {
         $firstCalendar = new Calendar(1);
         $secondCalendar = new Calendar(2);
@@ -258,7 +259,7 @@ class CalendarEventTest extends \PHPUnit\Framework\TestCase
         $this->assertNull($masterEvent->getChildEventByCalendar(new Calendar()));
     }
 
-    public function testGetReminderData()
+    public function testGetReminderData(): void
     {
         $obj = new CalendarEvent();
         ReflectionUtil::setId($obj, 1);
@@ -274,7 +275,7 @@ class CalendarEventTest extends \PHPUnit\Framework\TestCase
         $this->assertSame($reminderData->getRecipient(), $calendar->getOwner());
     }
 
-    public function testGetReminderDataWithLogicException()
+    public function testGetReminderDataWithLogicException(): void
     {
         $this->expectException(\LogicException::class);
         $this->expectExceptionMessage("Only user's calendar events can have reminders. Event Id: 1.");
@@ -284,20 +285,20 @@ class CalendarEventTest extends \PHPUnit\Framework\TestCase
         $obj->getReminderData();
     }
 
-    public function testToString()
+    public function testToString(): void
     {
         $obj = new CalendarEvent();
         $obj->setTitle('testTitle');
         $this->assertEquals($obj->getTitle(), (string)$obj);
     }
 
-    public function testGetCalendarUidNoCalendar()
+    public function testGetCalendarUidNoCalendar(): void
     {
         $obj = new CalendarEvent();
         $this->assertNull($obj->getCalendarUid());
     }
 
-    public function testGetCalendarUidUserCalendar()
+    public function testGetCalendarUidUserCalendar(): void
     {
         $calendar = new Calendar();
         ReflectionUtil::setId($calendar, 123);
@@ -307,7 +308,7 @@ class CalendarEventTest extends \PHPUnit\Framework\TestCase
         $this->assertEquals('user_123', $obj->getCalendarUid());
     }
 
-    public function testGetCalendarUidSystemCalendar()
+    public function testGetCalendarUidSystemCalendar(): void
     {
         $calendar = new SystemCalendar();
         ReflectionUtil::setId($calendar, 123);
@@ -317,7 +318,7 @@ class CalendarEventTest extends \PHPUnit\Framework\TestCase
         $this->assertEquals('system_123', $obj->getCalendarUid());
     }
 
-    public function testGetCalendarUidPublicCalendar()
+    public function testGetCalendarUidPublicCalendar(): void
     {
         $calendar = new SystemCalendar();
         ReflectionUtil::setId($calendar, 123);
@@ -328,7 +329,7 @@ class CalendarEventTest extends \PHPUnit\Framework\TestCase
         $this->assertEquals('public_123', $obj->getCalendarUid());
     }
 
-    public function testSetCalendar()
+    public function testSetCalendar(): void
     {
         $calendar = new Calendar();
         $systemCalendar = new SystemCalendar();
@@ -362,7 +363,7 @@ class CalendarEventTest extends \PHPUnit\Framework\TestCase
         $this->assertNull($obj->getSystemCalendar());
     }
 
-    public function testIsUpdatedFlags()
+    public function testIsUpdatedFlags(): void
     {
         $date = new \DateTime('2012-12-12 12:12:12');
         $calendarEvent = new CalendarEvent();
@@ -371,7 +372,7 @@ class CalendarEventTest extends \PHPUnit\Framework\TestCase
         $this->assertTrue($calendarEvent->isUpdatedAtSet());
     }
 
-    public function testIsNotUpdatedFlags()
+    public function testIsNotUpdatedFlags(): void
     {
         $calendarEvent = new CalendarEvent();
         $calendarEvent->setUpdatedAt(null);
@@ -379,7 +380,7 @@ class CalendarEventTest extends \PHPUnit\Framework\TestCase
         $this->assertFalse($calendarEvent->isUpdatedAtSet());
     }
 
-    public function testAttendees()
+    public function testAttendees(): void
     {
         $attendee = $this->createMock(\Oro\Bundle\CalendarBundle\Entity\Attendee::class);
         $attendees = new ArrayCollection([$attendee]);
@@ -402,7 +403,7 @@ class CalendarEventTest extends \PHPUnit\Framework\TestCase
         $this->assertCount(1, $calendarEvent->getAttendees());
     }
 
-    public function testAddAttendeeFailsWithChildEvent()
+    public function testAddAttendeeFailsWithChildEvent(): void
     {
         $this->expectException(\LogicException::class);
         $this->expectExceptionMessage(
@@ -417,7 +418,7 @@ class CalendarEventTest extends \PHPUnit\Framework\TestCase
         $childEvent->addAttendee(new Attendee(1));
     }
 
-    public function testRemoveAttendeeFailsWithChildEvent()
+    public function testRemoveAttendeeFailsWithChildEvent(): void
     {
         $this->expectException(\LogicException::class);
         $this->expectExceptionMessage(
@@ -432,7 +433,7 @@ class CalendarEventTest extends \PHPUnit\Framework\TestCase
         $childEvent->removeAttendee(new Attendee(1));
     }
 
-    public function testGetAttendeesWorksWithChildEvent()
+    public function testGetAttendeesWorksWithChildEvent(): void
     {
         $parentEvent = new CalendarEvent();
         $parentEvent->setTitle('First calendar event');
@@ -449,7 +450,7 @@ class CalendarEventTest extends \PHPUnit\Framework\TestCase
         $this->assertCount(4, $childEvent->getAttendees());
     }
 
-    public function testSetAttendeesFailsWithChildEvent()
+    public function testSetAttendeesFailsWithChildEvent(): void
     {
         $this->expectException(\LogicException::class);
         $this->expectExceptionMessage(
@@ -468,7 +469,7 @@ class CalendarEventTest extends \PHPUnit\Framework\TestCase
     /**
      * @dataProvider childAttendeesProvider
      */
-    public function testGetChildAttendees(CalendarEvent $event, array $expectedAttendees)
+    public function testGetChildAttendees(CalendarEvent $event, array $expectedAttendees): void
     {
         $this->assertEquals($expectedAttendees, array_values($event->getChildAttendees()->toArray()));
     }
@@ -537,7 +538,7 @@ class CalendarEventTest extends \PHPUnit\Framework\TestCase
         ];
     }
 
-    public function testGetChildAttendeesFailsWithChildEvent()
+    public function testGetChildAttendeesFailsWithChildEvent(): void
     {
         $this->expectException(\LogicException::class);
         $this->expectExceptionMessage(
@@ -553,7 +554,7 @@ class CalendarEventTest extends \PHPUnit\Framework\TestCase
         $childEvent->getChildAttendees();
     }
 
-    public function testExceptions()
+    public function testExceptions(): void
     {
         $exceptionOne = new CalendarEvent();
         $exceptionOne->setTitle('First calendar event exception');
@@ -598,7 +599,7 @@ class CalendarEventTest extends \PHPUnit\Framework\TestCase
         $this->assertEquals([1 => $exceptionTwo, 2 => $exceptionThree], $actual->toArray());
     }
 
-    public function testGetAttendeeByEmailReturnsTrueWhenAttendeeIsMatched()
+    public function testGetAttendeeByEmailReturnsTrueWhenAttendeeIsMatched(): void
     {
         $email = 'test@example.com';
         $event = new CalendarEvent();
@@ -622,7 +623,7 @@ class CalendarEventTest extends \PHPUnit\Framework\TestCase
         $this->assertSame($attendee2, $event->getAttendeeByEmail($email));
     }
 
-    public function testGetAttendeeByEmailReturnsFalseWhenNoAttendeesExist()
+    public function testGetAttendeeByEmailReturnsFalseWhenNoAttendeesExist(): void
     {
         $email = 'test@example.com';
         $event = new CalendarEvent();
@@ -630,7 +631,7 @@ class CalendarEventTest extends \PHPUnit\Framework\TestCase
         $this->assertNull($event->getAttendeeByEmail($email));
     }
 
-    public function testGetAttendeeByEmailReturnsFalseWhenNoAttendeeIsMatched()
+    public function testGetAttendeeByEmailReturnsFalseWhenNoAttendeeIsMatched(): void
     {
         $email = 'test@example.com';
         $event = new CalendarEvent();
@@ -654,7 +655,7 @@ class CalendarEventTest extends \PHPUnit\Framework\TestCase
         $this->assertNull($event->getAttendeeByEmail($email));
     }
 
-    public function testGetAttendeeByUserReturnsTrueWhenAttendeeIsMatched()
+    public function testGetAttendeeByUserReturnsTrueWhenAttendeeIsMatched(): void
     {
         $user = new User();
         $event = new CalendarEvent();
@@ -678,7 +679,7 @@ class CalendarEventTest extends \PHPUnit\Framework\TestCase
         $this->assertSame($attendee2, $event->getAttendeeByUser($user));
     }
 
-    public function testGetAttendeeByUserReturnsFalseWhenNoAttendeesExist()
+    public function testGetAttendeeByUserReturnsFalseWhenNoAttendeesExist(): void
     {
         $user = new User();
         $event = new CalendarEvent();
@@ -686,7 +687,7 @@ class CalendarEventTest extends \PHPUnit\Framework\TestCase
         $this->assertNull($event->getAttendeeByUser($user));
     }
 
-    public function testGetAttendeeByUserReturnsFalseWhenNoAttendeeIsMatched()
+    public function testGetAttendeeByUserReturnsFalseWhenNoAttendeeIsMatched(): void
     {
         $user = new User();
         $event = new CalendarEvent();
@@ -710,7 +711,7 @@ class CalendarEventTest extends \PHPUnit\Framework\TestCase
         $this->assertNull($event->getAttendeeByUser($user));
     }
 
-    public function testGetAttendeeByCalendarReturnsTrueWhenAttendeeIsMatched()
+    public function testGetAttendeeByCalendarReturnsTrueWhenAttendeeIsMatched(): void
     {
         $user = new User();
         $calendar = new Calendar();
@@ -736,7 +737,7 @@ class CalendarEventTest extends \PHPUnit\Framework\TestCase
         $this->assertSame($attendee2, $event->getAttendeeByCalendar($calendar));
     }
 
-    public function testGetAttendeeByCalendarReturnsFalseWhenNoAttendeesExist()
+    public function testGetAttendeeByCalendarReturnsFalseWhenNoAttendeesExist(): void
     {
         $user = new User();
         $calendar = new Calendar();
@@ -746,7 +747,7 @@ class CalendarEventTest extends \PHPUnit\Framework\TestCase
         $this->assertNull($event->getAttendeeByCalendar($calendar));
     }
 
-    public function testGetAttendeeByCalendarReturnsFalseWhenNoAttendeeIsMatched()
+    public function testGetAttendeeByCalendarReturnsFalseWhenNoAttendeeIsMatched(): void
     {
         $user = new User();
         $calendar = new Calendar();
@@ -772,7 +773,7 @@ class CalendarEventTest extends \PHPUnit\Framework\TestCase
         $this->assertNull($event->getAttendeeByCalendar($calendar));
     }
 
-    public function testGetAttendeeByCalendarReturnsFalseWhenCalendarHasNoOwner()
+    public function testGetAttendeeByCalendarReturnsFalseWhenCalendarHasNoOwner(): void
     {
         $calendar = new Calendar();
         $event = new CalendarEvent();
@@ -798,7 +799,7 @@ class CalendarEventTest extends \PHPUnit\Framework\TestCase
     public function testOrganizerIsFetchedFromOwnerInCaseOrganizerEmailIsNotProvided(
         ?string $displayName,
         string $expectedDisplayName
-    ) {
+    ): void {
         $calendarEvent = $this->getCalendarEventWithOwner();
         if ($displayName) {
             $calendarEvent->setOrganizerDisplayName($displayName);
@@ -820,7 +821,7 @@ class CalendarEventTest extends \PHPUnit\Framework\TestCase
     public function testOrganizerIsSameAsOwnerInCaseProvidedEmailIsTheSameAsOwnerEmail(
         ?string $displayName,
         string $expectedDisplayName
-    ) {
+    ): void {
         $calendarEvent = $this->getCalendarEventWithOwner();
         $calendarEvent->setOrganizerEmail(self::OWNER_EMAIL);
         if ($displayName) {
@@ -837,7 +838,7 @@ class CalendarEventTest extends \PHPUnit\Framework\TestCase
         $this->assertEquals($expectedDisplayName, $calendarEvent->getOrganizerDisplayName());
     }
 
-    public function testCalculateIsOrganizerDoesNotWorkForSystemCalendarEvents()
+    public function testCalculateIsOrganizerDoesNotWorkForSystemCalendarEvents(): void
     {
         $calendar = new SystemCalendar();
         $calendarEvent = new CalendarEvent();
@@ -851,7 +852,7 @@ class CalendarEventTest extends \PHPUnit\Framework\TestCase
         $this->assertNull($calendarEvent->getOrganizerDisplayName());
     }
 
-    public function testCalculateIsOrganizerDoesNotWorkIfCalendarIsNull()
+    public function testCalculateIsOrganizerDoesNotWorkIfCalendarIsNull(): void
     {
         $calendarEvent = new CalendarEvent();
         $calendarEvent
@@ -866,7 +867,7 @@ class CalendarEventTest extends \PHPUnit\Framework\TestCase
     /**
      * @dataProvider additionalFieldsProvider
      */
-    public function testAdditionalFields(array $eventFields, array $expectedFields)
+    public function testAdditionalFields(array $eventFields, array $expectedFields): void
     {
         /** @var CalendarEvent $calendarEvent */
         $calendarEvent = $this->getEntity(CalendarEvent::class, $eventFields);

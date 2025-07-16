@@ -10,8 +10,10 @@ use Oro\Bundle\CalendarBundle\Entity\SystemCalendar;
 use Oro\Bundle\CalendarBundle\Resolver\EventOrganizerResolver;
 use Oro\Bundle\CalendarBundle\Tests\Unit\Fixtures\Entity\Calendar;
 use Oro\Bundle\UserBundle\Entity\User;
+use PHPUnit\Framework\MockObject\MockObject;
+use PHPUnit\Framework\TestCase;
 
-class EventOrganizerResolverTest extends \PHPUnit\Framework\TestCase
+class EventOrganizerResolverTest extends TestCase
 {
     private const OWNER_EMAIL = 'owner@example.com';
     private const OWNER_FIRST_NAME = 'Owner';
@@ -22,17 +24,12 @@ class EventOrganizerResolverTest extends \PHPUnit\Framework\TestCase
     private const PROVIDED_LAST_NAME = 'Name';
     private const PROVIDED_DISPLAY_NAME = 'Provided Name';
 
-    /** @var ObjectRepository|\PHPUnit\Framework\MockObject\MockObject */
-    private $repository;
-
-    /** @var EventOrganizerResolver */
-    private $resolver;
+    private ObjectRepository&MockObject $repository;
+    private EventOrganizerResolver $resolver;
 
     #[\Override]
     protected function setUp(): void
     {
-        parent::setUp();
-
         $this->repository = $this->createMock(ObjectRepository::class);
 
         $em = $this->createMock(ObjectManager::class);
@@ -48,7 +45,7 @@ class EventOrganizerResolverTest extends \PHPUnit\Framework\TestCase
         $this->resolver = new EventOrganizerResolver($doctrine);
     }
 
-    public function testResolverDoesNotWorkForSystemCalendarEvents()
+    public function testResolverDoesNotWorkForSystemCalendarEvents(): void
     {
         $calendar = new SystemCalendar();
         $calendarEvent = new CalendarEvent();
@@ -61,7 +58,7 @@ class EventOrganizerResolverTest extends \PHPUnit\Framework\TestCase
         $this->assertNull($calendarEvent->getOrganizerDisplayName());
     }
 
-    public function testResolverDoesNotWorkIfOrganizerEmailIsNull()
+    public function testResolverDoesNotWorkIfOrganizerEmailIsNull(): void
     {
         $calendarEvent = new CalendarEvent();
 
@@ -76,7 +73,7 @@ class EventOrganizerResolverTest extends \PHPUnit\Framework\TestCase
     public function testOrganizerIsFetchedFromDBInCaseProvidedOrganizerEmailExistsInSystem(
         ?string $displayName,
         string $expectedDisplayName
-    ) {
+    ): void {
         $calendarEvent = $this->getCalendarEventWithOwner();
         $calendarEvent->setOrganizerEmail(self::PROVIDED_EMAIL);
         if ($displayName) {
@@ -105,7 +102,7 @@ class EventOrganizerResolverTest extends \PHPUnit\Framework\TestCase
     public function testOrganizerIsNullInCaseProvidedOrganizerEmailDoesNotExistsInSystem(
         ?string $displayName,
         string $expectedDisplayName
-    ) {
+    ): void {
         $calendarEvent = $this->getCalendarEventWithOwner();
         $calendarEvent->setOrganizerEmail(self::PROVIDED_EMAIL);
         if ($displayName) {

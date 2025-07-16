@@ -3,6 +3,7 @@
 namespace Oro\Bundle\CalendarBundle\Tests\Unit\Model\Recurrence;
 
 use Oro\Bundle\CalendarBundle\Entity;
+use Oro\Bundle\CalendarBundle\Entity\CalendarEvent;
 use Oro\Bundle\CalendarBundle\Model\Recurrence;
 use Oro\Bundle\CalendarBundle\Model\Recurrence\YearNthStrategy;
 use Oro\Bundle\LocaleBundle\Formatter\DateTimeFormatterInterface;
@@ -21,7 +22,7 @@ class YearNthStrategyTest extends AbstractTestStrategy
         $translator->expects($this->any())
             ->method('trans')
             ->willReturnCallback(function ($id, array $parameters = []) {
-                return $id . implode($parameters);
+                return $id . implode('', $parameters);
             });
         $dateTimeFormatter = $this->createMock(DateTimeFormatterInterface::class);
 
@@ -33,12 +34,12 @@ class YearNthStrategyTest extends AbstractTestStrategy
         $this->strategy = new YearNthStrategy($translator, $dateTimeFormatter, $localeSettings);
     }
 
-    public function testGetName()
+    public function testGetName(): void
     {
         $this->assertEquals('recurrence_yearnth', $this->strategy->getName());
     }
 
-    public function testSupports()
+    public function testSupports(): void
     {
         $recurrence = new Entity\Recurrence();
         $recurrence->setRecurrenceType(Recurrence::TYPE_YEAR_N_TH);
@@ -51,7 +52,7 @@ class YearNthStrategyTest extends AbstractTestStrategy
     /**
      * @dataProvider recurrencePatternsDataProvider
      */
-    public function testGetTextValue(array $recurrenceData, string $expected)
+    public function testGetTextValue(array $recurrenceData, string $expected): void
     {
         $recurrence = new Entity\Recurrence();
         $recurrence->setRecurrenceType(Recurrence::TYPE_YEAR_N_TH)
@@ -66,7 +67,7 @@ class YearNthStrategyTest extends AbstractTestStrategy
                 : new \DateTime($recurrenceData['endTime'], $this->getTimeZone()))
             ->setOccurrences($recurrenceData['occurrences']);
 
-        $calendarEvent = new Entity\CalendarEvent();
+        $calendarEvent = new CalendarEvent();
         $calendarEvent->setStart(new \DateTime($recurrenceData['startTime']));
         $recurrence->setCalendarEvent($calendarEvent);
 
@@ -76,7 +77,7 @@ class YearNthStrategyTest extends AbstractTestStrategy
     /**
      * @dataProvider recurrenceLastOccurrenceDataProvider
      */
-    public function testGetCalculatedEndTime(array $recurrenceData, \DateTime $expected)
+    public function testGetCalculatedEndTime(array $recurrenceData, \DateTime $expected): void
     {
         $recurrence = new Entity\Recurrence();
         $recurrence->setRecurrenceType(Recurrence::TYPE_YEAR_N_TH)

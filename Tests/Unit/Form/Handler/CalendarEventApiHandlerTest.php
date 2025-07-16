@@ -17,6 +17,8 @@ use Oro\Bundle\OrganizationBundle\Entity\Organization;
 use Oro\Bundle\SecurityBundle\Authentication\TokenAccessorInterface;
 use Oro\Bundle\UserBundle\Entity\User;
 use Oro\Component\Testing\ReflectionUtil;
+use PHPUnit\Framework\MockObject\MockObject;
+use PHPUnit\Framework\TestCase;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\HttpFoundation\ParameterBag;
 use Symfony\Component\HttpFoundation\Request;
@@ -25,34 +27,17 @@ use Symfony\Component\HttpFoundation\RequestStack;
 /**
  * @SuppressWarnings(PHPMD.TooManyPublicMethods)
  */
-class CalendarEventApiHandlerTest extends \PHPUnit\Framework\TestCase
+class CalendarEventApiHandlerTest extends TestCase
 {
-    /** @var FormInterface|\PHPUnit\Framework\MockObject\MockObject */
-    private $form;
-
-    /** @var Request */
-    private $request;
-
-    /** @var ActivityManager|\PHPUnit\Framework\MockObject\MockObject */
-    private $activityManager;
-
-    /** @var CalendarEventManager|\PHPUnit\Framework\MockObject\MockObject */
-    private $calendarEventManager;
-
-    /** @var NotificationManager|\PHPUnit\Framework\MockObject\MockObject */
-    private $notificationManager;
-
-    /** @var FeatureChecker|\PHPUnit\Framework\MockObject\MockObject */
-    private $featureChecker;
-
-    /** @var CalendarEvent */
-    private $entity;
-
-    /** @var Organization */
-    private $organization;
-
-    /** @var CalendarEventApiHandler */
-    private $handler;
+    private FormInterface&MockObject $form;
+    private Request $request;
+    private ActivityManager&MockObject $activityManager;
+    private CalendarEventManager&MockObject $calendarEventManager;
+    private NotificationManager&MockObject $notificationManager;
+    private FeatureChecker&MockObject $featureChecker;
+    private CalendarEvent $entity;
+    private Organization $organization;
+    private CalendarEventApiHandler $handler;
 
     #[\Override]
     protected function setUp(): void
@@ -114,7 +99,7 @@ class CalendarEventApiHandlerTest extends \PHPUnit\Framework\TestCase
         $this->handler->setForm($this->form);
     }
 
-    public function testProcessWithContexts()
+    public function testProcessWithContexts(): void
     {
         $context = new User();
         ReflectionUtil::setId($context, 123);
@@ -153,7 +138,7 @@ class CalendarEventApiHandlerTest extends \PHPUnit\Framework\TestCase
         $this->assertSame($defaultCalendar, $this->entity->getCalendar());
     }
 
-    public function testProcessPutWithNotifyAttendeesAllWorks()
+    public function testProcessPutWithNotifyAttendeesAllWorks(): void
     {
         $this->request->setMethod('PUT');
 
@@ -178,7 +163,7 @@ class CalendarEventApiHandlerTest extends \PHPUnit\Framework\TestCase
         $this->handler->process($this->entity);
     }
 
-    public function testProcessPutWithNotifyAttendeesAllWorksAndDisabledInvitations()
+    public function testProcessPutWithNotifyAttendeesAllWorksAndDisabledInvitations(): void
     {
         $this->request->setMethod('PUT');
 
@@ -202,7 +187,7 @@ class CalendarEventApiHandlerTest extends \PHPUnit\Framework\TestCase
         $this->handler->process($this->entity);
     }
 
-    public function testProcessPutWithNotifyAttendeesAddedOrDeletedWorks()
+    public function testProcessPutWithNotifyAttendeesAddedOrDeletedWorks(): void
     {
         $this->request->setMethod('PUT');
 
@@ -231,7 +216,7 @@ class CalendarEventApiHandlerTest extends \PHPUnit\Framework\TestCase
         $this->handler->process($this->entity);
     }
 
-    public function testProcessPutWithNotifyAttendeesNoneWorks()
+    public function testProcessPutWithNotifyAttendeesNoneWorks(): void
     {
         ReflectionUtil::setId($this->entity, 123);
         $this->request->setMethod('PUT');
@@ -256,7 +241,7 @@ class CalendarEventApiHandlerTest extends \PHPUnit\Framework\TestCase
         $this->handler->process($this->entity);
     }
 
-    public function testProcessPutWithNotifyAttendeesNotPassedWorks()
+    public function testProcessPutWithNotifyAttendeesNotPassedWorks(): void
     {
         ReflectionUtil::setId($this->entity, 123);
         $this->request->setMethod('PUT');
@@ -279,7 +264,7 @@ class CalendarEventApiHandlerTest extends \PHPUnit\Framework\TestCase
         $this->handler->process($this->entity);
     }
 
-    public function testProcessPostWithNotifyAttendeesNoneWorks()
+    public function testProcessPostWithNotifyAttendeesNoneWorks(): void
     {
         $this->request->setMethod('POST');
 
@@ -301,7 +286,7 @@ class CalendarEventApiHandlerTest extends \PHPUnit\Framework\TestCase
         $this->handler->process($this->entity);
     }
 
-    public function testProcessPostWithNotifyAttendeesNoneWorksAndDisabledInvitations()
+    public function testProcessPostWithNotifyAttendeesNoneWorksAndDisabledInvitations(): void
     {
         $this->request->setMethod('POST');
 
@@ -322,7 +307,7 @@ class CalendarEventApiHandlerTest extends \PHPUnit\Framework\TestCase
         $this->handler->process($this->entity);
     }
 
-    public function testProcessWithClearingExceptions()
+    public function testProcessWithClearingExceptions(): void
     {
         $this->request->setMethod('PUT');
 

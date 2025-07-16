@@ -4,15 +4,14 @@ namespace Oro\Bundle\CalendarBundle\Tests\Unit\Datagrid;
 
 use Oro\Bundle\CalendarBundle\Datagrid\SystemCalendarEventGridHelper;
 use Oro\Bundle\DataGridBundle\Datasource\ResultRecordInterface;
+use PHPUnit\Framework\MockObject\MockObject;
+use PHPUnit\Framework\TestCase;
 use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
 
-class SystemCalendarEventGridHelperTest extends \PHPUnit\Framework\TestCase
+class SystemCalendarEventGridHelperTest extends TestCase
 {
-    /** @var AuthorizationCheckerInterface|\PHPUnit\Framework\MockObject\MockObject */
-    private $authorizationChecker;
-
-    /** @var SystemCalendarEventGridHelper */
-    private $helper;
+    private AuthorizationCheckerInterface&MockObject $authorizationChecker;
+    private SystemCalendarEventGridHelper $helper;
 
     #[\Override]
     protected function setUp(): void
@@ -25,7 +24,7 @@ class SystemCalendarEventGridHelperTest extends \PHPUnit\Framework\TestCase
     /**
      * @dataProvider getPublicActionConfigurationClosureProvider
      */
-    public function testGetPublicActionConfigurationClosure(bool $isGranted, array $expected)
+    public function testGetPublicActionConfigurationClosure(bool $isGranted, array $expected): void
     {
         $record = $this->createMock(ResultRecordInterface::class);
 
@@ -56,7 +55,7 @@ class SystemCalendarEventGridHelperTest extends \PHPUnit\Framework\TestCase
     /**
      * @dataProvider getSystemActionConfigurationClosureProvider
      */
-    public function testGetSystemActionConfigurationClosure(bool $isGranted, array $expected)
+    public function testGetSystemActionConfigurationClosure(bool $isGranted, array $expected): void
     {
         $record = $this->createMock(ResultRecordInterface::class);
 

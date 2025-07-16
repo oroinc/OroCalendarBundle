@@ -6,12 +6,13 @@ use Oro\Bundle\CalendarBundle\Entity\Calendar;
 use Oro\Bundle\CalendarBundle\Entity\CalendarProperty;
 use Oro\Component\Testing\ReflectionUtil;
 use Oro\Component\Testing\Unit\EntityTestCaseTrait;
+use PHPUnit\Framework\TestCase;
 
-class CalendarPropertyTest extends \PHPUnit\Framework\TestCase
+class CalendarPropertyTest extends TestCase
 {
     use EntityTestCaseTrait;
 
-    public function testProperties()
+    public function testProperties(): void
     {
         $properties = [
             'id'              => ['id', 1],
@@ -27,7 +28,7 @@ class CalendarPropertyTest extends \PHPUnit\Framework\TestCase
         self::assertPropertyAccessors($entity, $properties);
     }
 
-    public function testToString()
+    public function testToString(): void
     {
         $entity = new CalendarProperty();
         self::assertSame('', (string)$entity);

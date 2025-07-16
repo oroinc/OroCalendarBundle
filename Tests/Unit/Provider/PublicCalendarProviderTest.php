@@ -20,23 +20,12 @@ use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
 
 class PublicCalendarProviderTest extends TestCase
 {
-    /** @var DoctrineHelper|MockObject */
-    private $doctrineHelper;
-
-    /** @var Recurrence|MockObject */
-    private $recurrenceModel;
-
-    /** @var PublicCalendarEventNormalizer|MockObject */
-    private $calendarEventNormalizer;
-
-    /** @var SystemCalendarConfig|MockObject */
-    private $calendarConfig;
-
-    /** @var AuthorizationCheckerInterface|MockObject */
-    private $authorizationChecker;
-
-    /** @var PublicCalendarProvider */
-    private $provider;
+    private DoctrineHelper&MockObject $doctrineHelper;
+    private Recurrence&MockObject $recurrenceModel;
+    private PublicCalendarEventNormalizer&MockObject $calendarEventNormalizer;
+    private SystemCalendarConfig&MockObject $calendarConfig;
+    private AuthorizationCheckerInterface&MockObject $authorizationChecker;
+    private PublicCalendarProvider $provider;
 
     #[\Override]
     protected function setUp(): void
@@ -56,7 +45,7 @@ class PublicCalendarProviderTest extends TestCase
         );
     }
 
-    public function testGetCalendarDefaultValuesDisabled()
+    public function testGetCalendarDefaultValuesDisabled(): void
     {
         $organizationId = 1;
         $userId = 123;
@@ -76,7 +65,7 @@ class PublicCalendarProviderTest extends TestCase
         );
     }
 
-    public function testGetCalendarDefaultValuesCannotAddEvents()
+    public function testGetCalendarDefaultValuesCannotAddEvents(): void
     {
         $organizationId = 1;
         $userId = 123;
@@ -126,7 +115,7 @@ class PublicCalendarProviderTest extends TestCase
         );
     }
 
-    public function testGetCalendarDefaultValuesCanAddEvents()
+    public function testGetCalendarDefaultValuesCanAddEvents(): void
     {
         $organizationId = 1;
         $userId = 123;
@@ -183,7 +172,7 @@ class PublicCalendarProviderTest extends TestCase
         );
     }
 
-    public function testGetCalendarEventsPublicNotSupport()
+    public function testGetCalendarEventsPublicNotSupport(): void
     {
         $organizationId = 1;
         $userId = 123;
@@ -200,7 +189,7 @@ class PublicCalendarProviderTest extends TestCase
         $this->assertEquals([], $result);
     }
 
-    public function testGetCalendarEvents()
+    public function testGetCalendarEvents(): void
     {
         $organizationId = 1;
         $userId = 123;

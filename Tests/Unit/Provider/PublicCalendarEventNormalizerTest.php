@@ -9,21 +9,16 @@ use Oro\Bundle\CalendarBundle\Manager\CalendarEventManager;
 use Oro\Bundle\CalendarBundle\Provider\PublicCalendarEventNormalizer;
 use Oro\Bundle\ReminderBundle\Entity\Manager\ReminderManager;
 use Oro\Bundle\UIBundle\Tools\HtmlTagHelper;
+use PHPUnit\Framework\MockObject\MockObject;
+use PHPUnit\Framework\TestCase;
 use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
 
-class PublicCalendarEventNormalizerTest extends \PHPUnit\Framework\TestCase
+class PublicCalendarEventNormalizerTest extends TestCase
 {
-    /** @var CalendarEventManager|\PHPUnit\Framework\MockObject\MockObject */
-    private $calendarEventManager;
-
-    /** @var ReminderManager|\PHPUnit\Framework\MockObject\MockObject */
-    private $reminderManager;
-
-    /** @var AuthorizationCheckerInterface|\PHPUnit\Framework\MockObject\MockObject */
-    private $authorizationChecker;
-
-    /** @var PublicCalendarEventNormalizer */
-    private $normalizer;
+    private CalendarEventManager&MockObject $calendarEventManager;
+    private ReminderManager&MockObject $reminderManager;
+    private AuthorizationCheckerInterface&MockObject $authorizationChecker;
+    private PublicCalendarEventNormalizer $normalizer;
 
     #[\Override]
     protected function setUp(): void
@@ -58,7 +53,7 @@ class PublicCalendarEventNormalizerTest extends \PHPUnit\Framework\TestCase
     /**
      * @dataProvider getCalendarEventsProvider
      */
-    public function testGetCalendarEvents(array $events, array $expected)
+    public function testGetCalendarEvents(array $events, array $expected): void
     {
         $calendarId = 123;
 
@@ -78,7 +73,7 @@ class PublicCalendarEventNormalizerTest extends \PHPUnit\Framework\TestCase
     /**
      * @dataProvider getGrantedCalendarEventsProvider
      */
-    public function testGetCalendarEventsWithGrantedManagement(array $events, array $expected)
+    public function testGetCalendarEventsWithGrantedManagement(array $events, array $expected): void
     {
         $calendarId = 123;
 

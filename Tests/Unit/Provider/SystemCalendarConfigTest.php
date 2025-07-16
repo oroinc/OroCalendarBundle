@@ -3,8 +3,9 @@
 namespace Oro\Bundle\CalendarBundle\Tests\Unit\Provider;
 
 use Oro\Bundle\CalendarBundle\Provider\SystemCalendarConfig;
+use PHPUnit\Framework\TestCase;
 
-class SystemCalendarConfigTest extends \PHPUnit\Framework\TestCase
+class SystemCalendarConfigTest extends TestCase
 {
     /**
      * @dataProvider configProvider
@@ -13,7 +14,7 @@ class SystemCalendarConfigTest extends \PHPUnit\Framework\TestCase
         string|bool $enabledSystemCalendar,
         bool $expectedIsPublicCalendarEnabled,
         bool $expectedIsSystemCalendarEnabled
-    ) {
+    ): void {
         $config = new SystemCalendarConfig($enabledSystemCalendar);
         $this->assertSame($expectedIsPublicCalendarEnabled, $config->isPublicCalendarEnabled());
         $this->assertSame($expectedIsSystemCalendarEnabled, $config->isSystemCalendarEnabled());

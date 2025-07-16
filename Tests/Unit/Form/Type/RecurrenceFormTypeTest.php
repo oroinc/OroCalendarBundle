@@ -7,19 +7,17 @@ use Oro\Bundle\CalendarBundle\Form\Type\RecurrenceFormType;
 use Oro\Bundle\CalendarBundle\Model\Recurrence;
 use Oro\Bundle\CalendarBundle\Model\Recurrence\StrategyInterface;
 use Oro\Bundle\FormBundle\Form\Type\OroDateTimeType;
+use PHPUnit\Framework\TestCase;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\Extension\Core\Type\IntegerType;
 use Symfony\Component\Form\Extension\Core\Type\TimezoneType;
 use Symfony\Component\Form\FormBuilder;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
-class RecurrenceFormTypeTest extends \PHPUnit\Framework\TestCase
+class RecurrenceFormTypeTest extends TestCase
 {
-    /** @var Recurrence */
-    private $model;
-
-    /** @var RecurrenceFormType */
-    private $type;
+    private Recurrence $model;
+    private RecurrenceFormType $type;
 
     #[\Override]
     protected function setUp(): void
@@ -32,7 +30,7 @@ class RecurrenceFormTypeTest extends \PHPUnit\Framework\TestCase
     /**
      * @SuppressWarnings(PHPMD.ExcessiveMethodLength)
      */
-    public function testBuildForm()
+    public function testBuildForm(): void
     {
         $builder = $this->createMock(FormBuilder::class);
 
@@ -140,7 +138,7 @@ class RecurrenceFormTypeTest extends \PHPUnit\Framework\TestCase
         $this->type->buildForm($builder, []);
     }
 
-    public function testConfigureOptions()
+    public function testConfigureOptions(): void
     {
         $resolver = $this->createMock(OptionsResolver::class);
         $resolver->expects($this->once())
