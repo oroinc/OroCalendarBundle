@@ -1,21 +1,21 @@
 oro_calendar:
     resource:     "@OroCalendarBundle/Controller"
-    type:         annotation
+    type:         attribute
     prefix:       /calendar
 
 oro_sytem_calendar:
     resource:     "@OroCalendarBundle/Controller/SystemCalendarController.php"
-    type:         annotation
+    type:         attribute
     prefix:       /system-calendar
 
 oro_sytem_calendar_event:
     resource:     "@OroCalendarBundle/Controller/SystemCalendarEventController.php"
-    type:         annotation
+    type:         attribute
     prefix:       /system-calendar
 
 oro_calendar_dashboard:
     resource:     "@OroCalendarBundle/Controller/Dashboard"
-    type:         annotation
+    type:         attribute
     prefix:       /dashboard
 
 
