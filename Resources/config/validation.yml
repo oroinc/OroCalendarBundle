@@ -37,7 +37,8 @@ Oro\Bundle\CalendarBundle\Entity\CalendarEvent:
             - Valid: ~
             - Oro\Bundle\CalendarBundle\Validator\Constraints\ReminderStartDate: ~
         organizerEmail:
-            - Email: ~
+            - Email:
+                mode: strict
             - Length:
                 max: 255
             - Oro\Bundle\FormBundle\Validator\Constraints\UnchangeableField: ~
