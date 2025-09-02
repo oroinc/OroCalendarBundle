@@ -4,6 +4,7 @@ namespace Oro\Bundle\CalendarBundle\Migrations\Data\ORM;
 
 use Doctrine\Persistence\ObjectManager;
 use Oro\Bundle\CalendarBundle\Entity\CalendarEvent;
+use Oro\Bundle\EmailBundle\EmailTemplateHydrator\EmailTemplateRawDataParser;
 use Oro\Bundle\EmailBundle\Entity\EmailTemplate;
 use Oro\Bundle\EmailBundle\Migrations\Data\ORM\AbstractEmailFixture;
 
@@ -30,13 +31,28 @@ class ConvertCalendarInvitationEmail extends AbstractEmailFixture
     #[\Override]
     protected function loadTemplate(ObjectManager $manager, $fileName, array $file): void
     {
+        /** @var EmailTemplateRawDataParser $emailTemplateRawDataParser */
+        $emailTemplateRawDataParser = $this->container->get('oro_email.email_template_hydrator.raw_data_parser');
+
         $template = file_get_contents($file['path']);
-        $templateContent = EmailTemplate::parseContent($template);
+        $templateContent = $emailTemplateRawDataParser->parseRawData($template);
+
         $existingEmailTemplatesList = $this->getEmailTemplatesList($this->getPreviousEmailsDir());
         $existingTemplate = file_get_contents($existingEmailTemplatesList[$fileName]['path']);
-        $existingParsedTemplate = EmailTemplate::parseContent($existingTemplate);
+        $existingParsedTemplate = $emailTemplateRawDataParser->parseRawData($existingTemplate);
+        // Keeping the legacy array structure for BC.
+        $existingParsedTemplate = [
+            'content' => $existingParsedTemplate['content'],
+            'params' => $existingParsedTemplate,
+        ];
         $existingEmailTemplate = $this->findExistingTemplate($manager, $existingParsedTemplate);
         if ($existingEmailTemplate) {
+            // Keeping the legacy array structure for BC.
+            $templateContent = [
+                'content' => $templateContent['content'],
+                'params' => $templateContent,
+            ];
+
             $this->updateExistingTemplate($existingEmailTemplate, $templateContent);
         }
     }

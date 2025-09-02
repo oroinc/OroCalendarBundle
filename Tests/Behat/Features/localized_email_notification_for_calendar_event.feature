@@ -24,21 +24,26 @@ Feature: Localized email notification for calendar event
     Given I go to System / Emails / Templates
     When I filter Template Name as is equal to "calendar_invitation_invite"
     And I click "edit" on first row in grid
+    And I clear "Content" textarea in form "Email Template Form"
     And fill "Email Template Form" with:
       | Subject | English Calendar Invitation Invite Subject |
       | Content | English Calendar Invitation Invite Body    |
     And I click "French"
     And fill "Email Template Form" with:
-      | Subject Fallback | false                                     |
-      | Content Fallback | false                                     |
-      | Subject          | French Calendar Invitation Invite Subject |
-      | Content          | French Calendar Invitation Invite Body    |
+      | Subject Fallback | false |
+      | Content Fallback | false |
+    And I clear "Content" textarea in form "Email Template Form"
+    And fill "Email Template Form" with:
+      | Subject | French Calendar Invitation Invite Subject |
+      | Content | French Calendar Invitation Invite Body    |
     And I click "German"
     And fill "Email Template Form" with:
-      | Subject Fallback | false                                     |
-      | Content Fallback | false                                     |
-      | Subject          | German Calendar Invitation Invite Subject |
-      | Content          | German Calendar Invitation Invite Body    |
+      | Subject Fallback | false |
+      | Content Fallback | false |
+    And I clear "Content" textarea in form "Email Template Form"
+    And fill "Email Template Form" with:
+      | Subject | German Calendar Invitation Invite Subject |
+      | Content | German Calendar Invitation Invite Body    |
     And I submit form
     Then I should see "Template saved" flash message
 
