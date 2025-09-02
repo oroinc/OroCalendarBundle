@@ -4,6 +4,7 @@ namespace Oro\Bundle\CalendarBundle\Migrations\Data\ORM;
 
 use Doctrine\Persistence\ObjectManager;
 use Oro\Bundle\CalendarBundle\Entity\CalendarEvent;
+use Oro\Bundle\EmailBundle\EmailTemplateHydrator\EmailTemplateRawDataParser;
 use Oro\Bundle\EmailBundle\Entity\EmailTemplate;
 use Oro\Bundle\EmailBundle\Migrations\Data\ORM\AbstractEmailFixture;
 
@@ -30,33 +31,35 @@ class ConvertCalendarInvitationEmail extends AbstractEmailFixture
     #[\Override]
     protected function loadTemplate(ObjectManager $manager, $fileName, array $file): void
     {
-        $template = file_get_contents($file['path']);
-        $templateContent = EmailTemplate::parseContent($template);
+        /** @var EmailTemplateRawDataParser $emailTemplateRawDataParser */
+        $emailTemplateRawDataParser = $this->container->get('oro_email.email_template_hydrator.raw_data_parser');
+
+        $newTemplateRawData = file_get_contents($file['path']);
+        $newTemplateArrayData = $emailTemplateRawDataParser->parseRawData($newTemplateRawData);
+
         $existingEmailTemplatesList = $this->getEmailTemplatesList($this->getPreviousEmailsDir());
-        $existingTemplate = file_get_contents($existingEmailTemplatesList[$fileName]['path']);
-        $existingParsedTemplate = EmailTemplate::parseContent($existingTemplate);
-        $existingEmailTemplate = $this->findExistingTemplate($manager, $existingParsedTemplate);
+        $existingTemplateRawData = file_get_contents($existingEmailTemplatesList[$fileName]['path']);
+        $existingTemplateArrayData = $emailTemplateRawDataParser->parseRawData($existingTemplateRawData);
+        $existingEmailTemplate = $this->findExistingTemplate($manager, $existingTemplateArrayData);
         if ($existingEmailTemplate) {
-            $this->updateExistingTemplate($existingEmailTemplate, $templateContent);
+            $this->updateExistingTemplate($existingEmailTemplate, $newTemplateArrayData);
         }
     }
 
     #[\Override]
-    protected function updateExistingTemplate(EmailTemplate $emailTemplate, array $template): void
+    protected function updateExistingTemplate(EmailTemplate $emailTemplate, array $arrayData): void
     {
-        $emailTemplate->setContent($template['content']);
+        $emailTemplate->setContent($arrayData['content']);
     }
 
     #[\Override]
     protected function findExistingTemplate(ObjectManager $manager, array $template): ?EmailTemplate
     {
-        if (!isset($template['params']['name'])
-            || !isset($template['content'])
-        ) {
+        if (!isset($template['name'], $template['content'])) {
             return null;
         }
         return $manager->getRepository(EmailTemplate::class)->findOneBy([
-            'name' => $template['params']['name'],
+            'name' => $template['name'],
             'entityName' => CalendarEvent::class,
             'content' => $template['content']
         ]);
