@@ -7,7 +7,7 @@ use Oro\Bundle\CalendarBundle\Form\Handler\SystemCalendarHandler;
 use Oro\Bundle\CalendarBundle\Provider\SystemCalendarConfig;
 use Oro\Bundle\SecurityBundle\Authentication\TokenAccessorInterface;
 use Oro\Bundle\UIBundle\Route\Router;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
+use Symfony\Bridge\Twig\Attribute\Template;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
@@ -22,7 +22,7 @@ use Symfony\Contracts\Translation\TranslatorInterface;
 class SystemCalendarController extends AbstractController
 {
     #[Route(name: 'oro_system_calendar_index')]
-    #[Template]
+    #[Template('@OroCalendar/SystemCalendar/index.html.twig')]
     public function indexAction()
     {
         $this->checkPublicAndSystemCalendarsEnabled();
@@ -33,7 +33,7 @@ class SystemCalendarController extends AbstractController
     }
 
     #[Route(path: '/view/{id}', name: 'oro_system_calendar_view', requirements: ['id' => '\d+'])]
-    #[Template]
+    #[Template('@OroCalendar/SystemCalendar/view.html.twig')]
     public function viewAction(SystemCalendar $entity)
     {
         $this->checkCalendarPermissions($entity);
@@ -84,7 +84,7 @@ class SystemCalendarController extends AbstractController
     }
 
     #[Route(path: '/widget/events/{id}', name: 'oro_system_calendar_widget_events', requirements: ['id' => '\d+'])]
-    #[Template]
+    #[Template('@OroCalendar/SystemCalendar/events.html.twig')]
     public function eventsAction(SystemCalendar $entity)
     {
         $this->checkCalendarPermissions($entity);

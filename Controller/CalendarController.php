@@ -12,7 +12,7 @@ use Oro\Bundle\SecurityBundle\Attribute\AclAncestor;
 use Oro\Bundle\SecurityBundle\Authentication\TokenAccessorInterface;
 use Oro\Bundle\UserBundle\Entity\User;
 use Oro\Bundle\UserBundle\Form\Type\UserSelectType;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
+use Symfony\Bridge\Twig\Attribute\Template;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Form\FormFactoryInterface;
 use Symfony\Component\Routing\Attribute\Route;
@@ -26,7 +26,7 @@ class CalendarController extends AbstractController
      * View user's default calendar
      */
     #[Route(path: '/default', name: 'oro_calendar_view_default')]
-    #[Template]
+    #[Template('@OroCalendar/Calendar/viewDefault.html.twig')]
     #[AclAncestor('oro_calendar_view')]
     public function viewDefaultAction()
     {
@@ -50,7 +50,7 @@ class CalendarController extends AbstractController
      * @return array
      */
     #[Route(path: '/view/{id}', name: 'oro_calendar_view', requirements: ['id' => '\d+'])]
-    #[Template]
+    #[Template('@OroCalendar/Calendar/view.html.twig')]
     #[Acl(id: 'oro_calendar_view', type: 'entity', class: Calendar::class, permission: 'VIEW', groupName: '')]
     public function viewAction(Calendar $calendar)
     {

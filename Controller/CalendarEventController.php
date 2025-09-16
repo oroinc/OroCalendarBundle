@@ -11,7 +11,7 @@ use Oro\Bundle\SecurityBundle\Attribute\Acl;
 use Oro\Bundle\SecurityBundle\Attribute\AclAncestor;
 use Oro\Bundle\SecurityBundle\Authentication\TokenAccessorInterface;
 use Oro\Bundle\UIBundle\Route\Router;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
+use Symfony\Bridge\Twig\Attribute\Template;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
@@ -26,7 +26,7 @@ use Symfony\Contracts\Translation\TranslatorInterface;
 class CalendarEventController extends AbstractController
 {
     #[Route(name: 'oro_calendar_event_index')]
-    #[Template]
+    #[Template('@OroCalendar/CalendarEvent/index.html.twig')]
     #[Acl(
         id: 'oro_calendar_event_view',
         type: 'entity',
@@ -46,7 +46,7 @@ class CalendarEventController extends AbstractController
      * @return array|RedirectResponse
      */
     #[Route(path: '/view/{id}', name: 'oro_calendar_event_view', requirements: ['id' => '\d+'])]
-    #[Template]
+    #[Template('@OroCalendar/CalendarEvent/view.html.twig')]
     #[AclAncestor('oro_calendar_event_view')]
     public function viewAction(CalendarEvent $entity)
     {
@@ -77,7 +77,7 @@ class CalendarEventController extends AbstractController
         requirements: ['id' => '\d+', 'renderContexts' => '\d+'],
         defaults: ['renderContexts' => true]
     )]
-    #[Template]
+    #[Template('@OroCalendar/CalendarEvent/info.html.twig')]
     #[AclAncestor('oro_calendar_event_view')]
     public function infoAction(Request $request, CalendarEvent $entity, $renderContexts)
     {
@@ -107,7 +107,7 @@ class CalendarEventController extends AbstractController
      * @return array
      */
     #[Route(path: '/activity/view/{entityClass}/{entityId}', name: 'oro_calendar_event_activity_view')]
-    #[Template]
+    #[Template('@OroCalendar/CalendarEvent/activity.html.twig')]
     #[AclAncestor('oro_calendar_event_view')]
     public function activityAction($entityClass, $entityId)
     {
@@ -152,7 +152,7 @@ class CalendarEventController extends AbstractController
      * @return array|RedirectResponse
      */
     #[Route(path: '/update/{id}', name: 'oro_calendar_event_update', requirements: ['id' => '\d+'])]
-    #[Template]
+    #[Template('@OroCalendar/CalendarEvent/update.html.twig')]
     #[Acl(
         id: 'oro_calendar_event_update',
         type: 'entity',

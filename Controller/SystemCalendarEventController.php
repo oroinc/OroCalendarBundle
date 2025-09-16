@@ -9,7 +9,7 @@ use Oro\Bundle\CalendarBundle\Form\Handler\SystemCalendarEventHandler;
 use Oro\Bundle\CalendarBundle\Provider\SystemCalendarConfig;
 use Oro\Bundle\EntityBundle\Tools\EntityRoutingHelper;
 use Oro\Bundle\UIBundle\Route\Router;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
+use Symfony\Bridge\Twig\Attribute\Template;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
@@ -28,7 +28,7 @@ class SystemCalendarEventController extends AbstractController
      * @return array
      */
     #[Route(path: '/event/view/{id}', name: 'oro_system_calendar_event_view', requirements: ['id' => '\d+'])]
-    #[Template]
+    #[Template('@OroCalendar/SystemCalendarEvent/view.html.twig')]
     public function viewAction(CalendarEvent $entity)
     {
         $calendar = $entity->getSystemCalendar();
@@ -59,7 +59,7 @@ class SystemCalendarEventController extends AbstractController
         requirements: ['id' => '\d+', 'renderContexts' => '\d+'],
         defaults: ['renderContexts' => true]
     )]
-    #[Template]
+    #[Template('@OroCalendar/SystemCalendarEvent/info.html.twig')]
     public function infoAction(Request $request, CalendarEvent $entity, $renderContexts)
     {
         $calendar = $entity->getSystemCalendar();
@@ -113,7 +113,7 @@ class SystemCalendarEventController extends AbstractController
      * @return array|RedirectResponse
      */
     #[Route(path: '/event/update/{id}', name: 'oro_system_calendar_event_update', requirements: ['id' => '\d+'])]
-    #[Template]
+    #[Template('@OroCalendar/SystemCalendarEvent/update.html.twig')]
     public function updateAction(Request $request, CalendarEvent $entity)
     {
         $calendar = $entity->getSystemCalendar();
