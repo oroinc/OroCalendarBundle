@@ -1,4 +1,5 @@
 import {macros} from 'underscore';
+import template from 'tpl-loader!orocalendar/templates/macros/calendar-event-reminder-template.html';
 
 macros('reminderTemplates', {
     /**
@@ -9,5 +10,5 @@ macros('reminderTemplates', {
      * @param {string} data.expireAt
      * @param {string?} data.url
      */
-    calendar_event_template: require('tpl-loader!orocalendar/templates/macros/calendar-event-reminder-template.html')
+    calendar_event_template: template
 });
