@@ -189,7 +189,7 @@ const CalendarEventView = BaseView.extend({
         this.initLayout({
             model: this.model,
             commonEventBus: this.options.commonEventBus
-        }).finally(this._hideMask.bind(this));
+        }).always(this._hideMask.bind(this));
     },
 
     _onClickDeleteDialogAction: function(e) {
