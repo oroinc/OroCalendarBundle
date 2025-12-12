@@ -129,6 +129,7 @@ class LoadUserData extends AbstractFixture implements DependentFixtureInterface
             /** @var User $user */
             $user = $userManager->createUser();
             $user->setOwner($businessUnit);
+            $user->addBusinessUnit($businessUnit);
 
             $role = $defaultRole;
             if (!empty($data['isAdministrator'])) {
