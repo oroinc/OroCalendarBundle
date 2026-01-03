@@ -28,7 +28,6 @@ use Symfony\Component\Security\Core\Exception\AccessDeniedException;
  */
 class CalendarEventController extends RestController
 {
-    // @codingStandardsIgnoreStart
     /**
      * Get calendar events. To get data, use either page/limit or start/end filters.
      *
@@ -40,7 +39,6 @@ class CalendarEventController extends RestController
      * @param Request $request
      * @return Response
      */
-    // @codingStandardsIgnoreEnd
     #[QueryParam(
         name: 'calendar',
         requirements: '\d+',

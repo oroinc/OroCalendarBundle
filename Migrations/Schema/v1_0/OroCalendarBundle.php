@@ -14,7 +14,7 @@ class OroCalendarBundle implements Migration
     #[\Override]
     public function up(Schema $schema, QueryBag $queries)
     {
-        // @codingStandardsIgnoreStart
+        // phpcs:disable
 
         /** Generate table oro_calendar **/
         $table = $schema->createTable('oro_calendar');
@@ -71,6 +71,6 @@ class OroCalendarBundle implements Migration
         $table->addForeignKeyConstraint($schema->getTable('oro_calendar'), ['calendar_id'], ['id'], ['onDelete' => 'CASCADE', 'onUpdate' => null]);
         /** End of generate foreign keys for table oro_calendar_event **/
 
-        // @codingStandardsIgnoreEnd
+        // phpcs:enable
     }
 }

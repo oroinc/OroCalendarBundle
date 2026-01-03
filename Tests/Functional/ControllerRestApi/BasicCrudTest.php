@@ -148,11 +148,11 @@ class BasicCrudTest extends AbstractTestCase
     {
         $calendarId = $this->getReference('oro_calendar:calendar:foo_user_1')->getId();
         $uid = Uuid::uuid();
-        // @codingStandardsIgnoreStart
+        // phpcs:disable
         $content = <<<CONTENT
 title=Regular%20event&uid=$uid&description=&start=2016-10-14T22%3A00%3A00.000Z&end=2016-10-14T23%3A00%3A00.000Z&allDay=false&attendees=&recurrence=&calendar=$calendarId
 CONTENT;
-        // @codingStandardsIgnoreEnd
+        // phpcs:enable
         parse_str($content, $parameters);
 
         // Step 1. Create regular calendar event using minimal required data in the request.
