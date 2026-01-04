@@ -14,7 +14,7 @@ use Symfony\Component\Validator\Exception\UnexpectedTypeException;
  */
 class RecurrenceValidator extends ConstraintValidator
 {
-    const MIN_INTERVAL = 1;
+    public const MIN_INTERVAL = 1;
 
     /** @var Model\Recurrence */
     protected $model;

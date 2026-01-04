@@ -12,7 +12,7 @@ class Recurrence
      *
      * @see \Oro\Bundle\CalendarBundle\Model\Recurrence\AbstractStrategy::getCalculatedEndTime
      */
-    const MAX_END_DATE = '9000-01-01T00:00:01+00:00';
+    public const MAX_END_DATE = '9000-01-01T00:00:01+00:00';
 
     /**#@+
      * Type of recurrence
@@ -28,12 +28,12 @@ class Recurrence
      * Property which obtains one of these values:
      * @see \Oro\Bundle\CalendarBundle\Entity\Recurrence::$recurrenceType
      */
-    const TYPE_DAILY = 'daily';
-    const TYPE_WEEKLY = 'weekly';
-    const TYPE_MONTHLY = 'monthly';
-    const TYPE_MONTH_N_TH = 'monthnth';
-    const TYPE_YEARLY = 'yearly';
-    const TYPE_YEAR_N_TH = 'yearnth';
+    public const TYPE_DAILY = 'daily';
+    public const TYPE_WEEKLY = 'weekly';
+    public const TYPE_MONTHLY = 'monthly';
+    public const TYPE_MONTH_N_TH = 'monthnth';
+    public const TYPE_YEARLY = 'yearly';
+    public const TYPE_YEAR_N_TH = 'yearnth';
     /**#@-*/
 
     /**#@+
@@ -45,11 +45,11 @@ class Recurrence
      * Property which obtains one of these values:
      * @see \Oro\Bundle\CalendarBundle\Entity\Recurrence::$instance
      */
-    const INSTANCE_FIRST = 1;
-    const INSTANCE_SECOND = 2;
-    const INSTANCE_THIRD = 3;
-    const INSTANCE_FOURTH = 4;
-    const INSTANCE_LAST = 5;
+    public const INSTANCE_FIRST = 1;
+    public const INSTANCE_SECOND = 2;
+    public const INSTANCE_THIRD = 3;
+    public const INSTANCE_FOURTH = 4;
+    public const INSTANCE_LAST = 5;
     /**#@-*/
 
     /**#@+
@@ -58,13 +58,13 @@ class Recurrence
      * Property which obtains one of these values:
      * @see \Oro\Bundle\CalendarBundle\Entity\Recurrence::$dayOfWeek
      */
-    const DAY_SUNDAY = 'sunday';
-    const DAY_MONDAY = 'monday';
-    const DAY_TUESDAY = 'tuesday';
-    const DAY_WEDNESDAY = 'wednesday';
-    const DAY_THURSDAY = 'thursday';
-    const DAY_FRIDAY = 'friday';
-    const DAY_SATURDAY = 'saturday';
+    public const DAY_SUNDAY = 'sunday';
+    public const DAY_MONDAY = 'monday';
+    public const DAY_TUESDAY = 'tuesday';
+    public const DAY_WEDNESDAY = 'wednesday';
+    public const DAY_THURSDAY = 'thursday';
+    public const DAY_FRIDAY = 'friday';
+    public const DAY_SATURDAY = 'saturday';
     /**#@-*/
 
     /** @var StrategyInterface  */

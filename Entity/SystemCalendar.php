@@ -34,8 +34,8 @@ class SystemCalendar implements ExtendEntityInterface
 {
     use ExtendEntityTrait;
 
-    const CALENDAR_ALIAS        = 'system';
-    const PUBLIC_CALENDAR_ALIAS = 'public';
+    public const CALENDAR_ALIAS        = 'system';
+    public const PUBLIC_CALENDAR_ALIAS = 'public';
 
     #[ORM\Id]
     #[ORM\Column(type: Types::INTEGER)]

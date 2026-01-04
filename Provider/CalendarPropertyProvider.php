@@ -18,7 +18,7 @@ use Oro\Component\DoctrineUtils\ORM\QueryBuilderUtil;
  */
 class CalendarPropertyProvider
 {
-    const CALENDAR_PROPERTY_CLASS = 'Oro\Bundle\CalendarBundle\Entity\CalendarProperty';
+    public const CALENDAR_PROPERTY_CLASS = 'Oro\Bundle\CalendarBundle\Entity\CalendarProperty';
 
     /** @var DoctrineHelper */
     protected $doctrineHelper;

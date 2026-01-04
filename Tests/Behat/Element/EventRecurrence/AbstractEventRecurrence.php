@@ -6,8 +6,8 @@ use Oro\Bundle\TestFrameworkBundle\Behat\Element\Element;
 
 abstract class AbstractEventRecurrence extends Element
 {
-    const REPEAT_EVERY_KEY = 'Repeat every';
-    const REPEAT_ON_KEY = 'Repeat on';
+    public const REPEAT_EVERY_KEY = 'Repeat every';
+    public const REPEAT_ON_KEY = 'Repeat on';
 
     private $recurrenceParams = [];
 

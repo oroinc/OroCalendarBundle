@@ -31,21 +31,21 @@ use Oro\Component\ConfigExpression\ContextAccessor;
  */
 class CreateCalendarEventAction extends AbstractAction
 {
-    const OPTION_KEY_TITLE       = 'title';
-    const OPTION_KEY_DESCRIPTION = 'description';
-    const OPTION_KEY_GUESTS      = 'guests';
-    const OPTION_KEY_INITIATOR   = 'initiator';
-    const OPTION_KEY_START       = 'start';
-    const OPTION_KEY_END         = 'end';
-    const OPTION_KEY_DURATION    = 'duration';
-    const OPTION_KEY_ATTRIBUTE   = 'attribute';
-    const OPTION_KEY_REMINDERS   = 'reminders';
+    public const OPTION_KEY_TITLE       = 'title';
+    public const OPTION_KEY_DESCRIPTION = 'description';
+    public const OPTION_KEY_GUESTS      = 'guests';
+    public const OPTION_KEY_INITIATOR   = 'initiator';
+    public const OPTION_KEY_START       = 'start';
+    public const OPTION_KEY_END         = 'end';
+    public const OPTION_KEY_DURATION    = 'duration';
+    public const OPTION_KEY_ATTRIBUTE   = 'attribute';
+    public const OPTION_KEY_REMINDERS   = 'reminders';
 
-    const OPTION_REMINDER_KEY_METHOD          = 'method';
-    const OPTION_REMINDER_KEY_INTERVAL_NUMBER = 'interval_number';
-    const OPTION_REMINDER_KEY_INTERVAL_UNIT   = 'interval_unit';
+    public const OPTION_REMINDER_KEY_METHOD          = 'method';
+    public const OPTION_REMINDER_KEY_INTERVAL_NUMBER = 'interval_number';
+    public const OPTION_REMINDER_KEY_INTERVAL_UNIT   = 'interval_unit';
 
-    const OPTION_DEFAULT_DURATION_INTERVAL = 'PT1H';
+    public const OPTION_DEFAULT_DURATION_INTERVAL = 'PT1H';
 
     private ManagerRegistry $doctrine;
 

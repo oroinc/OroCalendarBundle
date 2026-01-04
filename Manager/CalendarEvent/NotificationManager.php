@@ -24,19 +24,19 @@ class NotificationManager
     /**
      * Send notification to each attendee of the event.
      */
-    const ALL_NOTIFICATIONS_STRATEGY = 'all';
+    public const ALL_NOTIFICATIONS_STRATEGY = 'all';
 
     /**
      * Do not send any notifications.
      */
-    const NONE_NOTIFICATIONS_STRATEGY = 'none';
+    public const NONE_NOTIFICATIONS_STRATEGY = 'none';
 
     /**
      * Send notification only to added or deleted attendees. Used only in onUpdate method.
      *
      * @see NotificationManager::onUpdate
      */
-    const ADDED_OR_DELETED_NOTIFICATIONS_STRATEGY = 'added_or_deleted';
+    public const ADDED_OR_DELETED_NOTIFICATIONS_STRATEGY = 'added_or_deleted';
 
     /**
      * @var EmailNotificationSender

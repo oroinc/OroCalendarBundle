@@ -31,17 +31,17 @@ class Attendee implements EmailHolderInterface, ExtendEntityInterface
 {
     use ExtendEntityTrait;
 
-    const STATUS_ENUM_CODE = 'ce_attendee_status';
-    const TYPE_ENUM_CODE = 'ce_attendee_type';
+    public const STATUS_ENUM_CODE = 'ce_attendee_status';
+    public const TYPE_ENUM_CODE = 'ce_attendee_type';
 
-    const STATUS_NONE = 'none';
-    const STATUS_ACCEPTED = 'accepted';
-    const STATUS_DECLINED = 'declined';
-    const STATUS_TENTATIVE = 'tentative';
+    public const STATUS_NONE = 'none';
+    public const STATUS_ACCEPTED = 'accepted';
+    public const STATUS_DECLINED = 'declined';
+    public const STATUS_TENTATIVE = 'tentative';
 
-    const TYPE_ORGANIZER = 'organizer';
-    const TYPE_OPTIONAL  = 'optional';
-    const TYPE_REQUIRED  = 'required';
+    public const TYPE_ORGANIZER = 'organizer';
+    public const TYPE_OPTIONAL  = 'optional';
+    public const TYPE_REQUIRED  = 'required';
 
     #[ORM\Id]
     #[ORM\Column(type: Types::INTEGER)]

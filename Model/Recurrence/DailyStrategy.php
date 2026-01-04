@@ -10,7 +10,7 @@ class DailyStrategy extends AbstractStrategy
     /**
      * Maximum value of interval field for daily strategy is different.
      */
-    const MAX_INTERVAL = 99;
+    public const MAX_INTERVAL = 99;
 
     #[\Override]
     public function getName()

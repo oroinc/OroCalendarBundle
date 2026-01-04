@@ -19,7 +19,7 @@ use Oro\Component\DoctrineUtils\ORM\QueryBuilderUtil;
  */
 class CalendarEventRepository extends EntityRepository
 {
-    const RECURRENCE_FIELD_PREFIX = 'recurrence';
+    public const RECURRENCE_FIELD_PREFIX = 'recurrence';
 
     /**
      * Returns a query builder which can be used to get a list of user calendar events filtered by start and end dates

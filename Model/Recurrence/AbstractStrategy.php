@@ -16,7 +16,7 @@ abstract class AbstractStrategy implements StrategyInterface
     /**
      * Maximum value of interval field.
      */
-    const MAX_INTERVAL = 999;
+    public const MAX_INTERVAL = 999;
 
     /** @var TranslatorInterface */
     protected $translator;

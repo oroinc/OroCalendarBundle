@@ -40,7 +40,7 @@ class Calendar implements ExtendEntityInterface
 {
     use ExtendEntityTrait;
 
-    const CALENDAR_ALIAS = 'user';
+    public const CALENDAR_ALIAS = 'user';
 
     #[ORM\Id]
     #[ORM\Column(type: Types::INTEGER)]

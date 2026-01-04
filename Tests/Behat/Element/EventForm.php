@@ -8,8 +8,8 @@ use Oro\Bundle\TestFrameworkBundle\Behat\Element\Element;
 
 class EventForm extends OroForm
 {
-    const REPEATS_DROP_DOWN = 'Repeats';
-    const COLOR_FIELD_NAME = 'Color';
+    public const REPEATS_DROP_DOWN = 'Repeats';
+    public const COLOR_FIELD_NAME = 'Color';
 
     /**
      * Set repeating type drop down

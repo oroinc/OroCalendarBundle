@@ -39,14 +39,14 @@ use Oro\Bundle\UserBundle\Entity\User;
  */
 class EmailNotificationSender
 {
-    const NOTIFICATION_TEMPLATE_INVITE           = 'calendar_invitation_invite';
-    const NOTIFICATION_TEMPLATE_UPDATE           = 'calendar_invitation_update';
-    const NOTIFICATION_TEMPLATE_CANCEL           = 'calendar_invitation_delete_parent_event';
-    const NOTIFICATION_TEMPLATE_UN_INVITE        = 'calendar_invitation_uninvite';
-    const NOTIFICATION_TEMPLATE_STATUS_ACCEPTED  = 'calendar_invitation_accepted';
-    const NOTIFICATION_TEMPLATE_STATUS_TENTATIVE = 'calendar_invitation_tentative';
-    const NOTIFICATION_TEMPLATE_STATUS_DECLINED  = 'calendar_invitation_declined';
-    const NOTIFICATION_TEMPLATE_DELETE_CHILD     = 'calendar_invitation_delete_child_event';
+    public const NOTIFICATION_TEMPLATE_INVITE           = 'calendar_invitation_invite';
+    public const NOTIFICATION_TEMPLATE_UPDATE           = 'calendar_invitation_update';
+    public const NOTIFICATION_TEMPLATE_CANCEL           = 'calendar_invitation_delete_parent_event';
+    public const NOTIFICATION_TEMPLATE_UN_INVITE        = 'calendar_invitation_uninvite';
+    public const NOTIFICATION_TEMPLATE_STATUS_ACCEPTED  = 'calendar_invitation_accepted';
+    public const NOTIFICATION_TEMPLATE_STATUS_TENTATIVE = 'calendar_invitation_tentative';
+    public const NOTIFICATION_TEMPLATE_STATUS_DECLINED  = 'calendar_invitation_declined';
+    public const NOTIFICATION_TEMPLATE_DELETE_CHILD     = 'calendar_invitation_delete_child_event';
 
     /**
      * @var EmailNotificationManager
