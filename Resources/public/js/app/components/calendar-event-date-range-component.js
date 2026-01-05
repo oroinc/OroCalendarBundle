@@ -1,4 +1,3 @@
-import $ from 'jquery';
 import _ from 'underscore';
 import BaseComponent from 'oroui/js/app/components/base/component';
 import DatepairView from 'oroform/js/app/views/datepair-view';
@@ -23,7 +22,7 @@ const CalendarEventDateRangeComponent = BaseComponent.extend({
         opts.el = options._sourceElement;
 
         this._deferredInit();
-        $.when(..._.compact(subPromises)).then(() => {
+        Promise.all(subPromises.filter(Boolean)).then(() => {
             this.handleLayoutInit(opts);
             this._resolveDeferredInit();
         });
