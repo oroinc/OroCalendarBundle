@@ -20,7 +20,7 @@ use Oro\Component\Testing\ReflectionUtil;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 use Symfony\Component\Form\FormInterface;
-use Symfony\Component\HttpFoundation\ParameterBag;
+use Symfony\Component\HttpFoundation\InputBag;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\RequestStack;
 
@@ -55,7 +55,7 @@ class CalendarEventApiHandlerTest extends TestCase
             'contexts' => [],
             'attendees' => new ArrayCollection()
         ];
-        $this->request->request = new ParameterBag($formData);
+        $this->request->request = new InputBag($formData);
         $this->form->expects($this->once())
             ->method('setData')
             ->with($this->identicalTo($this->entity));

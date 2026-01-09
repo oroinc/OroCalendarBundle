@@ -12,6 +12,6 @@ class UpdateAttendeeCalendarEvent implements Migration
     public function up(Schema $schema, QueryBag $queries)
     {
         $table = $schema->getTable('oro_calendar_event_attendee');
-        $table->changeColumn('calendar_event_id', ['notnull' => false]);
+        $table->modifyColumn('calendar_event_id', ['notnull' => false]);
     }
 }

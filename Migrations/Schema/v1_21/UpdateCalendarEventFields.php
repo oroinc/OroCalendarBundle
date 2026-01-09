@@ -2,7 +2,7 @@
 
 namespace Oro\Bundle\CalendarBundle\Migrations\Schema\v1_21;
 
-use Doctrine\DBAL\Platforms\MySqlPlatform;
+use Doctrine\DBAL\Platforms\MySQLPlatform;
 use Doctrine\DBAL\Schema\Comparator;
 use Doctrine\DBAL\Schema\Schema;
 use Doctrine\DBAL\Types\Type;
@@ -66,7 +66,7 @@ class UpdateCalendarEventFields implements Migration, DatabasePlatformAwareInter
 
         $postSchema = clone $schema;
         $postSchema->getTable('oro_calendar_event')
-            ->changeColumn($field, ['notnull' => true, 'default' => false]);
+            ->modifyColumn($field, ['notnull' => true, 'default' => false]);
         $postQueries = $this->getSchemaDiff($schema, $postSchema);
         foreach ($postQueries as $query) {
             $queries->addPostQuery($query);
@@ -93,7 +93,7 @@ class UpdateCalendarEventFields implements Migration, DatabasePlatformAwareInter
     }
 
     /**
-     * @throws \Doctrine\DBAL\DBALException
+     * @throws \Doctrine\DBAL\Exception
      * @throws \Doctrine\DBAL\Schema\SchemaException
      */
     private function fixUidField(Schema $schema, QueryBag $queries)

@@ -2,6 +2,7 @@
 
 namespace Oro\Bundle\CalendarBundle\Autocomplete;
 
+use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\QueryBuilder;
 use Doctrine\Persistence\ManagerRegistry;
@@ -49,6 +50,9 @@ class UserCalendarHandler implements SearchHandlerInterface
     }
 
     #[\Override]
+    /**
+     * @SuppressWarnings(PHPMD.CyclomaticComplexity)
+     */
     public function search($query, $page, $perPage, $searchById = false)
     {
         [$search, $entityClass, $permission, $entityId, $excludeCurrentUser] = explode(';', $query);
@@ -60,7 +64,12 @@ class UserCalendarHandler implements SearchHandlerInterface
             : ObjectIdentityHelper::encodeIdentityString(EntityAclExtension::NAME, $entityClass);
         if ($this->authorizationChecker->isGranted($permission, $object)) {
             if ($searchById) {
-                $results = $this->doctrine->getRepository(Calendar::class)->findBy(['id' => explode(',', $search)]);
+                $searchIds = explode(',', $search);
+                if ($searchIds) {
+                    $results = $this->doctrine->getRepository(Calendar::class)->findBy(['id' => $searchIds]);
+                } else {
+                    $results = [];
+                }
             } else {
                 $page = (int)$page > 0 ? (int)$page : 1;
                 $perPage = (int)$perPage > 0 ? (int)$perPage : 10;
@@ -71,7 +80,7 @@ class UserCalendarHandler implements SearchHandlerInterface
                 if ($excludeCurrentUser) {
                     $queryBuilder
                         ->andWhere('user.id != :userId')
-                        ->setParameter('userId', $this->tokenAccessor->getUser()->getId());
+                        ->setParameter('userId', $this->tokenAccessor->getUser()?->getId(), Types::INTEGER);
                 }
                 $queryBuilder
                     ->setFirstResult($firstResult)

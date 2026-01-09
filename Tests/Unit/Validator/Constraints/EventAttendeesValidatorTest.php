@@ -11,6 +11,7 @@ use Oro\Bundle\CalendarBundle\Validator\Constraints\EventAttendees;
 use Oro\Bundle\CalendarBundle\Validator\Constraints\EventAttendeesValidator;
 use Oro\Component\Testing\ReflectionUtil;
 use PHPUnit\Framework\MockObject\MockObject;
+use Symfony\Component\Validator\ConstraintValidatorInterface;
 use Symfony\Component\Validator\Test\ConstraintValidatorTestCase;
 
 class EventAttendeesValidatorTest extends ConstraintValidatorTestCase
@@ -105,7 +106,7 @@ class EventAttendeesValidatorTest extends ConstraintValidatorTestCase
     }
 
     #[\Override]
-    protected function createValidator()
+    protected function createValidator(): ConstraintValidatorInterface
     {
         $doctrine = $this->createMock(ManagerRegistry::class);
         $doctrine->expects($this->any())

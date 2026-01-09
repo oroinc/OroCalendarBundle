@@ -20,7 +20,7 @@ class AttendeesToViewTransformer extends ContextsToViewTransformer
     }
 
     #[\Override]
-    public function reverseTransform($value)
+    public function reverseTransform($value): mixed
     {
         $entities = parent::reverseTransform($value);
 

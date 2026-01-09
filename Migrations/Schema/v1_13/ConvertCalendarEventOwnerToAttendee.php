@@ -28,7 +28,7 @@ class ConvertCalendarEventOwnerToAttendee extends ParametrizedMigrationQuery
      * we should use `ce.id`, because in `updateCalendarEvents` we should set `related_attendee`
      * and `calendar_event_id` will get  normal value in `updateAttendee`
      *
-     * @throws \Doctrine\DBAL\DBALException
+     * @throws \Doctrine\DBAL\Exception
      */
     protected function createAttendees(LoggerInterface $logger)
     {
@@ -45,7 +45,7 @@ class ConvertCalendarEventOwnerToAttendee extends ParametrizedMigrationQuery
 
         if (in_array(
             'serialized_data',
-            array_keys($this->connection->getSchemaManager()->listTableColumns('oro_calendar_event_attendee'))
+            array_keys($this->connection->createSchemaManager()->listTableColumns('oro_calendar_event_attendee'))
         )
         ) {
             $data['serialized_data'] = '\'Tjs=\'';
@@ -71,7 +71,7 @@ EOD;
     /**
      * This query updates `oro_calendar_event` and sets `related_attendee` from `oro_calendar_event_attendee`
      *
-     * @throws \Doctrine\DBAL\DBALException
+     * @throws \Doctrine\DBAL\Exception
      */
     protected function updateCalendarEvents(LoggerInterface $logger)
     {
@@ -91,7 +91,7 @@ EOD;
     /**
      * Update `oro_calendar_event_attendee` and set correct `calendar_event_id` using parent_id
      *
-     * @throws \Doctrine\DBAL\DBALException
+     * @throws \Doctrine\DBAL\Exception
      */
     protected function updateAttendee(LoggerInterface $logger)
     {

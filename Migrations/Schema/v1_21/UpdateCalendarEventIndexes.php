@@ -2,7 +2,7 @@
 
 namespace Oro\Bundle\CalendarBundle\Migrations\Schema\v1_21;
 
-use Doctrine\DBAL\Platforms\MySqlPlatform;
+use Doctrine\DBAL\Platforms\MySQLPlatform;
 use Doctrine\DBAL\Schema\Schema;
 use Oro\Bundle\MigrationBundle\Migration\Extension\DatabasePlatformAwareInterface;
 use Oro\Bundle\MigrationBundle\Migration\Extension\DatabasePlatformAwareTrait;
@@ -27,7 +27,7 @@ class UpdateCalendarEventIndexes implements Migration, DatabasePlatformAwareInte
     public function up(Schema $schema, QueryBag $queries)
     {
         // Re-create index only for MySQL
-        if (!$this->platform instanceof MySqlPlatform) {
+        if (!$this->platform instanceof MySQLPlatform) {
             return;
         }
 

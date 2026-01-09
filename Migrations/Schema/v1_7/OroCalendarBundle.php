@@ -31,7 +31,7 @@ class OroCalendarBundle implements Migration
         $table->setPrimaryKey(['id']);
 
         $table = $schema->getTable('oro_calendar_event');
-        $table->changeColumn('calendar_id', ['integer', 'notnull' => false]);
+        $table->modifyColumn('calendar_id', ['integer', 'notnull' => false]);
         $table->addColumn('system_calendar_id', 'integer', ['notnull' => false]);
         $table->addIndex(['system_calendar_id', 'start_at', 'end_at'], 'oro_sys_calendar_event_idx', []);
         $table->addIndex(['system_calendar_id'], 'IDX_2DDC40DD55F0F9D0', []);

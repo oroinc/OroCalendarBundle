@@ -6,6 +6,7 @@ use Oro\Bundle\CalendarBundle\Validator\Constraints\DateEarlierThan;
 use Oro\Bundle\CalendarBundle\Validator\Constraints\DateEarlierThanValidator;
 use Symfony\Component\Form\Form;
 use Symfony\Component\Form\FormConfigInterface;
+use Symfony\Component\Validator\ConstraintValidatorInterface;
 use Symfony\Component\Validator\Exception\UnexpectedTypeException;
 use Symfony\Component\Validator\Test\ConstraintValidatorTestCase;
 
@@ -36,7 +37,7 @@ class DateEarlierThanValidatorTest extends ConstraintValidatorTestCase
     }
 
     #[\Override]
-    protected function createValidator()
+    protected function createValidator(): ConstraintValidatorInterface
     {
         return new DateEarlierThanValidator();
     }
