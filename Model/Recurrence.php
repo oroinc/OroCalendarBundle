@@ -5,6 +5,12 @@ namespace Oro\Bundle\CalendarBundle\Model;
 use Oro\Bundle\CalendarBundle\Entity;
 use Oro\Bundle\CalendarBundle\Model\Recurrence\StrategyInterface;
 
+/**
+ * Model for managing calendar event recurrence patterns.
+ *
+ * Provides constants for recurrence types, instances, and days of week, and delegates
+ * occurrence calculations to {@see StrategyInterface} implementations.
+ */
 class Recurrence
 {
     /**

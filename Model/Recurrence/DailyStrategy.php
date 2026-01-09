@@ -5,6 +5,9 @@ namespace Oro\Bundle\CalendarBundle\Model\Recurrence;
 use Oro\Bundle\CalendarBundle\Entity;
 use Oro\Bundle\CalendarBundle\Model\Recurrence;
 
+/**
+ * Calculates occurrences for events that repeat daily at a specified interval.
+ */
 class DailyStrategy extends AbstractStrategy
 {
     /**

@@ -8,6 +8,9 @@ use Oro\Bundle\FormBundle\Form\Handler\RequestHandlerTrait;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\HttpFoundation\RequestStack;
 
+/**
+ * Handler for processing {@see SystemCalendar} entity form submissions.
+ */
 class SystemCalendarHandler
 {
     use RequestHandlerTrait;

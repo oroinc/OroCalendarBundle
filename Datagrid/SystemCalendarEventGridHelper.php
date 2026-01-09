@@ -5,6 +5,12 @@ namespace Oro\Bundle\CalendarBundle\Datagrid;
 use Oro\Bundle\DataGridBundle\Datasource\ResultRecordInterface;
 use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
 
+/**
+ * Helper for configuring system calendar event grid action visibility.
+ *
+ * Provides closures for determining grid action permissions based on user authorization
+ * for public and system calendar management.
+ */
 class SystemCalendarEventGridHelper
 {
     /** @var AuthorizationCheckerInterface */

@@ -2,6 +2,9 @@
 
 namespace Oro\Bundle\CalendarBundle\Provider;
 
+/**
+ * Applies permission-based restrictions to system calendar events based on user authorization.
+ */
 class SystemCalendarEventNormalizer extends AbstractCalendarEventNormalizer
 {
     #[\Override]

@@ -2,6 +2,12 @@
 
 namespace Oro\Bundle\CalendarBundle\Provider;
 
+/**
+ * Configuration provider for system and public calendar availability.
+ *
+ * Determines which calendar types (public/system/organization) are enabled
+ * based on system configuration settings.
+ */
 class SystemCalendarConfig
 {
     /** @var bool */

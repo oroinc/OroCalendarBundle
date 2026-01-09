@@ -2,6 +2,11 @@
 
 namespace Oro\Bundle\CalendarBundle\Exception;
 
+/**
+ * Exception thrown when attempting to add reminders to non-user calendar events.
+ *
+ * Indicates that only user calendar events can have reminders associated with them.
+ */
 class NotUserCalendarEvent extends \LogicException implements ExceptionInterface
 {
     /**

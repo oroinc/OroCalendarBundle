@@ -7,6 +7,11 @@ use Oro\Bundle\DataGridBundle\Datasource\ResultRecordInterface;
 use Oro\Bundle\SecurityBundle\Authentication\TokenAccessorInterface;
 use Oro\Bundle\UserBundle\Entity\User;
 
+/**
+ * Provider for calendar event invitation action permissions.
+ *
+ * Determines which invitation response actions (accept, decline, tentative) are available.
+ */
 class ActionPermissionProvider
 {
     /** @var TokenAccessorInterface */

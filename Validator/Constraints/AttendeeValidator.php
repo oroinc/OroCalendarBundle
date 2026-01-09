@@ -6,6 +6,11 @@ use Oro\Bundle\CalendarBundle\Entity\Attendee as AttendeeEntity;
 use Symfony\Component\Validator\Constraint;
 use Symfony\Component\Validator\ConstraintValidator;
 
+/**
+ * Validator for the {@see Attendee} constraint.
+ *
+ * Validates that attendees have either an email or display name, or are part of a system calendar event.
+ */
 class AttendeeValidator extends ConstraintValidator
 {
     /**

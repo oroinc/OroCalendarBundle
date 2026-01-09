@@ -8,6 +8,11 @@ use Oro\Bundle\CalendarBundle\Entity\CalendarEvent;
 use Oro\Bundle\CalendarBundle\Entity\Repository\CalendarEventRepository;
 use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
 
+/**
+ * Manager for matching calendar events across calendars.
+ *
+ * Handles merging of attendee information when new calendar events match existing events by UID and organizer.
+ */
 class MatchingEventsManager
 {
     /**

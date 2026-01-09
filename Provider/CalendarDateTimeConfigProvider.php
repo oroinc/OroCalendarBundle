@@ -4,6 +4,10 @@ namespace Oro\Bundle\CalendarBundle\Provider;
 
 use Oro\Bundle\LocaleBundle\Model\LocaleSettings;
 
+/**
+ * Provides date ranges and timezone offsets for calendar views using
+ * {@see LocaleSettings} for locale-specific calendar configuration.
+ */
 class CalendarDateTimeConfigProvider
 {
     /**

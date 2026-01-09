@@ -6,6 +6,10 @@ use Oro\Bundle\CalendarBundle\Entity\CalendarEvent;
 use Oro\Bundle\CalendarBundle\Manager\CalendarEvent\NotificationManager;
 use Oro\Bundle\FormBundle\Form\Handler\RequestHandlerTrait;
 
+/**
+ * Handler for processing {@see CalendarEvent} forms for system calendars
+ * with activity context management form submissions.
+ */
 class SystemCalendarEventHandler extends AbstractCalendarEventHandler
 {
     use RequestHandlerTrait;

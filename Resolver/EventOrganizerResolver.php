@@ -6,6 +6,9 @@ use Doctrine\Persistence\ManagerRegistry;
 use Oro\Bundle\CalendarBundle\Entity\CalendarEvent;
 use Oro\Bundle\UserBundle\Entity\User;
 
+/**
+ * Resolves and updates organizer details for calendar events by matching organizer email to {@see User}.
+ */
 class EventOrganizerResolver
 {
     /**
