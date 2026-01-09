@@ -330,7 +330,8 @@ class NotificationManager
         $strategy
     ) {
         // If calendar event exceptions were cleared cancel notification should be sent.
-        if (count($calendarEvent->getRecurringEventExceptions()->toArray()) == 0 &&
+        if (
+            count($calendarEvent->getRecurringEventExceptions()->toArray()) == 0 &&
             count($originalCalendarEvent->getRecurringEventExceptions()->toArray()) != 0
         ) {
             $this->addCancelNotificationsForRecurringEventExceptions(

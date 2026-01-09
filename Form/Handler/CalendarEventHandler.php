@@ -123,7 +123,8 @@ class CalendarEventHandler extends AbstractCalendarEventHandler
                 $this->activityManager->addActivityTarget($entity, $targetEntity);
             }
 
-            if ('assign' === $action
+            if (
+                'assign' === $action
                 && $targetEntity instanceof User
                 && $targetEntityId !== $this->tokenAccessor->getUserId()
             ) {

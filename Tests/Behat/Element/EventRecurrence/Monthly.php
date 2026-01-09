@@ -40,7 +40,7 @@ class Monthly extends AbstractEventRecurrence
                 "Recurrence days input not found (input[data-related-field='dayOfMonth'])"
             );
 
-            // TODO: here must be some js triggers, because just setValue not accepted
+            // Possible problem: there must be some js triggers, because just setValue not accepted
             $dayInput->setValue($matches['value']);
         } else {
             $repeatOnSelect = $this->find('css', 'span[data-name="repeat-on-instance"] select');

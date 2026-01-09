@@ -164,7 +164,8 @@ class SystemCalendarController extends AbstractController
         if (!$isGranted) {
             throw new AccessDeniedException();
         }
-        if (!$entity->isPublic()
+        if (
+            !$entity->isPublic()
             && $entity->getOrganization()->getId() !== $this->getSecurityTokenAccessor()->getOrganizationId()
         ) {
             throw new AccessDeniedException();

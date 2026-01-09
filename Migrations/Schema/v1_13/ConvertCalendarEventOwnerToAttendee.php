@@ -46,8 +46,7 @@ class ConvertCalendarEventOwnerToAttendee extends ParametrizedMigrationQuery
         if (in_array(
             'serialized_data',
             array_keys($this->connection->createSchemaManager()->listTableColumns('oro_calendar_event_attendee'))
-        )
-        ) {
+        )) {
             $data['serialized_data'] = '\'Tjs=\'';
         }
 

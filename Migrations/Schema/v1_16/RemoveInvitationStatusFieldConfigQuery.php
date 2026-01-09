@@ -36,7 +36,7 @@ class RemoveInvitationStatusFieldConfigQuery extends ParametrizedMigrationQuery
      */
     protected function doExecute(LoggerInterface $logger, $dryRun = false)
     {
-        $sql = 'DELETE FROM oro_entity_config_field WHERE field_name = ? '.
+        $sql = 'DELETE FROM oro_entity_config_field WHERE field_name = ? ' .
             'AND entity_id = (SELECT id FROM oro_entity_config WHERE class_name = ? LIMIT 1)';
 
         $parameters = ['invitationStatus', 'Oro\Bundle\CalendarBundle\Entity\CalendarEvent'];

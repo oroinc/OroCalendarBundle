@@ -111,7 +111,7 @@ class CreateCalendarEventAction extends AbstractAction
             $end = $this->contextAccessor->getValue($context, $this->options[self::OPTION_KEY_END]);
         } elseif (true === isset($this->options[self::OPTION_KEY_DURATION])) {
             $end = clone $calendarEvent->getStart();
-            $end->modify('+ '.$this->options[self::OPTION_KEY_DURATION]);
+            $end->modify('+ ' . $this->options[self::OPTION_KEY_DURATION]);
         } else {
             $end = clone $calendarEvent->getStart();
             $end->add(new \DateInterval(self::OPTION_DEFAULT_DURATION_INTERVAL));

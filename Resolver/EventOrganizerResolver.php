@@ -25,7 +25,8 @@ class EventOrganizerResolver
         }
 
         $calendarEvent->calculateIsOrganizer();
-        if (!$calendarEvent->getOrganizerEmail()
+        if (
+            !$calendarEvent->getOrganizerEmail()
             || ($calendarEvent->isOrganizer() && $calendarEvent->getOrganizerUser() !== null)
         ) {
             return;

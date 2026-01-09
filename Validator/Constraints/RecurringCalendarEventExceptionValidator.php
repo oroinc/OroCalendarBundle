@@ -50,8 +50,10 @@ class RecurringCalendarEventExceptionValidator extends ConstraintValidator
         CalendarEvent $value,
         RecurringCalendarEventException $constraint
     ) {
-        if ($value->getRecurringEvent() && $value->getRecurringEvent()->getRecurrence() === null
-            && $value->getRecurringEvent()->getParent() === null) {
+        if (
+            $value->getRecurringEvent() && $value->getRecurringEvent()->getRecurrence() === null
+            && $value->getRecurringEvent()->getParent() === null
+        ) {
             $this->context->addViolation($constraint->wrongRecurrenceMessage);
         }
     }
@@ -82,7 +84,8 @@ class RecurringCalendarEventExceptionValidator extends ConstraintValidator
                 $calendarId = $calendarData instanceof Calendar ? $calendarData->getId() : $calendarData;
             }
             $calendarAlias = Calendar::CALENDAR_ALIAS;
-            if ($rootContext->has('calendarAlias') &&
+            if (
+                $rootContext->has('calendarAlias') &&
                 $rootContext->get('calendarAlias') &&
                 $rootContext->get('calendarAlias')->getData()
             ) {

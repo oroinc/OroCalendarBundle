@@ -192,7 +192,7 @@ class UserCalendarEventNormalizer extends AbstractCalendarEventNormalizer
 
         try {
             return $propertyAccessor->getValue($object, $propertyPath);
-        } catch (InvalidPropertyPathException|NoSuchPropertyException|UnexpectedTypeException $e) {
+        } catch (InvalidPropertyPathException | NoSuchPropertyException | UnexpectedTypeException $e) {
             return null;
         }
     }

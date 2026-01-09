@@ -40,7 +40,8 @@ class CalendarEventAttendeesListener implements OptionalListenerInterface
             }
         }
         foreach ($deletedEntities as $entity) {
-            if ($this->isAttendeeApplicable($entity, $unitOfWork)
+            if (
+                $this->isAttendeeApplicable($entity, $unitOfWork)
                 && !$unitOfWork->isScheduledForDelete($entity->getCalendarEvent())
             ) {
                 $this->updateCalendarEventUpdatedAt($entity->getCalendarEvent(), $unitOfWork);

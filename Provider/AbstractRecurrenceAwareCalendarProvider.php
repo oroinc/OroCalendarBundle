@@ -111,7 +111,8 @@ abstract class AbstractRecurrenceAwareCalendarProvider extends AbstractCalendarP
     {
         $exceptions = [];
         foreach ($items as $index => $item) {
-            if (empty($item['recurrence']) &&
+            if (
+                empty($item['recurrence']) &&
                 !empty($item['recurringEventId']) &&
                 !empty($item['originalStart'])
             ) {
@@ -253,7 +254,8 @@ abstract class AbstractRecurrenceAwareCalendarProvider extends AbstractCalendarP
             foreach ($recurringExceptionEvents as $key => $exception) {
                 $originalStartTime = new \DateTime($exception['originalStart']);
                 $start = new \DateTime($occurrence['start']);
-                if ((int)$exception['recurringEventId'] === (int)$occurrence['id'] &&
+                if (
+                    (int)$exception['recurringEventId'] === (int)$occurrence['id'] &&
                     $originalStartTime->getTimestamp() === $start->getTimestamp()
                 ) {
                     $exceptionFound = true;

@@ -84,7 +84,8 @@ class SystemCalendarProvider extends AbstractRecurrenceAwareCalendarProvider
         $connections,
         $extraFields = []
     ) {
-        if (!$this->calendarConfig->isSystemCalendarEnabled()
+        if (
+            !$this->calendarConfig->isSystemCalendarEnabled()
             || !$this->authorizationChecker->isGranted('oro_system_calendar_management')
         ) {
             return [];

@@ -181,9 +181,10 @@ class CalendarPropertyProvider
      * Gets a default option of an enum associated with the given field
      * This method must be public because it is used as a callback
      */
-    public function getEnumDefaultValue(string$fieldName): ?string
+    public function getEnumDefaultValue(string $fieldName): ?string
     {
-        if (isset($this->computedDefaultValues[$fieldName])
+        if (
+            isset($this->computedDefaultValues[$fieldName])
             || array_key_exists($fieldName, $this->computedDefaultValues)
         ) {
             return $this->computedDefaultValues[$fieldName];

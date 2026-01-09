@@ -35,7 +35,8 @@ class UniqueUidValidator extends ConstraintValidator
         }
 
         //If event has recurring event, it should have the same UID
-        if ($calendarEvent->getRecurringEvent() !== null
+        if (
+            $calendarEvent->getRecurringEvent() !== null
             && $calendarEvent->getUid() === $calendarEvent->getRecurringEvent()->getUid()
         ) {
             return;

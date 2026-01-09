@@ -26,7 +26,8 @@ class CalendarEventEntityListener
 
         // if calendar event is an recurring event exception and its base recurring event has an UID,
         // set it to the exception event
-        if ($calendarEvent->getRecurringEvent() !== null
+        if (
+            $calendarEvent->getRecurringEvent() !== null
             && $calendarEvent->getRecurringEvent()->getUid() !== null
         ) {
             $calendarEvent->setUid($calendarEvent->getRecurringEvent()->getUid());

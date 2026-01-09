@@ -68,7 +68,8 @@ class EntityListener implements ServiceSubscriberInterface
         }
         foreach ($uow->getScheduledCollectionUpdates() as $coll) {
             $collOwner = $coll->getOwner();
-            if ($collOwner instanceof User
+            if (
+                $collOwner instanceof User
                 && $collOwner->getId()
                 && $coll->getMapping()['fieldName'] === 'organizations'
             ) {

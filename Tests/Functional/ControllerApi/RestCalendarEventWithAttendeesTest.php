@@ -440,7 +440,7 @@ class RestCalendarEventWithAttendeesTest extends WebTestCase
         $this->client->request(
             'GET',
             $this->getUrl('oro_api_get_calendarevents', $request)
-            .'&createdAt>'.urlencode('2014-03-04T20:00:00+0000')
+            . '&createdAt>' . urlencode('2014-03-04T20:00:00+0000')
         );
 
         $result = $this->getJsonResponseContent($this->client->getResponse(), 200);
@@ -450,7 +450,7 @@ class RestCalendarEventWithAttendeesTest extends WebTestCase
         $this->client->request(
             'GET',
             $this->getUrl('oro_api_get_calendarevents', $request)
-            .'&createdAt>'.urlencode('2050-03-04T20:00:00+0000')
+            . '&createdAt>' . urlencode('2050-03-04T20:00:00+0000')
         );
 
         $result = $this->getJsonResponseContent($this->client->getResponse(), 200);

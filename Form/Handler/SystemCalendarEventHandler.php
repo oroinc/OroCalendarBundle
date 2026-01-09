@@ -28,8 +28,7 @@ class SystemCalendarEventHandler extends AbstractCalendarEventHandler
             $this->submitPostPutRequest($this->form, $request);
 
             if ($this->form->isValid()) {
-                // TODO: should be refactored after finishing BAP-8722
-                // Contexts handling should be moved to common for activities form handler
+                // Contexts handling should be moved to common for activities form handler (BAP-8722)
                 if ($this->form->has('contexts')) {
                     $contexts = $this->form->get('contexts')->getData();
                     if ($entity->getCalendar()) {

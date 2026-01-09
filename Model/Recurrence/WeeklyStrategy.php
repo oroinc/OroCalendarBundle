@@ -76,14 +76,16 @@ class WeeklyStrategy extends AbstractStrategy
         while ($afterFullWeeksDate <= $end && $afterFullWeeksDate <= $recurrence->getCalculatedEndTime()) {
             foreach ($weekDays as $day) {
                 $next = $this->getNextOccurrence($day, $afterFullWeeksDate);
-                if ($next > $end
+                if (
+                    $next > $end
                     || $next > $recurrence->getCalculatedEndTime()
                     || ($recurrence->getOccurrences() && $fromStartInterval >= $recurrence->getOccurrences())
                 ) {
                     return $result;
                 }
 
-                if ($next >= $start
+                if (
+                    $next >= $start
                     && $next <= $end
                     && $next >= $recurrence->getStartTime()
                     && $next <= $recurrence->getCalculatedEndTime()
