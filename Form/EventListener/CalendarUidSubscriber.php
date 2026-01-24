@@ -9,6 +9,11 @@ use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\Form\FormEvent;
 use Symfony\Component\Form\FormEvents;
 
+/**
+ * Form event subscriber for calendar UID field management.
+ *
+ * Dynamically adds calendar selection fields using {@see CalendarChoiceType} or {@see CalendarChoiceTemplateType}.
+ */
 class CalendarUidSubscriber implements EventSubscriberInterface
 {
     #[\Override]

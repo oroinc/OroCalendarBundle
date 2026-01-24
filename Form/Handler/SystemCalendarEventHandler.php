@@ -6,6 +6,10 @@ use Oro\Bundle\CalendarBundle\Entity\CalendarEvent;
 use Oro\Bundle\CalendarBundle\Manager\CalendarEvent\NotificationManager;
 use Oro\Bundle\FormBundle\Form\Handler\RequestHandlerTrait;
 
+/**
+ * Handler for processing {@see CalendarEvent} forms for system calendars
+ * with activity context management form submissions.
+ */
 class SystemCalendarEventHandler extends AbstractCalendarEventHandler
 {
     use RequestHandlerTrait;
@@ -28,8 +32,7 @@ class SystemCalendarEventHandler extends AbstractCalendarEventHandler
             $this->submitPostPutRequest($this->form, $request);
 
             if ($this->form->isValid()) {
-                // TODO: should be refactored after finishing BAP-8722
-                // Contexts handling should be moved to common for activities form handler
+                // Contexts handling should be moved to common for activities form handler (BAP-8722)
                 if ($this->form->has('contexts')) {
                     $contexts = $this->form->get('contexts')->getData();
                     if ($entity->getCalendar()) {

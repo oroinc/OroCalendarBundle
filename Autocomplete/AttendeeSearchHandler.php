@@ -7,6 +7,11 @@ use Oro\Bundle\ActivityBundle\Autocomplete\ContextSearchHandler;
 use Oro\Bundle\CalendarBundle\Manager\AttendeeManager;
 use Oro\Bundle\SearchBundle\Query\Result\Item;
 
+/**
+ * Autocomplete search handler for calendar event attendees.
+ *
+ * Converts search results into attendee objects with display information using {@see AttendeeManager}.
+ */
 class AttendeeSearchHandler extends ContextSearchHandler
 {
     /** @var AttendeeManager */

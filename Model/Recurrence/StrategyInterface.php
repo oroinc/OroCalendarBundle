@@ -4,6 +4,12 @@ namespace Oro\Bundle\CalendarBundle\Model\Recurrence;
 
 use Oro\Bundle\CalendarBundle\Entity\Recurrence;
 
+/**
+ * Interface for calendar event recurrence calculation strategies.
+ *
+ * Defines the contract for calculating recurring event occurrences, validating recurrence rules,
+ * and providing textual representations of {@see Recurrence} patterns.
+ */
 interface StrategyInterface
 {
     /**

@@ -6,6 +6,9 @@ use Doctrine\ORM\EntityRepository;
 use Doctrine\ORM\QueryBuilder;
 use Oro\Bundle\CalendarBundle\Entity\Calendar;
 
+/**
+ * Repository for {@see Calendar} entities.
+ */
 class CalendarRepository extends EntityRepository
 {
     /**

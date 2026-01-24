@@ -11,6 +11,12 @@ use Oro\Bundle\DataGridBundle\Event\BuildBefore;
 use Oro\Bundle\SecurityBundle\Authentication\TokenAccessorInterface;
 use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
 
+/**
+ * Listener for system calendar datagrid events.
+ *
+ * Configures datagrid visibility and filters based on calendar type (public/system)
+ * and user permissions using {@see SystemCalendarConfig} and {@see AuthorizationCheckerInterface}.
+ */
 class SystemCalendarGridListener
 {
     /** @var AuthorizationCheckerInterface */

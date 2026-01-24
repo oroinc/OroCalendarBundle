@@ -7,6 +7,10 @@ use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\Form\FormEvent;
 use Symfony\Component\Form\FormEvents;
 
+/**
+ * Manages recurrence field lifecycle, clearing old recurrence data and removing recurrence fields
+ * for recurring event exceptions.
+ */
 class CalendarEventRecurrenceSubscriber implements EventSubscriberInterface
 {
     #[\Override]

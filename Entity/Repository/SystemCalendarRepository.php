@@ -5,6 +5,9 @@ namespace Oro\Bundle\CalendarBundle\Entity\Repository;
 use Doctrine\ORM\EntityRepository;
 use Doctrine\ORM\QueryBuilder;
 
+/**
+ * Repository for {@see SystemCalendar} entities.
+ */
 class SystemCalendarRepository extends EntityRepository
 {
     /**

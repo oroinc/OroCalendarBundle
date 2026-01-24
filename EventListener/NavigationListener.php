@@ -8,6 +8,12 @@ use Oro\Bundle\NavigationBundle\Utils\MenuUpdateUtils;
 use Oro\Bundle\SecurityBundle\Authentication\TokenAccessorInterface;
 use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
 
+/**
+ * Listener for calendar navigation menu configuration.
+ *
+ * Configures calendar menu visibility based on system calendar configuration (see {@see SystemCalendarConfig})
+ * and user permissions using.
+ */
 class NavigationListener
 {
     /** @var SystemCalendarConfig */

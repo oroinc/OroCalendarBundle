@@ -2,6 +2,9 @@
 
 namespace Oro\Bundle\CalendarBundle\Provider;
 
+/**
+ * Applies permission-based restrictions to public calendar events based on user authorization.
+ */
 class PublicCalendarEventNormalizer extends AbstractCalendarEventNormalizer
 {
     #[\Override]

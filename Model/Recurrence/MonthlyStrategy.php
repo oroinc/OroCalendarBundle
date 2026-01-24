@@ -5,6 +5,9 @@ namespace Oro\Bundle\CalendarBundle\Model\Recurrence;
 use Oro\Bundle\CalendarBundle\Entity;
 use Oro\Bundle\CalendarBundle\Model\Recurrence;
 
+/**
+ * Calculates occurrences for events that repeat monthly on a specific day of the month.
+ */
 class MonthlyStrategy extends AbstractStrategy
 {
     #[\Override]

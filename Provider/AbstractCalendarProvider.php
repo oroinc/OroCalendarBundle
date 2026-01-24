@@ -4,6 +4,13 @@ namespace Oro\Bundle\CalendarBundle\Provider;
 
 use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
 
+/**
+ * Provides common functionality for calendar data providers.
+ *
+ * This base class offers helper methods for retrieving and filtering entity fields
+ * that are supported by calendar implementations. Subclasses should implement the
+ * {@see CalendarProviderInterface} methods to provide calendar-specific data.
+ */
 abstract class AbstractCalendarProvider implements CalendarProviderInterface
 {
     /**

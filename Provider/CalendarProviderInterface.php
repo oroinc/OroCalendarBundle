@@ -2,6 +2,10 @@
 
 namespace Oro\Bundle\CalendarBundle\Provider;
 
+/**
+ * Defines the contract for retrieving calendar default properties and events
+ * for integration with external calendar systems.
+ */
 interface CalendarProviderInterface
 {
     /**
