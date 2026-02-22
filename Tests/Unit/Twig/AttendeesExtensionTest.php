@@ -21,7 +21,7 @@ class AttendeesExtensionTest extends TestCase
         $this->featureChecker = $this->createMock(FeatureChecker::class);
 
         $container = self::getContainerBuilder()
-            ->add('oro_featuretoggle.checker.feature_checker', $this->featureChecker)
+            ->add(FeatureChecker::class, $this->featureChecker)
             ->getContainer($this);
 
         $this->extension = new AttendeesExtension($container);
@@ -34,7 +34,9 @@ class AttendeesExtensionTest extends TestCase
             ->with('calendar_events_attendee_notifications')
             ->willReturn(true);
 
-        self::assertTrue(self::callTwigFunction($this->extension, 'is_attendees_invitation_enabled', []));
+        self::assertTrue(
+            self::callTwigFunction($this->extension, 'is_attendees_invitation_enabled', [])
+        );
     }
 
     public function testIsCalendarMasterFeaturesEnabledWithDisabledInvitations(): void
@@ -44,6 +46,8 @@ class AttendeesExtensionTest extends TestCase
             ->with('calendar_events_attendee_notifications')
             ->willReturn(false);
 
-        self::assertFalse(self::callTwigFunction($this->extension, 'is_attendees_invitation_enabled', []));
+        self::assertFalse(
+            self::callTwigFunction($this->extension, 'is_attendees_invitation_enabled', [])
+        );
     }
 }

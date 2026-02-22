@@ -64,7 +64,6 @@ services:
 
     oro_calendar.twig.dateformat:
         class: Oro\Bundle\CalendarBundle\Twig\DateFormatExtension
-        public: false
         arguments:
             - '@oro_platform.twig.service_locator'
         tags:
@@ -72,15 +71,14 @@ services:
 
     oro_calendar.twig.recurrence:
         class: Oro\Bundle\CalendarBundle\Twig\RecurrenceExtension
-        public: false
         arguments:
             - '@oro_platform.twig.service_locator'
         tags:
             - { name: twig.extension }
+            - { name: container.service_subscriber, id: oro_calendar.model.recurrence, key: Oro\Bundle\CalendarBundle\Model\Recurrence }
 
     oro_calendar.twig.attendie:
         class: Oro\Bundle\CalendarBundle\Twig\AttendeesExtension
-        public: false
         arguments:
             - '@oro_platform.twig.service_locator'
         tags:

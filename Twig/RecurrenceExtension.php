@@ -7,7 +7,6 @@ use Oro\Bundle\CalendarBundle\Entity\Recurrence as EntityRecurrence;
 use Oro\Bundle\CalendarBundle\Model\Recurrence;
 use Psr\Container\ContainerInterface;
 use Symfony\Contracts\Service\ServiceSubscriberInterface;
-use Symfony\Contracts\Translation\TranslatorInterface;
 use Twig\Extension\AbstractExtension;
 use Twig\TwigFunction;
 
@@ -18,31 +17,11 @@ use Twig\TwigFunction;
  */
 class RecurrenceExtension extends AbstractExtension implements ServiceSubscriberInterface
 {
-    /** @var ContainerInterface */
-    protected $container;
+    private array $patternsCache = [];
 
-    /** @var array */
-    protected $patternsCache = [];
-
-    public function __construct(ContainerInterface $container)
-    {
-        $this->container = $container;
-    }
-
-    /**
-     * @return TranslatorInterface
-     */
-    protected function getTranslator()
-    {
-        return $this->container->get(TranslatorInterface::class);
-    }
-
-    /**
-     * @return Recurrence
-     */
-    protected function getRecurrenceModel()
-    {
-        return $this->container->get('oro_calendar.model.recurrence');
+    public function __construct(
+        private readonly ContainerInterface $container
+    ) {
     }
 
     #[\Override]
@@ -99,8 +78,12 @@ class RecurrenceExtension extends AbstractExtension implements ServiceSubscriber
     public static function getSubscribedServices(): array
     {
         return [
-            TranslatorInterface::class,
-            'oro_calendar.model.recurrence' => Recurrence::class,
+            Recurrence::class
         ];
+    }
+
+    private function getRecurrenceModel(): Recurrence
+    {
+        return $this->container->get(Recurrence::class);
     }
 }

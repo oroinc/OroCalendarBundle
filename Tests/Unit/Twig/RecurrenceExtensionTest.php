@@ -4,30 +4,25 @@ namespace Oro\Bundle\CalendarBundle\Tests\Unit\Twig;
 
 use Oro\Bundle\CalendarBundle\Entity;
 use Oro\Bundle\CalendarBundle\Model\Recurrence;
-use Oro\Bundle\CalendarBundle\Model\Recurrence\StrategyInterface;
 use Oro\Bundle\CalendarBundle\Twig\RecurrenceExtension;
 use Oro\Component\Testing\Unit\TwigExtensionTestCaseTrait;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
-use Symfony\Contracts\Translation\TranslatorInterface;
 
 class RecurrenceExtensionTest extends TestCase
 {
     use TwigExtensionTestCaseTrait;
 
-    private TranslatorInterface&MockObject $translator;
-    private StrategyInterface&MockObject $strategy;
+    private Recurrence&MockObject $recurrenceModel;
     private RecurrenceExtension $extension;
 
     #[\Override]
     protected function setUp(): void
     {
-        $this->translator = $this->createMock(TranslatorInterface::class);
-        $this->strategy = $this->createMock(StrategyInterface::class);
+        $this->recurrenceModel = $this->createMock(Recurrence::class);
 
         $container = self::getContainerBuilder()
-            ->add(TranslatorInterface::class, $this->translator)
-            ->add('oro_calendar.model.recurrence', new Recurrence($this->strategy))
+            ->add(Recurrence::class, $this->recurrenceModel)
             ->getContainer($this);
 
         $this->extension = new RecurrenceExtension($container);
@@ -35,7 +30,7 @@ class RecurrenceExtensionTest extends TestCase
 
     public function testGetRecurrenceTextValue(): void
     {
-        $this->strategy->expects($this->once())
+        $this->recurrenceModel->expects($this->once())
             ->method('getTextValue')
             ->willReturn('test_pattern');
 

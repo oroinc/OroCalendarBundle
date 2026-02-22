@@ -2,6 +2,7 @@
 
 namespace Oro\Bundle\CalendarBundle\Twig;
 
+use Oro\Bundle\FeatureToggleBundle\Checker\FeatureChecker;
 use Psr\Container\ContainerInterface;
 use Symfony\Contracts\Service\ServiceSubscriberInterface;
 use Twig\Extension\AbstractExtension;
@@ -13,18 +14,9 @@ use Twig\TwigFunction;
  */
 class AttendeesExtension extends AbstractExtension implements ServiceSubscriberInterface
 {
-    /** @var ContainerInterface */
-    protected $container;
-
-    public function __construct(ContainerInterface $container)
-    {
-        $this->container = $container;
-    }
-
-    #[\Override]
-    public static function getSubscribedServices(): array
-    {
-        return ['oro_featuretoggle.checker.feature_checker'];
+    public function __construct(
+        private readonly ContainerInterface $container
+    ) {
     }
 
     #[\Override]
@@ -37,7 +29,19 @@ class AttendeesExtension extends AbstractExtension implements ServiceSubscriberI
 
     public function isAttendeesInvitationEnabled(): bool
     {
-        return $this->container->get('oro_featuretoggle.checker.feature_checker')
-            ->isFeatureEnabled('calendar_events_attendee_notifications');
+        return $this->getFeatureChecker()->isFeatureEnabled('calendar_events_attendee_notifications');
+    }
+
+    #[\Override]
+    public static function getSubscribedServices(): array
+    {
+        return [
+            FeatureChecker::class
+        ];
+    }
+
+    private function getFeatureChecker(): FeatureChecker
+    {
+        return $this->container->get(FeatureChecker::class);
     }
 }

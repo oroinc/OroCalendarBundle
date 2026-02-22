@@ -19,42 +19,17 @@ use Twig\TwigFunction;
  */
 class DateFormatExtension extends AbstractExtension implements ServiceSubscriberInterface
 {
-    /** @var ContainerInterface */
-    protected $container;
-
-    public function __construct(ContainerInterface $container)
-    {
-        $this->container = $container;
-    }
-
-    /**
-     * @return DateTimeFormatterInterface
-     */
-    protected function getDateTimeFormatter()
-    {
-        return $this->container->get('oro_locale.formatter.date_time');
-    }
-
-    /**
-     * @return ConfigManager
-     */
-    protected function getConfigManager()
-    {
-        return $this->container->get('oro_config.global');
+    public function __construct(
+        protected readonly ContainerInterface $container
+    ) {
     }
 
     #[\Override]
     public function getFunctions()
     {
         return [
-            new TwigFunction(
-                'calendar_date_range',
-                [$this, 'formatCalendarDateRange']
-            ),
-            new TwigFunction(
-                'calendar_date_range_organization',
-                [$this, 'formatCalendarDateRangeOrganization']
-            )
+            new TwigFunction('calendar_date_range', [$this, 'formatCalendarDateRange']),
+            new TwigFunction('calendar_date_range_organization', [$this, 'formatCalendarDateRangeOrganization'])
         ];
     }
 
@@ -212,8 +187,7 @@ class DateFormatExtension extends AbstractExtension implements ServiceSubscriber
      */
     protected function getFormattingCode(int $localizationId)
     {
-        $localizationData = $this->container->get('oro_locale.manager.localization')
-            ->getLocalizationData($localizationId);
+        $localizationData = $this->getLocalizationManager()->getLocalizationData($localizationId);
 
         return $localizationData['formattingCode'] ?? Configuration::DEFAULT_LOCALE;
     }
@@ -224,7 +198,22 @@ class DateFormatExtension extends AbstractExtension implements ServiceSubscriber
         return [
             'oro_locale.formatter.date_time' => DateTimeFormatterInterface::class,
             'oro_config.global' => ConfigManager::class,
-            'oro_locale.manager.localization' => LocalizationManager::class,
+            LocalizationManager::class
         ];
+    }
+
+    protected function getDateTimeFormatter(): DateTimeFormatterInterface
+    {
+        return $this->container->get('oro_locale.formatter.date_time');
+    }
+
+    protected function getConfigManager(): ConfigManager
+    {
+        return $this->container->get('oro_config.global');
+    }
+
+    protected function getLocalizationManager(): LocalizationManager
+    {
+        return $this->container->get(LocalizationManager::class);
     }
 }
