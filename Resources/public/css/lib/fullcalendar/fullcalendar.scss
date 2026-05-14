@@ -58,7 +58,7 @@ body .fc { /* extra precedence to overcome jqui */
 }
 
 .fc-unthemed td.fc-today {
-    background: $extra-300;
+    background: $primary-accent-extra-light;
 }
 
 .fc-highlight { /* when user is selecting cells */
@@ -67,7 +67,7 @@ body .fc { /* extra precedence to overcome jqui */
 }
 
 .fc-bgevent { /* default look for background events */
-    background: $success-ultra-light;
+    background: $success-light;
     opacity: .3;
 }
 
@@ -584,7 +584,7 @@ temporary rendered events).
 
 .fc-event,
 .fc-event-dot {
-    background-color: $extra-200; /* default BACKGROUND color */
+    background-color: $primary-accent-extra-light; /* default BACKGROUND color */
 }
 
 /* overpower some of bootstrap's and jqui's styles on <a> tags */
@@ -864,7 +864,7 @@ a.fc-more:hover {
 
 .fc-now-indicator {
     position: absolute;
-    border: 0 solid $danger;
+    border: 0 solid $error;
 }
 
 
