@@ -26,36 +26,44 @@ use Oro\Bundle\UserBundle\Entity\User;
 #[ORM\Entity(repositoryClass: AttendeeRepository::class)]
 #[ORM\Table(name: 'oro_calendar_event_attendee')]
 #[ORM\HasLifecycleCallbacks]
-#[Config(defaultValues: ['entity' => ['icon' => 'fa-info-circle'], 'activity' => ['immutable' => true]])]
+#[Config(defaultValues: [
+    'entity' => ['icon' => 'fa-info-circle'],
+    'activity' => ['immutable' => true],
+    'email' => ['available_in_template' => true],
+])]
 class Attendee implements EmailHolderInterface, ExtendEntityInterface
 {
     use ExtendEntityTrait;
 
-    const STATUS_ENUM_CODE = 'ce_attendee_status';
-    const TYPE_ENUM_CODE = 'ce_attendee_type';
+    public const STATUS_ENUM_CODE = 'ce_attendee_status';
+    public const TYPE_ENUM_CODE = 'ce_attendee_type';
 
-    const STATUS_NONE = 'none';
-    const STATUS_ACCEPTED = 'accepted';
-    const STATUS_DECLINED = 'declined';
-    const STATUS_TENTATIVE = 'tentative';
+    public const STATUS_NONE = 'none';
+    public const STATUS_ACCEPTED = 'accepted';
+    public const STATUS_DECLINED = 'declined';
+    public const STATUS_TENTATIVE = 'tentative';
 
-    const TYPE_ORGANIZER = 'organizer';
-    const TYPE_OPTIONAL  = 'optional';
-    const TYPE_REQUIRED  = 'required';
+    public const TYPE_ORGANIZER = 'organizer';
+    public const TYPE_OPTIONAL = 'optional';
+    public const TYPE_REQUIRED = 'required';
 
     #[ORM\Id]
     #[ORM\Column(type: Types::INTEGER)]
     #[ORM\GeneratedValue(strategy: 'AUTO')]
+    #[ConfigField(defaultValues: ['email' => ['available_in_template' => true]])]
     protected ?int $id = null;
 
     #[ORM\Column(name: 'email', type: Types::STRING, length: 255, nullable: true)]
+    #[ConfigField(defaultValues: ['email' => ['available_in_template' => true]])]
     protected ?string $email = null;
 
     #[ORM\Column(name: 'display_name', type: Types::STRING, length: 255, nullable: true)]
+    #[ConfigField(defaultValues: ['email' => ['available_in_template' => true]])]
     protected ?string $displayName = null;
 
     #[ORM\ManyToOne(targetEntity: User::class)]
     #[ORM\JoinColumn(name: 'user_id', referencedColumnName: 'id', nullable: true, onDelete: 'SET NULL')]
+    #[ConfigField(defaultValues: ['email' => ['available_in_template' => true]])]
     protected ?User $user = null;
 
     /**
@@ -64,14 +72,21 @@ class Attendee implements EmailHolderInterface, ExtendEntityInterface
      */
     #[ORM\ManyToOne(targetEntity: CalendarEvent::class, inversedBy: 'attendees')]
     #[ORM\JoinColumn(name: 'calendar_event_id', referencedColumnName: 'id', nullable: true, onDelete: 'CASCADE')]
+    #[ConfigField(defaultValues: ['email' => ['available_in_template' => true]])]
     protected ?CalendarEvent $calendarEvent = null;
 
     #[ORM\Column(name: 'created_at', type: Types::DATETIME_MUTABLE)]
-    #[ConfigField(defaultValues: ['entity' => ['label' => 'oro.ui.created_at']])]
+    #[ConfigField(defaultValues: [
+        'entity' => ['label' => 'oro.ui.created_at'],
+        'email' => ['available_in_template' => true],
+    ])]
     protected ?\DateTimeInterface $createdAt = null;
 
     #[ORM\Column(name: 'updated_at', type: Types::DATETIME_MUTABLE)]
-    #[ConfigField(defaultValues: ['entity' => ['label' => 'oro.ui.updated_at']])]
+    #[ConfigField(defaultValues: [
+        'entity' => ['label' => 'oro.ui.updated_at'],
+        'email' => ['available_in_template' => true],
+    ])]
     protected ?\DateTimeInterface $updatedAt = null;
 
     /**
@@ -239,7 +254,7 @@ class Attendee implements EmailHolderInterface, ExtendEntityInterface
      */
     public function __toString()
     {
-        return (string) $this->displayName;
+        return (string)$this->displayName;
     }
 
     /**
@@ -270,6 +285,7 @@ class Attendee implements EmailHolderInterface, ExtendEntityInterface
     public function isUserEqual(User $user = null)
     {
         $actualUser = $this->getUser();
+
         return $actualUser === $user || ($user && $actualUser && $actualUser->getId() == $user->getId());
     }
 
@@ -283,6 +299,7 @@ class Attendee implements EmailHolderInterface, ExtendEntityInterface
     public function isEmailEqual($email)
     {
         $actualEmail = $this->getEmail();
+
         return $actualEmail === $email || 0 === strcasecmp($actualEmail, $email);
     }
 }

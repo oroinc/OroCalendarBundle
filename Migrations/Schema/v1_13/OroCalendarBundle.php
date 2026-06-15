@@ -105,7 +105,8 @@ class OroCalendarBundle implements Migration, ExtendExtensionAwareInterface
             false,
             false,
             [
-                'extend' => ['owner' => ExtendScope::OWNER_CUSTOM]
+                'extend' => ['owner' => ExtendScope::OWNER_CUSTOM],
+                'email' => ['available_in_template' => true],
             ]
         );
 
@@ -117,7 +118,8 @@ class OroCalendarBundle implements Migration, ExtendExtensionAwareInterface
             false,
             false,
             [
-                'extend' => ['owner' => ExtendScope::OWNER_CUSTOM]
+                'extend' => ['owner' => ExtendScope::OWNER_CUSTOM],
+                'email' => ['available_in_template' => true],
             ]
         );
     }

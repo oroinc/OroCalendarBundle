@@ -106,7 +106,8 @@ class OroCalendarBundleInstaller implements
             false,
             false,
             [
-                'extend' => ['owner' => ExtendScope::OWNER_CUSTOM]
+                'extend' => ['owner' => ExtendScope::OWNER_CUSTOM],
+                'email' => ['available_in_template' => true],
             ]
         );
 
@@ -118,7 +119,8 @@ class OroCalendarBundleInstaller implements
             false,
             false,
             [
-                'extend' => ['owner' => ExtendScope::OWNER_CUSTOM]
+                'extend' => ['owner' => ExtendScope::OWNER_CUSTOM],
+                'email' => ['available_in_template' => true],
             ]
         );
     }

@@ -9,6 +9,7 @@ use Doctrine\ORM\Mapping as ORM;
 use Extend\Entity\Autocomplete\OroCalendarBundle_Entity_Calendar;
 use Oro\Bundle\CalendarBundle\Entity\Repository\CalendarRepository;
 use Oro\Bundle\EntityConfigBundle\Metadata\Attribute\Config;
+use Oro\Bundle\EntityConfigBundle\Metadata\Attribute\ConfigField;
 use Oro\Bundle\EntityExtendBundle\Entity\ExtendEntityInterface;
 use Oro\Bundle\EntityExtendBundle\Entity\ExtendEntityTrait;
 use Oro\Bundle\OrganizationBundle\Entity\Organization;
@@ -33,7 +34,8 @@ use Oro\Bundle\UserBundle\Entity\User;
         ],
         'security' => ['type' => 'ACL', 'group_name' => '', 'category' => 'account_management'],
         'activity' => ['immutable' => true],
-        'attachment' => ['immutable' => true]
+        'attachment' => ['immutable' => true],
+        'email' => ['available_in_template' => true]
     ]
 )]
 class Calendar implements ExtendEntityInterface
@@ -45,23 +47,28 @@ class Calendar implements ExtendEntityInterface
     #[ORM\Id]
     #[ORM\Column(type: Types::INTEGER)]
     #[ORM\GeneratedValue(strategy: 'AUTO')]
+    #[ConfigField(defaultValues: ['email' => ['available_in_template' => true]])]
     protected ?int $id = null;
 
     #[ORM\Column(type: Types::STRING, length: 255, nullable: true)]
+    #[ConfigField(defaultValues: ['email' => ['available_in_template' => true]])]
     protected ?string $name = null;
 
     #[ORM\ManyToOne(targetEntity: User::class)]
     #[ORM\JoinColumn(name: 'user_owner_id', referencedColumnName: 'id', onDelete: 'SET NULL')]
+    #[ConfigField(defaultValues: ['email' => ['available_in_template' => true]])]
     protected ?User $owner = null;
 
     /**
      * @var Collection<int, CalendarEvent>
      */
     #[ORM\OneToMany(mappedBy: 'calendar', targetEntity: CalendarEvent::class, cascade: ['persist'])]
+    #[ConfigField(defaultValues: ['email' => ['available_in_template' => true]])]
     protected ?Collection $events = null;
 
     #[ORM\ManyToOne(targetEntity: Organization::class)]
     #[ORM\JoinColumn(name: 'organization_id', referencedColumnName: 'id', onDelete: 'SET NULL')]
+    #[ConfigField(defaultValues: ['email' => ['available_in_template' => true]])]
     protected ?OrganizationInterface $organization = null;
 
     /**
