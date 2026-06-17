@@ -30,6 +30,9 @@ use Oro\Bundle\OrganizationBundle\Entity\Organization;
  *          },
  *          "attachment"={
  *              "immutable"=true
+ *          },
+ *          "email"={
+ *              "available_in_template"=true
  *          }
  *      }
  * )

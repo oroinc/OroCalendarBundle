@@ -68,6 +68,9 @@ use Oro\Bundle\UserBundle\Entity\User;
  *          "grid"={
  *              "default"="calendar-event-grid",
  *              "context"="calendar-event-for-context-grid"
+ *          },
+ *          "email"={
+ *              "available_in_template"=true
  *          }
  *      }
  * )
