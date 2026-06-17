@@ -35,6 +35,9 @@ use Oro\Bundle\UserBundle\Entity\User;
  *          },
  *          "attachment"={
  *              "immutable"=true
+ *          },
+ *          "email"={
+ *              "available_in_template"=true
  *          }
  *      }
  * )
