@@ -61,7 +61,8 @@ use Oro\Bundle\UserBundle\Entity\User;
             'action_link_widget' => 'oro_add_calendar_event_link'
         ],
         'attachment' => ['immutable' => true],
-        'grid' => ['default' => 'calendar-event-grid', 'context' => 'calendar-event-for-context-grid']
+        'grid' => ['default' => 'calendar-event-grid', 'context' => 'calendar-event-for-context-grid'],
+        'email' => ['available_in_template' => true]
     ]
 )]
 class CalendarEvent implements
@@ -78,53 +79,57 @@ class CalendarEvent implements
     #[ORM\Id]
     #[ORM\Column(name: 'id', type: Types::INTEGER)]
     #[ORM\GeneratedValue(strategy: 'AUTO')]
+    #[ConfigField(defaultValues: ['email' => ['available_in_template' => true]])]
     protected ?int $id = null;
 
     #[ORM\Column(name: 'uid', type: Types::STRING, length: 36, nullable: true)]
-    #[ConfigField(defaultValues: ['dataaudit' => ['auditable' => true]])]
+    #[ConfigField(defaultValues: ['dataaudit' => ['auditable' => true], 'email' => ['available_in_template' => true]])]
     protected ?string $uid = null;
 
     /**
      * @var Collection<int, CalendarEvent>
      */
     #[ORM\OneToMany(mappedBy: 'parent', targetEntity: CalendarEvent::class, cascade: ['all'], orphanRemoval: true)]
+    #[ConfigField(defaultValues: ['email' => ['available_in_template' => true]])]
     protected ?Collection $childEvents = null;
 
     #[ORM\ManyToOne(targetEntity: CalendarEvent::class, fetch: 'EAGER', inversedBy: 'childEvents')]
     #[ORM\JoinColumn(name: 'parent_id', referencedColumnName: 'id', onDelete: 'CASCADE')]
+    #[ConfigField(defaultValues: ['email' => ['available_in_template' => true]])]
     protected ?CalendarEvent $parent = null;
 
     #[ORM\ManyToOne(targetEntity: Calendar::class, inversedBy: 'events')]
     #[ORM\JoinColumn(name: 'calendar_id', referencedColumnName: 'id', nullable: true, onDelete: 'CASCADE')]
-    #[ConfigField(defaultValues: ['dataaudit' => ['auditable' => true]])]
+    #[ConfigField(defaultValues: ['dataaudit' => ['auditable' => true], 'email' => ['available_in_template' => true]])]
     protected ?Calendar $calendar = null;
 
     #[ORM\ManyToOne(targetEntity: SystemCalendar::class, inversedBy: 'events')]
     #[ORM\JoinColumn(name: 'system_calendar_id', referencedColumnName: 'id', nullable: true, onDelete: 'CASCADE')]
-    #[ConfigField(defaultValues: ['dataaudit' => ['auditable' => true]])]
+    #[ConfigField(defaultValues: ['dataaudit' => ['auditable' => true], 'email' => ['available_in_template' => true]])]
     protected ?SystemCalendar $systemCalendar = null;
 
     #[ORM\Column(name: 'title', type: Types::STRING, length: 255)]
-    #[ConfigField(defaultValues: ['dataaudit' => ['auditable' => true]])]
+    #[ConfigField(defaultValues: ['dataaudit' => ['auditable' => true], 'email' => ['available_in_template' => true]])]
     protected ?string $title = null;
 
     #[ORM\Column(name: 'description', type: Types::TEXT, nullable: true)]
-    #[ConfigField(defaultValues: ['dataaudit' => ['auditable' => true]])]
+    #[ConfigField(defaultValues: ['dataaudit' => ['auditable' => true], 'email' => ['available_in_template' => true]])]
     protected ?string $description = null;
 
     #[ORM\Column(name: 'start_at', type: Types::DATETIME_MUTABLE)]
-    #[ConfigField(defaultValues: ['dataaudit' => ['auditable' => true]])]
+    #[ConfigField(defaultValues: ['dataaudit' => ['auditable' => true], 'email' => ['available_in_template' => true]])]
     protected ?\DateTimeInterface $start = null;
 
     #[ORM\Column(name: 'end_at', type: Types::DATETIME_MUTABLE)]
-    #[ConfigField(defaultValues: ['dataaudit' => ['auditable' => true]])]
+    #[ConfigField(defaultValues: ['dataaudit' => ['auditable' => true], 'email' => ['available_in_template' => true]])]
     protected ?\DateTimeInterface $end = null;
 
     #[ORM\Column(name: 'all_day', type: Types::BOOLEAN, nullable: false, options: ['default' => false])]
-    #[ConfigField(defaultValues: ['dataaudit' => ['auditable' => true]])]
+    #[ConfigField(defaultValues: ['dataaudit' => ['auditable' => true], 'email' => ['available_in_template' => true]])]
     protected ?bool $allDay = false;
 
     #[ORM\Column(name: 'background_color', type: Types::STRING, length: 7, nullable: true)]
+    #[ConfigField(defaultValues: ['email' => ['available_in_template' => true]])]
     protected ?string $backgroundColor = null;
 
     /**
@@ -147,6 +152,7 @@ class CalendarEvent implements
         orphanRemoval: true
     )]
     #[ORM\OrderBy(['displayName' => Criteria::ASC])]
+    #[ConfigField(defaultValues: ['email' => ['available_in_template' => true]])]
     protected ?Collection $attendees = null;
 
     /**
@@ -155,6 +161,7 @@ class CalendarEvent implements
      */
     #[ORM\ManyToOne(targetEntity: Attendee::class, cascade: ['persist', 'remove'], fetch: 'EAGER')]
     #[ORM\JoinColumn(name: 'related_attendee_id', referencedColumnName: 'id', onDelete: 'SET NULL')]
+    #[ConfigField(defaultValues: ['email' => ['available_in_template' => true]])]
     protected ?Attendee $relatedAttendee = null;
 
     /**
@@ -162,6 +169,7 @@ class CalendarEvent implements
      */
     #[ORM\OneToOne(inversedBy: 'calendarEvent', targetEntity: Recurrence::class, cascade: ['ALL'], orphanRemoval: true)]
     #[ORM\JoinColumn(name: 'recurrence_id', referencedColumnName: 'id', nullable: true, onDelete: 'SET NULL')]
+    #[ConfigField(defaultValues: ['email' => ['available_in_template' => true]])]
     protected ?Recurrence $recurrence = null;
 
     /**
@@ -179,6 +187,7 @@ class CalendarEvent implements
      * @var Collection<int, CalendarEvent>
      */
     #[ORM\OneToMany(mappedBy: 'recurringEvent', targetEntity: CalendarEvent::class, cascade: ['persist'])]
+    #[ConfigField(defaultValues: ['email' => ['available_in_template' => true]])]
     protected ?Collection $recurringEventExceptions = null;
 
     /**
@@ -188,6 +197,7 @@ class CalendarEvent implements
      */
     #[ORM\ManyToOne(targetEntity: CalendarEvent::class, inversedBy: 'recurringEventExceptions')]
     #[ORM\JoinColumn(name: 'recurring_event_id', referencedColumnName: 'id', onDelete: 'CASCADE')]
+    #[ConfigField(defaultValues: ['email' => ['available_in_template' => true]])]
     protected ?CalendarEvent $recurringEvent = null;
 
     /**
@@ -197,6 +207,7 @@ class CalendarEvent implements
      * Only exception event has this value not empty.
      */
     #[ORM\Column(name: 'original_start_at', type: Types::DATETIME_MUTABLE, nullable: true)]
+    #[ConfigField(defaultValues: ['email' => ['available_in_template' => true]])]
     protected ?\DateTimeInterface $originalStart = null;
 
     /**
@@ -207,6 +218,7 @@ class CalendarEvent implements
      * @var bool
      */
     #[ORM\Column(name: 'is_cancelled', type: Types::BOOLEAN, nullable: false, options: ['default' => false])]
+    #[ConfigField(defaultValues: ['email' => ['available_in_template' => true]])]
     protected ?bool $cancelled = false;
 
     /**
@@ -219,16 +231,20 @@ class CalendarEvent implements
     protected $childEventCloneInProgress = false;
 
     #[ORM\Column(name: 'is_organizer', type: Types::BOOLEAN, nullable: true)]
+    #[ConfigField(defaultValues: ['email' => ['available_in_template' => true]])]
     protected ?bool $isOrganizer = null;
 
     #[ORM\Column(name: 'organizer_email', type: Types::STRING, length: 255, nullable: true)]
+    #[ConfigField(defaultValues: ['email' => ['available_in_template' => true]])]
     protected ?string $organizerEmail = null;
 
     #[ORM\Column(name: 'organizer_display_name', type: Types::STRING, length: 255, nullable: true)]
+    #[ConfigField(defaultValues: ['email' => ['available_in_template' => true]])]
     protected ?string $organizerDisplayName = null;
 
     #[ORM\ManyToOne(targetEntity: User::class)]
     #[ORM\JoinColumn(name: 'organizer_user_id', referencedColumnName: 'id', nullable: true, onDelete: 'SET NULL')]
+    #[ConfigField(defaultValues: ['email' => ['available_in_template' => true]])]
     protected ?User $organizerUser = null;
 
     public function __construct()
