@@ -42,7 +42,6 @@
         &__item-datetime {
             label {
                 vertical-align: top;
-                margin-top: 6px;
             }
         }
 
@@ -54,7 +53,7 @@
             position: relative;
             display: inline-block;
             max-width: 238px;
-            margin-left: $content-padding-small;
+            margin-top: $content-padding-small;
 
             input[type='text'] {
                 &.datepicker-input {
@@ -104,15 +103,25 @@
 
     &-summary {
         margin-top: $content-padding-medium;
-        padding: 4px 10px 9px 0;
+        padding: 4px 0 9px;
         border-radius: $input-border-radius;
 
-        &.control-group .control-label.wrap {
-            color: $info;
+        &.control-group {
+            margin-bottom: $content-padding-xs;
+
+            .control-label.wrap {
+                color: $info;
+                padding-left: $content-padding-small;
+            }
         }
 
         .controls {
             padding-top: 6px;
+            padding-right: $content-padding-xs;
         }
+    }
+
+    &-warning {
+        max-width: 800px;
     }
 }

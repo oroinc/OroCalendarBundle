@@ -141,7 +141,7 @@
         }
     } %}
     {% set rightColumn %}
-        <div class="control-group-container" {{ UI.renderPageComponentAttributes(calendarEventDateRange) }}>
+        <div class="control-group-container calendar-event-daterange" {{ UI.renderPageComponentAttributes(calendarEventDateRange) }}>
             {{ form_row(form.start) }}
             {{ form_row(form.end) }}
             {{ form_row(form.allDay) }}
@@ -152,7 +152,7 @@
                 '<%= recurrencePattern %>'
             ) }}
         <% } else { %>
-            <div class="control-group-container" {{ UI.renderPageComponentAttributes(calendarEventRecurrence) }}></div>
+            <div class="control-group-container calendar-event-recurrence" {{ UI.renderPageComponentAttributes(calendarEventRecurrence) }}></div>
         <% } %>
     {% endset %}
     {% set leftColumn %}

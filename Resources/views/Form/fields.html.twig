@@ -71,13 +71,13 @@
     {% endfor %}
 
     {{ form_errors(form) }}
-    <div {{ UI.renderPageComponentAttributes({
+    <div class="calendar-event-recurrence" {{ UI.renderPageComponentAttributes({
         module: 'orocalendar/js/app/components/calendar-event-recurrence-component',
         name: 'calendar-event-recurrence',
         options: {
             inputNamePrefixes: form.vars.full_name,
             errors: errors,
-            modelAttrs: modelAttrs
+            modelAttrs: modelAttrs,
         }
     }) }}></div>
 {% endblock %}

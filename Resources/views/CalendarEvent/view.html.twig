@@ -89,9 +89,11 @@
                     {% include '@OroCalendar/CalendarEvent/invitationControl.html.twig' with {'entity': entity, 'triggerEventName': ''} %}
                 {% endif %}
             </div>
-            <div class="responsive-block">
-                {{ entityConfig.renderDynamicFields(entity) }}
-            </div>
+            {% apply spaceless %}
+                <div class="responsive-block">
+                    {{ entityConfig.renderDynamicFields(entity) }}
+                </div>
+            {% endapply %}
         </div>
     {%- endset -%}
 
