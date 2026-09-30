@@ -26,6 +26,8 @@ Feature: Create calendar events
     When I set Reminders with:
       | Method | Interval unit | Interval number |
       | Email  | minutes       | 21347349587354  |
+    # the interval validator runs on blur, so the field must lose the focus first
+    And I click on empty space
     Then I should see "Event Form" validation errors:
       | Reminder 1 Interval number | This value should be between 1 and 2,147,483,647. |
     When I fill "Event Form" with:

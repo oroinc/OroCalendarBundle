@@ -33,17 +33,48 @@ class CalendarEventInfo extends UiDialog
     #[\Override]
     protected function init()
     {
-        $dataGroup = $this->findAll('css', ".attribute-item");
-        /** @var NodeElement $group */
-        foreach ($dataGroup as $group) {
-            $label = $group->find('css', 'label.attribute-item__term')->getText();
-            $value = $group->find('css', '.attribute-item__description > div')->getText();
+        // The dialog is read as soon as it opens, and rows whose label is not rendered yet would share one empty key.
+        // Thus read again while a label is empty, and at the end accept the rows that did render. Then one row
+        // that never fills in cannot leave the whole set empty.
+        $this->calendarItemInfo = $this->spin(
+            static fn (self $element) => $element->collectItemInfo(false),
+            5
+        ) ?? $this->collectItemInfo(true);
+    }
 
-            if (strtotime(trim($value))) {
-                $value = new \DateTime($value);
+    /**
+     * @param bool $tolerant Skip a row that is not fully rendered instead of refusing the read
+     * @return array|null Null when a row is not complete and another read can help
+     */
+    private function collectItemInfo(bool $tolerant): ?array
+    {
+        $info = [];
+
+        /** @var NodeElement $group */
+        foreach ($this->findAll('css', '.attribute-item') as $group) {
+            $label = $group->find('css', 'label.attribute-item__term');
+            $labelText = null === $label ? '' : trim($label->getText());
+
+            if ('' === $labelText) {
+                if (!$tolerant) {
+                    return null;
+                }
+
+                continue;
             }
 
-            $this->calendarItemInfo[$label] = $value;
+            // renderAttribute() writes the value directly into .attribute-item__description, so a row without
+            // a value has no inner <div>. This is a normal state, not a partial render worth a wait.
+            $value = $group->find('css', '.attribute-item__description > div');
+            $valueText = null === $value ? '' : $value->getText();
+
+            $info[$labelText] = strtotime(trim($valueText)) ? new \DateTime($valueText) : $valueText;
         }
+
+        if (!$info) {
+            return $tolerant ? [] : null;
+        }
+
+        return $info;
     }
 }
