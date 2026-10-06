@@ -10,7 +10,7 @@
         'route': 'oro_system_calendar_view',
         'params': {'id': '$id'}
     }) %}
-    {% if is_granted('oro_calendar_create') %}
+    {% if is_granted('oro_public_calendar_management') or is_granted('oro_system_calendar_management') %}
         {% set html = html ~ UI.saveAndNewButton({
             'route': 'oro_system_calendar_create'
         }) %}
