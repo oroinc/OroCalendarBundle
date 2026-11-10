@@ -73,7 +73,7 @@ abstract class AbstractValidationErrorTestCase extends AbstractTestCase
                 ],
                 'errors' => [
                     'endTime' => [
-                        'Please enter a valid date and time.'
+                        'This value is not a valid date and time.'
                     ]
                 ]
             ],
@@ -88,7 +88,7 @@ abstract class AbstractValidationErrorTestCase extends AbstractTestCase
                 ],
                 'errors' => [
                     'occurrences' => [
-                        'Please enter an integer.'
+                        'This value is not a valid integer.'
                     ]
                 ]
             ],
@@ -130,7 +130,7 @@ abstract class AbstractValidationErrorTestCase extends AbstractTestCase
                 ],
                 'errors' => [
                     'interval' => [
-                        'Please enter an integer.'
+                        'This value is not a valid integer.'
                     ]
                 ]
             ],
@@ -216,7 +216,7 @@ abstract class AbstractValidationErrorTestCase extends AbstractTestCase
                 ],
                 'errors' => [
                     'timeZone' => [
-                        'Please select a valid timezone.'
+                        'This value is not a valid timezone.'
                     ]
                 ]
             ],
@@ -229,7 +229,7 @@ abstract class AbstractValidationErrorTestCase extends AbstractTestCase
                 ],
                 'errors' => [
                     'timeZone' => [
-                        'Please select a valid timezone.'
+                        'This value is not a valid timezone.'
                     ]
                 ]
             ],
@@ -324,7 +324,7 @@ abstract class AbstractValidationErrorTestCase extends AbstractTestCase
                 ],
                 'errors' => [
                     'dayOfMonth' => [
-                        'Please enter an integer.'
+                        'This value is not a valid integer.'
                     ]
                 ]
             ],
@@ -369,7 +369,7 @@ abstract class AbstractValidationErrorTestCase extends AbstractTestCase
                 ],
                 'errors' => [
                     'monthOfYear' => [
-                        'Please enter an integer.'
+                        'This value is not a valid integer.'
                     ]
                 ]
             ],
