@@ -102,8 +102,8 @@ class AjaxCalendarEventController extends AbstractController
                 'text'        => $attendeeRelationManager->getDisplayName($attendee),
                 'displayName' => $attendee->getDisplayName(),
                 'email'       => $attendee->getEmail(),
-                'type'        => $attendee->getType() ? $attendee->getType()->getId() : null,
-                'status'      => $attendee->getStatus() ? $attendee->getStatus()->getId() : null,
+                'type'        => $attendee->getType()?->getInternalId(),
+                'status'      => $attendee->getStatus()?->getInternalId(),
                 'userId'      => $attendee->getUser() ? $attendee->getUser()->getId() : null,
                 /**
                  * Selected Value Id should additionally encoded because it should be used as string key
